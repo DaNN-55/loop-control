@@ -1,0 +1,46 @@
+{
+  "exactNameReferences": [
+    {
+      "file": "src/local-app/retiredCloudRpc.integration.test.ts",
+      "line": 10,
+      "names": [
+        "create_external_connection",
+        "rotate_external_connection",
+        "delete_external_connection_version",
+        "resolve_external_connection_secret"
+      ],
+      "kind": "verification"
+    },
+    {
+      "file": "src/local-app/retiredCloudRpc.integration.test.ts",
+      "line": 44,
+      "names": [
+        "create_external_connection",
+        "rotate_external_connection",
+        "delete_external_connection_version",
+        "resolve_external_connection_secret"
+      ],
+      "kind": "verification"
+    },
+    {
+      "file": "scripts/e2e/clean-schema.mjs",
+      "line": 25,
+      "names": [
+        "create_external_connection",
+        "rotate_external_connection",
+        "delete_external_connection_version",
+        "resolve_external_connection_secret"
+      ],
+      "kind": "verification"
+    }
+  ],
+  "productionReferences": [],
+  "retainedChain": {
+    "OwnerHTTP": "src/local-app/localRoute.ts:211",
+    "command": "src/local-app/connections.ts:230",
+    "intent": "local_identity.apply_connection_intent(uuid)",
+    "secretStore": "src/local-app/keychainStore.ts",
+    "workerBinding": "src/worker/localConnection.ts",
+    "historyRestore": "scripts/storage/restore.mjs"
+  }
+}

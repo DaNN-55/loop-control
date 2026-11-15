@@ -1,0 +1,76 @@
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-b28gUF/source
+
+stderr | src/local-app/legacyWorkbenchAdoption.integration.test.ts > browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-HFCVA3/browser-vite-cache/deps/react-dom_client.js?v=741b2a99 as it exceeds the max of 500KB.
+
+(node:58573) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/legacyWorkbenchAdoption.integration.test.ts (36 tests) 139579ms
+   ✓ browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames  8196ms
+   ✓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (legacy)  11934ms
+   ✓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (registered)  10643ms
+   ✓ refuses an invalidated original preview without reviving or rewriting its manual bindings  1125ms
+   ✓ refuses unknown workbench evidence before creating current registration  1066ms
+   ✓ refuses changed-confirmation workbench evidence before creating current registration  1057ms
+   ✓ refuses unconfirmed workbench evidence before creating current registration  1078ms
+   ✓ refuses file-sha workbench evidence before creating current registration  1051ms
+   ✓ requires the exact source, replays only its receipt and preserves a different unknown request and existing current edit  1318ms
+   ✓ preserves a saved native document when its SQL registration is missing instead of replacing it with old bindings  1063ms
+   ✓ uses the original HTML project instead of rebuilding its already edited content from older bindings  1112ms
+   ✓ continues the old source-audio protocol whose preview correctly has a null narration track identity  5839ms
+   ✓ keeps the original frozen music A when a later unconfirmed result B exists for the same cue  1451ms
+   ✓ preserves the exact confirmed narration track and refuses its invalidated source task  1386ms
+   ✓ imports pending selections as current inputs and candidates without borrowing old confirmation, then continues through explicit adoption and native export  8390ms
+   ✓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: false)  9527ms
+   ✓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: true)  9546ms
+   ✓ keeps unknown old voice unresolved while local candidates remain usable and current external proposals are blocked  1753ms
+   ✓ imports every original registered music result as an unadopted local preparation and adopts only the explicitly selected result  1974ms
+   ✓ refuses invalidated-confirmation mixed imports without changing original work or replacing current editing  1073ms
+   ✓ refuses stale-source mixed imports without changing original work or replacing current editing  1075ms
+   ✓ refuses foreign-owner mixed imports without changing original work or replacing current editing  1021ms
+   ✓ refuses existing-workspace mixed imports without changing original work or replacing current editing  1155ms
+   ✓ preserves the frozen music source interval when an unfinished shot precedes the confirmed shot, keeping the later result unadopted  2043ms
+   ✓ moves a frozen shot effect with its confirmed shot after an unfinished gap without silently losing its original use  1963ms
+   ✓ keeps a confirmed shot usable when the unfinished shot source is offline, preserving its original selection as an issue  1758ms
+   ✓ carries original unfinished mix settings into current inputs while adoption remains explicit  8389ms
+   ✓ pending two-slot composition remains an explicit current source choice with exact slot windows  8249ms
+   ✓ continues pending 'sequential' ranges with explicit adoption and preserves Owner overrides  6187ms
+   ✓ continues pending 'pip' ranges with explicit adoption and preserves Owner overrides  5394ms
+   ✓ continues pending 'grid' ranges with explicit adoption and preserves Owner overrides  5950ms
+   ✓ keeps a confirmed original shot intact while importing and adopting an unfinished parallel composition  6762ms
+   ✓ keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project  1756ms
+   ✓ retains the existing SQL rejection of unsupported original compositions without changing the draft  1072ms
+   ✓ imports an original image window of 0.05 seconds by its actual frames while retaining public registration limits  4433ms
+   ✓ imports an original image window of 121 seconds by its actual frames while retaining public registration limits  1784ms
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (23 tests) 50236ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  1883ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  1585ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  1527ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  4904ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  2121ms
+   ✓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change  6340ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  1609ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (current protocol)  1975ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (legacy protocol)  2059ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  1727ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  3493ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  1369ms
+   ✓ added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST  2148ms
+   ✓ manual video adoption preserves the selected source interval and refuses a short range  1770ms
+   ✓ video generation freezes and applies the first-frame composition without changing the source image  1667ms
+   ✓ returns the used video to candidates without moving the shot and allows re-adoption  1928ms
+   ✓ freezes volcengine keyframes inputs and sends the right roles to a simulated provider  1642ms
+   ✓ freezes volcengine references inputs and sends the right roles to a simulated provider  1781ms
+   ✓ freezes minimax keyframes inputs and sends the right roles to a simulated provider  1650ms
+   ✓ freezes minimax references inputs and sends the right roles to a simulated provider  1789ms
+   ✓ freezes kling keyframes inputs and sends the right roles to a simulated provider  1656ms
+   ✓ freezes kling references inputs and sends the right roles to a simulated provider  1801ms
+   ✓ freezes bailian references inputs and sends the right roles to a simulated provider  1810ms
+
+ Test Files  2 passed (2)
+      Tests  59 passed (59)
+   Start at  15:01:40
+   Duration  191.02s (transform 524ms, setup 7ms, collect 944ms, tests 189.81s, environment 0ms, prepare 64ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-b28gUF/evidence/vitest.json

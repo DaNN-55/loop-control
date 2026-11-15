@@ -1,0 +1,24 @@
+{
+  "sourceFilesCompared": 1345,
+  "changedExisting": [
+    "src/local-app/workspaceNarration.ts",
+    "src/local-app/workspaceAudio.integration.test.ts",
+    "src/local-app/workspaceCaptionsCommands.ts",
+    "src/local-app/productionCaptionInputs.integration.test.ts",
+    "src/local-app/workspaceCaptions.integration.test.ts",
+    "src/local-app/workspaceCandidates.ts",
+    "src/local-app/workspacePreparation.ts",
+    "src/local-app/workspaceAudio.ts",
+    "scripts/e2e/clean-schema.mjs"
+  ],
+  "added": [
+    "db/current/190-independent-workspace-narration-inputs.sql",
+    "src/local-app/productionNarrationInputs.integration.test.ts"
+  ],
+  "removed": [],
+  "isolatedSourceMatches": true,
+  "headUnchanged": true,
+  "indexUnchanged": true,
+  "dailySnapshotUnchanged": true,
+  "dailyMetrics": "{\"events\": 0, \"enabled\": false}"
+}

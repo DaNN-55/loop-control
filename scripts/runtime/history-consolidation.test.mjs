@@ -18,3 +18,9 @@ it('still protects nonempty credential lines without consuming the following pub
  expect(putNamedSecret).toHaveBeenCalledWith('history/synthetic.env/PROVIDER_API_KEY','synthetic-credential');
  expect(replacements).toHaveLength(1);
 });
+it('decodes validated quoted COPY identifiers into exact history keys while keeping SQL quoting and JSON precision',async()=>{
+ const {archiveCopies}=await import('../storage/native-backup-format.mjs');
+ const snapshot='{"amount":9007199254740993}',copy=archiveCopies('COPY local_identity.production_shot_versions (shot_id, "position", "snapshot", enabled) FROM stdin;\nshot-01\t1\t'+snapshot+'\tt\n\\.\n')[0];
+ const row=decodeCopy(copy,{snapshot:'jsonb',enabled:'boolean'})[0];
+ expect(copy.columns).toBe('shot_id, "position", "snapshot", enabled');expect(Object.keys(row)).toEqual(['shot_id','position','snapshot','enabled']);expect(row.position).toBe('1');expect(row.enabled).toBe(true);expect(JSON.stringify(row.snapshot)).toBe(snapshot);
+});

@@ -1,0 +1,32 @@
+{
+  "coverKind": "material",
+  "source": {
+    "version": "workspace-cover-source/v1",
+    "kind": "material",
+    "id": "c1f8d750-7bc4-490b-9290-0bfc1aac551f",
+    "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+  },
+  "metadataCoverSource": {
+    "version": "workspace-cover-source/v1",
+    "kind": "material",
+    "id": "c1f8d750-7bc4-490b-9290-0bfc1aac551f",
+    "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+  },
+  "exactExportSha256": "65a6d6afb1f490102e072754615a562b2b1651beb65d30ed267f29a51f33427e",
+  "negativeCases": [
+    "wrong_sha",
+    "unknown_id",
+    "other_episode",
+    "invalid_uuid",
+    "array_kind",
+    "host_root",
+    "mixed_bytes_and_source",
+    "wrong_owner",
+    "same_length_file_tamper",
+    "missing_file"
+  ],
+  "noQueuedDeliveryAfterRejection": true,
+  "originalMaterialRecordUnchanged": true,
+  "originalPlanSha256": "f81737a5af16817730b0b59e0ac2c6d2a710c59c6810049788e0349a738eec0a",
+  "workerStatus": "completed"
+}

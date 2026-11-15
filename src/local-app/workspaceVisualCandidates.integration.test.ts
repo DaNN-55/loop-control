@@ -101,11 +101,19 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['current','legacy']
  const {narrationFixture}=await import('./workspaceNarration.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{writeFile}=await import('node:fs/promises');const f=await narrationFixture(undefined,undefined,true);try{
   await f.authorize();let w=f.made;const image=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'resume.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'}),mode=join(f.root,'poll-mode'),module=join(f.root,'controlled-video.mjs');await writeFile(mode,'fail');await writeFile(module,(await readFile(module,'utf8')).replace("if(host==='ark.cn-beijing.volces.com')return",`if(host==='ark.cn-beijing.volces.com'&&readFileSync(${JSON.stringify(mode)},'utf8')==='fail')throw Error('Controlled poll interruption');if(host==='ark.cn-beijing.volces.com')return`));
   expect(await readFile(module,'utf8')).toContain("throw Error('Controlled poll interruption')");
-  // Simulate a task frozen before migration; this trigger is disabled only in
-  // this test-owned database while the original queue builds its old snapshot.
-  if(protocol==='legacy')await f.c.query('ALTER TABLE public.tasks DISABLE TRIGGER aaa_workspace_shot_video_protocol');
   const requested=await f.chosenRequest('requestWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,firstFrameMaterialRevisionId:image.body.id,prompt:'可恢复视频',durationSeconds:4,reservationCents:90});expect(requested.status).toBe(200);w=requested.body;const job=w.visualTasks[0];
-  if(protocol==='legacy')await f.c.query('ALTER TABLE public.tasks ENABLE TRIGGER aaa_workspace_shot_video_protocol');
+  if(protocol==='legacy'){
+   // New queues always create the current protocol. Construct a recorded old task in this isolated fixture, retaining every native identity guard.
+   const {randomUUID}=await import('node:crypto'),legacyId=randomUUID(),legacyRequestId=randomUUID(),original=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0].input_snapshot;
+   const legacy={...original,wan_request_id:legacyRequestId,capability:'b_roll_generation',storyboard_review_package_id:f.board,shot:{...original.shot,shotType:'b_roll'},media:{...original.media,wan_video:original.media.video},output:{...original.output,required_artifact_types:['b_roll_asset']}};
+   delete legacy.production_preparation;delete legacy.media.video;delete legacy.native_output_namespace;delete legacy.native_episode_relative_path;delete legacy.native_episode_directory_identity;
+   await f.c.query('BEGIN');try{
+    await f.c.query("INSERT INTO public.tasks SELECT (jsonb_populate_record(NULL::public.tasks,to_jsonb(t)||jsonb_build_object('id',$2::uuid,'task_type','generate_b_roll','input_snapshot',$3::jsonb))).* FROM public.tasks t WHERE id=$1",[job.taskId,legacyId,legacy]);
+    await f.c.query("UPDATE public.tasks SET status='superseded',invalidated_at=clock_timestamp(),invalidated_reason='Unused current-protocol fixture retained' WHERE id=$1",[job.taskId]);
+    await f.c.query("INSERT INTO local_identity.workspace_visual_candidates SELECT (jsonb_populate_record(NULL::local_identity.workspace_visual_candidates,to_jsonb(v)||jsonb_build_object('id',$2::uuid,'task_id',$3::uuid,'created_at',clock_timestamp()))).* FROM local_identity.workspace_visual_candidates v WHERE id=$1",[job.id,legacyRequestId,legacyId]);await f.c.query('COMMIT');
+   }catch(error){await f.c.query('ROLLBACK');throw error;}
+   job.taskId=legacyId;job.id=legacyRequestId;
+  }
   const frozen=(await f.c.query('SELECT task_type,input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0];expect(frozen.task_type).toBe(protocol==='legacy'?'generate_b_roll':'generate_shot_video');expect(frozen.input_snapshot.capability).toBe(protocol==='legacy'?'b_roll_generation':'shot_video_generation');
 await f.execute(job.taskId,false);w=await f.read();expect(w.visualTasks[0].canResume).toBe(true);expect(w.project.sha256).toBe(f.made.project.sha256);
   // A second legitimate workspace owned by the same Owner cannot resume this episode's task.

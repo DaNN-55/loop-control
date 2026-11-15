@@ -1,0 +1,79 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-osoJmb/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-osoJmb/source
+
+stderr | src/local-app/legacyWorkbenchAdoption.integration.test.ts > browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-cFtfIX/browser-vite-cache/deps/react-dom_client.js?v=a7aad818 as it exceeds the max of 500KB.
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts (36 tests | 1 failed | 35 skipped) 7124ms
+   × browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames 7124ms
+     → Browser find failed: {"success":false,"data":null,"error":"No element found: getByRole('tab', { name: '视频', exact: true }). Verify the selector, role, or name is correct and the element exists in the DOM."}
+
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (legacy)
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (registered)
+   ↓ refuses an invalidated original preview without reviving or rewriting its manual bindings
+   ↓ refuses unknown workbench evidence before creating current registration
+   ↓ refuses changed-confirmation workbench evidence before creating current registration
+   ↓ refuses unconfirmed workbench evidence before creating current registration
+   ↓ refuses file-sha workbench evidence before creating current registration
+   ↓ requires the exact source, replays only its receipt and preserves a different unknown request and existing current edit
+   ↓ preserves a saved native document when its SQL registration is missing instead of replacing it with old bindings
+   ↓ uses the original HTML project instead of rebuilding its already edited content from older bindings
+   ↓ continues the old source-audio protocol whose preview correctly has a null narration track identity
+   ↓ keeps the original frozen music A when a later unconfirmed result B exists for the same cue
+   ↓ preserves the exact confirmed narration track and refuses its invalidated source task
+   ↓ imports pending selections as current inputs and candidates without borrowing old confirmation, then continues through explicit adoption and native export
+   ↓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: false)
+   ↓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: true)
+   ↓ keeps unknown old voice unresolved while local candidates remain usable and current external proposals are blocked
+   ↓ imports every original registered music result as an unadopted local preparation and adopts only the explicitly selected result
+   ↓ refuses invalidated-confirmation mixed imports without changing original work or replacing current editing
+   ↓ refuses stale-source mixed imports without changing original work or replacing current editing
+   ↓ refuses foreign-owner mixed imports without changing original work or replacing current editing
+   ↓ refuses existing-workspace mixed imports without changing original work or replacing current editing
+   ↓ preserves the frozen music source interval when an unfinished shot precedes the confirmed shot, keeping the later result unadopted
+   ↓ moves a frozen shot effect with its confirmed shot after an unfinished gap without silently losing its original use
+   ↓ keeps a confirmed shot usable when the unfinished shot source is offline, preserving its original selection as an issue
+   ↓ carries original unfinished mix settings into current inputs while adoption remains explicit
+   ↓ pending two-slot composition remains an explicit current source choice with exact slot windows
+   ↓ continues pending 'sequential' ranges with explicit adoption and preserves Owner overrides
+   ↓ continues pending 'pip' ranges with explicit adoption and preserves Owner overrides
+   ↓ continues pending 'grid' ranges with explicit adoption and preserves Owner overrides
+   ↓ keeps a confirmed original shot intact while importing and adopting an unfinished parallel composition
+   ↓ keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project
+   ↓ retains the existing SQL rejection of unsupported original compositions without changing the draft
+   ↓ imports an original image window of 0.05 seconds by its actual frames while retaining public registration limits
+   ↓ imports an original image window of 121 seconds by its actual frames while retaining public registration limits
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyWorkbenchAdoption.integration.test.ts > browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames
+Error: Browser find failed: {"success":false,"data":null,"error":"No element found: getByRole('tab', { name: '视频', exact: true }). Verify the selector, role, or name is correct and the element exists in the DOM."}
+
+ ❯ Object.cli src/local-app/storyBrowser.fixture.ts:23:77
+     21|   let stdout:string;
+     22|   try{({stdout}=await exec('agent-browser',['--session',session,'--jso…
+     23|   catch(error){const e=error as Error&{stdout?:string;stderr?:string};…
+       |                                                                             ^
+     24|   const result=JSON.parse(stdout);if(!result.success)throw Error(resul…
+     25|  };
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts:66:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 35 skipped (36)
+   Start at  14:55:37
+   Duration  8.09s (transform 517ms, setup 8ms, collect 812ms, tests 7.12s, environment 0ms, prepare 34ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-osoJmb/evidence/vitest.json

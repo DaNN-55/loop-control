@@ -1,0 +1,26 @@
+E2E evidence: /private/tmp/loop-story-e2e-OKsOtD/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-OKsOtD/source
+
+ ✓ src/local-app/productionDefaultPreparation.integration.test.ts (7 tests) 25157ms
+   ✓ new production prepares directly from an independent baseline without old packages, classifications, approvals or drafts and survives reopen  3205ms
+   ✓ format-only continuation keeps an independent baseline, exact project and all input versions without creating a legacy child package  3081ms
+   ✓ a fresh independent order queues and executes an image from its own frozen baseline without consulting any review package  3630ms
+   ✓ independent source extraction and sound search register preparation-bound audio while retired review evidence remains untouched  5502ms
+   ✓ exact deletion includes registered independent preparation files and preserves unregistered user files  3028ms
+   ✓ a new independent volcengine video request freezes its real basis and executes controlled transport without retired shot classification  3422ms
+   ✓ a new independent bailian video request freezes its real basis and executes controlled transport without retired shot classification  3287ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  23:12:35
+   Duration  25.86s (transform 432ms, setup 7ms, collect 574ms, tests 25.16s, environment 0ms, prepare 26ms)
+
+JSON report written to /private/tmp/loop-story-e2e-OKsOtD/evidence/vitest.json

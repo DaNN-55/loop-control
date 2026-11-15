@@ -1,0 +1,26 @@
+[
+  {
+    "owner_id": "13463a6d-5901-4e94-9afd-9f33552472d3",
+    "sampled_at": "2026-11-13T08:33:06.346Z",
+    "cpu_percent": null,
+    "memory_used_bytes": "17073078272",
+    "memory_total_bytes": "17179869184",
+    "queue_count": 1,
+    "running_count": 0,
+    "resource_wait_count": 0,
+    "gpu_percent": null,
+    "gap_seconds": "0"
+  },
+  {
+    "owner_id": "13463a6d-5901-4e94-9afd-9f33552472d3",
+    "sampled_at": "2026-11-13T08:33:36.348Z",
+    "cpu_percent": "40.6",
+    "memory_used_bytes": "16962224128",
+    "memory_total_bytes": "17179869184",
+    "queue_count": 1,
+    "running_count": 0,
+    "resource_wait_count": 0,
+    "gpu_percent": null,
+    "gap_seconds": "0.002"
+  }
+]

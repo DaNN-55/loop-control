@@ -1,3 +1,4 @@
+import type {Database} from "../lib/database.types";
 export const episodeStages = [
   "waiting_input",
   "brief_draft",
@@ -14,7 +15,12 @@ export const episodeStages = [
   "render_ready",
   "qc_review",
   "qc_passed",
+  "publish_ready",
+  "publishing_review",
+  "published",
+  "metrics_collecting",
+  "learning_recorded",
   "production_completed",
 ] as const;
 
-export type EpisodeStage = (typeof episodeStages)[number];
+export type EpisodeStage = Database["public"]["Enums"]["episode_stage"];

@@ -117,23 +117,44 @@ it('receives a late save in the original session and lets a reopened visit expli
  await act(async()=>release());await screen.findByRole('button',{name:'重试加入候选'});expect(f.calls.some(c=>c.name==='confirmWorkspaceNarration')).toBe(false);
  fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);
 });
-it('reopens after an unknown HTTP confirmation and reads its frozen receipt without confirming twice',async()=>{
- const f=setup(),execute=f.command.getMockImplementation()!,receipts=new Map<string,unknown>(),confirmKeys:string[]=[],readbackKeys:string[]=[];let lost=false;
+it.each(['immediate','held'] as const)('reopens after an unknown HTTP confirmation and reads its frozen receipt without confirming twice (%s)',async timing=>{
+ const f=setup(),execute=f.command.getMockImplementation()!,receipts=new Map<string,unknown>(),confirmKeys:string[]=[],readbackKeys:string[]=[];let lost=false,holdWorkspace=false;
+ let releaseWorkspace!:()=>void,releaseReceipt!:()=>void;const workspaceGate=new Promise<void>(resolve=>{releaseWorkspace=resolve;}),receiptGate=new Promise<void>(resolve=>{releaseReceipt=resolve;});
  vi.stubGlobal('crypto',webcrypto);
  vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
   if(path.endsWith('/session'))return Response.json({csrfToken:'manual-http-fixture'});
   if(init?.method==='POST'){
-   if(path.endsWith('/command-receipt')){const query=JSON.parse(String(init.body));readbackKeys.push(query.operation.idempotencyKey);return Response.json(readbackKeys.length===1?{status:'unknown'}:{status:'committed',result:receipts.get(query.operation.idempotencyKey)});}
+   if(path.endsWith('/command-receipt')){
+    const query=JSON.parse(String(init.body));readbackKeys.push(query.operation.idempotencyKey);
+    if(readbackKeys.length===1)return Response.json({status:'unknown'});
+    if(timing==='held')await receiptGate;
+    return Response.json({status:'committed',result:receipts.get(query.operation.idempotencyKey)});
+   }
    const body=JSON.parse(String(init.body));if(body.command==='confirmWorkspaceNarration')confirmKeys.push(body.idempotencyKey);
    if(receipts.has(body.idempotencyKey))return Response.json(receipts.get(body.idempotencyKey));
    const value=await execute(body.command,body.data);receipts.set(body.idempotencyKey,value);
    if(body.command==='confirmWorkspaceNarration'&&!lost){lost=true;return Response.json({error:'确认回包中断'},{status:503});}return Response.json(value);
   }
+  if(path.endsWith('/workspace')&&holdWorkspace)await workspaceGate;
   return Response.json(path.endsWith('/workspace')?{workspace:f.stored}:{serviceCatalog:{version:1,groups:[]}});
  }));await localRequest('session');f.command.mockImplementation((name,data)=>localCommand(name,data,undefined,'episode-commands'));
- const first=render(<f.View ownerId="http-manual-owner"/>);drop('first');await screen.findByText(/本次操作结果暂未确认/);first.unmount();
- render(<f.View ownerId="http-manual-owner"/>);fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));await screen.findByRole('button',{name:'采用'});
- expect(confirmKeys).toHaveLength(1);expect(readbackKeys).toEqual([confirmKeys[0],confirmKeys[0]]);expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);expect(f.stored.revision).toBe(3);
+ const first=render(<f.View ownerId={'http-manual-owner-'+timing}/>);drop('first');await screen.findByText(/本次操作结果暂未确认/);
+ const uncertain=Object.keys(sessionStorage).filter(key=>key.endsWith('.uncertain'));expect(uncertain).toHaveLength(1);first.unmount();
+ holdWorkspace=timing==='held';render(<f.View ownerId={'http-manual-owner-'+timing}/>);fireEvent.click(screen.getByRole('button',{name:'重试加入候选'}));
+ if(timing==='held'){
+  // The persisted candidate already has an adopt button while recovery is still pending.
+  expect(screen.getByRole('button',{name:'采用'})).toHaveProperty('disabled',true);expect(readbackKeys).toEqual([confirmKeys[0]]);
+  await act(async()=>releaseWorkspace());await waitFor(()=>expect(readbackKeys).toEqual([confirmKeys[0],confirmKeys[0]]));
+  expect(screen.getByRole('region',{name:'人工口播登记'})).toBeTruthy();expect(sessionStorage.getItem(uncertain[0])).toBe('1');expect(confirmKeys).toHaveLength(1);
+  expect(screen.getByRole('button',{name:'采用'})).toHaveProperty('disabled',true);await act(async()=>releaseReceipt());
+ }
+ // A visible candidate is not completion: wait for the receipt and the pending UI/storage to settle.
+ await waitFor(()=>{
+  expect(readbackKeys).toEqual([confirmKeys[0],confirmKeys[0]]);expect(screen.queryByRole('region',{name:'人工口播登记'})).toBeNull();
+  expect(Object.keys(sessionStorage).filter(key=>key.startsWith('loop.local.pending.'))).toEqual([]);expect(screen.getByRole('button',{name:'采用'})).not.toHaveProperty('disabled',true);
+ });
+ expect(confirmKeys).toHaveLength(1);expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration')).toHaveLength(1);expect(f.calls.filter(c=>c.name==='confirmWorkspaceNarration')).toHaveLength(1);expect(f.stored.revision).toBe(3);
+ expect(f.calls.some(c=>c.name==='adoptWorkspaceCandidate')).toBe(false);
 });
 it('does not publish a late initial read after the manual narration visit switches shots',async()=>{
  const f=setup(),changed=vi.fn();let finish!:(r:Response)=>void;

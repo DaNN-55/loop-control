@@ -1,0 +1,50 @@
+E2E evidence: /private/tmp/loop-story-e2e-B9y0YV/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-B9y0YV/source
+
+(node:36893) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ src/local-app/productionHistoryProjection.integration.test.ts (11 tests | 1 failed | 10 skipped) 24403ms
+   × history projection restores an independent production graph and actual adopted sources without reviving execution or changing the archive 24403ms
+     → workspace_visual_image_choices: expected undefined to be truthy
+   ↓ history request projection preserves provenance and current state: other-owner
+   ↓ history request projection preserves provenance and current state: current-parent-owner
+   ↓ history request projection preserves provenance and current state: forged-owner-proof
+   ↓ history request projection preserves provenance and current state: row-owner
+   ↓ history request projection preserves provenance and current state: other-episode
+   ↓ history request projection preserves provenance and current state: missing-parent
+   ↓ history request projection preserves provenance and current state: invalid-key
+   ↓ history request projection preserves provenance and current state: current-record
+   ↓ history request projection preserves provenance and current state: rollback
+   ↓ restored in-flight narration stays unclaimable and cannot restore paid-call confirmation or login authority
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionHistoryProjection.integration.test.ts > history projection restores an independent production graph and actual adopted sources without reviving execution or changing the archive
+AssertionError: workspace_visual_image_choices: expected undefined to be truthy
+
+[32m- Expected:[39m 
+true
+
+[31m+ Received:[39m 
+undefined
+
+ ❯ src/local-app/productionHistoryProjection.integration.test.ts:67:92
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 skipped (11)
+   Start at  01:06:46
+   Duration  25.13s (transform 437ms, setup 7ms, collect 597ms, tests 24.40s, environment 0ms, prepare 31ms)
+
+JSON report written to /private/tmp/loop-story-e2e-B9y0YV/evidence/vitest.json

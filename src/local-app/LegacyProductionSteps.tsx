@@ -7,7 +7,6 @@ import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
 import {localArtifactUrl,artifactPreviewKind,useLocalArtifactBlob,useLocalArtifactText} from '../reviews/localArtifactPreview';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
-import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {localRequest} from './client';
 import './legacy-production.css';
 import './legacy-production-compact.css';
@@ -38,19 +37,16 @@ function ReviewVersion({values,value,onChange,label}:{values:Review[];value:Revi
  return values.length?<NativeSelect size="sm" aria-label={label} value={value?.id??''} onChange={e=>onChange(e.target.value)}>{values.map(p=><option key={p.id} value={p.id}>v{p.revision_number}{p.invalidated_at?uiText(" · 已失效"):p.id===values.find(v=>!v.invalidated_at)?.id?uiText(" · 当前记录"):uiText(" · 历史版本")}</option>)}</NativeSelect>:null;
 }
 interface LegacyShot {id:string;scriptSegment:string;shotType?:string;productionMethod?:string;targetSpec?:string;durationSeconds?:number;inputBasis?:Array<{relativePath:string}>}
-export function LegacyPreparation({snapshot,onResume,readOnly=false,pending=false}:{snapshot:EpisodeProductionSnapshot;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
+export function LegacyPreparation({snapshot}:{snapshot:EpisodeProductionSnapshot}){
  const boards=reviews(snapshot,'storyboard_review'),[boardId,setBoardId]=useState(''),[shotId,setShotId]=useState('');
  const board=boards.find(p=>p.id===boardId)??boards[0],context=object(board?.context_snapshot),rawBoard=object(object(context.worker_result).storyboard??context.storyboard);
- const [saved,setSaved]=useState<{project:OpenChatCutProject|null;sha256?:string}|null>(null);
- useEffect(()=>{let active=true;void localRequest(`episodes/${snapshot.episode.id}/legacy-project`).then(value=>{if(active)setSaved(value);}).catch(()=>{});return()=>{active=false;};},[snapshot.episode.id]);
- const qc=reviews(snapshot,'qc_review').find(p=>!p.invalidated_at),render=snapshot.artifacts.find(a=>a.id===qc?.artifact_id),source=snapshot.artifacts.filter(a=>['review_render_project','final_render_project'].includes(a.artifact_type)&&/\.(json|html)$/.test(a.relative_path)).sort(newest).find(a=>a.producer_task_id===render?.producer_task_id);
  const shots=(Array.isArray(rawBoard.shots)?rawBoard.shots:[]).filter(s=>typeof object(s).id==='string'&&typeof object(s).scriptSegment==='string') as LegacyShot[];
  const shot=shots.find(s=>s.id===shotId)??shots[0],draft=snapshot.shotPreparationDrafts?.find(d=>d.review_package_id===board?.id&&d.shot_id===shot?.id);
  const frozenReview=reviews(snapshot,'production_ready').find(p=>object(p.context_snapshot).storyboard_review_package_id===board?.id),frozen=object(frozenReview?.context_snapshot);
  const members=(Array.isArray(frozen.members)?frozen.members:[]).map(object),frozenVisual=object(members.find(m=>m.member_key===`shot:${shot?.id}`)?.artifact),frozenAudio=object(members.find(m=>m.member_key===`narration:${shot?.id}`)?.audio_track);
  const selected=snapshot.materialRevisions.find(m=>m.id===draft?.selected_material_revision_id),video=snapshot.artifacts.find(a=>a.id===(draft?.current_video_artifact_id??frozenVisual.id)),audio=snapshot.audioTracks.find(a=>a.id===(draft?.current_audio_track_id??frozenAudio.id));
  return <div className="legacy-production legacy-production-compact legacy-preparation-compact">
-  <header className="legacy-compact-topbar"><h3>{uiText("已有分镜与匹配")}</h3><span>{shots.length}{uiText(" 个分镜")}</span><ReviewVersion values={boards} value={board} onChange={id=>{setBoardId(id);setShotId('');}} label={uiText("已有分镜版本")}/>{!readOnly&&onResume&&(source||saved?.project)&&<Button size="sm" color="primary" isDisabled={pending||!saved||board?.id!==boards.find(p=>!p.invalidated_at)?.id} onPress={()=>void onResume(saved?.project?{savedProjectSha256:saved.sha256}:{artifactId:source!.id,expectedSourceSha256:source!.sha256}).catch(()=>{})}>{pending?uiText("正在接入…"):uiText("启用逐镜头编辑")}</Button>}</header>
+  <header className="legacy-compact-topbar"><h3>{uiText("已有分镜与匹配")}</h3><span>{shots.length}{uiText(" 个分镜")}</span><ReviewVersion values={boards} value={board} onChange={id=>{setBoardId(id);setShotId('');}} label={uiText("已有分镜版本")}/></header>
   <div className="legacy-preparation-layout">
    <section className="legacy-shot-table-pane" aria-label={uiText("已有分镜与匹配")}>
     {shots.length?<details className="legacy-all-shots" open><summary>{uiText("全部分镜")}</summary><div className="legacy-table-scroll"><table aria-label={uiText("已有分镜列表")}><thead><tr><th>{uiText("镜头")}</th><th>{uiText("脚本与素材")}</th><th>{uiText("时长")}</th><th>{uiText("画面")}</th><th>{uiText("声音")}</th></tr></thead><tbody>{shots.map(s=>{const rowDraft=snapshot.shotPreparationDrafts?.find(d=>d.review_package_id===board?.id&&d.shot_id===s.id),rowVisual=object(members.find(m=>m.member_key===`shot:${s.id}`)?.artifact),rowAudio=object(members.find(m=>m.member_key===`narration:${s.id}`)?.audio_track),rowMaterial=snapshot.materialRevisions.find(m=>m.id===rowDraft?.selected_material_revision_id),rowVideo=snapshot.artifacts.find(a=>a.id===(rowDraft?.current_video_artifact_id??rowVisual.id)),rowNarration=snapshot.audioTracks.find(a=>a.id===(rowDraft?.current_audio_track_id??rowAudio.id));return <tr key={s.id} className={s.id===shot?.id?'is-selected':''}><th><button type="button" aria-label={uiText("选择镜头 {value0}",{value0:String(s.id)})} aria-pressed={s.id===shot?.id} onClick={()=>setShotId(s.id)}>{s.id}</button></th><td><button type="button" className="legacy-shot-text" onClick={()=>setShotId(s.id)}><span>{s.scriptSegment}</span><small>{rowMaterial||rowVideo?uiText("素材 · {value0}",{value0:String(rowMaterial?.source_path.split('/').pop()??rowVideo?.relative_path.split('/').pop())}):uiText("未保存画面匹配")}</small></button></td><td>{s.durationSeconds??'—'}{uiText(" 秒")}</td><td><span className={rowMaterial||rowVideo?'is-ready':''}>{rowMaterial||rowVideo?uiText("已匹配"):uiText("未记录")}</span></td><td>{rowDraft?.audio_mode==='none'?uiText("静音"):rowDraft?.audio_mode==='source'?uiText("素材原声"):rowNarration?uiText("已记录"):uiText("未记录")}</td></tr>;})}</tbody></table></div></details>:<p className="legacy-empty-content">{uiText("尚无分镜记录。")}</p>}
@@ -64,8 +60,7 @@ export function LegacyPreparation({snapshot,onResume,readOnly=false,pending=fals
  </div>;
 }
 
-export interface LegacyWorkspaceSource {artifactId?:string;expectedSourceSha256?:string;savedProjectSha256?:string}
-export function LegacyEditing({snapshot,onResume,readOnly=false,pending=false}:{snapshot:EpisodeProductionSnapshot;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
+export function LegacyEditing({snapshot}:{snapshot:EpisodeProductionSnapshot}){
  const qc=reviews(snapshot,'qc_review')[0],render=snapshot.artifacts.find(a=>a.id===qc?.artifact_id);
  const allProjects=snapshot.artifacts.filter(a=>['review_render_project','final_render_project','shot_editable_project'].includes(a.artifact_type)).sort(newest);
  const current=allProjects.find(a=>render&&a.producer_task_id===render.producer_task_id)??allProjects[0];
@@ -83,7 +78,6 @@ export function LegacyEditing({snapshot,onResume,readOnly=false,pending=false}:{
   {error&&<p role="alert" className="legacy-compact-alert">{uiText(error||'')}</p>}{!saved&&<p role="status" className="legacy-compact-alert">{uiText("正在读取已保存工程…")}</p>}
   <div className="legacy-editing-layout">
    <section className="legacy-editor-preview"><header><h4>{uiText("对应审核预览")}</h4>{render&&<FileLink episodeId={render.episode_id} path={render.relative_path} sha256={render.sha256}>{uiText("下载审核预览")}</FileLink>}</header>{render?<Media episodeId={render.episode_id} path={render.relative_path} sha256={render.sha256} label={uiText("已有剪辑审核预览")}/>:<div className="legacy-no-preview"><p>{uiText("尚无对应审核预览。")}</p></div>}
-    {!readOnly&&onResume&&(selectedId==='saved'||artifact&&['review_render_project','final_render_project'].includes(artifact.artifact_type)&&/\.(json|html)$/.test(artifact.relative_path))&&<div className="legacy-edit-entry"><Button size="sm" color="primary" isDisabled={pending||!saved||artifact?.relative_path.endsWith('.json')&&!project||selectedId!=='saved'&&!!saved.project} onPress={()=>{const source=selectedId==='saved'?{savedProjectSha256:saved!.sha256}:{artifactId:artifact!.id,expectedSourceSha256:artifact!.sha256};void onResume(source).catch(()=>{});}}>{pending?uiText("正在打开…"):uiText("继续编辑原工程")}</Button><span>{uiText("编辑另存工作版本，保留原工程和审核产物。")}</span></div>}
    </section>
    <aside className="legacy-project-detail">
     <section className="legacy-compact-detail-section"><h4>{uiText("工程文件")}</h4>{selectedId==='saved'&&saved?.sha256&&<a href={`/api/local/episodes/${snapshot.episode.id}/legacy-project?download=${saved.sha256}`} download>{uiText("下载已保存工程")}</a>}{artifact&&<><FileLink episodeId={artifact.episode_id} path={artifact.relative_path} sha256={artifact.sha256}>{uiText("下载工程 ")}{artifact.relative_path.split('/').pop()}</FileLink><p className="legacy-file-path">{artifact.relative_path}</p>{!artifact.relative_path.endsWith('.json')&&<details><summary>{uiText("查看原工程源码")}</summary><TextFile episodeId={artifact.episode_id} path={artifact.relative_path} sha256={artifact.sha256}/></details>}</>}{!projects.length&&!saved?.project&&saved&&<p>{uiText("尚无已保存的剪辑工程。")}</p>}</section>

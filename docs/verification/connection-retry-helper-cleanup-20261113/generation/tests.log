@@ -1,0 +1,36 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-RsPNNo/source
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (12 tests) 93249ms
+   ✓ Owner can prepare disabled narration before editing without queuing external tasks  2842ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  8653ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  8278ms
+   ✓ both first narration tracks assemble and crop an available source without invalidating the other shot  9614ms
+   ✓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery  5007ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  5112ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=false)  25203ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=true)  7355ms
+   ✓ first speech remains a candidate after a real native save and never overwrites the edited project  8275ms
+   ✓ speech beyond the Provider maximum blocks a video submission without cutting words  4425ms
+   ✓ one shot with two visual ranges keeps one voice and its original task after deleting the first range  7029ms
+   ✓ registered completed task media resolve directly without a fake material and reject changed bytes  1454ms
+ ✓ src/local-app/productionSelection.integration.test.ts (3 tests) 9108ms
+   ✓ without any account budget, explicit image selections freeze two independent connections without blueprint image authority  3609ms
+   ✓ exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain  3097ms
+   ✓ legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection  2401ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (6 tests) 13221ms
+   ✓ confirmation does not queue, legacy enablement cannot bypass it, and one confirmation queues exactly once without enabling the episode  2289ms
+   ✓ expired and changed-input confirmations fail without consuming the proposal or queueing a task  1809ms
+   ✓ connection or reference changes require a fresh confirmation and failed validation rolls consumption back  2199ms
+   ✓ confirmation records follow the existing guarded production-order deletion  2219ms
+   ✓ automatically estimates a call and atomically freezes the Owner-adjusted reservation in the actual queued task  2583ms
+   ✓ rolls confirmation consumption back when the real candidate write fails and permits the same confirmation after repair  2120ms
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts (1 test) 26035ms
+   ✓ native text, style and timing save once, final-file approval confirms captions and later edits invalidate it  26034ms
+
+ Test Files  4 passed (4)
+      Tests  22 passed (22)
+   Start at  12:03:34
+   Duration  144.96s (transform 1.79s, setup 26ms, collect 2.78s, tests 141.61s, environment 0ms, prepare 130ms)
+
+JSON report written to /private/tmp/loop-story-e2e-RsPNNo/evidence/vitest.json

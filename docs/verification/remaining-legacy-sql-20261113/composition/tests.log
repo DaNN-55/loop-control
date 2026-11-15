@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-XGWYfn/source
+
+ ✓ src/local-app/workflowLegacyRules.integration.test.ts (4 tests | 3 skipped) 5476ms
+   ✓ 48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence  5475ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 3 skipped (4)
+   Start at  09:05:03
+   Duration  6.20s (transform 422ms, setup 8ms, collect 592ms, tests 5.48s, environment 0ms, prepare 32ms)
+
+JSON report written to /private/tmp/loop-story-e2e-XGWYfn/evidence/vitest.json

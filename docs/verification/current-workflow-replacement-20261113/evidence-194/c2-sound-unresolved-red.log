@@ -1,0 +1,47 @@
+E2E evidence: /private/tmp/loop-story-e2e-i5AYd6/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-i5AYd6/source
+
+ ❯ src/local-app/productionSoundUse.integration.test.ts (3 tests | 1 failed | 2 skipped) 7355ms
+   ↓ observes actual local music adoption, gain changes, disable and re-enable without counting preparation or reopen as use
+   × uses the native audible sequence window for local effects, replacement and track muting rather than counting the media pool 7354ms
+     → expected { version: 'sound-use/v1', …(5) } to match object { used: 3, withdrawn: 3, …(2) }
+(3 matching properties omitted from actual)
+   ↓ records explicitly extracted current source audio through a real local Worker without creating an old draft
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionSoundUse.integration.test.ts > uses the native audible sequence window for local effects, replacement and track muting rather than counting the media pool
+AssertionError: expected { version: 'sound-use/v1', …(5) } to match object { used: 3, withdrawn: 3, …(2) }
+(3 matching properties omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "changed": 0,[22m
+[32m-   "unknownEvents": 1,[39m
+[31m+   "unknownEvents": 0,[39m
+[2m    "used": 3,[22m
+[2m    "withdrawn": 3,[22m
+[2m  }[22m
+
+ ❯ src/local-app/productionSoundUse.integration.test.ts:68:210
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 skipped (3)
+   Start at  04:08:33
+   Duration  8.07s (transform 422ms, setup 6ms, collect 582ms, tests 7.35s, environment 0ms, prepare 31ms)
+
+JSON report written to /private/tmp/loop-story-e2e-i5AYd6/evidence/vitest.json

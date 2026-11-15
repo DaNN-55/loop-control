@@ -1,0 +1,49 @@
+E2E evidence: /private/tmp/loop-story-e2e-k81RJ6/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-k81RJ6/source
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests | 1 failed) 11388ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)  3808ms
+   × fresh authored first video uses current preparation without a legacy approval (actual voice=true) 2967ms
+     → expected 400 to be 200 // Object.is equality
+   ✓ replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice  4612ms
+ ✓ src/local-app/currentShotSemantics.integration.test.ts (3 tests) 11864ms
+   ✓ current new script → neutral workspace → actual video queue and Worker  4299ms
+   ✓ current legacy-script script → neutral workspace → actual video queue and Worker  3783ms
+   ✓ current plain script → neutral workspace → actual video queue and Worker  3781ms
+ ✓ src/local-app/inputStorageLocation.integration.test.ts (4 tests) 9983ms
+   ✓ Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart  3722ms
+   ✓ Owner reuses an approved series input as a self-contained managed copy with original source approval evidence  3481ms
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  1691ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1087ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > fresh authored first video uses current preparation without a legacy approval (actual voice=true)
+AssertionError: expected 400 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 400[39m
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:22:126
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 9 passed (10)
+   Start at  02:42:57
+   Duration  34.34s (transform 424ms, setup 8ms, collect 747ms, tests 33.24s, environment 0ms, prepare 68ms)
+
+JSON report written to /private/tmp/loop-story-e2e-k81RJ6/evidence/vitest.json

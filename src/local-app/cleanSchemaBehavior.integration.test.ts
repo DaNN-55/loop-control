@@ -12,7 +12,7 @@ it.skipIf(!enabled)('clean baseline preserves actual Owner RLS and Worker identi
   const other=await ownerTransaction(f.pool,f.other,true,c=>c.query('SELECT id FROM public.accounts'));
   expect(own.rowCount).toBeGreaterThan(0);expect(other.rows).toEqual([]);
   const read=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.otherToken}});expect(read.status).toBe(404);
-  await expect(ownerTransaction(f.pool,f.owner,true,c=>c.query('SELECT * FROM local_identity.claim_input_task(NULL,2)'))).rejects.toMatchObject({code:'42501'});
+  await expect(ownerTransaction(f.pool,f.owner,true,c=>c.query('SELECT * FROM local_identity.claim_managed_worker_task(NULL,2)'))).rejects.toMatchObject({code:'42501'});
   const c=await worker.connect();try{await c.query('BEGIN');await c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);expect((await c.query("SELECT session_user,has_function_privilege(current_user,'local_identity.owner_id()','EXECUTE') owner_access")).rows[0]).toEqual({session_user:'loop_worker',owner_access:false});await expect(c.query('SELECT local_identity.owner_id()')).rejects.toMatchObject({code:'42501'});}finally{await c.query('ROLLBACK');c.release();}
  }finally{await f.close();}
 },120000);

@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-rbQRtL/source
+
+ ✓ src/local-app/legacyPlanAdoption.integration.test.ts (8 tests) 38321ms
+   ✓ explicitly imports the saved plan as current preparation without treating planned references or old authorization as adopted media  18473ms
+   ✓ rejects stale identity and other Owners, replays the exact receipt and preserves existing edits and an unknown old request  3345ms
+   ✓ preserves a native project even when its current SQL workspace registration is missing  2857ms
+   ✓ verifies same-account original bindings through registered roots and never trusts a saved host root  3539ms
+   ✓ verifies foreign-account original bindings through registered roots and never trusts a saved host root  3063ms
+   ✓ retains a recorded planner origin instead of relabelling an unrelated historical preparation as a saved plan  1241ms
+   ✓ rejects unsupported saved binding protocols rather than guessing a current interpretation  2902ms
+   ✓ does not trust a source declaration after file bytes change and leaves the saved record intact  2898ms
+ ✓ src/local-app/productionDefaultPreparation.integration.test.ts (7 tests) 25516ms
+   ✓ new production prepares directly from an independent baseline without old packages, classifications, approvals or drafts and survives reopen  3225ms
+   ✓ format-only continuation keeps an independent baseline, exact project and all input versions without creating a legacy child package  3052ms
+   ✓ a fresh independent order queues and executes an image from its own frozen baseline without consulting any review package  3700ms
+   ✓ independent source extraction and sound search register preparation-bound audio while retired review evidence remains untouched  5631ms
+   ✓ exact deletion includes registered independent preparation files and preserves unregistered user files  3106ms
+   ✓ a new independent volcengine video request freezes its real basis and executes controlled transport without retired shot classification  3447ms
+   ✓ a new independent bailian video request freezes its real basis and executes controlled transport without retired shot classification  3353ms
+ ✓ src/local-app/legacyScriptPlanRead.integration.test.ts (2 tests) 5905ms
+   ✓ keeps the saved v2 plan readable as an immutable snapshot after the current script becomes v3  2988ms
+   ✓ shows the saved declaration without restoring old enablement or treating it as verified executable input  2917ms
+ ✓ src/local-app/legacyPlanAdoptionMigration.integration.test.ts (1 test) 1961ms
+   ✓ 196 preserves nonempty 195 business, frozen and collected facts, rolls back atomically, and fully restores the candidate without backfilling  1961ms
+
+ Test Files  4 passed (4)
+      Tests  18 passed (18)
+   Start at  08:53:17
+   Duration  73.32s (transform 603ms, setup 9ms, collect 1.11s, tests 71.70s, environment 0ms, prepare 118ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-rbQRtL/evidence/vitest.json

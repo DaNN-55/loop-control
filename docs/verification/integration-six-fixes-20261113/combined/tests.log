@@ -1,0 +1,56 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-h1vt1a/source
+
+ ❯ src/local-app/nativeStorageSql.integration.test.ts (2 tests | 1 failed) 2668ms
+   × registered freezes use literal owned prefixes and retain fixed publish identities 1477ms
+     → expected [ { …(3) } ] to deeply equal [ { …(3) } ]
+   ✓ fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix  1191ms
+ ✓ src/local-app/workspaceAudio.integration.test.ts (8 tests) 81668ms
+   ✓ Owner prepares manual episode music, adopts actual audio and persists native independent mix  2401ms
+   ✓ Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart  4372ms
+   ✓ source mode uses real native source extraction task without fabricating a legacy video-ready draft  8633ms
+   ✓ actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots  42688ms
+   ✓ real loop_worker planning never queues legacy soundtrack cues for an editable native workspace  2969ms
+   ✓ real loop_worker planning leaves historical soundtrack cues unchanged outside native workspaces  2712ms
+   ✓ nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot  13530ms
+   ✓ explicit narration adoption advances the shared edit fence and late first results remain candidates  4363ms
+ ✓ src/local-app/workspaceAudioSelection.integration.test.ts (2 tests) 14498ms
+   ✓ independent audio searches freeze connection and query across blueprint changes, retries, audition and explicit native adoption  9478ms
+   ✓ invalid audio selections do not enqueue and unavailable search never blocks uploaded music or original audio  5019ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (6 tests) 9898ms
+   ✓ confirmation does not queue, legacy enablement cannot bypass it, and one confirmation queues exactly once without enabling the episode  1957ms
+   ✓ expired and changed-input confirmations fail without consuming the proposal or queueing a task  1541ms
+   ✓ connection or reference changes require a fresh confirmation and failed validation rolls consumption back  1425ms
+   ✓ confirmation records follow the existing guarded production-order deletion  1526ms
+   ✓ automatically estimates a call and atomically freezes the Owner-adjusted reservation in the actual queued task  1909ms
+   ✓ rolls confirmation consumption back when the real candidate write fails and permits the same confirmation after repair  1539ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/nativeStorageSql.integration.test.ts > registered freezes use literal owned prefixes and retain fixed publish identities
+AssertionError: expected [ { …(3) } ] to deeply equal [ { …(3) } ]
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  [[22m
+[2m    {[22m
+[32m-     "file_size": 100,[39m
+[31m+     "file_size": "100",[39m
+[2m      "relative_path": "episodes/3636a302-aeb2-4387-8a94-0df1b1e4099f/openchatcut-frozen/16b7a9d4-3a3c-4ded-9d32-b4667c4c78da/project.json",[22m
+[2m      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",[22m
+[2m    },[22m
+[2m  ][22m
+
+ ❯ src/local-app/nativeStorageSql.integration.test.ts:27:168
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 17 passed (18)
+   Start at  08:31:20
+   Duration  110.34s (transform 564ms, setup 11ms, collect 1.14s, tests 108.73s, environment 0ms, prepare 110ms)
+
+JSON report written to /private/tmp/loop-story-e2e-h1vt1a/evidence/vitest.json

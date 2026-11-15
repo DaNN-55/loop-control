@@ -1,0 +1,73 @@
+E2E evidence: /private/tmp/loop-story-e2e-v8q3dm/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-v8q3dm/source
+
+ ✓ src/local-app/productionPreparationImport.integration.test.ts (9 tests) 13889ms
+   ✓ imports an existing preparation deterministically without rewriting the old package, project, shots, tasks or audio and refuses conflicting provenance  1564ms
+   ✓ formatting-only script continuation keeps canonical shot versions and their authored origin including locally added shots  3082ms
+   ✓ known canonical preparations still verify their actual frozen file on current reads and commands (missing)  1181ms
+   ✓ known canonical preparations still verify their actual frozen file on current reads and commands (sha)  1168ms
+   ✓ known canonical preparations still verify their actual frozen file on current reads and commands (size)  1162ms
+   ✓ known canonical preparations still verify their actual frozen file on current reads and commands (manifest)  1177ms
+   ✓ known canonical preparations still verify their actual frozen file on current reads and commands (permission)  1150ms
+   ✓ current Owner preparation and native shot edits use canonical lineage without writing the old workspace shot-input table  1226ms
+   ✓ 188 backfills original preparation and local-shot lineage atomically, keeps every old field and source, refuses script ambiguity and restores the nonempty graph  2178ms
+ ✓ src/local-app/workspaceShots.integration.test.ts (10 tests) 37989ms
+   ✓ Owner reorders native shot instances without rewriting registered sources or storyboard history  1393ms
+   ✓ a shot with two visual ranges owns one stable caption lane when its first range is removed  1554ms
+   ✓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence  3245ms
+   ✓ two ranges retain one actual main voice and full following captions after deleting their first visual instance  13732ms
+   ✓ reopening an actively edited native structure reuses its running Studio and latest project  3540ms
+   ✓ upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues  3879ms
+   ✓ added native shots accept registered images and source video while the approved storyboard stays unchanged  3423ms
+   ✓ native Owner save rejects deleting the last effective shot while retaining the recoverable document  4128ms
+   ✓ initial all-placeholder drafts remain saved but cannot enter native editing  1198ms
+   ✓ removes a selected shot, retains original media and historical projects, and protects the final shot after reopening  1896ms
+stdout | src/local-app/workspaceNativeSave.integration.test.ts > native save reads the complete final state once, preserves synced captions and reopens the real SDK document
+NATIVE_SAVE_PROFILE {"samples":[{"durationMs":632.53,"queries":185,"completeReads":1,"fileChecks":9,"mp3Probes":0,"mp4Probes":0},{"durationMs":693.45,"queries":185,"completeReads":1,"fileChecks":9,"mp3Probes":0,"mp4Probes":0},{"durationMs":657.61,"queries":185,"completeReads":1,"fileChecks":9,"mp3Probes":0,"mp4Probes":0},{"durationMs":294.62,"queries":185,"completeReads":1,"fileChecks":9,"mp3Probes":0,"mp4Probes":0},{"durationMs":643.65,"queries":185,"completeReads":1,"fileChecks":9,"mp3Probes":0,"mp4Probes":0}]}
+
+ ✓ src/local-app/workspaceNativeSave.integration.test.ts (2 tests) 17423ms
+   ✓ native save reads the complete final state once, preserves synced captions and reopens the real SDK document  13968ms
+   ✓ a real final-state database permission failure rolls back the saved row, caption evidence and immutable version registration  3454ms
+ ✓ src/local-app/legacyWorkspaceEditing.integration.test.ts (4 tests) 14379ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (legacy)  4856ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (registered)  4738ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (legacy)  2412ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (registered)  2372ms
+ ✓ src/local-app/workspaceDeliveryIdentity.integration.test.ts (2 tests) 15521ms
+   ✓ delivery keeps distinct adopted narration identities when shots share one uploaded file  13103ms
+   ✓ Owner workspace reads accept a unique legacy narration path and reject ambiguous or mismatched sources  2417ms
+ ✓ src/local-app/workspaceReadback.integration.test.ts (5 tests) 13623ms
+   ✓ caption edits assemble one final response with current timing and survive an Owner restart  1434ms
+   ✓ pool registration, matching, Studio recovery and replanning assemble only the required final states  4758ms
+   ✓ uploaded music adoption, mixing and switches preserve the final preparation and gain with one readback each  3276ms
+   ✓ narration adoption and switches return the final track and mode using one readback each  2168ms
+   ✓ visual adoption writes evidence before one final response and a final-read failure rolls back the whole adoption  1987ms
+ ✓ src/local-app/productionScriptV3.integration.test.ts (2 tests) 13761ms
+   ✓ a static v3 order rejects malformed structured imports and delivers without video fields or generation tasks  11033ms
+   ✓ a restored invalid structured main script reports its line error and never creates a prose preparation  2728ms
+ ✓ src/local-app/legacyHtmlWorkspace.integration.test.ts (2 tests) 10549ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (legacy)  5314ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (registered)  5234ms
+ ✓ src/local-app/productionPreparation.integration.test.ts (4 tests) 11609ms
+   ✓ registers an independent preparation with stable shot identities, immutable retries and Owner-only access without legacy review records  3725ms
+   ✓ the local preparation file boundary rejects missing files, wrong SHA or size and a manifest different from the actual bytes before registration  2724ms
+   ✓ Owner permanent deletion removes an independently registered preparation only after the existing archive and exact-file confirmation gates  2839ms
+   ✓ 187 adds independent storage without rewriting a nonempty old project, draft, audio or frozen task and supports atomic upgrade and full restore  2320ms
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts (2 tests) 4833ms
+   ✓ Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence  3313ms
+   ✓ substantive script edits cannot bypass the stale-project guard through formatting recovery  1520ms
+
+ Test Files  10 passed (10)
+      Tests  42 passed (42)
+   Start at  19:57:00
+   Duration  156.60s (transform 602ms, setup 14ms, collect 1.77s, tests 153.58s, environment 1ms, prepare 281ms)
+
+JSON report written to /private/tmp/loop-story-e2e-v8q3dm/evidence/vitest.json

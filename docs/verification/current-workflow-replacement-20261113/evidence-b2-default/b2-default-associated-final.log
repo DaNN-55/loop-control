@@ -1,0 +1,54 @@
+E2E evidence: /private/tmp/loop-story-e2e-qWpijh/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-qWpijh/source
+
+ ✓ src/local-app/productionDefaultPreparation.integration.test.ts (7 tests) 25117ms
+   ✓ new production prepares directly from an independent baseline without old packages, classifications, approvals or drafts and survives reopen  3105ms
+   ✓ format-only continuation keeps an independent baseline, exact project and all input versions without creating a legacy child package  3175ms
+   ✓ a fresh independent order queues and executes an image from its own frozen baseline without consulting any review package  3503ms
+   ✓ independent source extraction and sound search register preparation-bound audio while retired review evidence remains untouched  5530ms
+   ✓ exact deletion includes registered independent preparation files and preserves unregistered user files  3045ms
+   ✓ a new independent volcengine video request freezes its real basis and executes controlled transport without retired shot classification  3324ms
+   ✓ a new independent bailian video request freezes its real basis and executes controlled transport without retired shot classification  3432ms
+ ✓ src/local-app/productionScriptV3.integration.test.ts (4 tests) 20856ms
+   ✓ a static v3 order rejects malformed structured imports and delivers without video fields or generation tasks  12207ms
+   ✓ a restored invalid structured main script reports its line error and never creates a prose preparation  2785ms
+   ✓ the current default script imports as v3 and prepares without an old plan or implicit media generation  2990ms
+   ✓ the current example script imports as v3 and prepares without an old plan or implicit media generation  2873ms
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests) 14054ms
+   ✓ speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption  3428ms
+   ✓ fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted  8496ms
+   ✓ speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart  2129ms
+ ✓ src/local-app/planningRetirement.integration.test.ts (5 tests) 12778ms
+   ✓ current plain preparation works without CLI planning and retired requests preserve history  2706ms
+   ✓ current v2 preparation works without CLI planning and retired requests preserve history  2547ms
+   ✓ current v3 preparation works without CLI planning and retired requests preserve history  2575ms
+   ✓ claim and lease recovery leave retired ready task records byte-equivalent  2467ms
+   ✓ claim and lease recovery leave retired running task records byte-equivalent  2481ms
+ ✓ src/local-app/currentShotSemantics.integration.test.ts (3 tests) 11692ms
+   ✓ current new script → neutral workspace → actual video queue and Worker  3979ms
+   ✓ current legacy-script script → neutral workspace → actual video queue and Worker  3783ms
+   ✓ current plain script → neutral workspace → actual video queue and Worker  3929ms
+ ✓ src/local-app/inputStorageLocation.integration.test.ts (4 tests) 10021ms
+   ✓ Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart  3743ms
+   ✓ Owner reuses an approved series input as a self-contained managed copy with original source approval evidence  3489ms
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  1674ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1113ms
+ ✓ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests) 12886ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)  3817ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)  4518ms
+   ✓ replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice  4549ms
+
+ Test Files  7 passed (7)
+      Tests  29 passed (29)
+   Start at  02:45:48
+   Duration  109.40s (transform 477ms, setup 9ms, collect 1.16s, tests 107.40s, environment 0ms, prepare 162ms)
+
+JSON report written to /private/tmp/loop-story-e2e-qWpijh/evidence/vitest.json

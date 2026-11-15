@@ -1,0 +1,49 @@
+{
+  "exactNameReferences": [
+    {
+      "file": "src/local-app/retiredConnectionRetryHelpers.integration.test.ts",
+      "line": 8,
+      "names": [
+        "record_external_connection_verification",
+        "worker_retry_delay_ms"
+      ],
+      "kind": "verification"
+    },
+    {
+      "file": "src/local-app/retiredConnectionRetryHelpers.integration.test.ts",
+      "line": 50,
+      "names": [
+        "worker_retry_delay_ms"
+      ],
+      "kind": "verification"
+    },
+    {
+      "file": "src/local-app/retiredConnectionRetryHelpers.integration.test.ts",
+      "line": 51,
+      "names": [
+        "record_external_connection_verification",
+        "worker_retry_delay_ms"
+      ],
+      "kind": "verification"
+    },
+    {
+      "file": "scripts/e2e/clean-schema.mjs",
+      "line": 25,
+      "names": [
+        "record_external_connection_verification",
+        "worker_retry_delay_ms"
+      ],
+      "kind": "verification"
+    }
+  ],
+  "productionReferences": [],
+  "preservedChain": {
+    "verification": "src/worker/localConnection.ts",
+    "probeRecording": "local_identity.record_connection_probe",
+    "scheduler": "src/orchestration/workerScheduler.ts",
+    "claim": "local_identity.claim_input_task_pre_lease",
+    "persistedBackoff": "public.worker_retry_backoff",
+    "workerPort": "src/local-app/workerDatabase.ts",
+    "unknownPublication": "src/local-app/nativeAttemptOutput.ts"
+  }
+}

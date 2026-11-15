@@ -19,6 +19,64 @@ async function chooseModel(kind:'图片'|'视频',model:string,connection?:strin
 async function chooseVideo(){await chooseModel('视频','doubao-seedance-2-0-260128');}
 afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
 
+it('shows and previews the verified initial video interval without adopting or generating',async()=>{
+ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}};
+ const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]}} command={command} onChange={vi.fn()} materials={[]}/>);
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('1');
+ expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('2');
+ await userEvent.click(screen.getByRole('button',{name:'完成'}));
+ expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('min')).toBe('1');expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('max')).toBe('2');
+ expect(command).not.toHaveBeenCalled();
+});
+
+it('sends an explicit zero start with the displayed imported interval and waits for adoption confirmation',async()=>{
+ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}};
+ const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{...preparation,impact:{...preparation.impact,currentSeconds:1,appliedSeconds:1,deltaSeconds:0}}:w);
+ render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]}/>);
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
+ await userEvent.click(screen.getByRole('button',{name:'采用视频到当前镜头'}));await screen.findByRole('group',{name:'采用前核对'});
+ expect(command).toHaveBeenCalledExactlyOnceWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate',sourceInSeconds:0,sourceOutSeconds:2}));
+ await userEvent.click(screen.getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate',adoptionId:'adoption'})));
+});
+
+it('resets each selected video to its own source interval and describes the selected duration',async()=>{
+ const candidates=[{...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:.5,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}},{...workspace.visualCandidates![0],id:'other',relativePath:'other.mp4',durationSeconds:2,currentDurationSeconds:.5,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:.25,sourceOutSeconds:.75}}];
+ const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:candidates}} command={command} onChange={vi.fn()} materials={[]}/>);
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
+ await userEvent.click(screen.getByRole('button',{name:'预览视频候选 02'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('0.25');expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('0.75');
+ expect(screen.getByRole('option',{name:'使用所选区间时长'})).toBeTruthy();
+ await userEvent.click(screen.getByRole('button',{name:'完成'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('1');expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('2');expect(command).not.toHaveBeenCalled();
+});
+
+it.each([
+ {sourceFrame:0,frames:30,rate:1,start:'0',end:'1',slider:'片段进度'},
+ {sourceFrame:15,frames:30,rate:2,start:'0.5',end:'2.5',slider:'片段进度'},
+ {sourceFrame:0,frames:45,rate:2,start:'0',end:'3',slider:'视频进度'},
+])('reopens an adopted video at the actual native source window rather than its original import interval: %j',({sourceFrame,frames,rate,start,end,slider})=>{
+ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,status:'adopted' as const,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}};
+ const project={timelines:[{fps:30,items:[{id:'visual-1',kind:'video',srcInFrame:sourceFrame,durationInFrames:frames,playbackRate:rate}]}]} as unknown as import('../worker/openchatcutProject').OpenChatCutProject;
+ render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]}} command={vi.fn()} onChange={vi.fn()} materials={[]} project={project} currentVisualKind="video" currentVisualPath={candidate.relativePath}/>);
+ const video=screen.getByLabelText('视频候选预览');Object.defineProperty(video,'duration',{value:3,configurable:true});fireEvent.loadedMetadata(video);
+ expect(screen.getByRole('slider',{name:slider}).getAttribute('min')).toBe(start);expect(screen.getByRole('slider',{name:slider}).getAttribute('max')).toBe(end);expect((video as HTMLVideoElement).playbackRate).toBe(rate);
+ expect(screen.queryByRole('button',{name:'裁剪与时长'})).toBeNull();
+});
+
+it('uses the adopted native window immediately even when the pending form retained an explicit end',async()=>{
+ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}},w={...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]},props={command:vi.fn(),onChange:vi.fn(),materials:[]};
+ const view=render(<WorkspaceVisualPreparation {...props} workspace={w}/>);await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}),{target:{value:'1.5'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
+ const project={timelines:[{fps:30,items:[{id:'visual-1',kind:'video',srcInFrame:0,durationInFrames:30}]}]} as unknown as import('../worker/openchatcutProject').OpenChatCutProject;
+ view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...w,visualCandidates:[{...candidate,status:'adopted'}]}} project={project} currentVisualKind="video" currentVisualPath={candidate.relativePath}/>);
+ const video=screen.getByLabelText('视频候选预览');Object.defineProperty(video,'duration',{value:3,configurable:true});fireEvent.loadedMetadata(video);
+ expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('min')).toBe('0');expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('max')).toBe('1');expect(props.command).not.toHaveBeenCalled();
+});
+
 it.each(['image','video'] as const)('invalidated queued %s is historical and cannot keep the generation form busy',kind=>{
  const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[],visualTasks:[{id:'expired',taskId:'expired-task',shotId:'S1',targetItemId:'visual-1',kind,status:'ready',invalidated:true,submissionUnknown:false,publicationAttempt:null}]} as unknown as ProductionWorkspace;
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json(videoCatalog)));

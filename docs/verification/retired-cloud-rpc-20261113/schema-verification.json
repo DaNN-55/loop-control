@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "project": "/private/tmp/loop-cloud-rpc-cleanup-20261113-n62eb2wp/source",
+  "container": "loop-clean-schema-2fd267271718",
+  "containerRemoved": true,
+  "sourceExportProvided": false,
+  "results": {
+    "freshGeneration": true,
+    "freshLedgerDoesNotInventHistory": true,
+    "freshRerunNoOp": true,
+    "olderPrefixUpgrades": true,
+    "olderUpgradeRerunNoOp": true,
+    "InjectedFailureRollsBack": true,
+    "allBusinessRowsPreserved": true,
+    "sequenceStatePreserved": true,
+    "unaffectedSecurityAclPreserved": true,
+    "freshAndUpgradedSecurityMatch": true,
+    "legacyLedgerPreserved": true,
+    "legacyRerunNoOp": true,
+    "oldExportHistoricalRowsPreserved": true,
+    "oldExportConstraintRetainsExistingOnly": true,
+    "oldProviderNewWritesRejected": true,
+    "freshAndUpgradedCatalogMatch": true,
+    "onlySkippedHistoricalGuardsRetainOldNames": true,
+    "securityInventory": {
+      "md5": "fa31b7a994fcfe5f4ce248582f6b7152",
+      "count": 554
+    },
+    "clusterRoles": [
+      {
+        "rolname": "loop_anonymous",
+        "rolsuper": false,
+        "rolconfig": null,
+        "rolinherit": true,
+        "rolcanlogin": false,
+        "rolcreatedb": false,
+        "rolbypassrls": false,
+        "rolconnlimit": -1,
+        "rolcreaterole": false,
+        "rolvaliduntil": null,
+        "rolreplication": false
+      },
+      {
+        "rolname": "loop_app",
+        "rolsuper": false,
+        "rolconfig": null,
+        "rolinherit": true,
+        "rolcanlogin": true,
+        "rolcreatedb": false,
+        "rolbypassrls": false,
+        "rolconnlimit": -1,
+        "rolcreaterole": false,
+        "rolvaliduntil": null,
+        "rolreplication": false
+      },
+      {
+        "rolname": "loop_owner",
+        "rolsuper": false,
+        "rolconfig": null,
+        "rolinherit": true,
+        "rolcanlogin": false,
+        "rolcreatedb": false,
+        "rolbypassrls": false,
+        "rolconnlimit": -1,
+        "rolcreaterole": false,
+        "rolvaliduntil": null,
+        "rolreplication": false
+      },
+      {
+        "rolname": "loop_worker",
+        "rolsuper": false,
+        "rolconfig": null,
+        "rolinherit": true,
+        "rolcanlogin": true,
+        "rolcreatedb": false,
+        "rolbypassrls": false,
+        "rolconnlimit": -1,
+        "rolcreaterole": false,
+        "rolvaliduntil": null,
+        "rolreplication": false
+      }
+    ],
+    "roleMemberships": [
+      {
+        "set": true,
+        "role": "loop_owner",
+        "admin": false,
+        "member": "loop_app",
+        "inherit": true
+      }
+    ],
+    "remainingLegacyGuards": [
+      "local_identity.reject_retired_blueprint_provider",
+      "local_identity.without_retired_provider_capabilities"
+    ],
+    "tablesCompared": 120,
+    "businessRows": 7
+  }
+}

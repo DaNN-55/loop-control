@@ -10,7 +10,7 @@ export function observeWorkspaceReadback(pool:Pool){
  });
  return async<T>(action:()=>Promise<T>)=>{
   const trace:string[]=[];active=trace;
-  try{return{result:await action(),trace,reads:trace.filter(sql=>sql.startsWith('SELECT w.*,e.main_script_revision_id current_script,e.stage episode_stage,p.invalidated_at')).length};}
+  try{return{result:await action(),trace,reads:trace.filter(sql=>sql.startsWith('SELECT w.*,e.main_script_revision_id current_script,e.stage episode_stage,')).length};}
   finally{active=undefined;}
  };
 }

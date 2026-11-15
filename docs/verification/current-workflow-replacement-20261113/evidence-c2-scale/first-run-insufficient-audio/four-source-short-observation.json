@@ -1,0 +1,422 @@
+{
+  "times": {
+    "generateInputs": 38.03266699999995,
+    "ownerImports": 810.66975,
+    "initialNativeSave": 670.1697499999991,
+    "disabledChangedSave": 469.79049999999916,
+    "enabledChangedSave": 2116.8670840000013,
+    "unchangedSave": 311.7029160000002,
+    "actualExport": 10911.011665999999,
+    "workerDelivery": 492.1463339999973
+  },
+  "snapshots": {
+    "hostBefore": {
+      "loadavg": [
+        2.798828125,
+        3.576171875,
+        4.998046875
+      ],
+      "freeBytes": 160907264,
+      "totalBytes": 17179869184,
+      "selfMemory": {
+        "rss": 224477184,
+        "heapTotal": 114851840,
+        "heapUsed": 67461136,
+        "external": 11558294,
+        "arrayBuffers": 4241086
+      }
+    },
+    "disabledProbes": {
+      "all": 0,
+      "observation": 0
+    },
+    "changedProbes": {
+      "all": 8,
+      "observation": 8
+    },
+    "unchangedProbes": {
+      "all": 8,
+      "observation": 8
+    },
+    "savedProjectSha256": "0c67f54ea23cc7171fe27d4d7124e15680d37a7992254bca7a449102f771ef0e",
+    "sawActiveExport": true,
+    "samplerStatus": {
+      "enabled": true,
+      "stopped": false,
+      "lastSampleAt": "2026-11-14T13:42:52.257Z",
+      "lastError": null
+    },
+    "exportArtifact": {
+      "sha256": "8961ed4bcf762ff85b1733f033b44a3e218efad22e746f58aacaa4a24037032a",
+      "fileSize": 585553
+    },
+    "soundEvents": [
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "c5b821bf-f0a8-453c-9f3e-550eea519ff4",
+          "use_sha256": "3493343b640490e8763fd1bc7cd457e30fe037dcd778a80e303dcb002a5bd093",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "088c211b11e00fb9204bef6fc79ed00b4297c852935d350f1eb349a5cc81e975",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "c35b19ab14c881adb7276c0af0e51d1d36d8cc8655a5e1b9c6d2af354326093c",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "c5b821bf-f0a8-453c-9f3e-550eea519ff4",
+          "use_sha256": "c70610b991e3656bb564c93ae23e749eb647693a09d913686da142a13e12a931",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "088c211b11e00fb9204bef6fc79ed00b4297c852935d350f1eb349a5cc81e975",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "17679d0b8e3d1cc45ca398db034d6ce9cf14e756ef057ce89bb8c559d3d057c9",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "c5b821bf-f0a8-453c-9f3e-550eea519ff4",
+          "use_sha256": "88b327072d82035e87866fc272a3c390402089e38530d59f6471aeae48be790f",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "088c211b11e00fb9204bef6fc79ed00b4297c852935d350f1eb349a5cc81e975",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "847aaf65bb5803b14d288a671422a45057580fdbe053769da9ff75de25dd0aa2",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "c5b821bf-f0a8-453c-9f3e-550eea519ff4",
+          "use_sha256": "5a0112ab3a2f93b83a613be1e7a56922b6eb11f1124ffc0d57426828874d1e3d",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "088c211b11e00fb9204bef6fc79ed00b4297c852935d350f1eb349a5cc81e975",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "7ec5ffbea7c559c56d5907833d108556087dc0ab97c8c48951eb38e2eec03097",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "a38191f7-1081-4502-802a-d43687b88094",
+          "use_sha256": "9fd54720c777d6ef0b7250bacf0f8252cd06a1bd19b98a42cca6b5bdf826794b",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "ab3b9c5c49bb03313f325e93c03f464feaa33d720e8f6bc86695552e45c39fa8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "0914e4efb09dbaa4d43ca2dd6bb28d9c7cc5dc43b6256b04e5c7fab8209d1a13",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "a38191f7-1081-4502-802a-d43687b88094",
+          "use_sha256": "8b3c890c993a57e2737668133a39428f2140894205e310ac1a92914b894db649",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "ab3b9c5c49bb03313f325e93c03f464feaa33d720e8f6bc86695552e45c39fa8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "916ed187e252b84a8a530e7337531e4dd8e54509d0b0caf7329a8cc88bdc6043",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "a38191f7-1081-4502-802a-d43687b88094",
+          "use_sha256": "ae85f6352a5eb80030e7c309009c2e55f2d3fa9c2ad8663ec2f05dd7b316473d",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "ab3b9c5c49bb03313f325e93c03f464feaa33d720e8f6bc86695552e45c39fa8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "a37fb5c40a3327a94064e84e8a0f7c8b61b843f6a8e6df997b716dfd5961c1b1",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "a38191f7-1081-4502-802a-d43687b88094",
+          "use_sha256": "f671fddd554637e9c727f256e1b2e4bd51dc7d6f2a66856526a2612db6c1773a",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "ab3b9c5c49bb03313f325e93c03f464feaa33d720e8f6bc86695552e45c39fa8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "4f836faa8a30c68feca953a3784af2a195c5b524489683013b63731f7ac27335",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "5cb7c3e6-cb3f-4906-a107-c1bff5b6048d",
+          "use_sha256": "be96668cf364df8b84f702011f8565aff8439dfc9a15df4779f68cff69de7c9c",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "d3d425e44ee72bf9309f08c060b09906b522693f110ffebaa213325db745dfe8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "8ca18a710299c947ff6bcaba56325910064520b48ae75b92bc205aa684c1c491",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "5cb7c3e6-cb3f-4906-a107-c1bff5b6048d",
+          "use_sha256": "e2c6ff3142607f9aa865e2982510db095831cfe3976256f92adcd869ddb2e6ef",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "d3d425e44ee72bf9309f08c060b09906b522693f110ffebaa213325db745dfe8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "7c54d423c05630ad6f4f274f2bd231789ec63b1097a071bcf17e333efc0db8cf",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "5cb7c3e6-cb3f-4906-a107-c1bff5b6048d",
+          "use_sha256": "d470c1594dec639b9da70673b824dd66ca544661a0c98ab6238cdc82b0a6a646",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "d3d425e44ee72bf9309f08c060b09906b522693f110ffebaa213325db745dfe8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "4ae9e28b56f234bfcda50e1a328b2ca1aa8b432bae4f05885b58274957a5692a",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "5cb7c3e6-cb3f-4906-a107-c1bff5b6048d",
+          "use_sha256": "45ac75caf0dc752ce48c2cb569441b619a5b914eabe8bad6171d69f3755883d2",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "d3d425e44ee72bf9309f08c060b09906b522693f110ffebaa213325db745dfe8",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "63226f3b8ce377ce5aeafb0cf774f4b5067538d103304f40b758139adba6086e",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "8c9062be-98cb-4c99-b33f-2e43e7144d17",
+          "use_sha256": "4834b86f6f74de7646b5cc02b72f8fc9378119f84d9cbac44a674703a146ecc6",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "8695ba4ffe436b550c393c91faac43491b03706cd30bad95f42e25fdf2e07a5d",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "78bfe0365342b1a04e5e1f32d648f8ad28258273466c867018c31fae3080ec00",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "8c9062be-98cb-4c99-b33f-2e43e7144d17",
+          "use_sha256": "7af2cb9d5389f0c568577b0959d7b4f1533501666343e64400ada8effaf92e7f",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "8695ba4ffe436b550c393c91faac43491b03706cd30bad95f42e25fdf2e07a5d",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "9bc36725d3f07b7516be12a7f88a1c80b852af1b99142a7938a0da29899488f9",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "8c9062be-98cb-4c99-b33f-2e43e7144d17",
+          "use_sha256": "200bd576c13ef1a45a8baae20d3659906dbd54566e4402b57f4dd4de4b239378",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "8695ba4ffe436b550c393c91faac43491b03706cd30bad95f42e25fdf2e07a5d",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "8c2dc45a53dda9945a1a40a880e6e9b7a0ed9cfb3d9ae10a40da9039a383f33d",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "sound_changed",
+        "payload": {
+          "role": "other",
+          "action": "changed",
+          "version": "sound-use/v1",
+          "source_id": "8c9062be-98cb-4c99-b33f-2e43e7144d17",
+          "use_sha256": "de8f1444acc4a62857b81dc087f69b51b2f10016ada70687672596b8997b7974",
+          "source_kind": "material",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "source_sha256": "8695ba4ffe436b550c393c91faac43491b03706cd30bad95f42e25fdf2e07a5d",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "instance_sha256": "45bec5d79bb54fad544fe01b45ab44bb959e84b8188192d06fa623a404051cf7",
+          "project_revision": 10
+        }
+      }
+    ],
+    "exportEvents": [
+      {
+        "event_type": "local_export_started",
+        "payload": {
+          "phase": "started",
+          "version": "local-export/v1",
+          "export_id": "723f7818-eab6-4cbc-a213-f79593d03129",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "project_revision": 10
+        }
+      },
+      {
+        "event_type": "local_export_finished",
+        "payload": {
+          "phase": "finished",
+          "outcome": "ready",
+          "version": "local-export/v1",
+          "export_id": "723f7818-eab6-4cbc-a213-f79593d03129",
+          "started_at": "2026-11-14T13:42:52.219379+00:00",
+          "reason_code": "verified_output",
+          "workspace_id": "eb7361ee-8bad-40fb-be4f-dbd927dc545c",
+          "content_sha256": "6f2ba9e0da641b62bd098a369988cf1629ee7ffc53f6124bcf0a93bcf4917801",
+          "start_observed": true,
+          "duration_seconds": 10.714885,
+          "project_revision": 10
+        }
+      }
+    ],
+    "resourceRows": [
+      {
+        "owner_id": "b6f8ae67-0180-4d04-baf6-52c828c8045e",
+        "sampled_at": "2026-11-14T13:42:52.257Z",
+        "cpu_percent": null,
+        "memory_used_bytes": "15680208896",
+        "memory_total_bytes": "17179869184",
+        "queue_count": 0,
+        "running_count": 0,
+        "resource_wait_count": 0,
+        "gpu_percent": null,
+        "gap_seconds": "0"
+      }
+    ],
+    "exportResourceRows": [
+      {
+        "owner_id": "b6f8ae67-0180-4d04-baf6-52c828c8045e",
+        "sampled_at": "2026-11-14T13:42:52.257Z",
+        "active_exports": 1
+      }
+    ],
+    "delivery": {
+      "taskId": "3c198f21-93b8-4211-9244-6a9f36f60af6",
+      "status": "completed"
+    },
+    "hostAfter": {
+      "loadavg": [
+        3.51220703125,
+        3.67431640625,
+        4.99169921875
+      ],
+      "freeBytes": 1906606080,
+      "totalBytes": 17179869184,
+      "selfMemory": {
+        "rss": 181452800,
+        "heapTotal": 57507840,
+        "heapUsed": 46336304,
+        "external": 5707099,
+        "arrayBuffers": 1347919
+      }
+    },
+    "inputs": [
+      {
+        "sha256": "088c211b11e00fb9204bef6fc79ed00b4297c852935d350f1eb349a5cc81e975",
+        "fileSize": 2880044,
+        "seconds": 30,
+        "frequency": 110
+      },
+      {
+        "sha256": "ab3b9c5c49bb03313f325e93c03f464feaa33d720e8f6bc86695552e45c39fa8",
+        "fileSize": 2880044,
+        "seconds": 30,
+        "frequency": 165
+      },
+      {
+        "sha256": "d3d425e44ee72bf9309f08c060b09906b522693f110ffebaa213325db745dfe8",
+        "fileSize": 2880044,
+        "seconds": 30,
+        "frequency": 220
+      },
+      {
+        "sha256": "8695ba4ffe436b550c393c91faac43491b03706cd30bad95f42e25fdf2e07a5d",
+        "fileSize": 2880044,
+        "seconds": 30,
+        "frequency": 275
+      }
+    ],
+    "finalProbes": {
+      "all": 11,
+      "observation": 8
+    },
+    "scale": {
+      "name": "four-source-short",
+      "sources": 4,
+      "sourceSeconds": 30,
+      "cutsPerSource": 4,
+      "outputSeconds": 12
+    },
+    "sourceBytes": 11520176,
+    "outcome": "passed"
+  },
+  "measurement": "single sequential observation; warm/cold cache unknown; host resources include other processes; no capacity or SLA claim"
+}

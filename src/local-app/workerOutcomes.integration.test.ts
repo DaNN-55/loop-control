@@ -23,7 +23,7 @@ it.skipIf(!enabled)('a failure report already waiting on the lease cannot cross 
    const fence={p_task_id:id,p_attempt:task.attempt,p_lease_token:task.lease_token},pid=(await reporting.query('SELECT pg_backend_pid() pid')).rows[0].pid;
    await publishing.query('BEGIN');await publishing.query('SELECT local_identity.begin_native_output_publication($1,$2,$3)',[id,task.attempt,task.lease_token]);
    const result={version:'worker-result/v1',taskId:id,status:'failed',artifacts:[],validation:{passed:false,checks:[]},actualCostCents:0,blockers:[],retry:{shouldRetry:false,reason:'Controlled late process failure'},nextStep:'Inspect Worker'};
-   const late=reporting.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:result}]).then(()=>({error:null}),error=>({error}));
+   const late=reporting.query('SELECT local_identity.execute_managed_worker_command($1,$2)',['report_worker_result',{...fence,p_result:result}]).then(()=>({error:null}),error=>({error}));
    await vi.waitFor(async()=>expect((await f.c.query('SELECT wait_event_type FROM pg_stat_activity WHERE pid=$1',[pid])).rows[0].wait_event_type).toBe('Lock'),{timeout:10000,interval:25});
    await publishing.query('COMMIT');expect((await late).error).toBeInstanceOf(Error);
    expect((await f.c.query('SELECT status,attempt FROM public.tasks WHERE id=$1',[id])).rows[0]).toEqual({status:'running',attempt:1});

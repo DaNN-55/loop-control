@@ -1,0 +1,22 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-FkO41f/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-FkO41f/source
+
+ ✓ src/local-app/legacyWorkbenchAdoption.integration.test.ts (23 tests | 22 skipped) 2631ms
+   ✓ preserves the frozen music source interval when an unfinished shot precedes the confirmed shot, keeping the later result unadopted  2630ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 22 skipped (23)
+   Start at  11:33:13
+   Duration  3.45s (transform 472ms, setup 7ms, collect 686ms, tests 2.63s, environment 0ms, prepare 36ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-FkO41f/evidence/vitest.json

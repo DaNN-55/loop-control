@@ -1,4 +1,5 @@
 import {isConnectionId} from "./runtimeEvidence.js";
+import type {ProductionVisualSource} from '../reviews/productionScript.js';
 import {shotCompositionLayouts,type ShotCompositionLayout} from '../shotComposition.js';
 import type {FrozenVideoVisualInput} from '../videoVisualInputs.js';
 import {wanVideoModel,wanVideoParameters,defaultWanModelSettings} from '../wanVideoModels.js';
@@ -78,6 +79,7 @@ export interface VisualAssetRequest {
 }
 
 export interface StoryboardShotManifest {
+  renderPreferences?:import('../workspaceRenderPreferences.js').WorkspaceRenderPreferences;
   id: string;
   scriptSegment: string;
   durationSeconds: number;
@@ -86,6 +88,8 @@ export interface StoryboardShotManifest {
   inputBasis: Array<Pick<ArtifactManifest, "relativePath" | "sha256">>;
   targetSpec: string;
   layout?: ShotCompositionLayout;
+  visualSource?:ProductionVisualSource;
+  materialReference?:string;
 }
 
 export interface StoryboardManifest {

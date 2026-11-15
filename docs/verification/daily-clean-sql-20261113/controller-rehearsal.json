@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "results": {
+    "VM ready": true,
+    "rehearsal_vm interruption recorded": true,
+    "rehearsal_vm resumed by OID": true,
+    "rehearsal_vm duplicate refused": true,
+    "rehearsal_vm rollback preserves source": true,
+    "rehearsal_vm interrupted rollback": true,
+    "rehearsal_native interruption recorded": true,
+    "rehearsal_native resumed by OID": true,
+    "rehearsal_native duplicate refused": true,
+    "rehearsal_native rollback preserves source": true,
+    "rehearsal_native interrupted rollback": true,
+    "Native full dump restore and adoption": true,
+    "Native active client blocks swap": true,
+    "Native old database frozen": true,
+    "Writer after final rollback snapshot cannot connect": true,
+    "Failed audit restores an initially frozen target": true,
+    "Controller full cycle and rollback": true,
+    "Controller abort before swap": true,
+    "Controller refuses rollback after any new target row": true,
+    "Controller recovers interrupted receipt publication": true,
+    "Controller forbids rollback after consumer marker": true
+  }
+}

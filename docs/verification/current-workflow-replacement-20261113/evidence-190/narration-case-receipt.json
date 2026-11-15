@@ -1,0 +1,324 @@
+{
+  "runs": [
+    {
+      "root": "/private/tmp/loop-story-e2e-VmYNoi",
+      "passed": 43,
+      "failed": 2,
+      "pending": 0
+    },
+    {
+      "root": "/private/tmp/loop-story-e2e-C3ngHF",
+      "passed": 10,
+      "failed": 0,
+      "pending": 0
+    },
+    {
+      "root": "/private/tmp/loop-story-e2e-50cn44",
+      "passed": 1,
+      "failed": 0,
+      "pending": 2
+    }
+  ],
+  "uniqueFiles": 10,
+  "uniqueCases": 49,
+  "passed": 49,
+  "unresolved": [],
+  "cases": [
+    {
+      "file": "src/local-app/productionCaptionInputs.integration.test.ts",
+      "name": "new workspace caption preparation and edits never create retired shot drafts and survive reopen",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/productionCaptionInputs.integration.test.ts",
+      "name": "speech submission freezes the current independent caption input without rewriting the historical caption cache",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/productionCaptionInputs.integration.test.ts",
+      "name": "adopted native audio can align and confirm current captions without any retired draft and rejects a late result after editing",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/productionCaptionInputs.integration.test.ts",
+      "name": "caption inputs preserve Owner, current-preparation and direct-write fences and follow the original exact deletion protocol",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/productionCaptionInputs.integration.test.ts",
+      "name": "189 imports nonempty historical caption inputs without changing any original row and preserves atomic rollback and full restore",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/productionNarrationInputs.integration.test.ts",
+      "name": "current manual narration saves independent inputs and preparation-bound audio without creating retired shot drafts",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionNarrationInputs.integration.test.ts",
+      "name": "current speech executes with independent preparation=false and historical snapshot=false and records its real audio provenance",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionNarrationInputs.integration.test.ts",
+      "name": "current speech executes with independent preparation=true and historical snapshot=false and records its real audio provenance",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionNarrationInputs.integration.test.ts",
+      "name": "current speech executes with independent preparation=false and historical snapshot=true and records its real audio provenance",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionNarrationInputs.integration.test.ts",
+      "name": "independent voice inputs retain Owner, current script, preparation, historical and direct-write fences",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionNarrationInputs.integration.test.ts",
+      "name": "190 imports historical voice values and confirmation evidence exactly, rolls back atomically and restores the full nonempty graph",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "4/24 persists exactly two local recoveries across attempts and reuses a reserved request without an extra send",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "4 changed input is proven not sent, while historical reservations remain unknown",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "5/9/24 verified files recover the original publication with no new Provider request: received-write",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "5/9/24 verified files recover the original publication with no new Provider request: commit-rejected",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "5/9/24 verified files recover the original publication with no new Provider request: commit-ack-lost",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "24 unknown speech only allows a separately confirmed new generation, preserves old receipt, and cannot reuse that exception",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "4/24 a temporary local failure stops after two recovery attempts and a new explicit confirmation can retry without unknown warning",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/receiptRules.integration.test.ts",
+      "name": "24 a documented business refusal over HTTP 200 is rejected, preserves the code and allows explicit retry",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "name": "speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "name": "fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/speechSelection.integration.test.ts",
+      "name": "speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-50cn44"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "Owner prepares manual episode music, adopts actual audio and persists native independent mix",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "source mode uses real native source extraction task without fabricating a legacy video-ready draft",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "real loop_worker planning never queues legacy soundtrack cues for an editable native workspace",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "real loop_worker planning leaves historical soundtrack cues unchanged outside native workspaces",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceAudio.integration.test.ts",
+      "name": "explicit narration adoption advances the shared edit fence and late first results remain candidates",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceImageGeneration.integration.test.ts",
+      "name": "HTTP → isolated queue → actual Worker publishes a reference-based image batch; selecting and adopting remain explicit",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceManualNarration.integration.test.ts",
+      "name": "unassigned MP3 can be used for narration, music and effects without provider calls",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceManualNarration.integration.test.ts",
+      "name": "first TTS draft preserves script subtitles and later drafts preserve independent captions",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "Owner can prepare disabled narration before editing without queuing external tasks",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "both first narration tracks assemble and crop an available source without invalidating the other shot",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "a running task may register its immutable output but late speech cannot replace changed input or advance delivery",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "actual narration drives the paid video window and freezes speech provenance (changed=false)",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "actual narration drives the paid video window and freezes speech provenance (changed=true)",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "first speech remains a candidate after a real native save and never overwrites the edited project",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "speech beyond the Provider maximum blocks a video submission without cutting words",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "one shot with two visual ranges keeps one voice and its original task after deleting the first range",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/workspaceNarration.integration.test.ts",
+      "name": "registered completed task media resolve directly without a fake material and reject changed bytes",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-VmYNoi"
+    },
+    {
+      "file": "src/local-app/productionMetricsRetry.integration.test.ts",
+      "name": "freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionMetricsWorkflow.integration.test.ts",
+      "name": "collects real controlled Chinese narration, frozen estimate, adoption, withdrawal, re-adoption and reopen without storing text",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionMetricsWorkflow.integration.test.ts",
+      "name": "a real SQL response-write failure never repeats a Provider transport and keeps the request marker",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    },
+    {
+      "file": "src/local-app/productionMetricsWorkflow.integration.test.ts",
+      "name": "freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package",
+      "status": "passed",
+      "sourceRun": "/private/tmp/loop-story-e2e-C3ngHF"
+    }
+  ],
+  "notOneGreenBatch": true,
+  "explanation": "Main batch had two fixture failures. Current narration six-case rerun resolves the historical fixture; a targeted selected-speech rerun resolves an unchanged189 stale-revision test. No product changes after the main batch; only these two test files differ. Metrics add four distinct cases."
+}

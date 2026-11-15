@@ -1,3 +1,4 @@
+import {assertLegacyExternalRequestsResolved} from './legacyDraftInputs.js';
 import {resolveWorkspaceImageRequest,resolveWorkspaceVideoRequest} from './workspaceVisualRequest.js';
 import {imageQualityLabels} from '../imageGeneration.js';
 import {soundIntentQuery} from '../soundIntent.js';
@@ -19,6 +20,7 @@ import {ConfigurationError,canonical} from './configurationCommands.js';
 /** Resolve the same selection and native voice window used by the queue. No Provider is invoked. */
 async function describe(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:string,payload:Record<string,unknown>){
  if(JSON.stringify(payload).length>16384||!requiresWorkspaceCall(command,payload)||!Object.hasOwn(productionWorkspaceFields,command)||Object.keys(payload).some(k=>!productionWorkspaceFields[command].includes(k))||payload.episodeId!==row.episode_id||payload.workspaceId!==row.id||payload.expectedRevision!==Number(row.revision))throw new ConfigurationError(400,'本次调用参数无效，请重新填写。');
+ await assertLegacyExternalRequestsResolved(c,root,row);
  let videoInputs:Awaited<ReturnType<typeof resolveWorkspaceVideoRequest>>['visual']|undefined;
  const speech=command==='generateWorkspaceNarration',sound=command==='prepareWorkspaceAudio',image=command==='requestWorkspaceImageCandidates';
  let selection=payload.selection,prompt=String(payload.prompt??''),target=row.bindings.find(b=>b.itemId===payload.targetItemId||b.id===payload.clipId)?.shotId??String(payload.shotId??'整期'),amount=payload.reservationCents===undefined?undefined:Number(payload.reservationCents),providerDuration:number|undefined,parameters:string[]=[],narration:unknown=null,previous:Record<string,any>|null=null;

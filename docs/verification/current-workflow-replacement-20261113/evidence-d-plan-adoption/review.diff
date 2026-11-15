@@ -1,0 +1,462 @@
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/db/current/196-saved-plan-preparation.sql
++++ /Users/dan/Programs/loop-control/db/current/196-saved-plan-preparation.sql
+@@ -0,0 +1,50 @@
++-- D: freeze a verified saved plan as current preparation; never revive its execution grant.
++CREATE FUNCTION local_identity.register_saved_plan_preparation(p_episode uuid,p_script uuid,p_id uuid,p_file jsonb,p_manifest jsonb,p_source text,p_plan_sha text) RETURNS uuid
++ LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
++DECLARE saved local_identity.script_productions; source public.production_material_revisions;
++ existing local_identity.production_preparation_revisions; identity jsonb; shot jsonb; segment jsonb;
++BEGIN
++ IF NOT local_identity.lock_owned_input_episode(p_episode) THEN RAISE EXCEPTION 'Owned input required' USING ERRCODE='42501';END IF;
++ IF NOT EXISTS(SELECT 1 FROM public.episodes e WHERE e.id=p_episode AND e.main_script_revision_id=p_script AND e.archived_at IS NULL
++  AND e.stage IN ('script_approved','storyboard_review','storyboard_approved','production_ready','render_ready','qc_review')
++  AND NOT local_identity.is_historical_episode(e.id)) OR NOT local_identity.script_material_is_approved(p_script) THEN
++  RAISE EXCEPTION 'Current confirmed script required' USING ERRCODE='40001';
++ END IF;
++ SELECT * INTO saved FROM local_identity.script_productions WHERE episode_id=p_episode AND owner_id=local_identity.owner_id() FOR SHARE;
++ IF NOT FOUND THEN RAISE EXCEPTION 'Owned saved plan required' USING ERRCODE='42501';END IF;
++ identity:=jsonb_build_object('version','legacy-production-plan/v1','episodeId',p_episode,'scriptRevisionId',saved.script_revision_id,'scriptSha256',saved.script_sha256,'plan',saved.plan);
++ IF p_plan_sha IS NULL OR p_plan_sha !~ '^[a-f0-9]{64}$' OR p_source IS NULL
++  OR p_source::jsonb IS DISTINCT FROM identity OR encode(extensions.digest(convert_to(p_source,'UTF8'),'sha256'),'hex') IS DISTINCT FROM p_plan_sha
++  OR saved.plan->>'version' IS DISTINCT FROM '2' OR jsonb_typeof(saved.plan->'segments') IS DISTINCT FROM 'array' THEN
++  RAISE EXCEPTION 'Saved plan identity changed or unsupported' USING ERRCODE='40001';
++ END IF;
++ SELECT * INTO source FROM public.production_material_revisions WHERE id=p_script AND episode_id=p_episode AND material_type='script';
++ IF NOT FOUND OR source.sha256 IS DISTINCT FROM saved.script_sha256 OR NOT EXISTS(
++  SELECT 1 FROM public.production_material_revisions original WHERE original.id=saved.script_revision_id AND original.episode_id=p_episode AND original.material_type='script' AND original.sha256=saved.script_sha256
++ ) THEN RAISE EXCEPTION 'Saved script bytes and current script must agree' USING ERRCODE='40001';END IF;
++ IF p_manifest#>>'{savedPlan,sha256}' IS DISTINCT FROM p_plan_sha
++  OR p_manifest#>>'{savedPlan,scriptRevisionId}' IS DISTINCT FROM saved.script_revision_id::text
++  OR jsonb_typeof(p_manifest->'shots') IS DISTINCT FROM 'array'
++  OR jsonb_array_length(p_manifest->'shots')<>jsonb_array_length(saved.plan->'segments') THEN
++  RAISE EXCEPTION 'Saved plan preparation required' USING ERRCODE='22023';
++ END IF;
++ FOR shot,segment IN SELECT a.value,b.value FROM jsonb_array_elements(p_manifest->'shots') WITH ORDINALITY a
++  JOIN jsonb_array_elements(saved.plan->'segments') WITH ORDINALITY b USING(ordinality) LOOP
++  IF shot->>'id' IS DISTINCT FROM segment->>'id' OR shot->>'scriptSegment' IS DISTINCT FROM segment->>'narration'
++   OR shot->'savedSettings' IS DISTINCT FROM segment->'settings' THEN RAISE EXCEPTION 'Saved segment changed' USING ERRCODE='40001';END IF;
++ END LOOP;
++ SELECT * INTO existing FROM local_identity.production_preparation_revisions WHERE id=p_id;
++ IF FOUND THEN
++  IF existing.origin<>'plan-import' OR existing.episode_id IS DISTINCT FROM p_episode OR existing.script_revision_id IS DISTINCT FROM p_script
++   OR existing.file_reference IS DISTINCT FROM p_file OR existing.manifest IS DISTINCT FROM p_manifest
++   OR existing.source_evidence->>'plan_sha256' IS DISTINCT FROM p_plan_sha THEN RAISE EXCEPTION 'Preparation identity already used' USING ERRCODE='40001';END IF;
++  RETURN p_id;
++ END IF;
++ PERFORM local_identity.register_production_preparation(p_episode,p_script,p_id,p_file,p_manifest);
++ UPDATE local_identity.production_preparation_revisions SET origin='plan-import',source_reference_id=saved.script_revision_id,
++  source_evidence=jsonb_build_object('version','saved-production-plan/v1','plan_sha256',p_plan_sha,'record',to_jsonb(saved)) WHERE id=p_id;
++ RETURN p_id;
++END $$;
++REVOKE ALL ON FUNCTION local_identity.register_saved_plan_preparation(uuid,uuid,uuid,jsonb,jsonb,text,text) FROM PUBLIC,loop_app,loop_worker,loop_owner,loop_anonymous;
++GRANT EXECUTE ON FUNCTION local_identity.register_saved_plan_preparation(uuid,uuid,uuid,jsonb,jsonb,text,text) TO loop_app;
++COMMENT ON FUNCTION local_identity.register_saved_plan_preparation(uuid,uuid,uuid,jsonb,jsonb,text,text) IS 'Controller verifies actual script/material/preparation files before registration. Saved settings and authorization are evidence only; no task or execution authorization is created.';
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/local-app/legacyPlanAdoption.ts
++++ /Users/dan/Programs/loop-control/src/local-app/legacyPlanAdoption.ts
+@@ -0,0 +1,85 @@
++import {randomUUID,createHash} from 'node:crypto';
++import {mkdir,writeFile} from 'node:fs/promises';
++import {basename,dirname} from 'node:path';
++import {isDeepStrictEqual} from 'node:util';
++import type {PoolClient} from 'pg';
++import {canonical,canonicalFingerprint,ConfigurationError} from './configurationCommands.js';
++import {savedProductionPlanIdentity,type ScriptProductionRecord} from './scriptProductionStore.js';
++import {parseProductionScript,validateProductionDefaults} from '../reviews/productionScript.js';
++import type {MaterialResolution,ProductionMaterial} from '../reviews/productionPlan.js';
++import {verifyEpisodeFile} from './episodeFiles.js';
++import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
++import {snapshotInput} from './localFiles.js';
++import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
++import {verifyProductionPreparationDocument} from './productionPreparationStore.js';
++import {defaultShotCaptionContract,normalizeShotCaptionContract,type ShotCaptionAnchor} from '../shotCaptions.js';
++import type {ProductionWorkspace} from '../productionWorkspace.js';
++
++/** Original saved roots are declarations, never host filesystem authority. */
++export async function prepareSavedPlanAdoption(c:PoolClient,root:string,episode:{id:string;account_id:string;main_script_revision_id:string|null},expected:unknown){
++ const record=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 FOR SHARE',[episode.id])).rows[0] as ScriptProductionRecord|undefined;
++ if(!record||typeof expected!=='string'||canonicalFingerprint(savedProductionPlanIdentity(episode.id,record))!==expected)throw new ConfigurationError(409,'原保存计划已变化，请重新读取并确认。');
++ const plan=record.plan;
++ if(plan?.version!==2||plan.script?.version!==2||!Array.isArray(plan.segments)||!plan.segments.length)throw new ConfigurationError(409,'原计划格式尚未接入，请保留原计划核对。');
++ const source=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='script'",[episode.main_script_revision_id,episode.id])).rows[0];
++ if(!source||source.sha256!==record.script_sha256)throw new ConfigurationError(409,'当前脚本与原计划正文版本不同，不会覆盖当前脚本。');
++ const bytes=await verifyEpisodeFile(c,root,episode.id,source.storage_path,source.sha256,Number(source.file_size));
++ const script=parseProductionScript(bytes.toString('utf8'));
++ if(!isDeepStrictEqual(script,plan.script)||plan.segments.length!==script!.segments.length||plan.segments.some((s,i)=>s.id!==script!.segments[i].id||s.narration!==script!.segments[i].narration||s.subtitle!==(script!.segments[i].subtitle??s.narration)))throw new ConfigurationError(409,'原计划与已核验脚本段落不一致，未猜测镜头映射。');
++ try{validateProductionDefaults(plan.settings);for(const s of plan.segments)validateProductionDefaults(s.settings);}catch{throw new ConfigurationError(409,'原计划包含尚不能接入的设置，请保留原版核对。');}
++ const location=await episodeStorageLocationAtRoot(c,root,episode.id);await requireEpisodeStorageDirectory(c,location);
++ const materials=new Map<string,ProductionMaterial>();
++ const resolutions=[{ref:plan.bgm,kind:'bgm'},{ref:plan.cover,kind:'cover'},...plan.segments.flatMap(s=>[{ref:s.firstFrame,kind:'image'},{ref:s.sfx,kind:'sfx'}])];
++ for(const {ref,kind} of resolutions){
++  if(!ref||ref.kind!==kind||!['bound','none','missing','ambiguous'].includes(ref.status))throw new ConfigurationError(409,'原计划素材绑定协议尚未支持，未猜测其含义。');
++  if(ref.status!=='bound')continue;
++  const m=ref.material;if(!m)throw new ConfigurationError(409,'原计划绑定缺少素材身份。');
++  const stored=(await c.query('SELECT m.*,e.account_id FROM public.production_material_revisions m JOIN public.episodes e ON e.id=m.episode_id WHERE m.id=$1',[m.id])).rows[0];
++  if(!stored||stored.account_id!==episode.account_id||stored.episode_id!==m.episodeId||stored.sha256!==m.sha256||Number(stored.file_size)!==m.size||stored.storage_path!==m.path||stored.material_type!==m.type||stored.mime_type!==m.mime||stored.material_purpose!==m.purpose||!['image','audio'].includes(m.type))throw new ConfigurationError(409,'原计划素材登记或归属已变化。');
++  const image=ref.kind==='image'||ref.kind==='cover';
++  if(image&&m.type!=='image'||!image&&(m.type!=='audio'||m.purpose!==(ref.kind==='bgm'?'background_music':'sound_effect')))throw new ConfigurationError(409,'原计划素材用途不一致。');
++  if(materials.has(m.id))continue;
++  const sourceRoot=(await c.query('SELECT local_identity.storage_physical_root(asset_root) root FROM local_identity.episode_storage_location($1)',[m.episodeId])).rows[0]?.root;
++  if(typeof sourceRoot!=='string')throw new ConfigurationError(409,'原素材位置缺少可验证的当前映射。');
++  const sourceLocation=await episodeStorageLocationAtRoot(c,sourceRoot,m.episodeId);await requireEpisodeStorageDirectory(c,sourceLocation);
++  const content=await verifyEpisodeFile(c,sourceLocation.assetRoot,m.episodeId,m.path,m.sha256,m.size);
++  if(m.episodeId===episode.id){materials.set(m.id,m);continue;}
++  if(!(await c.query('SELECT local_identity.script_material_is_approved($1) approved',[m.id])).rows[0].approved)throw new ConfigurationError(409,'原系列素材缺少可验证的采用许可。');
++  const copy=await snapshotInput(root,episode.id,{sourceKind:'file',sourcePath:basename(stored.source_path),contentBase64:content.toString('base64')},location.relativePath);
++  const local=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,false,$9)) result',[episode.id,m.type,'file',copy.sourcePath,copy.storagePath,m.mime,copy.sha256,copy.fileSize,m.purpose])).rows[0].result;
++  const provenance=(await c.query('SELECT local_identity.record_material_reuse($1,$2) result',[local.id,m.id])).rows[0].result;
++  materials.set(m.id,{...m,id:local.id,episodeId:episode.id,path:copy.storagePath,root,provenance});
++ }
++ const id=randomUUID(),manifest={version:'production-preparation/v1',savedPlan:{version:'saved-production-plan/v1',sha256:expected,scriptRevisionId:record.script_revision_id,scriptSha256:record.script_sha256,settings:plan.settings},
++  materialBindings:[...materials].map(([sourceId,m])=>({sourceId,materialRevisionId:m.id,sha256:m.sha256})),
++  shots:plan.segments.map(s=>({id:s.id,scriptSegment:s.narration,durationSeconds:s.settings.duration??5,targetSpec:plan.settings.aspectRatio??s.settings.aspectRatio??'9:16',visualSource:'unassigned',visualIntent:s.visual||s.videoPrompt,savedSettings:s.settings,...(s.settings.layout?{layout:s.settings.layout}:{}),inputBasis:[{relativePath:source.storage_path,sha256:source.sha256}]}))};
++ const document=Buffer.from(JSON.stringify(manifest,null,2)+'\n'),reference={relativePath:`${location.relativePath}/preparation/${id}.json`,sha256:createHash('sha256').update(document).digest('hex'),fileSize:document.length},path=await safeAssetOutputPath(root,reference.relativePath);
++ await mkdir(dirname(path),{recursive:true});await writeFile(path,document,{flag:'wx'});await verifyProductionPreparationDocument(c,root,episode.id,reference,manifest);
++ await c.query('SELECT local_identity.register_saved_plan_preparation($1,$2,$3,$4,$5,$6,$7)',[episode.id,source.id,id,reference,manifest,JSON.stringify(canonical(savedProductionPlanIdentity(episode.id,record))),expected]);
++ return{preparation:{id,manifest,relative_path:reference.relativePath,sha256:reference.sha256,file_size:reference.fileSize,legacy_package_id:null},plan,materials};
++}
++
++/** Prepare references through current local commands; adoption and generation stay explicit. */
++export async function installSavedPlanInputs(c:PoolClient,initial:ProductionWorkspace,adoption:Awaited<ReturnType<typeof prepareSavedPlanAdoption>>,execute:(command:string,data:Record<string,unknown>)=>Promise<ProductionWorkspace>){
++ let state=initial;
++ const send=async(command:string,data:Record<string,unknown>)=>state=await execute(command,{workspaceId:state.id,expectedRevision:state.revision,...data});
++ const material=(ref:MaterialResolution)=>ref.status==='bound'&&ref.material?adoption.materials.get(ref.material.id):undefined;
++ for(const segment of adoption.plan.segments){
++  const settings=segment.settings,clips=state.clips.filter(b=>b.shotId===segment.id);
++  await c.query('SELECT local_identity.save_production_narration_input($1,$2,$3,$4,$5,$6,$7,NULL)',[state.id,segment.id,'none',segment.narration,settings.voice??null,settings.speakingRate??null,settings.language??null]);
++  const caption=defaultShotCaptionContract(segment.subtitle,'independent',settings.captionsEnabled!==false);
++  caption.spatial={version:'shot-caption-space/v2',aspectRatio:adoption.plan.settings.aspectRatio??'9:16',anchor:(settings.captionAnchor??'bottom-center') as ShotCaptionAnchor,safeArea:settings.captionSafeArea??'title-safe',maxLines:settings.captionMaxLines??2,maxCharactersPerLine:settings.captionMaxCharacters??14};
++  await send('saveWorkspaceCaptions',{clipId:clips[0].id,captionContract:normalizeShotCaptionContract(caption,{text:caption.text,enabled:caption.enabled})});
++  if(settings.captionMode!=='independent'){
++   await send('saveWorkspaceNarrationCaptions',{clipId:clips[0].id,contentMode:'follow_tts',text:segment.subtitle});
++   if(settings.captionsEnabled===false)await send('setWorkspaceCaptionsEnabled',{clipId:clips[0].id,enabled:false});
++  }
++  const image=material(segment.firstFrame);
++  if(image)for(const clip of clips)await send('registerWorkspaceVisualCandidate',{targetItemId:clip.itemId,materialRevisionId:image.id,usage:'still',durationSeconds:settings.duration??5});
++  const sound=material(segment.sfx);
++  if(sound)await send('prepareWorkspaceAudio',{kind:'sfx',shotId:segment.id,materialRevisionId:sound.id,description:'原保存计划音效',durationSeconds:settings.sfxDuration??1,anchor:'shot',offsetSeconds:settings.sfxStart??0});
++ }
++ const music=material(adoption.plan.bgm);
++ if(music)await send('prepareWorkspaceAudio',{kind:'bgm',materialRevisionId:music.id,description:'原保存计划配乐',durationSeconds:adoption.plan.segments.reduce((sum,s)=>sum+(s.settings.duration??5),0),anchor:'absolute',offsetSeconds:0});
++ return state;
++}
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/local-app/legacyPlanAdoption.integration.test.ts
++++ /Users/dan/Programs/loop-control/src/local-app/legacyPlanAdoption.integration.test.ts
+@@ -0,0 +1,144 @@
++// @vitest-environment node
++import {it,expect} from 'vitest';
++import {readFile,writeFile,rename,mkdir} from 'node:fs/promises';
++import {join} from 'node:path';
++import {randomUUID,createHash} from 'node:crypto';
++import {csrfFor} from './sessions';
++import {nativeWorkerPort} from './workerDatabase';
++import {runWorkspaceDeliveryProcess} from './workspaceDelivery.fixture';
++import {formalWorkflowFixture} from './formalWorkflow.fixture';
++import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
++import {workspaceTestMedia} from './workspaceTestMedia.fixture';
++import {productionWorkspaceFixture} from './productionWorkspace.fixture';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('explicitly imports the saved plan as current preparation without treating planned references or old authorization as adopted media',async()=>{
++ const script=historicalProductionScriptV2.replace('填写已上传图片的素材名称','原图').replace('旁白音色：默认','旁白音色：归档音色').replace('生成时长（秒）：默认','生成时长（秒）：2').replace('字幕：开启','字幕：关闭').replace('背景音乐素材：默认','背景音乐素材：配乐');
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:script}),worker=f.workerPool();
++ try{
++  const upload=async(name:string,type:string,path:string,purpose:string)=>{const r=await f.send('importMaterial',{sourceKind:'file',sourcePath:name,materialType:type,materialPurpose:purpose,mimeType:type==='image'?'image/png':'audio/mpeg',isMainScript:false,contentBase64:(await readFile(path)).toString('base64')});expect(r.status,JSON.stringify(r.body)).toBe(200);return r.body;};
++  const image=await upload('原图.png','image',workspaceTestMedia('still-striped.png'),'visual_reference');
++  const music=await upload('配乐.mp3','audio',workspaceTestMedia('controlled-narration-tone.mp3'),'background_music');
++  const saved=await f.send('configureScriptProduction',{enabled:false});expect(saved.status,JSON.stringify(saved.body)).toBe(200);expect(saved.body.plan.segments[0].firstFrame.material.id).toBe(image.id);expect(saved.body.plan.bgm.material.id).toBe(music.id);
++  expect((await f.send('start')).status).toBe(200);
++  await f.c.query("UPDATE public.episodes SET tts_voice='今天的默认音色' WHERE id=$1",[f.newEpisode]);
++  await f.c.query('UPDATE local_identity.script_productions SET enabled=true,authorized_at=clock_timestamp() WHERE episode_id=$1',[f.newEpisode]);
++  const get=async()=>{const r=await fetch(`${f.origin}/api/local/script-production?episode=${f.newEpisode}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);return r.json();};
++  const snapshot=await get(),record=(await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value;
++  const imported=await f.send('adoptLegacyPlan',{expectedScriptRevisionId:f.main,expectedPlanSha256:snapshot.planSha256});expect(imported.status,JSON.stringify(imported.body)).toBe(200);let w=imported.body;
++  expect(w.storyboardPackageId).toBeNull();expect(w.preparation).toMatchObject({origin:'saved-plan',authorized:false,planSha256:snapshot.planSha256});
++  expect(w.narration[0]).toMatchObject({mode:'none',voice:'归档音色',text:saved.body.plan.segments[0].narration,selection:null});
++  expect(w.captions[0].contract.enabled).toBe(false);expect(w.readiness.placeholders).toHaveLength(1);
++  const candidate=w.visualCandidates.find((c:any)=>c.materialRevisionId===image.id);expect(candidate).toMatchObject({status:'available',kind:'image'});
++  const bgm=w.audio.preparations.find((p:any)=>p.kind==='bgm');expect(bgm).toMatchObject({status:'ready',taskId:null,adoptedItemId:null,source:{provider:'manual',materialRevisionId:music.id}});expect(w.audio.mix.sounds).toHaveLength(0);
++  const baseline=(await f.c.query('SELECT origin,manifest,source_evidence FROM local_identity.production_preparation_revisions WHERE id=$1',[w.preparationRevisionId])).rows[0];expect(baseline.origin).toBe('plan-import');expect(baseline.source_evidence.record).toEqual(record);expect(baseline.manifest.shots[0]).toMatchObject({durationSeconds:2,savedSettings:saved.body.plan.segments[0].settings});
++  for(const table of ['review_packages','shot_preparation_drafts','approvals','tasks'])expect((await f.c.query(`SELECT count(*)::int n FROM public.${table} WHERE episode_id=$1`,[f.newEpisode])).rows[0].n,table).toBe(0);
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const ready=await send('prepareWorkspaceVisualCandidate',{candidateId:candidate.id,durationPolicy:'keep-target'});await send('adoptWorkspaceVisualCandidate',{candidateId:candidate.id,adoptionId:ready.adoptionId});await send('adoptWorkspaceAudio',{preparationId:bgm.id});
++  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;await send('closeWorkspaceStudio');await f.restart();const read=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});w=(await read.json()).workspace;
++  await send('exportWorkspace');expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');
++  const output=w.exports[0];await send('confirmWorkspaceExport',{exportId:output.id,expectedExportSha256:output.artifact.sha256,expectedContentSha256:w.contentSha256});
++  await send('prepareWorkspaceDelivery',{exportId:output.id,expectedExportSha256:output.artifact.sha256,expectedContentSha256:w.contentSha256,title:'原保存计划接入后的当前交付',description:'只有明确采用内容进入交付',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});
++  const claim=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:w.deliveries[0].taskId,p_worker_capacity:2}) as any[])[0];expect(claim).toBeTruthy();const delivered=await runWorkspaceDeliveryProcess(f,claim,{mountPath:f.mountPath});expect(delivered.status,JSON.stringify(delivered)).toBe('completed');
++  let metadata:any;for(const artifact of delivered.artifacts){const r=await fetch(`${f.origin}/_local-artifact?episode=${f.newEpisode}&path=${encodeURIComponent(artifact.relativePath)}&sha256=${artifact.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);const bytes=Buffer.from(await r.arrayBuffer());expect(createHash('sha256').update(bytes).digest('hex')).toBe(artifact.sha256);if(artifact.artifactType==='metadata')metadata=JSON.parse(bytes.toString());}
++  expect(metadata.narration[0]).toMatchObject({baselineText:saved.body.plan.segments[0].narration,sourceText:null,adoptedText:null,textSource:'not_recorded'});
++  expect((await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value).toEqual(record);expect((await get()).planSha256).toBe(snapshot.planSha256);
++  expect(JSON.parse(await readFile(join(f.assetRoot,w.exports[0].project.relativePath),'utf8')).timelines[0].items.some((i:any)=>i.kind==='image')).toBe(true);
++ }finally{await worker.end();await f.close();}
++},180000);
++
++async function savedPlanFixture(){
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:historicalProductionScriptV2});
++ try{
++  const saved=await f.send('configureScriptProduction',{enabled:false});expect(saved.status,JSON.stringify(saved.body)).toBe(200);expect((await f.send('start')).status).toBe(200);
++  const snapshot=async()=>{const r=await fetch(`${f.origin}/api/local/script-production?episode=${f.newEpisode}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);return r.json();};
++  return{...f,snapshot};
++ }catch(error){await f.close();throw error;}
++}
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('rejects stale identity and other Owners, replays the exact receipt and preserves existing edits and an unknown old request',async()=>{
++ const f=await savedPlanFixture();
++ try{
++  const snapshot=await f.snapshot(),data={expectedScriptRevisionId:f.main,expectedPlanSha256:snapshot.planSha256};
++  expect((await f.request('adoptLegacyPlan',{episodeId:f.newEpisode,...data},{token:f.otherToken})).status).toBe(404);
++  expect((await f.send('adoptLegacyPlan',{...data,expectedPlanSha256:'0'.repeat(64)})).status).toBe(409);
++  expect((await f.send('adoptLegacyPlan',{...data,enabled:true})).status).toBe(400);
++  const oldTask=randomUUID();await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,provider,input_snapshot,last_result) VALUES($1,$2,'generate_narration','blocked','volcengine_tts',$3,$4)",[oldTask,f.newEpisode,{capability:'narration',frozen:'original unknown request'},{blockers:[{code:'provider_outcome_unknown'}],retry:{shouldRetry:false}}]);
++  const old=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[oldTask])).rows[0].value;
++  const key=randomUUID(),post=async()=>{const r=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'adoptLegacyPlan',idempotencyKey:key,data:{episodeId:f.newEpisode,...data}})});return{status:r.status,body:await r.json()};};
++  const first=await post();expect(first.status,JSON.stringify(first.body)).toBe(200);expect(await post()).toEqual(first);let w=first.body;
++  const edited=await f.send('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'Owner当前编辑必须保留'}});expect(edited.status).toBe(200);w=edited.body;
++  const bytes=await readFile(join(f.assetRoot,w.project.relativePath));expect((await f.send('adoptLegacyPlan',data)).status).toBe(409);expect(await readFile(join(f.assetRoot,w.project.relativePath))).toEqual(bytes);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_preparation_revisions WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(1);
++  expect((await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[oldTask])).rows[0].value).toEqual(old);expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(1);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('preserves a native project even when its current SQL workspace registration is missing',async()=>{
++ const f=await savedPlanFixture();
++ try{
++  const snapshot=await f.snapshot(),prefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[f.newEpisode])).rows[0].directory_relative_path;
++  const projectId=`loop-control-${f.newEpisode}`,work=join(f.assetRoot,prefix,'openchatcut-work/current');await mkdir(join(work,'runtime'),{recursive:true});
++  const project={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:'original-editor-version'},assets:[],mediaFolders:[],activeTimelineId:projectId,timelines:[{id:projectId,name:'原编辑需要恢复，不能由计划替换',fps:30,width:1080,height:1920,fit:'contain',items:[],tracks:{},trackOrder:[],transitions:[],selectedId:null}]};
++  const store=Buffer.from(JSON.stringify({version:1,entries:{projects:[{id:projectId,name:'原剪辑'}],[`project:${projectId}`]:project}})),metadata=Buffer.from(JSON.stringify({projectId,reverseSources:{},inputFingerprint:'original-editor-version'}));
++  await writeFile(join(work,'runtime/project-store-v1.json'),store,{flag:'wx'});await writeFile(join(work,'workspace.json'),metadata,{flag:'wx'});
++  const r=await f.send('adoptLegacyPlan',{expectedScriptRevisionId:f.main,expectedPlanSha256:snapshot.planSha256});expect(r.status,JSON.stringify(r.body)).toBe(409);
++  expect(await readFile(join(work,'runtime/project-store-v1.json'))).toEqual(store);expect(await readFile(join(work,'workspace.json'))).toEqual(metadata);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_preparation_revisions WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['same-account','foreign-account'] as const)('verifies %s original bindings through registered roots and never trusts a saved host root',async(scope)=>{
++ const f=await savedPlanFixture();
++ try{
++  let sourceEpisode=f.episode;
++  if(scope==='same-account'){
++   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.newEpisode])).rows[0].account_id;
++   const created=await f.request('create',{episodeId:undefined,accountId:account,title:'原计划跨单素材来源'});expect(created.status,JSON.stringify(created.body)).toBe(200);sourceEpisode=created.body.id;
++  }
++  const uploaded=await f.request('importMaterial',{episodeId:sourceEpisode,sourceKind:'file',sourcePath:'填写已上传图片的素材名称.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);
++  const m=(await f.c.query('SELECT * FROM public.production_material_revisions WHERE id=$1',[uploaded.body.id])).rows[0],before=await f.snapshot();
++  const reference={...before.plan.segments[0].firstFrame,status:'bound',material:{id:m.id,episodeId:m.episode_id,seriesId:null,name:m.source_path,type:m.material_type,purpose:m.material_purpose,mime:m.mime_type,path:m.storage_path,sha256:m.sha256,size:Number(m.file_size),root:'/untrusted/old-plan-root'},candidates:[]};
++  await f.c.query("UPDATE local_identity.script_productions SET plan=jsonb_set(plan,'{segments,0,firstFrame}',$2) WHERE episode_id=$1",[f.newEpisode,reference]);const snapshot=await f.snapshot();
++  const imported=await f.send('adoptLegacyPlan',{expectedScriptRevisionId:f.main,expectedPlanSha256:snapshot.planSha256});
++  if(scope==='foreign-account'){
++   expect(imported.status,JSON.stringify(imported.body)).toBe(409);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_preparation_revisions WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);return;
++  }
++  expect(imported.status,JSON.stringify(imported.body)).toBe(200);const w=imported.body,candidate=w.visualCandidates[0];expect(candidate.materialRevisionId).not.toBe(m.id);
++  const copied=(await f.c.query('SELECT * FROM public.production_material_revisions WHERE id=$1',[candidate.materialRevisionId])).rows[0];expect(copied).toMatchObject({episode_id:f.newEpisode,sha256:m.sha256,file_size:m.file_size});
++  const provenance=(await f.c.query('SELECT provenance FROM local_identity.material_import_origins WHERE material_id=$1',[copied.id])).rows[0].provenance;expect(provenance).toMatchObject({source:{id:m.id,episode_id:sourceEpisode,sha256:m.sha256},approvals:[expect.objectContaining({approved_by:f.owner})]});
++  const prefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[sourceEpisode])).rows[0].directory_relative_path;await rename(join(f.assetRoot,prefix),join(f.root,'original-source-offline'));await f.restart();
++  const response=await fetch(`${f.origin}/_local-artifact?episode=${f.newEpisode}&path=${encodeURIComponent(copied.storage_path)}&sha256=${m.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);expect(Buffer.from(await response.arrayBuffer())).toEqual(await readFile(workspaceTestMedia('still-striped.png')));
++  expect((await f.c.query('SELECT * FROM public.production_material_revisions WHERE id=$1',[m.id])).rows[0]).toEqual(m);expect((await f.snapshot()).plan).toEqual(snapshot.plan);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('retains a recorded planner origin instead of relabelling an unrelated historical preparation as a saved plan',async()=>{
++ const f=await productionWorkspaceFixture();
++ try{
++  await f.c.query("INSERT INTO local_identity.workspace_preparations(package_id,episode_id,script_revision_id,origin,confirmed_by) VALUES($1,$2,$3,'planner',$4)",[f.board,f.episode,f.script,f.owner]);
++  const prepared=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
++  const stored=(await f.c.query('SELECT origin,source_format,source_evidence FROM local_identity.production_preparation_revisions WHERE id=$1',[prepared.body.preparationRevisionId])).rows[0];expect(stored).toMatchObject({origin:'plan-import',source_format:'storyboard/v1'});expect(stored.source_evidence.version).toBeUndefined();
++  expect(prepared.body.preparation.origin).toBe('planner');expect(prepared.body.preparation.planSha256).toBeUndefined();expect(prepared.body.preparation.shots.every((s:any)=>s.origin==='planner')).toBe(true);
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);expect((await response.json()).workspace.preparation.origin).toBe('planner');
++  expect((await f.c.query('SELECT source_evidence FROM local_identity.production_preparation_revisions WHERE id=$1',[prepared.body.preparationRevisionId])).rows[0].source_evidence).toEqual(stored.source_evidence);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('rejects unsupported saved binding protocols rather than guessing a current interpretation',async()=>{
++ const f=await savedPlanFixture();
++ try{
++  await f.c.query("UPDATE local_identity.script_productions SET plan=jsonb_set(plan,'{segments,0,firstFrame,status}','\"future-binding\"') WHERE episode_id=$1",[f.newEpisode]);
++  const source=await f.snapshot();const r=await f.send('adoptLegacyPlan',{expectedScriptRevisionId:f.main,expectedPlanSha256:source.planSha256});expect(r.status,JSON.stringify(r.body)).toBe(409);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_preparation_revisions WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);expect((await f.snapshot()).plan).toEqual(source.plan);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('does not trust a source declaration after file bytes change and leaves the saved record intact',async()=>{
++ const f=await savedPlanFixture();let file:string|undefined,original:Buffer|undefined;
++ try{
++  const source=await f.snapshot(),record=(await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value;
++  file=join(f.assetRoot,(await f.c.query('SELECT storage_path FROM public.production_material_revisions WHERE id=$1',[f.main])).rows[0].storage_path);original=await readFile(file);await writeFile(file,'changed bytes');
++  const r=await f.send('adoptLegacyPlan',{expectedScriptRevisionId:f.main,expectedPlanSha256:source.planSha256});expect(r.status,JSON.stringify(r.body)).toBe(409);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_preparation_revisions WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);expect((await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value).toEqual(record);
++ }finally{if(file&&original)await writeFile(file,original);await f.close();}
++},120000);
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/local-app/legacyPlanAdoptionMigration.integration.test.ts
++++ /Users/dan/Programs/loop-control/src/local-app/legacyPlanAdoptionMigration.integration.test.ts
+@@ -0,0 +1,35 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {randomBytes,randomUUID} from 'node:crypto';
++import {join} from 'node:path';
++import {loadSchemaCatalog,freshSchemaTransaction,migrationTransaction,schemaMigrationPlan} from './schemaMigrations';
++import {seedHistoricalPreparation} from './historicalPreparation.fixture';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('196 preserves nonempty 195 business, frozen and collected facts, rolls back atomically, and fully restores the candidate without backfilling',async()=>{
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated saved-plan migration');
++ const {databaseSnapshot,assertRestored}=await import(join(process.cwd(),'scripts/runtime/clean-sql-cutover.mjs'));
++ const catalog=loadSchemaCatalog(process.cwd()),old={...catalog,current:catalog.current.filter(m=>m.version<'188-')},suffix=randomBytes(6).toString('hex'),source='loop_milestones_'+suffix,restored=source+'_restored',databases:string[]=[],sql=(q:string,db=source)=>context.sql(q,db),off=randomUUID();
++ try{
++  for(const db of [source,restored]){context.sql('CREATE DATABASE '+db+' TEMPLATE template0','postgres');databases.push(db);}
++  sql(freshSchemaTransaction(old));const ids=seedHistoricalPreparation(sql);sql(migrationTransaction(catalog.current.filter(m=>m.version>='188-'&&m.version<'196-')));
++  sql(`INSERT INTO local_identity.owners(id,email)VALUES('${off}','off@example.invalid');INSERT INTO local_identity.production_metric_controls(owner_id,enabled)VALUES('${off}',false);
++   SET SESSION AUTHORIZATION loop_app;BEGIN;SELECT set_config('loop.owner_id','${ids.owner}',true);SELECT local_identity.set_production_metrics_enabled(true);
++   SELECT local_identity.record_owned_production_metric('${ids.episode}','retry_relation','retained-before-milestones',jsonb_build_object('workspace_id','${ids.workspace}','reason_code','retained_fact'));COMMIT;RESET SESSION AUTHORIZATION;`);
++  const before=databaseSnapshot(context,source,process.cwd()),migration=catalog.current.find(m=>m.version.startsWith('196-'))!;expect(before.rows['local_identity.production_metric_events'].rows).toBe(2);
++  expect(()=>sql('BEGIN;'+migration.body+'SELECT 1/0;COMMIT;')).toThrow(/division by zero/);expect(databaseSnapshot(context,source,process.cwd())).toEqual(before);
++  sql(migrationTransaction([migration]));const after=databaseSnapshot(context,source,process.cwd());
++  expect(after.rows).toEqual(before.rows);expect(after.sequenceRows).toEqual(before.sequenceRows);expect(after.roles).toEqual(before.roles);
++  const addedFunctions=['register_saved_plan_preparation'],addedTriggers:string[]=[];
++  for(const key of Object.keys(before.catalog)){
++   const filtered=after.catalog[key].filter((item:any)=>key==='functions'?!addedFunctions.includes(item.name):key==='triggers'?!addedTriggers.includes(item.name):true);expect(filtered,key).toEqual(before.catalog[key]);
++  }
++  expect(after.catalog.functions.length-before.catalog.functions.length).toBe(1);expect(sql("SELECT has_function_privilege('loop_worker','local_identity.register_saved_plan_preparation(uuid,uuid,uuid,jsonb,jsonb,text,text)','EXECUTE')::text")).toBe('false');expect(sql("SELECT has_function_privilege('loop_app','local_identity.register_saved_plan_preparation(uuid,uuid,uuid,jsonb,jsonb,text,text)','EXECUTE')::text")).toBe('true');expect(after.catalog.triggers.length-before.catalog.triggers.length).toBe(0);
++  expect(after.security.filter((item:any)=>!addedFunctions.some(name=>item.kind==='function'&&item.identity.startsWith('local_identity.'+name+'(')))).toEqual(before.security);
++  for(const [version,value]of Object.entries(before.ledger))expect(after.ledger[version]).toEqual(value);
++  expect(schemaMigrationPlan(Object.fromEntries(Object.entries(after.ledger).map(([key,value])=>[key,(value as {sha256:string}).sha256])),{...catalog,current:catalog.current.filter(m=>m.version<'197-')})).toEqual([]);
++  expect(sql("SELECT count(*) FROM local_identity.production_metric_events WHERE event_type LIKE 'sound_%'")).toBe('0');expect(sql(`SELECT enabled::text FROM local_identity.production_metric_controls WHERE owner_id='${off}'`)).toBe('false');
++  sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',source]),restored);assertRestored(after,databaseSnapshot(context,restored,process.cwd()));
++  expect(sql(`SELECT current_audio_track_id::text FROM public.shot_preparation_drafts WHERE episode_id='${ids.episode}'`,restored)).toBe(ids.audio);
++  expect(sql("SELECT count(*) FROM local_identity.production_metric_events WHERE event_type LIKE 'sound_%'",restored)).toBe('0');
++ }finally{for(const db of databases.reverse())context.sql('DROP DATABASE '+db+' WITH (FORCE)','postgres');}
++},120000);
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/local-app/scriptProductionStore.ts
++++ /Users/dan/Programs/loop-control/src/local-app/scriptProductionStore.ts
+@@ -12,6 +12,9 @@
+ export interface ScriptEpisode {id:string;account_id:string;series_id?:string;series_version_id:string|null;main_script_revision_id:string|null;stage:string;policy:Record<string,unknown>;tts_voice?:string;tts_language_code?:string;tts_speaking_rate?:number}
+ export interface ScriptProductionRecord {episode_id:string;owner_id:string;script_sha256:string;script_revision_id:string;authorization_hash:string;enabled:boolean;plan:ResolvedProductionPlan;progress:Record<string,unknown>;last_status:string}
+ export {productionHash};
++export function savedProductionPlanIdentity(episodeId:string,record:Pick<ScriptProductionRecord,'script_revision_id'|'script_sha256'|'plan'>){
++ return{version:'legacy-production-plan/v1',episodeId,scriptRevisionId:record.script_revision_id,scriptSha256:record.script_sha256,plan:record.plan};
++}
+ export class ScriptProductionStore {
+  constructor(private mediaRoot:string){}
+  async read(c:PoolClient,episodeId:string){
+@@ -25,7 +28,7 @@
+    savedEnabled:record?.enabled??false,savedAuthorizationHash:record?.authorization_hash??null,
+    savedScriptRevisionId:record?.script_revision_id??null,savedScriptSha256:record?.script_sha256??null,
+    currentScriptRevisionId:e.main_script_revision_id,scriptMatchesCurrent:record?record.script_revision_id===e.main_script_revision_id:null,
+-   planSha256:record?productionHash({version:'legacy-production-plan/v1',episodeId:e.id,scriptRevisionId:record.script_revision_id,scriptSha256:record.script_sha256,plan:record.plan}):null,
++   planSha256:record?productionHash(savedProductionPlanIdentity(e.id,record)):null,
+    status:record?'历史计划只读，请通过当前工作区继续制作。':'未保存旧制作计划'};
+  }
+  async alias(c:PoolClient,ownerId:string,materialId:string,name:string){
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/local-app/episodeCommands.ts
++++ /Users/dan/Programs/loop-control/src/local-app/episodeCommands.ts
+@@ -99,7 +99,7 @@
+    }else{
+     // Older owned orders predate native execution registration. Enrol only at
+     // an explicit four-step entry; failed commands roll this back with the rest.
+-    if(['adoptLegacyWorkspace','prepareWorkspace','reconfirmScript','importMaterial'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
++    if(['adoptLegacyWorkspace','adoptLegacyPlan','prepareWorkspace','reconfirmScript','importMaterial'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
+      if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
+      const legacy=(await c.query('SELECT stage,archived_at FROM public.episodes WHERE id=$1',[data.episodeId])).rows[0];
+      if(legacy.archived_at||legacy.stage==='production_completed')throw new ConfigurationError(409,'历史或已完成生产单只读。');
+@@ -108,7 +108,7 @@
+     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
+     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
+     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
+-    const inputIo=['importMaterial','reconfirmScript','configureScriptProduction','prepareWorkspace'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
++    const inputIo=['importMaterial','reconfirmScript','configureScriptProduction','prepareWorkspace','adoptLegacyPlan'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
+     if(location)await requireEpisodeStorageDirectory(c,location);
+     const root=location?.assetRoot??await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
+     if(body.command!=='openDirectory'){
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/local-app/productionWorkspaceCommands.ts
++++ /Users/dan/Programs/loop-control/src/local-app/productionWorkspaceCommands.ts
+@@ -1,4 +1,5 @@
+ import {recordWorkspaceEditingMilestone} from './productionMilestones.js';
++import {prepareSavedPlanAdoption,installSavedPlanInputs} from './legacyPlanAdoption.js';
+ import {workspaceStudioFingerprint} from './workspaceStudioFingerprint.js';
+ import {recordProjectCandidateChanges} from './productionMetricWrites.js';
+ import {recordProjectSoundChanges} from './productionSoundUse.js';
+@@ -46,7 +47,7 @@
+ import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
+ import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
+ import {inspectOpenChatCutProjectWithRuntime,type OpenChatCutProjectObservation} from '../worker/openchatcutProjectReader.js';
+-import {openOpenChatCutDraftStudio,snapshotOpenChatCutStudio,closeOpenChatCutStudio,isOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
++import {openOpenChatCutDraftStudio,snapshotOpenChatCutStudio,closeOpenChatCutStudio,isOpenChatCutStudio,inspectOpenChatCutStoredProject,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
+ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
+ import type {ProductionWorkspace,WorkspaceClip} from '../productionWorkspace.js';
+ interface Episode {id:string;account_id:string;policy:Record<string,unknown>;main_script_revision_id:string|null;stage:string;archived_at?:string|null}
+@@ -151,12 +152,17 @@
+    await recordWorkspaceVersion(c,resumed,'确认脚本排版修订，沿用原工程继续编辑');
+    return readProductionWorkspace(c,e.id,root);
+   }
+-  if(command==='prepareWorkspace'||command==='replanWorkspace'){
++  if(command==='prepareWorkspace'||command==='replanWorkspace'||command==='adoptLegacyPlan'){
+    if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId)throw new ConfigurationError(409,'脚本基准已变化，请先确认当前脚本。');
++   if(command==='adoptLegacyPlan'&&row)throw new ConfigurationError(409,'已有当前工程，未覆盖现有编辑。');
++   if(command==='adoptLegacyPlan'&&isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并关闭原编辑器，再接入保存计划。');
++   if(command==='adoptLegacyPlan'&&await inspectOpenChatCutStoredProject(root,e.id,await episodeFileIO(c,root,e.id)))throw new ConfigurationError(409,'已有原生剪辑版本，请从原工程接入；保存计划不会替换原编辑。');
+    if(!data.reviewPackageId&&command==='prepareWorkspace'&&row?.script_revision_id===e.main_script_revision_id){
+     await syncProductionWorkspaceShots(c,row,root);return readProductionWorkspace(c,e.id,root);
+    }
+    let p=(await c.query("SELECT p.*,a.relative_path,a.sha256,a.file_size,p.id legacy_package_id FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1 AND p.episode_id=$2 AND p.stage='storyboard_review' AND p.invalidated_at IS NULL",[data.reviewPackageId,e.id])).rows[0];
++   const savedPlan=command==='adoptLegacyPlan'?await prepareSavedPlanAdoption(c,root,e,data.expectedPlanSha256):null;
++   if(savedPlan)p=savedPlan.preparation;
+    if(!p&&!data.reviewPackageId)p=await prepareAuthoredWorkspace(c,root,e);
+    if(p?.legacy_package_id){
+     if(p.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyEpisodeFile(c,root,e.id,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({storage:await episodeFileIO(c,root,e.id),assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
+@@ -221,6 +227,7 @@
+    }
+    // The confirmed current workspace activates explicit local requests, without the retired storyboard planner.
+    await c.query('UPDATE local_identity.input_episodes SET enabled=true WHERE episode_id=$1 AND owner_id=local_identity.owner_id()',[e.id]);
++   if(savedPlan)return installSavedPlanInputs(c,(await readProductionWorkspace(c,e.id,root))!,savedPlan,async(command,data)=>await this.execute(c,e,root,runtime,command,data) as ProductionWorkspace);
+    return readProductionWorkspace(c,e.id,root);
+   }
+   if(command==='saveWorkspaceVideoRanges')return saveWorkspaceVideoRanges(c,root,e.id,data);
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/local-app/workspacePreparation.ts
++++ /Users/dan/Programs/loop-control/src/local-app/workspacePreparation.ts
+@@ -44,15 +44,15 @@
+  await c.query('SELECT local_identity.sync_workspace_caption_inputs($1)',[row.id]);
+  await c.query('SELECT local_identity.sync_workspace_narration_inputs($1)',[row.id]);
+ }
+-function preparationOrigin(origin:string){return origin==='script'?'script-segment':origin==='plan-import'?'planner':'legacy-board';}
++function preparationOrigin(origin:string,format:string,protocol?:string){return origin==='script'?'script-segment':origin==='plan-import'?format==='production-preparation/v1'&&protocol==='saved-production-plan/v1'?'saved-plan':'planner':'legacy-board';}
+ export async function resolveWorkspaceShotLineage(c:PoolClient,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'preparation_revision_id'|'bindings'>,shotId:string,preparationId=row.preparation_revision_id??row.storyboard_package_id){
+- const result=(await c.query('SELECT s.*,p.origin preparation_origin,local_identity.historical_preparation_shot_classification(p.id,s.shot_id) historical_classification FROM local_identity.production_shot_versions s JOIN local_identity.production_preparation_revisions p ON p.id=s.preparation_revision_id WHERE s.preparation_revision_id=$1 AND s.episode_id=$2 AND s.shot_id=$3',[preparationId,row.episode_id,shotId])).rows[0];
++ const result=(await c.query("SELECT s.*,p.origin preparation_origin,p.source_format preparation_format,p.source_evidence->>'version' preparation_protocol,local_identity.historical_preparation_shot_classification(p.id,s.shot_id) historical_classification FROM local_identity.production_shot_versions s JOIN local_identity.production_preparation_revisions p ON p.id=s.preparation_revision_id WHERE s.preparation_revision_id=$1 AND s.episode_id=$2 AND s.shot_id=$3",[preparationId,row.episode_id,shotId])).rows[0];
+  if(!result)throw new ConfigurationError(409,'镜头制作依据尚未接入，请先确认当前制作基准。');
+- return{...result,origin:result.origin==='local'?'local-added':preparationOrigin(result.preparation_origin),shot_type:result.historical_classification??null,id:shotId,scriptSegment:result.baseline_text};
++ return{...result,origin:result.origin==='local'?'local-added':preparationOrigin(result.preparation_origin,result.preparation_format,result.preparation_protocol),shot_type:result.historical_classification??null,id:shotId,scriptSegment:result.baseline_text};
+ }
+ 
+ export async function readWorkspacePreparation(c:PoolClient,row:ProductionWorkspaceRecord){
+- const prep=(await c.query('SELECT origin FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[row.preparation_revision_id??row.storyboard_package_id,row.episode_id])).rows[0],auth=(await c.query('SELECT enabled,authorization_hash,plan FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
++ const prep=(await c.query('SELECT origin,source_format,source_evidence FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[row.preparation_revision_id??row.storyboard_package_id,row.episode_id])).rows[0],auth=(await c.query('SELECT enabled,authorization_hash,plan FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
+  if(!prep)throw new ConfigurationError(409,'制作基准尚未接入，请先确认当前版本。');
+  const shots:Array<{shotId:string;origin:string;visualSource?:ProductionVisualSource;materialReference?:string}>=[];
+  for(const clip of row.bindings){
+@@ -60,7 +60,8 @@
+   const source=await resolveWorkspaceShotLineage(c,row,clip.shotId),intent=source.snapshot;
+   shots.push({shotId:clip.shotId,origin:source.origin,...(productionVisualSources.includes(intent?.visualSource)?{visualSource:intent.visualSource}:{}),...(typeof intent?.materialReference==='string'?{materialReference:intent.materialReference}:{})});
+  }
+- return{origin:preparationOrigin(prep.origin),scriptRevisionId:row.script_revision_id,authorized:!!auth?.enabled,authorizationHash:auth?.authorization_hash,shots};
++ const origin=preparationOrigin(prep.origin,prep.source_format,prep.source_evidence?.version);
++ return{origin,scriptRevisionId:row.script_revision_id,authorized:origin!=='saved-plan'&&!!auth?.enabled,authorizationHash:origin==='saved-plan'?undefined:auth?.authorization_hash,...(origin==='saved-plan'?{planSha256:prep.source_evidence?.plan_sha256}:{}),shots};
+ }
+ 
+ export async function preserveLegacyWorkspace(c:PoolClient,root:string,episodeId:string,decision:unknown){
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source/src/productionWorkspace.ts
++++ /Users/dan/Programs/loop-control/src/productionWorkspace.ts
+@@ -12,7 +12,7 @@
+  selectedImages?:Array<{targetItemId:string;candidateId:string;materialRevisionId:string}>;
+  visualConfiguration?:{imageSelection?:import('./productionSelection.js').ProductionSelection;imageModel:string|null;videoModel:string|null;videoProvider:string|null};
+  recovery?:{decision:'preserve'|'fresh';relativePath:string;sha256:string;fileSize:number};
+- preparation?:{origin:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string;visualSource?:import('./reviews/productionScript.js').ProductionVisualSource;materialReference?:string}>};
++ preparation?:{origin:string;planSha256?:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string;visualSource?:import('./reviews/productionScript.js').ProductionVisualSource;materialReference?:string}>};
+  pexels?:import('./workspacePexels.js').WorkspacePexelsState;visualCandidates?:WorkspaceVisualCandidate[];visualTasks?:WorkspaceVisualTask[];visualTargets?:WorkspaceVisualTarget[];
+  id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string|null;preparationRevisionId?:string;revision:number;contentSha256:string;nativeEditRevision?:number;
+  audio?:{enabled?:{bgm:boolean;sfx:boolean};defaults?:{selection?:import('./productionSelection.js').ProductionSelection;settings?:{description:string;query:string;materialRevisionId:string}}|null;mix:WorkspaceAudioMix;preparations:Array<{generationTask?:import('./workspaceVisualCandidates.js').WorkspaceVisualTask;id:string;kind:string;shotId:string|null;sourceItemId:string|null;description:string;query:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;connection?:{name:string;version:number}|null;anchor:string;offsetSeconds:number;durationSeconds:number;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;relativePath:string|null;sha256:string|null;fileSize:number;adoptedItemId:string|null;source:Record<string,unknown>|null}>};usedNarration?:WorkspaceUsedNarration[];candidates?:WorkspaceCandidate[];deliveries?:WorkspaceDelivery[];exports?:WorkspaceExport[];exportIssues?:WorkspaceExportIssue[];captions?:WorkspaceCaptionState[];narration?:WorkspaceNarration[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
+@@ -20,6 +20,7 @@
+  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
+ }
+ export const productionWorkspaceFields:Record<string,string[]>={
++ adoptLegacyPlan:['episodeId','expectedScriptRevisionId','expectedPlanSha256'],
+  prepareWorkspaceCall:['episodeId','workspaceId','expectedRevision','callCommand','callData'],
+  confirmWorkspaceCall:['episodeId','workspaceId','expectedRevision','confirmationId','reservationCents'],
+  resumeWorkspaceEditing:['episodeId','workspaceId','expectedRevision','expectedScriptRevisionId','expectedProjectSha256'],

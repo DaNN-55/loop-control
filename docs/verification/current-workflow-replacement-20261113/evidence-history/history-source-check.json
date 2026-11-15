@@ -1,0 +1,12 @@
+{
+  "sourceFiles": 1354,
+  "matchesFinalSource": true,
+  "changedSince192": [
+    "scripts/runtime/production-history.mjs",
+    "scripts/runtime/project-history.mjs",
+    "src/local-app/productionHistoryProjection.integration.test.ts",
+    "src/local-app/workspaceAudio.fixture.ts"
+  ],
+  "headIndexUnchanged": true,
+  "fixedSource": "/private/tmp/loop-story-e2e-exX4Q9/source"
+}

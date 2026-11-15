@@ -1,3 +1,4 @@
+import {workspaceShotMediaName} from './workspaceDisplayNames.js';
 import {applyWorkspaceVideoSound,removeLinkedVideoSound,type VideoSound} from './workspaceVideoSound.js';
 import {followWorkspaceNarrationCaption} from './workspaceCaptions.js';
 import {isValidShotCaptionContract,type ShotCaptionContract} from './shotCaptions.js';
@@ -21,8 +22,9 @@ export function workspaceCandidateTarget(item:Record<string,unknown>){
 }
 export interface WorkspaceCandidateMainVoice {initialCaptionContract?:ShotCaptionContract;narrationText?:string;workspaceId:string;shotId:string;visualItemIds:string[];expectedRoute:string;activate:boolean;volume:number;window:{startFrame:number;durationInFrames:number}}
 export function workspaceCandidateAppearance(item:Record<string,unknown>){return JSON.stringify({transform:item.transform??null,keyframes:item.keyframes??null,zoom:item.zoom??null},(_key,value)=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value);}
-export interface WorkspaceCandidateEdit {videoSound?:VideoSound;visual?:WorkspaceCandidateVisual;mainVoice?:WorkspaceCandidateMainVoice;shotWindow?:{startFrame:number;durationInFrames:number};targetItemId:string;expectedTarget:ReturnType<typeof workspaceCandidateTarget>|null;source:{id:string;kind:'audio'|'video'|'image';src:string;sha256:string;inputFingerprint:string;durationSeconds:number;sourceInSeconds?:number;fullDurationSeconds?:number;width?:number;height?:number};durationPolicy:'keep-target'|'use-candidate'}
+export interface WorkspaceCandidateEdit {videoSound?:VideoSound;visual?:WorkspaceCandidateVisual;mainVoice?:WorkspaceCandidateMainVoice;shotWindow?:{startFrame:number;durationInFrames:number};targetItemId:string;expectedTarget:ReturnType<typeof workspaceCandidateTarget>|null;source:{name?:string;id:string;kind:'audio'|'video'|'image';src:string;sha256:string;inputFingerprint:string;durationSeconds:number;sourceInSeconds?:number;fullDurationSeconds?:number;width?:number;height?:number};durationPolicy:'keep-target'|'use-candidate'}
 export function isWorkspaceCandidateEdit(value:unknown):value is WorkspaceCandidateEdit {if(!value||typeof value!=='object')return false;const e=value as WorkspaceCandidateEdit;const sound=e.videoSound;
+ if(e.source?.name!==undefined&&(typeof e.source.name!=='string'||!e.source.name.trim()||e.source.name.length>200))return false;
  if(e.mainVoice?.initialCaptionContract!==undefined&&!isValidShotCaptionContract(e.mainVoice.initialCaptionContract))return false;
  if(sound&&(e.source?.kind!=='video'||!e.visual?.shotId||!['silent','embedded','separate'].includes(sound.mode)))return false;
  if(sound?.mode==='separate'&&(!/^material-[a-f0-9-]{36}$/.test(sound.asset?.id??'')||sound.asset?.kind!=='audio'||!/^\/media\/uploads\/[a-f0-9]+\.[a-z0-9]+$/.test(sound.asset.src)||!Number.isSafeInteger(sound.asset.durationInFrames)||sound.asset.durationInFrames<1||!/^([a-f0-9]{64})$/.test(sound.sha256)))return false;
@@ -51,11 +53,11 @@ export function applyWorkspaceCandidate(project:OpenChatCutProject,edit:Workspac
  if(item&&(Number(item.playbackRate??1)!==1||item.edits))throw Error('目标已变速或分段，请先在原生编辑器明确恢复完整区间。');
  if(edit.durationPolicy==='keep-target'&&!main&&edit.source.kind!=='image'&&Number(item?.durationInFrames)>frames)throw Error('候选短于目标窗口，请明确采用候选时长。');
  if(edit.visual&&edit.durationPolicy==='use-candidate'&&Number(item?.durationInFrames)!==frames&&!edit.visual.acceptTimelineImpact)throw Error('候选时长将改变空隙或覆盖，请明确接受其它片段位置保持。');
- const asset={...(edit.visual?{width:edit.source.width,height:edit.source.height,sourceContentHash:edit.source.sha256,sourceRevision:`source-sha256-${edit.source.sha256}`}:{ }),id:edit.source.id,name:String(item?.name??edit.targetItemId),kind:edit.source.kind,src:edit.source.src,durationInFrames:assetFrames};
+ const asset={...(edit.visual?{width:edit.source.width,height:edit.source.height,sourceContentHash:edit.source.sha256,sourceRevision:`source-sha256-${edit.source.sha256}`}:{ }),id:edit.source.id,name:edit.source.name??String(item?.name??workspaceShotMediaName(main?.shotId??edit.visual?.shotId??'',main?'narration':'visual')),kind:edit.source.kind,src:edit.source.src,durationInFrames:assetFrames};
  const existing=next.assets.find(a=>a.id===asset.id);if(existing&&existing.src!==asset.src)throw Error('候选素材身份已变化。');if(!existing)next.assets.push(asset);
  const ambience=main?timeline.items.find(i=>i.id===`workspace-ambience-shot-${main.shotId}`):undefined,ambienceTrack=ambience?structuredClone(timeline.tracks[String(ambience.track)]):undefined;
  const activate=()=>{if(!main)return;next=applyWorkspaceAudioMix(next,{kind:'voice',workspaceId:main.workspaceId,shotId:main.shotId,visualItemIds:main.visualItemIds,mode:'tts',gainDb:0,ambienceGainDb:null,narrationAssetId:edit.source.id},{narrationDurationInFrames:appliedDuration});timeline=next.timelines.find(t=>t.id===timelineId)!;item=timeline.items.find(i=>i.id===edit.targetItemId);if(item)item.volume=main.volume;if(ambience){timeline.items.push(ambience);if(ambienceTrack)timeline.tracks[String(ambience.track)]=ambienceTrack;}};
- const created=!item;if(created)activate();if(!item)throw Error('主声音轨未建立。');
+ const created=!item;if(created)activate();if(created&&item&&edit.source.name)item.name=edit.source.name;if(!item)throw Error('主声音轨未建立。');
  if(main?.activate)item.startFrame=main.window.startFrame;
  Object.assign(item,{src:edit.source.src,sourceAssetId:asset.id,sourceRevision:`source-sha256-${edit.source.sha256}`,sourceContentHash:edit.source.sha256,loopControlCandidate:{inputFingerprint:edit.source.inputFingerprint,sourceId:edit.source.id,durationPolicy:edit.durationPolicy,startFrame:Number(item.startFrame),durationInFrames:appliedDuration,shotWindow:edit.shotWindow},srcInFrame:Math.round((edit.source.sourceInSeconds??0)*timeline.fps),durationInFrames:appliedDuration});
  if(edit.visual){

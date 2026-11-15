@@ -102,6 +102,17 @@ export async function probeVideoHasAudio(path:string):Promise<boolean>{
   return Boolean(stdout.trim());
 }
 
+/** Stream bounds, rather than container/video length, delimit actual audio use. */
+export async function inspectAudioStream(path:string):Promise<{hasAudio:boolean;startSeconds:number|null;endSeconds:number|null}>{
+  // Optional sound observations run inside a save transaction. Their probe must
+  // not inherit the five-minute media execution timeout; callers retain unknown.
+  const {stdout}=await promisify(execFile)('ffprobe',['-v','error','-select_streams','a:0','-show_entries','stream=start_time,duration:format=start_time,duration,nb_streams','-of','json',path],{timeout:5000,maxBuffer:4*1024*1024});
+  const probe=JSON.parse(stdout) as {streams?:Array<{start_time?:string;duration?:string}>;format?:{start_time?:string;duration?:string;nb_streams?:number}};
+  const audio=probe.streams?.[0];if(!audio)return{hasAudio:false,startSeconds:null,endSeconds:null};
+  const start=Number(audio.start_time??probe.format?.start_time??0),duration=Number(audio.duration??(probe.format?.nb_streams===1?probe.format.duration:undefined));
+  return{hasAudio:true,startSeconds:Number.isFinite(start)?start:null,endSeconds:Number.isFinite(start)&&Number.isFinite(duration)&&duration>0?start+duration:null};
+}
+
 export async function inspectMp4Artifact(path: string): Promise<{ durationSeconds: number; width: number; height: number; hasAudio: boolean; blackFrameCount: number }> {
   const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type,width,height", "-of", "json", path]);
   const inspected = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string; width?: number; height?: number }> };

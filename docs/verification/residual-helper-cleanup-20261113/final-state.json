@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "fullAfterSnapshotStillEqual": true,
+  "removed": true,
+  "functions": 379,
+  "metricEvents": 0,
+  "metricControls": 0
+}

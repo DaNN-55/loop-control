@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { assertOpenChatCutRuntime, openChatCutRenderEnvironment, openChatCutViteArguments } from "./openchatcut-render.mjs";
+import { assertOpenChatCutRuntime, openChatCutExportRange, openChatCutRenderEnvironment, openChatCutViteArguments } from "./openchatcut-render.mjs";
 
 const scriptPath = join(dirname(fileURLToPath(import.meta.url)), "openchatcut-render.mjs");
 const temporaryRoots = [];
@@ -93,4 +93,11 @@ describe("OpenChatCut 渲染运行时", () => {
     expect(result.status).toBe(0);
     expect(result.stdout.trim()).toBe("openchatcut@0.2.14");
   });
+});
+
+it("uses the actual half-open frame range for subsecond exports and retained audio tails", () => {
+  expect(openChatCutExportRange({items:[{startFrame:0,durationInFrames:15}]})).toEqual({startFrame:0,endFrameExclusive:15});
+  expect(openChatCutExportRange({items:[{startFrame:0,durationInFrames:60},{startFrame:60,durationInFrames:15},{startFrame:0,durationInFrames:90}]})).toEqual({startFrame:0,endFrameExclusive:90});
+  expect(openChatCutExportRange({items:[]})).toEqual({});
+  expect(() => openChatCutExportRange({items:[{startFrame:0,durationInFrames:NaN}]})).toThrow("frame range");
 });

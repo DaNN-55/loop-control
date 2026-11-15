@@ -67,7 +67,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const soundQuery=soundIntentQuery(prompt);
  const input=useRef<HTMLInputElement>(null),current=useRef(w),working=useRef(false);current.current=w;
  const reading=useWorkspaceReading(w,onChange,selectedShotId??'episode','无法读取当前工程版本。');
- const pollingError=useWorkspacePolling(reading,{enabled:!busy&&!!w.audio?.preparations.some(p=>p.taskId&&['ready','running'].includes(p.status)),interval:3000,
+ const pollingError=useWorkspacePolling(reading,{enabled:!busy&&!!w.audio?.preparations.some(p=>p.kind!=='source'&&p.taskId&&['ready','running'].includes(p.status)),interval:3000,
   load:value=>{if(working.current)throw Object.assign(Error('音频操作正在进行。'),{name:'AbortError'});return command('refreshWorkspaceAudio',{episodeId:value.episodeId,workspaceId:value.id,expectedRevision:value.revision}) as Promise<ProductionWorkspace>;}});
  useEffect(()=>{if(!bridge?.connected)return;let active=true;void bridge.inspect().then(value=>{if(active)setLive(value.document);}).catch(()=>{});return()=>{active=false;};},[bridge?.connected,w.project.sha256]);
  async function savedWorkspace(){if(!bridge)return current.current;await bridge.save();return reading.read();}
@@ -116,7 +116,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const nativeItems=new Map(doc?.timelines.flatMap(t=>t.items).map(item=>[String(item.id),item]));
  function currentSound(p:NonNullable<ProductionWorkspace['audio']>['preparations'][number]){const sound=mix?.sounds.find(s=>s.itemId===p.adoptedItemId),native=sound?nativeItems.get(sound.itemId):undefined,meta=native?.loopControlAudio as {preparationId?:string}|undefined;return meta?.preparationId&&meta.preparationId!==p.id?undefined:sound;}
  function placement(p:NonNullable<ProductionWorkspace['audio']>['preparations'][number]){const native=currentSound(p)?nativeItems.get(p.adoptedItemId!):undefined,meta=native?.loopControlAudio as {anchor?:string;shotId?:string}|undefined;return {anchor:meta?.anchor??p.anchor,shotId:meta?.shotId??p.shotId};}
- const effects=preparations.filter(p=>p.kind==='sfx'&&(!selectedShotId||placement(p).anchor==='shot'&&placement(p).shotId===selectedShotId)),absoluteEffects=selectedShotId?preparations.filter(p=>p.kind==='sfx'&&placement(p).anchor==='absolute'):[],other=preparations.filter(p=>p.kind==='bgm'?kind==='bgm':p.kind==='source'&&(!selectedShotId||p.shotId===selectedShotId));
+ const effects=preparations.filter(p=>p.kind==='sfx'&&(!selectedShotId||placement(p).anchor==='shot'&&placement(p).shotId===selectedShotId)),absoluteEffects=selectedShotId?preparations.filter(p=>p.kind==='sfx'&&placement(p).anchor==='absolute'):[],other=preparations.filter(p=>p.kind==='bgm'&&kind==='bgm');
  async function applySound(edit:WorkspaceAudioEdit){return perform(async saved=>{
   if(bridge)setLive(await bridge.applyNativeEdit('apply-audio-mix',{edit}));
   else reading.publish(await command('mixWorkspaceAudio',{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,edit}) as ProductionWorkspace);

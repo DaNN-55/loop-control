@@ -1,3 +1,4 @@
+import {workspaceRenderPreferences} from './workspaceRenderPreferences.js';
 import {readWorkspaceShotWindow,readWorkspaceShots,workspaceShotIdentity} from './workspaceShots.js';
 import {isValidShotCaptionContract,normalizeShotCaptionContract} from './shotCaptions.js';
 import type {ShotCaptionContract} from './shotCaptions.js';
@@ -22,9 +23,9 @@ export function applyWorkspaceCaptionEdit(project:OpenChatCutProject,itemId:stri
  contract=normalizeShotCaptionContract(contract,{enabled:contract.enabled,text:contract.text,aspectRatio:timeline.width===timeline.height?'1:1':timeline.width>timeline.height?'16:9':'9:16'});
  const laneId=window?.shotId?`workspace-caption-shot-${window.shotId}`:`workspace-caption-${itemId}`,slotId=`${laneId}-slot`;
  const nativeTrack=Object.entries(timeline.tracks).find(([,t])=>t.kind==='caption'&&t.captions?.sourceEntries?.some(e=>e.id===laneId))??Object.entries(timeline.tracks).find(([,t])=>t.kind==='caption'&&t.captions?.sourceEntries?.some(e=>e.loopControl?.version==='workspace-caption/v1'));
- const trackId=nativeTrack?.[0]??'workspace-captions';
+ const trackId=nativeTrack?.[0]??'workspace-captions',preset=window?.shotId?workspaceRenderPreferences(next,window.shotId)?.captionStyle:undefined;
  let track=timeline.tracks[trackId];
- if(!track){track=timeline.tracks[trackId]={kind:'caption',name:'字幕',captions:{enabled:true,template:'plain',pacing:'phrase',sourceMode:'item',sourceEntries:[],layoutPolicy:{mode:'manual-slots',slots:[]},perSource:{}}};timeline.trackOrder.push(trackId);}
+ if(!track){track=timeline.tracks[trackId]={kind:'caption',name:'字幕',captions:{enabled:true,template:preset==='cinematic'?'black-bar':'plain',pacing:'phrase',sourceMode:'item',sourceEntries:[],layoutPolicy:{mode:'manual-slots',slots:[]},perSource:{}}};timeline.trackOrder.push(trackId);}
  const captions=track.captions!,existing=captions.sourceEntries?.find(e=>e.id===laneId),spatial=contract.spatial;
  const insets=spatial.insets!,anchor=spatial.anchor,width=1-insets.left-insets.right,height=1-insets.top-insets.bottom;
  const offsetX=anchor.endsWith('-left')?insets.left-.1:anchor.endsWith('-right')?.1-insets.right:(insets.left-insets.right)/2;
@@ -38,7 +39,7 @@ export function applyWorkspaceCaptionEdit(project:OpenChatCutProject,itemId:stri
  // Native manual lanes consume explicit newlines. Never rely on the unsupported
  // maxCharactersPerLine knob or on generated-lane fixed 24-character paging.
  const fontSize=Math.min(.045,width*timeline.width/(timeline.height*Math.max(1,spatial.maxCharactersPerLine)*1.1),height/(spatial.maxLines*1.5));
- const lane={...existing,id:laneId,itemId:`manual:${laneId}`,label:'字幕',slotId,visible:contract.enabled,anchor,offsetXRatio:offsetX,offsetYRatio:offsetY,widthRatio:width,heightRatio:height,words,style:{fontFamily:'sans-serif',fontWeight:600,color:'#ffffff',...existing?.style,fontSize,wholeLine:true},loopControl:{version:'workspace-caption/v1',contentMode:contract.contentMode,text:contract.text,spatial:structuredClone(spatial)}};
+ const lane={...existing,id:laneId,itemId:`manual:${laneId}`,label:'字幕',slotId,visible:contract.enabled,anchor,offsetXRatio:offsetX,offsetYRatio:offsetY,widthRatio:width,heightRatio:height,words,style:{fontFamily:preset?'Noto Sans SC':'sans-serif',fontWeight:preset==='cinematic'?700:600,color:'#ffffff',...(preset?{highlightColor:'#ffffff',strokeColor:'#000000',strokeWidth:preset==='cinematic'?0:2.5,background:preset==='cinematic'?'#000000c9':'transparent'}:{}),...existing?.style,fontSize,wholeLine:true},loopControl:{version:'workspace-caption/v1',contentMode:contract.contentMode,text:contract.text,spatial:structuredClone(spatial)}};
  const applied=options.timingOnly&&existing?{...existing,words,loopControl:lane.loopControl}:lane;
  captions.sourceEntries=existing?captions.sourceEntries.map(e=>e.id===laneId?applied:e):[...(captions.sourceEntries??[]),lane];
  const oldSlots=captions.layoutPolicy?.mode==='manual-slots'?captions.layoutPolicy.slots:[];

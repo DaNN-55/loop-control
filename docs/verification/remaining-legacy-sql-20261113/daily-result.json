@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "applied": "173-remove-retired-studio-storyboard-entry.sql",
+  "removed": [
+    "public.request_studio_storyboard_revision(uuid,text)",
+    "public.orchestrate_storyboard_tasks_for_episode(uuid)"
+  ],
+  "privateRecovery": "/Users/dan/Programs/loop-control/.loop-control/local/studio-entry-cleanup-173-432383175034",
+  "backupSha256": "64c22cb6f37e6bc9e24143b25a84f2b83f564e64e0e12b05c8d65209cdaccc8f",
+  "dumpRestoreVerified": true,
+  "rehearsalVerified": true,
+  "unchangedTables": 120,
+  "unchangedRows": 203,
+  "oldLedgerRows": 170,
+  "newLedgerRows": 171,
+  "allOtherCatalogAndAclPreserved": true,
+  "sequencesAndRolesPreserved": true,
+  "frozenOldDatabasePreserved": true,
+  "pid": 51263,
+  "http": 200,
+  "serviceRestarted": false,
+  "candidateRemoved": true
+}

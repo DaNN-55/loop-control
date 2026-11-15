@@ -1,0 +1,60 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx (35 tests | 1 failed | 34 skipped) 165ms
+   ↓ shows and previews the verified initial video interval without adopting or generating
+   ↓ sends an explicit zero start with the displayed imported interval and waits for adoption confirmation
+   ↓ resets each selected video to its own source interval and describes the selected duration
+   ↓ reopens an adopted video at the actual native source window rather than its original import interval: {"sourceFrame":0,"rate":1,"start":"0","end":"1"}
+   ↓ reopens an adopted video at the actual native source window rather than its original import interval: {"sourceFrame":15,"rate":2,"start":"0.5","end":"2.5"}
+   × uses the adopted native window immediately even when the pending form retained an explicit end 164ms
+     → expected '1.5' to be '1' // Object.is equality
+   ↓ invalidated queued image is historical and cannot keep the generation form busy
+   ↓ invalidated queued video is historical and cannot keep the generation form busy
+   ↓ starts both tabs with placeholders and keeps API fields out of the upload flow
+   ↓ preserves each target’s generation draft across tabs and shot selection
+   ↓ image thumbnails preview without adopting or changing the explicitly chosen video first frame
+   ↓ explicit image generation freezes reference IDs, count, quality and dimensions without adopting
+   ↓ keeps the original image draft visible when its model is disabled in connection settings
+   ↓ keeps the original video draft visible when its model is disabled in connection settings
+   ↓ keeps the adopted video when manually choosing an image as fallback
+   ↓ keeps 图片 candidate actions without a generation settings entry
+   ↓ keeps 视频 candidate actions without a generation settings entry
+   ↓ retains explicit connection choices through shot switches and refresh without submitting
+   ↓ video choice and input conflicts survive refresh while actual voice is checked against the chosen model
+   ↓ formal video entry offers Pexels query without a generation model or first frame
+   ↓ keeps a cleared image override blank across target switches and reopening with a legacy default
+   ↓ keeps a cleared video override blank across target switches and reopening with a legacy default
+   ↓ keeps a cleared Pexels connection and query across target switches and reopening without searching
+   ↓ requires explicit image selection and adoption and preserves old candidates on append
+   ↓ requires explicit video selection and adoption and preserves old candidates on append
+   ↓ keeps stale and read-only candidates visible while disallowing adoption
+   ↓ adds an existing episode image to results without adopting or submitting generation
+   ↓ adds an existing episode video to results without adopting or submitting generation
+   ↓ assigns video roles by shared input order and submits only the selected mode’s compatible materials
+   ↓ returns focus to the direct image action after cancelling inline adoption
+   ↓ navigates the vertical candidate rail with up/down and retains left/right, Home/End without adopting
+   ↓ downloads the selected original image through the existing fingerprinted artifact route
+   ↓ switches video generation and Pexels in one picker while preserving independent drafts and search settings
+   ↓ restores legacy Pexels query and connection without converting them to a video generation selection
+   ↓ formats the actual voice duration without rounding the generation request
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > uses the adopted native window immediately even when the pending form retained an explicit end
+AssertionError: expected '1.5' to be '1' // Object.is equality
+
+Expected: "1"
+Received: "1.5"
+
+ ❯ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx:76:150
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 34 skipped (35)
+   Start at  14:53:56
+   Duration  1.97s (transform 373ms, setup 8ms, collect 1.42s, tests 165ms, environment 258ms, prepare 33ms)
+

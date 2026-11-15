@@ -1,0 +1,25 @@
+{
+  "standards": {
+    "openFindings": 0,
+    "finalMatrixRead": true,
+    "currentSourceShaRecomputed": 1680,
+    "defaultSuiteVersion": "run-kdaMnp/source",
+    "deltaVersion": "run-C9tVXC/source",
+    "mixedBatchAndFilteredCasesKeptSeparate": true
+  },
+  "spec": {
+    "openFindings": 0,
+    "a1OpenFindings": 0,
+    "f2OpenFindings": 0,
+    "allApprovedAtoGRequirementsClosed": true,
+    "finalMatrix": {
+      "run": "run-VIQ06l",
+      "files": 8,
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0
+    },
+    "historicalEvidenceReusedWhenApplicable": true
+  },
+  "source": "readonly review_integration_standards and review_integration_spec final replies, 2026-11-15"
+}

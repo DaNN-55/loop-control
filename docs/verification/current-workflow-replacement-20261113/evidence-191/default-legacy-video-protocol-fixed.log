@@ -1,0 +1,21 @@
+E2E evidence: /private/tmp/loop-story-e2e-2BwSI1/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-2BwSI1/source
+
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (23 tests | 21 skipped) 4587ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (current protocol)  2550ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (legacy protocol)  2036ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 21 skipped (23)
+   Start at  23:41:17
+   Duration  5.50s (transform 542ms, setup 8ms, collect 779ms, tests 4.59s, environment 0ms, prepare 33ms)
+
+JSON report written to /private/tmp/loop-story-e2e-2BwSI1/evidence/vitest.json

@@ -1,0 +1,24 @@
+E2E evidence: /private/tmp/loop-story-e2e-PWizMG/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-PWizMG/source
+
+ ✓ src/local-app/productionPreparation.integration.test.ts (4 tests) 11967ms
+   ✓ registers an independent preparation with stable shot identities, immutable retries and Owner-only access without legacy review records  3939ms
+   ✓ the local preparation file boundary rejects missing files, wrong SHA or size and a manifest different from the actual bytes before registration  2753ms
+   ✓ Owner permanent deletion removes an independently registered preparation only after the existing archive and exact-file confirmation gates  2972ms
+   ✓ 187 adds independent storage without rewriting a nonempty old project, draft, audio or frozen task and supports atomic upgrade and full restore  2302ms
+ ↓ src/local-app/storyE2e.integration.test.ts (24 tests | 24 skipped)
+
+ Test Files  1 passed | 1 skipped (2)
+      Tests  4 passed | 24 skipped (28)
+   Start at  18:23:21
+   Duration  13.05s (transform 508ms, setup 8ms, collect 853ms, tests 11.97s, environment 0ms, prepare 54ms)
+
+JSON report written to /private/tmp/loop-story-e2e-PWizMG/evidence/vitest.json

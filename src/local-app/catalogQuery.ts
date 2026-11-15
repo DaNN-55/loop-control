@@ -32,9 +32,9 @@ export const localCatalogSql=` with owned_base as materialized (
    coalesce(x.status='ready' and x.artifact is not null and not exists(select 1 from jsonb_array_elements(case when jsonb_typeof(x.checks)='array' then x.checks else '[]'::jsonb end) check_row where check_row->>'passed' is distinct from 'true'),false) export_ready,
    d.task_id delivery_task_id,d.status delivery_status,
    exists(select 1 from local_identity.workspace_export_issues i where i.workspace_id=w.id and i.resolved_at is null) open_issue,
-   coalesce(e.main_script_revision_id=w.script_revision_id and p.invalidated_at is null,false) basis_current
+   coalesce(e.main_script_revision_id=w.script_revision_id and local_identity.preparation_source_current(p.id),false) basis_current
   from owned e join local_identity.production_workspaces w on w.episode_id=e.id
-  join public.review_packages p on p.id=w.storyboard_package_id
+  join local_identity.production_preparation_revisions p on p.id=w.preparation_revision_id and p.episode_id=w.episode_id and p.script_revision_id=w.script_revision_id
   left join lateral(select x.* from local_identity.workspace_exports x where x.workspace_id=w.id order by x.created_at desc,x.id desc limit 1)x on true
   left join lateral(select t.id task_id,t.status from local_identity.workspace_deliveries d join public.tasks t on t.id=d.task_id where d.workspace_id=w.id and d.export_id=x.id order by d.created_at desc,d.id desc limit 1)d on true
  ), current_packages as materialized (

@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-gqm11B/source
+
+ ✓ src/local-app/retiredResidualHelpers.integration.test.ts (1 test) 18474ms
+   ✓ 183 removes only four unused helpers after full history and frozen source-audio restore while preserving current locks and all guards  18473ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  12:46:32
+   Duration  21.26s (transform 1.68s, setup 16ms, collect 2.46s, tests 18.47s, environment 0ms, prepare 75ms)
+
+JSON report written to /private/tmp/loop-story-e2e-gqm11B/evidence/vitest.json

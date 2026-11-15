@@ -1,0 +1,16 @@
+{
+  "passed": 56,
+  "files": 8,
+  "skipped": 0,
+  "fullTypecheck": true,
+  "sourceFiles": 1408,
+  "sqlUnchanged": true,
+  "headUnchanged": true,
+  "physicalIndexUnchanged": true,
+  "noDailyMutation": true,
+  "realPaidProviderCalls": 0,
+  "realVideoApiCalls": 0,
+  "goalComplete": false,
+  "ownedRunsWithoutContainerResidue": 12,
+  "databaseContainersRemoved": 11
+}

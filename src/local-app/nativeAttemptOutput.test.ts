@@ -34,7 +34,7 @@ function database(activeAttempt:number,failReport=false,failCommit=false,outputC
   if(sql.includes('episode_storage_location'))return{rows:[{account_id:'account',directory_relative_path:`episodes/${episodeId}`,directory_device_id:null,directory_inode_id:null,storage_series_id:null,layout_version:1}]};
   if(sql.includes('native_output_authority')){if(values?.[1]!==activeAttempt)throw Error('Lease expired');return{rows:[{authority:{output:outputContract,reviewProjectPath:null,finalProjectPath:null,status:'running',inputHash:'frozen-input',artifacts:[],conflicts:[]}}]};}
   if(sql==='COMMIT'&&failCommit)throw Error('Commit outcome unknown');
-  if(sql.includes('input_worker_call')){
+  if(sql.includes('execute_managed_worker_command')){
    const args=values?.[1] as {p_attempt:number};
    if(args.p_attempt!==activeAttempt)throw Error('Lease expired');
    if(values?.[0]==='report_worker_result'){if(failReport)throw Error('Result registration failed');accepted.push(args.p_attempt);}
@@ -129,7 +129,7 @@ it('retains failed attempt files without reporting them as accepted or repeating
  await writeSafeAssetFile(attempt.taskPackage.assets.allowedRoot,output,'unregistered output');
  const db=database(0,true);await expect(attempt.publish(db.pool,result('unregistered output'))).rejects.toThrow('Result registration failed');
  expect(await readFile(join(attempt.taskPackage.assets.allowedRoot,output),'utf8')).toBe('unregistered output');
- expect(db.accepted).toEqual([]);expect(db.operations).toEqual(['SELECT local_identity.begin_native_output_publication($1,$2,$3)','BEGIN','SELECT local_identity.input_worker_call($1,$2)','SELECT local_identity.native_output_authority($1,$2,$3,$4) authority','SAVEPOINT native_output_publication','SELECT local_identity.input_worker_call($1,$2)','ROLLBACK TO SAVEPOINT native_output_publication','ROLLBACK','SELECT local_identity.finish_native_output_publication($1,$2,$3)','release']);
+ expect(db.accepted).toEqual([]);expect(db.operations).toEqual(['SELECT local_identity.begin_native_output_publication($1,$2,$3)','BEGIN','SELECT local_identity.execute_managed_worker_command($1,$2)','SELECT local_identity.native_output_authority($1,$2,$3,$4) authority','SAVEPOINT native_output_publication','SELECT local_identity.execute_managed_worker_command($1,$2)','ROLLBACK TO SAVEPOINT native_output_publication','ROLLBACK','SELECT local_identity.finish_native_output_publication($1,$2,$3)','release']);
 });
 
 it('restores an existing canonical file before releasing the task transaction when result registration fails',async()=>{

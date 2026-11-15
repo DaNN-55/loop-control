@@ -60,7 +60,7 @@ export async function createNativeApplication(d){
   return current.handler(q,r);
  },close:async()=>{if(closed)return;closed=true;await previousPending?.close();await current.close();}};
 async function createNativeInstance(d,activate,lifecycle){
- const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,mediaRootSettings,closing;function close(){return closing??=(async()=>{accounts?.close();mediaRootSettings?.close();await automation?.stop();await episodes?.close();await worker?.stop();await pool.end();})();}
+ const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,metricsSampler,metricsPool,mediaRootSettings,closing;function close(){return closing??=(async()=>{accounts?.close();mediaRootSettings?.close();await metricsSampler?.stop();await metricsPool?.end();await automation?.stop();await episodes?.close();await worker?.stop();await pool.end();})();}
  try{
  const authorization=readMediaRootAuthorization(d);if(authorization?.operation==='migration'){const proof=(await pool.query(migrationProofQuery(authorization))).rows[0].media_root_publication_proof;verifyMediaRootMigrationProof(proof,authorization);}
  const binding=d.mediaRootBinding??await inspectMediaRoot(d.mediaRoot);
@@ -80,6 +80,13 @@ async function createNativeInstance(d,activate,lifecycle){
  const connections=new LocalConnections(pool,store,probe);episodes=worker?new LocalEpisodeCommands(pool,d.mediaRoot,{...d.worker,...worker,checkReferences:(c,refs,options)=>connections.assertBlueprintReferences(c,refs,options)}):undefined;
  accounts=new LocalAccountCommands(pool,d.mediaRoot,episodes);
  automation=await startNativeAutomation({backupsEnabled:d.automaticBackups!==false,pool,projectRoot:d.projectRoot,runtimeRelease:d.runtimeRelease,recordSchedule:!worker,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,backup:nativeBackup(d.projectRoot,d.database.database,d.mediaRoot,d.backupRoot,{script:d.backupScript,environment:d.backupEnvironment}),...(d.controlledNotifications?{send:async m=>appendFileSync(join(d.stateDirectory,'notification-private.jsonl'),JSON.stringify({id:m.eventId,at:new Date().toISOString()})+'\n',{mode:0o600})}:{})});
+ // No module/schema access until a future explicit deployment opts in. Database
+ // Owner control is checked separately on every observation.
+ if(d.productionMetrics?.enabled===true){
+  const {startOwnerProductionMetricsSampler}=await load('local-app/productionMetricsSampler.js');
+  metricsPool=createLocalDatabase(d.database);
+  metricsSampler=startOwnerProductionMetricsSampler({pool:metricsPool,ownerId:d.productionMetrics.ownerId,enabled:true,localExports:ownerId=>episodes?.activeLocalExports(ownerId)??0});
+ }
  const historyRoot=join(d.runtimeRoot,'history/content');
  const storageResources=[{kind:'program',path:d.projectRoot},{kind:'runtime',path:d.runtimeRoot},{kind:'state',path:d.stateDirectory},{kind:'program',path:d.openChatCut?.root},{kind:'model-cache',path:d.worker?.alignment?.cacheDirectory},{kind:'history',path:historyRoot},{kind:'backup',path:d.backupRoot},{kind:'secrets'}].filter(r=>r.path||r.kind==='secrets');
  mediaRootSettings=new LocalMediaRootSettings(pool,d.mediaRoot,{resources:storageResources,pendingOperations:async()=>readPendingMediaRootDeployment(d)?[{kind:'publication',reason:'本机存储配置发布尚未完成，请先恢复原操作。'}]:[],minimumFreeBytes:d.worker?.minimumFreeBytes??0,retainedRoots:[d.worker?.alignment?.cacheDirectory].filter(p=>typeof p==='string'),protectedRoots:[...sourceRoots,historyRoot,d.runtimeRoot,d.projectRoot,d.stateDirectory,d.backupRoot,d.openChatCut?.root,d.worker?.alignment?.cacheDirectory].filter(p=>typeof p==='string'),...lifecycle,persist:(binding,publication)=>persistMediaRootDeployment(d,binding,publication),activate});

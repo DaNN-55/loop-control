@@ -1,0 +1,605 @@
+{
+  "passed": true,
+  "defaultFinal": {
+    "files": 352,
+    "passed": 2132,
+    "failed": 0,
+    "skipped": 0,
+    "singleRun": true
+  },
+  "integrationLatest": {
+    "passed": 73,
+    "failed": 0,
+    "pending": 0,
+    "skipped": 0
+  },
+  "integrationFiles": 20,
+  "groups": [
+    {
+      "name": "184-targets",
+      "evidence": "/private/tmp/loop-story-e2e-jxGZPU/evidence",
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "containerRemoved": true
+    },
+    {
+      "name": "legacy-protection",
+      "evidence": "/private/tmp/loop-story-e2e-mKpBuO/evidence",
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "containerRemoved": true
+    },
+    {
+      "name": "current-recovery",
+      "evidence": "/private/tmp/loop-story-e2e-saSl0f/evidence",
+      "passed": 23,
+      "failed": 2,
+      "skipped": 0,
+      "containerRemoved": true
+    },
+    {
+      "name": "deletion-history",
+      "evidence": "/private/tmp/loop-story-e2e-d3dp2b/evidence",
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0,
+      "containerRemoved": true
+    },
+    {
+      "name": "184-final-targets",
+      "evidence": "/private/tmp/loop-story-e2e-eqPJCM/evidence",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "containerRemoved": true
+    },
+    {
+      "name": "formal-recovery-final",
+      "evidence": "/private/tmp/loop-story-e2e-JaA0Yi/evidence",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "containerRemoved": true
+    }
+  ],
+  "latestIntegration": [
+    {
+      "file": "accountCreation.integration.test.ts",
+      "cases": [
+        {
+          "name": "first account on a native workspace without import history owns one persisted real directory and survives replay and rename",
+          "status": "passed"
+        },
+        {
+          "name": "real native new installation creates its first account without import data and resumes a killed creation in the same directory",
+          "status": "passed"
+        },
+        {
+          "name": "creation faults preserve unknown files, clean only owned empty folders and resume the pre-marker crash window",
+          "status": "passed"
+        },
+        {
+          "name": "creation cleanup preserves same-byte replacement markers and final registration refuses a replacement directory",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredShotReviewSql.integration.test.ts",
+      "cases": [
+        {
+          "name": "174 preserves nonempty legacy review history through a full restore, removes only retired producers and fails closed",
+          "status": "passed"
+        },
+        {
+          "name": "retired shot review HTTP requests preserve Owner and CSRF fences and never replay a successful old receipt",
+          "status": "passed"
+        },
+        {
+          "name": "a leased historical revision result retains evidence without producing or approving a new storyboard and keeps lease and frozen-path guards",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredTriggerFunctions.integration.test.ts",
+      "cases": [
+        {
+          "name": "184 removes only three retired trigger pairs after nonempty full history restore while preserving frozen evidence and the storyboard completion guard",
+          "status": "passed"
+        },
+        {
+          "name": "retained storyboard completion validates historical frozen inputs through a real saved Worker port and produces its original review without approving it",
+          "status": "passed"
+        },
+        {
+          "name": "current and all saved account creation commands own real directories and replay without obsolete prompt seeds; original prompt rows stay immutable",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "legacyReceivedRetry.integration.test.ts",
+      "cases": [
+        {
+          "name": "17/24 legacy received without recoverable evidence requires a new confirmation; fact/hold still prohibit it: image",
+          "status": "passed"
+        },
+        {
+          "name": "17/24 legacy received without recoverable evidence requires a new confirmation; fact/hold still prohibit it: speech",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "productionRevisions.integration.test.ts",
+      "cases": [
+        {
+          "name": "immutable script reconfirmation preserves Owner, version, idle and idempotency fences after old shot revision removal",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredInitialization.integration.test.ts",
+      "cases": [
+        {
+          "name": "180 removes only unused initialization entries after restoring account, rule and delegated-task history without altering bindings or guards",
+          "status": "passed"
+        },
+        {
+          "name": "current Owner rule save, draft creation and activation preserve frozen Episode bindings after 180",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredLegacyExecution.integration.test.ts",
+      "cases": [
+        {
+          "name": "retired repair and automatic dispatch reject execution while keeping history and current ownership boundaries",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredShotPreparation.integration.test.ts",
+      "cases": [
+        {
+          "name": "179 removes only unused shot entries after full restore of real historical drafts, audio and frozen evidence while retaining freeze protection",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredSqlRuntimeCompatibility.integration.test.ts",
+      "cases": [
+        {
+          "name": "175 removes only four unused rejection entries after full history restore and preserves every retained definition and ACL",
+          "status": "passed"
+        },
+        {
+          "name": "real saved runtime modules still pass Worker startup, reject old planning and scan no enabled history after 175",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "workflowLegacyRules.integration.test.ts",
+      "cases": [
+        {
+          "name": "48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence",
+          "status": "passed"
+        },
+        {
+          "name": "retired Studio structural return preserves all packages, stage and immutable QC files behind Owner and CSRF checks",
+          "status": "passed"
+        },
+        {
+          "name": "a running historical storyboard revision cannot reactivate the retired Studio structural return",
+          "status": "passed"
+        },
+        {
+          "name": "48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "formalWorkflow.delivery.integration.test.ts",
+      "cases": [
+        {
+          "name": "formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "formalWorkflow.integration.test.ts",
+      "cases": [
+        {
+          "name": "Owner prepares a confirmed fresh script before visual materials exist without a planner",
+          "status": "passed"
+        },
+        {
+          "name": "Owner builds a formal incomplete draft without old storyboard approvals",
+          "status": "passed"
+        },
+        {
+          "name": "first formal adoption preserves the latest unsubmitted legacy Studio document",
+          "status": "passed"
+        },
+        {
+          "name": "late legacy render reports retain artifacts without advancing or approving the adopted workspace",
+          "status": "passed"
+        },
+        {
+          "name": "fresh formal and added shots generate through the real controlled Provider Worker without legacy approval",
+          "status": "passed"
+        },
+        {
+          "name": "retired planner retries cannot alter historical tasks or the confirmed script",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "legacyAdoptionWorker.integration.test.ts",
+      "cases": [
+        {
+          "name": "a committed native attempt keeps its frozen inode, task, fee and Provider submission while adoption relocates publication recovery",
+          "status": "passed"
+        },
+        {
+          "name": "the compiled delivery Worker consumes the original queued manifest and publishes unchanged logical references after adoption and source offline",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "restorePublication.integration.test.ts",
+      "cases": [
+        {
+          "name": "SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover",
+          "status": "passed"
+        },
+        {
+          "name": "SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover",
+          "status": "passed"
+        },
+        {
+          "name": "SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover",
+          "status": "passed"
+        },
+        {
+          "name": "SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "workspaceAudio.integration.test.ts",
+      "cases": [
+        {
+          "name": "Owner prepares manual episode music, adopts actual audio and persists native independent mix",
+          "status": "passed"
+        },
+        {
+          "name": "Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart",
+          "status": "passed"
+        },
+        {
+          "name": "source mode uses real native source extraction task without fabricating a legacy video-ready draft",
+          "status": "passed"
+        },
+        {
+          "name": "actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots",
+          "status": "passed"
+        },
+        {
+          "name": "real loop_worker planning never queues legacy soundtrack cues for an editable native workspace",
+          "status": "passed"
+        },
+        {
+          "name": "real loop_worker planning leaves historical soundtrack cues unchanged outside native workspaces",
+          "status": "passed"
+        },
+        {
+          "name": "nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot",
+          "status": "passed"
+        },
+        {
+          "name": "explicit narration adoption advances the shared edit fence and late first results remain candidates",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "workspaceDelivery.integration.test.ts",
+      "cases": [
+        {
+          "name": "Owner delivery requires an exact confirmed export",
+          "status": "passed"
+        },
+        {
+          "name": "real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart",
+          "status": "passed"
+        },
+        {
+          "name": "a queued package cannot complete or retry against a different final export",
+          "status": "passed"
+        },
+        {
+          "name": "delivery records the used trimmed voice source and never substitutes an unadopted draft text",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "accountDeletionStorage.integration.test.ts",
+      "cases": [
+        {
+          "name": "account deletion cleans only registered empty containers, retaining unknown parents and immutable completed creation history",
+          "status": "passed"
+        },
+        {
+          "name": "a pending registered container creation reserves its account against parent deletion",
+          "status": "passed"
+        },
+        {
+          "name": "a parent account cannot cascade an active, archived or completed production",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "episodeDeletionStorage.integration.test.ts",
+      "cases": [
+        {
+          "name": "Owner confirms actual collection files while unknown manual files remain byte-identical",
+          "status": "passed"
+        },
+        {
+          "name": "another Owner business dependency blocks ordinary deletion before any file changes",
+          "status": "passed"
+        },
+        {
+          "name": "successful exact cleanup removes only reviewed title links to the deleted directory",
+          "status": "passed"
+        },
+        {
+          "name": "a retained manual document keeps its referenced owned bytes and unknown empty directory intact",
+          "status": "passed"
+        },
+        {
+          "name": "unknown paid submission blocks confirmed deletion without changing any registered file",
+          "status": "passed"
+        },
+        {
+          "name": "a safely rolled back confirmation releases its reservation for a newly reviewed inventory",
+          "status": "passed"
+        },
+        {
+          "name": "a new PID resumes link-before-unlink interruption using only the original durable scope",
+          "status": "passed"
+        },
+        {
+          "name": "a new PID resumes before-finalize interruption using only the original durable scope",
+          "status": "passed"
+        },
+        {
+          "name": "a new PID resumes after-first-finalize interruption using only the original durable scope",
+          "status": "passed"
+        },
+        {
+          "name": "a new PID resumes restore-uncommitted interruption using only the original durable scope",
+          "status": "passed"
+        },
+        {
+          "name": "an old cleanup receipt without exact file authority remains pending and explains its preserved staging files",
+          "status": "passed"
+        },
+        {
+          "name": "rollback preserves an unknown file inserted at the actual restore publication boundary",
+          "status": "passed"
+        },
+        {
+          "name": "staging never overwrites an unknown file inserted at the actual filesystem publication boundary",
+          "status": "passed"
+        },
+        {
+          "name": "a new Owner HTTP PID restores the exact staged files after SIGKILL and resumes the original confirmation",
+          "status": "passed"
+        },
+        {
+          "name": "a durable exact confirmation is committed before filesystem staging and survives business rollback",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "recycleBin.integration.test.ts",
+      "cases": [
+        {
+          "name": "quota counts real registered bytes, sweeps safe FIFO on mutation, preserves newest and oversized item",
+          "status": "passed"
+        },
+        {
+          "name": "unknown and running work block entry; offline or changed files block restore; protected manual files survive quota",
+          "status": "passed"
+        },
+        {
+          "name": "hardlinked bytes are counted once and protected, account cannot orphan trash, concurrent restore has one winner",
+          "status": "passed"
+        },
+        {
+          "name": "real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state",
+          "status": "passed"
+        },
+        {
+          "name": "recycle enforces Owner, CSRF, revision, durable duplicate receipts and explicit permanent confirmation",
+          "status": "passed"
+        },
+        {
+          "name": "recycle schema applies forward without rewriting existing migration checksums",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "file": "retiredHistoryManagement.integration.test.ts",
+      "cases": [
+        {
+          "name": "182 removes only unused history management entries after full nonempty restore while preserving receipts, evidence and all guards",
+          "status": "passed"
+        }
+      ]
+    }
+  ],
+  "retainedGuardCounterfactual": {
+    "guardPresentPassed": 1,
+    "guardAbsentRejectedAssertionFailedAsExpected": 1
+  },
+  "uiDiagnosis": {
+    "unmodifiedIsolatedPasses": 20,
+    "earliestDomBoundaryFailed": 2,
+    "readerReadObservedInactive": 2,
+    "actFlushFixedPasses": 2
+  },
+  "source": {
+    "passed": true,
+    "files": 1334,
+    "mismatch": [],
+    "originalExistingFilesChanges": [
+      [
+        "src/local-app/retiredTriggerFunctions.integration.test.ts",
+        "changed"
+      ],
+      [
+        "PLAN.md",
+        "changed"
+      ],
+      [
+        "docs/adr/README.md",
+        "changed"
+      ],
+      [
+        "scripts/e2e/clean-schema.mjs",
+        "changed"
+      ],
+      [
+        "src/local-app/ProductionWorkspacePanel.operations.test.tsx",
+        "changed"
+      ],
+      [
+        "src/local-app/formalWorkflow.delivery.integration.test.ts",
+        "changed"
+      ],
+      [
+        "src/local-app/legacyAdoptionWorker.integration.test.ts",
+        "changed"
+      ]
+    ]
+  },
+  "schema": {
+    "passed": true,
+    "project": "/private/tmp/loop-retired-trigger-cleanup-20261113-dlds6fjh/source",
+    "container": "loop-clean-schema-73b2b856948a",
+    "containerRemoved": true,
+    "sourceExportProvided": false,
+    "results": {
+      "freshGeneration": true,
+      "freshLedgerDoesNotInventHistory": true,
+      "freshRerunNoOp": true,
+      "olderPrefixUpgrades": true,
+      "olderUpgradeRerunNoOp": true,
+      "InjectedFailureRollsBack": true,
+      "allBusinessRowsPreserved": true,
+      "sequenceStatePreserved": true,
+      "unaffectedSecurityAclPreserved": true,
+      "freshAndUpgradedSecurityMatch": true,
+      "legacyLedgerPreserved": true,
+      "legacyRerunNoOp": true,
+      "oldExportHistoricalRowsPreserved": true,
+      "oldExportConstraintRetainsExistingOnly": true,
+      "oldProviderNewWritesRejected": true,
+      "freshAndUpgradedCatalogMatch": true,
+      "onlySkippedHistoricalGuardsRetainOldNames": true,
+      "securityInventory": {
+        "md5": "97b679b11838b16b5b101c519fb6aebf",
+        "count": 555
+      },
+      "clusterRoles": [
+        {
+          "rolname": "loop_anonymous",
+          "rolsuper": false,
+          "rolconfig": null,
+          "rolinherit": true,
+          "rolcanlogin": false,
+          "rolcreatedb": false,
+          "rolbypassrls": false,
+          "rolconnlimit": -1,
+          "rolcreaterole": false,
+          "rolvaliduntil": null,
+          "rolreplication": false
+        },
+        {
+          "rolname": "loop_app",
+          "rolsuper": false,
+          "rolconfig": null,
+          "rolinherit": true,
+          "rolcanlogin": true,
+          "rolcreatedb": false,
+          "rolbypassrls": false,
+          "rolconnlimit": -1,
+          "rolcreaterole": false,
+          "rolvaliduntil": null,
+          "rolreplication": false
+        },
+        {
+          "rolname": "loop_owner",
+          "rolsuper": false,
+          "rolconfig": null,
+          "rolinherit": true,
+          "rolcanlogin": false,
+          "rolcreatedb": false,
+          "rolbypassrls": false,
+          "rolconnlimit": -1,
+          "rolcreaterole": false,
+          "rolvaliduntil": null,
+          "rolreplication": false
+        },
+        {
+          "rolname": "loop_worker",
+          "rolsuper": false,
+          "rolconfig": null,
+          "rolinherit": true,
+          "rolcanlogin": true,
+          "rolcreatedb": false,
+          "rolbypassrls": false,
+          "rolconnlimit": -1,
+          "rolcreaterole": false,
+          "rolvaliduntil": null,
+          "rolreplication": false
+        }
+      ],
+      "roleMemberships": [
+        {
+          "set": true,
+          "role": "loop_owner",
+          "admin": false,
+          "member": "loop_app",
+          "inherit": true
+        }
+      ],
+      "remainingLegacyGuards": [
+        "local_identity.reject_retired_blueprint_provider",
+        "local_identity.without_retired_provider_capabilities"
+      ],
+      "tablesCompared": 120,
+      "businessRows": 7
+    }
+  }
+}

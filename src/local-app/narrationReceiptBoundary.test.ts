@@ -14,6 +14,7 @@ it.each(['legacy-reserve-false','confirmed-route-null','transport-disconnected',
   const queries:string[]=[];
   const pool={query:async(sql:string)=>{
    queries.push(sql);
+   if(sql.includes('to_regprocedure'))return{rows:[{present:false}]}; // This legacy-boundary scenario has no metrics schema.
    if(sql.includes('input_task_connection'))return{rows:[{provider:'volcengine_tts',adapter:'volcengine_tts',endpoint:'https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse',version_id:'11111111-1111-4111-8111-111111111111',secret_ref:'synthetic-ref'}]};
    if(sql.includes('reserve_workspace_narration_route'))return{rows:[{route:failure==='confirmed-route-null'?null:'confirmed'}]};
    if(sql.includes('reserve_workspace_narration_submission'))return{rows:[{reserved:false}]};

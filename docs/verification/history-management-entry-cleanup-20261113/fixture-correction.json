@@ -1,0 +1,16 @@
+{
+  "cause": "New fixture copied missing-function expectations from a public-schema batch; anonymous has no local_identity schema USAGE.",
+  "observedSchemaUsage": {
+    "loop_anonymous": false,
+    "loop_app": true,
+    "loop_owner": true,
+    "loop_worker": true,
+    "postgres": true
+  },
+  "afterRemovalExpectedSqlState": {
+    "loop_anonymous": "42501",
+    "otherActors": "42883"
+  },
+  "productOrProtectionChanged": false,
+  "originalFixturePreserved": "retiredHistoryManagement.initial.ts"
+}

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "removedFunctions": [
+    "public.set_generation_budget",
+    "public.approval_gate_enabled",
+    "public.auto_advance_disabled_approval_gate",
+    "public.orchestrate_provided_script_tasks",
+    "public.orchestrate_provided_script_tasks_for_episode",
+    "public.orchestrate_embedded_audio_tasks"
+  ],
+  "removedTrigger": "public.tasks.zz_auto_advance_disabled_approval_gate_after_task",
+  "all120TablesAnd201RowsPreserved": true,
+  "allSequencesAndRolesPreserved": true,
+  "remainingAclPreserved": true,
+  "legacyLedgerPreserved": true,
+  "ledgerCount": 169,
+  "functionCount": 459,
+  "triggerCount": 98
+}

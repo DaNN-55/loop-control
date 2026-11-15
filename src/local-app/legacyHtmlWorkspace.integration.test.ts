@@ -6,15 +6,20 @@ import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {confirmedTtsRender} from '../worker/openchatcutProject.fixture';
 import {legacyHtmlFixture} from './legacyHtmlWorkspace.fixture';
+import {storyBrowser} from './storyBrowser.fixture';
 const hash=(v:Buffer|string)=>createHash('sha256').update(v).digest('hex');
 it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (%s)',async layout=>{
  const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> 'HTML恢复 [T09]_%/本单':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
+ let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
   const render=confirmedTtsRender(),audio=randomUUID(),artifact=randomUUID(),path=`${f.episodeRelativePath}/original.html`;
   render.preRenderReviewPackageId=f.board;render.members[0].relativePath=f.videoPath;render.members[1].relativePath=`${f.episodeRelativePath}/voice.mp3`;render.members[0].sha256=f.files[0].sha256;render.members[1].sha256=f.files[1].sha256;render.members[1].audioTrackId=audio;render.confirmedShots[0].audioTrackId=audio;
   const fixture=legacyHtmlFixture(render,true),bytes=Buffer.from(fixture.html);await writeFile(join(f.assetRoot,path),bytes);
   await f.c.query('UPDATE public.tasks SET input_snapshot=$2 WHERE id=$1',[f.task,{...fixture.snapshot,input_artifacts:f.files}]);
   await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:render.storyboard}}]);
+  // Keep the original board artifact consistent with the frozen one-shot HTML fixture.
+  const boardBytes=Buffer.from(JSON.stringify(render.storyboard));await writeFile(join(f.assetRoot,f.boardPath),boardBytes);
+  await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(boardBytes),boardBytes.length]);
   await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'review_render_project',$4,$5,$6)",[artifact,f.episode,f.task,path,hash(bytes),bytes.length]);
   const voiceArtifact=randomUUID();await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'audio',$4,$5,$6)",[voiceArtifact,f.episode,f.task,render.members[1].relativePath,f.files[1].sha256,f.files[1].fileSize]);
   await f.c.query("INSERT INTO public.audio_tracks(id,episode_id,source_task_id,source_artifact_id,track_kind,cue_id,relative_path,sha256,file_size,duration_seconds) VALUES($1,$2,$3,$4,'narration','shot-1',$5,$6,$7,2)",[audio,f.episode,f.task,voiceArtifact,render.members[1].relativePath,f.files[1].sha256,f.files[1].fileSize]);
@@ -22,7 +27,11 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registe
   const fingerprint=async()=>(await f.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'reviews',(SELECT jsonb_agg(r ORDER BY id) FROM public.review_packages r WHERE episode_id=$1),'materials',(SELECT jsonb_agg(m ORDER BY id) FROM public.production_material_revisions m WHERE episode_id=$1)) value",[f.episode])).rows[0].value,before=await fingerprint();
   const data={artifactId:artifact,expectedSourceSha256:hash(bytes),expectedScriptRevisionId:f.script,reviewPackageId:f.board};
   expect((await f.request('adoptLegacyWorkspace',data,{token:f.otherToken})).status).toBe(404);expect((await f.request('adoptLegacyWorkspace',{...data,expectedSourceSha256:'0'.repeat(64)})).status).toBe(409);
-  const adopted=await f.request('adoptLegacyWorkspace',data);expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);let w=adopted.body;expect(w.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
+  let adopted;
+  if(layout==='legacy'&&process.env.LOOP_STORY_E2E==='1'){
+   browser=await storyBrowser(f,'html-source','四步制作 T02 验收');await browser.cli('open',browser.url+'&step=editing');await browser.wait("!!document.querySelector('select[name=workspaceSource]')");await browser.cli('select','select[name=workspaceSource]',artifact);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);await browser.click('接入当前制作');await browser.wait("!!document.querySelector('[aria-label=素材镜头列表]')");const r=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});adopted={status:r.status,body:(await r.json()).workspace};await browser.capture('imported');
+  }else adopted=await f.request('adoptLegacyWorkspace',data);
+  expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);let w=adopted.body;expect(w.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
   expect(w.clips).toHaveLength(2);expect(w.readiness.placeholders).toEqual([]);expect(w.readiness.missingSources).toEqual([]);expect(w.preparation.authorized).toBe(false);expect(w.captions).toHaveLength(1);expect(w.captions[0].textConfirmed).toBe(false);expect(w.narration[0].mode).toBe('manual');expect(w.narration[0].adoptedAudioTrackId).toBe(audio);expect(w.captions[0].contract.cues[0].endMs).toBe(2000);
   const project=async(sha:string)=>{const r=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${sha}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);return(await r.json()).project;};
   const original=await project(w.project.sha256);expect(original.timelines[0].items.filter((i:any)=>i.kind==='video')).toHaveLength(2);expect(original.timelines[0].items.find((i:any)=>i.kind==='audio').sourceAssetId).toBe(`audio-track-${audio}`);
@@ -36,5 +45,5 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registe
   await f.restart();expect((await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision})).status).toBe(200);
   expect(await readFile(join(f.assetRoot,path))).toEqual(bytes);expect(await fingerprint()).toEqual(before);expect((await f.request('adoptLegacyWorkspace',data)).status).toBe(409);
   const flags=(await f.c.query('SELECT * FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode])).rows[0];for(const key of ['enabled','storyboard_enabled','media_enabled','narration_enabled','studio_enabled'])expect(flags[key]).toBe(false);
- }finally{await f.close();}
+ }finally{await browser?.close();await f.close();}
 },180000);

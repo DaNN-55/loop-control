@@ -1,0 +1,39 @@
+E2E evidence: /private/tmp/loop-story-e2e-yeDs1i/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-yeDs1i/source
+
+ ❯ src/local-app/retiredGeneratedScript.integration.test.ts (2 tests | 1 failed) 10087ms
+   ✓ 185 retires only the generated-script pair with a fail-closed Owner transition and preserves full original evidence and real history projection  10082ms
+   × all real saved Worker and Owner command ports reject generated-script execution while retaining old storyboard approval and its projections 5ms
+     → Explicit copied runtime packages required
+ ✓ src/local-app/historyProjectionReferences.integration.test.ts (6 tests) 8583ms
+   ✓ history projection restores a main script inserted later in the same batch without replacing current references  1673ms
+   ✓ history projection preserves source evidence and refuses a missing main-script replacement  1442ms
+   ✓ history projection preserves source evidence and refuses a other_episode main-script replacement  1323ms
+   ✓ history projection preserves source evidence and refuses a other_owner main-script replacement  1377ms
+   ✓ history projection preserves source evidence and refuses a current main-script replacement  1425ms
+   ✓ history projection rolls back recovered references and historical markers when publication fails  1342ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/retiredGeneratedScript.integration.test.ts > all real saved Worker and Owner command ports reject generated-script execution while retaining old storyboard approval and its projections
+Error: Explicit copied runtime packages required
+ ❯ src/local-app/retiredGeneratedScript.integration.test.ts:129:75
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 7 passed (8)
+   Start at  17:08:11
+   Duration  20.25s (transform 730ms, setup 12ms, collect 1.22s, tests 18.67s, environment 0ms, prepare 90ms)
+
+JSON report written to /private/tmp/loop-story-e2e-yeDs1i/evidence/vitest.json

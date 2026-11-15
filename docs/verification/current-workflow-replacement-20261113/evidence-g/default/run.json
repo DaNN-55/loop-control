@@ -1,0 +1,17 @@
+{
+  "source": "/Volumes/Ebuget 1T/loop-workflow-continuation-raru2715/run-kdaMnp/source",
+  "args": [
+    "test",
+    "--",
+    "--maxWorkers=2",
+    "--fileParallelism=false",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile=/Volumes/Ebuget 1T/loop-workflow-continuation-raru2715/g-default/vitest.json"
+  ],
+  "exitCode": 0,
+  "defaultSuite": true,
+  "isolated": true,
+  "dailyRuntime": false,
+  "realProviderCalls": 0
+}

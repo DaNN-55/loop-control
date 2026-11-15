@@ -1,0 +1,20 @@
+{
+  "unchangedSincePreviousPassingBatch": {
+    "src/local-app/LocalDeletionRecovery.test.tsx": true,
+    "src/local-app/LocalDeletionRecovery.tsx": true,
+    "src/local-app/WorkspaceNarrationPanel.manual.test.tsx": true,
+    "src/local-app/WorkspaceNarrationPanel.tsx": true
+  },
+  "failures": [
+    {
+      "file": "src/local-app/LocalDeletionRecovery.test.tsx",
+      "observation": "findByRole resolves when the article is present; focus is set by a subsequent React useEffect and the test asserts it immediately."
+    },
+    {
+      "file": "src/local-app/WorkspaceNarrationPanel.manual.test.tsx",
+      "observation": "findByRole for the existing adopt button resolves before the asynchronous receipt readback completes; immediate readbackKeys assertion observes only the first request."
+    }
+  ],
+  "productOrProtectionChanged": false,
+  "recheck": "Run both complete original files once serially without editing tests or components."
+}

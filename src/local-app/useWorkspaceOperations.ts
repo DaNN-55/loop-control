@@ -2,15 +2,16 @@ import {useEffect,useMemo,useReducer,useRef} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {OpenChatCutStudioWorkspace} from '../reviews/reviewRevision';
 import type {EmbeddedStudioSession} from './EmbeddedStudioHost';
+import type {WorkspaceSourceReference} from '../workspaceSourceOptions';
 
 type Selection={shotId:string;itemId:string};
 type State=
- |{phase:'ready'|'preparing'|'closed'}
+ |{phase:'ready'|'preparing'|'adopting'|'closed'}
  |{phase:'opening';session:EmbeddedStudioSession|null;destination:'editor'|'stay'}
  |{phase:'editing'|'saving'|'closing';session:EmbeddedStudioSession};
 type Prepare={scriptRevisionId:string;boardId?:string;reason?:string;legacyDecision?:'preserve'|'fresh';stayOnCurrentStep?:boolean};
 interface Options {
- episodeId:string;readOnly:boolean;reopen:boolean;
+ episodeId:string;scriptRevisionId:string|null;readOnly:boolean;reopen:boolean;
  current:()=>ProductionWorkspace|null;
  command:(name:string,data:unknown,owns:()=>boolean)=>Promise<unknown>;
  publish:(workspace:ProductionWorkspace)=>void;
@@ -50,6 +51,24 @@ export function useWorkspaceOperations(options:Options){
    publish(state,result as ProductionWorkspace,source);latest.current.prepared(!!input.stayOnCurrentStep);
   }finally{if(owns(state))transition({phase:'ready'});}
  }
+ async function adoptSource(source:WorkspaceSourceReference,scriptRevisionId:string){
+  if(!available()||owner.state.phase!=='ready'||latest.current.current())return;
+  if(latest.current.scriptRevisionId!==scriptRevisionId){latest.current.error('脚本基准已变化，请重新读取来源。');return;}
+  const state:State={phase:'adopting'};transition(state);
+  const request=source.kind==='saved-plan'?{command:'adoptLegacyPlan',data:{expectedPlanSha256:source.expectedPlanSha256}}:
+   source.kind==='shot-workbench'?{command:source.mode==='inputs'?'importLegacyDraftInputs':'adoptLegacyWorkspace',data:{reviewPackageId:source.reviewPackageId,workbenchSha256:source.workbenchSha256}}:
+   source.kind==='saved-native'?{command:'adoptLegacyWorkspace',data:{reviewPackageId:source.reviewPackageId,savedProjectSha256:source.savedProjectSha256}}:
+   {command:'adoptLegacyWorkspace',data:{reviewPackageId:source.reviewPackageId,artifactId:source.artifactId,expectedSourceSha256:source.expectedSourceSha256}};
+  const ownsInput=()=>owns(state)&&available()&&latest.current.scriptRevisionId===scriptRevisionId;
+  try{
+   const result=await latest.current.command(request.command,{episodeId:options.episodeId,expectedScriptRevisionId:scriptRevisionId,...request.data},ownsInput) as ProductionWorkspace;
+   if(!ownsInput())return;
+   if(!result||!Array.isArray(result.clips)||result.episodeId!==options.episodeId||result.scriptRevisionId!==scriptRevisionId)throw Error('未收到对应来源的当前工程，请重新读取。');
+   publish(state,result,latest.current.current());latest.current.prepared(true);return true;
+  }catch(error){
+   if(ownsInput()&&!(error instanceof Error&&error.name==='AbortError'))latest.current.error(error instanceof Error?error.message:'接入未完成，请重新读取当前工程。');throw error;
+  }finally{if(owns(state))transition({phase:'ready'});}
+ }
  async function open(){
   const previous=owner.state;
   if(!available()||previous.phase!=='ready'&&(previous.phase!=='editing'||!latest.current.reopen))return;
@@ -83,5 +102,5 @@ export function useWorkspaceOperations(options:Options){
  }
  function cancelOpening(){const state=owner.state;if(owns(state)&&state.phase==='opening'){state.destination='stay';render();}}
  const state=owner.state;
- return {prepare,open,save,close,cancelOpening,preparing:state.phase==='preparing',opening:state.phase==='opening'&&state.destination==='editor',session:'session' in state?state.session:null};
+ return {prepare,adoptSource,open,save,close,cancelOpening,preparing:state.phase==='preparing'||state.phase==='adopting',adopting:state.phase==='adopting',opening:state.phase==='opening'&&state.destination==='editor',session:'session' in state?state.session:null};
 }

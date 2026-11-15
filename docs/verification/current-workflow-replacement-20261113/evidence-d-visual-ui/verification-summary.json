@@ -1,0 +1,26 @@
+{
+  "matrix": {
+    "passed": 92,
+    "failed": 2,
+    "cases": 94
+  },
+  "fixedAffectedFiles": {
+    "passed": 59,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sameSourceUnits": {
+    "passed": 51,
+    "failed": 0
+  },
+  "exactFinalBrowser": {
+    "passed": 1,
+    "filtered": 35
+  },
+  "browserOffGate": "skips-with-zero",
+  "finalSource": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-rAbvgw/source",
+  "fullDefaultSuiteRun": false,
+  "allGoalRequirementsComplete": false,
+  "paidCalls": 0,
+  "videoApiCalls": 0
+}

@@ -1,0 +1,13 @@
+{
+  "db/current/175-remove-unreferenced-retired-sql-entries.sql": "7c59554b398c359775301b7d754c69b9741f607d1e4576a0fc3e90273340c659",
+  "src/local-app/retiredSqlRuntimeCompatibility.integration.test.ts": "3281dfdb036f57f398f8d4a30c138d23d77817ae0c8f7ed6f807c905ae581d90",
+  "scripts/e2e/clean-schema.mjs": "f8a264bf69dd686b9227a3f04afb083cbc02328c0ff484ce18c7110bce36330d",
+  "scripts/e2e/run.mjs": "6d27d7252b65351ed3de52ec1549222e59ab2fde2b618480313f6f416793848d",
+  "src/lib/database.types.ts": "5cf02ea876e25ace2f4a7d647bce3ff5c990242497525096f1aee80a8f41c21b",
+  "src/local-app/recycleBin.independent.integration.test.ts": "cbe6af10e58b9b3f56a758ade15403bf4460646157a2e7bd7bbaa10a475d1b64",
+  "src/local-app/recycleBin.integration.test.ts": "d3ff2e163d3c862ada72b7f5ff303e15cdbdf548ea99b3c204adbc872a4161da",
+  "src/local-app/recycleBin.ts": "05ba0f698688c7bdecfc44e94cd634467c6e6c1e572d84a64e9a3d165f4c1b30",
+  "src/local-app/retiredLegacyExecution.integration.test.ts": "a6eaa30562aa386424b64376856fb76afc43a38e5e17c7d1270b77345a21741a",
+  "src/local-app/retiredNarration.integration.test.ts": "30e4891165d2e3a43ed7c8a97580caa6477381cbd743f709ea547917f07ddd56",
+  "src/local-app/retiredNarrationWorker.test.ts": "86ad6d31d264f6387f35b3486003317f9c4a5df0b5a3cd7aaf396e52fd07b51e"
+}

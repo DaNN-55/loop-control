@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-J1G4zJ/source
+
+ ✓ src/local-app/retiredCloudRpc.integration.test.ts (3 tests | 1 skipped) 8867ms
+   ✓ 176 removes only five unused cloud connection RPCs after nonempty history restore and preserves all other data, definitions and ACL  7214ms
+   ✓ current Owner HTTP rebinds an unbound restored version with exact IDs and frozen history after 176  1653ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 1 skipped (3)
+   Start at  10:24:45
+   Duration  9.63s (transform 435ms, setup 9ms, collect 616ms, tests 8.87s, environment 0ms, prepare 27ms)
+
+JSON report written to /private/tmp/loop-story-e2e-J1G4zJ/evidence/vitest.json

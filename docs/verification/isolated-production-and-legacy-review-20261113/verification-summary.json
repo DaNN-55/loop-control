@@ -1,0 +1,106 @@
+[
+  {
+    "label": "collection-workflow",
+    "path": "/private/tmp/loop-story-e2e-aNkM1f/evidence/vitest.json",
+    "passed": 9,
+    "failed": 1,
+    "pending": 0,
+    "cases": [
+      {
+        "name": "completes a new isolated order and reconciles production metrics without video generation",
+        "status": "failed"
+      },
+      {
+        "name": "C collection in an explicitly isolated PostgreSQL fixture defaults off, bootstraps observations only, and records activation gaps",
+        "status": "passed"
+      },
+      {
+        "name": "C collection in an explicitly isolated PostgreSQL fixture keeps events atomic and idempotent, prevents forged relationships and direct writes",
+        "status": "passed"
+      },
+      {
+        "name": "C collection in an explicitly isolated PostgreSQL fixture freezes submission quality, separates backoff from eligible wait, and fences Worker events",
+        "status": "passed"
+      },
+      {
+        "name": "C collection in an explicitly isolated PostgreSQL fixture keeps restored past facts and submission quality unknown while collecting later real changes",
+        "status": "passed"
+      },
+      {
+        "name": "C collection in an explicitly isolated PostgreSQL fixture records bounded resource observations, nullable GPU and gaps without changing business records",
+        "status": "passed"
+      },
+      {
+        "name": "C collection in an explicitly isolated PostgreSQL fixture retains only new statistics, preserves current quality and anonymous totals after permanent deletion",
+        "status": "passed"
+      },
+      {
+        "name": "collects real controlled Chinese narration, frozen estimate, adoption, withdrawal, re-adoption and reopen without storing text",
+        "status": "passed"
+      },
+      {
+        "name": "a real SQL response-write failure never repeats a Provider transport and keeps the request marker",
+        "status": "passed"
+      },
+      {
+        "name": "freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package",
+        "status": "passed"
+      }
+    ]
+  },
+  {
+    "label": "first-complete-order",
+    "path": "/private/tmp/loop-story-e2e-TNEAaq/evidence/vitest.json",
+    "passed": 1,
+    "failed": 0,
+    "pending": 0,
+    "cases": [
+      {
+        "name": "completes a new isolated order and reconciles production metrics without video generation",
+        "status": "passed"
+      }
+    ]
+  },
+  {
+    "label": "centered-complete-order",
+    "path": "/private/tmp/loop-story-e2e-PBe3wP/evidence/vitest.json",
+    "passed": 1,
+    "failed": 0,
+    "pending": 0,
+    "cases": [
+      {
+        "name": "completes a new isolated order and reconciles production metrics without video generation",
+        "status": "passed"
+      }
+    ]
+  },
+  {
+    "label": "retry-deletion-quality",
+    "path": "/private/tmp/loop-story-e2e-UTxp3V/evidence/vitest.json",
+    "passed": 4,
+    "failed": 0,
+    "pending": 1,
+    "cases": [
+      {
+        "name": "freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes",
+        "status": "passed"
+      },
+      {
+        "name": "storyboard shot removal records one narration withdrawal and retains audio and historical project across receipt replay and reopen",
+        "status": "passed"
+      },
+      {
+        "name": "native editor shot deletion records one narration withdrawal across repeated save and reopen while keeping source history",
+        "status": "passed"
+      },
+      {
+        "name": "persists Owner-selected business quality atomically with creation and revisioned commands without changing generation settings",
+        "status": "passed"
+      },
+      {
+        "name": "holds a clearly isolated quality fixture for browser verification",
+        "status": "skipped"
+      }
+    ]
+  }
+]

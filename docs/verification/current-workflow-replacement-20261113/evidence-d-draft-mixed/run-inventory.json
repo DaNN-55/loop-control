@@ -1,0 +1,74 @@
+[
+  {
+    "label": "d-mixed-red",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-RaKBY9/source"
+  },
+  {
+    "label": "d-mixed-first",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-1bCxuc/source"
+  },
+  {
+    "label": "d-mixed-primary",
+    "passed": true,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-upf5Z3/source"
+  },
+  {
+    "label": "d-mixed-matrix",
+    "passed": true,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-o6Xmk0/source"
+  },
+  {
+    "label": "d-mixed-music-red",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-HgpLOf/source"
+  },
+  {
+    "label": "d-mixed-music-green",
+    "passed": true,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-FkO41f/source"
+  },
+  {
+    "label": "d-mixed-sfx-red",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-jYwSVc/source"
+  },
+  {
+    "label": "d-mixed-final",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-UnpuWB/source"
+  },
+  {
+    "label": "d-mixed-sfx-diagnostic",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-iG1FOC/source"
+  },
+  {
+    "label": "d-mixed-sfx-state-diagnostic",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-TX8H5F/source"
+  },
+  {
+    "label": "d-mixed-sfx-coordinate-red",
+    "passed": false,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-m11DiC/source"
+  },
+  {
+    "label": "d-mixed-reviewed-final",
+    "passed": true,
+    "containerRemoved": true,
+    "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-J0pciK/source"
+  }
+]

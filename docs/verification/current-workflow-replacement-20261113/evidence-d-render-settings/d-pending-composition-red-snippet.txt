@@ -1,0 +1,9 @@
+
+it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('pending two-slot composition remains an explicit current source choice with exact slot windows',async()=>{
+ const f=await recordedWorkbench();
+ try{
+  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending',clip_segments=$2,composition=$3 WHERE id=$1",[f.draft.id,JSON.stringify([{start_seconds:0,end_seconds:1},{start_seconds:1,end_seconds:2}]),{version:'shot-composition/v1',layout:'2up-horizontal',slots:[{id:'left',clipSegmentIndex:0,fit:'contain',focalPoint:{x:.2,y:.3}},{id:'right',clipSegmentIndex:1,fit:'cover',focalPoint:{x:.8,y:.7}}]}]);
+  const source=await f.get();expect(source.status).toBe(200);const imported=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(imported.status,JSON.stringify(imported.body)).toBe(200);
+  const w=imported.body;expect(w.clips).toHaveLength(2);expect(w.visualCandidates).toHaveLength(2);expect(w.usedNarration).toHaveLength(0);expect(w.audio.mix.sounds).toHaveLength(0);const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(project.timelines[0].items.filter((i:any)=>i.kind==='video'||i.kind==='image')).toHaveLength(0);
+ }finally{await f.close();}
+},90000);

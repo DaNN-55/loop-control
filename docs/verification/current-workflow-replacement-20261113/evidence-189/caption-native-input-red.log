@@ -1,0 +1,49 @@
+E2E evidence: /private/tmp/loop-story-e2e-XQmawN/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-XQmawN/source
+
+ ❯ src/local-app/workspaceCaptions.integration.test.ts (6 tests | 1 failed | 5 skipped) 8531ms
+   ↓ Owner edits only the chosen native caption lane and persists manual timing without shot approval
+   ↓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit
+   ↓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area
+   ↓ Owner caption errors identify the field and current shot window without changing the saved native captions
+   × percentage margins and second timings survive Owner save, native dragging, save and reopen 8531ms
+     → expected { id: 'manual', text: '百分比字幕', …(2) } to match object { start_ms: 250, end_ms: 1150 }
+(2 matching properties omitted from actual)
+   ↓ browser edits and reopens percentage margins and second timing through the actual Owner HTTP boundary
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceCaptions.integration.test.ts > percentage margins and second timings survive Owner save, native dragging, save and reopen
+AssertionError: expected { id: 'manual', text: '百分比字幕', …(2) } to match object { start_ms: 250, end_ms: 1150 }
+(2 matching properties omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "end_ms": 1150,[39m
+[32m-   "start_ms": 250,[39m
+[31m+   "end_ms": 1250,[39m
+[31m+   "start_ms": 125,[39m
+[2m  }[22m
+
+ ❯ src/local-app/workspaceCaptions.integration.test.ts:118:25
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  21:02:50
+   Duration  9.71s (transform 680ms, setup 10ms, collect 999ms, tests 8.53s, environment 0ms, prepare 45ms)
+
+JSON report written to /private/tmp/loop-story-e2e-XQmawN/evidence/vitest.json

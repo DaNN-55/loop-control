@@ -1,0 +1,153 @@
+E2E evidence: /private/tmp/loop-story-e2e-Lx09nY/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-Lx09nY/source
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests | 3 failed) 9321ms
+   × fresh authored first video uses current preparation without a legacy approval (actual voice=false) 3199ms
+     → {"selectedImages":[],"visualConfiguration":{"imageModel":null,"videoModel":null,"videoProvider":null},"preparation":{"origin":"script-segment","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","authorized":false,"shots":[{"shotId":"shot-01","origin":"script-segment","visualSource":"unassigned"}]},"pexels":{"requests":[]},"visualCandidates":[],"visualTasks":[{"attempt":0,"maxAttempts":1,"invalidatedAt":null,"retryAt":null,"id":"7bba4511-bc25-4c56-ad2e-e354c3984894","shotId":"shot-01","targetItemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","kind":"video","taskId":"e07f213c-636c-4ba2-bb43-30125fb148ee","status":"ready","provider":"volcengine","model":"doubao-seedance-2-0-260128","createdAt":"2026-11-13T18:33:36.326Z","connectionName":"Controlled narration video","error":null,"retryTaskId":null,"dispatchObservation":null,"submissionOutcome":null,"videoPhase":null,"providerTaskId":null,"requestState":null,"publicationAttempt":null,"submissionUnknown":false,"reservationCents":null,"canResume":false,"invalidated":false,"waitingForRetry":false,"retryAllowed":false,"automaticRetryExhausted":false,"unknownRetryAllowed":false,"generation":{"selection":{"model":"doubao-seedance-2-0-260128","adapter":"seedance_video","provider":"volcengine","capability":"video","connectionVersionId":"0abe8f8e-e0bd-486a-af48-9c0fc6230b65"},"connectionName":"Controlled narration video","prompt":"清晨山脊，缓慢推进。","actualPrompt":"清晨山脊，缓慢推进。\n\n账号创作规则：{\"tone\":\"克制\",\"positioning\":\"保留事实\"}\n系列创作规则：null","firstFrameMaterialRevisionId":"6b5cb31e-6a9b-416f-86b5-09c9214b0e4e","durationSeconds":4}}],"visualTargets":[{"targetItemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","width":1080,"height":1920,"provider":"","voiceMode":"none","durationSeconds":null,"providerDurationSeconds":null,"minimumSeconds":2,"maximumSeconds":15}],"audio":{"enabled":{"bgm":true,"sfx":true},"defaults":null,"mix":{"voices":[{"coverage":"none","startSeconds":null,"durationSeconds":null,"shotDurationSeconds":4,"sourceStartSeconds":null,"sourceLabel":null,"alignmentReady":false,"shotId":"shot-01","mode":"none","gainDb":0,"ambienceGainDb":null,"sourceItemId":null,"sourceAssetId":null}],"sounds":[]},"preparations":[]},"deliveries":[],"usedNarration":[],"candidates":[],"exports":[],"exportIssues":[],"captions":[{"clipId":"73953420-052e-4e86-a01a-5f97f9b1a371","itemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","shotId":"shot-01","durationMs":4000,"contract":{"version":"shot-captions/v1","enabled":true,"contentMode":"follow_tts","text":"填写本段完整口播。","cues":[{"id":"initial-shot-01~0","text":"填写本段完整口播。","startMs":0,"endMs":5000}],"spatial":{"version":"shot-caption-space/v2","anchor":"bottom-center","safeArea":"title-safe","aspectRatio":"9:16","insets":{"top":0.08,"right":0.08,"bottom":0.18,"left":0.08},"maxLines":2,"maxCharactersPerLine":16}},"inputFingerprint":"f9c6f8a881bf6be965627d3c258a892c7c38a9846814a342d58f7f6d7c9595b7","timing":"stale","textConfirmed":false,"audioTrackId":null,"narrationText":null,"taskId":null,"alignmentStatus":null,"alignmentInputVersion":null,"detail":null}],"id":"d0873c91-5a50-4e9e-a750-8bb03c2847d4","episodeId":"b3f89c8f-a1d5-4b8b-8c47-310bc97d0419","workflowVersion":"four-step/v1","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","storyboardPackageId":null,"preparationRevisionId":"d04311f6-5b00-4eb3-992b-4c1f4f5fe857","revision":2,"contentSha256":"2ec1988ea16678318e824ffb391b5a79481c11eb62b3ba75b5d704cea8332b26","nativeEditRevision":0,"narration":[{"enabled":true,"retainedAudioTrackId":null,"execution":null,"windowWarning":null,"selection":null,"defaults":null,"requiresCandidateAdoption":false,"clipId":"73953420-052e-4e86-a01a-5f97f9b1a371","shotId":"shot-01","mode":"none","text":"填写本段完整口播。","voice":null,"languageCode":null,"speakingRate":null,"override":false,"inputFingerprint":"2a3142bce38538af65559630f3996a04ccb8f671957eb083c579d07ad731e917","confirmed":false,"taskId":null,"status":"pending","error":null,"audioTrackId":null,"artifactId":null,"relativePath":null,"sha256":null,"fileSize":null,"durationSeconds":null,"itemId":"workspace-narration-shot-shot-01","adoptedAudioTrackId":null}],"clips":[{"id":"73953420-052e-4e86-a01a-5f97f9b1a371","text":"填写本段完整口播。","image":{"fit":"contain","usage":"ai-video","focusX":0,"focusY":0,"taskId":"e07f213c-636c-4ba2-bb43-30125fb148ee","durationSeconds":4,"materialRevisionId":"6b5cb31e-6a9b-416f-86b5-09c9214b0e4e","providerDurationSeconds":4},"itemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","shotId":"shot-01","source":null}],"project":{"relativePath":"未分系列--72fe1d9f-99a9-4cd5-8d7e-d1b99cd3bf71/正式新单--b3f89c8f-a1d5-4b8b-8c47-310bc97d0419/production-workspace/versions/d87ff228f2344ee7f9da1006d3492ca58d7154bb6fa5a1d4cc5cb7ff15873fd9.json","sha256":"d87ff228f2344ee7f9da1006d3492ca58d7154bb6fa5a1d4cc5cb7ff15873fd9","fileSize":4309,"projectId":"loop-control-b3f89c8f-a1d5-4b8b-8c47-310bc97d0419"},"history":[{"revision":2,"sha256":"d87ff228f2344ee7f9da1006d3492ca58d7154bb6fa5a1d4cc5cb7ff15873fd9","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","reason":"请求首次图片视频","createdAt":"2026-11-13T18:33:36.442Z"},{"revision":1,"sha256":"09cd85128a04596d9be94c43c3dfe6827be64f4e61dc68a5cfdfe93e320f947c","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","reason":"首次组装","createdAt":"2026-11-13T18:33:36.125Z"}],"readiness":{"deliverable":false,"placeholders":["shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371"],"missingSources":[]},"stale":false}: expected 200 to be 409 // Object.is equality
+   × fresh authored first video uses current preparation without a legacy approval (actual voice=true) 3187ms
+     → {"selectedImages":[],"visualConfiguration":{"imageModel":null,"videoModel":null,"videoProvider":null},"preparation":{"origin":"script-segment","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","authorized":false,"shots":[{"shotId":"shot-01","origin":"script-segment","visualSource":"unassigned"}]},"pexels":{"requests":[]},"visualCandidates":[],"visualTasks":[{"attempt":0,"maxAttempts":1,"invalidatedAt":null,"retryAt":null,"id":"5a7e0b6d-800b-40e6-a0fa-6189d36b0dec","shotId":"shot-01","targetItemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","kind":"video","taskId":"eb058604-b134-421a-bff4-3ff7aec37adb","status":"ready","provider":"volcengine","model":"doubao-seedance-2-0-260128","createdAt":"2026-11-13T18:33:39.513Z","connectionName":"Controlled narration video","error":null,"retryTaskId":null,"dispatchObservation":null,"submissionOutcome":null,"videoPhase":null,"providerTaskId":null,"requestState":null,"publicationAttempt":null,"submissionUnknown":false,"reservationCents":null,"canResume":false,"invalidated":false,"waitingForRetry":false,"retryAllowed":false,"automaticRetryExhausted":false,"unknownRetryAllowed":false,"generation":{"selection":{"model":"doubao-seedance-2-0-260128","adapter":"seedance_video","provider":"volcengine","capability":"video","connectionVersionId":"7d7c8c3f-b255-4aad-9332-67be081f5eec"},"connectionName":"Controlled narration video","prompt":"清晨山脊，缓慢推进。","actualPrompt":"清晨山脊，缓慢推进。\n\n账号创作规则：{\"tone\":\"克制\",\"positioning\":\"保留事实\"}\n系列创作规则：null","firstFrameMaterialRevisionId":"ce569917-604f-4c26-8331-45ab13e2ff9e","durationSeconds":4}}],"visualTargets":[{"targetItemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","width":1080,"height":1920,"provider":"","voiceMode":"none","durationSeconds":null,"providerDurationSeconds":null,"minimumSeconds":2,"maximumSeconds":15}],"audio":{"enabled":{"bgm":true,"sfx":true},"defaults":null,"mix":{"voices":[{"coverage":"none","startSeconds":null,"durationSeconds":null,"shotDurationSeconds":4,"sourceStartSeconds":null,"sourceLabel":null,"alignmentReady":false,"shotId":"shot-01","mode":"none","gainDb":0,"ambienceGainDb":null,"sourceItemId":null,"sourceAssetId":null}],"sounds":[]},"preparations":[]},"deliveries":[],"usedNarration":[],"candidates":[],"exports":[],"exportIssues":[],"captions":[{"clipId":"3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","itemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","shotId":"shot-01","durationMs":4000,"contract":{"version":"shot-captions/v1","enabled":true,"contentMode":"follow_tts","text":"填写本段完整口播。","cues":[{"id":"initial-shot-01~0","text":"填写本段完整口播。","startMs":0,"endMs":5000}],"spatial":{"version":"shot-caption-space/v2","anchor":"bottom-center","safeArea":"title-safe","aspectRatio":"9:16","insets":{"top":0.08,"right":0.08,"bottom":0.18,"left":0.08},"maxLines":2,"maxCharactersPerLine":16}},"inputFingerprint":"33965ff38f699628f4fffa5f06e7e4b0973331db7a8705d0ac6b585e286fdde9","timing":"stale","textConfirmed":false,"audioTrackId":null,"narrationText":null,"taskId":null,"alignmentStatus":null,"alignmentInputVersion":null,"detail":null}],"id":"a39b4460-57f9-45bc-9cb6-3b3bed30ad16","episodeId":"422af8f4-e293-46be-bce5-79b693c8b22c","workflowVersion":"four-step/v1","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","storyboardPackageId":null,"preparationRevisionId":"5993b4c3-c2ae-4435-9567-1aa217faccfa","revision":2,"contentSha256":"71606fe3c01209f6cfac541111948ec9642a2b0fd97813d0fb81cdd95991c0a6","nativeEditRevision":0,"narration":[{"enabled":true,"retainedAudioTrackId":null,"execution":null,"windowWarning":null,"selection":null,"defaults":null,"requiresCandidateAdoption":false,"clipId":"3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","shotId":"shot-01","mode":"none","text":"填写本段完整口播。","voice":null,"languageCode":null,"speakingRate":null,"override":false,"inputFingerprint":"c2b2964332a45d9ba466281e3a5b99ca801437f41feead3036d2c6d73163730b","confirmed":false,"taskId":null,"status":"pending","error":null,"audioTrackId":null,"artifactId":null,"relativePath":null,"sha256":null,"fileSize":null,"durationSeconds":null,"itemId":"workspace-narration-shot-shot-01","adoptedAudioTrackId":null}],"clips":[{"id":"3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","text":"填写本段完整口播。","image":{"fit":"contain","usage":"ai-video","focusX":0,"focusY":0,"taskId":"eb058604-b134-421a-bff4-3ff7aec37adb","durationSeconds":4,"materialRevisionId":"ce569917-604f-4c26-8331-45ab13e2ff9e","providerDurationSeconds":4},"itemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","shotId":"shot-01","source":null}],"project":{"relativePath":"未分系列--0abea388-535d-4ed3-bc5d-05ac388e9aa7/正式新单--422af8f4-e293-46be-bce5-79b693c8b22c/production-workspace/versions/c73cb6b8b4e238cb3db6291467ba02402793ff4666d9ca614631c3319290dd00.json","sha256":"c73cb6b8b4e238cb3db6291467ba02402793ff4666d9ca614631c3319290dd00","fileSize":4309,"projectId":"loop-control-422af8f4-e293-46be-bce5-79b693c8b22c"},"history":[{"revision":2,"sha256":"c73cb6b8b4e238cb3db6291467ba02402793ff4666d9ca614631c3319290dd00","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","reason":"请求首次图片视频","createdAt":"2026-11-13T18:33:39.606Z"},{"revision":1,"sha256":"b5f57a8b9e5d4999f9b07462d2df0469e79fe53f0e962c2f89bd0764fe755792","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","reason":"首次组装","createdAt":"2026-11-13T18:33:39.330Z"}],"readiness":{"deliverable":false,"placeholders":["shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2"],"missingSources":[]},"stale":false}: expected 200 to be 409 // Object.is equality
+   × replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice 2935ms
+     → {"error":"请在生成时确认本次调用，不再开启整期在线制作。"}: expected 409 to be 200 // Object.is equality
+ ❯ src/local-app/inputStorageLocation.integration.test.ts (4 tests | 1 failed) 9430ms
+   × Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart 3394ms
+     → expected undefined to be truthy
+   ✓ Owner reuses an approved series input as a self-contained managed copy with original source approval evidence  3342ms
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  1583ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1111ms
+ ✓ src/local-app/productionScriptV3.integration.test.ts (4 tests) 19523ms
+   ✓ a static v3 order rejects malformed structured imports and delivers without video fields or generation tasks  10837ms
+   ✓ a restored invalid structured main script reports its line error and never creates a prose preparation  2764ms
+   ✓ the current default script imports as v3 and prepares without an old plan or implicit media generation  2952ms
+   ✓ the current example script imports as v3 and prepares without an old plan or implicit media generation  2968ms
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests) 14026ms
+   ✓ speech requests freeze connection and voice while defaults change, and completed audio waits for explicit native adoption  3392ms
+   ✓ fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted  8513ms
+   ✓ speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart  2121ms
+ ❯ src/local-app/currentShotSemantics.integration.test.ts (3 tests | 3 failed) 8716ms
+   × current new script → neutral workspace → actual video queue and Worker 2937ms
+     → expected +0 to be 1 // Object.is equality
+   × current legacy-script script → neutral workspace → actual video queue and Worker 2886ms
+     → expected +0 to be 1 // Object.is equality
+   × current plain script → neutral workspace → actual video queue and Worker 2893ms
+     → expected +0 to be 2 // Object.is equality
+ ✓ src/local-app/planningRetirement.integration.test.ts (5 tests) 12665ms
+   ✓ current plain preparation works without CLI planning and retired requests preserve history  2653ms
+   ✓ current v2 preparation works without CLI planning and retired requests preserve history  2634ms
+   ✓ current v3 preparation works without CLI planning and retired requests preserve history  2507ms
+   ✓ claim and lease recovery leave retired ready task records byte-equivalent  2440ms
+   ✓ claim and lease recovery leave retired running task records byte-equivalent  2428ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/currentShotSemantics.integration.test.ts > current new script → neutral workspace → actual video queue and Worker
+ FAIL  src/local-app/currentShotSemantics.integration.test.ts > current legacy-script script → neutral workspace → actual video queue and Worker
+AssertionError: expected +0 to be 1 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 0[39m
+
+ ❯ src/local-app/currentShotSemantics.integration.test.ts:20:157
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/local-app/currentShotSemantics.integration.test.ts > current plain script → neutral workspace → actual video queue and Worker
+AssertionError: expected +0 to be 2 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 2[39m
+[31m+ 0[39m
+
+ ❯ src/local-app/currentShotSemantics.integration.test.ts:20:157
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/local-app/inputStorageLocation.integration.test.ts > Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart
+AssertionError: expected undefined to be truthy
+
+[32m- Expected:[39m 
+true
+
+[31m+ Received:[39m 
+undefined
+
+ ❯ src/local-app/inputStorageLocation.integration.test.ts:33:330
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > fresh authored first video uses current preparation without a legacy approval (actual voice=false)
+AssertionError: {"selectedImages":[],"visualConfiguration":{"imageModel":null,"videoModel":null,"videoProvider":null},"preparation":{"origin":"script-segment","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","authorized":false,"shots":[{"shotId":"shot-01","origin":"script-segment","visualSource":"unassigned"}]},"pexels":{"requests":[]},"visualCandidates":[],"visualTasks":[{"attempt":0,"maxAttempts":1,"invalidatedAt":null,"retryAt":null,"id":"7bba4511-bc25-4c56-ad2e-e354c3984894","shotId":"shot-01","targetItemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","kind":"video","taskId":"e07f213c-636c-4ba2-bb43-30125fb148ee","status":"ready","provider":"volcengine","model":"doubao-seedance-2-0-260128","createdAt":"2026-11-13T18:33:36.326Z","connectionName":"Controlled narration video","error":null,"retryTaskId":null,"dispatchObservation":null,"submissionOutcome":null,"videoPhase":null,"providerTaskId":null,"requestState":null,"publicationAttempt":null,"submissionUnknown":false,"reservationCents":null,"canResume":false,"invalidated":false,"waitingForRetry":false,"retryAllowed":false,"automaticRetryExhausted":false,"unknownRetryAllowed":false,"generation":{"selection":{"model":"doubao-seedance-2-0-260128","adapter":"seedance_video","provider":"volcengine","capability":"video","connectionVersionId":"0abe8f8e-e0bd-486a-af48-9c0fc6230b65"},"connectionName":"Controlled narration video","prompt":"清晨山脊，缓慢推进。","actualPrompt":"清晨山脊，缓慢推进。\n\n账号创作规则：{\"tone\":\"克制\",\"positioning\":\"保留事实\"}\n系列创作规则：null","firstFrameMaterialRevisionId":"6b5cb31e-6a9b-416f-86b5-09c9214b0e4e","durationSeconds":4}}],"visualTargets":[{"targetItemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","width":1080,"height":1920,"provider":"","voiceMode":"none","durationSeconds":null,"providerDurationSeconds":null,"minimumSeconds":2,"maximumSeconds":15}],"audio":{"enabled":{"bgm":true,"sfx":true},"defaults":null,"mix":{"voices":[{"coverage":"none","startSeconds":null,"durationSeconds":null,"shotDurationSeconds":4,"sourceStartSeconds":null,"sourceLabel":null,"alignmentReady":false,"shotId":"shot-01","mode":"none","gainDb":0,"ambienceGainDb":null,"sourceItemId":null,"sourceAssetId":null}],"sounds":[]},"preparations":[]},"deliveries":[],"usedNarration":[],"candidates":[],"exports":[],"exportIssues":[],"captions":[{"clipId":"73953420-052e-4e86-a01a-5f97f9b1a371","itemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","shotId":"shot-01","durationMs":4000,"contract":{"version":"shot-captions/v1","enabled":true,"contentMode":"follow_tts","text":"填写本段完整口播。","cues":[{"id":"initial-shot-01~0","text":"填写本段完整口播。","startMs":0,"endMs":5000}],"spatial":{"version":"shot-caption-space/v2","anchor":"bottom-center","safeArea":"title-safe","aspectRatio":"9:16","insets":{"top":0.08,"right":0.08,"bottom":0.18,"left":0.08},"maxLines":2,"maxCharactersPerLine":16}},"inputFingerprint":"f9c6f8a881bf6be965627d3c258a892c7c38a9846814a342d58f7f6d7c9595b7","timing":"stale","textConfirmed":false,"audioTrackId":null,"narrationText":null,"taskId":null,"alignmentStatus":null,"alignmentInputVersion":null,"detail":null}],"id":"d0873c91-5a50-4e9e-a750-8bb03c2847d4","episodeId":"b3f89c8f-a1d5-4b8b-8c47-310bc97d0419","workflowVersion":"four-step/v1","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","storyboardPackageId":null,"preparationRevisionId":"d04311f6-5b00-4eb3-992b-4c1f4f5fe857","revision":2,"contentSha256":"2ec1988ea16678318e824ffb391b5a79481c11eb62b3ba75b5d704cea8332b26","nativeEditRevision":0,"narration":[{"enabled":true,"retainedAudioTrackId":null,"execution":null,"windowWarning":null,"selection":null,"defaults":null,"requiresCandidateAdoption":false,"clipId":"73953420-052e-4e86-a01a-5f97f9b1a371","shotId":"shot-01","mode":"none","text":"填写本段完整口播。","voice":null,"languageCode":null,"speakingRate":null,"override":false,"inputFingerprint":"2a3142bce38538af65559630f3996a04ccb8f671957eb083c579d07ad731e917","confirmed":false,"taskId":null,"status":"pending","error":null,"audioTrackId":null,"artifactId":null,"relativePath":null,"sha256":null,"fileSize":null,"durationSeconds":null,"itemId":"workspace-narration-shot-shot-01","adoptedAudioTrackId":null}],"clips":[{"id":"73953420-052e-4e86-a01a-5f97f9b1a371","text":"填写本段完整口播。","image":{"fit":"contain","usage":"ai-video","focusX":0,"focusY":0,"taskId":"e07f213c-636c-4ba2-bb43-30125fb148ee","durationSeconds":4,"materialRevisionId":"6b5cb31e-6a9b-416f-86b5-09c9214b0e4e","providerDurationSeconds":4},"itemId":"shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371","shotId":"shot-01","source":null}],"project":{"relativePath":"未分系列--72fe1d9f-99a9-4cd5-8d7e-d1b99cd3bf71/正式新单--b3f89c8f-a1d5-4b8b-8c47-310bc97d0419/production-workspace/versions/d87ff228f2344ee7f9da1006d3492ca58d7154bb6fa5a1d4cc5cb7ff15873fd9.json","sha256":"d87ff228f2344ee7f9da1006d3492ca58d7154bb6fa5a1d4cc5cb7ff15873fd9","fileSize":4309,"projectId":"loop-control-b3f89c8f-a1d5-4b8b-8c47-310bc97d0419"},"history":[{"revision":2,"sha256":"d87ff228f2344ee7f9da1006d3492ca58d7154bb6fa5a1d4cc5cb7ff15873fd9","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","reason":"请求首次图片视频","createdAt":"2026-11-13T18:33:36.442Z"},{"revision":1,"sha256":"09cd85128a04596d9be94c43c3dfe6827be64f4e61dc68a5cfdfe93e320f947c","scriptRevisionId":"b516763f-08dc-47ab-accc-2fb0c8844671","reason":"首次组装","createdAt":"2026-11-13T18:33:36.125Z"}],"readiness":{"deliverable":false,"placeholders":["shot-shot-01-73953420-052e-4e86-a01a-5f97f9b1a371"],"missingSources":[]},"stale":false}: expected 200 to be 409 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 200[39m
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:19:90
+     17| 
+     18|   const payload={clipId:w.clips[0].id,materialRevisionId:uploaded.body…
+     19|   r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.…
+       |                                                                                          ^
+     20|   expect((await send('authorizeWorkspacePreparation',{enabled:true})).…
+     21|   if(withVoice){
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > fresh authored first video uses current preparation without a legacy approval (actual voice=true)
+AssertionError: {"selectedImages":[],"visualConfiguration":{"imageModel":null,"videoModel":null,"videoProvider":null},"preparation":{"origin":"script-segment","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","authorized":false,"shots":[{"shotId":"shot-01","origin":"script-segment","visualSource":"unassigned"}]},"pexels":{"requests":[]},"visualCandidates":[],"visualTasks":[{"attempt":0,"maxAttempts":1,"invalidatedAt":null,"retryAt":null,"id":"5a7e0b6d-800b-40e6-a0fa-6189d36b0dec","shotId":"shot-01","targetItemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","kind":"video","taskId":"eb058604-b134-421a-bff4-3ff7aec37adb","status":"ready","provider":"volcengine","model":"doubao-seedance-2-0-260128","createdAt":"2026-11-13T18:33:39.513Z","connectionName":"Controlled narration video","error":null,"retryTaskId":null,"dispatchObservation":null,"submissionOutcome":null,"videoPhase":null,"providerTaskId":null,"requestState":null,"publicationAttempt":null,"submissionUnknown":false,"reservationCents":null,"canResume":false,"invalidated":false,"waitingForRetry":false,"retryAllowed":false,"automaticRetryExhausted":false,"unknownRetryAllowed":false,"generation":{"selection":{"model":"doubao-seedance-2-0-260128","adapter":"seedance_video","provider":"volcengine","capability":"video","connectionVersionId":"7d7c8c3f-b255-4aad-9332-67be081f5eec"},"connectionName":"Controlled narration video","prompt":"清晨山脊，缓慢推进。","actualPrompt":"清晨山脊，缓慢推进。\n\n账号创作规则：{\"tone\":\"克制\",\"positioning\":\"保留事实\"}\n系列创作规则：null","firstFrameMaterialRevisionId":"ce569917-604f-4c26-8331-45ab13e2ff9e","durationSeconds":4}}],"visualTargets":[{"targetItemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","width":1080,"height":1920,"provider":"","voiceMode":"none","durationSeconds":null,"providerDurationSeconds":null,"minimumSeconds":2,"maximumSeconds":15}],"audio":{"enabled":{"bgm":true,"sfx":true},"defaults":null,"mix":{"voices":[{"coverage":"none","startSeconds":null,"durationSeconds":null,"shotDurationSeconds":4,"sourceStartSeconds":null,"sourceLabel":null,"alignmentReady":false,"shotId":"shot-01","mode":"none","gainDb":0,"ambienceGainDb":null,"sourceItemId":null,"sourceAssetId":null}],"sounds":[]},"preparations":[]},"deliveries":[],"usedNarration":[],"candidates":[],"exports":[],"exportIssues":[],"captions":[{"clipId":"3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","itemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","shotId":"shot-01","durationMs":4000,"contract":{"version":"shot-captions/v1","enabled":true,"contentMode":"follow_tts","text":"填写本段完整口播。","cues":[{"id":"initial-shot-01~0","text":"填写本段完整口播。","startMs":0,"endMs":5000}],"spatial":{"version":"shot-caption-space/v2","anchor":"bottom-center","safeArea":"title-safe","aspectRatio":"9:16","insets":{"top":0.08,"right":0.08,"bottom":0.18,"left":0.08},"maxLines":2,"maxCharactersPerLine":16}},"inputFingerprint":"33965ff38f699628f4fffa5f06e7e4b0973331db7a8705d0ac6b585e286fdde9","timing":"stale","textConfirmed":false,"audioTrackId":null,"narrationText":null,"taskId":null,"alignmentStatus":null,"alignmentInputVersion":null,"detail":null}],"id":"a39b4460-57f9-45bc-9cb6-3b3bed30ad16","episodeId":"422af8f4-e293-46be-bce5-79b693c8b22c","workflowVersion":"four-step/v1","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","storyboardPackageId":null,"preparationRevisionId":"5993b4c3-c2ae-4435-9567-1aa217faccfa","revision":2,"contentSha256":"71606fe3c01209f6cfac541111948ec9642a2b0fd97813d0fb81cdd95991c0a6","nativeEditRevision":0,"narration":[{"enabled":true,"retainedAudioTrackId":null,"execution":null,"windowWarning":null,"selection":null,"defaults":null,"requiresCandidateAdoption":false,"clipId":"3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","shotId":"shot-01","mode":"none","text":"填写本段完整口播。","voice":null,"languageCode":null,"speakingRate":null,"override":false,"inputFingerprint":"c2b2964332a45d9ba466281e3a5b99ca801437f41feead3036d2c6d73163730b","confirmed":false,"taskId":null,"status":"pending","error":null,"audioTrackId":null,"artifactId":null,"relativePath":null,"sha256":null,"fileSize":null,"durationSeconds":null,"itemId":"workspace-narration-shot-shot-01","adoptedAudioTrackId":null}],"clips":[{"id":"3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","text":"填写本段完整口播。","image":{"fit":"contain","usage":"ai-video","focusX":0,"focusY":0,"taskId":"eb058604-b134-421a-bff4-3ff7aec37adb","durationSeconds":4,"materialRevisionId":"ce569917-604f-4c26-8331-45ab13e2ff9e","providerDurationSeconds":4},"itemId":"shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2","shotId":"shot-01","source":null}],"project":{"relativePath":"未分系列--0abea388-535d-4ed3-bc5d-05ac388e9aa7/正式新单--422af8f4-e293-46be-bce5-79b693c8b22c/production-workspace/versions/c73cb6b8b4e238cb3db6291467ba02402793ff4666d9ca614631c3319290dd00.json","sha256":"c73cb6b8b4e238cb3db6291467ba02402793ff4666d9ca614631c3319290dd00","fileSize":4309,"projectId":"loop-control-422af8f4-e293-46be-bce5-79b693c8b22c"},"history":[{"revision":2,"sha256":"c73cb6b8b4e238cb3db6291467ba02402793ff4666d9ca614631c3319290dd00","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","reason":"请求首次图片视频","createdAt":"2026-11-13T18:33:39.606Z"},{"revision":1,"sha256":"b5f57a8b9e5d4999f9b07462d2df0469e79fe53f0e962c2f89bd0764fe755792","scriptRevisionId":"fae52113-dd28-42f7-ab87-9c00389e1402","reason":"首次组装","createdAt":"2026-11-13T18:33:39.330Z"}],"readiness":{"deliverable":false,"placeholders":["shot-shot-01-3bbe2c35-558f-4c4f-9b90-d9088c04a9b2"],"missingSources":[]},"stale":false}: expected 200 to be 409 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 200[39m
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:19:90
+     17| 
+     18|   const payload={clipId:w.clips[0].id,materialRevisionId:uploaded.body…
+     19|   r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.…
+       |                                                                                          ^
+     20|   expect((await send('authorizeWorkspacePreparation',{enabled:true})).…
+     21|   if(withVoice){
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice
+AssertionError: {"error":"请在生成时确认本次调用，不再开启整期在线制作。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ send src/local-app/workspaceFirstVideo.integration.test.ts:50:221
+
+ ❯ generate src/local-app/workspaceFirstVideo.integration.test.ts:52:39
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:53:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+
+ Test Files  3 failed | 3 passed (6)
+      Tests  7 failed | 15 passed (22)
+   Start at  02:33:32
+   Duration  75.47s (transform 451ms, setup 8ms, collect 1.06s, tests 73.68s, environment 0ms, prepare 141ms)
+
+JSON report written to /private/tmp/loop-story-e2e-Lx09nY/evidence/vitest.json

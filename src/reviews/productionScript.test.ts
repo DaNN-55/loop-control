@@ -3,12 +3,13 @@ import {readFileSync,readdirSync} from 'node:fs';
 import {parseProductionScript,productionScriptTemplate,validateProductionDefaults} from './productionScript';
 import {mainScriptDiagnostic} from './mainScript';
 import {resolveProductionPlan,resolveProductionMaterial,type ProductionMaterial} from './productionPlan';
-const text=productionScriptTemplate.replace('填写已上传图片的素材名称','客厅首帧');
+import {historicalProductionScriptV2} from './productionScript.fixture';
+const text=historicalProductionScriptV2.replace('填写已上传图片的素材名称','客厅首帧');
 describe('production script v2',()=>{
  it('omits obsolete classification in new scripts but reads explicit legacy scripts',()=>{expect(productionScriptTemplate).not.toContain('镜头类型');expect(parseProductionScript(text)?.segments[0]).not.toHaveProperty('shotType');expect(parseProductionScript(text.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll'))?.segments[0].shotType).toBe('a_roll');});
  it('keeps legacy scripts readable and validates typed scripts',()=>{expect(parseProductionScript('# 标题\n\n## 正文\n口播')).toBeNull();expect(mainScriptDiagnostic('# 标题\n\n## 正文\n口播')).toBeNull();expect(parseProductionScript(text)?.segments[0]).toMatchObject({id:'shot-01',videoPrompt:'填写直接提交视频模型的画面与动作描述。',settings:{firstFrame:'客厅首帧',sfx:'none'}});});
  it.each([
-  [text.replace('模板版本：2','模板版本：3'),'版本'],
+  [text.replace('模板版本：2','模板版本：99'),'版本'],
   [text.replace('- 构图：full','- 构图：随意摆放'),'只能选择'],
   [text.replace('- 转场：cut','- 转场：淡淡地转过去'),'只能选择'],
   [text.replace('- 字幕最大行数：2','- 字幕最大行数：20'),'1～2'],

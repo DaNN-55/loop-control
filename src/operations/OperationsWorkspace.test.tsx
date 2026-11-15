@@ -12,9 +12,9 @@ const series = { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z"
 const seriesVersion = { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-version-1", rules: {}, series_id: series.id, version: 2 } as Database["public"]["Tables"]["series_versions"]["Row"];
 
 const episodes: Episode[] = [
-  { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-review", series_version_id: seriesVersion.id, stage: "script_review", title: "脚本待审", updated_at: "2026-08-15T00:00:00.000Z" },
-  { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-blocked", series_version_id: seriesVersion.id, stage: "production_ready", title: "媒体受阻", updated_at: "2026-08-15T00:00:00.000Z" },
-  { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-unassigned", series_version_id: null, stage: "production_completed", title: "无系列生产单", updated_at: "2026-08-15T00:00:00.000Z" },
+  { main_script_revision_id: null, archived_at: null, is_test: false, script_source: "provided", worker_preflight_at: null, audio_source_mode: "tts", tts_language_code: null, tts_voice: null, tts_speaking_rate: null, account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-review", series_version_id: seriesVersion.id, stage: "script_review", title: "脚本待审", updated_at: "2026-08-15T00:00:00.000Z" },
+  { main_script_revision_id: null, archived_at: null, is_test: false, script_source: "provided", worker_preflight_at: null, audio_source_mode: "tts", tts_language_code: null, tts_voice: null, tts_speaking_rate: null, account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-blocked", series_version_id: seriesVersion.id, stage: "production_ready", title: "媒体受阻", updated_at: "2026-08-15T00:00:00.000Z" },
+  { main_script_revision_id: null, archived_at: null, is_test: false, script_source: "provided", worker_preflight_at: null, audio_source_mode: "tts", tts_language_code: null, tts_voice: null, tts_speaking_rate: null, account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-unassigned", series_version_id: null, stage: "production_completed", title: "无系列生产单", updated_at: "2026-08-15T00:00:00.000Z" },
 ];
 
 const reviewPackages: ReviewPackage[] = [
@@ -23,7 +23,7 @@ const reviewPackages: ReviewPackage[] = [
   { artifact_id: null, context_snapshot: {}, created_at: "2026-08-15T00:01:00.000Z", episode_id: "episode-blocked", id: "stale-visual-review", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "visual_review", task_id: "task-stale", task_run_id: "run-stale" },
 ];
 
-const tasks: Task[] = [{ actual_cost_cents: null, attempt: 0, budget_limit_cents: 0, claimed_at: null, completed_at: null, created_at: "2026-08-15T00:00:00.000Z", episode_id: "episode-blocked", id: "blocked-task", input_snapshot: {}, last_result: { blockers: [{ code: "media_provider_unavailable", detail: "测试媒体适配器未配置。" }] }, max_attempts: 1, model: "", prompt_version: "", provider: "", status: "blocked", task_type: "generate_b_roll" }];
+const tasks: Task[] = [{ invalidated_at:null, invalidated_reason:null, lease_token:null, available_at:"2026-08-15T00:00:00.000Z", actual_cost_cents: null, attempt: 0, budget_limit_cents: 0, claimed_at: null, completed_at: null, created_at: "2026-08-15T00:00:00.000Z", episode_id: "episode-blocked", id: "blocked-task", input_snapshot: {}, last_result: { blockers: [{ code: "media_provider_unavailable", detail: "测试媒体适配器未配置。" }] }, max_attempts: 1, model: "", prompt_version: "", provider: "", status: "blocked", task_type: "generate_b_roll" }];
 
 it.each(['per-row blocker','old-response queue fallback'])('explains an unknown narration result in delivery using %s',async source=>{
  const episode={...episodes[1],title:'咖啡两镜头'},open=vi.fn(),queue=vi.fn();

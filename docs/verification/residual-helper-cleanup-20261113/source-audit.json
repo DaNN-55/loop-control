@@ -1,0 +1,84 @@
+{
+  "productionReferences": [],
+  "verificationReferences": [
+    {
+      "file": "src/local-app/retiredResidualHelpers.integration.test.ts",
+      "line": 9,
+      "names": [
+        "history_episode_business_revision",
+        "history_episode_delete_plan",
+        "lock_owned_account",
+        "queue_frozen_shot_source_audio"
+      ]
+    },
+    {
+      "file": "src/local-app/retiredResidualHelpers.integration.test.ts",
+      "line": 52,
+      "names": [
+        "history_episode_business_revision",
+        "history_episode_delete_plan",
+        "lock_owned_account",
+        "queue_frozen_shot_source_audio"
+      ]
+    },
+    {
+      "file": "scripts/e2e/clean-schema.mjs",
+      "line": 25,
+      "names": [
+        "history_episode_business_revision",
+        "history_episode_delete_plan",
+        "lock_owned_account",
+        "queue_frozen_shot_source_audio"
+      ]
+    }
+  ],
+  "targets": [
+    {
+      "identity": "local_identity.history_episode_business_revision(p_episode text)",
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "incomingDependencies": [],
+      "effectiveSqlCallers": [
+        "local_identity.history_episode_delete_plan"
+      ]
+    },
+    {
+      "identity": "local_identity.history_episode_delete_plan(p_episode text, p_session_hash text)",
+      "acl": [
+        "postgres=X/postgres",
+        "loop_app=X/postgres"
+      ],
+      "incomingDependencies": [],
+      "effectiveSqlCallers": []
+    },
+    {
+      "identity": "local_identity.lock_owned_account(p_account_id uuid)",
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "incomingDependencies": [],
+      "effectiveSqlCallers": []
+    },
+    {
+      "identity": "public.queue_frozen_shot_source_audio(p_draft_id uuid, p_retry boolean)",
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "incomingDependencies": [],
+      "effectiveSqlCallers": []
+    }
+  ],
+  "internalOnlyCall": [
+    "local_identity.history_episode_delete_plan -> local_identity.history_episode_business_revision"
+  ],
+  "preservedChain": {
+    "accountRowLock": "src/local-app/accountCommands.ts:31",
+    "currentHistoryLock": "src/local-app/episodeLifecycle.ts:122,152",
+    "sourceAudio": "src/local-app/workspaceAudio.ts -> local_identity.use_workspace_source_track",
+    "sharedHistoryReference": "local_identity.history_external_reference",
+    "receiptFiles": "src/local-app/historyEpisodeDeletion.ts",
+    "frozenDraftGuard": "public.protect_frozen_shot_preparation_inputs"
+  },
+  "prefixMatchesAreDifferentFunctions": true
+}

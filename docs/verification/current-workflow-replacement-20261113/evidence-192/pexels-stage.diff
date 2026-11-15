@@ -1,0 +1,273 @@
+--- 191/src/local-app/workspacePexels.ts
++++ 192/src/local-app/workspacePexels.ts
+@@ -16,6 +16,11 @@
+ import type {InputRuntime} from './episodeCommands.js';
+ import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+ const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
++function requirePexelsPreparation(row:ProductionWorkspaceRecord,snapshot:Record<string,any>){
++ const target=snapshot.target;
++ if(target?.scriptRevisionId!==row.script_revision_id||
++  (target.preparationRevisionId?target.preparationRevisionId!==row.preparation_revision_id||target.workspaceId!==row.id:!row.storyboard_package_id))throw new ConfigurationError(409,'制作基准已变化，请针对当前镜头重新检索。');
++}
+ export async function readWorkspacePexels(c:PoolClient,root:string,row:ProductionWorkspaceRecord,requestId?:string):Promise<WorkspacePexelsState>{
+  // Keep each target's current result set, independent from activity on other shots.
+  const latest=`WITH searches AS (SELECT DISTINCT ON(target_item_id) id FROM local_identity.workspace_pexels_requests WHERE workspace_id=$1 AND request_snapshot->>'operation'='search' ORDER BY target_item_id,created_at DESC,id DESC), previews AS (SELECT DISTINCT ON(r.target_item_id,r.request_snapshot#>>'{source,id}') r.id FROM local_identity.workspace_pexels_requests r JOIN searches s ON s.id::text=r.request_snapshot#>>'{source,searchId}' WHERE r.workspace_id=$1 AND r.request_snapshot->>'operation'='preview' ORDER BY r.target_item_id,r.request_snapshot#>>'{source,id}',r.created_at DESC,r.id DESC)`;
+@@ -36,6 +41,7 @@
+   const preview=state.requests.find(r=>r.id===data.previewId&&r.operation==='preview');if(!preview?.preview||preview.status!=='completed'||!preview.source)throw new ConfigurationError(409,'请先完成选定素材的预览下载，再导入候选。');
+   if(preview.candidateId)return;
+   const record=(await c.query('SELECT * FROM local_identity.workspace_pexels_requests WHERE id=$1 AND workspace_id=$2',[preview.id,row.id])).rows[0],item=project.timelines.flatMap(t=>t.items).find(i=>i.id===preview.targetItemId),clip=row.bindings.find(b=>b.itemId===preview.targetItemId);
++  requirePexelsPreparation(row,record.request_snapshot);
+   if(!clip||!item||productionHash(workspaceCandidateTarget(item))!==productionHash(workspaceCandidateTarget(record.target_snapshot)))throw new ConfigurationError(409,'目标画面已变化，请针对当前镜头重新检索。');
+   const a=preview.preview,bytes=await verifyEpisodeFile(c,root,row.episode_id,a.relativePath,a.sha256,a.fileSize),observed=await inspectWorkspaceVisualFile(root,relative(root,await (await episodeFileIO(c,root,row.episode_id)).resolveReference(a.relativePath)),'video');
+   const stored=await snapshotInput(root,row.episode_id,{sourceKind:'file',sourcePath:`pexels-${preview.source.id}.mp4`,contentBase64:bytes.toString('base64')} as never,location.relativePath);
+@@ -53,12 +59,13 @@
+   await runtime.checkReferences(c,[resolved.connection!.id],{purpose:'workspace-generation'});if(!runtime.mediaReady)throw new ConfigurationError(503,'媒体 Worker 未配置。');await runtime.mediaReady({video:resolved.execution});
+   const e=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0],script=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[row.script_revision_id,row.episode_id])).rows[0];await verifyEpisodeFile(c,root,row.episode_id,script.storage_path,script.sha256,Number(script.file_size));
+   const inputs=[{artifactType:'main_script',relativePath:script.storage_path,sha256:script.sha256,fileSize:Number(script.file_size)}],seconds=Number(item.durationInFrames)/timeline.fps,query=data.query.replace(/\s+/g,' ').trim();
+-  expected=workspaceCandidateTarget(item);itemId=String(item.id);snapshot={operation:'search',query,parameters,selection:resolved.selection,connection:resolved.connection,execution:resolved.execution,inputs,targetDurationSeconds:seconds,context:{accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creativeAccountRules(e.policy),seriesVersionId:e.series_version_id,seriesRules:e.rules??null},target:{targetItemId:itemId,shotId:clip.shotId,workspaceRevision:Number(row.revision),scriptRevisionId:row.script_revision_id,projectSha256:row.project_sha256}};
++  expected=workspaceCandidateTarget(item);itemId=String(item.id);snapshot={operation:'search',query,parameters,selection:resolved.selection,connection:resolved.connection,execution:resolved.execution,inputs,targetDurationSeconds:seconds,context:{accountId:e.account_id,blueprintVersionId:e.blueprint_version_id,accountRules:creativeAccountRules(e.policy),seriesVersionId:e.series_version_id,seriesRules:e.rules??null},target:{workspaceId:row.id,preparationRevisionId:row.preparation_revision_id,targetItemId:itemId,shotId:clip.shotId,workspaceRevision:Number(row.revision),scriptRevisionId:row.script_revision_id,projectSha256:row.project_sha256}};
+  }else{
+   if(typeof data.searchId!=='string'||!uuid.test(data.searchId)||!Number.isSafeInteger(data.resultId))throw new ConfigurationError(400,'请选择检索结果。');
+   const search=state.requests.find(r=>r.id===data.searchId&&r.operation==='search'),selected=search?.results?.find(r=>r.id===data.resultId);if(!search||search.status!=='completed'||!selected)throw new ConfigurationError(409,'检索结果不存在或已不可读取，请重新检索。');
+   const record=(await c.query('SELECT * FROM local_identity.workspace_pexels_requests WHERE id=$1 AND workspace_id=$2',[search.id,row.id])).rows[0];itemId=search.targetItemId;expected=record.target_snapshot;const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===itemId);if(!item||productionHash(workspaceCandidateTarget(item))!==productionHash(workspaceCandidateTarget(record.target_snapshot)))throw new ConfigurationError(409,'目标画面已变化，请重新检索。');
+-  snapshot={...record.request_snapshot,operation:'preview',source:{...selected,query:search.query,parameters:search.parameters,selection:search.selection,connectionName:search.connectionName,searchId:search.id}};
++  requirePexelsPreparation(row,record.request_snapshot);
++  snapshot={...record.request_snapshot,target:{...record.request_snapshot.target,workspaceId:row.id,preparationRevisionId:row.preparation_revision_id},operation:'preview',source:{...selected,query:search.query,parameters:search.parameters,selection:search.selection,connectionName:search.connectionName,searchId:search.id}};
+  }
+  const id=randomUUID();snapshot.expectedRevision=Number(row.revision);snapshot.fingerprint=productionHash({expected,snapshot});
+  await c.query('INSERT INTO local_identity.workspace_pexels_requests(id,workspace_id,episode_id,target_item_id,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6)',[id,row.id,row.episode_id,itemId!,expected,snapshot]);
+--- 191/src/local-app/workspacePexels.fixture.ts
++++ 192/src/local-app/workspacePexels.fixture.ts
+@@ -3,8 +3,8 @@
+ import {join} from 'node:path';
+ import {narrationFixture} from './workspaceNarration.fixture';
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+-export async function workspacePexelsFixture(options?:{testRootParent?:string;mountPath?:string;episodeRelativePath?:(episodeId:string)=>string},migrations:string[]=[]){
+- const f=await narrationFixture(undefined,undefined,false,false,options?{voice:workspaceTestMedia('controlled-narration-tone.mp3'),video:workspaceTestMedia('landscape-red-blue.mp4'),...options,migrations}:migrations);try{
++export async function workspacePexelsFixture(options?:{testRootParent?:string;mountPath?:string;episodeRelativePath?:(episodeId:string)=>string},migrations:string[]=[],existing?:Awaited<ReturnType<typeof narrationFixture>>){
++ const f=existing??await narrationFixture(undefined,undefined,false,false,options?{voice:workspaceTestMedia('controlled-narration-tone.mp3'),video:workspaceTestMedia('landscape-red-blue.mp4'),...options,migrations}:migrations);try{
+  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();await f.c.query('BEGIN');
+  await f.c.query("INSERT INTO public.external_connections(id,provider,adapter,name,created_by,current_version_id,endpoint) VALUES($1,'pexels','pexels_video','Pexels A',$2,$3,'https://api.pexels.com')",[connection,f.owner,version]);
+  await f.c.query("INSERT INTO public.external_connection_versions(id,connection_id,version,provider,adapter,endpoint,vault_secret_id) VALUES($1,$2,1,'pexels','pexels_video','https://api.pexels.com',$3)",[version,connection,secret]);
+@@ -12,5 +12,5 @@
+  const mode=join(f.root,'pexels-mode');await writeFile(mode,'success');const calls=join(f.root,'pexels-calls.jsonl');await writeFile(join(f.root,'controlled-video.mjs'),`import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){return{mode:'controlled',store:{mode:'keychain',get:async ref=>'synthetic-'+ref},fetcher:async(url,init={})=>{const mode=readFileSync(${JSON.stringify(mode)},'utf8');appendFileSync(${JSON.stringify(calls)},JSON.stringify({url:String(url),authorization:init.headers?.Authorization})+'\\n');if(mode==='reject')return new Response('{}',{status:401});if(mode==='transport')throw Error('controlled network failure');if(new URL(url).hostname==='api.pexels.com')return Response.json({videos:(mode==='empty'?[]:[11,22]).map(id=>({id,...(id===11?{image:'https://images.pexels.com/videos/11/preview.jpg'}:{}),duration:4,url:'https://www.pexels.com/video/'+id+'/',user:{name:'Fixture creator',url:'https://www.pexels.com/@fixture/'},video_files:[{id:id+1,file_type:'video/mp4',width:640,height:360,link:mode==='badurl'?'http://127.0.0.1/private':'https://videos.pexels.com/video-files/'+id+'/test.mp4'}]}))});if(mode==='download-fail')return new Response('no',{status:503});if(mode==='oversize')return new Response('invalid',{headers:{'content-type':'video/mp4','content-length':'104857601'}});if(mode==='invalid')return new Response('not a video',{headers:{'content-type':'video/mp4'}});return new Response(readFileSync(mode==='short'?${JSON.stringify(join(f.root,'short.mp4'))}:${JSON.stringify(workspaceTestMedia('landscape-red-blue.mp4'))}),{headers:{'content-type':'video/mp4'}});}};}`);
+ 
+  return {...f,version,connection,secret,calls,pexelsMode:mode};
+- }catch(error){await f.close();throw error;}
++ }catch(error){if(!existing)await f.close();throw error;}
+ }
+--- 191/src/local-app/productionPexelsInputs.integration.test.ts
++++ 192/src/local-app/productionPexelsInputs.integration.test.ts
+@@ -0,0 +1,76 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {formalWorkflowFixture} from './formalWorkflow.fixture';
++import {workspacePexelsFixture} from './workspacePexels.fixture';
++import {readFile} from 'node:fs/promises';
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('independent Pexels search and preview freeze the canonical shot basis, import explicitly and leave legacy records untouched',async()=>{
++ const f=await formalWorkflowFixture({controlled:true,videoConfiguration:false,freshAccount:true,scriptText:'# 当前检索\n\n## 正文\n\n第一镜寻找海面。\n\n第二镜保留原画面。'});
++ try{
++  const p=await workspacePexelsFixture(undefined,[],f.controlled!);expect((await f.send('start')).status).toBe(200);
++  const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);let w=prepared.body;
++  const send=async(command:string,data:Record<string,unknown>)=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;};
++  const read=async()=>{const r=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);w=(await r.json()).workspace;};
++  const original=w.project.sha256,shot=w.clips[0].shotId;
++  await send('searchWorkspacePexelsVideos',{targetItemId:w.clips[0].itemId,selection:{capability:'video',provider:'pexels',adapter:'pexels_video',connectionVersionId:p.version},query:'ocean'});
++  const search=w.pexels.requests[0],reference={version:'production-preparation-ref/v1',workspace_id:w.id,preparation_revision_id:w.preparationRevisionId,script_revision_id:f.main,shot_id:shot};
++  const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[search.taskId])).rows[0].input_snapshot;expect(snapshot.production_preparation).toEqual(reference);expect(snapshot).not.toHaveProperty('storyboard_review_package_id');expect(snapshot.workspace_target).toMatchObject({workspaceId:w.id,preparationRevisionId:w.preparationRevisionId,shotId:shot});
++  expect((await p.execute(search.taskId)).status).toBe('completed');await read();expect(w.pexels.requests[0].results.map((x:any)=>x.id)).toEqual([11,22]);
++  await send('previewWorkspacePexelsVideo',{searchId:search.id,resultId:22});const preview=w.pexels.requests[0];expect((await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[preview.taskId])).rows[0].input_snapshot.production_preparation).toEqual(reference);
++  expect((await p.execute(preview.taskId)).status).toBe('completed');await read();await send('importWorkspacePexelsVideo',{previewId:preview.id});expect(w.visualCandidates).toHaveLength(1);expect(w.visualCandidates[0].source.id).toBe(22);expect(w.project.sha256).toBe(original);
++  const decision=await f.send('prepareWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,candidateId:w.visualCandidates[0].id,durationPolicy:'use-candidate',acceptTimelineImpact:true});expect(decision.status,JSON.stringify(decision.body)).toBe(200);
++  await send('adoptWorkspaceVisualCandidate',{candidateId:w.visualCandidates[0].id,adoptionId:decision.body.adoptionId});expect(w.visualCandidates[0].status).toBe('adopted');
++  for(const table of ['review_packages','shot_preparation_drafts','approvals'])expect((await f.c.query(`SELECT count(*)::int n FROM public.${table} WHERE episode_id=$1`,[f.newEpisode])).rows[0].n).toBe(0);
++  expect((await f.c.query('SELECT count(*)::int n FROM public.paid_generation_reservations r JOIN public.tasks t ON t.id=r.task_id WHERE t.episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['other-shot','missing-reference','future-version','wrong-request','wrong-target'] as const)('Pexels stops before transport when the frozen preparation has %s',async change=>{
++ const f=await formalWorkflowFixture({controlled:true,videoConfiguration:false,freshAccount:true,scriptText:'# 当前检索\n\n## 正文\n\n第一镜寻找海面。\n\n第二镜保留原画面。'});
++ try{
++  const p=await workspacePexelsFixture(undefined,[],f.controlled!);expect((await f.send('start')).status).toBe(200);let response=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(response.status).toBe(200);let w=response.body;
++  response=await f.send('searchWorkspacePexelsVideos',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:{capability:'video',provider:'pexels',adapter:'pexels_video',connectionVersionId:p.version},query:'ocean'});expect(response.status).toBe(200);w=response.body;
++  const id=w.pexels.requests[0].taskId,snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[id])).rows[0].input_snapshot;
++  if(change==='other-shot')snapshot.production_preparation.shot_id=w.clips[1].shotId;
++  else if(change==='missing-reference')delete snapshot.production_preparation;
++  else if(change==='future-version')snapshot.production_preparation.version='production-preparation-ref/v999';
++  else if(change==='wrong-target')snapshot.workspace_target.targetItemId=w.clips[1].itemId;
++  else snapshot.workspace_pexels_request_id=w.id;
++  await f.c.query('UPDATE public.tasks SET input_snapshot=$2 WHERE id=$1',[id,snapshot]);
++  expect((await p.execute(id,false)).status).toBe('failed');await expect(readFile(p.calls,'utf8')).rejects.toMatchObject({code:'ENOENT'});
++  expect((await f.c.query('SELECT project_sha256 FROM local_identity.production_workspaces WHERE id=$1',[w.id])).rows[0].project_sha256).toBe(w.project.sha256);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['future-protocol','wrong-target'] as const)('Pexels refuses an unknown legacy Pexels contract: %s',async change=>{
++ const f=await workspacePexelsFixture();try{
++  let w=await f.read();const r=await f.request('searchWorkspacePexelsVideos',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:{capability:'video',provider:'pexels',adapter:'pexels_video',connectionVersionId:f.version},query:'recorded input'});expect(r.status).toBe(200);w=r.body;const job=w.pexels.requests[0];
++  await f.c.query("UPDATE local_identity.workspace_pexels_requests SET request_snapshot=request_snapshot #- '{target,preparationRevisionId}' #- '{target,workspaceId}' WHERE id=$1",[job.id]);
++  const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0].input_snapshot;delete snapshot.production_preparation;delete snapshot.workspace_target.preparationRevisionId;delete snapshot.workspace_target.workspaceId;
++  if(change==='wrong-target')snapshot.workspace_target.targetItemId=w.clips[1].itemId;
++  await f.c.query('UPDATE public.tasks SET input_snapshot=$2,prompt_version=$3 WHERE id=$1',[job.taskId,snapshot,change==='future-protocol'?'workspace-pexels-v999':'workspace-pexels-v1']);
++  expect((await f.execute(job.taskId,false)).status).toBe('failed');await expect(readFile(f.calls,'utf8')).rejects.toMatchObject({code:'ENOENT'});
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a recorded legacy Pexels search executes through its original basis without rewriting its frozen snapshot',async()=>{
++ const f=await workspacePexelsFixture();try{
++  let w=await f.read();const r=await f.request('searchWorkspacePexelsVideos',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:{capability:'video',provider:'pexels',adapter:'pexels_video',connectionVersionId:f.version},query:'recorded ocean'});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;const job=w.pexels.requests[0];
++  // Reconstruct the pre-192 frozen protocol only in this owned historical fixture.
++  await f.c.query("UPDATE local_identity.workspace_pexels_requests SET request_snapshot=request_snapshot #- '{target,preparationRevisionId}' #- '{target,workspaceId}' WHERE id=$1",[job.id]);
++  await f.c.query("UPDATE public.tasks SET input_snapshot=(input_snapshot-'production_preparation') #- '{workspace_target,preparationRevisionId}' #- '{workspace_target,workspaceId}' WHERE id=$1",[job.taskId]);
++  const frozen=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0].input_snapshot;
++  expect((await f.execute(job.taskId)).status).toBe('completed');w=await f.read();expect(w.pexels.requests[0].results).toHaveLength(2);
++  const preview=await f.request('previewWorkspacePexelsVideo',{workspaceId:w.id,expectedRevision:w.revision,searchId:job.id,resultId:22});expect(preview.status,JSON.stringify(preview.body)).toBe(200);
++  const previewTask=preview.body.pexels.requests.find((r:any)=>r.operation==='preview').taskId;expect((await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[previewTask])).rows[0].input_snapshot.production_preparation).toMatchObject({version:'production-preparation-ref/v1',preparation_revision_id:w.preparationRevisionId});expect((await f.execute(previewTask)).status).toBe('completed');
++  const after=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0].input_snapshot;delete frozen.runtime_constraints;delete after.runtime_constraints;expect(after).toEqual(frozen);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a new Pexels task cannot discard its reference and pretend to be legacy on an imported workspace',async()=>{
++ const f=await workspacePexelsFixture();try{
++  let w=await f.read();const r=await f.request('searchWorkspacePexelsVideos',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:{capability:'video',provider:'pexels',adapter:'pexels_video',connectionVersionId:f.version},query:'new request on imported workspace'});expect(r.status).toBe(200);w=r.body;const id=w.pexels.requests[0].taskId;
++  await f.c.query("UPDATE public.tasks SET input_snapshot=(input_snapshot-'production_preparation')||jsonb_build_object('storyboard_review_package_id',$2::text) WHERE id=$1",[id,f.board]);
++  expect((await f.execute(id,false)).status).toBe('failed');await expect(readFile(f.calls,'utf8')).rejects.toMatchObject({code:'ENOENT'});
++ }finally{await f.close();}
++},120000);
+--- 191/src/local-app/productionPexelsMigration.integration.test.ts
++++ 192/src/local-app/productionPexelsMigration.integration.test.ts
+@@ -0,0 +1,24 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {randomBytes} from 'node:crypto';
++import {join} from 'node:path';
++import {loadSchemaCatalog,freshSchemaTransaction,migrationTransaction,schemaMigrationPlan} from './schemaMigrations';
++import {seedHistoricalPreparation} from './historicalPreparation.fixture';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('192 preserves nonempty historical workspaces, audio, frozen tasks and permissions through atomic upgrade, rollback and full restore',async()=>{
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated migration fixtures');
++ const {databaseSnapshot,assertRestored}=await import(join(process.cwd(),'scripts/runtime/clean-sql-cutover.mjs'));
++ const all=loadSchemaCatalog(process.cwd()),catalog={...all,current:all.current.filter(f=>f.version<'193-')},previous={...catalog,current:catalog.current.filter(f=>f.version<'192-')},seedCatalog={...previous,current:previous.current.filter(f=>f.version<'188-')};
++ const suffix=randomBytes(6).toString('hex'),database='loop_pexels_import_'+suffix,restored='loop_pexels_restore_'+suffix,created:string[]=[];const sql=(q:string,db=database)=>context.sql(q,db),snapshot=()=>databaseSnapshot(context,database,process.cwd());
++ try{
++  for(const db of [database,restored]){context.sql('CREATE DATABASE '+db+' TEMPLATE template0','postgres');created.push(db);}
++  sql(freshSchemaTransaction(seedCatalog));const ids=seedHistoricalPreparation(sql);sql(migrationTransaction(previous.current.filter(f=>f.version>='188-')));
++  const before=snapshot(),ledger=Object.fromEntries(Object.entries(before.ledger).map(([n,v])=>[n,(v as {sha256:string}).sha256])),pending=schemaMigrationPlan(ledger,catalog);expect(pending.map(f=>f.version)).toEqual(['192-independent-workspace-pexels-inputs.sql']);const migration=migrationTransaction(pending);
++  expect(()=>sql(migration.replace(/COMMIT;$/,'SELECT 1/0;COMMIT;'))).toThrow(/division by zero/);assertRestored(before,snapshot());sql(migration);const after=snapshot();
++  expect(after.rows).toEqual(before.rows);expect(after.sequenceRows).toEqual(before.sequenceRows);expect(after.roles).toEqual(before.roles);for(const item of before.security)expect(after.security).toContainEqual(item);for(const [version,row]of Object.entries(before.ledger))expect(after.ledger[version]).toEqual(row);
++  expect(sql(`SELECT storyboard_package_id::text FROM local_identity.production_workspaces WHERE id='${ids.workspace}'`)).toBe(ids.board);
++  const applied=Object.fromEntries(Object.entries(after.ledger).map(([n,v])=>[n,(v as {sha256:string}).sha256]));expect(schemaMigrationPlan(applied,catalog)).toEqual([]);
++  sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',database]),restored);assertRestored(after,databaseSnapshot(context,restored,process.cwd()));
++  expect(sql(`SELECT current_audio_track_id::text FROM public.shot_preparation_drafts WHERE episode_id='${ids.episode}'`,restored)).toBe(ids.audio);
++ }finally{for(const db of created.reverse())context.sql('DROP DATABASE '+db+' WITH (FORCE)','postgres');}
++},120000);
+--- 191/db/current/192-independent-workspace-pexels-inputs.sql
++++ 192/db/current/192-independent-workspace-pexels-inputs.sql
+@@ -0,0 +1,106 @@
++-- Freeze Pexels inputs against the current independent preparation. Historical rows and frozen requests remain unchanged.
++
++CREATE OR REPLACE FUNCTION local_identity.queue_workspace_pexels(p_id uuid)
++ RETURNS uuid
++ LANGUAGE plpgsql
++ SECURITY DEFINER
++ SET search_path TO ''
++AS $function$
++DECLARE r local_identity.workspace_pexels_requests;w local_identity.production_workspaces;cfg jsonb;snap jsonb;tid uuid;op text;BEGIN
++ SELECT * INTO r FROM local_identity.workspace_pexels_requests WHERE id=p_id FOR UPDATE;
++ IF NOT FOUND OR NOT local_identity.lock_owned_input_episode(r.episode_id) THEN RAISE EXCEPTION 'Owned Pexels request required' USING ERRCODE='42501';END IF;
++ IF r.task_id IS NOT NULL THEN RETURN r.task_id;END IF;
++ w:=local_identity.lock_current_production_workspace(r.workspace_id);
++ IF w.episode_id IS DISTINCT FROM r.episode_id OR NOT local_identity.preparation_source_current(w.preparation_revision_id) THEN RAISE EXCEPTION 'Current production preparation required';END IF;
++ snap:=r.request_snapshot;cfg:=snap->'execution';op:=snap->>'operation';
++ IF snap#>>'{target,workspaceId}' IS DISTINCT FROM w.id::text OR snap#>>'{target,preparationRevisionId}' IS DISTINCT FROM w.preparation_revision_id::text
++  OR snap#>>'{target,scriptRevisionId}' IS DISTINCT FROM w.script_revision_id::text OR snap#>>'{target,targetItemId}' IS DISTINCT FROM r.target_item_id
++  OR NOT EXISTS(SELECT 1 FROM jsonb_array_elements(w.bindings) b JOIN local_identity.production_shot_versions s ON s.preparation_revision_id=w.preparation_revision_id AND s.episode_id=w.episode_id AND s.shot_id=b->>'shotId' WHERE b->>'itemId'=r.target_item_id AND s.shot_id=snap#>>'{target,shotId}') THEN RAISE EXCEPTION 'Frozen Pexels preparation target mismatch';END IF;
++ IF op NOT IN ('search','preview') OR snap#>>'{selection,capability}'<>'video' OR cfg#>>'{executor,provider}'<>'pexels' OR cfg#>>'{executor,adapter}'<>'pexels_video' OR snap#>>'{selection,model}' IS NOT NULL OR cfg->>'credential_ref' IS DISTINCT FROM snap#>>'{selection,connectionVersionId}' OR NOT EXISTS(SELECT 1 FROM public.episodes e WHERE e.id=r.episode_id AND e.main_script_revision_id=w.script_revision_id AND e.archived_at IS NULL AND e.stage<>'production_completed' AND w.revision=(snap->>'expectedRevision')::bigint) THEN RAISE EXCEPTION 'Current Pexels selection and workspace required';END IF;
++ IF NOT EXISTS(SELECT 1 FROM public.external_connection_versions cv JOIN public.external_connections cn ON cn.id=cv.connection_id AND cn.created_by=local_identity.owner_id() JOIN local_identity.connection_bindings cb ON cb.version_id=cv.id AND cb.owner_id=cn.created_by AND cb.store_mode='keychain' JOIN local_identity.connection_qualifications cq ON cq.version_id=cv.id AND cq.owner_id=cn.created_by AND cq.qualified WHERE cv.id::text=cfg->>'credential_ref' AND cv.provider='pexels' AND cv.adapter='pexels_video' AND cv.revoked_at IS NULL AND (op='preview' OR cn.current_version_id=cv.id) AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence p WHERE p.version_id=cv.id AND p.owner_id=cn.created_by AND p.mode='live' AND p.outcome='verified')) THEN RAISE EXCEPTION 'Validated owned Pexels connection required';END IF;
++ PERFORM pg_advisory_xact_lock(hashtextextended(r.workspace_id::text||r.target_item_id||':pexels:'||op,0));
++ IF EXISTS(SELECT 1 FROM local_identity.workspace_pexels_requests x JOIN public.tasks t ON t.id=x.task_id WHERE x.workspace_id=r.workspace_id AND x.target_item_id=r.target_item_id AND x.request_snapshot->>'operation'=op AND t.status IN ('ready','running')) THEN RAISE EXCEPTION 'Pexels request already running' USING ERRCODE='55000';END IF;
++ UPDATE local_identity.input_episodes SET enabled=true,media_enabled=true WHERE episode_id=r.episode_id;
++ INSERT INTO public.tasks(episode_id,task_type,status,budget_limit_cents,max_attempts,provider,model,prompt_version,input_snapshot) VALUES(r.episode_id,CASE op WHEN 'search' THEN 'search_shot_video' ELSE 'preview_shot_video' END,'ready',0,1,'pexels','pexels-video-v1','workspace-pexels-v1',jsonb_build_object(
++ 'capability',CASE op WHEN 'search' THEN 'shot_video_search' ELSE 'shot_video_preview' END,'production_preparation',jsonb_build_object('version','production-preparation-ref/v1','workspace_id',w.id,'preparation_revision_id',w.preparation_revision_id,'script_revision_id',w.script_revision_id,'shot_id',snap#>>'{target,shotId}'),'workspace_pexels_request_id',r.id,'configuration_hash',snap->>'fingerprint','credential_ref',cfg->>'credential_ref','executor',cfg->'executor','production_selection',snap->'selection','production_context',snap->'context','workspace_target',snap->'target','cost_basis',jsonb_build_object('kind','free-search','reservedCents',0),'allowed_tools',jsonb_build_array('read','write'),'input_artifacts',snap->'inputs','budget',jsonb_build_object('limit_cents',0,'max_attempts',1),
++ 'media',jsonb_build_object('adapter','pexels_video','video',jsonb_build_object('query',snap->>'query','target_duration_seconds',snap->'targetDurationSeconds','request',jsonb_build_object('operation',op,'parameters',snap->'parameters','source',snap->'source'))),
++ 'output',jsonb_build_object('required_artifact_types',jsonb_build_array(CASE op WHEN 'search' THEN 'pexels_search_results' ELSE 'pexels_video_preview' END),'content_type',CASE op WHEN 'search' THEN 'application/json' ELSE 'video/mp4' END,'relative_path',format('episodes/%s/pexels/%s',r.episode_id,CASE op WHEN 'search' THEN 'results.json' ELSE 'preview.mp4' END),'review_stage','production_ready'))) RETURNING id INTO tid;
++ UPDATE local_identity.workspace_pexels_requests SET task_id=tid WHERE id=r.id;RETURN tid;
++END $function$
++;
++
++CREATE OR REPLACE FUNCTION local_identity.workspace_task_preparation_current(p_task uuid, p_workspace uuid)
++ RETURNS boolean
++ LANGUAGE sql
++ STABLE SECURITY DEFINER
++ SET search_path TO ''
++AS $function$
++ SELECT EXISTS(SELECT 1 FROM public.tasks t JOIN local_identity.production_workspaces w ON w.episode_id=t.episode_id
++ JOIN public.episodes e ON e.id=w.episode_id JOIN local_identity.production_preparation_revisions p ON p.id=w.preparation_revision_id AND p.episode_id=e.id AND p.script_revision_id=w.script_revision_id
++ WHERE t.id=p_task AND w.id=p_workspace AND t.invalidated_at IS NULL AND e.main_script_revision_id=w.script_revision_id
++  AND e.archived_at IS NULL AND e.stage<>'production_completed' AND NOT local_identity.is_recycled_episode(e.id) AND NOT local_identity.is_historical_episode(e.id)
++  AND local_identity.preparation_source_current(p.id)
++  AND CASE WHEN t.input_snapshot ? 'production_preparation' THEN
++   t.input_snapshot#>>'{production_preparation,version}'='production-preparation-ref/v1'
++   AND t.input_snapshot#>>'{production_preparation,workspace_id}'=w.id::text
++   AND t.input_snapshot#>>'{production_preparation,preparation_revision_id}'=p.id::text
++   AND t.input_snapshot#>>'{production_preparation,script_revision_id}'=w.script_revision_id::text
++   AND (NOT(t.input_snapshot->'production_preparation' ? 'shot_id') OR EXISTS(SELECT 1 FROM local_identity.production_shot_versions shot WHERE shot.preparation_revision_id=p.id AND shot.episode_id=e.id AND shot.shot_id=t.input_snapshot#>>'{production_preparation,shot_id}'))
++   AND (EXISTS(SELECT 1 FROM local_identity.workspace_visual_candidates v
++    WHERE v.task_id=t.id AND v.workspace_id=w.id AND v.episode_id=e.id AND v.shot_id IS NOT NULL
++     AND v.shot_id=t.input_snapshot#>>'{production_preparation,shot_id}'
++     AND v.id::text=coalesce(t.input_snapshot->>'workspace_image_request_id',t.input_snapshot->>'workspace_visual_request_id')
++     AND (v.request_snapshot->>'kind'='image' AND t.task_type='generate_static_visual' OR v.request_snapshot->>'kind'='video' AND t.task_type IN ('generate_shot_video','generate_a_roll','generate_b_roll')))
++    OR EXISTS(SELECT 1 FROM local_identity.workspace_audio_requests r JOIN local_identity.workspace_audio_preparations a ON a.id=r.preparation_id
++     WHERE r.task_id=t.id AND r.workspace_id=w.id AND r.episode_id=e.id AND a.workspace_id=w.id AND a.episode_id=e.id
++      AND t.task_type IN ('extract_embedded_audio','generate_soundtrack')
++      AND a.shot_id IS NOT DISTINCT FROM t.input_snapshot#>>'{production_preparation,shot_id}' AND (a.kind<>'source' OR a.shot_id IS NOT NULL))
++    OR EXISTS(SELECT 1 FROM local_identity.workspace_pexels_requests r WHERE r.task_id=t.id AND r.workspace_id=w.id AND r.episode_id=e.id
++     AND t.provider='pexels' AND t.task_type IN ('search_shot_video','preview_shot_video') AND r.id::text=t.input_snapshot->>'workspace_pexels_request_id' AND t.prompt_version='workspace-pexels-v1' AND t.model='pexels-video-v1'
++     AND t.input_snapshot->'workspace_target'=r.request_snapshot->'target'
++     AND coalesce(t.input_snapshot#>>'{media,video,request,operation}',t.input_snapshot#>>'{media,b_roll,request,operation}')=r.request_snapshot->>'operation'
++     AND CASE WHEN t.task_type='generate_b_roll' THEN r.request_snapshot->>'operation' IN ('search','preview') ELSE t.task_type=CASE r.request_snapshot->>'operation' WHEN 'search' THEN 'search_shot_video' WHEN 'preview' THEN 'preview_shot_video' END END
++     AND r.request_snapshot#>>'{target,workspaceId}'=w.id::text AND r.request_snapshot#>>'{target,preparationRevisionId}'=p.id::text
++     AND r.request_snapshot#>>'{target,scriptRevisionId}'=w.script_revision_id::text AND r.request_snapshot#>>'{target,shotId}'=t.input_snapshot#>>'{production_preparation,shot_id}'
++     AND r.target_item_id=r.request_snapshot#>>'{target,targetItemId}'
++     AND EXISTS(SELECT 1 FROM jsonb_array_elements(w.bindings) b WHERE b->>'itemId'=r.target_item_id AND b->>'shotId'=r.request_snapshot#>>'{target,shotId}')))
++  ELSE p.source_format='storyboard/v1' AND p.source_reference_id=w.storyboard_package_id
++   AND (t.provider IS DISTINCT FROM 'pexels' AND (t.input_snapshot->>'storyboard_review_package_id'=p.source_reference_id::text OR t.task_type='generate_static_visual'
++    AND EXISTS(SELECT 1 FROM local_identity.workspace_visual_candidates v WHERE v.workspace_id=w.id AND v.episode_id=e.id AND v.task_id=t.id AND v.id::text=t.input_snapshot->>'workspace_image_request_id'))
++    OR t.provider='pexels' AND t.task_type IN ('search_shot_video','preview_shot_video','generate_b_roll')
++    AND EXISTS(SELECT 1 FROM local_identity.workspace_pexels_requests r WHERE r.task_id=t.id AND r.workspace_id=w.id AND r.episode_id=e.id
++     AND NOT(r.request_snapshot->'target' ? 'preparationRevisionId') AND NOT(r.request_snapshot->'target' ? 'workspaceId')
++     AND r.id::text=t.input_snapshot->>'workspace_pexels_request_id' AND t.prompt_version='workspace-pexels-v1' AND t.model='pexels-video-v1'
++     AND t.input_snapshot->'workspace_target'=r.request_snapshot->'target'
++     AND coalesce(t.input_snapshot#>>'{media,video,request,operation}',t.input_snapshot#>>'{media,b_roll,request,operation}')=r.request_snapshot->>'operation'
++     AND CASE WHEN t.task_type='generate_b_roll' THEN r.request_snapshot->>'operation' IN ('search','preview') ELSE t.task_type=CASE r.request_snapshot->>'operation' WHEN 'search' THEN 'search_shot_video' WHEN 'preview' THEN 'preview_shot_video' END END AND r.request_snapshot#>>'{target,scriptRevisionId}'=w.script_revision_id::text
++     AND EXISTS(SELECT 1 FROM jsonb_array_elements(w.bindings) b WHERE b->>'itemId'=r.target_item_id AND b->>'shotId'=r.request_snapshot#>>'{target,shotId}')))
++  END)
++$function$
++;
++
++CREATE OR REPLACE FUNCTION local_identity.input_media_connection(p_task_id uuid, p_attempt integer, p_lease_token uuid, p_version_id uuid)
++ RETURNS TABLE(version_id uuid, provider text, adapter text, endpoint text, secret_ref uuid)
++ LANGUAGE plpgsql
++ SECURITY DEFINER
++ SET search_path TO ''
++AS $function$
++BEGIN
++ IF EXISTS(SELECT 1 FROM local_identity.workspace_pexels_requests r WHERE r.task_id=p_task_id) THEN
++  IF local_identity.actor_role() IS DISTINCT FROM 'service_role' THEN RAISE EXCEPTION 'Worker required' USING ERRCODE='42501';END IF;
++  PERFORM public.refresh_worker_task_lease(p_task_id,p_attempt,p_lease_token);
++  IF NOT EXISTS(SELECT 1 FROM local_identity.workspace_pexels_requests r WHERE r.task_id=p_task_id AND local_identity.workspace_task_preparation_current(p_task_id,r.workspace_id)) THEN RAISE EXCEPTION 'Pexels production preparation is stale' USING ERRCODE='55000';END IF;
++ END IF;
++ IF NOT EXISTS(SELECT 1 FROM public.tasks t WHERE t.id=p_task_id AND t.task_type='generate_soundtrack' AND EXISTS(SELECT 1 FROM local_identity.workspace_audio_requests r WHERE r.task_id=t.id)) THEN RETURN QUERY SELECT * FROM local_identity.input_media_connection_before_audio_selection(p_task_id,p_attempt,p_lease_token,p_version_id);RETURN;END IF;
++ IF local_identity.actor_role() IS DISTINCT FROM 'service_role' THEN RAISE EXCEPTION 'Worker required' USING ERRCODE='42501';END IF;
++ PERFORM public.refresh_worker_task_lease(p_task_id,p_attempt,p_lease_token);
++ RETURN QUERY SELECT cv.id,cv.provider,cv.adapter,cv.endpoint,b.secret_ref FROM public.tasks t
++ JOIN local_identity.input_episodes i ON i.episode_id=t.episode_id AND i.enabled AND i.media_enabled
++ JOIN public.external_connection_versions cv ON cv.id=p_version_id AND cv.provider=t.provider AND cv.adapter=t.input_snapshot#>>'{executor,adapter}' AND cv.revoked_at IS NULL
++ JOIN public.external_connections cn ON cn.id=cv.connection_id AND cn.created_by=i.owner_id
++ JOIN local_identity.connection_bindings b ON b.version_id=cv.id AND b.owner_id=i.owner_id AND b.store_mode='keychain'
++ JOIN local_identity.connection_qualifications q ON q.version_id=cv.id AND q.owner_id=i.owner_id AND q.qualified
++ WHERE t.id=p_task_id AND t.input_snapshot->>'credential_ref'=cv.id::text AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence pe WHERE pe.version_id=cv.id AND pe.owner_id=i.owner_id AND pe.mode='live' AND pe.outcome='verified');
++ IF NOT FOUND THEN RAISE EXCEPTION 'Frozen audio connection unavailable';END IF;
++END $function$
++;

@@ -1,0 +1,21 @@
+{
+  "episode_created": 1,
+  "quality_changed": 2,
+  "stage_transition_evidence": 2,
+  "stage_changed": 2,
+  "queue_entered": 3,
+  "estimate_frozen": 2,
+  "attempt_started": 3,
+  "task_claimed": 3,
+  "provider_request_dispatch": 2,
+  "reservation_created": 2,
+  "provider_dispatch_phase": 8,
+  "provider_response_observed": 2,
+  "attempt_finished": 3,
+  "provider_receipt_persisted": 2,
+  "candidate_adopted": 5,
+  "candidate_withdrawn": 1,
+  "candidate_rejected": 1,
+  "delivery_confirmed": 1,
+  "delivery_completed": 1
+}

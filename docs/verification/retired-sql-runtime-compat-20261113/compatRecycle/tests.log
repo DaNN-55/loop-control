@@ -1,0 +1,43 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-vK16pN/source
+
+ ❯ src/local-app/recycleBin.integration.test.ts (6 tests | 1 failed) 21549ms
+   ✓ quota counts real registered bytes, sweeps safe FIFO on mutation, preserves newest and oversized item  5447ms
+   ✓ unknown and running work block entry; offline or changed files block restore; protected manual files survive quota  5136ms
+   ✓ hardlinked bytes are counted once and protected, account cannot orphan trash, concurrent restore has one winner  2188ms
+   ✓ real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state  3509ms
+   ✓ recycle enforces Owner, CSRF, revision, durable duplicate receipts and explicit permanent confirmation  3389ms
+   × recycle schema applies forward without rewriting existing migration checksums 1879ms
+     → expected undefined to be 'c379d438c744ae069cb48b194ca730f3ab8e9…' // Object.is equality
+ ✓ src/local-app/retiredSqlRuntimeCompatibility.integration.test.ts (2 tests) 9088ms
+   ✓ 175 removes only four unused rejection entries after full history restore and preserves every retained definition and ACL  4582ms
+   ✓ real saved runtime modules still pass Worker startup, reject old planning and scan no enabled history after 175  4505ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/recycleBin.integration.test.ts > recycle schema applies forward without rewriting existing migration checksums
+AssertionError: expected undefined to be 'c379d438c744ae069cb48b194ca730f3ab8e9…' // Object.is equality
+
+[32m- Expected:[39m 
+"c379d438c744ae069cb48b194ca730f3ab8e9d3d65324963d81d7a89c6a52374"
+
+[31m+ Received:[39m 
+undefined
+
+ ❯ src/local-app/recycleBin.integration.test.ts:130:28
+    128|   const after=Object.fromEntries(rows.map(row=>[row.version,row.sha256…
+    129|   for(const [version,sha] of Object.entries(before))expect(after[versi…
+    130|   expect(after[migration]).toBe(createHash('sha256').update(await read…
+       |                            ^
+    131|   expect((await f.c.query("SELECT count(*)::int count FROM local_ident…
+    132|   expect((await f.c.query("SELECT local_identity.is_recycled_episode($…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 7 passed (8)
+   Start at  10:00:41
+   Duration  32.58s (transform 1.14s, setup 14ms, collect 1.53s, tests 30.64s, environment 0ms, prepare 81ms)
+
+JSON report written to /private/tmp/loop-story-e2e-vK16pN/evidence/vitest.json

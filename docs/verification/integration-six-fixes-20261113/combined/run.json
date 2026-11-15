@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "source": "/private/tmp/loop-story-e2e-h1vt1a/source",
+  "evidence": "/private/tmp/loop-story-e2e-h1vt1a/evidence",
+  "container": "loop-story-e2e-66e73629493a",
+  "containerRemoved": true,
+  "paidCalls": 0,
+  "paidCostCny": 0,
+  "maxVideoSeconds": 8
+}

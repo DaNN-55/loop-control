@@ -1,4 +1,4 @@
-import {loadSchemaCatalog} from './schemaMigrations.js';
+import {loadSchemaCatalog,verifySchemaLedger} from './schemaMigrations.js';
 import {spawn} from 'node:child_process';
 import {Duplex} from 'node:stream';
 import {Pool} from 'pg';
@@ -9,9 +9,10 @@ const migrationName=/^[0-9]{3}-[a-z0-9-]+\.sql$/;
 /** Validates the entire applied ledger before selecting requested forwards. */
 export function planFixtureMigrations(applied:Record<string,string>,available:Migration[],requested:string[]):Migration[]{
  const files=new Map(available.map(file=>[file.version,file]));
- for(const[version,sha256]of Object.entries(applied))if(!(migrationName.test(version)||version==='clean-v2.sql')||!files.has(version)||files.get(version)!.sha256!==sha256)throw Error('Applied fixture migration changed: '+version);
+ for(const[version,sha256]of Object.entries(applied))if(!(migrationName.test(version)||/^clean-v[23]\.sql$/.test(version))||!files.has(version)||files.get(version)!.sha256!==sha256)throw Error('Applied fixture migration changed: '+version);
+ const coveredThrough=Math.max(...available.map((f,i)=>/^clean-v[23]\.sql$/.test(f.version)&&Object.hasOwn(applied,f.version)?i:-1));
  const names=[...new Set(requested.map(path=>{if(!/^db\/(?:local|archive\/legacy-v1)\/[0-9]{3}-[a-z0-9-]+\.sql$/.test(path))throw Error('Invalid fixture migration path');return path.slice(path.lastIndexOf('/')+1);} ))].sort();
- return names.flatMap(version=>{const file=files.get(version);if(!file)throw Error('Missing fixture migration: '+version);return Object.hasOwn(applied,version)||(Object.hasOwn(applied,'clean-v2.sql')&&available.findIndex(f=>f.version===version)<available.findIndex(f=>f.version==='clean-v2.sql'))?[]:[file];});
+ return names.flatMap(version=>{const file=files.get(version);if(!file)throw Error('Missing fixture migration: '+version);return Object.hasOwn(applied,version)||available.findIndex(f=>f.version===version)<coveredThrough?[]:[file];});
 }
 
 /** Schema and the technical ledger share one exported read-only snapshot. No business data are copied. */
@@ -20,6 +21,7 @@ export async function copyFixtureSchema(context:FixtureSchemaContext,targetDatab
  const occupied=context.sql("SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND n.nspname !~ '^pg_'",targetDatabase);
  if(occupied!=='0')throw Error('Fixture target is not empty');
  const catalog=loadSchemaCatalog(projectRoot),available=[...catalog.legacy,catalog.baseline,...catalog.current];
+ if(catalog.effective){const covered=catalog.current.filter(f=>Object.hasOwn(catalog.effective!.covered,f.version));available.splice(catalog.legacy.length+1+covered.length,0,catalog.effective.baseline);}
  const bridge=context.nativeConnection?undefined:spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
  const socket=bridge?Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!}):undefined;
  const pool=new Pool({database:context.database,user:'postgres',max:1,connectionTimeoutMillis:5000,...(context.nativeConnection??{stream:()=>Object.assign(socket!,{connect(){queueMicrotask(()=>socket!.emit('connect'));return socket;},setNoDelay(){return socket;},setKeepAlive(){return socket;}})})} as ConstructorParameters<typeof Pool>[0]);
@@ -29,6 +31,7 @@ export async function copyFixtureSchema(context:FixtureSchemaContext,targetDatab
    await c.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
    const snapshot=(await c.query('SELECT pg_export_snapshot() AS snapshot')).rows[0].snapshot as string;
    const applied=Object.fromEntries((await c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows.map(row=>[row.version,row.sha256])) as Record<string,string>;
+   verifySchemaLedger(applied,catalog);
    const pending=planFixtureMigrations(applied,available,migrations);
    const dumpArgs=['-U','postgres','-d',context.database,'--schema-only','--snapshot='+snapshot];
    const schema=context.nativeConnection?context.execTool!('pg_dump',dumpArgs):context.docker(['exec',context.container,'pg_dump',...dumpArgs]);

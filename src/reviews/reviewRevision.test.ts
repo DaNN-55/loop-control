@@ -5,20 +5,24 @@ import { viewTransport } from "../lib/viewTransport";
 vi.mock("../lib/viewTransport", () => ({ viewTransport: { rpc: vi.fn() } }));
 
 describe("审核修订", () => {
-  it("按动作分流，并返回明确结果", async () => {
+  it("冻结合成调整，并返回明确结果", async () => {
     vi.mocked(viewTransport.rpc).mockResolvedValue({ error: null } as never);
 
     await expect(requestReviewRevision({ kind: "composition", reviewPackageId: "review-1", reason: "调整字幕", studioProject: { relativePath: "episodes/episode-1/openchatcut-frozen/123/project.json", sha256: "a".repeat(64), fileSize: 1, composition: defaultReviewRenderComposition } })).resolves.toMatchObject({ kind: "composition" });
     expect(viewTransport.rpc).toHaveBeenCalledWith("request_review_render_revision", expect.objectContaining({ p_reason: "调整字幕", p_review_package_id: "review-1", p_composition: expect.objectContaining({ studio_project: expect.objectContaining({ relative_path: "episodes/episode-1/openchatcut-frozen/123/project.json", sha256: "a".repeat(64), file_size: 1, composition: expect.objectContaining({ transition: "fade" }) }) }) }));
 
-    await expect(requestReviewRevision({ kind: "storyboard", reviewPackageId: "review-2", reason: "删除镜头" })).resolves.toMatchObject({ kind: "storyboard" });
-    expect(viewTransport.rpc).toHaveBeenLastCalledWith("request_studio_storyboard_revision", { p_reason: "删除镜头", p_review_package_id: "review-2" });
   });
 
   it("保留数据库返回的失败原因", async () => {
     vi.mocked(viewTransport.rpc).mockResolvedValue({ error: new Error("Review render package is no longer current") } as never);
 
-    await expect(requestReviewRevision({ kind: "storyboard", reviewPackageId: "review-1", reason: "删除镜头" })).rejects.toThrow("Review render package is no longer current");
+    await expect(requestReviewRevision({ kind: "composition", reviewPackageId: "review-1", reason: "调整字幕" })).rejects.toThrow("Review render package is no longer current");
+  });
+
+  it("旧结构修订请求在网络调用前拒绝，不能误转成合成修订", async () => {
+    vi.mocked(viewTransport.rpc).mockClear();
+    await expect(requestReviewRevision({ kind: "storyboard", reviewPackageId: "review-1", reason: "删除镜头" } as never)).rejects.toThrow("旧分镜结构修订入口已退役");
+    expect(viewTransport.rpc).not.toHaveBeenCalled();
   });
 
   it("冻结 Studio 工程后才提交合成修订", async () => {

@@ -1,0 +1,22 @@
+{
+  "db/current/199-worker-responsibility-boundaries.sql": {
+    "sha256": "2c82118701d05a74351744d08cf1f2351a0389d944966da11d658aecb24398af",
+    "matchesFinalQueueSource": true
+  },
+  "db/current/200-consolidate-visual-queue.sql": {
+    "sha256": "fdc97f461bf01f57f5a817d9f83c3c82b7cf363aca2ac0e008a2c9db282fdabf",
+    "matchesFinalQueueSource": true
+  },
+  "src/local-app/workerDatabase.ts": {
+    "sha256": "923f3572205e4d4adbcf8d294c42873bc64dfefb4ba185846ff38a6cdf7a18eb",
+    "matchesFinalQueueSource": true
+  },
+  "src/local-app/nativeAttemptOutput.ts": {
+    "sha256": "18bb49f4daa16c838378e2ab0eeb0508054509be1347fed3c5887a84d6b5c6b6",
+    "matchesFinalQueueSource": true
+  },
+  "src/orchestration/runtimeBuild.ts": {
+    "sha256": "985805f2b74ce045e14ba8198215a4ae465a7de9a7c36559e7a1e3d12e946504",
+    "matchesFinalQueueSource": true
+  }
+}

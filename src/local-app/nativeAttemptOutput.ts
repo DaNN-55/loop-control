@@ -73,7 +73,7 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    if(!currentDirectory.isDirectory()||await realpath(directory)!==directory||currentDirectory.dev!==details.dev||currentDirectory.ino!==details.ino)throw Error('生产单目录身份已变化，保留任务文件等待恢复。');
    // The existing lease function asserts this attempt/token and updates the
    // task row. Keep that row lock until files and result registration finish.
-   await client.query('SELECT local_identity.input_worker_call($1,$2)',['refresh_worker_task_lease',fence]);
+   await client.query('SELECT local_identity.execute_managed_worker_command($1,$2)',['refresh_worker_task_lease',fence]);
    const artifacts=new Map(result.artifacts.map(artifact=>[artifact.relativePath,artifact]));
    // These two existing executor outputs are physical diagnostics rather than
    // indexed artifacts. Preserve their established paths under the same fence.
@@ -98,7 +98,7 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
    await durableReceipt(stagingRoot,{version:1,fence,taskPackage,assetRoot:taskPackage.assets.allowedRoot,inputHash:authority.inputHash,result,files:prepared.map(file=>({artifact:file.artifact,previous:file.previous})),status:'prepared'});
    await recordVerifiedProviderResult(client,taskPackage,fence);
    for(const file of prepared){modified.push(file);await atomicReplace(file.temporary,file.destination);}
-   await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:result}]);
+   await client.query('SELECT local_identity.execute_managed_worker_command($1,$2)',['report_worker_result',{...fence,p_result:result}]);
    await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
    commitSent=true;
    await client.query('COMMIT');
@@ -224,7 +224,7 @@ export async function recoverNativeAttemptOutput(pool:Pick<Pool,'connect'>,paths
   if(!registered){for(const file of files)await restorePublication(backupRoot,file);}
   await client.query('SAVEPOINT native_output_publication');
   for(const file of files){modified=true;await atomicReplace(file.temporary,file.destination);}
-  if(!registered){await recordVerifiedProviderResult(client,receipt.taskPackage,fence);await client.query('SELECT local_identity.input_worker_call($1,$2)',['report_worker_result',{...fence,p_result:receipt.result}]);}
+  if(!registered){await recordVerifiedProviderResult(client,receipt.taskPackage,fence);await client.query('SELECT local_identity.execute_managed_worker_command($1,$2)',['report_worker_result',{...fence,p_result:receipt.result}]);}
   await client.query('SELECT local_identity.finish_native_output_publication($1,$2,$3)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token]);
   commitSent=true;await client.query('COMMIT');
   await durableReceipt(paths.stagingRoot,{...receipt,status:'reconciled_completed'});

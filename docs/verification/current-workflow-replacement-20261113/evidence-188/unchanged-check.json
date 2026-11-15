@@ -1,0 +1,17 @@
+{
+  "originalSourceFilesCompared": 1341,
+  "changedOriginalSource": [],
+  "isolatedCopyMismatch": [],
+  "headUnchanged": true,
+  "indexUnchanged": true,
+  "dailySnapshotUnchanged": true,
+  "unchangedSinceFoundation": true,
+  "dailyMetrics": "{\"events\": 0, \"enabled\": false}",
+  "tests": {
+    "numPassedTests": 17,
+    "numFailedTests": 0,
+    "numPendingTests": 1,
+    "success": true
+  },
+  "containerRemoved": true
+}

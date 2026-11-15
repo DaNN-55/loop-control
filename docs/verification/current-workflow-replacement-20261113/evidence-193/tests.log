@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-NDGVOW/source
+
+ ✓ src/local-app/latestAssessment.integration.test.ts (1 test) 14918ms
+   ✓ builds a new independent two-shot order, native edit and actual delivery with event reconciliation and no video calls  14917ms
+ ✓ src/local-app/productionMilestones.integration.test.ts (5 tests) 29430ms
+   ✓ real script confirmation and workspace creation record distinct current workflow milestones exactly once  3018ms
+   ✓ actual editor work and exact export confirmations produce milestones while blocked opens and repeated opens do not  17571ms
+   ✓ only newly created orders get a script-phase milestone and activation never invents an old creation  2932ms
+   ✓ milestone privileges and a failed metric transaction cannot authorize another Owner or leave a false successful start  3010ms
+   ✓ the actual Owner read retains a prior workflow anchor without counting it as a new occurrence or carrying another Owner  2898ms
+ ✓ src/local-app/productionMetricsWorkflow.integration.test.ts (3 tests) 12072ms
+   ✓ collects real controlled Chinese narration, frozen estimate, adoption, withdrawal, re-adoption and reopen without storing text  3215ms
+   ✓ a real SQL response-write failure never repeats a Provider transport and keeps the request marker  828ms
+   ✓ freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package  8029ms
+ ✓ src/local-app/productionMetricsShotDeletion.integration.test.ts (2 tests) 7960ms
+   ✓ storyboard shot removal records one narration withdrawal and retains audio and historical project across receipt replay and reopen  2740ms
+   ✓ native editor shot deletion records one narration withdrawal across repeated save and reopen while keeping source history  5220ms
+ ✓ src/local-app/productionMilestonesMigration.integration.test.ts (1 test) 1829ms
+   ✓ 193 keeps nonempty 192 business and collected facts unchanged, rolls back atomically, and fully restores the candidate without backfilling  1829ms
+ ✓ src/local-app/productionMetricsRetry.integration.test.ts (1 test) 1294ms
+   ✓ freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes  1293ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts (6 tests) 1039ms
+
+ Test Files  7 passed (7)
+      Tests  19 passed (19)
+   Start at  03:50:27
+   Duration  70.51s (transform 451ms, setup 10ms, collect 1.17s, tests 68.54s, environment 0ms, prepare 185ms)
+
+JSON report written to /private/tmp/loop-story-e2e-NDGVOW/evidence/vitest.json

@@ -1,0 +1,44 @@
+E2E evidence: /private/tmp/loop-story-e2e-EJMZLM/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-EJMZLM/source
+
+ ❯ src/local-app/productionPexelsInputs.integration.test.ts (7 tests | 1 failed | 6 skipped) 2163ms
+   ↓ independent Pexels search and preview freeze the canonical shot basis, import explicitly and leave legacy records untouched
+   ↓ Pexels stops before transport when the frozen preparation has other-shot
+   ↓ Pexels stops before transport when the frozen preparation has missing-reference
+   ↓ Pexels stops before transport when the frozen preparation has future-version
+   ↓ Pexels stops before transport when the frozen preparation has wrong-request
+   × a recorded legacy Pexels search executes through its original basis without rewriting its frozen snapshot 2163ms
+     → {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 200 // Object.is equality
+   ↓ a new Pexels task cannot discard its reference and pretend to be legacy on an imported workspace
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionPexelsInputs.integration.test.ts > a recorded legacy Pexels search executes through its original basis without rewriting its frozen snapshot
+AssertionError: {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 503[39m
+
+ ❯ src/local-app/productionPexelsInputs.integration.test.ts:52:191
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  23:52:38
+   Duration  3.27s (transform 668ms, setup 7ms, collect 978ms, tests 2.16s, environment 0ms, prepare 31ms)
+
+JSON report written to /private/tmp/loop-story-e2e-EJMZLM/evidence/vitest.json

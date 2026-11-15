@@ -37,3 +37,9 @@ it('keeps whole-episode music on an absolute position without a shot placeholder
  expect(next.timelines[0].items.find(i=>i.id==='bgm')).toMatchObject({startFrame:15,durationInFrames:60});
  expect(()=>applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'bgm',gainDb:-12,duckDepthDb:10,placement:{anchor:'shot',shotId:'s1',offsetSeconds:0,durationSeconds:1}})).toThrow('无效');
 });
+
+it('names newly created voice nodes for people and keeps later manual names and stable native identities',()=>{
+ const p=project(),edit={kind:'voice' as const,workspaceId:'w',shotId:'s1',visualItemIds:['visual-1','visual-2'],sourceItemId:'visual-1',sourceAssetId:'audio-track-source',mode:'source' as const,gainDb:-6,ambienceGainDb:null};
+ const next=applyWorkspaceAudioMix(p,edit),node=next.timelines[0].items.find(item=>item.id==='workspace-source-shot-s1')!;expect(node.name).toBe('镜头 01 原声');node.name='人工命名 · 山脚现场';
+ const changed=applyWorkspaceAudioMix(next,{...edit,gainDb:-3});expect(changed.timelines[0].items.find(item=>item.id===node.id)).toMatchObject({name:'人工命名 · 山脚现场',sourceAssetId:'audio-track-source',src:'source.mp3'});expect(p.timelines[0].items.some(item=>item.id===node.id)).toBe(false);
+});

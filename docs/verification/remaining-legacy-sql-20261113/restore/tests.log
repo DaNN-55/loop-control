@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-cMn6p4/source
+
+ ✓ src/local-app/retiredOrchestrationShells.integration.test.ts (1 test) 5443ms
+   ✓ removes old orchestration shells and their last Studio caller after full restore, preserving history and dependency rollback  5443ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  08:50:35
+   Duration  5.58s (transform 22ms, setup 8ms, collect 15ms, tests 5.44s, environment 0ms, prepare 31ms)
+
+JSON report written to /private/tmp/loop-story-e2e-cMn6p4/evidence/vitest.json

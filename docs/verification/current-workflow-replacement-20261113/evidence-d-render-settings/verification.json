@@ -1,0 +1,74 @@
+{
+  "sourceFilesCompared": 1408,
+  "sourceDifferences": [],
+  "baselineSourceChangePaths": [
+    "src/local-app/legacyDraftInputs.ts",
+    "src/local-app/legacyMixedWorkspace.ts",
+    "src/local-app/legacyPlanAdoption.ts",
+    "src/local-app/legacyRenderSettings.integration.test.ts",
+    "src/local-app/legacyWorkbenchAdoption.integration.test.ts",
+    "src/local-app/legacyWorkbenchSource.ts",
+    "src/local-app/productionWorkspaceCommands.ts",
+    "src/local-app/registeredWorkspaceAudio.ts",
+    "src/local-app/workspaceAudio.ts",
+    "src/local-app/workspaceCandidateAdoption.ts",
+    "src/local-app/workspaceInitialProject.ts",
+    "src/local-app/workspaceNarration.ts",
+    "src/local-app/workspacePreparation.ts",
+    "src/local-app/workspaceSourceAdoption.integration.test.ts",
+    "src/productionWorkspace.ts",
+    "src/worker/contracts.ts",
+    "src/workspaceAudio.ts",
+    "src/workspaceCaptions.ts",
+    "src/workspaceMusicAdoption.ts",
+    "src/workspaceRenderPreferences.ts",
+    "src/workspaceShots.ts"
+  ],
+  "head": "2d1a8ff46318ece0031c0810899a339df71520c9",
+  "headUnchanged": true,
+  "indexUnchanged": true,
+  "sdkSourceFilesChecked": 1707,
+  "sdkDifferences": [],
+  "unexpectedOriginalChanges": [],
+  "daily": {
+    "ledgerSame": true,
+    "catalogSame": true,
+    "securitySame": true,
+    "rolesSame": true,
+    "sequencesSame": true,
+    "rowsChanged": [],
+    "frozenSame": true,
+    "appSame": true,
+    "deploymentSame": true,
+    "metricsSame": true,
+    "metrics": {
+      "events": 0,
+      "enabled": false
+    },
+    "priorSliceRowsDifferent": [
+      "local_identity.sessions",
+      "local_identity.automation_jobs",
+      "local_identity.automation_plans",
+      "local_identity.media_root_binding",
+      "local_identity.automation_attempts"
+    ],
+    "priorSliceAppSame": false,
+    "dailyWritesByThisTask": false
+  },
+  "integration": {
+    "numTotalTests": 72,
+    "numPassedTests": 72,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "units": {
+    "numTotalTests": 8,
+    "numPassedTests": 8,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "success": true
+  },
+  "ownedRunsClosed": 13,
+  "defaultFullSuiteRun": false
+}

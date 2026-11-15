@@ -1,0 +1,2 @@
+E2E evidence: /private/tmp/loop-story-e2e-nlZF8m/evidence
+Error: ENOSPC: no space left on device, mkdir '/private/tmp/loop-story-e2e-nlZF8m/OpenChatCut/src/agent'

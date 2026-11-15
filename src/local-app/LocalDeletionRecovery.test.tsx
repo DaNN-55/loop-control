@@ -1,5 +1,5 @@
 import {afterEach,expect,it,vi} from 'vitest';
-import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {LocalDeletionRecovery} from './LocalDeletionRecovery';
 import {localRequest,localCommand} from './client';
@@ -8,10 +8,20 @@ afterEach(()=>{cleanup();vi.resetAllMocks();});
 const prepared={cleanupKey:'prepared-key',title:'未提交的生产单',path:'/media/order-one',stagingPaths:['/media/order-one/file.stage'],phase:'prepared',message:'删除尚未提交，可恢复已暂存的文件。'};
 const committed={cleanupKey:'committed-key',title:'文件待清理的生产单',path:'/media/order-two',stagingPaths:['/media/order-two/file.stage']};
 it('reads durable tasks without retrying, distinguishes actions and focuses the requested task',async()=>{
- vi.mocked(localRequest).mockResolvedValue([prepared,committed]);render(<LocalDeletionRecovery revision={1} targetKey={committed.cleanupKey}/>);
- const target=await screen.findByRole('article',{name:committed.title});expect(document.activeElement).toBe(target);
+ let finishRead!:(items:Array<typeof prepared|typeof committed>)=>void;vi.mocked(localRequest).mockImplementation(()=>new Promise(resolve=>{finishRead=resolve;}));
+ render(<LocalDeletionRecovery revision={1} targetKey={committed.cleanupKey}/>);expect(screen.queryByRole('article')).toBeNull();expect(localCommand).not.toHaveBeenCalled();
+ await act(async()=>finishRead([prepared,committed]));const target=await screen.findByRole('article',{name:committed.title});await waitFor(()=>expect(document.activeElement).toBe(target));
  expect(within(target).getByRole('button',{name:'继续清理'})).toBeTruthy();expect(screen.getByRole('button',{name:'恢复文件'})).toBeTruthy();expect(localCommand).not.toHaveBeenCalled();
  expect(screen.queryByRole('heading',{name:'待完成删除'})).toBeNull();expect(screen.queryByText(prepared.message)).toBeNull();expect(screen.getByText('删除未生效')).toBeTruthy();expect(screen.getByText('记录已删除')).toBeTruthy();
+});
+it('keeps user focus across a read-only refresh and focuses a different explicitly requested task',async()=>{
+ vi.mocked(localRequest).mockResolvedValue([prepared,committed]);
+ const content=(revision:number,targetKey:string)=><><button>其他操作</button><LocalDeletionRecovery revision={revision} targetKey={targetKey}/></>;
+ const view=render(content(1,committed.cleanupKey));await waitFor(()=>expect(document.activeElement).toBe(screen.getByRole('article',{name:committed.title})));
+ // Use an unaffected control: a disabled refresh button naturally loses focus in a browser.
+ const outside=screen.getByRole('button',{name:'其他操作'});act(()=>outside.focus());view.rerender(content(2,committed.cleanupKey));
+ await waitFor(()=>{expect(localRequest).toHaveBeenCalledTimes(2);expect(screen.getByRole('button',{name:'刷新清理任务'})).not.toHaveProperty('disabled',true);});expect(document.activeElement).toBe(outside);
+ view.rerender(content(2,prepared.cleanupKey));await waitFor(()=>expect(document.activeElement).toBe(screen.getByRole('article',{name:prepared.title})));expect(localCommand).not.toHaveBeenCalled();
 });
 it('restores an uncommitted task once even when clicked twice and leaves other tasks alone',async()=>{
  vi.mocked(localRequest).mockResolvedValueOnce([prepared,committed]).mockResolvedValue([committed]);let finish!:(value:any)=>void;

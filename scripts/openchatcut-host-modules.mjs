@@ -3,6 +3,7 @@ import {readFile} from 'node:fs/promises';
 // One registration per source file. Dependency edges belong to source imports.
 const modules=[
  ['composition','src/shotComposition.ts'],
+ ['display-names','src/workspaceDisplayNames.ts'],
  ['video-sound','src/workspaceVideoSound.ts'],
  ['candidates','src/workspaceCandidates.ts',true],
  ['structure','src/workspaceShots.ts',true],

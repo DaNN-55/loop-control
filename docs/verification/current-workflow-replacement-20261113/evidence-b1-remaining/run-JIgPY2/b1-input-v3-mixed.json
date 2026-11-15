@@ -1,0 +1,41 @@
+{
+  "kind": "v3-mixed",
+  "episode": "cd512df9-d32f-4de7-862a-723ad1128b6c",
+  "baselineBefore": "1258b6a8-ca6f-418d-96be-a88e32ec1382",
+  "baselineAfter": "b96c7eae-a71c-4dd9-80f0-e9909a2998e8",
+  "stable": [
+    {
+      "id": "d0a9317e-50d0-42f0-85be-20e5bc8287fc",
+      "itemId": "shot-shot-01-d0a9317e-50d0-42f0-85be-20e5bc8287fc",
+      "shotId": "shot-01"
+    },
+    {
+      "id": "595a7362-02ec-4fa5-8d7d-d99bfb0f83f1",
+      "itemId": "shot-shot-02-595a7362-02ec-4fa5-8d7d-d99bfb0f83f1",
+      "shotId": "shot-02"
+    },
+    {
+      "id": "c6fd5341-fb12-426c-a54c-b045f69add93",
+      "itemId": "shot-shot-03-c6fd5341-fb12-426c-a54c-b045f69add93",
+      "shotId": "shot-03"
+    },
+    {
+      "id": "a1d903bf-e9ac-47c5-b398-c600de456ab9",
+      "itemId": "shot-shot-04-a1d903bf-e9ac-47c5-b398-c600de456ab9",
+      "shotId": "shot-04"
+    }
+  ],
+  "manualTrack": "fc13fb27-8c07-44cf-8617-c5b5a71e0900",
+  "project": {
+    "relativePath": "未分系列--76617ac0-800a-4e7c-b407-12aabf7a5c4a/正式新单--cd512df9-d32f-4de7-862a-723ad1128b6c/production-workspace/versions/7c7a9aa0dde1f099810e94bb50533f609c88764df7e5f65330710b791d91279e.json",
+    "sha256": "7c7a9aa0dde1f099810e94bb50533f609c88764df7e5f65330710b791d91279e",
+    "fileSize": 17775,
+    "projectId": "loop-control-cd512df9-d32f-4de7-862a-723ad1128b6c"
+  },
+  "oldTablesEmpty": true,
+  "tasks": [
+    {
+      "task_type": "generate_narration"
+    }
+  ]
+}

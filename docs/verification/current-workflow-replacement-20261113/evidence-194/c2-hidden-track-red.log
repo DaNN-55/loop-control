@@ -1,0 +1,48 @@
+E2E evidence: /private/tmp/loop-story-e2e-V6dBg2/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-V6dBg2/source
+
+ ❯ src/local-app/productionSoundUse.integration.test.ts (5 tests | 1 failed | 4 skipped) 6818ms
+   ↓ observes actual local music adoption, gain changes, disable and re-enable without counting preparation or reopen as use
+   ↓ uses the native audible sequence window for local effects, replacement and track muted rather than counting the media pool
+   × uses the native audible sequence window for local effects, replacement and track hidden rather than counting the media pool 6818ms
+     → expected { version: 'sound-use/v1', …(5) } to match object { used: 2, withdrawn: 2, changed: +0 }
+(4 matching properties omitted from actual)
+   ↓ keeps sound scope and transaction protection, and never backfills edits made while collection is off
+   ↓ records explicitly extracted current source audio through a real local Worker without creating an old draft
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionSoundUse.integration.test.ts > uses the native audible sequence window for local effects, replacement and track hidden rather than counting the media pool
+AssertionError: expected { version: 'sound-use/v1', …(5) } to match object { used: 2, withdrawn: 2, changed: +0 }
+(4 matching properties omitted from actual)
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[2m    "changed": 0,[22m
+[2m    "used": 2,[22m
+[32m-   "withdrawn": 2,[39m
+[31m+   "withdrawn": 1,[39m
+[2m  }[22m
+
+ ❯ src/local-app/productionSoundUse.integration.test.ts:62:210
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  04:19:11
+   Duration  7.55s (transform 427ms, setup 7ms, collect 602ms, tests 6.82s, environment 0ms, prepare 31ms)
+
+JSON report written to /private/tmp/loop-story-e2e-V6dBg2/evidence/vitest.json

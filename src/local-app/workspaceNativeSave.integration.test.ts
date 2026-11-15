@@ -18,7 +18,7 @@ it.skipIf(!enabled)('native save reads the complete final state once, preserves 
   if(clients.has(client))return;clients.add(client);
   const query=client.query.bind(client) as (...args:any[])=>any;
   // Observe the real query without changing pg's Promise/callback overloads.
-  client.query=((...args:any[])=>{if(measuring){queries++;const sql=typeof args[0]==='string'?args[0]:args[0]?.text;if(sql?.startsWith('SELECT w.*,e.main_script_revision_id current_script,e.stage episode_stage,p.invalidated_at'))completeReads++;}return query(...args);}) as typeof client.query;
+  client.query=((...args:any[])=>{if(measuring){queries++;const sql=typeof args[0]==='string'?args[0]:args[0]?.text;if(sql?.startsWith('SELECT w.*,e.main_script_revision_id current_script,e.stage episode_stage,'))completeReads++;}return query(...args);}) as typeof client.query;
  });
  try{
   const made=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(made.status,JSON.stringify(made.body)).toBe(200);

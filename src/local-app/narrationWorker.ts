@@ -1,3 +1,4 @@
+import {observeProductionRequest} from './productionMetricWrites.js';
 import {registeredAdapters} from '../worker/registeredAdapters.js';
 import {videoProviders,minimaxEndpoints} from "../worker/videoProviderCatalog.js";
 import {officialVideoDownloadUrl} from "../worker/officialVideoProvider.js";
@@ -60,7 +61,7 @@ export async function executeNativeNarration(pool:Pool,config:NativeNarrationCon
     await prepareProviderDispatch(pool,fence,'speech');
     await markProviderDispatching(pool,fence);dispatched=true;
    }
-   let response:Response;try{response=await (fetchConfirmedSpeech??ports.fetcher)(url,init);}catch(error){if(error instanceof ProviderRequestNotSentError)throw error;throw new ProviderOutcomeUnknownError();}
+   let response:Response;try{response=await observeProductionRequest(pool,fence,'create',()=>(fetchConfirmedSpeech??ports.fetcher)(url,init));}catch(error){if(error instanceof ProviderRequestNotSentError)throw error;throw new ProviderOutcomeUnknownError();}
    // A transport break or accepted-but-malformed response must never resend a paid request.
    // Only a definite client rejection permits Owner's explicit retry.
    rejectionStatus=response.status;rejected=response.status>=400&&response.status<500&&response.status!==408;

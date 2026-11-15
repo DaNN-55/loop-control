@@ -1,0 +1,411 @@
+--- before/src/local-app/productionSoundUse.ts
++++ after/src/local-app/productionSoundUse.ts
+@@ -0,0 +1,130 @@
++import {createHash} from 'node:crypto';
++import type {PoolClient} from 'pg';
++import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
++import {workspaceExecutionProject} from '../workspaceExecution.js';
++import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
++import {productionMetricsEnabled} from './productionQuality.js';
++import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
++import {episodeStorageLocationAtRoot} from './episodeStorageLocation.js';
++import {inspectAudioStream} from '../worker/mediaTools.js';
++
++const hash=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
++type Role='bgm'|'sfx'|'source'|'ambience'|'narration'|'other';
++interface Use {instance:string;usage:string;role:Role;path:string;assetId:string;sha:string|null;uncertain:boolean;window:{from:number;to:number;fps:number;item:Record<string,unknown>}}
++interface Workspace {id:string;episode_id:string;revision:string|number;bindings:ReadonlyArray<{shotId:string}>}
++
++/** Monotone native volume automation has a bounded, exact positivity test.
++ * Exotic overshooting curves and transcript edits remain explicitly unresolved.
++ */
++function audibleWindow(item:Record<string,unknown>,lo:number,hi:number):'audible'|'silent'|'unknown'{
++ const start=Number(item.startFrame),first=Math.max(Math.floor(lo-start),Number(item.fadeInFrames??0)>0?1:0),last=Math.ceil(hi-start)-1;if(first>last)return'silent';
++ const frames=(item.keyframes as {volume?:Array<{frame:number;value:number;easing?:unknown}>}|undefined)?.volume;
++ if(!frames?.length)return Number(item.volume??1)>0?'audible':'silent';
++ if(frames.some((k,i)=>!Number.isFinite(k.frame)||!Number.isFinite(k.value)||k.value<0||k.value>2||i>0&&k.frame<=frames[i-1].frame||k.easing!==undefined&&!['linear','easeIn','easeOut','easeInOut'].includes(String(k.easing))&&!(Array.isArray(k.easing)&&k.easing.length===4&&k.easing.every(n=>typeof n==='number'&&n>=0&&n<=1))))return'unknown';
++ const positive=(frame:number)=>{
++  if(frame<=frames[0].frame)return frames[0].value>0;
++  if(frame>=frames.at(-1)!.frame)return frames.at(-1)!.value>0;
++  for(let i=1;i<frames.length;i++)if(frame<=frames[i].frame)return frame===frames[i].frame?frames[i].value>0:frames[i-1].value>0||frames[i].value>0;
++  return false;
++ };
++ return positive(first)||positive(last)||frames.some(k=>k.frame>=first&&k.frame<=last&&k.value>0)?'audible':'silent';
++}
++
++/** Only reachable, audible native instances inside the active sequence window count.
++ * Instance identity includes the sequence path: two placements are two uses, not two sources.
++ */
++function soundInstances(input:OpenChatCutProject,row:Workspace){
++ const project=workspaceExecutionProject(input),uses=new Map<string,Use>();let nodes=0;
++ const voices=new Set(row.bindings.map(b=>resolveWorkspaceMainVoice(project,b.shotId).item));
++ const visit=(id:string,from:number,to:number,path:string[],parents:unknown[],stack:Set<string>,parentUncertain=false)=>{
++  if(stack.has(id)||stack.size>32||++nodes>4096)throw Error('Sound observation sequence graph is invalid');
++  const timeline=project.timelines.find(t=>t.id===id);if(!timeline)throw Error('Sound observation timeline is missing');
++  const nextStack=new Set(stack).add(id);
++  for(const item of timeline.items){
++   const start=Number(item.startFrame),end=start+Number(item.durationInFrames),lo=Math.max(start,from),hi=Math.min(end,to);
++   const track=timeline.tracks[String(item.track)] as {muted?:boolean;hidden?:boolean;audioRouting?:unknown}|undefined;
++   if(!(hi>lo)||track?.muted||track?.hidden)continue;
++   // The native nested renderer propagates track mute, not the sequence item's gain/fade.
++   const audible=item.kind==='sequence'?'audible':audibleWindow(item,lo,hi);if(audible==='silent')continue;
++   const uncertain=parentUncertain||audible==='unknown'||!!item.transcript||!!item.edits;
++   const instancePath=[...path,timeline.id,String(item.id)],window=item.kind==='sequence'?[lo,hi,Number(item.srcInFrame??0),Number(item.playbackRate??1),timeline.fps,item.transcript??null,item.edits??null]:[lo,hi,Number(item.srcInFrame??0),Number(item.playbackRate??1),Number(item.volume??1),timeline.fps,track?.audioRouting??null,(item.keyframes as {volume?:unknown}|undefined)?.volume??null,item.fadeInFrames??0,item.fadeOutFrames??0,item.transcript??null,item.deletedWordIdx??null,item.edits??null];
++   if(item.kind==='sequence'){
++    const rate=Number(item.playbackRate??1),source=Number(item.srcInFrame??0);if(!(rate>0))continue;
++    const child=project.timelines.find(t=>t.id===item.timelineId);if(!child)throw Error('Sound observation timeline is missing');
++    const duration=Math.max(1,child.fps,...child.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)));
++    visit(String(item.timelineId),Math.min(duration-1,source+(lo-start)*rate),Math.min(duration,source+(hi-start)*rate),instancePath,[...parents,window],nextStack,uncertain||rate!==1);continue;
++   }
++   if(item.kind!=='audio'&&item.kind!=='video')continue;
++   const asset=project.assets.find(a=>a.id===item.sourceAssetId),src=typeof item.src==='string'?item.src:asset?.src;if(!src)continue;
++   const meta=item.loopControlAudio as {workspaceId?:string;kind?:string;sourceItemId?:string;shotId?:string}|undefined;
++   const origin=item.loopControlVideoSound as {videoItemId?:string;videoSourceAssetId?:string}|undefined;
++   const linkedSource=!!origin&&timeline.items.some(visual=>visual.kind==='video'&&visual.id===origin.videoItemId&&visual.sourceAssetId===origin.videoSourceAssetId);
++   const mainVoice=voices.has(item)||meta?.workspaceId===row.id&&row.bindings.some(b=>b.shotId===meta.shotId)&&(item.id===`workspace-narration-shot-${meta.shotId}`||item.id===`workspace-source-shot-${meta.shotId}`);
++   const role:Role=meta?.workspaceId===row.id&&(meta.kind==='bgm'||meta.kind==='sfx')?meta.kind:item.kind==='video'||linkedSource?'source':meta?.sourceItemId?mainVoice?'source':'ambience':mainVoice?'narration':'other';
++   const instance=hash(instancePath),assetId=String(item.sourceAssetId??'');
++   const sha=typeof item.sourceContentHash==='string'?item.sourceContentHash:null;
++   uses.set(instance,{instance,usage:hash([parents,window,item.kind,role,assetId,src,sha]),role,path:src,assetId,sha,uncertain,window:{from:lo,to:hi,fps:timeline.fps,item}});
++  }
++ };
++ visit(project.activeTimelineId,0,Infinity,[],[],new Set());return uses;
++}
++
++/** Native IDs are hints only; a same-episode registered row and bytes hash prove the source. */
++async function soundSource(c:PoolClient,root:string,row:Workspace,use:Use){
++ if(use.uncertain)return null;
++ const explicit=use.assetId.match(/^(material-|audio-track-)([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i);
++ const result=await c.query(`WITH sources AS(
++  SELECT 'material'::text kind,id,sha256,file_size FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2 AND material_type IN('audio','video')
++  UNION ALL SELECT 'audio_track',id,sha256,file_size FROM public.audio_tracks WHERE episode_id=$1 AND relative_path=$2
++  UNION ALL SELECT 'task_artifact',id,sha256,file_size FROM public.artifacts WHERE episode_id=$1 AND relative_path=$2 AND artifact_type IN('narration_audio','soundtrack_audio','source_audio','shot_source_audio','legacy_recovered_media','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video'))
++  SELECT * FROM sources WHERE ($3::uuid IS NULL OR id=$3 AND kind=$4) AND ($5::text IS NULL OR sha256=$5)`,[row.episode_id,use.path,explicit?.[2]??null,explicit?.[1]==='material-'?'material':'audio_track',use.sha]);
++ if(result.rows.length!==1)return null;
++ const source=result.rows[0] as {id:string;kind:string;sha256:string;file_size:number|string};
++ try{
++  await verifyEpisodeFile(c,root,row.episode_id,use.path,source.sha256,Number(source.file_size));
++  const audio=await inspectAudioStream(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),use.path));
++  return{...source,...audio};
++ }catch{return null;}
++}
++
++/** Current business transaction owns both the native revision and its observations. */
++export async function recordProjectSoundChanges(c:PoolClient,root:string,row:Workspace,before:OpenChatCutProject,after:OpenChatCutProject,beforeBindings:Workspace['bindings']){
++ if(!await productionMetricsEnabled(c))return;
++ if(!(await c.query("SELECT to_regprocedure('local_identity.record_workspace_sound_use(uuid,bigint,text,text,text,uuid,text,text,text)') IS NOT NULL present")).rows[0]?.present)return;
++ const previous=soundInstances(before,{...row,bindings:beforeBindings}),next=soundInstances(after,row);
++ const sources=new Map<string,ReturnType<typeof soundSource>>();
++ const resolve=async(use:Use)=>{
++  const key=hash([use.assetId,use.path,use.sha,use.uncertain]);let pending=sources.get(key);if(!pending){pending=soundSource(c,root,row,use);sources.set(key,pending);}const source=await pending;
++  if(!source)return null;if(!source.hasAudio)return{...source,silent:true};if(source.startSeconds===null||source.endSeconds===null)return null;
++  const {from,to,fps,item}=use.window,start=Number(item.startFrame),sourceIn=Number(item.srcInFrame??0),rate=Number(item.playbackRate??1);
++  const lo=Math.max(from,start+(source.startSeconds*fps-sourceIn)/rate),hi=Math.min(to,start+(source.endSeconds*fps-sourceIn)/rate);
++  if(!(hi>lo))return{...source,silent:true};const audible=audibleWindow(item,lo,hi);return audible==='unknown'?null:{...source,silent:audible==='silent'};
++ };
++ for(const key of new Set([...previous.keys(),...next.keys()])){
++  const old=previous.get(key),current=next.get(key);if(old?.usage===current?.usage)continue;
++  const previousSource=old?await resolve(old):null,currentSource=current?await resolve(current):null;
++  if(old&&!previousSource||current&&!currentSource){
++   const unresolved=current&&!currentSource?current:old!;
++   await c.query('SELECT local_identity.record_workspace_sound_use($1,$2,$3,$4,$5,$6,$7,$8,$9)',[row.id,row.revision,unresolved.role,old&&current?'changed':current?'used':'withdrawn','unresolved',null,null,unresolved.instance,unresolved.usage]);
++   // A retained instance with unknown audibility does not prove either a withdrawal
++   // or a fresh adoption when it becomes interpretable again.
++   if(old&&current)continue;
++  }
++  const same=previousSource&&currentSource&&previousSource.id===currentSource.id&&previousSource.kind===currentSource.kind&&previousSource.sha256===currentSource.sha256&&old!.role===current!.role;
++  const changes:Array<{use:Use;source:NonNullable<typeof previousSource>;action:'used'|'withdrawn'|'changed'}>=[];
++  if(same&&!previousSource.silent&&!currentSource.silent)changes.push({use:current!,source:currentSource!,action:'changed'});
++  else{if(old&&previousSource&&!previousSource.silent)changes.push({use:old,source:previousSource,action:'withdrawn'});if(current&&currentSource&&!currentSource.silent)changes.push({use:current,source:currentSource,action:'used'});}
++  for(const {use,source,action} of changes)await c.query('SELECT local_identity.record_workspace_sound_use($1,$2,$3,$4,$5,$6,$7,$8,$9)',[row.id,row.revision,use.role,action,source.kind,source.id,source.sha256,use.instance,use.usage]);
++ }
++}
++
++export function summarizeSoundUse(events:ReadonlyArray<{type:string;payload:Record<string,unknown>}>){
++ const summary={version:'sound-use/v1' as const,used:0,withdrawn:0,changed:0,roles:{} as Record<string,{used:number;withdrawn:number;changed:number}>,unknownEvents:0};
++ for(const event of events){
++  if(event.type==='sound_unresolved'){summary.unknownEvents++;continue;}
++  if(!['sound_used','sound_withdrawn','sound_changed'].includes(event.type))continue;
++  const role=event.payload.role;if(event.payload.version!=='sound-use/v1'||typeof role!=='string'||!['bgm','sfx','source','ambience','narration','other'].includes(role)){summary.unknownEvents++;continue;}
++  const action=event.type.slice(6) as 'used'|'withdrawn'|'changed';summary[action]++;(summary.roles[role]??={used:0,withdrawn:0,changed:0})[action]++;
++ }
++ return summary;
++}
+--- before/src/local-app/productionMetricsCollected.ts
++++ after/src/local-app/productionMetricsCollected.ts
+@@ -1,4 +1,5 @@
+ import {summarizeProductionWorkflow} from './productionWorkflowMetrics.js';
++import {summarizeSoundUse} from './productionSoundUse.js';
+ import type {Pool} from 'pg';
+ import {ownerTransaction} from './ownerTransaction.js';
+ import {readProductionMetricsSnapshot,productionMetricsWindow,type MetricsWindow} from './productionMetrics.js';
+@@ -47,7 +48,7 @@
+  const typeCounts:Record<string,number>={};for(const e of real)typeCounts[e.type]=(typeCounts[e.type]??0)+1;
+  return{
+   enabled:facts.enabled,coverage:{periods:facts.coverage,detailRetentionMonths:12,resourceRetentionDays:30,dailyRetentionMonths:24,observations:count(events,'coverage_observation'),historyBackfilled:false},
+-  detail:{counts:typeCounts,workflow:summarizeProductionWorkflow(facts.events,facts.coverage,window.from,end),stageResidenceSeconds:stageSeconds,stageResidenceIncludesOwnerWait:true,
++  detail:{counts:typeCounts,workflow:summarizeProductionWorkflow(facts.events,facts.coverage,window.from,end),soundUse:summarizeSoundUse(real),stageResidenceSeconds:stageSeconds,stageResidenceIncludesOwnerWait:true,
+    queue:{eligibleWaitSeconds:stats(numbers(claims,'eligible_wait_seconds')),backoffSeconds:stats(numbers(claims,'backoff_seconds')),observedOrMissingCycles:count(real,'task_claimed')-claims.length,waitReason:'eligible_wait_includes_capacity_and_scheduler_wait'},
+    candidates:{adopted:count(real,'candidate_adopted'),withdrawn:count(real,'candidate_withdrawn'),rejected:count(real,'candidate_rejected'),explicitRetryRelations:count(real,'retry_relation'),retryReasons,automaticReworkClassification:false},
+    requests:{dispatchMarked:requests.length,operations,dispatchDoesNotProveSupplierReceipt:true,artifactReceipts:count(real,'provider_receipt_persisted')},
+--- before/src/local-app/productionSoundUse.integration.test.ts
++++ after/src/local-app/productionSoundUse.integration.test.ts
+@@ -0,0 +1,142 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {readFile} from 'node:fs/promises';
++import {join} from 'node:path';
++import {execFileSync} from 'node:child_process';
++import {createHash,randomUUID} from 'node:crypto';
++import {formalWorkflowFixture} from './formalWorkflow.fixture';
++import {workspaceTestMedia} from './workspaceTestMedia.fixture';
++import {ownerTransaction} from './ownerTransaction';
++import {readProductionMetricsV2} from './productionMetricsCollected';
++import {productionScriptTemplate} from '../reviews/productionScript';
++import {defaultShotCaptionContract} from '../shotCaptions';
++import {editStudioDocument} from './studioDocument.fixture';
++import {workspaceAudioMedia} from './workspaceAudioMedia.fixture';
++import {nativeWorkerPort} from './workerDatabase';
++import {runWorkspaceDeliveryProcess} from './workspaceDelivery.fixture';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('observes actual local music adoption, gain changes, disable and re-enable without counting preparation or reopen as use',async()=>{
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:productionScriptTemplate.replace('镜头时长（秒）：5','镜头时长（秒）：1')});
++ try{
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));
++  expect((await f.send('start')).status).toBe(200);let w=(await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main})).body;
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const summary=async()=>{const now=Date.now();return(await readProductionMetricsV2(f.pool,f.owner,{from:new Date(now-16*3600000).toISOString().slice(0,10),toExclusive:new Date(now+32*3600000).toISOString().slice(0,10),includeTestEpisodes:true})).collected!.detail;};
++  const music=await f.send('importMaterial',{sourceKind:'file',sourcePath:'music.mp3',materialType:'audio',materialPurpose:'background_music',mimeType:'audio/mpeg',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('controlled-narration-tone.mp3'))).toString('base64')});expect(music.status).toBe(200);
++  await send('prepareWorkspaceAudio',{kind:'bgm',materialRevisionId:music.body.id,description:'测试配乐',durationSeconds:1});const preparation=w.audio.preparations[0];
++  expect((await summary()).soundUse).toMatchObject({version:'sound-use/v1',used:0,withdrawn:0,changed:0});
++  await send('adoptWorkspaceAudio',{preparationId:preparation.id});
++  expect((await summary()).soundUse).toMatchObject({used:1,withdrawn:0,changed:0,roles:{bgm:{used:1,withdrawn:0,changed:0}}});
++  await send('mixWorkspaceAudio',{edit:{kind:'sound',workspaceId:w.id,itemId:'workspace-bgm',gainDb:-18,duckDepthDb:10}});
++  expect((await summary()).soundUse).toMatchObject({used:1,withdrawn:0,changed:1});
++  await send('setWorkspaceAudioEnabled',{kind:'bgm',enabled:false});expect((await summary()).soundUse).toMatchObject({used:1,withdrawn:1,changed:1});
++  await send('setWorkspaceAudioEnabled',{kind:'bgm',enabled:true});expect((await summary()).soundUse).toMatchObject({used:2,withdrawn:1,changed:1});
++  const before=await summary();await f.restart();await send('refreshWorkspaceAudio');expect(await summary()).toEqual(expect.objectContaining({soundUse:before.soundUse}));
++  const events=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type LIKE 'sound_%' ORDER BY id",[f.newEpisode])).rows;
++  expect(events).toHaveLength(4);expect(events[0].payload).toMatchObject({source_kind:'material',source_id:music.body.id,role:'bgm'});expect(JSON.stringify(events)).not.toContain('测试配乐');expect(JSON.stringify(events)).not.toContain('relativePath');
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('does not invent sound use for a silent video registered through the real frozen legacy recovery boundary',async()=>{
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:productionScriptTemplate.replace('镜头时长（秒）：5','镜头时长（秒）：1')});
++ try{
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));expect((await f.send('start')).status).toBe(200);let w=(await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main})).body;
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const image=await f.send('importMaterial',{sourceKind:'file',sourcePath:'image.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(image.status).toBe(200);
++  const clip=w.clips[0];await send('matchWorkspaceImage',{clipId:clip.id,materialRevisionId:image.body.id,usage:'still',durationSeconds:1,fit:'contain',focusX:0,focusY:0});await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});
++  const directory=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[f.newEpisode])).rows[0].directory_relative_path,path=directory+'/recovered-silent.mp4';
++  execFileSync('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','color=c=red:size=180x320:rate=30','-t','1','-an','-c:v','libx264','-pix_fmt','yuv420p',join(f.assetRoot,path)]);
++  const bytes=await readFile(join(f.assetRoot,path)),sha=createHash('sha256').update(bytes).digest('hex'),task=randomUUID(),source={relativePath:path,sha256:sha,fileSize:bytes.length};
++  await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot)VALUES($1,$2,'generate_narration','completed',$3)",[task,f.newEpisode,{input_artifacts:[source]}]);
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.register_workspace_recovery_source($1,$2)',[f.newEpisode,JSON.stringify(source)]));
++  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{doc.assets.push({id:'recovered-video',name:'旧恢复视频',kind:'video',src:path,durationInFrames:30});const visual=doc.timelines[0].items.find((i:any)=>i.id===clip.itemId);visual.kind='video';visual.src=path;visual.sourceAssetId='recovered-video';visual.sourceContentHash=sha;visual.volume=1;});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256})).productionWorkspace;
++  expect((await f.c.query("SELECT count(*)::int n FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type LIKE 'sound_%'",[f.newEpisode])).rows[0].n).toBe(0);await send('closeWorkspaceStudio');
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['muted','hidden','keyframes','source_end']as const)('uses the native audible sequence window for local effects, replacement and track %s rather than counting the media pool',async(disabled)=>{
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:productionScriptTemplate.replace('镜头时长（秒）：5','镜头时长（秒）：1')});
++ try{
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));
++  expect((await f.send('start')).status).toBe(200);let w=(await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main})).body;
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const upload=async(path:string,kind:string,purpose:string)=>{const r=await f.send('importMaterial',{sourceKind:'file',sourcePath:path.split('/').at(-1),materialType:kind,materialPurpose:purpose,mimeType:kind==='audio'?'audio/mpeg':'image/png',isMainScript:false,contentBase64:(await readFile(path)).toString('base64')});expect(r.status).toBe(200);return r.body.id;};
++  const summary=async()=>{const now=Date.now();return(await readProductionMetricsV2(f.pool,f.owner,{from:new Date(now-16*3600000).toISOString().slice(0,10),toExclusive:new Date(now+32*3600000).toISOString().slice(0,10),includeTestEpisodes:true})).collected!.detail.soundUse;};
++  const image=await upload(workspaceTestMedia('still-striped.png'),'image','visual_reference'),clip=w.clips[0];await send('matchWorkspaceImage',{clipId:clip.id,materialRevisionId:image,usage:'still',durationSeconds:1,fit:'contain',focusX:0,focusY:0});await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});
++  const media=await workspaceAudioMedia(f.root),first=await upload(media.bgm,'audio','sound_effect'),replacement=await upload(media.voice,'audio','sound_effect');
++  const replacementInfo=(await f.c.query('SELECT storage_path,sha256 FROM public.production_material_revisions WHERE id=$1',[replacement])).rows[0];
++  await send('prepareWorkspaceAudio',{kind:'sfx',materialRevisionId:first,description:'本地音效',durationSeconds:.4,anchor:'absolute',offsetSeconds:.2});const prep=w.audio.preparations[0];await send('adoptWorkspaceAudio',{preparationId:prep.id});
++  expect(await summary()).toMatchObject({used:1,withdrawn:0,changed:0,roles:{sfx:{used:1,withdrawn:0,changed:0}}});
++  await send('adoptWorkspaceAudio',{preparationId:prep.id});expect(await summary()).toMatchObject({used:1,withdrawn:0,changed:0});
++  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{
++   const root=doc.timelines[0],sound=root.items.find((i:any)=>i.id===prep.adoptedItemId||i.loopControlAudio?.preparationId===prep.id);expect(sound).toBeTruthy();
++   root.items=root.items.filter((i:any)=>i!==sound);const child=structuredClone(root);child.id='sound-child';child.items=[{...sound,startFrame:0,durationInFrames:12}];doc.timelines.push(child);
++   root.items.push({id:'audible-sequence',name:'音效序列',kind:'sequence',track:root.items[0].track,timelineId:child.id,startFrame:0,durationInFrames:30,srcInFrame:0,volume:0,fadeInFrames:30,keyframes:{volume:[{frame:0,value:0},{frame:30,value:0}]}});
++   const unused=structuredClone(child);unused.id='unreachable-sound';unused.items[0].id='unreachable-audio';doc.timelines.push(unused);
++   doc.assets.push({id:'material-'+replacement,name:'Replacement',kind:'audio',src:replacementInfo.storage_path,durationInFrames:71});
++  });
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256})).productionWorkspace;
++  expect(await summary()).toMatchObject({used:2,withdrawn:1,changed:0});
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const child=doc.timelines.find((t:any)=>t.id==='sound-child');if(disabled==='keyframes')child.items[0].keyframes={volume:[{frame:0,value:0},{frame:12,value:0}]};else if(disabled==='source_end')child.items[0].srcInFrame=30000;else child.tracks[String(child.items[0].track)][disabled]=true;});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256})).productionWorkspace;expect(await summary()).toMatchObject({used:2,withdrawn:2,changed:0});
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const child=doc.timelines.find((t:any)=>t.id==='sound-child');if(disabled==='keyframes')delete child.items[0].keyframes;else if(disabled==='source_end')child.items[0].srcInFrame=0;else child.tracks[String(child.items[0].track)][disabled]=false;child.items[0].src=replacementInfo.storage_path;child.items[0].sourceAssetId='material-'+replacement;child.items[0].sourceContentHash=replacementInfo.sha256;});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256})).productionWorkspace;expect(await summary()).toMatchObject({used:3,withdrawn:2,changed:0});
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const child=doc.timelines.find((t:any)=>t.id==='sound-child');child.items[0].keyframes={volume:[{frame:0,value:1,easing:[.1,-1,.9,2]},{frame:12,value:1}]};});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256})).productionWorkspace;expect(await summary()).toMatchObject({used:3,withdrawn:2,changed:0,unknownEvents:1});
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{delete doc.timelines.find((t:any)=>t.id==='sound-child').items[0].keyframes;});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256})).productionWorkspace;expect(await summary()).toMatchObject({used:3,withdrawn:2,changed:0,unknownEvents:2});
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.id==='audible-sequence').srcInFrame=30;});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256})).productionWorkspace;expect(await summary()).toMatchObject({used:3,withdrawn:3,changed:0});
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.id==='audible-sequence').srcInFrame=0;const child=doc.timelines.find((t:any)=>t.id==='sound-child'),asset=doc.assets.find((a:any)=>a.id==='material-'+replacement);doc.assets.push({...asset,id:'audio-track-'+f.other});child.items[0].sourceAssetId='audio-track-'+f.other;});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256})).productionWorkspace;expect(await summary()).toMatchObject({used:3,withdrawn:3,changed:0,unknownEvents:3});
++  await send('closeWorkspaceStudio');await f.restart();expect(await summary()).toMatchObject({used:3,withdrawn:3,changed:0});
++ }finally{await f.close();}
++},180000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('keeps sound scope and transaction protection, and never backfills edits made while collection is off',async()=>{
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:productionScriptTemplate.replace('镜头时长（秒）：5','镜头时长（秒）：1')}),worker=f.workerPool();
++ try{
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));expect((await f.send('start')).status).toBe(200);let w=(await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main})).body;
++  const send=(command:string,data:Record<string,unknown>={})=>f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});
++  const music=await f.send('importMaterial',{sourceKind:'file',sourcePath:'protected-music.mp3',materialType:'audio',materialPurpose:'background_music',mimeType:'audio/mpeg',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('controlled-narration-tone.mp3'))).toString('base64')});expect(music.status).toBe(200);
++  const made=await send('prepareWorkspaceAudio',{kind:'bgm',materialRevisionId:music.body.id,description:'保护核查',durationSeconds:1});expect(made.status).toBe(200);w=made.body;const prep=w.audio.preparations[0],before={revision:w.revision,sha:w.project.sha256};
++  const eventCount=async()=>(await f.c.query("SELECT count(*)::int n FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type LIKE 'sound_%'",[f.newEpisode])).rows[0].n;
++  await f.c.query("CREATE FUNCTION local_identity.c2_reject_sound()RETURNS trigger LANGUAGE plpgsql AS $$BEGIN IF NEW.event_type LIKE 'sound_%' THEN RAISE EXCEPTION 'forced sound observation failure';END IF;RETURN NEW;END$$;CREATE TRIGGER c2_reject_sound BEFORE INSERT ON local_identity.production_metric_events FOR EACH ROW EXECUTE FUNCTION local_identity.c2_reject_sound()");
++  expect((await send('adoptWorkspaceAudio',{preparationId:prep.id})).status).toBeGreaterThanOrEqual(400);
++  const after=await send('refreshWorkspaceAudio');expect(after.status).toBe(200);expect({revision:after.body.revision,sha:after.body.project.sha256}).toEqual(before);expect(after.body.audio.preparations[0].adoptedItemId).toBeNull();expect(await eventCount()).toBe(0);
++  await f.c.query('DROP TRIGGER c2_reject_sound ON local_identity.production_metric_events;DROP FUNCTION local_identity.c2_reject_sound()');const adopted=await send('adoptWorkspaceAudio',{preparationId:prep.id});expect(adopted.status).toBe(200);w=adopted.body;expect(await eventCount()).toBe(1);
++  const args=[w.id,w.revision,'bgm','used','material',music.body.id,'a'.repeat(64),'b'.repeat(64),'c'.repeat(64)],sql='SELECT local_identity.record_workspace_sound_use($1,$2,$3,$4,$5,$6,$7,$8,$9)';
++  await expect(ownerTransaction(f.pool,f.other,false,c=>c.query(sql,args))).rejects.toMatchObject({code:'42501'});await expect(worker.query(sql,args)).rejects.toMatchObject({code:'42501'});
++  await expect(ownerTransaction(f.pool,f.owner,false,c=>c.query(sql,args))).rejects.toMatchObject({code:'42501'});await expect(ownerTransaction(f.pool,f.owner,false,c=>c.query(sql,[...args.slice(0,2),'body text',...args.slice(3)]))).rejects.toMatchObject({code:'22023'});
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(false)'));const off=await send('setWorkspaceAudioEnabled',{kind:'bgm',enabled:false});expect(off.status).toBe(200);w=off.body;expect(await eventCount()).toBe(1);
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));expect(await eventCount()).toBe(1);await f.restart();expect(await eventCount()).toBe(1);
++ }finally{await worker.end();await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('records explicitly extracted current source audio through a real local Worker without creating an old draft',async()=>{
++ const f=await formalWorkflowFixture({freshAccount:true,controlled:true,scriptText:productionScriptTemplate.replace('镜头时长（秒）：5','镜头时长（秒）：2')});const worker=f.workerPool();
++ try{
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));
++  expect((await f.send('start')).status).toBe(200);let w=(await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main})).body;
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+': '+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const media=await workspaceAudioMedia(f.root),video=await f.send('importMaterial',{sourceKind:'file',sourcePath:'source.mp4',materialType:'video',materialPurpose:'a_roll',mimeType:'video/mp4',isMainScript:false,contentBase64:(await readFile(media.video)).toString('base64')});expect(video.status).toBe(200);
++  const clip=w.clips[0];await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:video.body.id});
++  const initial=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type='sound_used' ORDER BY id",[f.newEpisode])).rows;expect(initial.map(e=>e.payload.role)).toEqual(['source']);expect(initial[0].payload.source_kind).toBe('material');
++  await send('prepareWorkspaceAudio',{kind:'source',shotId:clip.shotId,sourceItemId:clip.itemId});const prep=w.audio.preparations[0];
++  const task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:prep.taskId,p_worker_capacity:2})as any[])[0];expect(task.task_id).toBe(prep.taskId);const done=await runWorkspaceDeliveryProcess(f,task,{mountPath:f.mountPath,media:{mode:'local'}});expect(done.status,JSON.stringify(done)).toBe('completed');
++  await send('adoptWorkspaceAudio',{preparationId:prep.id});
++  const events=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type='sound_used' ORDER BY id",[f.newEpisode])).rows;
++  expect(events.filter(e=>e.payload.role==='source').map(e=>e.payload.source_kind)).toEqual(['material','audio_track']);
++  await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});
++  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const timeline=doc.timelines[0];timeline.items=timeline.items.filter((i:any)=>i.kind!=='audio');timeline.items.find((i:any)=>i.id===clip.itemId).volume=1;timeline.linkGroups=[];});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256})).productionWorkspace;
++  const embedded=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type='sound_used' ORDER BY id",[f.newEpisode])).rows;
++  expect(embedded.filter(e=>e.payload.role==='source').map(e=>e.payload.source_kind)).toEqual(['material','audio_track','material']);expect(embedded.at(-1)?.payload.source_id).toBe(video.body.id);
++  await send('closeWorkspaceStudio');
++  expect((await f.c.query('SELECT count(*)::int n FROM public.shot_preparation_drafts WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
++ }finally{await worker.end();await f.close();}
++},180000);
+--- before/src/local-app/productionMilestonesMigration.integration.test.ts
++++ after/src/local-app/productionMilestonesMigration.integration.test.ts
+@@ -26,7 +26,7 @@
+   expect(after.catalog.functions.length-before.catalog.functions.length).toBe(3);expect(after.catalog.triggers.length-before.catalog.triggers.length).toBe(3);
+   expect(after.security.filter((item:any)=>!addedFunctions.some(name=>item.kind==='function'&&item.identity.startsWith('local_identity.'+name+'(')))).toEqual(before.security);
+   for(const [version,value]of Object.entries(before.ledger))expect(after.ledger[version]).toEqual(value);
+-  expect(schemaMigrationPlan(Object.fromEntries(Object.entries(after.ledger).map(([key,value])=>[key,(value as {sha256:string}).sha256])),catalog)).toEqual([]);
++  expect(schemaMigrationPlan(Object.fromEntries(Object.entries(after.ledger).map(([key,value])=>[key,(value as {sha256:string}).sha256])),{...catalog,current:catalog.current.filter(m=>m.version<'194-')})).toEqual([]);
+   expect(sql("SELECT count(*) FROM local_identity.production_metric_events WHERE event_type='workflow_milestone'")).toBe('0');expect(sql(`SELECT enabled::text FROM local_identity.production_metric_controls WHERE owner_id='${off}'`)).toBe('false');
+   sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',source]),restored);assertRestored(after,databaseSnapshot(context,restored,process.cwd()));
+   expect(sql(`SELECT current_audio_track_id::text FROM public.shot_preparation_drafts WHERE episode_id='${ids.episode}'`,restored)).toBe(ids.audio);
+--- before/src/local-app/productionWorkspaceCommands.ts
++++ after/src/local-app/productionWorkspaceCommands.ts
+@@ -1,6 +1,7 @@
+ import {recordWorkspaceEditingMilestone} from './productionMilestones.js';
+ import {workspaceStudioFingerprint} from './workspaceStudioFingerprint.js';
+ import {recordProjectCandidateChanges} from './productionMetricWrites.js';
++import {recordProjectSoundChanges} from './productionSoundUse.js';
+ import {adoptProductionPreparation,verifyProductionPreparationSource} from './productionPreparationStore.js';
+ import {legacyVideoDefault} from './legacyVideoCompatibility.js';
+ import {defaultShotComposition,shotCompositionRect,shotCompositionTransform,shotCompositionSlotLabels,shotCompositionLayouts} from '../shotComposition.js';
+@@ -321,6 +322,7 @@
+  if(!changed.rowCount)throw new ConfigurationError(409,'工程版本已变化，请重新读取当前工程。');
+  const current=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0] as ProductionWorkspaceRecord;
+  await recordProjectCandidateChanges(c,current,previous,project,row.bindings);
++ await recordProjectSoundChanges(c,root,current,previous,project,row.bindings);
+  await syncProductionWorkspaceShots(c,current,root);
+  await recordWorkspaceVersion(c,current,reason??null);
+  // Stop only work which has not started. Sent/unknown requests retain all evidence.
+--- before/src/local-app/productionSoundUseMigration.integration.test.ts
++++ after/src/local-app/productionSoundUseMigration.integration.test.ts
+@@ -0,0 +1,35 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {randomBytes,randomUUID} from 'node:crypto';
++import {join} from 'node:path';
++import {loadSchemaCatalog,freshSchemaTransaction,migrationTransaction,schemaMigrationPlan} from './schemaMigrations';
++import {seedHistoricalPreparation} from './historicalPreparation.fixture';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('194 keeps nonempty 193 business and collected facts unchanged, rolls back atomically, and fully restores the candidate without backfilling',async()=>{
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated milestone migration');
++ const {databaseSnapshot,assertRestored}=await import(join(process.cwd(),'scripts/runtime/clean-sql-cutover.mjs'));
++ const catalog=loadSchemaCatalog(process.cwd()),old={...catalog,current:catalog.current.filter(m=>m.version<'188-')},suffix=randomBytes(6).toString('hex'),source='loop_milestones_'+suffix,restored=source+'_restored',databases:string[]=[],sql=(q:string,db=source)=>context.sql(q,db),off=randomUUID();
++ try{
++  for(const db of [source,restored]){context.sql('CREATE DATABASE '+db+' TEMPLATE template0','postgres');databases.push(db);}
++  sql(freshSchemaTransaction(old));const ids=seedHistoricalPreparation(sql);sql(migrationTransaction(catalog.current.filter(m=>m.version>='188-'&&m.version<'194-')));
++  sql(`INSERT INTO local_identity.owners(id,email)VALUES('${off}','off@example.invalid');INSERT INTO local_identity.production_metric_controls(owner_id,enabled)VALUES('${off}',false);
++   SET SESSION AUTHORIZATION loop_app;BEGIN;SELECT set_config('loop.owner_id','${ids.owner}',true);SELECT local_identity.set_production_metrics_enabled(true);
++   SELECT local_identity.record_owned_production_metric('${ids.episode}','retry_relation','retained-before-milestones',jsonb_build_object('workspace_id','${ids.workspace}','reason_code','retained_fact'));COMMIT;RESET SESSION AUTHORIZATION;`);
++  const before=databaseSnapshot(context,source,process.cwd()),migration=catalog.current.find(m=>m.version.startsWith('194-'))!;expect(before.rows['local_identity.production_metric_events'].rows).toBe(2);
++  expect(()=>sql('BEGIN;'+migration.body+'SELECT 1/0;COMMIT;')).toThrow(/division by zero/);expect(databaseSnapshot(context,source,process.cwd())).toEqual(before);
++  sql(migrationTransaction([migration]));const after=databaseSnapshot(context,source,process.cwd());
++  expect(after.rows).toEqual(before.rows);expect(after.sequenceRows).toEqual(before.sequenceRows);expect(after.roles).toEqual(before.roles);
++  const addedFunctions=['record_workspace_sound_use'],addedTriggers:string[]=[];
++  for(const key of Object.keys(before.catalog)){
++   const filtered=after.catalog[key].filter((item:any)=>key==='functions'?!addedFunctions.includes(item.name):key==='triggers'?!addedTriggers.includes(item.name):true);expect(filtered,key).toEqual(before.catalog[key]);
++  }
++  expect(after.catalog.functions.length-before.catalog.functions.length).toBe(1);expect(after.catalog.triggers.length-before.catalog.triggers.length).toBe(0);
++  expect(after.security.filter((item:any)=>!addedFunctions.some(name=>item.kind==='function'&&item.identity.startsWith('local_identity.'+name+'(')))).toEqual(before.security);
++  for(const [version,value]of Object.entries(before.ledger))expect(after.ledger[version]).toEqual(value);
++  expect(schemaMigrationPlan(Object.fromEntries(Object.entries(after.ledger).map(([key,value])=>[key,(value as {sha256:string}).sha256])),{...catalog,current:catalog.current.filter(m=>m.version<'195-')})).toEqual([]);
++  expect(sql("SELECT count(*) FROM local_identity.production_metric_events WHERE event_type LIKE 'sound_%'")).toBe('0');expect(sql(`SELECT enabled::text FROM local_identity.production_metric_controls WHERE owner_id='${off}'`)).toBe('false');
++  sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',source]),restored);assertRestored(after,databaseSnapshot(context,restored,process.cwd()));
++  expect(sql(`SELECT current_audio_track_id::text FROM public.shot_preparation_drafts WHERE episode_id='${ids.episode}'`,restored)).toBe(ids.audio);
++  expect(sql("SELECT count(*) FROM local_identity.production_metric_events WHERE event_type LIKE 'sound_%'",restored)).toBe('0');
++ }finally{for(const db of databases.reverse())context.sql('DROP DATABASE '+db+' WITH (FORCE)','postgres');}
++},120000);
+--- before/src/worker/mediaTools.ts
++++ after/src/worker/mediaTools.ts
+@@ -102,6 +102,15 @@
+   return Boolean(stdout.trim());
+ }
+ 
++/** Stream bounds, rather than container/video length, delimit actual audio use. */
++export async function inspectAudioStream(path:string):Promise<{hasAudio:boolean;startSeconds:number|null;endSeconds:number|null}>{
++  const {stdout}=await runCommandWithOutput('ffprobe',['-v','error','-select_streams','a:0','-show_entries','stream=start_time,duration:format=start_time,duration,nb_streams','-of','json',path]);
++  const probe=JSON.parse(stdout) as {streams?:Array<{start_time?:string;duration?:string}>;format?:{start_time?:string;duration?:string;nb_streams?:number}};
++  const audio=probe.streams?.[0];if(!audio)return{hasAudio:false,startSeconds:null,endSeconds:null};
++  const start=Number(audio.start_time??probe.format?.start_time??0),duration=Number(audio.duration??(probe.format?.nb_streams===1?probe.format.duration:undefined));
++  return{hasAudio:true,startSeconds:Number.isFinite(start)?start:null,endSeconds:Number.isFinite(start)&&Number.isFinite(duration)&&duration>0?start+duration:null};
++}
++
+ export async function inspectMp4Artifact(path: string): Promise<{ durationSeconds: number; width: number; height: number; hasAudio: boolean; blackFrameCount: number }> {
+   const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type,width,height", "-of", "json", path]);
+   const inspected = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string; width?: number; height?: number }> };
+--- before/db/current/194-production-sound-use.sql
++++ after/db/current/194-production-sound-use.sql
+@@ -0,0 +1,28 @@
++-- Sound use is distinct from candidate selection and from paid generation requests.
++-- No backfill, new table, or change to the general event payload/type allowlists.
++CREATE FUNCTION local_identity.record_workspace_sound_use(p_workspace uuid,p_revision bigint,p_role text,p_action text,p_source_kind text,p_source uuid,p_sha text,p_instance text,p_usage text) RETURNS boolean
++ LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
++DECLARE w local_identity.production_workspaces;
++BEGIN
++ SELECT * INTO w FROM local_identity.lock_current_production_workspace(p_workspace);
++ IF NOT local_identity.production_metrics_enabled() THEN RETURN false;END IF;
++ IF p_revision IS DISTINCT FROM w.revision OR p_role IS NULL OR p_role NOT IN('bgm','sfx','source','ambience','narration','other')
++  OR p_action IS NULL OR p_action NOT IN('used','withdrawn','changed') OR p_source_kind IS NULL OR p_source_kind NOT IN('material','audio_track','task_artifact','unresolved')
++  OR coalesce(p_instance,'') !~ '^[0-9a-f]{64}$' OR coalesce(p_usage,'') !~ '^[0-9a-f]{64}$'
++  OR (p_source_kind='unresolved' AND (p_source IS NOT NULL OR p_sha IS NOT NULL))
++  OR (p_source_kind<>'unresolved' AND (p_source IS NULL OR coalesce(p_sha,'') !~ '^[0-9a-f]{64}$')) THEN
++  RAISE EXCEPTION 'Invalid sound observation' USING ERRCODE='22023';END IF;
++ IF p_source_kind='material' THEN
++  IF NOT EXISTS(SELECT 1 FROM public.production_material_revisions WHERE id=p_source AND episode_id=w.episode_id AND material_type IN('audio','video') AND sha256=p_sha) THEN RAISE EXCEPTION 'Sound material scope mismatch' USING ERRCODE='42501';END IF;
++ ELSIF p_source_kind='audio_track' THEN
++  IF NOT EXISTS(SELECT 1 FROM public.audio_tracks WHERE id=p_source AND episode_id=w.episode_id AND sha256=p_sha) THEN RAISE EXCEPTION 'Sound track scope mismatch' USING ERRCODE='42501';END IF;
++ ELSIF p_source_kind='task_artifact' THEN
++  IF NOT EXISTS(SELECT 1 FROM public.artifacts WHERE id=p_source AND episode_id=w.episode_id AND sha256=p_sha AND artifact_type IN('narration_audio','soundtrack_audio','source_audio','shot_source_audio','legacy_recovered_media','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video')) THEN RAISE EXCEPTION 'Sound artifact scope mismatch' USING ERRCODE='42501';END IF;
++ END IF;
++ -- Role describes the saved native use, not a generation/preparation entitlement.
++ -- An Owner can replace a native sound with another registered source directly.
++ RETURN local_identity.append_production_metric(local_identity.owner_id(),w.episode_id,CASE WHEN p_source_kind='unresolved' THEN 'sound_unresolved' ELSE 'sound_'||p_action END,'sound:'||w.id||':'||p_revision||':'||p_instance||':'||p_action,
++  jsonb_build_object('version','sound-use/v1','workspace_id',w.id,'project_revision',p_revision,'content_sha256',w.content_sha256,'role',p_role,'action',p_action,'source_kind',p_source_kind,'source_id',p_source,'source_sha256',p_sha,'instance_sha256',p_instance,'use_sha256',p_usage));
++END $$;
++REVOKE ALL ON FUNCTION local_identity.record_workspace_sound_use(uuid,bigint,text,text,text,uuid,text,text,text) FROM PUBLIC,loop_app,loop_worker,loop_owner,loop_anonymous;
++GRANT EXECUTE ON FUNCTION local_identity.record_workspace_sound_use(uuid,bigint,text,text,text,uuid,text,text,text) TO loop_app;

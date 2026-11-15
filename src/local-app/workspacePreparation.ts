@@ -1,4 +1,6 @@
+import {productionRenderPreferences} from '../workspaceRenderPreferences.js';
 import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
+import {adoptProductionPreparation,registerProductionPreparation,verifyProductionPreparationSource} from './productionPreparationStore.js';
 import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import {inspectOpenChatCutStoredProject} from '../worker/openchatcutStudio.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
@@ -7,10 +9,8 @@ import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,mkdir} from 'node:fs/promises';
 import {dirname} from 'node:path';
 import type {PoolClient} from 'pg';
-import {parseStoryboardScript} from '../reviews/productionScript.js';
+import {parseStoryboardScript,segmentSettings,productionVisualSources,type ProductionVisualSource} from '../reviews/productionScript.js';
 import {plainScriptParagraphs} from '../reviews/mainScript.js';
-import type {StoryboardManifest} from '../worker/contracts.js';
-import {storyboardFromScript} from '../worker/scriptPlanning.js';
 import {verifyNativeFile} from './localFiles.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {ConfigurationError} from './configurationCommands.js';
@@ -25,35 +25,44 @@ export async function prepareAuthoredWorkspace(c:PoolClient,root:string,e:{id:st
  const inputs=[{artifactType:'main_script',relativePath:source.storage_path,sha256:source.sha256,fileSize:Number(source.file_size)}];
  const paragraphs=script?[]:plainScriptParagraphs(text);
  if(!script&&!paragraphs.length)throw new ConfigurationError(409,'脚本正文为空，请补充正文后重新确认。');
- const board:StoryboardManifest=script?storyboardFromScript(script,inputs,{},true):{
-  version:'storyboard/v1',audioCues:[],shots:paragraphs.map((scriptSegment,index)=>({
-   id:'shot-'+String(index+1).padStart(2,'0'),scriptSegment,durationSeconds:5,
-   // Required only by frozen storyboard/v1; never copied into new workspace shot classification.
-   shotType:'b_roll',
-   productionMethod:'待匹配素材',targetSpec:'9:16',inputBasis:[{relativePath:source.storage_path,sha256:source.sha256}],
-  })),
- };
- const id=randomUUID(),bytes=Buffer.from(JSON.stringify(board,null,2)+'\n'),path=`${location.relativePath}/preparation/${id}.json`,sha=createHash('sha256').update(bytes).digest('hex'),file=await safeAssetOutputPath(root,path);
+ const manifest={version:'production-preparation/v1',shots:script?script.segments.map(segment=>{
+  const settings=segmentSettings(script,segment),renderPreferences=productionRenderPreferences(settings);
+  return{id:segment.id,scriptSegment:segment.narration,durationSeconds:settings.duration??5,targetSpec:settings.aspectRatio??'9:16',visualSource:segment.visualSource??'unassigned',...(renderPreferences?{renderPreferences}:{}),visualIntent:segment.visual||segment.videoPrompt||'待匹配素材',inputBasis:inputs.map(({relativePath,sha256})=>({relativePath,sha256})),...(settings.layout?{layout:settings.layout}:{}),...(settings.materialReference?{materialReference:settings.materialReference}:{})};
+ }):paragraphs.map((scriptSegment,index)=>({id:'shot-'+String(index+1).padStart(2,'0'),scriptSegment,durationSeconds:5,targetSpec:'9:16',visualSource:'unassigned',visualIntent:'待匹配素材',inputBasis:[{relativePath:source.storage_path,sha256:source.sha256}]}))};
+ const id=randomUUID(),bytes=Buffer.from(JSON.stringify(manifest,null,2)+'\n'),path=`${location.relativePath}/preparation/${id}.json`,sha=createHash('sha256').update(bytes).digest('hex'),file=await safeAssetOutputPath(root,path);
  await mkdir(dirname(file),{recursive:true});await writeFile(file,bytes,{flag:'wx'});
- await c.query('SELECT local_identity.register_workspace_preparation($1,$2,$3,$4,$5,$6)',[e.id,source.id,id,{relativePath:path,sha256:sha,fileSize:bytes.length},board,'script-segment']);
- return(await c.query('SELECT p.*,a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1',[id])).rows[0];
+ await registerProductionPreparation(c,root,{episodeId:e.id,scriptRevisionId:source.id,preparationRevisionId:id,file:{relativePath:path,sha256:sha,fileSize:bytes.length},manifest});
+ return{id,manifest,relative_path:path,sha256:sha,file_size:bytes.length,legacy_package_id:null};
 }
 export async function readWorkspacePlanning(c:PoolClient,taskId:string){const task=(await c.query('SELECT status,last_result FROM public.tasks WHERE id=$1',[taskId])).rows[0];return{planning:true as const,taskId,status:task.status,detail:task.last_result?.blockers?.[0]?.detail??task.last_result?.retry?.reason??null};}
-export async function syncWorkspaceShotInputs(c:PoolClient,row:ProductionWorkspaceRecord,bindings:WorkspaceClip[]){
- const p=(await c.query('SELECT p.context_snapshot,b.origin FROM public.review_packages p LEFT JOIN local_identity.workspace_preparations b ON b.package_id=p.id WHERE p.id=$1',[row.storyboard_package_id])).rows[0];
- for(const clip of bindings){const shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),legacy=!p?.origin||p.origin==='legacy-board',snapshot={...(shot??{id:clip.shotId})};if(!legacy)delete snapshot.shotType;
- await c.query('INSERT INTO local_identity.workspace_shot_inputs(workspace_id,preparation_id,shot_id,origin,baseline_text,shot_type,snapshot) VALUES($1,$7,$2,$3,$4,$5,$6) ON CONFLICT DO NOTHING',[row.id,clip.shotId,shot?p.origin??'legacy-board':'local-added',shot?.scriptSegment??'',legacy?shot?.shotType??null:null,snapshot,row.storyboard_package_id]);}
+export async function syncProductionWorkspaceShots(c:PoolClient,row:ProductionWorkspaceRecord,root:string){
+ const preparationId=row.preparation_revision_id??row.storyboard_package_id;
+ const known=(await c.query('SELECT 1 FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2 AND script_revision_id=$3',[preparationId,row.episode_id,row.script_revision_id])).rowCount;
+ if(!known)await adoptProductionPreparation(c,root,row.episode_id,row.script_revision_id,preparationId!);
+ else await verifyProductionPreparationSource(c,root,row.episode_id,preparationId!);
+ await c.query('SELECT local_identity.sync_production_workspace_shots($1)',[row.id]);
+ row.preparation_revision_id=preparationId;
+ await c.query('SELECT local_identity.sync_workspace_caption_inputs($1)',[row.id]);
+ await c.query('SELECT local_identity.sync_workspace_narration_inputs($1)',[row.id]);
 }
-export async function resolveWorkspaceShotLineage(c:PoolClient,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'bindings'>,shotId:string,preparationId=row.storyboard_package_id){
- let result=(await c.query('SELECT * FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2 AND preparation_id=$3',[row.id,shotId,preparationId])).rows[0];
- if(!result){const p=(await c.query('SELECT p.context_snapshot,b.origin FROM public.review_packages p LEFT JOIN local_identity.workspace_preparations b ON b.package_id=p.id WHERE p.id=$1 AND p.episode_id=$2',[preparationId,row.episode_id])).rows[0],shot=p?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===shotId);if(!shot&&!row.bindings.some(b=>b.shotId===shotId))throw new ConfigurationError(409,'镜头制作依据已变化，请保存并重新确认。');result={origin:shot?p?.origin??'legacy-board':'local-added',baseline_text:shot?.scriptSegment??'',shot_type:p?.origin==='legacy-board'||!p?.origin?shot?.shotType??null:null,snapshot:shot??{id:shotId}};}
- return{...result,id:shotId,scriptSegment:result.baseline_text};
+function preparationOrigin(origin:string,format:string,protocol?:string){return origin==='script'?'script-segment':origin==='plan-import'?format==='production-preparation/v1'&&protocol==='saved-production-plan/v1'?'saved-plan':'planner':'legacy-board';}
+export async function resolveWorkspaceShotLineage(c:PoolClient,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'preparation_revision_id'|'bindings'>,shotId:string,preparationId=row.preparation_revision_id??row.storyboard_package_id){
+ const result=(await c.query("SELECT s.*,p.origin preparation_origin,p.source_format preparation_format,p.source_evidence->>'version' preparation_protocol,local_identity.historical_preparation_shot_classification(p.id,s.shot_id) historical_classification FROM local_identity.production_shot_versions s JOIN local_identity.production_preparation_revisions p ON p.id=s.preparation_revision_id WHERE s.preparation_revision_id=$1 AND s.episode_id=$2 AND s.shot_id=$3",[preparationId,row.episode_id,shotId])).rows[0];
+ if(!result)throw new ConfigurationError(409,'镜头制作依据尚未接入，请先确认当前制作基准。');
+ return{...result,origin:result.origin==='local'?'local-added':preparationOrigin(result.preparation_origin,result.preparation_format,result.preparation_protocol),shot_type:result.historical_classification??null,id:shotId,scriptSegment:result.baseline_text};
 }
 
 export async function readWorkspacePreparation(c:PoolClient,row:ProductionWorkspaceRecord){
- const prep=(await c.query('SELECT origin FROM local_identity.workspace_preparations WHERE package_id=$1',[row.storyboard_package_id])).rows[0],auth=(await c.query('SELECT enabled,authorization_hash,plan FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
- const shots:Array<{shot_id:string;origin:string}>=[];for(const clip of row.bindings){if(shots.some(s=>s.shot_id===clip.shotId))continue;const source=await resolveWorkspaceShotLineage(c,row,clip.shotId);shots.push({shot_id:clip.shotId,origin:source.origin});}
- return{origin:prep?.origin??'legacy-board',scriptRevisionId:row.script_revision_id,authorized:!!auth?.enabled,authorizationHash:auth?.authorization_hash,shots:shots.map(s=>({shotId:s.shot_id,origin:s.origin}))};
+ const prep=(await c.query('SELECT origin,source_format,source_evidence FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[row.preparation_revision_id??row.storyboard_package_id,row.episode_id])).rows[0],auth=(await c.query('SELECT enabled,authorization_hash,plan FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];
+ if(!prep)throw new ConfigurationError(409,'制作基准尚未接入，请先确认当前版本。');
+ const shots:Array<{shotId:string;origin:string;visualSource?:ProductionVisualSource;materialReference?:string}>=[];
+ for(const clip of row.bindings){
+  if(shots.some(s=>s.shotId===clip.shotId))continue;
+  const source=await resolveWorkspaceShotLineage(c,row,clip.shotId),intent=source.snapshot;
+  shots.push({shotId:clip.shotId,origin:source.origin,...(productionVisualSources.includes(intent?.visualSource)?{visualSource:intent.visualSource}:{}),...(typeof intent?.materialReference==='string'?{materialReference:intent.materialReference}:{})});
+ }
+ const origin=preparationOrigin(prep.origin,prep.source_format,prep.source_evidence?.version);
+ return{origin,scriptRevisionId:row.script_revision_id,authorized:origin!=='saved-plan'&&!!auth?.enabled,authorizationHash:origin==='saved-plan'?undefined:auth?.authorization_hash,...(origin==='saved-plan'?{planSha256:prep.source_evidence?.plan_sha256}:{}),shots};
 }
 
 export async function preserveLegacyWorkspace(c:PoolClient,root:string,episodeId:string,decision:unknown){

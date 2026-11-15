@@ -1,4 +1,6 @@
 export type MaterialReference = string;
+export const productionVisualSources=['image','video','material','unassigned']as const;
+export type ProductionVisualSource=typeof productionVisualSources[number];
 export interface ProductionSettings {
   aspectRatio?: '9:16' | '16:9' | '1:1';
   voice?: string; speakingRate?: number; language?: string;
@@ -10,16 +12,17 @@ export interface ProductionSettings {
   layout?: 'full' | '2up-horizontal' | '2up-vertical' | 'pip' | 'grid-4';
   narrationGainDb?: number; bgmGainDb?: number; sfxGainDb?: number;
   bgmDucking?: 'off' | 'light' | 'medium' | 'strong';
-  bgm?: MaterialReference; sfx?: MaterialReference; firstFrame?: MaterialReference; cover?: MaterialReference;
+  bgm?: MaterialReference; sfx?: MaterialReference; firstFrame?: MaterialReference; materialReference?:MaterialReference; cover?: MaterialReference;
   duration?: number; sfxStart?: number; sfxDuration?: number;
   videoReservationCents?: number;
 }
 export interface ProductionSegment {
   id: string; paragraph: string; narration: string; visual: string;
+  visualSource?:ProductionVisualSource;
   videoPrompt: string; /** @deprecated Explicit legacy script field; current scripts do not classify shots. */ shotType?: 'a_roll' | 'b_roll'; settings: ProductionSettings; subtitle?: string;
 }
 export interface ProductionScript {
-  version: 2; title: string; settings: ProductionSettings;
+  version: 2|3; title: string; settings: ProductionSettings;
   segments: ProductionSegment[]; notes: string[];
 }
 export class ProductionScriptError extends Error {
@@ -62,8 +65,10 @@ const fields: Record<string, { key: keyof ProductionSettings; parse: (s: string)
   '背景音乐素材': { key: 'bgm', parse: reference },
   '音效素材': { key: 'sfx', parse: reference },
   '首帧素材': { key: 'firstFrame', parse: reference },
+  '素材名称': { key: 'materialReference', parse: reference },
   '封面素材': { key: 'cover', parse: reference },
   '生成时长（秒）': { key: 'duration', parse: number(2, 15, true) },
+  '镜头时长（秒）': { key: 'duration', parse: number(0.1, 120) },
   '视频费用预留（分/镜头）': { key: 'videoReservationCents', parse: number(1, 100000, true) },
   '音效起点（秒）': { key: 'sfxStart', parse: number(0, 3600) },
   '音效时长（秒）': { key: 'sfxDuration', parse: number(0.01, 3600) },
@@ -82,14 +87,14 @@ export function validateProductionDefaults(value:unknown):ProductionSettings {
 export function parseProductionScript(text: string): ProductionScript | null {
   const version = text.match(/^-\s*模板版本[：:]\s*(\S+)\s*$/m);
   if (!version) return null;
-  if (version[1] !== '2') throw new ProductionScriptError('不支持的模板版本', text.slice(0, version.index).split('\n').length);
-  const result: ProductionScript = { version: 2, title: '', settings: {}, segments: [], notes: [] };
+  if (!['2','3'].includes(version[1])) throw new ProductionScriptError('不支持的模板版本', text.slice(0, version.index).split('\n').length);
+  const result: ProductionScript = { version: version[1]==='3'?3:2, title: '', settings: {}, segments: [], notes: [] };
   let section = '', segment: ProductionSegment | undefined;
   let seen = new Set<string>(), hasSettings = false, hasBody = false;
   const checkSegment = (line: number) => {
     if (!segment) return;
-    for (const [field, value] of [['口播',segment.narration],['视频生成提示词',segment.videoPrompt]]) if (!value) throw new ProductionScriptError(`段落 ${segment.paragraph} 缺少${field}`, line);
-    if (!seen.has('首帧素材') && !result.settings.firstFrame) throw new ProductionScriptError(`段落 ${segment.paragraph} 缺少首帧素材`, line);
+    for (const [field, value] of result.version===2?[['口播',segment.narration],['视频生成提示词',segment.videoPrompt]]:[['口播',segment.narration],['画面来源',segment.visualSource]]) if (!value) throw new ProductionScriptError(`段落 ${segment.paragraph} 缺少${field}`, line);
+    if (result.version===2&&!seen.has('首帧素材') && !result.settings.firstFrame) throw new ProductionScriptError(`段落 ${segment.paragraph} 缺少首帧素材`, line);
     if ((segment.settings.captionMode ?? result.settings.captionMode) === 'independent' && !seen.has('字幕正文')) throw new ProductionScriptError('独立字幕需要填写字幕正文', line);
   };
   const lines = text.replace(/^\uFEFF/, '').split(/\r?\n/);
@@ -123,12 +128,15 @@ export function parseProductionScript(text: string): ProductionScript | null {
     if(seen.has(name)) throw new ProductionScriptError('字段重复：'+name,i+1);seen.add(name);
     if(!value) throw new ProductionScriptError('字段不能为空；继承时填写“默认”',i+1);
     try {
+      if(result.version===2&&['素材名称','镜头时长（秒）','画面来源','视频提示词'].includes(name)||result.version===3&&['首帧素材','生成时长（秒）','视频生成提示词','镜头类型'].includes(name))throw Error('当前模板版本不支持字段：'+name);
       if(name==='模板版本'&&!segment) continue;
       if(name==='视频模型') { if(value!=='默认') throw Error('视频模型须沿用已确认执行配置，请填写默认');continue; }
       if(segment&&name==='口播') { segment.narration=value;continue; }
       if(segment&&name==='画面提示') { segment.visual=value;continue; }
+      if(segment&&name==='画面来源') { const sources={图片:'image',视频:'video',已有素材:'material',暂未选择:'unassigned'}as const;if(!Object.hasOwn(sources,value))throw Error('画面来源只能选择 图片 / 视频 / 已有素材 / 暂未选择');segment.visualSource=sources[value as keyof typeof sources];continue; }
       if(segment&&name==='首帧要求') { result.notes.push(`段落 ${segment.paragraph} 首帧要求：${value}`);continue; }
       if(segment&&name==='视频生成提示词') { if(value.length>1500)throw Error('视频生成提示词不能超过 1500 字符');segment.videoPrompt=value;continue; }
+      if(segment&&name==='视频提示词') { if(value.length>1500)throw Error('视频提示词不能超过 1500 字符');segment.videoPrompt=value;continue; }
       if(segment&&name==='镜头类型') { segment.shotType=choices(['a_roll','b_roll'])(value) as ProductionSegment['shotType'];continue; }
       if(segment&&name==='字幕正文') { segment.subtitle=value;continue; }
       const definition=fields[name];if(!definition)throw Error('未知字段：'+name);
@@ -150,10 +158,8 @@ export const productionScriptTemplate = `# 本期标题
 
 ## 制作设置
 
-- 模板版本：2
+- 模板版本：3
 - 画幅：9:16
-- 视频模型：默认
-- 视频费用预留（分/镜头）：默认
 - 旁白音色：默认
 - 旁白语速：默认
 - 背景音乐素材：默认
@@ -172,22 +178,17 @@ export const productionScriptTemplate = `# 本期标题
 
 - 口播：填写本段完整口播。
 - 画面提示：填写画面意图，可使用长句。
-- 首帧素材：填写已上传图片的素材名称
-- 视频生成提示词：填写直接提交视频模型的画面与动作描述。
-- 生成时长（秒）：默认
+- 画面来源：暂未选择
+- 镜头时长（秒）：5
 - 构图：full
 - 音效素材：无
 
 ## 本期补充约束（可选）
 
-- 制作备注：补充说明只供审核参考，不作为可执行配置。
+- 制作备注：补充说明不作为可执行配置。
 `;
 
-/** Nonconforming scripts still serve as input for storyboard parsing. */
+/** Ordinary prose remains supported; an explicit invalid versioned contract must be corrected. */
 export function parseStoryboardScript(text: string): ProductionScript | null {
-  try { return parseProductionScript(text); }
-  catch (error) {
-    if (error instanceof ProductionScriptError) return null;
-    throw error;
-  }
+  return parseProductionScript(text);
 }

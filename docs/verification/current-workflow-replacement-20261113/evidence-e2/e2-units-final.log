@@ -1,0 +1,167 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 3ms
+ ❯ src/local-app/nativeAttemptOutput.test.ts (20 tests | 7 failed) 686ms
+   × keeps a late executor in its attempt directory after a newer attempt is accepted 67ms
+     → expected [] to deeply equal [ 1 ]
+   ✓ prepares the frozen output parent for an alignment executor using an exclusive direct write 50ms
+   ✓ copies frozen inputs without sharing writable inodes with the accepted media 6ms
+   ✓ rejects output publication over a frozen input or approved reuse source 8ms
+   ✓ publishes the existing card-project auxiliary file inside the same lease fence 36ms
+   ✓ keeps published bytes independent from an executor still holding its staging file descriptor 23ms
+   ✓ rejects canonical symlink destinations before touching outside files or registering a result 10ms
+   × retains failed attempt files without reporting them as accepted or repeating registration 26ms
+     → promise resolved "undefined" instead of rejecting
+   × restores an existing canonical file before releasing the task transaction when result registration fails 31ms
+     → promise resolved "undefined" instead of rejecting
+   ✓ restores earlier replacements and removes newly introduced files after a partial multi-file publication failure 30ms
+   × restores every replaced file and removes new canonical files when multi-file registration fails 35ms
+     → promise resolved "undefined" instead of rejecting
+   ✓ retains both generations without blind restoration or repeated registration when COMMIT is uncertain 35ms
+   × does not restore over canonical bytes after a connection loss prevents proving that the original lock survived 28ms
+     → promise resolved "undefined" instead of rejecting
+   ✓ rejects a changed output hash before replacing an existing canonical file 15ms
+   ✓ rejects publication over a path already indexed by a different task before changing any bytes 7ms
+   ✓ reconciles an unknown commit from the current completed database result and is safe to repeat 75ms
+   × registers the verified staged result after an unknown transaction rolled back, without rerunning its executor 67ms
+     → expected [] to deeply equal [ +0 ]
+   × restores original bytes while still locked when explicit recovery registration fails 58ms
+     → promise resolved "{ status: 'completed', …(1) }" instead of rejecting
+   ✓ keeps canonical bytes and private recovery evidence when the database cannot verify the identity 42ms
+   ✓ rejects a recomputed receipt whose declared primary path differs from the database frozen output 35ms
+ ✓ src/orchestration/runtimeExecutionPolicy.test.ts (9 tests) 1289ms
+   ✓ explicit preparation publishes a supported new protocol and leaves the original archive intact  1050ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/nativeAttemptOutput.test.ts > keeps a late executor in its attempt directory after a newer attempt is accepted
+AssertionError: expected [] to deeply equal [ 1 ]
+
+- Expected
++ Received
+
+- [
+-   1,
+- ]
++ []
+
+ ❯ src/local-app/nativeAttemptOutput.test.ts:58:22
+     56|  expect(await readFile(join(oldPackage.assets.allowedRoot,output),'utf…
+     57|  expect(await readFile(join(old.taskPackage.assets.allowedRoot,output)…
+     58|  expect(db.accepted).toEqual([1]);
+       |                      ^
+     59| });
+     60| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/local-app/nativeAttemptOutput.test.ts > retains failed attempt files without reporting them as accepted or repeating registration
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected: 
+Error {
+  "message": "rejected promise",
+}
+
++ Received: 
+undefined
+
+ ❯ src/local-app/nativeAttemptOutput.test.ts:130:95
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/local-app/nativeAttemptOutput.test.ts > restores an existing canonical file before releasing the task transaction when result registration fails
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected: 
+Error {
+  "message": "rejected promise",
+}
+
++ Received: 
+undefined
+
+ ❯ src/local-app/nativeAttemptOutput.test.ts:141:66
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/local-app/nativeAttemptOutput.test.ts > restores every replaced file and removes new canonical files when multi-file registration fails
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected: 
+Error {
+  "message": "rejected promise",
+}
+
++ Received: 
+undefined
+
+ ❯ src/local-app/nativeAttemptOutput.test.ts:166:72
+    164|  await writeSafeAssetFile(attempt.taskPackage.assets.allowedRoot,outpu…
+    165|  const report=result('candidate output');report.artifacts.push({artifa…
+    166|  const db=database(0,true);await expect(attempt.publish(db.pool,report…
+       |                                                                        ^
+    167|  expect(await readFile(join(p.assets.allowedRoot,output),'utf8')).toBe…
+    168|  expect(await readdir(join(p.assets.allowedRoot,'episodes',episodeId))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/local-app/nativeAttemptOutput.test.ts > does not restore over canonical bytes after a connection loss prevents proving that the original lock survived
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected: 
+Error {
+  "message": "rejected promise",
+}
+
++ Received: 
+undefined
+
+ ❯ src/local-app/nativeAttemptOutput.test.ts:189:66
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/local-app/nativeAttemptOutput.test.ts > registers the verified staged result after an unknown transaction rolled back, without rerunning its executor
+AssertionError: expected [] to deeply equal [ +0 ]
+
+- Expected
++ Received
+
+- [
+-   0,
+- ]
++ []
+
+ ❯ src/local-app/nativeAttemptOutput.test.ts:229:22
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/local-app/nativeAttemptOutput.test.ts > restores original bytes while still locked when explicit recovery registration fails
+AssertionError: promise resolved "{ status: 'completed', …(1) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "registered": true,
++   "status": "completed",
+  }
+
+ ❯ src/local-app/nativeAttemptOutput.test.ts:238:134
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  7 failed | 23 passed (30)
+   Start at  22:55:48
+   Duration  1.51s (transform 311ms, setup 20ms, collect 460ms, tests 1.98s, environment 0ms, prepare 111ms)
+

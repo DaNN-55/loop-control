@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "removedTemporaryDirectories": [
+    "/private/tmp/loop-story-e2e-9o7L0X/source",
+    "/private/tmp/loop-story-e2e-9o7L0X/OpenChatCut",
+    "/private/tmp/loop-story-e2e-9hZup6/source",
+    "/private/tmp/loop-story-e2e-9hZup6/OpenChatCut",
+    "/private/tmp/loop-story-e2e-nfEdGf/source",
+    "/private/tmp/loop-story-e2e-nfEdGf/OpenChatCut",
+    "/private/tmp/loop-story-e2e-irA12W/source",
+    "/private/tmp/loop-story-e2e-irA12W/OpenChatCut",
+    "/private/tmp/loop-story-e2e-CV3omV/source",
+    "/private/tmp/loop-story-e2e-CV3omV/OpenChatCut",
+    "/private/tmp/loop-initialization-cleanup-20261113-wfzdexpl/source",
+    "/private/tmp/loop-initialization-cleanup-20261113-wfzdexpl/dependencies",
+    "/private/tmp/loop-initialization-cleanup-20261113-wfzdexpl/legacy-releases"
+  ],
+  "count": 13,
+  "e2eContainersRemoved": 5,
+  "schemaContainersRemoved": 1,
+  "originalRuntimePackagesPreserved": 23,
+  "dailyRecoveryPreserved": true,
+  "evidencePreserved": true
+}

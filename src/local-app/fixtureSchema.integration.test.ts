@@ -42,7 +42,7 @@ it.skipIf(!enabled)('schema provisioning accepts both the pre-workspace and upgr
 it.skipIf(!enabled)('an applied migration SHA mismatch refuses provisioning before writing the target schema',async()=>{
  const f=await databases();try{
   f.context.sql("UPDATE local_identity.schema_migrations SET sha256=repeat('0',64) WHERE version='083-legacy-episode-archive.sql'",f.source);
-  await expect(copyFixtureSchema(f.sourceContext,f.before,['db/archive/legacy-v1/084-four-step-workspace.sql'])).rejects.toThrow('Applied fixture migration changed: 083-legacy-episode-archive.sql');
+  await expect(copyFixtureSchema(f.sourceContext,f.before,['db/archive/legacy-v1/084-four-step-workspace.sql'])).rejects.toThrow('Applied migration changed or unknown: 083-legacy-episode-archive.sql');
   expect(f.context.sql("SELECT to_regclass('local_identity.schema_migrations') IS NULL",f.before)).toBe('t');
  }finally{f.close();}
 },120000);

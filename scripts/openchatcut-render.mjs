@@ -65,7 +65,7 @@ try {
     const response = await fetch(`http://127.0.0.1:${port}/export`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Origin: `http://127.0.0.1:${port}`, "Sec-Fetch-Site": "same-origin" },
-      body: JSON.stringify({ state, ...(project ? { project, timelineId: spec.timelineId || project.activeTimelineId } : {}), format: "video", codec: "h264", name: "loop-control" }),
+      body: JSON.stringify({ state, ...openChatCutExportRange(state), ...(project ? { project, timelineId: spec.timelineId || project.activeTimelineId } : {}), format: "video", codec: "h264", name: "loop-control" }),
     });
     if (!response.ok) throw new Error(`OpenChatCut export failed (${response.status}): ${await response.text()}`);
     const bytes = new Uint8Array(await response.arrayBuffer());
@@ -84,6 +84,20 @@ try {
   await rm(dataDir, { recursive: true, force: true });
   await pruneOpenChatCutCache(root);
 }
+}
+
+/** Export the actual active timeline extent, including subsecond documents. */
+export function openChatCutExportRange(state) {
+  if (!state.items.length) return {};
+  let end = 0;
+  for (const item of state.items) {
+    const itemEnd = Number(item.startFrame) + Number(item.durationInFrames);
+    if (!Number.isFinite(itemEnd)) throw new Error("OpenChatCut export frame range is invalid.");
+    end = Math.max(end, itemEnd);
+  }
+  const endFrameExclusive = Math.ceil(end);
+  if (!Number.isSafeInteger(endFrameExclusive) || endFrameExclusive < 1) throw new Error("OpenChatCut export frame range is invalid.");
+  return { startFrame: 0, endFrameExclusive };
 }
 
 export function openChatCutViteArguments(root, port) {

@@ -1,0 +1,34 @@
+E2E evidence: /private/tmp/loop-story-e2e-fmTg6k/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-fmTg6k/source
+
+ ❯ src/local-app/productionNarrationInputs.integration.test.ts (3 tests | 1 failed) 10522ms
+   ✓ current manual narration saves independent inputs and preparation-bound audio without creating retired shot drafts  3529ms
+   ✓ current speech executes with independent preparation=false without old task fields and records its real audio provenance  3769ms
+   × current speech executes with independent preparation=true without old task fields and records its real audio provenance 3224ms
+     → {"stack":"ProviderRequestNotSentError: 本次尚未发送；输入、授权或配置已变化，请核对后重试。\n    at prepareProviderDispatch (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/providerDispatch.ts:21:95)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at Object.fetcher (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/narrationWorker.ts:61:5)\n    at synthesizeVolcengineTts (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/mediaProviders.ts:61:20)\n    at mediaBytes (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/controlledMediaExecutor.ts:125:21)\n    at executeControlledMediaTask (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/controlledMediaExecutor.ts:41:407)\n    at executeNativeNarration (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/narrationWorker.ts:59:13)\n    at Object.execute (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/workspaceNarration.fixture.ts:67:922)\n    at runCodexWorker (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/codexRunner.ts:141:20)\n    at Object.execute (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/workspaceNarration.fixture.ts:67:16)","message":"本次尚未发送；输入、授权或配置已变化，请核对后重试。","reason":"input_changed","code":"PROVIDER_REQUEST_NOT_SENT","name":"ProviderRequestNotSentError"} {"last_result":{"retry":{"reason":"本次尚未发送；输入、授权或配置已变化，请核对后重试。","shouldRetry":false},"status":"failed","taskId":"e6193ca9-012d-47f1-bd30-00900f9d6304","version":"worker-result/v1","blockers":[{"code":"PROVIDER_REQUEST_NOT_SENT","detail":"本次尚未发送；输入、授权或配置已变化，请核对后重试。"}],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"validation":{"checks":[{"name":"codex_execution","detail":"本次尚未发送；输入、授权或配置已变化，请核对后重试。","passed":false}],"passed":false},"actualCostCents":1}}
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionNarrationInputs.integration.test.ts > current speech executes with independent preparation=true without old task fields and records its real audio provenance
+Error: {"stack":"ProviderRequestNotSentError: 本次尚未发送；输入、授权或配置已变化，请核对后重试。\n    at prepareProviderDispatch (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/providerDispatch.ts:21:95)\n    at processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at Object.fetcher (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/narrationWorker.ts:61:5)\n    at synthesizeVolcengineTts (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/mediaProviders.ts:61:20)\n    at mediaBytes (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/controlledMediaExecutor.ts:125:21)\n    at executeControlledMediaTask (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/controlledMediaExecutor.ts:41:407)\n    at executeNativeNarration (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/narrationWorker.ts:59:13)\n    at Object.execute (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/workspaceNarration.fixture.ts:67:922)\n    at runCodexWorker (/private/tmp/loop-story-e2e-fmTg6k/source/src/worker/codexRunner.ts:141:20)\n    at Object.execute (/private/tmp/loop-story-e2e-fmTg6k/source/src/local-app/workspaceNarration.fixture.ts:67:16)","message":"本次尚未发送；输入、授权或配置已变化，请核对后重试。","reason":"input_changed","code":"PROVIDER_REQUEST_NOT_SENT","name":"ProviderRequestNotSentError"} {"last_result":{"retry":{"reason":"本次尚未发送；输入、授权或配置已变化，请核对后重试。","shouldRetry":false},"status":"failed","taskId":"e6193ca9-012d-47f1-bd30-00900f9d6304","version":"worker-result/v1","blockers":[{"code":"PROVIDER_REQUEST_NOT_SENT","detail":"本次尚未发送；输入、授权或配置已变化，请核对后重试。"}],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"validation":{"checks":[{"name":"codex_execution","detail":"本次尚未发送；输入、授权或配置已变化，请核对后重试。","passed":false}],"passed":false},"actualCostCents":1}}
+ ❯ Object.execute src/local-app/workspaceNarration.fixture.ts:68:105
+
+ ❯ src/local-app/productionNarrationInputs.integration.test.ts:55:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  21:46:54
+   Duration  11.32s (transform 461ms, setup 7ms, collect 661ms, tests 10.52s, environment 0ms, prepare 33ms)
+
+JSON report written to /private/tmp/loop-story-e2e-fmTg6k/evidence/vitest.json

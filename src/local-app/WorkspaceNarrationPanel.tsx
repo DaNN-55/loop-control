@@ -74,7 +74,7 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
 }
 
 function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSettings,persistSettings,settingsChanged,saveSettings,settingsFeedback,tab,onTab,tracks,materials,pending,command,onChanged,expanded,onImportAudio}:{episodeId:string;workspace:ProductionWorkspace;narration:WorkspaceNarration;defaults:Settings|null|undefined;services:ProductionService[];onSettings:(settings:Settings)=>void;persistSettings:(w?:ProductionWorkspace)=>Promise<ProductionWorkspace>;settingsChanged:boolean;saveSettings:()=>void;settingsFeedback:ReactNode;tab:'voice'|'captions';onTab:(tab:'voice'|'captions')=>void;tracks:Track[];materials:NarrationMaterial[];pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChanged:(w:ProductionWorkspace)=>void;expanded:boolean;onImportAudio?:(files:File[])=>Promise<unknown>}){
- const tabId=useId(),textHeadingId=useId(),audioInput=useRef<HTMLInputElement>(null);
+ const tabId=useId(),textHeadingId=useId(),textInputId=useId(),draftStateId=useId(),audioInput=useRef<HTMLInputElement>(null);
  const adoptionTrigger=useRef<Element|null>(null);
  const key=`loop-speech-draft:${workspace.id}:${n.shotId}`;
  const savedCaption=workspace.captions?.find(c=>c.clipId===n.clipId||c.shotId===n.shotId)?.contract;
@@ -84,6 +84,8 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   try{const draft=sessionStorage.getItem(key+':text');return draft===n.text||draft===savedText?null:draft;}catch{return null;}
  });
  const text=textDraft??savedText;
+ const used=workspace.usedNarration?.find(voice=>voice.shotId===n.shotId),hasAdopted=!!used||!!n.adoptedAudioTrackId||!!n.retainedAudioTrackId;
+ const draftState=!hasAdopted?'尚未采用口播。':used?.text==null?'当前采用的口播正文未记录。':text===used.text?'与已采用口播正文一致。':'草稿未采用，成片仍使用已采用口播。';
  const followText=n.adoptedAudioTrackId||n.retainedAudioTrackId?(savedCaption?.contentMode==='follow_tts'?savedCaption.text:workspace.usedNarration?.find(v=>v.shotId===n.shotId)?.text??n.text):text;
  const setText=(value:string)=>setTextDraft(value);
  const [mode,setMode]=useState<WorkspaceNarration['mode']>(()=>{try{const value=sessionStorage.getItem(key+':mode');return value&&['tts','manual'].includes(value)?value as WorkspaceNarration['mode']:n.mode==='manual'?'manual':'tts';}catch{return n.mode==='manual'?'manual':'tts';}}),[busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -259,7 +261,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
      <WorkspaceMaterialDrop label={uiText("拖入口播文件")} kind="audio" purpose="narration" surface="preview" persistent disabled={disabled}
       onSelect={id=>void addManualMaterial(id)} onBrowse={onImportAudio?()=>audioInput.current?.click():undefined} onFiles={files=>void importAudio(files)}/>
      <input ref={audioInput} aria-label={uiText("导入人工口播")} hidden type="file" multiple accept=".mp3,audio/mpeg" disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)void importAudio(files);}}/>
-    </div>:<><header className="workspace-caption-editor-heading"><h3 id={textHeadingId}>{uiText("口播文案")}</h3></header><textarea aria-label={uiText("口播文案")} rows={4} maxLength={100000} disabled={disabled} value={text} onChange={e=>setText(e.target.value)}/></>}
+    </div>:<><header className="workspace-caption-editor-heading"><h3 id={textHeadingId}><label htmlFor={textInputId}>{uiText("口播草稿")}</label></h3></header><textarea id={textInputId} aria-describedby={draftStateId} rows={4} maxLength={100000} disabled={disabled} value={text} onChange={e=>setText(e.target.value)}/><p id={draftStateId} className="workspace-narration-model-note">{uiText(draftState)}</p>{used?.text!=null&&text!==used.text&&<details className="workspace-narration-adopted"><summary>{uiText("成片采用的口播")}</summary><p className="workspace-saved-caption">{used.text}</p></details>}</>}
     </div>
     <WorkspaceNarrationToolbar mode={mode==='manual'?'manual':'tts'} value={speechSettings} services={services} disabled={disabled} changed={settingsChanged} onMode={setMode} onChange={onSettings} onSave={saveSettings}>
      {inlineReview&&!inlineCandidate&&<><span role="status">{reviewSummary}</span>{inlineActions}</>}

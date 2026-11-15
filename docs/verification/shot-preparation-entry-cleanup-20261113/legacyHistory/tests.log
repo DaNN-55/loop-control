@@ -1,0 +1,25 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-xDpthH/source
+
+ ✓ src/local-app/legacyWorkspaceEditing.integration.test.ts (4 tests) 28813ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (legacy)  8460ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (registered)  10402ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (legacy)  5003ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (registered)  4946ms
+ ✓ src/local-app/legacyHtmlWorkspace.integration.test.ts (2 tests) 22110ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (legacy)  9599ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (registered)  12510ms
+ ✓ src/local-app/legacyWorkspaceEntry.integration.test.ts (3 tests) 10146ms
+   ✓ legacy orders enter four-step preparation only on an explicit owned command  6055ms
+   ✓ legacy script revision uses the same explicit entry and failed imports leave no registration  1931ms
+   ✓ legacy inspection stays read-only and completed, archived and historical orders are not enrolled  2159ms
+ ✓ src/local-app/legacyStudioProject.integration.test.ts (2 tests) 9230ms
+   ✓ Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (legacy)  5787ms
+   ✓ Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (registered)  3442ms
+
+ Test Files  4 passed (4)
+      Tests  11 passed (11)
+   Start at  11:26:01
+   Duration  73.58s (transform 751ms, setup 47ms, collect 2.53s, tests 70.30s, environment 0ms, prepare 216ms)
+
+JSON report written to /private/tmp/loop-story-e2e-xDpthH/evidence/vitest.json

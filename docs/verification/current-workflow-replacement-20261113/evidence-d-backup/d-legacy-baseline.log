@@ -1,0 +1,44 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-22XAKR/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-22XAKR/source
+
+ ✓ src/local-app/legacyWorkspaceEditing.integration.test.ts (4 tests) 14242ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (legacy)  4853ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation (registered)  4582ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (legacy)  2395ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy (registered)  2411ms
+ ✓ src/local-app/legacyHtmlWorkspace.integration.test.ts (2 tests) 9868ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (legacy)  4973ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (registered)  4894ms
+ ❯ src/local-app/legacyAdoptionNative.integration.test.ts (3 tests | 1 failed) 40862ms
+   ✓ native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (legacy)  17508ms
+   ✓ native SQLite, immutable versions and original sources survive explicit adoption, source offline and fresh SDK save/reopen/export (recorded-prefix)  16556ms
+   × adopted lineage is backed up and restored into a new database and root before a fresh application edits SQLite and exports with the source offline 6798ms
+     → Unsupported archive columns
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyAdoptionNative.integration.test.ts > adopted lineage is backed up and restored into a new database and root before a fresh application edits SQLite and exports with the source offline
+Error: Unsupported archive columns
+ ❯ archiveCopies scripts/storage/native-backup-format.mjs:6:68
+
+ ❯ createNativeBackup scripts/storage/backup.mjs:45:91
+ ❯ restoreCreatedEpisode src/local-app/episodeCreationRestore.fixture.ts:19:16
+ ❯ src/local-app/legacyAdoptionNative.integration.test.ts:49:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 8 passed (9)
+   Start at  06:35:16
+   Duration  66.04s (transform 496ms, setup 7ms, collect 762ms, tests 64.97s, environment 0ms, prepare 74ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-22XAKR/evidence/vitest.json

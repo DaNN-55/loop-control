@@ -1,0 +1,12 @@
+{
+  "dailySnapshotUnchanged": true,
+  "frozenMetadataUnchanged": true,
+  "applicationConfigUnchanged": true,
+  "deploymentConfigUnchanged": true,
+  "metricsUnchanged": true,
+  "metrics": {
+    "events": 0,
+    "enabled": false
+  },
+  "numericMigration": 185
+}

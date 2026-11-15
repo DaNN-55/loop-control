@@ -1,0 +1,868 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-timing-fix-20261113-ezrpvi84/no-focus-source
+
+ ❯ src/local-app/LocalDeletionRecovery.test.tsx (7 tests | 2 failed | 5 skipped) 2058ms
+   × reads durable tasks without retrying, distinguishes actions and focuses the requested task 1051ms
+     → expected <body><div>…(1)</div></body> to be <article …(5)>…(2)</article> // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"待处理的文件清理"[39m
+        [33mclass[39m=[32m"deletion-cleanup-panel"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"未提交的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"prepared-key"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m未提交的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m删除未生效[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_2_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m恢复文件[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"文件待清理的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"committed-key"[39m
+            [33mdata-targeted[39m=[32m"true"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m文件待清理的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m记录已删除[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_4_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m继续清理[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"deletion-cleanup-toolbar"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"刷新清理任务"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_0_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m刷新[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+   × keeps user focus across a read-only refresh and focuses a different explicitly requested task 1006ms
+     → expected <body><div>…(2)</div></body> to be <article …(5)>…(2)</article> // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<button>[39m
+        [0m其他操作[0m
+      [36m</button>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"待处理的文件清理"[39m
+        [33mclass[39m=[32m"deletion-cleanup-panel"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"未提交的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"prepared-key"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m未提交的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m删除未生效[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_8_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m恢复文件[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"文件待清理的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"committed-key"[39m
+            [33mdata-targeted[39m=[32m"true"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m文件待清理的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m记录已删除[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_a_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m继续清理[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"deletion-cleanup-toolbar"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"刷新清理任务"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_6_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m刷新[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+   ↓ restores an uncommitted task once even when clicked twice and leaves other tasks alone
+   ↓ keeps the task and full failure message when cleanup remains pending, then reports confirmed completion
+   ↓ shows read failures and a working refresh without presenting them as an empty queue
+   ↓ does not replace a newer queue with a late previous response
+   ↓ keeps a concrete prepared recovery failure visible while removing only the normal explanation
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalDeletionRecovery.test.tsx > reads durable tasks without retrying, distinguishes actions and focuses the requested task
+AssertionError: expected <body><div>…(1)</div></body> to be <article …(5)>…(2)</article> // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"待处理的文件清理"[39m
+        [33mclass[39m=[32m"deletion-cleanup-panel"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"未提交的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"prepared-key"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m未提交的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m删除未生效[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_2_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m恢复文件[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"文件待清理的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"committed-key"[39m
+            [33mdata-targeted[39m=[32m"true"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m文件待清理的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m记录已删除[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_4_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m继续清理[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"deletion-cleanup-toolbar"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"刷新清理任务"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_0_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m刷新[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected
++ Received
+
+@@ -1,5 +1,68 @@
++ <body>
++   <div>
++     <section
++       aria-label="待处理的文件清理"
++       class="deletion-cleanup-panel"
++     >
++       <div>
++         <article
++           aria-label="未提交的生产单"
++           class="deletion-cleanup-task"
++           data-cleanup-key="prepared-key"
++           tabindex="-1"
++         >
++           <header>
++             <div>
++               <h3>
++                 未提交的生产单
++               </h3>
++               <span>
++                 删除未生效
++               </span>
++             </div>
++             <button
++               class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"
++               data-color="secondary"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_2_"
++               tabindex="0"
++               type="button"
++             >
++               <span
++                 class="transition-inherit-all px-0.5"
++                 data-text="true"
++               >
++                 恢复文件
++               </span>
++             </button>
++           </header>
++           <details>
++             <summary>
++               查看位置
++             </summary>
++             <dl>
++               <dt>
++                 原位置
++               </dt>
++               <dd>
++                 <code>
++                   /media/order-one
++                 </code>
++               </dd>
++               <dt>
++                 暂存位置
++               </dt>
++               <dd>
++                 <code>
++                   /media/order-one/file.stage
++                 </code>
++               </dd>
++             </dl>
++           </details>
++         </article>
+          <article
+            aria-label="文件待清理的生产单"
+            class="deletion-cleanup-task"
+            data-cleanup-key="committed-key"
+            data-targeted="true"
+@@ -53,5 +116,30 @@
+                  </code>
+                </dd>
+              </dl>
+            </details>
+          </article>
++       </div>
++       <div
++         class="deletion-cleanup-toolbar"
++       >
++         <button
++           aria-label="刷新清理任务"
++           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"
++           data-color="tertiary"
++           data-rac=""
++           data-react-aria-pressable="true"
++           id="react-aria-_r_0_"
++           tabindex="0"
++           type="button"
++         >
++           <span
++             class="transition-inherit-all px-0.5"
++             data-text="true"
++           >
++             刷新
++           </span>
++         </button>
++       </div>
++     </section>
++   </div>
++ </body>
+
+ ❯ src/local-app/LocalDeletionRecovery.test.tsx:13:175
+
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../dependencies/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../dependencies/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../dependencies/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/LocalDeletionRecovery.test.tsx > keeps user focus across a read-only refresh and focuses a different explicitly requested task
+AssertionError: expected <body><div>…(2)</div></body> to be <article …(5)>…(2)</article> // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<button>[39m
+        [0m其他操作[0m
+      [36m</button>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"待处理的文件清理"[39m
+        [33mclass[39m=[32m"deletion-cleanup-panel"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"未提交的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"prepared-key"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m未提交的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m删除未生效[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_8_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m恢复文件[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-one/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+          [36m<article[39m
+            [33maria-label[39m=[32m"文件待清理的生产单"[39m
+            [33mclass[39m=[32m"deletion-cleanup-task"[39m
+            [33mdata-cleanup-key[39m=[32m"committed-key"[39m
+            [33mdata-targeted[39m=[32m"true"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+          [36m>[39m
+            [36m<header>[39m
+              [36m<div>[39m
+                [36m<h3>[39m
+                  [0m文件待清理的生产单[0m
+                [36m</h3>[39m
+                [36m<span>[39m
+                  [0m记录已删除[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+                [33mdata-color[39m=[32m"secondary"[39m
+                [33mdata-rac[39m=[32m""[39m
+                [33mdata-react-aria-pressable[39m=[32m"true"[39m
+                [33mid[39m=[32m"react-aria-_r_a_"[39m
+                [33mtabindex[39m=[32m"0"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                  [33mdata-text[39m=[32m"true"[39m
+                [36m>[39m
+                  [0m继续清理[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</header>[39m
+            [36m<details>[39m
+              [36m<summary>[39m
+                [0m查看位置[0m
+              [36m</summary>[39m
+              [36m<dl>[39m
+                [36m<dt>[39m
+                  [0m原位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+                [36m<dt>[39m
+                  [0m暂存位置[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [36m<code>[39m
+                    [0m/media/order-two/file.stage[0m
+                  [36m</code>[39m
+                [36m</dd>[39m
+              [36m</dl>[39m
+            [36m</details>[39m
+          [36m</article>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"deletion-cleanup-toolbar"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"刷新清理任务"[39m
+            [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+            [33mdata-color[39m=[32m"tertiary"[39m
+            [33mdata-rac[39m=[32m""[39m
+            [33mdata-react-aria-pressable[39m=[32m"true"[39m
+            [33mid[39m=[32m"react-aria-_r_6_"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+              [33mdata-text[39m=[32m"true"[39m
+            [36m>[39m
+              [0m刷新[0m
+            [36m</span>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</section>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected
++ Received
+
+@@ -1,6 +1,72 @@
++ <body>
++   <div>
++     <button>
++       其他操作
++     </button>
++     <section
++       aria-label="待处理的文件清理"
++       class="deletion-cleanup-panel"
++     >
++       <div>
+          <article
++           aria-label="未提交的生产单"
++           class="deletion-cleanup-task"
++           data-cleanup-key="prepared-key"
++           tabindex="-1"
++         >
++           <header>
++             <div>
++               <h3>
++                 未提交的生产单
++               </h3>
++               <span>
++                 删除未生效
++               </span>
++             </div>
++             <button
++               class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"
++               data-color="secondary"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_8_"
++               tabindex="0"
++               type="button"
++             >
++               <span
++                 class="transition-inherit-all px-0.5"
++                 data-text="true"
++               >
++                 恢复文件
++               </span>
++             </button>
++           </header>
++           <details>
++             <summary>
++               查看位置
++             </summary>
++             <dl>
++               <dt>
++                 原位置
++               </dt>
++               <dd>
++                 <code>
++                   /media/order-one
++                 </code>
++               </dd>
++               <dt>
++                 暂存位置
++               </dt>
++               <dd>
++                 <code>
++                   /media/order-one/file.stage
++                 </code>
++               </dd>
++             </dl>
++           </details>
++         </article>
++         <article
+            aria-label="文件待清理的生产单"
+            class="deletion-cleanup-task"
+            data-cleanup-key="committed-key"
+            data-targeted="true"
+            tabindex="-1"
+@@ -53,5 +119,30 @@
+                  </code>
+                </dd>
+              </dl>
+            </details>
+          </article>
++       </div>
++       <div
++         class="deletion-cleanup-toolbar"
++       >
++         <button
++           aria-label="刷新清理任务"
++           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"
++           data-color="tertiary"
++           data-rac=""
++           data-react-aria-pressable="true"
++           id="react-aria-_r_6_"
++           tabindex="0"
++           type="button"
++         >
++           <span
++             class="transition-inherit-all px-0.5"
++             data-text="true"
++           >
++             刷新
++           </span>
++         </button>
++       </div>
++     </section>
++   </div>
++ </body>
+
+ ❯ src/local-app/LocalDeletionRecovery.test.tsx:20:102
+     18|  vi.mocked(localRequest).mockResolvedValue([prepared,committed]);
+     19|  const content=(revision:number,targetKey:string)=><><button>其他操作</but…
+     20|  const view=render(content(1,committed.cleanupKey));await waitFor(()=>…
+       |                                                                                                      ^
+     21|  // Use an unaffected control: a disabled refresh button naturally los…
+     22|  const outside=screen.getByRole('button',{name:'其他操作'});act(()=>outsid…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled ../dependencies/node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback ../dependencies/node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback ../dependencies/node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 skipped (7)
+   Start at  13:17:17
+   Duration  3.18s (transform 101ms, setup 7ms, collect 670ms, tests 2.06s, environment 302ms, prepare 36ms)
+
+JSON report written to /private/tmp/loop-ui-timing-fix-20261113-ezrpvi84/no-focus-final.json

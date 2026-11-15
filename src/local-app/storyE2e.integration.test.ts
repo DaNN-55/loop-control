@@ -54,8 +54,8 @@ it.skipIf(!enabled)('story 1 browser: validates the new script, recovers committ
   browser=await storyBrowser(f,'creation-story');
   await browser.click('确认脚本');await browser.cli('wait','--text','请填写主脚本');
   await browser.fill('主脚本',f.scriptText);browser.dropNextResponse('importMaterial');await browser.doubleClick('确认脚本');
-  await browser.cli('wait','--text','服务端结果回执未能送达');
-  await browser.click('确认脚本');
+  await expect.poll(()=>browser!.traffic.some(t=>t.command==='importMaterial'&&t.status===200&&t.dropped),{timeout:10000}).toBe(true);
+  // The current confirmation flow reads back the committed import and continues automatically.
   await expect.poll(async()=>(await f.read())?.clips?.length,{timeout:15000}).toBe(2);
   expect(f.workspace.clips.map(c=>c.text)).toEqual(storyLines);
   expect(f.workspace.clips.map(c=>c.shotId)).toEqual(['shot-01','shot-02']);
@@ -65,8 +65,9 @@ it.skipIf(!enabled)('story 1 browser: validates the new script, recovers committ
   await browser.click('关闭生产单详情');await browser.click('新建生产单');
   const title='末班车前的一把伞 · 纸条特写';await browser.fill('工作标题（可留空）',title);
   await browser.cli('select','[aria-label="系列版本"]',f.series.id);
-  browser.dropNextResponse('create');await browser.doubleClick('创建生产单');await browser.cli('wait','--text','服务端结果回执未能送达');
-  await browser.click('创建生产单');await browser.wait("!document.querySelector('[role=dialog][aria-label=新建生产单]')");
+  browser.dropNextResponse('create');await browser.doubleClick('创建生产单');
+  await expect.poll(()=>browser!.traffic.some(t=>t.command==='create'&&t.status===200&&t.dropped),{timeout:10000}).toBe(true);
+  await browser.wait("!document.querySelector('[role=dialog][aria-label=新建生产单]')");
   const rows=(await f.c.query('SELECT id,series_version_id FROM public.episodes WHERE title=$1',[title])).rows;
   expect(rows).toHaveLength(1);expect(rows[0].series_version_id).toBe(f.series.id);
   await browser.capture('created');
@@ -368,15 +369,15 @@ it.skipIf(!enabled)('story 3 browser: a lost storyboard adoption receipt leaves 
   await f.ok(f.send('registerWorkspaceVisualCandidate',{targetItemId:f.workspace.clips[0].itemId,materialRevisionId:material.id,usage:'still',durationSeconds:3}));
   browser=await storyBrowser(f,'storyboard-adoption');
   await browser.cli('open',browser.url+'&step=preparation');
-  await browser.cli('wait','.workspace-result-more > summary');await browser.cli('click','.workspace-result-more > summary');
-  await browser.click('采用到当前镜头');
+  await browser.click('预览图片候选 02');
+  await browser.click('采用图片到当前镜头');
   browser.dropNextResponse('adoptWorkspaceVisualCandidate');
   await browser.click('确认采用');
   await expect.poll(()=>browser!.traffic.some(t=>t.command==='adoptWorkspaceVisualCandidate'&&t.dropped),{timeout:10000}).toBe(true);
   await expect.poll(async()=>(await f.read()).visualCandidates![0].status,{timeout:10000}).toBe('adopted');
   const saved=f.workspace.project.sha256;
   await browser.cli('reload');
-  await browser.cli('wait','--text','当前镜头画面');
+  await browser.wait("!!document.querySelector('button[aria-label=撤回图片采用]')");
   expect((await f.read()).project.sha256).toBe(saved);
   expect(f.workspace.clips.map(c=>c.text)).toEqual(storyLines);
   await browser.capture('adopted-and-saved');

@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/production-metrics-c-20261113/loop-control
+
+ ↓ src/local-app/productionMetricsShotDeletion.integration.test.ts > storyboard shot removal records one narration withdrawal and retains audio and historical project across receipt replay and reopen
+ ✓ src/local-app/productionMetricsShotDeletion.integration.test.ts > native editor shot deletion records one narration withdrawal across repeated save and reopen while keeping source history 7193ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 1 skipped (2)
+   Start at  11:09:43
+   Duration  8.09s (transform 530ms, setup 10ms, collect 731ms, tests 7.19s, environment 0ms, prepare 42ms)
+

@@ -1,0 +1,108 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-aBLcNr/source
+
+ ❯ src/local-app/workspaceAudio.integration.test.ts (8 tests | 4 failed | 4 skipped) 26302ms
+   ↓ Owner prepares manual episode music, adopts actual audio and persists native independent mix
+   × Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart 3369ms
+     → expected 200 to be 409 // Object.is equality
+   × source mode uses real native source extraction task without fabricating a legacy video-ready draft 4921ms
+     → {"error":"调整范围超出独立原声，请先解除联动或重新采用视频区间。"}: expected 409 to be 200 // Object.is equality
+   ↓ actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots
+   ↓ real loop_worker planning never queues legacy soundtrack cues for an editable native workspace
+   × real loop_worker planning retains the legacy soundtrack path outside native workspaces 2731ms
+     → expected 0 to be greater than 0
+   × nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot 15279ms
+     → {"error":"删除后画面短于完整字幕，请先明确调整字幕或画面时长。"}: expected 409 to be 200 // Object.is equality
+   ↓ explicit narration adoption advances the shared edit fence and late first results remain candidates
+ ❯ src/local-app/nativeStorageSql.integration.test.ts (2 tests | 2 failed) 2343ms
+   × effective SQL120 guards use literal owned prefixes and retain fixed publish identities 1270ms
+     → expected false to be true // Object.is equality
+   × fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix 1072ms
+     → Frozen Studio task differs
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/nativeStorageSql.integration.test.ts > effective SQL120 guards use literal owned prefixes and retain fixed publish identities
+AssertionError: expected false to be true // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+ ❯ src/local-app/nativeStorageSql.integration.test.ts:16:28
+     14|   const ref={relative_path:`${f.episodeRelativePath}/openchatcut-froze…
+     15|   const owned=async(value:unknown)=>(await f.c.query('SELECT local_ide…
+     16|   expect(await owned(ref)).toBe(true);
+       |                            ^
+     17|   expect(await owned({...ref,relative_path:ref.relative_path.replace('…
+     18|   expect(await owned({...ref,relative_path:`episodes/${randomUUID()}/o…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/local-app/nativeStorageSql.integration.test.ts > fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix
+error: Frozen Studio task differs
+ ❯ ../../../../Users/dan/Programs/loop-control/node_modules/pg/lib/client.js:694:17
+ ❯ src/local-app/nativeStorageSql.integration.test.ts:46:17
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart
+AssertionError: expected 200 to be 409 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 200[39m
+
+ ❯ src/local-app/workspaceAudio.integration.test.ts:29:121
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > source mode uses real native source extraction task without fabricating a legacy video-ready draft
+AssertionError: {"error":"调整范围超出独立原声，请先解除联动或重新采用视频区间。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ src/local-app/workspaceAudio.integration.test.ts:51:180
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > real loop_worker planning retains the legacy soundtrack path outside native workspaces
+AssertionError: expected 0 to be greater than 0
+ ❯ src/local-app/workspaceAudio.integration.test.ts:89:69
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot
+AssertionError: {"error":"删除后画面短于完整字幕，请先明确调整字幕或画面时长。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ send src/local-app/workspaceAudio.integration.test.ts:94:186
+
+ ❯ src/local-app/workspaceAudio.integration.test.ts:105:71
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 4 skipped (10)
+   Start at  08:22:36
+   Duration  29.63s (transform 440ms, setup 8ms, collect 700ms, tests 28.64s, environment 0ms, prepare 64ms)
+
+JSON report written to /private/tmp/loop-story-e2e-aBLcNr/evidence/vitest.json

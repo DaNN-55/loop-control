@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "source": "/Volumes/Ebuget 1T/loop-workflow-continuation-raru2715/run-zsApEA/source",
+  "evidence": "/Volumes/Ebuget 1T/loop-workflow-continuation-raru2715/run-YuZwR9/evidence",
+  "container": "loop-story-e2e-b4abc63db53a",
+  "containerRemoved": true,
+  "paidCalls": 0,
+  "paidCostCny": 0,
+  "realVideoApiCalls": 0,
+  "implementation": true
+}

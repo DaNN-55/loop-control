@@ -1,0 +1,51 @@
+E2E evidence: /private/tmp/loop-story-e2e-yBdtkV/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-yBdtkV/source
+
+ ❯ src/local-app/productionSoundUse.integration.test.ts (6 tests | 1 failed | 5 skipped) 6963ms
+   ↓ observes actual local music adoption, gain changes, disable and re-enable without counting preparation or reopen as use
+   ↓ uses the native audible sequence window for local effects, replacement and track muted rather than counting the media pool
+   ↓ uses the native audible sequence window for local effects, replacement and track hidden rather than counting the media pool
+   ↓ uses the native audible sequence window for local effects, replacement and track keyframes rather than counting the media pool
+   ↓ keeps sound scope and transaction protection, and never backfills edits made while collection is off
+   × records explicitly extracted current source audio through a real local Worker without creating an old draft 6962ms
+     → expected [ 'material', 'audio_track' ] to deeply equal [ 'material', 'audio_track', …(1) ]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionSoundUse.integration.test.ts > records explicitly extracted current source audio through a real local Worker without creating an old draft
+AssertionError: expected [ 'material', 'audio_track' ] to deeply equal [ 'material', 'audio_track', …(1) ]
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  [[22m
+[2m    "material",[22m
+[2m    "audio_track",[22m
+[32m-   "material",[39m
+[2m  ][22m
+
+ ❯ src/local-app/productionSoundUse.integration.test.ts:112:87
+    110|   w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.wo…
+    111|   const embedded=(await f.c.query("SELECT payload FROM local_identity.…
+    112|   expect(embedded.filter(e=>e.payload.role==='source').map(e=>e.payloa…
+       |                                                                                       ^
+    113|   await send('closeWorkspaceStudio');
+    114|   expect((await f.c.query('SELECT count(*)::int n FROM public.shot_pre…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  04:21:16
+   Duration  7.67s (transform 424ms, setup 6ms, collect 590ms, tests 6.96s, environment 0ms, prepare 24ms)
+
+JSON report written to /private/tmp/loop-story-e2e-yBdtkV/evidence/vitest.json

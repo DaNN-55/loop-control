@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/effectiveSchema.test.ts (2 tests) 5ms
+ ✓ src/local-app/schemaMigrations.test.ts (4 tests) 5ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  23:41:52
+   Duration  288ms (transform 22ms, setup 6ms, collect 78ms, tests 10ms, environment 0ms, prepare 51ms)
+

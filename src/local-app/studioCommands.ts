@@ -5,7 +5,7 @@ import type {PoolClient} from 'pg';
 import {ConfigurationError,jsonFingerprint as identity} from './configurationCommands.js';
 import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {closeOpenChatCutStudio,openOpenChatCutStudio,snapshotOpenChatCutStudio,freezeOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
-import {shotPreparationContractFromSnapshot,reviewRenderFromSnapshot} from '../worker/codexRunner.js';
+import {shotPreparationContractFromSnapshot,reviewRenderFromSnapshot} from '../worker/history/reviewRenderV1.js';
 import {parseShotWorkbenchClipSegments,shotWorkbenchReviewRender} from '../worker/shotWorkbenchStudio.js';
 import type {WorkerTaskPackage} from '../worker/contracts.js';
 import {workerPreflightVersion} from '../worker/contracts.js';

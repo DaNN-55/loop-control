@@ -1,0 +1,41 @@
+{
+  "kind": "video",
+  "audioStreams": 1,
+  "samples": 50176,
+  "rms": 0.02061826815655247,
+  "exportSha256": "0b65146c1598a6c8db36628aa6293a66af3a26078d5b0f30b24a0550a20990b4",
+  "events": [
+    {
+      "event_type": "sound_withdrawn",
+      "payload": {
+        "role": "bgm",
+        "action": "withdrawn",
+        "version": "sound-use/v1",
+        "source_id": "4f41be04-cba7-4ef7-91bd-9890d897a389",
+        "use_sha256": "7ba2ce04d962828140eb4d6a0beb96c35f6f38daacd47ae4d2859a9305e2d3dd",
+        "source_kind": "material",
+        "workspace_id": "578bff5b-58ae-4c54-a830-672d41ea262e",
+        "source_sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+        "content_sha256": "4f06575455b4f04536c8c8e8b16382438a126f17a31d34961cd85f2944a4cc08",
+        "instance_sha256": "765f5eb9db83caa74bec1d4a22dc42cbc1f6213e3c4e273d20635bb1f34a06b4",
+        "project_revision": 5
+      }
+    },
+    {
+      "event_type": "sound_used",
+      "payload": {
+        "role": "bgm",
+        "action": "used",
+        "version": "sound-use/v1",
+        "source_id": "4f41be04-cba7-4ef7-91bd-9890d897a389",
+        "use_sha256": "b499f5cd7f2a3b9bc682112db3ccb38680262a44614390ba0b18dc7bd8271b57",
+        "source_kind": "material",
+        "workspace_id": "578bff5b-58ae-4c54-a830-672d41ea262e",
+        "source_sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+        "content_sha256": "4f06575455b4f04536c8c8e8b16382438a126f17a31d34961cd85f2944a4cc08",
+        "instance_sha256": "65d32005a5d10b041833ff585dfc07507c3553c019643c9a8d8737400d2fd0a6",
+        "project_revision": 5
+      }
+    }
+  ]
+}

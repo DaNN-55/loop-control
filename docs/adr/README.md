@@ -1,5 +1,7 @@
 # 架构决策
 
+- [ADR-0068：独立制作基准版本与稳定镜头](0068-independent-production-preparation.md)
+
 - [ADR-0001：Episode 归档与永久删除](0001-episode-archive-and-permanent-delete.md)
 - [ADR-0004：Prompt 上下文优先级](0004-prompt-context-precedence.md)
 - [ADR-0005：蓝图能力与运行前置边界](0005-blueprint-capability-prerequisites-boundary.md)
@@ -81,3 +83,36 @@
 
 - [ADR-0048：旧规划写入退役与只读配置归档](0048-retire-legacy-sql-production-writes.md)
 - [0049：退役旧任务修复、派单和自动续跑](0049-retire-legacy-dispatch-repair-and-continuation.md)
+- [ADR-0050：日常采用 clean-v2 并保留旧库](0050-daily-clean-sql-adoption.md)
+- [ADR-0051：删除无当前消费者的旧 SQL 辅助对象](0051-remove-unused-legacy-sql-helpers.md)
+
+- [ADR-0052：删除无消费者的旧编排空壳](0052-remove-disconnected-orchestration-shells.md)
+- [ADR-0053：删除旧 Studio 结构修订调用链](0053-remove-retired-studio-storyboard-entry.md)
+- [ADR-0054：删除旧镜头结构修订与旧审核入口](0054-remove-retired-shot-review-entries.md)
+- [ADR-0055：按旧运行包依赖清理退役 SQL 入口](0055-retired-sql-runtime-compatibility.md)
+
+- [0056：移除无消费者的旧云端连接 RPC](0056-remove-retired-cloud-connection-rpcs.md)
+
+- [ADR-0057：默认关闭的生产统计采集](0057-production-metrics-collection.md) — 迁移177与并行175／176联验，代码回迁；日常未迁移、未启用。
+
+- [0058：移除未挂载触发器和无消费者的旧预渲染入口](0058-remove-disconnected-prerender-functions.md)
+
+- [0059：移除无消费者的旧镜头准备入口](0059-remove-unused-shot-preparation-entries.md)
+
+- [0060：移除无消费者的旧初始化与委托入口](0060-remove-unused-initialization-entries.md)
+
+- [0061：移除旧连接验证与重试延时辅助入口](0061-remove-unused-connection-retry-helpers.md)
+
+- [0062：移除无消费者的旧历史管理入口](0062-remove-unused-history-management-entries.md)
+
+- [0063：移除最后四个无消费者的旧辅助候选](0063-remove-unused-legacy-auxiliary-functions.md)
+
+- [0064：移除旧修订派单与新账号旧 Prompt 初始化触发器](0064-retire-revision-and-prompt-triggers.md)
+
+- [0065：退役旧生成脚本审核与批准落库链](0065-retire-generated-script-chain.md)
+
+- [0066：以当前制作模型替换旧执行链，保留版本化历史恢复](0066-current-production-workflow-replacement.md)
+
+- [0067：退役无消费者的旧建单 RPC](0067-remove-unused-create-episode-rpc.md)
+
+- [0069：独立的制作里程碑与覆盖区间](0069-production-workflow-observations.md)（Accepted，分步实施中）

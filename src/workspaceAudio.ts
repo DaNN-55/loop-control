@@ -1,3 +1,4 @@
+import {workspaceShotMediaName} from './workspaceDisplayNames.js';
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 export type WorkspaceVoiceMode='source'|'tts'|'none';
 export interface WorkspaceVoiceEdit {kind:'voice';workspaceId:string;shotId:string;visualItemIds:string[];mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId?:string;sourceAssetId?:string;narrationAssetId?:string}
@@ -5,9 +6,10 @@ export interface WorkspaceSoundEdit {kind:'sound';workspaceId:string;itemId:stri
 export type WorkspaceAudioEdit=WorkspaceVoiceEdit|WorkspaceSoundEdit;
 export interface WorkspaceAudioMix {voices:Array<{shotId:string;mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId:string|null;sourceAssetId:string|null;coverage?:'full'|'partial'|'none';startSeconds?:number|null;durationSeconds?:number|null;shotDurationSeconds?:number;sourceStartSeconds?:number|null;sourceLabel?:string|null;alignmentReady?:boolean}>;sounds:Array<{itemId:string;kind:'bgm'|'sfx';gainDb:number;duckDepthDb:number;startSeconds:number;durationSeconds:number}>}
 export const workspaceAudioFields:Record<string,string[]>={
+ adoptWorkspaceRecordedVoice:['episodeId','workspaceId','expectedRevision','shotId','audioTrackId','expectedSha256'],
  setWorkspaceAudioEnabled:['episodeId','workspaceId','expectedRevision','kind','enabled'],
  saveWorkspaceAudioDefaults:['episodeId','workspaceId','expectedRevision','selection'],
- prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','intent','candidateCount','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','retry','selection'],
+ prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','intent','candidateCount','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','audioTrackId','retry','selection'],
  saveWorkspaceMusicSettings:['episodeId','workspaceId','expectedRevision','settings'],
  adoptWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId'],
  mixWorkspaceAudio:['episodeId','workspaceId','expectedRevision','edit'],
@@ -18,7 +20,7 @@ const db=(value:unknown)=>Math.round(20*Math.log10(Math.max(.000001,Number(value
 function validDb(value:unknown,min=-60,max=12):value is number{return typeof value==='number'&&Number.isFinite(value)&&value>=min&&value<=max;}
 function metadata(item:Record<string,unknown>){return item.loopControlAudio as {workspaceId?:string;shotId?:string;kind?:string;sourceItemId?:string;sourceAssetId?:string;anchor?:string;offsetSeconds?:number}|undefined;}
 /** Only edits current native nodes. No preparation rows or hidden timeline are consulted. */
-export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:WorkspaceAudioEdit,options:{narrationDurationInFrames?:number}={}):OpenChatCutProject {
+export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:WorkspaceAudioEdit,options:{narrationDurationInFrames?:number;preserveSourcePresentation?:boolean}={}):OpenChatCutProject {
  if(!edit||typeof edit!=='object'||typeof edit.workspaceId!=='string'||!validDb(edit.gainDb))throw Error('混音输入无效。');
  const next=structuredClone(project);
  if(edit.kind==='sound'){
@@ -52,7 +54,7 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
  const timeline=timelines[0],visuals=timeline.items.filter(i=>ids.has(String(i.id)));
  if(visuals.length!==ids.size||visuals.some(i=>!['video','image','text'].includes(String(i.kind))))throw Error('画面实例已变化，请刷新。');
  const narrationId=`workspace-narration-shot-${edit.shotId}`,sourceId=`workspace-source-shot-${edit.shotId}`,ambienceId=`workspace-ambience-shot-${edit.shotId}`;
- let narration=timeline.items.find(i=>i.id===narrationId);const narrationAsset=next.assets.find(a=>a.id===edit.narrationAssetId&&a.kind==='audio');if(!narration&&edit.mode==='tts'&&narrationAsset){const start=Math.min(...visuals.map(i=>Number(i.startFrame))),end=Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames)));const frames=options.narrationDurationInFrames??end-start;if(!Number.isSafeInteger(frames)||frames<1||frames>narrationAsset.durationInFrames||options.narrationDurationInFrames===undefined&&narrationAsset.durationInFrames!==end-start)throw Error('画面范围与完整口播时长不同，请先明确调整。');narration={id:narrationId,kind:'audio',name:edit.shotId+' 口播',src:narrationAsset.src,sourceAssetId:narrationAsset.id,srcInFrame:0,startFrame:start,durationInFrames:frames};}const oldSource=timeline.items.find(i=>i.id===sourceId),oldAmbience=timeline.items.find(i=>i.id===ambienceId);
+ let narration=timeline.items.find(i=>i.id===narrationId);const narrationAsset=next.assets.find(a=>a.id===edit.narrationAssetId&&a.kind==='audio');if(!narration&&edit.mode==='tts'&&narrationAsset){const start=Math.min(...visuals.map(i=>Number(i.startFrame))),end=Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames)));const frames=options.narrationDurationInFrames??end-start;if(!Number.isSafeInteger(frames)||frames<1||frames>narrationAsset.durationInFrames||options.narrationDurationInFrames===undefined&&narrationAsset.durationInFrames!==end-start)throw Error('画面范围与完整口播时长不同，请先明确调整。');narration={id:narrationId,kind:'audio',name:workspaceShotMediaName(edit.shotId,'narration'),src:narrationAsset.src,sourceAssetId:narrationAsset.id,srcInFrame:0,startFrame:start,durationInFrames:frames};}const oldSource=timeline.items.find(i=>i.id===sourceId),oldAmbience=timeline.items.find(i=>i.id===ambienceId);
  // Muting every visual avoids duplicate source audio from multiple composition slots.
  for(const visual of visuals){visual.volume=0;visual.loopControlAudio={workspaceId:edit.workspaceId,shotId:edit.shotId,voiceMode:edit.mode};}
  const paired=new Set(timeline.linkGroups?.filter(group=>group.id.startsWith('workspace-video-sound-')&&group.itemIds.some(id=>ids.has(id))).flatMap(group=>group.itemIds));
@@ -66,14 +68,24 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
   const prior=edit.mode==='source'?oldSource:oldAmbience,sourceItemId=edit.sourceItemId??metadata(prior??{})?.sourceItemId,source=visuals.find(i=>i.id===sourceItemId),assetId=edit.sourceAssetId??metadata(prior??{})?.sourceAssetId;
   const asset=next.assets.find(a=>a.id===assetId&&a.kind==='audio');
   if(!source||source.kind!=='video'||!asset)throw Error('请先准备并选择本镜的原片音轨。');
-  const provenance=(asset as unknown as {loopControlAudioSource?:{videoAssetId?:string;sourceInFrame?:number;sourceFrameRate?:number}}).loopControlAudioSource;if(provenance&&provenance.videoAssetId!==source.sourceAssetId)throw Error('画面来源已变化，请重新提取当前原片声音。');
-  const start=Number(source.startFrame),duration=Number(source.durationInFrames),baseSeconds=Number(provenance?.sourceInFrame??0)/Number(provenance?.sourceFrameRate??timeline.fps),srcIn=Number(source.srcInFrame??0)-Math.round(baseSeconds*timeline.fps),rate=Number(source.playbackRate??1);
-  if(!(rate>0)||srcIn<0||srcIn+duration*rate>asset.durationInFrames+1)throw Error('原声音轨短于当前画面使用窗口。');
-  const id=edit.mode==='source'?sourceId:ambienceId,track=edit.mode==='source'?'workspace-main-voice':'workspace-ambience';
-  retained.push({id,kind:'audio',name:edit.shotId+(edit.mode==='source'?' 原声':' 环境声'),track,src:asset.src,sourceAssetId:asset.id,startFrame:start,durationInFrames:duration,srcInFrame:srcIn,playbackRate:rate,volume:gain(edit.mode==='source'?edit.gainDb:edit.ambienceGainDb!),loopControlAudio:{workspaceId:edit.workspaceId,shotId:edit.shotId,sourceItemId:source.id,sourceAssetId:asset.id}});
+  const provenance=(asset as unknown as {loopControlAudioSource?:{videoAssetId?:string;sha256?:string;sourceInFrame?:number;sourceFrameRate?:number}}).loopControlAudioSource;if(provenance&&provenance.videoAssetId!==source.sourceAssetId)throw Error('画面来源已变化，请重新提取当前原片声音。');
+  // Adoption replaces a source; an explicit mix edit changes presentation.
+  const previous=options.preserveSourcePresentation&&edit.mode==='source'?prior:undefined;
+  const previousProvenance=(next.assets.find(a=>a.id===previous?.sourceAssetId) as unknown as {loopControlAudioSource?:typeof provenance}|undefined)?.loopControlAudioSource;
+  const baseSeconds=Number(provenance?.sourceInFrame??0)/Number(provenance?.sourceFrameRate??timeline.fps);
+  if(previous&&(!previousProvenance||typeof previousProvenance.sha256!=='string'))throw Error('原声提取区间缺少可核验证据，请保留当前工程核对。');
+  const sameVideo=previousProvenance&&provenance&&previousProvenance.sha256===provenance.sha256;
+  const previousBaseSeconds=sameVideo?Number(previousProvenance.sourceInFrame??0)/Number(previousProvenance.sourceFrameRate??timeline.fps):baseSeconds;
+  const start=Number(previous?.startFrame??source.startFrame),duration=Number(previous?.durationInFrames??source.durationInFrames),rate=Number(previous?.playbackRate??source.playbackRate??1);
+  const srcIn=previous?Number(previous.srcInFrame??0)+Math.round((previousBaseSeconds-baseSeconds)*timeline.fps):Number(source.srcInFrame??0)-Math.round(baseSeconds*timeline.fps);
+  if(!Number.isSafeInteger(start)||start<0||!Number.isSafeInteger(duration)||duration<1||!Number.isFinite(rate)||!(rate>0)||!Number.isFinite(srcIn)||srcIn<0||srcIn+duration*rate>asset.durationInFrames+1)throw Error('原声音轨短于当前画面使用窗口。');
+  const id=edit.mode==='source'?sourceId:ambienceId,track=previous?.track??(edit.mode==='source'?'workspace-main-voice':'workspace-ambience');
+  const node:OpenChatCutProject['timelines'][number]['items'][number]={...previous,id,kind:'audio',name:prior?.name??workspaceShotMediaName(edit.shotId,edit.mode==='source'?'source':'ambience'),track,src:asset.src,sourceAssetId:asset.id,startFrame:start,durationInFrames:duration,srcInFrame:srcIn,playbackRate:rate,volume:previous?previous.volume:gain(edit.mode==='source'?edit.gainDb:edit.ambienceGainDb!),loopControlAudio:{...metadata(previous??{}),workspaceId:edit.workspaceId,shotId:edit.shotId,sourceItemId:source.id,sourceAssetId:asset.id}};
+  if(previous&&previous.sourceAssetId!==asset.id){delete node.sourceRevision;delete node.sourceContentHash;delete node.sourceFilename;}
+  retained.push(node);
  }
  timeline.items=retained;
- for(const [id,name,role] of [['workspace-main-voice','主声音','anchor'],['workspace-ambience','环境声',undefined]] as const){if(timeline.items.some(i=>i.track===id)){if(!timeline.trackOrder.includes(id))timeline.trackOrder.push(id);timeline.tracks[id]={kind:'audio',name,role};}}
+ for(const [id,name,role] of [['workspace-main-voice','主声音','anchor'],['workspace-ambience','环境声',undefined]] as const){if(timeline.items.some(i=>i.track===id)){if(!timeline.trackOrder.includes(id))timeline.trackOrder.push(id);if(!options.preserveSourcePresentation||!timeline.tracks[id])timeline.tracks[id]={kind:'audio',name,role};}}
  return next;
 }
 export function readWorkspaceAudioMix(project:OpenChatCutProject,shots:Record<string,string[]>):WorkspaceAudioMix {

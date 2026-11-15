@@ -10,7 +10,7 @@ const exec=promisify(execFile);
 type Story=Awaited<ReturnType<typeof storyE2eFixture>>;
 
 /** Real UI and reverse proxy. Gateway faults never synthesize a successful business result. */
-export async function storyBrowser(f:Story,name:string){
+export async function storyBrowser(f:Pick<Story,'origin'|'root'|'episode'|'email'|'password'>,name:string,expectedTitle='末班车前的一把伞'){
  const session='story-'+randomBytes(6).toString('hex'),evidence=process.env.LOOP_STORY_EVIDENCE!;
  const traffic:Array<{command:string;status:number;dropped:boolean}>=[];
  let drop:{command:string;before:boolean}|undefined,vite:ViteDevServer|undefined;
@@ -64,7 +64,7 @@ export async function storyBrowser(f:Story,name:string){
   await vite.listen();const url=`http://127.0.0.1:${(vite.httpServer!.address() as {port:number}).port}/__story?episode=${f.episode}`;
   await cli('open',url);await cli('wait','--text','登录控制台');
   await fill('邮箱',f.email);await fill('密码',f.password);await click('使用密码登录');
-  await cli('wait','--text','末班车前的一把伞');
+  await cli('wait','--text',expectedTitle);
   return{cli,snapshot,evaluate,wait,click,doubleClick,fill,capture,traffic,url,holdRead,failReads:(kind:ReadKind)=>{readFailures.add(kind);return()=>readFailures.delete(kind);},dropNextResponse:(command:string)=>{drop={command,before:false};},interruptNextRequest:(command:string)=>{drop={command,before:true};},close};
  }catch(error){await close();throw error;}
 }

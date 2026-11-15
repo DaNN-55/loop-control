@@ -1,0 +1,43 @@
+E2E evidence: /private/tmp/loop-story-e2e-qBKU6B/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-qBKU6B/source
+
+ ❯ src/local-app/productionMilestones.integration.test.ts (2 tests | 1 failed) 7639ms
+   ✓ real script confirmation and workspace creation record distinct current workflow milestones exactly once  3040ms
+   × actual editor work and exact export confirmations produce milestones while blocked opens and repeated opens do not 4599ms
+     → expected [ 'script_confirmed', …(3) ] to deeply equal [ 'script_confirmed', …(2) ]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionMilestones.integration.test.ts > actual editor work and exact export confirmations produce milestones while blocked opens and repeated opens do not
+AssertionError: expected [ 'script_confirmed', …(3) ] to deeply equal [ 'script_confirmed', …(2) ]
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  [[22m
+[2m    "script_confirmed",[22m
+[2m    "workspace_prepared",[22m
+[31m+   "native_edit_saved",[39m
+[2m    "editing_opened",[22m
+[2m  ][22m
+
+ ❯ src/local-app/productionMilestones.integration.test.ts:35:122
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  03:08:22
+   Duration  8.32s (transform 407ms, setup 8ms, collect 561ms, tests 7.64s, environment 0ms, prepare 25ms)
+
+JSON report written to /private/tmp/loop-story-e2e-qBKU6B/evidence/vitest.json

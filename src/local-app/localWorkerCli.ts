@@ -6,7 +6,7 @@ import{readMediaDeployment}from'./mediaDeployment.js';
 import{assertAlignmentReady,executeNativeAlignment}from'./alignmentWorker.js';
 import{assertMediaReady,executeNativeMedia,nativeMediaTask,nativeMediaRequiresExternal}from'./mediaWorker.js';
 // Native task process: database authentication arrives over bounded stdin only.
-import {runCodexWorker,type ClaimedWorkerTask} from '../worker/codexRunner.js';
+import {runMediaTask,type ClaimedWorkerTask} from '../worker/mediaTaskRunner.js';
 import {verifyMediaLibrary,verifyArtifactIndex} from '../worker/mediaLibrary.js';
 import {assertRuntimeRelease,RuntimePreparationError} from '../orchestration/runtimeBuild.js';
 import {fileURLToPath} from 'node:url';
@@ -43,7 +43,7 @@ try{
  if(task.task_type==='prepare_publish_package'&&(task.input_snapshot as Record<string,unknown>)?.capability==='workspace_delivery'){const result=await executeWorkspaceDeliveryWorker(pool,physicalRoot,task);process.stdout.write(JSON.stringify(result)+'\n');}else{
  if(typeof task.task_type!=='string'||!((task.task_type==='align_shot_captions'&&task.provider==='whisperx')||nativeMediaTask(task.task_type,String(task.provider))|| (task.task_type==='generate_narration'&&task.provider==='volcengine_tts')))throw Error('Task outside native input/storyboard/narration boundary');
  let outputs:Awaited<ReturnType<typeof prepareNativeAttemptOutput>>|undefined;
- const result=await runCodexWorker({
+ const result=await runMediaTask({
   actualCostCents:config.actualCostCents,
   async claimNextTask(){return {taskId:task.task_id,taskType:task.task_type,attempt:task.attempt,budgetLimitCents:task.budget_limit_cents,maxAttempts:task.max_attempts,provider:task.provider,model:task.model,promptVersion:task.prompt_version,episodeId:task.episode_id,accountId:task.account_id,blueprintVersionId:task.blueprint_version_id,title:task.title,allowedAssetRoot:physicalRoot,inputSnapshot:task.input_snapshot} as ClaimedWorkerTask;},
   async verifyAssetRoot(root){if(!(location.layoutVersion===1&&root===config.mediaRoot&&root===location.assetRoot))await nativeAssetRoot(config.mediaRoot,root);await verifyMediaLibrary({mediaRootBinding:(await pool.query("SELECT local_identity.media_deployment()->'binding' binding")).rows[0].binding,assetRoot:root,mountPath:config.mountPath,minimumFreeBytes:config.minimumFreeBytes,requireEpisodesDirectory:false,allowMountRoot:location.layoutVersion===1&&root===config.mediaRoot});},

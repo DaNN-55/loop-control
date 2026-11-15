@@ -1,0 +1,126 @@
+{
+  "passed": true,
+  "stages": [
+    {
+      "phase": "initial-unknown",
+      "confirmKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "readbackKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "saveKeys": [
+        "bc0f13f7-8819-4a86-959c-17fe6f91d427"
+      ],
+      "pendingKeys": [
+        "loop.local.pending.808d4ebfb26a6f57f60dd96b5ae95df506e08e6e54b8d3ff2df32cdcc213a704.uncertain",
+        "loop.local.pending.808d4ebfb26a6f57f60dd96b5ae95df506e08e6e54b8d3ff2df32cdcc213a704"
+      ],
+      "registration": true
+    },
+    {
+      "phase": "workspace-held",
+      "confirmKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "readbackKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "saveKeys": [
+        "bc0f13f7-8819-4a86-959c-17fe6f91d427"
+      ],
+      "adoptDisabled": true,
+      "pendingKeys": [
+        "loop.local.pending.808d4ebfb26a6f57f60dd96b5ae95df506e08e6e54b8d3ff2df32cdcc213a704.uncertain",
+        "loop.local.pending.808d4ebfb26a6f57f60dd96b5ae95df506e08e6e54b8d3ff2df32cdcc213a704"
+      ],
+      "registration": true
+    },
+    {
+      "phase": "receipt-held",
+      "confirmKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "readbackKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731",
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "saveKeys": [
+        "bc0f13f7-8819-4a86-959c-17fe6f91d427"
+      ],
+      "adoptDisabled": true,
+      "pendingKeys": [
+        "loop.local.pending.808d4ebfb26a6f57f60dd96b5ae95df506e08e6e54b8d3ff2df32cdcc213a704.uncertain",
+        "loop.local.pending.808d4ebfb26a6f57f60dd96b5ae95df506e08e6e54b8d3ff2df32cdcc213a704"
+      ],
+      "registration": true
+    },
+    {
+      "phase": "committed",
+      "confirmKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "readbackKeys": [
+        "de137370-f6c1-49a8-8ca7-2afd872bb731",
+        "de137370-f6c1-49a8-8ca7-2afd872bb731"
+      ],
+      "saveKeys": [
+        "bc0f13f7-8819-4a86-959c-17fe6f91d427"
+      ],
+      "adoptDisabled": false,
+      "pendingKeys": [],
+      "registration": false
+    }
+  ],
+  "trace": {
+    "requests": [
+      {
+        "path": "/api/local/connections",
+        "method": "GET"
+      },
+      {
+        "path": "/api/local/episodes/e/workspace",
+        "method": "GET"
+      },
+      {
+        "path": "/api/local/session",
+        "method": "GET"
+      },
+      {
+        "path": "/api/local/episode-commands",
+        "method": "POST"
+      },
+      {
+        "path": "/api/local/episode-commands",
+        "method": "POST"
+      },
+      {
+        "path": "/api/local/command-receipt",
+        "method": "POST"
+      },
+      {
+        "path": "/api/local/connections",
+        "method": "GET"
+      },
+      {
+        "path": "/api/local/episodes/e/workspace",
+        "method": "GET"
+      },
+      {
+        "path": "/api/local/command-receipt",
+        "method": "POST"
+      }
+    ],
+    "confirmKeys": [
+      "de137370-f6c1-49a8-8ca7-2afd872bb731"
+    ],
+    "readbackKeys": [
+      "de137370-f6c1-49a8-8ca7-2afd872bb731",
+      "de137370-f6c1-49a8-8ca7-2afd872bb731"
+    ],
+    "saveKeys": [
+      "bc0f13f7-8819-4a86-959c-17fe6f91d427"
+    ],
+    "focus": []
+  }
+}

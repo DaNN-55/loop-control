@@ -1,0 +1,39 @@
+E2E evidence: /private/tmp/loop-story-e2e-nrKuIJ/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-nrKuIJ/source
+
+ ✓ src/local-app/productionHistoryProjection.integration.test.ts (9 tests) 15852ms
+   ✓ history projection restores an independent production graph and actual adopted sources without reviving execution or changing the archive  5579ms
+   ✓ history request projection preserves provenance and current state: other-owner  1332ms
+   ✓ history request projection preserves provenance and current state: row-owner  1241ms
+   ✓ history request projection preserves provenance and current state: other-episode  1217ms
+   ✓ history request projection preserves provenance and current state: missing-parent  1263ms
+   ✓ history request projection preserves provenance and current state: invalid-key  1180ms
+   ✓ history request projection preserves provenance and current state: current-record  1231ms
+   ✓ history request projection preserves provenance and current state: rollback  1216ms
+   ✓ restored in-flight narration stays unclaimable and cannot restore paid-call confirmation or login authority  1593ms
+ ✓ src/local-app/historyProjectionReferences.integration.test.ts (10 tests) 11915ms
+   ✓ history projection restores a main script inserted later in the same batch without replacing current references  1341ms
+   ✓ history projection repairs only a proven prior missing reference for an untouched historical order  1166ms
+   ✓ history projection repairs only a proven prior missing reference for an edited historical order  1171ms
+   ✓ history projection repairs only a proven prior missing reference for an series_edited historical order  1191ms
+   ✓ history projection repairs only a proven prior missing reference for an current_link historical order  1257ms
+   ✓ history projection preserves source evidence and refuses a missing main-script replacement  1187ms
+   ✓ history projection preserves source evidence and refuses a other_episode main-script replacement  1162ms
+   ✓ history projection preserves source evidence and refuses a other_owner main-script replacement  1179ms
+   ✓ history projection preserves source evidence and refuses a current main-script replacement  1113ms
+   ✓ history projection rolls back recovered references and historical markers when publication fails  1146ms
+
+ Test Files  2 passed (2)
+      Tests  19 passed (19)
+   Start at  00:54:00
+   Duration  28.84s (transform 527ms, setup 8ms, collect 841ms, tests 27.77s, environment 0ms, prepare 58ms)
+
+JSON report written to /private/tmp/loop-story-e2e-nrKuIJ/evidence/vitest.json

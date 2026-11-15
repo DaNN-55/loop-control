@@ -1,0 +1,103 @@
+E2E evidence: /private/tmp/loop-story-e2e-bGpYtH/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-bGpYtH/source
+
+(node:90797) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspacePexels.integration.test.ts (6 tests) 44382ms
+   ✓ Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart  17798ms
+   ✓ Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically  3476ms
+   ✓ queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query  2830ms
+   ✓ a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window  2222ms
+   ✓ Pexels results and unimported previews for one shot survive many searches on another shot  15960ms
+   ✓ thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption  2095ms
+ ✓ src/local-app/productionDefaultPreparation.integration.test.ts (7 tests) 25670ms
+   ✓ new production prepares directly from an independent baseline without old packages, classifications, approvals or drafts and survives reopen  3234ms
+   ✓ format-only continuation keeps an independent baseline, exact project and all input versions without creating a legacy child package  3039ms
+   ✓ a fresh independent order queues and executes an image from its own frozen baseline without consulting any review package  3620ms
+   ✓ independent source extraction and sound search register preparation-bound audio while retired review evidence remains untouched  5842ms
+   ✓ exact deletion includes registered independent preparation files and preserves unregistered user files  3104ms
+   ✓ a new independent volcengine video request freezes its real basis and executes controlled transport without retired shot classification  3435ms
+   ✓ a new independent bailian video request freezes its real basis and executes controlled transport without retired shot classification  3394ms
+ ❯ src/local-app/productionPexelsInputs.integration.test.ts (6 tests | 4 failed) 18588ms
+   ✓ independent Pexels search and preview freeze the canonical shot basis, import explicitly and leave legacy records untouched  4144ms
+   × Pexels stops before transport when the frozen preparation has other-shot 3244ms
+     → expected 'failed' to be 'blocked' // Object.is equality
+   × Pexels stops before transport when the frozen preparation has missing-reference 3235ms
+     → expected 'failed' to be 'blocked' // Object.is equality
+   × Pexels stops before transport when the frozen preparation has future-version 3228ms
+     → expected 'failed' to be 'blocked' // Object.is equality
+   × Pexels stops before transport when the frozen preparation has wrong-request 3152ms
+     → expected 'failed' to be 'blocked' // Object.is equality
+   ✓ a recorded legacy Pexels search executes through its original basis without rewriting its frozen snapshot  1584ms
+ ❯ src/local-app/productionMetricsRetry.integration.test.ts (1 test | 1 failed) 786ms
+   × freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes 786ms
+     → ENOSPC: no space left on device, mkdir '/private/tmp/loop-153-5mUYpu/account'
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionPexelsMigration.integration.test.ts [ src/local-app/productionPexelsMigration.integration.test.ts ]
+Error: ENOSPC: no space left on device, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/eyRC-lEmyEvswH9A5FI4I/ssr/a05532227f452799263c8f117e36b0f1d9913d79'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionMetricsRetry.integration.test.ts > freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes
+Error: ENOSPC: no space left on device, mkdir '/private/tmp/loop-153-5mUYpu/account'
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:21:3
+
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:8:10
+ ❯ src/local-app/productionMetricsRetry.integration.test.ts:12:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/local-app/productionPexelsInputs.integration.test.ts > Pexels stops before transport when the frozen preparation has other-shot
+ FAIL  src/local-app/productionPexelsInputs.integration.test.ts > Pexels stops before transport when the frozen preparation has missing-reference
+ FAIL  src/local-app/productionPexelsInputs.integration.test.ts > Pexels stops before transport when the frozen preparation has future-version
+ FAIL  src/local-app/productionPexelsInputs.integration.test.ts > Pexels stops before transport when the frozen preparation has wrong-request
+AssertionError: expected 'failed' to be 'blocked' // Object.is equality
+
+Expected: [32m"[7mblock[27med"[39m
+Received: [31m"[7mfail[27med"[39m
+
+ ❯ src/local-app/productionPexelsInputs.integration.test.ts:39:46
+     37|   else snapshot.workspace_pexels_request_id=w.id;
+     38|   await f.c.query('UPDATE public.tasks SET input_snapshot=$2 WHERE id=…
+     39|   expect((await p.execute(id,false)).status).toBe('blocked');await exp…
+       |                                              ^
+     40|   expect((await f.c.query('SELECT project_sha256 FROM local_identity.p…
+     41|  }finally{await f.close();}
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+
+ Test Files  3 failed | 2 passed (5)
+      Tests  5 failed | 15 passed (20)
+   Start at  23:48:27
+   Duration  90.92s (transform 464ms, setup 10ms, collect 937ms, tests 89.43s, environment 0ms, prepare 132ms)
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: ENOSPC: no space left on device, open '/private/tmp/loop-story-e2e-bGpYtH/evidence/vitest.json'
+ ❯ open node:internal/fs/promises:1345:25
+ ❯ Object.writeFile node:internal/fs/promises:1965:14
+ ❯ JsonReporter.writeReport ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/index.VByaPkjc.js:1779:4
+ ❯ JsonReporter.logTasks ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/index.VByaPkjc.js:1763:3
+ ❯ JsonReporter.onFinished ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/index.VByaPkjc.js:1766:3
+ ❯ Vitest.report ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:9958:3
+ ❯ TestRun.end ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:8893:4
+ ❯ ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:9666:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -28, code: 'ENOSPC', syscall: 'open', path: '/private/tmp/loop-story-e2e-bGpYtH/evidence/vitest.json' }
+
+
+

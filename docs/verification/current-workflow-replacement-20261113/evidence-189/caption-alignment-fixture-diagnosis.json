@@ -1,0 +1,7 @@
+{
+  "repeatedFailure": "native full-audio alignment guard rejected keep-target trimming",
+  "fixtureCorrection": "use-candidate keeps the complete adopted audio and changes shot duration",
+  "protectionUnchanged": true,
+  "beforeAlignmentImplementationSnapshot": "/private/tmp/loop-story-e2e-WohTN0/source",
+  "correctedTestSha256": "6e0f1323bd9bad9237dd91be49aab3fb8c9c086112a98c5831d956af0b9170d7"
+}

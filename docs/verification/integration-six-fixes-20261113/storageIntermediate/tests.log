@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-qOcL9u/source
+
+ ❯ src/local-app/nativeStorageSql.integration.test.ts (2 tests | 1 failed) 2769ms
+   × effective SQL120 guards use literal owned prefixes and retain fixed publish identities 1610ms
+     → expected false to be true // Object.is equality
+   ✓ fresh Owner Studio scope keeps exact frozen input and task namespace at a literal registered prefix  1159ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/nativeStorageSql.integration.test.ts > effective SQL120 guards use literal owned prefixes and retain fixed publish identities
+AssertionError: expected false to be true // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+ ❯ src/local-app/nativeStorageSql.integration.test.ts:25:28
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  08:29:01
+   Duration  3.78s (transform 590ms, setup 13ms, collect 855ms, tests 2.77s, environment 0ms, prepare 38ms)
+
+JSON report written to /private/tmp/loop-story-e2e-qOcL9u/evidence/vitest.json

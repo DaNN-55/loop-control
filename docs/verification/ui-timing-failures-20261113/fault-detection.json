@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "checks": {
+    "reproduction": {
+      "expectedFailureCount": 2,
+      "observedFailureCount": 2,
+      "detected": true
+    },
+    "reproduction-confirmed": {
+      "expectedFailureCount": 2,
+      "observedFailureCount": 2,
+      "detected": true
+    },
+    "no-focus-final": {
+      "expectedFailureCount": 2,
+      "observedFailureCount": 2,
+      "detected": true
+    },
+    "replay-unknown": {
+      "expectedFailureCount": 2,
+      "observedFailureCount": 2,
+      "detected": true
+    }
+  },
+  "productionMutationConfinedToPrivateCopies": true
+}

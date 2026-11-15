@@ -1,0 +1,64 @@
+[
+  {
+    "run": "evidence",
+    "episode": "5817bd04-9a00-414d-81cd-b163c5185935",
+    "reproduced": true,
+    "comparison": [
+      {
+        "shotId": "shot-01",
+        "expectedTrack": "23717734-c401-4afd-89df-ca6d546404b0",
+        "actualTrack": "23717734-c401-4afd-89df-ca6d546404b0",
+        "expectedText": "清晨，先给自己一段安静。",
+        "actualText": "清晨，先给自己一段安静。",
+        "passed": true
+      },
+      {
+        "shotId": "shot-02",
+        "expectedTrack": "7ca80255-3071-4396-9a03-52b54e40ea98",
+        "actualTrack": "23717734-c401-4afd-89df-ca6d546404b0",
+        "expectedText": "让热水慢慢唤醒咖啡的香气。",
+        "actualText": "清晨，先给自己一段安静。",
+        "passed": false
+      },
+      {
+        "shotId": "shot-03",
+        "expectedTrack": "d5b8dccb-fd71-4c70-be1f-c369c553ba77",
+        "actualTrack": "23717734-c401-4afd-89df-ca6d546404b0",
+        "expectedText": "端起杯子，开始今天的生活。",
+        "actualText": "清晨，先给自己一段安静。",
+        "passed": false
+      }
+    ]
+  },
+  {
+    "run": "centered-evidence",
+    "episode": "23be133d-7552-432c-b3b1-d319563ff179",
+    "reproduced": true,
+    "comparison": [
+      {
+        "shotId": "shot-01",
+        "expectedTrack": "64e2b109-11e7-4def-9f49-e49460bf0f75",
+        "actualTrack": "64e2b109-11e7-4def-9f49-e49460bf0f75",
+        "expectedText": "清晨，先给自己一段安静。",
+        "actualText": "清晨，先给自己一段安静。",
+        "passed": true
+      },
+      {
+        "shotId": "shot-02",
+        "expectedTrack": "0cdbe581-7d20-4e56-bd65-b4b1dba37ff3",
+        "actualTrack": "64e2b109-11e7-4def-9f49-e49460bf0f75",
+        "expectedText": "让热水慢慢唤醒咖啡的香气。",
+        "actualText": "清晨，先给自己一段安静。",
+        "passed": false
+      },
+      {
+        "shotId": "shot-03",
+        "expectedTrack": "87b637fc-798c-414b-a290-4fa471d4c399",
+        "actualTrack": "64e2b109-11e7-4def-9f49-e49460bf0f75",
+        "expectedText": "端起杯子，开始今天的生活。",
+        "actualText": "清晨，先给自己一段安静。",
+        "passed": false
+      }
+    ]
+  }
+]

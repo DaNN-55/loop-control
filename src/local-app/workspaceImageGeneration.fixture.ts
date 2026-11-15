@@ -4,8 +4,8 @@ import {join} from 'node:path';
 import {narrationFixture} from './workspaceNarration.fixture';
 import {productionHash} from './scriptProductionStore';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
-export async function workspaceImageGenerationFixture(migrations:string[]=[],episodeRelativePath?:(episodeId:string)=>string){
- const f=await narrationFixture(undefined,undefined,true,false,{migrations:['db/local/127-connection-model-settings.sql','db/local/128-connection-model-discovery.sql','db/local/129-bailian-video-models.sql',...migrations],episodeRelativePath});try{
+export async function workspaceImageGenerationFixture(migrations:string[]=[],episodeRelativePath?:(episodeId:string)=>string,existing?:Awaited<ReturnType<typeof narrationFixture>>){
+ const f=existing??await narrationFixture(undefined,undefined,true,false,{migrations:['db/local/127-connection-model-settings.sql','db/local/128-connection-model-discovery.sql','db/local/129-bailian-video-models.sql',...migrations],episodeRelativePath});try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();
  await f.c.query('BEGIN');
  await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);
@@ -29,5 +29,5 @@ export async function workspaceImageGenerationFixture(migrations:string[]=[],epi
  await rename(module,join(f.root,'video-only.mjs'));
  await writeFile(module,`import{createNarrationPorts as videoPorts}from'./video-only.mjs';import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){const video=await videoPorts();return{mode:'controlled',store:{mode:'keychain',get:async ref=> 'synthetic-image-'+ref},fetcher:async(url,init)=>{if(new URL(url).hostname!=='api.openai.com')return video.fetcher(url,init);const body=JSON.parse(init.body);appendFileSync(${JSON.stringify(submissions)},JSON.stringify({url:String(url),body,credentialRef:new Headers(init.headers).get('Authorization')?.replace('Bearer synthetic-image-','')})+'\\n');if(readFileSync(${JSON.stringify(f.responseMode)},'utf8')==='unknown')throw Error('Controlled image transport break');return Response.json({data:Array.from({length:body.n},()=>({b64_json:readFileSync(${JSON.stringify(workspaceTestMedia('still-striped.png'))}).toString('base64')}))});}};}`);
  return {f,ref,submissions};
- }catch(error){await f.close();throw error;}
+ }catch(error){if(!existing)await f.close();throw error;}
 }

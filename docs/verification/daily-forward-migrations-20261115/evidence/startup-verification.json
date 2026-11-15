@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "npmStart": true,
+  "idempotentStart": true,
+  "ownerLoginViaExistingChrome": true,
+  "systemStatus": "正常",
+  "workerStatus": "在线 · 空闲",
+  "runtimeStatus": "已应用当前版本",
+  "productionListVisibility": "all",
+  "existingProductionVerification": "not executable: source database contains zero accounts and zero episodes before this operation",
+  "changedTablesAfterStart": [
+    "local_identity.sessions",
+    "local_identity.media_root_binding"
+  ],
+  "rolesPreserved": true,
+  "ledgerPreserved": true,
+  "pid": 67619,
+  "runtimeReleaseId": "1c0624abba54daa366914bb1c5c9e7e4427fa4556b9f2f71fa8db3682276bc9c",
+  "facts": {
+    "tasks": 0,
+    "accounts": 0,
+    "episodes": 0,
+    "materials": 0,
+    "dispatches": 0,
+    "credentials": 1,
+    "visualSubmissions": 0,
+    "narrationSubmissions": 0
+  }
+}

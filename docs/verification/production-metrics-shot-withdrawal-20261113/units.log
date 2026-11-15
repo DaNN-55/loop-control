@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/production-metrics-c-20261113/loop-control
+
+ ✓ src/local-app/productionMetricsCollected.test.ts (4 tests) 4ms
+ ✓ src/local-app/productionMetricWrites.test.ts (4 tests) 4ms
+ ✓ src/workspaceAudio.test.ts (4 tests) 5ms
+ ✓ src/local-app/productionMetrics.test.ts (9 tests) 5ms
+
+ Test Files  4 passed (4)
+      Tests  21 passed (21)
+   Start at  11:14:36
+   Duration  1.30s (transform 535ms, setup 38ms, collect 791ms, tests 17ms, environment 772ms, prepare 194ms)
+

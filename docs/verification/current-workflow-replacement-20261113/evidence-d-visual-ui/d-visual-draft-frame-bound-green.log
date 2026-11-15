@@ -1,0 +1,22 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-bTLTX1/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-bTLTX1/source
+
+ ✓ src/local-app/legacyWorkbenchAdoption.integration.test.ts (33 tests | 32 skipped) 1870ms
+   ✓ keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project  1870ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 32 skipped (33)
+   Start at  13:59:55
+   Duration  2.62s (transform 443ms, setup 6ms, collect 637ms, tests 1.87s, environment 0ms, prepare 28ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-bTLTX1/evidence/vitest.json

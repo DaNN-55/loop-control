@@ -1,0 +1,29 @@
+{
+  "rms": 0.08299979903603587,
+  "metadata": {
+    "shotId": "shot-01",
+    "baselineText": "填写本段完整口播。",
+    "sourceText": "这份人工录音是明确采用的来源。",
+    "adoptedText": "这份人工录音是明确采用的来源。",
+    "textCoverage": "complete_source",
+    "windows": [
+      {
+        "srcInFrame": 0,
+        "usedDurationSeconds": 2.4,
+        "sourceDurationSeconds": 2.4,
+        "playbackRate": 1,
+        "fps": 30,
+        "audible": true,
+        "audibility": "audible",
+        "textCoverageVerified": true
+      }
+    ],
+    "textSource": "owner_adoption",
+    "sourceDiffersFromBaseline": true,
+    "differsFromBaseline": true,
+    "audioTrackId": "5430ec94-2fd6-4bc1-b714-289c54ab3104",
+    "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "itemId": "workspace-narration-shot-shot-01",
+    "source": "未分系列--80cb6ebf-3a39-4a88-a09d-59751dbb0fd0/正式新单--76dabba2-67e7-465d-89d0-49f09f0f6ff5/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-controlled-narration-tone.mp3"
+  }
+}

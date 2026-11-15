@@ -1,5 +1,11 @@
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 
+/** Match the native renderer's explicit kind and its fallback for unnamed tracks. */
+export function isWorkspaceVideoTrack(timeline:OpenChatCutProject['timelines'][number],track:string){
+ const prefix=track.toUpperCase()[0];
+ return (timeline.tracks[track]?.kind??(prefix==='A'?'audio':prefix==='C'?'caption':'video'))==='video';
+}
+
 /** A reversible native switch removes this node from execution, not from history. */
 export function workspaceExecutionProject(project:OpenChatCutProject):OpenChatCutProject {
  const next=structuredClone(project);

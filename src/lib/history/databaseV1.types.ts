@@ -1,0 +1,1938 @@
+// Frozen legacy remote-view/v1 decoding contract. Never describes the current SQL API.
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type HistoricalDatabaseV1 = {
+  public: {
+    Tables: {
+      account_blueprint_versions: {
+        Row: {
+          archived_at?: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          is_snapshot?: boolean
+          policy: Json
+          version: number
+        }
+        Insert: {
+          archived_at?: string | null
+          account_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_snapshot?: boolean
+          policy: Json
+          version: number
+        }
+        Update: {
+          archived_at?: string | null
+          account_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_snapshot?: boolean
+          policy?: Json
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_blueprint_versions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      account_memberships: {
+        Row: {
+          account_id: string
+          role: HistoricalDatabaseV1["public"]["Enums"]["member_role"]
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          role: HistoricalDatabaseV1["public"]["Enums"]["member_role"]
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          role?: HistoricalDatabaseV1["public"]["Enums"]["member_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_memberships_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounts: {
+        Row: {
+          archived_at: string | null
+          created_at: string
+          current_blueprint_version_id: string | null
+          id: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        Insert: {
+          archived_at?: string | null
+          created_at?: string
+          current_blueprint_version_id?: string | null
+          id?: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        Update: {
+          archived_at?: string | null
+          created_at?: string
+          current_blueprint_version_id?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          timezone?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_current_blueprint_version_fk"
+            columns: ["id", "current_blueprint_version_id"]
+            isOneToOne: false
+            referencedRelation: "account_blueprint_versions"
+            referencedColumns: ["account_id", "id"]
+          },
+        ]
+      }
+      external_connections: {
+        Row: {
+          adapter: string
+          created_at: string
+          created_by: string
+          current_version_id: string
+          description?: string
+          endpoint?: string
+          id: string
+          last_verification_detail: string | null
+          last_verified_at: string | null
+          name: string
+          provider: string
+          status: "unverified" | "verified" | "invalid" | "retryable"
+        }
+        Insert: {
+          adapter: string
+          created_at?: string
+          created_by: string
+          current_version_id: string
+          description?: string
+          endpoint?: string
+          id?: string
+          last_verification_detail?: string | null
+          last_verified_at?: string | null
+          name: string
+          provider: string
+          status?: "unverified" | "verified" | "invalid" | "retryable"
+        }
+        Update: {
+          adapter?: string
+          created_at?: string
+          created_by?: string
+          current_version_id?: string
+          description?: string
+          endpoint?: string
+          id?: string
+          last_verification_detail?: string | null
+          last_verified_at?: string | null
+          name?: string
+          provider?: string
+          status?: "unverified" | "verified" | "invalid" | "retryable"
+        }
+        Relationships: []
+      }
+      external_connection_versions: {
+        Row: {
+          adapter: string
+          connection_id: string
+          created_at: string
+          endpoint: string
+          id: string
+          provider: string
+          revoked_at: string | null
+          vault_secret_id: string
+          version: number
+        }
+        Insert: {
+          adapter: string
+          connection_id: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          provider: string
+          revoked_at?: string | null
+          vault_secret_id: string
+          version: number
+        }
+        Update: {
+          adapter?: string
+          connection_id?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          provider?: string
+          revoked_at?: string | null
+          vault_secret_id?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      external_connection_verifications: {
+        Row: {
+          connection_id: string
+          connection_version_id: string
+          created_at: string
+          detail: string
+          id: string
+          status: "verified" | "invalid" | "retryable"
+        }
+        Insert: {
+          connection_id: string
+          connection_version_id: string
+          created_at?: string
+          detail: string
+          id?: string
+          status: "verified" | "invalid" | "retryable"
+        }
+        Update: {
+          connection_id?: string
+          connection_version_id?: string
+          created_at?: string
+          detail?: string
+          id?: string
+          status?: "verified" | "invalid" | "retryable"
+        }
+        Relationships: []
+      }
+      approvals: {
+        Row: {
+          actor_id: string
+          created_at: string
+          decision: string
+          episode_id: string
+          id: string
+          reason: string
+          review_package_id: string | null
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          decision: string
+          episode_id: string
+          id?: string
+          reason: string
+          review_package_id?: string | null
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          decision?: string
+          episode_id?: string
+          id?: string
+          reason?: string
+          review_package_id?: string | null
+          stage?: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approvals_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approvals_review_package_id_fkey"
+            columns: ["review_package_id"]
+            isOneToOne: true
+            referencedRelation: "review_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      artifacts: {
+        Row: {
+          artifact_type: string
+          created_at: string
+          episode_id: string
+          file_size: number
+          id: string
+          producer_task_id: string | null
+          relative_path: string
+          sha256: string
+        }
+        Insert: {
+          artifact_type: string
+          created_at?: string
+          episode_id: string
+          file_size: number
+          id?: string
+          producer_task_id?: string | null
+          relative_path: string
+          sha256: string
+        }
+        Update: {
+          artifact_type?: string
+          created_at?: string
+          episode_id?: string
+          file_size?: number
+          id?: string
+          producer_task_id?: string | null
+          relative_path?: string
+          sha256?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artifacts_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artifacts_producer_task_id_fkey"
+            columns: ["producer_task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audio_track_annotations: {
+        Row: {
+          at_seconds: number
+          audio_track_id: string
+          author_id: string
+          created_at: string
+          id: string
+          reason: string
+        }
+        Insert: { at_seconds: number; audio_track_id: string; author_id: string; created_at?: string; id?: string; reason: string }
+        Update: { at_seconds?: number; audio_track_id?: string; author_id?: string; created_at?: string; id?: string; reason?: string }
+        Relationships: [{ foreignKeyName: "audio_track_annotations_audio_track_id_fkey"; columns: ["audio_track_id"]; isOneToOne: false; referencedRelation: "audio_tracks"; referencedColumns: ["id"] }]
+      }
+      audio_tracks: {
+        Row: {
+          created_at: string
+          cue_id: string | null
+          duration_seconds: number
+          episode_id: string
+          file_size: number
+          id: string
+          relative_path: string
+          sha256: string
+          source_artifact_id: string
+          source_material_revision_id: string | null
+          source_review_package_id: string | null
+          source_task_id: string
+          start_seconds: number
+          track_kind: string
+        }
+        Insert: { created_at?: string; cue_id?: string | null; duration_seconds: number; episode_id: string; file_size: number; id?: string; relative_path: string; sha256: string; source_artifact_id: string; source_material_revision_id?: string | null; source_review_package_id?: string | null; source_task_id: string; start_seconds?: number; track_kind: string }
+        Update: { created_at?: string; cue_id?: string | null; duration_seconds?: number; episode_id?: string; file_size?: number; id?: string; relative_path?: string; sha256?: string; source_artifact_id?: string; source_material_revision_id?: string | null; source_review_package_id?: string | null; source_task_id?: string; start_seconds?: number; track_kind?: string }
+        Relationships: [
+          { foreignKeyName: "audio_tracks_episode_id_fkey"; columns: ["episode_id"]; isOneToOne: false; referencedRelation: "episodes"; referencedColumns: ["id"] },
+          { foreignKeyName: "audio_tracks_source_artifact_id_fkey"; columns: ["source_artifact_id"]; isOneToOne: true; referencedRelation: "artifacts"; referencedColumns: ["id"] },
+          { foreignKeyName: "audio_tracks_source_material_revision_id_fkey"; columns: ["source_material_revision_id"]; isOneToOne: false; referencedRelation: "production_material_revisions"; referencedColumns: ["id"] },
+          { foreignKeyName: "audio_tracks_source_review_package_id_fkey"; columns: ["source_review_package_id"]; isOneToOne: false; referencedRelation: "review_packages"; referencedColumns: ["id"] },
+          { foreignKeyName: "audio_tracks_source_task_id_fkey"; columns: ["source_task_id"]; isOneToOne: true; referencedRelation: "tasks"; referencedColumns: ["id"] },
+        ]
+      }
+      asset_locks: {
+        Row: {
+          episode_id: string
+          expires_at: string
+          locked_at: string
+          resource_key: string
+        }
+        Insert: {
+          episode_id: string
+          expires_at: string
+          locked_at?: string
+          resource_key: string
+        }
+        Update: {
+          episode_id?: string
+          expires_at?: string
+          locked_at?: string
+          resource_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_locks_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_events: {
+        Row: {
+          account_id: string
+          actor_id: string | null
+          created_at: string
+          episode_id: string | null
+          event_type: string
+          id: string
+          payload: Json
+        }
+        Insert: {
+          account_id: string
+          actor_id?: string | null
+          created_at?: string
+          episode_id?: string | null
+          event_type: string
+          id?: string
+          payload?: Json
+        }
+        Update: {
+          account_id?: string
+          actor_id?: string | null
+          created_at?: string
+          episode_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_events_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      episodes: {
+        Row: {
+          archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
+          tts_language_code?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
+          account_id: string
+          blueprint_version_id: string
+          created_at: string
+          id: string
+          is_test?: boolean
+          main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
+          series_version_id?: string | null
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
+          tts_language_code?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
+          account_id: string
+          blueprint_version_id: string
+          created_at?: string
+          id?: string
+          is_test?: boolean
+          main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
+          series_version_id?: string | null
+          stage?: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
+          tts_language_code?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
+          account_id?: string
+          blueprint_version_id?: string
+          created_at?: string
+          id?: string
+          is_test?: boolean
+          main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
+          series_version_id?: string | null
+          stage?: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episodes_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "episodes_blueprint_belongs_to_account_fk"
+            columns: ["account_id", "blueprint_version_id"]
+            isOneToOne: false
+            referencedRelation: "account_blueprint_versions"
+            referencedColumns: ["account_id", "id"]
+          },
+          {
+            foreignKeyName: "episodes_series_version_belongs_to_account_fk"
+            columns: ["account_id", "series_version_id"]
+            isOneToOne: false
+            referencedRelation: "series_versions"
+            referencedColumns: ["account_id", "id"]
+          },
+        ]
+      }
+      prompt_versions: {
+        Row: {
+          account_id: string
+          capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash: string
+          created_at: string
+          created_by: string | null
+          id: string
+          instructions: string
+          is_active: boolean
+          name: string
+          slug: string
+          summary: string
+          version: number
+        }
+        Insert: {
+          account_id: string
+          capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          summary: string
+          version: number
+        }
+        Update: {
+          account_id?: string
+          capability?: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          summary?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_versions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      production_material_revisions: {
+        Row: {
+          created_at: string
+          created_by: string
+          episode_id: string
+          file_size: number
+          id: string
+          is_main_script: boolean
+          material_purpose: string
+          material_type: string
+          mime_type: string
+          revision_number: number
+          sha256: string
+          source_kind: string
+          source_path: string
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          episode_id: string
+          file_size: number
+          id?: string
+          is_main_script?: boolean
+          material_purpose: string
+          material_type: string
+          mime_type: string
+          revision_number: number
+          sha256: string
+          source_kind: string
+          source_path: string
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          episode_id?: string
+          file_size?: number
+          id?: string
+          is_main_script?: boolean
+          material_purpose?: string
+          material_type?: string
+          mime_type?: string
+          revision_number?: number
+          sha256?: string
+          source_kind?: string
+          source_path?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_material_revisions_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shot_preparation_drafts: {
+        Row: {
+          caption_text_confirmation?: Json | null
+          acoustic_alignment?: Json | null
+          caption_contract?: Json
+          composition?: Json
+          input_fingerprint?: string | null
+          preparation_contract?: Json
+          preparation_contract_status?: "current" | "needs_upgrade"
+          preparation_input_fingerprint?: string
+          transition_mode?: "cut" | "fade" | "studio"
+          preview_status?: "failed" | "pending" | "ready" | "running"
+          current_preview_artifact_id?: string | null
+          current_preview_project_artifact_id?: string | null
+          current_preview_task_id?: string | null
+          current_preview_input_fingerprint?: string | null
+          pending_preview_task_id?: string | null
+          preview_error?: string | null
+          bgm_ducking_level?: "off" | "light" | "medium" | "strong"
+          audio_mode: "none" | "source" | "tts"
+          audio_status: "failed" | "pending" | "ready" | "running"
+          clip_end_seconds?: number | null
+          clip_segments: Json
+          clip_start_seconds?: number | null
+          confirmation_status: "confirmed" | "pending" | "skipped"
+          created_at: string
+          current_audio_track_id?: string | null
+          current_tts_task_id?: string | null
+          current_video_artifact_id?: string | null
+          current_video_task_id?: string | null
+          episode_id: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          id: string
+          pending_tts_task_id?: string | null
+          pending_alignment_task_id?: string | null
+          pending_source_audio_task_id?: string | null
+          pending_video_task_id?: string | null
+          review_package_id: string
+          shot_id: string
+          subtitle_text: string
+          subtitles_enabled: boolean
+          tts_actual_duration_seconds?: number | null
+          tts_error?: string | null
+          tts_language_code?: string | null
+          tts_override_speaking_rate?: number | null
+          tts_override_voice?: string | null
+          tts_text?: string | null
+          tts_text_confirmation_fingerprint?: string | null
+          tts_text_confirmed_at?: string | null
+          tts_text_confirmed_by?: string | null
+          tts_speaking_rate: number | null
+          tts_voice: string | null
+          updated_at: string
+          video_duration_seconds?: number | null
+          warning_decision?: "accepted" | "not_required"
+          warning_reason?: string | null
+          warning_accepted_at?: string | null
+          warning_accepted_by?: string | null
+          confirmation_reason?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          skipped_at?: string | null
+          skipped_by?: string | null
+          selected_material_revision_id?: string | null
+          source_audio_duration_seconds?: number | null
+          source_audio_error?: string | null
+          source_video_duration_seconds?: number | null
+          video_error?: string | null
+          video_status: "failed" | "pending" | "ready" | "running"
+        }
+        Insert: {
+          caption_text_confirmation?: Json | null
+          acoustic_alignment?: Json | null
+          caption_contract?: Json
+          composition?: Json
+          input_fingerprint?: string | null
+          preparation_contract?: Json
+          preparation_contract_status?: "current" | "needs_upgrade"
+          preparation_input_fingerprint?: string
+          transition_mode?: "cut" | "fade" | "studio"
+          preview_status?: "failed" | "pending" | "ready" | "running"
+          current_preview_artifact_id?: string | null
+          current_preview_project_artifact_id?: string | null
+          current_preview_task_id?: string | null
+          current_preview_input_fingerprint?: string | null
+          pending_preview_task_id?: string | null
+          preview_error?: string | null
+          bgm_ducking_level?: "off" | "light" | "medium" | "strong"
+          audio_mode?: "none" | "source" | "tts"
+          audio_status?: "failed" | "pending" | "ready" | "running"
+          clip_end_seconds?: number | null
+          clip_segments?: Json
+          clip_start_seconds?: number | null
+          confirmation_status?: "confirmed" | "pending" | "skipped"
+          created_at?: string
+          current_audio_track_id?: string | null
+          current_tts_task_id?: string | null
+          current_video_artifact_id?: string | null
+          current_video_task_id?: string | null
+          episode_id: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          id?: string
+          pending_tts_task_id?: string | null
+          pending_alignment_task_id?: string | null
+          pending_source_audio_task_id?: string | null
+          pending_video_task_id?: string | null
+          review_package_id: string
+          shot_id: string
+          subtitle_text: string
+          subtitles_enabled?: boolean
+          tts_actual_duration_seconds?: number | null
+          tts_error?: string | null
+          tts_language_code?: string | null
+          tts_override_speaking_rate?: number | null
+          tts_override_voice?: string | null
+          tts_text?: string | null
+          tts_text_confirmation_fingerprint?: string | null
+          tts_text_confirmed_at?: string | null
+          tts_text_confirmed_by?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
+          updated_at?: string
+          selected_material_revision_id?: string | null
+          source_audio_duration_seconds?: number | null
+          source_audio_error?: string | null
+          source_video_duration_seconds?: number | null
+          video_error?: string | null
+          video_status?: "failed" | "pending" | "ready" | "running"
+          video_duration_seconds?: number | null
+          warning_decision?: "accepted" | "not_required"
+          warning_reason?: string | null
+          warning_accepted_at?: string | null
+          warning_accepted_by?: string | null
+          confirmation_reason?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          skipped_at?: string | null
+          skipped_by?: string | null
+        }
+        Update: {
+          caption_text_confirmation?: Json | null
+          acoustic_alignment?: Json | null
+          caption_contract?: Json
+          composition?: Json
+          input_fingerprint?: string | null
+          preparation_contract?: Json
+          preparation_contract_status?: "current" | "needs_upgrade"
+          preparation_input_fingerprint?: string
+          transition_mode?: "cut" | "fade" | "studio"
+          preview_status?: "failed" | "pending" | "ready" | "running"
+          current_preview_artifact_id?: string | null
+          current_preview_project_artifact_id?: string | null
+          current_preview_task_id?: string | null
+          current_preview_input_fingerprint?: string | null
+          pending_preview_task_id?: string | null
+          preview_error?: string | null
+          bgm_ducking_level?: "off" | "light" | "medium" | "strong"
+          audio_mode?: "none" | "source" | "tts"
+          audio_status?: "failed" | "pending" | "ready" | "running"
+          clip_end_seconds?: number | null
+          clip_segments?: Json
+          clip_start_seconds?: number | null
+          confirmation_status?: "confirmed" | "pending" | "skipped"
+          created_at?: string
+          current_audio_track_id?: string | null
+          current_tts_task_id?: string | null
+          current_video_artifact_id?: string | null
+          current_video_task_id?: string | null
+          episode_id?: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          id?: string
+          pending_tts_task_id?: string | null
+          pending_alignment_task_id?: string | null
+          pending_source_audio_task_id?: string | null
+          pending_video_task_id?: string | null
+          review_package_id?: string
+          shot_id?: string
+          subtitle_text?: string
+          subtitles_enabled?: boolean
+          tts_actual_duration_seconds?: number | null
+          tts_error?: string | null
+          tts_language_code?: string | null
+          tts_override_speaking_rate?: number | null
+          tts_override_voice?: string | null
+          tts_text?: string | null
+          tts_text_confirmation_fingerprint?: string | null
+          tts_text_confirmed_at?: string | null
+          tts_text_confirmed_by?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
+          updated_at?: string
+          selected_material_revision_id?: string | null
+          source_audio_duration_seconds?: number | null
+          source_audio_error?: string | null
+          source_video_duration_seconds?: number | null
+          video_error?: string | null
+          video_status?: "failed" | "pending" | "ready" | "running"
+          video_duration_seconds?: number | null
+          warning_decision?: "accepted" | "not_required"
+          warning_reason?: string | null
+          warning_accepted_at?: string | null
+          warning_accepted_by?: string | null
+          confirmation_reason?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          skipped_at?: string | null
+          skipped_by?: string | null
+        }
+        Relationships: [
+          { foreignKeyName: "shot_preparation_drafts_episode_id_fkey"; columns: ["episode_id"]; isOneToOne: false; referencedRelation: "episodes"; referencedColumns: ["id"] },
+          { foreignKeyName: "shot_preparation_drafts_review_package_id_fkey"; columns: ["review_package_id"]; isOneToOne: false; referencedRelation: "review_packages"; referencedColumns: ["id"] },
+        ]
+      }
+      storyboard_audio_selections: {
+        Row: {
+          audio_kind: "bgm" | "sfx"
+          created_at: string
+          created_by: string
+          cue_id: string | null
+          episode_id: string
+          id: string
+          material_revision_id: string | null
+          review_package_id: string
+          target_id: string
+          target_kind: "episode" | "shot"
+          updated_at: string
+        }
+        Insert: {
+          audio_kind: "bgm" | "sfx"
+          created_at?: string
+          created_by: string
+          cue_id?: string | null
+          episode_id: string
+          id?: string
+          material_revision_id?: string | null
+          review_package_id: string
+          target_id: string
+          target_kind: "episode" | "shot"
+          updated_at?: string
+        }
+        Update: {
+          audio_kind?: "bgm" | "sfx"
+          created_at?: string
+          created_by?: string
+          cue_id?: string | null
+          episode_id?: string
+          id?: string
+          material_revision_id?: string | null
+          review_package_id?: string
+          target_id?: string
+          target_kind?: "episode" | "shot"
+          updated_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "storyboard_audio_selections_episode_id_fkey"; columns: ["episode_id"]; isOneToOne: false; referencedRelation: "episodes"; referencedColumns: ["id"] },
+          { foreignKeyName: "storyboard_audio_selections_material_revision_id_fkey"; columns: ["material_revision_id"]; isOneToOne: false; referencedRelation: "production_material_revisions"; referencedColumns: ["id"] },
+          { foreignKeyName: "storyboard_audio_selections_review_package_id_fkey"; columns: ["review_package_id"]; isOneToOne: false; referencedRelation: "review_packages"; referencedColumns: ["id"] },
+        ]
+      }
+      pre_render_review_member_decisions: {
+        Row: {
+          actor_id: string
+          created_at: string
+          decision: string
+          inherited_from_review_package_id: string | null
+          member_key: string
+          reason: string
+          review_package_id: string
+        }
+        Insert: { actor_id: string; created_at?: string; decision: string; inherited_from_review_package_id?: string | null; member_key: string; reason: string; review_package_id: string }
+        Update: { actor_id?: string; created_at?: string; decision?: string; inherited_from_review_package_id?: string | null; member_key?: string; reason?: string; review_package_id?: string }
+        Relationships: []
+      }
+      pre_render_review_members: {
+        Row: {
+          artifact_id: string | null
+          audio_track_id: string | null
+          created_at: string
+          evidence_snapshot: Json
+          id: string
+          member_key: string
+          member_kind: string
+          review_package_id: string
+          source_material_revision_id: string | null
+          source_task_id: string | null
+        }
+        Insert: { artifact_id?: string | null; audio_track_id?: string | null; created_at?: string; evidence_snapshot: Json; id?: string; member_key: string; member_kind: string; review_package_id: string; source_material_revision_id?: string | null; source_task_id?: string | null }
+        Update: { artifact_id?: string | null; audio_track_id?: string | null; created_at?: string; evidence_snapshot?: Json; id?: string; member_key?: string; member_kind?: string; review_package_id?: string; source_material_revision_id?: string | null; source_task_id?: string | null }
+        Relationships: []
+      }
+      review_packages: {
+        Row: {
+          artifact_id: string | null
+          context_snapshot: Json
+          created_at: string
+          episode_id: string
+          id: string
+          invalidated_at: string | null
+          invalidated_reason: string | null
+          revision_number: number
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          task_id: string | null
+          task_run_id: string | null
+        }
+        Insert: {
+          artifact_id?: string | null
+          context_snapshot: Json
+          created_at?: string
+          episode_id: string
+          id?: string
+          invalidated_at?: string | null
+          invalidated_reason?: string | null
+          revision_number: number
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          task_id?: string | null
+          task_run_id?: string | null
+        }
+        Update: {
+          artifact_id?: string | null
+          context_snapshot?: Json
+          created_at?: string
+          episode_id?: string
+          id?: string
+          invalidated_at?: string | null
+          invalidated_reason?: string | null
+          revision_number?: number
+          stage?: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          task_id?: string | null
+          task_run_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_packages_artifact_id_fkey"
+            columns: ["artifact_id"]
+            isOneToOne: false
+            referencedRelation: "artifacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_packages_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_packages_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "review_packages_task_run_id_fkey"
+            columns: ["task_run_id"]
+            isOneToOne: false
+            referencedRelation: "task_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_annotations: {
+        Row: {
+          actor_id: string
+          created_at: string
+          id: string
+          reason: string
+          review_package_id: string
+          shot_id: string
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          id?: string
+          reason: string
+          review_package_id: string
+          shot_id: string
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          id?: string
+          reason?: string
+          review_package_id?: string
+          shot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_annotations_review_package_id_fkey"
+            columns: ["review_package_id"]
+            isOneToOne: false
+            referencedRelation: "review_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qc_review_issues: {
+        Row: {
+          at_seconds: number
+          created_at: string
+          created_by: string
+          id: string
+          member_key: string | null
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          review_package_id: string
+          severity: string
+          status: string
+        }
+        Insert: {
+          at_seconds: number
+          created_at?: string
+          created_by: string
+          id?: string
+          member_key?: string | null
+          reason: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          review_package_id: string
+          severity: string
+          status?: string
+        }
+        Update: {
+          at_seconds?: number
+          created_at?: string
+          created_by?: string
+          id?: string
+          member_key?: string | null
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          review_package_id?: string
+          severity?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qc_review_issues_review_package_id_fkey"
+            columns: ["review_package_id"]
+            isOneToOne: false
+            referencedRelation: "review_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      series: {
+        Row: { account_id: string; created_at: string; id: string; name: string }
+        Insert: { account_id: string; created_at?: string; id?: string; name: string }
+        Update: { account_id?: string; created_at?: string; id?: string; name?: string }
+        Relationships: [
+          {
+            foreignKeyName: "series_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      series_versions: {
+        Row: { account_id: string; created_at: string; created_by: string; id: string; rules: Json; series_id: string; version: number }
+        Insert: { account_id: string; created_at?: string; created_by: string; id?: string; rules?: Json; series_id: string; version: number }
+        Update: { account_id?: string; created_at?: string; created_by?: string; id?: string; rules?: Json; series_id?: string; version?: number }
+        Relationships: [
+          {
+            foreignKeyName: "series_versions_account_id_series_id_fkey"
+            columns: ["account_id", "series_id"]
+            isOneToOne: false
+            referencedRelation: "series"
+            referencedColumns: ["account_id", "id"]
+          },
+        ]
+      }
+      state_transitions: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          episode_id: string
+          from_stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"] | null
+          id: string
+          reason: string
+          to_stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          episode_id: string
+          from_stage?: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"] | null
+          id?: string
+          reason: string
+          to_stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          episode_id?: string
+          from_stage?: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"] | null
+          id?: string
+          reason?: string
+          to_stage?: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "state_transitions_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_runs: {
+        Row: {
+          actual_cost_cents: number
+          attempt: number
+          completed_at: string | null
+          id: string
+          result: Json | null
+          started_at: string
+          status: HistoricalDatabaseV1["public"]["Enums"]["task_status"]
+          task_id: string
+          task_package: Json
+        }
+        Insert: {
+          actual_cost_cents?: number
+          attempt: number
+          completed_at?: string | null
+          id?: string
+          result?: Json | null
+          started_at?: string
+          status?: HistoricalDatabaseV1["public"]["Enums"]["task_status"]
+          task_id: string
+          task_package: Json
+        }
+        Update: {
+          actual_cost_cents?: number
+          attempt?: number
+          completed_at?: string | null
+          id?: string
+          result?: Json | null
+          started_at?: string
+          status?: HistoricalDatabaseV1["public"]["Enums"]["task_status"]
+          task_id?: string
+          task_package?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_runs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          actual_cost_cents: number | null
+          attempt: number
+          budget_limit_cents: number
+          claimed_at: string | null
+          completed_at: string | null
+          created_at: string
+          episode_id: string
+          id: string
+          input_snapshot: Json
+          last_result: Json | null
+          max_attempts: number
+          model: string
+          prompt_version: string
+          provider: string
+          status: HistoricalDatabaseV1["public"]["Enums"]["task_status"]
+          task_type: string
+        }
+        Insert: {
+          actual_cost_cents?: number | null
+          attempt?: number
+          budget_limit_cents?: number
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          episode_id: string
+          id?: string
+          input_snapshot?: Json
+          last_result?: Json | null
+          max_attempts?: number
+          model?: string
+          prompt_version?: string
+          provider?: string
+          status?: HistoricalDatabaseV1["public"]["Enums"]["task_status"]
+          task_type: string
+        }
+        Update: {
+          actual_cost_cents?: number | null
+          attempt?: number
+          budget_limit_cents?: number
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          episode_id?: string
+          id?: string
+          input_snapshot?: Json
+          last_result?: Json | null
+          max_attempts?: number
+          model?: string
+          prompt_version?: string
+          provider?: string
+          status?: HistoricalDatabaseV1["public"]["Enums"]["task_status"]
+          task_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      read_episode_catalog: {
+        Args: { p_view?: string; p_page?: number; p_account_id?: string | null; p_series_id?: string; p_visibility?: string; p_pending_page?: number; p_blocked_page?: number }
+        Returns: Json
+      }
+      request_wan_shot_video: { Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_first_frame_id: string; p_prompt: string; p_duration: number; p_request_id: string }; Returns: string }
+      resume_wan_video_task: { Args: { p_task_id: string }; Returns: undefined }
+
+      update_external_connection: {
+        Args: { p_connection_id: string; p_description: string; p_name: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["external_connections"]["Row"]
+        SetofOptions: { from: "*"; to: "external_connections"; isOneToOne: true; isSetofReturn: false }
+      }
+      list_external_connection_versions: {
+        Args: { p_connection_id?: string | null }
+        Returns: Array<{
+          adapter: string
+          connection_id: string
+          created_at: string
+          endpoint: string
+          id: string
+          is_current: boolean
+          provider: string
+          revoked_at: string | null
+          status: "unverified" | "verified" | "invalid" | "retryable" | "revoked"
+          version: number
+        }>
+        SetofOptions: { from: "*"; to: "external_connection_versions"; isOneToOne: false; isSetofReturn: true }
+      }
+      revoke_external_connection_version: {
+        Args: { p_version_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["external_connection_versions"]["Row"]
+        SetofOptions: { from: "*"; to: "external_connection_versions"; isOneToOne: true; isSetofReturn: false }
+      }
+      apply_external_connection_repair: {
+        Args: { p_blocker_code?: string | null; p_blocker_detail?: string | null; p_connection_version_id: string; p_episode_id: string }
+        Returns: Json
+        SetofOptions: { from: "*"; to: "Json"; isOneToOne: true; isSetofReturn: false }
+      }
+      activate_blueprint_version: {
+        Args: { p_account_id: string; p_blueprint_version_id: string }
+        Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          is_snapshot?: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      apply_episode_configuration_repair_v2: {
+        Args: {
+          p_blocker_code?: string | null
+          p_blocker_detail?: string | null
+          p_episode_id: string
+          p_policy: Json
+        }
+        Returns: Json
+        SetofOptions: {
+          from: "*"
+          to: "Json"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_account: {
+        Args: {
+          p_account_name: string
+          p_account_slug: string
+          p_policy: Json
+          p_timezone: string
+        }
+        Returns: {
+          created_at: string
+          current_blueprint_version_id: string | null
+          id: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_blueprint_version: {
+        Args: { p_account_id: string; p_policy: Json }
+        Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      delete_account: {
+        Args: { p_account_id: string; p_confirmation: string }
+        Returns: boolean
+      }
+      rename_account: {
+        Args: { p_account_id: string; p_account_name: string }
+        Returns: {
+          created_at: string
+          current_blueprint_version_id: string | null
+          id: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_account_archived: {
+        Args: { p_account_id: string; p_archived: boolean }
+        Returns: {
+          archived_at: string | null
+          created_at: string
+          current_blueprint_version_id: string | null
+          id: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_blueprint_archived: {
+        Args: { p_account_id: string; p_archived: boolean; p_blueprint_version_id: string }
+        Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_prompt_version: {
+        Args: {
+          p_account_id: string
+          p_capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          p_instructions?: string
+          p_name: string
+          p_summary: string
+        }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["prompt_versions"]["Row"]
+        SetofOptions: { from: "*"; to: "prompt_versions"; isOneToOne: true; isSetofReturn: false }
+      }
+      create_series: {
+        Args: { p_account_id: string; p_name: string; p_rules: Json }
+        Returns: {
+          account_id: string
+          created_at: string
+          created_by: string
+          id: string
+          rules: Json
+          series_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "series_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_series_version: {
+        Args: { p_rules: Json; p_series_id: string }
+        Returns: {
+          account_id: string
+          created_at: string
+          created_by: string
+          id: string
+          rules: Json
+          series_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "series_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      import_production_material: {
+        Args: {
+          p_episode_id: string
+          p_file_size: number
+          p_is_main_script: boolean
+          p_material_purpose: string
+          p_material_type: string
+          p_mime_type: string
+          p_sha256: string
+          p_source_kind: string
+          p_source_path: string
+          p_storage_path: string
+        }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["production_material_revisions"]["Row"]
+        SetofOptions: { from: "*"; to: "production_material_revisions"; isOneToOne: true; isSetofReturn: false }
+      }
+      register_manual_a_roll: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      register_manual_audio: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_storyboard_review_package_id: string; p_target_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      register_manual_episode_narration: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_storyboard_review_package_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      register_manual_b_roll: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_shot_acoustic_alignment: {
+        Args: { p_episode_id: string; p_local_only?: boolean; p_review_package_id: string; p_shot_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_manual_shot_clip: {
+        Args: { p_clip_end_seconds: number; p_clip_start_seconds: number; p_episode_id: string; p_kind: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_manual_alignment: {
+        Args: { p_cues: Json; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: undefined
+      }
+      save_shot_preparation_draft: {
+        Args: { p_audio_mode: "none" | "source" | "tts"; p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_caption_contract: {
+        Args: { p_caption_contract: Json; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_audio_mix: {
+        Args: { p_bgm_ducking_level: "off" | "light" | "medium" | "strong"; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_transition_mode: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_transition_mode: "cut" | "fade" | "studio" }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_storyboard_audio_selection: {
+        Args: { p_audio_kind: "bgm" | "sfx"; p_cue_id: string | null; p_episode_id: string; p_material_revision_id?: string | null; p_review_package_id: string; p_target_id: string; p_target_kind: "episode" | "shot" }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["storyboard_audio_selections"]["Row"]
+        SetofOptions: { from: "*"; to: "storyboard_audio_selections"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_episode_tts_settings: {
+        Args: { p_episode_id: string; p_tts_language_code: string; p_tts_speaking_rate: number; p_tts_voice: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_workbench_draft: {
+        Args: { p_audio_mode: "none" | "source" | "tts"; p_clip_segments: Json; p_episode_id: string; p_material_revision_id: string; p_review_package_id: string; p_shot_id: string; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_workbench_composition_draft: {
+        Args: { p_audio_mode: "none" | "source" | "tts"; p_clip_segments: Json; p_composition: Json; p_episode_id: string; p_material_revision_id: string; p_review_package_id: string; p_shot_id: string; p_source_video_duration_seconds: number; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      generate_shot_review_video: {
+        Args: { p_accept_duration_risk?: boolean; p_episode_id: string; p_review_package_id: string; p_risk_reason?: string | null; p_studio_project: Json }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"][]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: false; isSetofReturn: true }
+      }
+      generate_shot_sync_preview: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"][]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: false; isSetofReturn: true }
+      }
+      confirm_shot_sync_preview: {
+        Args: { p_confirmation_reason: string; p_deviation_resolution: string; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      generate_shot_source_audio: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_retry?: boolean; p_shot_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_tts_override: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_tts_speaking_rate: number | null; p_tts_voice: string | null }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      generate_shot_clip: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_retry?: boolean; p_shot_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      start_episode_production: {
+        Args: { p_episode_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      create_audio_track_annotation: {
+        Args: { p_audio_track_id: string; p_at_seconds: number; p_reason: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["audio_track_annotations"]["Row"]
+        SetofOptions: { from: "*"; to: "audio_track_annotations"; isOneToOne: true; isSetofReturn: false }
+      }
+      update_episode_title: {
+        Args: { p_episode_id: string; p_title: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      set_episode_archived: {
+        Args: { p_archived: boolean; p_episode_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      set_episode_audio_source_mode: {
+        Args: { p_audio_source_mode: "source" | "tts"; p_episode_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      delete_episode: {
+        Args: { p_actor_id: string; p_episode_id: string }
+        Returns: Json
+      }
+      has_required_artifacts: {
+        Args: {
+          p_episode_id: string
+          p_to_stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Returns: boolean
+      }
+      is_account_member: {
+        Args: { target_account_id: string }
+        Returns: boolean
+      }
+      is_allowed_episode_transition: {
+        Args: {
+          from_stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          to_stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Returns: boolean
+      }
+      record_publish_package: {
+        Args: {
+          p_episode_id: string
+          p_file_size: number
+          p_relative_path: string
+          p_sha256: string
+        }
+        Returns: {
+          artifact_type: string
+          created_at: string
+          episode_id: string
+          file_size: number
+          id: string
+          producer_task_id: string | null
+          relative_path: string
+          sha256: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "artifacts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      record_publish_package_verification: {
+        Args: { p_episode_id: string; p_file_size: number; p_sha256: string }
+        Returns: {
+          budget_limit_cents: number | null
+          created_at: string
+          episode_id: string
+          id: string
+          input_snapshot: Json
+          max_attempts: number
+          status: HistoricalDatabaseV1["public"]["Enums"]["task_status"]
+          task_type: string
+        }
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      create_qc_review_issue: {
+        Args: { p_at_seconds: number; p_member_key: string | null; p_reason: string; p_review_package_id: string; p_severity: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["qc_review_issues"]["Row"]
+        SetofOptions: { from: "*"; to: "qc_review_issues"; isOneToOne: true; isSetofReturn: false }
+      }
+      resolve_qc_review_issue: {
+        Args: { p_issue_id: string; p_status: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["qc_review_issues"]["Row"]
+        SetofOptions: { from: "*"; to: "qc_review_issues"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_qc_member_revision: {
+        Args: { p_issue_id: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_review_render_revision: {
+        Args: {
+          p_composition: Json
+          p_reason: string
+          p_review_package_id: string
+        }
+        Returns: {
+          account_id: string
+          blueprint_version_id: string
+          created_at: string
+          id: string
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          title: string
+          updated_at: string
+        }
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      retry_failed_final_render: {
+        Args: { p_episode_id: string; p_reason: string }
+        Returns: HistoricalDatabaseV1["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_studio_storyboard_revision: {
+        Args: { p_reason: string; p_review_package_id: string }
+        Returns: {
+          account_id: string
+          blueprint_version_id: string
+          created_at: string
+          id: string
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          title: string
+          updated_at: string
+        }
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      update_current_blueprint: {
+        Args: { p_account_id: string; p_policy: Json }
+        Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          is_snapshot?: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      transition_episode: {
+        Args: {
+          p_episode_id: string
+          p_reason: string
+          p_to_stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+        }
+        Returns: {
+          account_id: string
+          blueprint_version_id: string
+          created_at: string
+          id: string
+          stage: HistoricalDatabaseV1["public"]["Enums"]["episode_stage"]
+          title: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "episodes"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+    }
+    Enums: {
+      episode_stage:
+        | "waiting_input"
+        | "brief_draft"
+        | "script_draft"
+        | "script_review"
+        | "script_approved"
+        | "visual_draft"
+        | "visual_review"
+        | "visual_approved"
+        | "storyboard_draft"
+        | "storyboard_review"
+        | "storyboard_approved"
+        | "production_ready"
+        | "render_ready"
+        | "qc_review"
+        | "qc_passed"
+        | "production_completed"
+      member_role: "owner" | "worker"
+      task_status: "ready" | "running" | "completed" | "blocked" | "failed" | "superseded"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type HistoricalDatabaseV1WithoutInternals = HistoricalDatabaseV1
+
+type DefaultSchema = HistoricalDatabaseV1WithoutInternals[Extract<keyof HistoricalDatabaseV1, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof HistoricalDatabaseV1WithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof HistoricalDatabaseV1WithoutInternals
+  }
+    ? keyof (HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof HistoricalDatabaseV1WithoutInternals
+}
+  ? (HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof HistoricalDatabaseV1WithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof HistoricalDatabaseV1WithoutInternals
+  }
+    ? keyof HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof HistoricalDatabaseV1WithoutInternals
+}
+  ? HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof HistoricalDatabaseV1WithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof HistoricalDatabaseV1WithoutInternals
+  }
+    ? keyof HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof HistoricalDatabaseV1WithoutInternals
+}
+  ? HistoricalDatabaseV1WithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof HistoricalDatabaseV1WithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof HistoricalDatabaseV1WithoutInternals
+  }
+    ? keyof HistoricalDatabaseV1WithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof HistoricalDatabaseV1WithoutInternals
+}
+  ? HistoricalDatabaseV1WithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof HistoricalDatabaseV1WithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof HistoricalDatabaseV1WithoutInternals
+  }
+    ? keyof HistoricalDatabaseV1WithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof HistoricalDatabaseV1WithoutInternals
+}
+  ? HistoricalDatabaseV1WithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      episode_stage: [
+        "waiting_input",
+        "brief_draft",
+        "script_draft",
+        "script_review",
+        "script_approved",
+        "visual_draft",
+        "visual_review",
+        "visual_approved",
+        "storyboard_draft",
+        "storyboard_review",
+        "storyboard_approved",
+        "production_ready",
+        "render_ready",
+        "qc_review",
+        "qc_passed",
+        "production_completed",
+      ],
+      member_role: ["owner", "worker"],
+      task_status: ["ready", "running", "completed", "blocked", "failed", "superseded"],
+    },
+  },
+} as const

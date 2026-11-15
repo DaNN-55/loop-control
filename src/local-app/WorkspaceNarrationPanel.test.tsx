@@ -72,9 +72,9 @@ it('hides narration completely when switched off and restores the draft when ree
  const {workspace}=setup();cleanup();
  const command=vi.fn(async(_name:string,data:any)=>({...workspace,narration:[{...workspace.narration![0],enabled:data.enabled}]}));
  function Harness(){const [w,setW]=useState(workspace);return <WorkspaceNarrationPanel episodeId="e" workspace={w} selectedShotId="S01" pending={false} command={command} onChanged={setW}/>;}
- render(<Harness/>);fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'关闭后保留的文案'}});fireEvent.click(screen.getByRole('switch',{name:'启用口播'}));
- await waitFor(()=>expect(screen.queryByRole('textbox',{name:'口播文案'})).toBeNull());expect(screen.queryByRole('button',{name:'口播来源'})).toBeNull();expect(screen.getByRole('switch',{name:'启用口播'})).toHaveProperty('checked',false);
- fireEvent.click(screen.getByRole('switch',{name:'启用口播'}));await waitFor(()=>expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','关闭后保留的文案'));
+ render(<Harness/>);fireEvent.change(screen.getByRole('textbox',{name:'口播草稿'}),{target:{value:'关闭后保留的文案'}});fireEvent.click(screen.getByRole('switch',{name:'启用口播'}));
+ await waitFor(()=>expect(screen.queryByRole('textbox',{name:'口播草稿'})).toBeNull());expect(screen.queryByRole('button',{name:'口播来源'})).toBeNull();expect(screen.getByRole('switch',{name:'启用口播'})).toHaveProperty('checked',false);
+ fireEvent.click(screen.getByRole('switch',{name:'启用口播'}));await waitFor(()=>expect(screen.getByRole('textbox',{name:'口播草稿'})).toHaveProperty('value','关闭后保留的文案'));
  expect(command.mock.calls.map(([name])=>name)).toEqual(['setWorkspaceNarrationEnabled','setWorkspaceNarrationEnabled']);
 });
 
@@ -153,7 +153,7 @@ it('reviews historical text and restores the existing candidate without generati
  expect(dialog.textContent).toContain('当前正文完整口播');
  expect(dialog.textContent).toContain('恢复为旧口播');
  fireEvent.click(screen.getByRole('button',{name:'确认采用'}));
- await waitFor(()=>expect(screen.getByRole<HTMLTextAreaElement>('textbox',{name:'口播文案'}).value).toBe('旧口播'));
+ await waitFor(()=>expect(screen.getByRole<HTMLTextAreaElement>('textbox',{name:'口播草稿'}).value).toBe('旧口播'));
  expect(command.mock.calls.map(([name])=>name)).toEqual(['prepareWorkspaceCandidate','adoptWorkspaceCandidate']);
  expect(command).toHaveBeenLastCalledWith('adoptWorkspaceCandidate',expect.objectContaining({restoreNarration:true,adoptionId:'adoption'}));
 });
@@ -162,10 +162,10 @@ it('keeps independent captions separate from the single narration input and reco
  const {workspace,command}=setup();cleanup();
  const captions=[{clipId:'c',shotId:'S01',contract:{enabled:true,contentMode:'independent',text:'已有独立字幕'}}] as ProductionWorkspace['captions'];
  render(<WorkspaceNarrationPanel episodeId="e" workspace={{...workspace,captions}} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
- expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','完整口播');
+ expect(screen.getByRole('textbox',{name:'口播草稿'})).toHaveProperty('value','完整口播');
  expect(screen.queryByRole('combobox',{name:'字幕模式'})).toBeNull();expect(screen.queryByRole('button',{name:'保存镜头字幕'})).toBeNull();
  expect(screen.getByRole('tab',{name:'字幕'})).toBeTruthy();
- fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'新的生成文案'}});
+ fireEvent.change(screen.getByRole('textbox',{name:'口播草稿'}),{target:{value:'新的生成文案'}});
  await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));fireEvent.click(screen.getByRole('button',{name:'生成口播'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('generateWorkspaceNarration',expect.anything()));
  expect(command).toHaveBeenCalledWith('saveWorkspaceNarration',expect.objectContaining({text:'新的生成文案'}));
@@ -175,11 +175,11 @@ it('keeps independent captions separate from the single narration input and reco
 it('edits subtitles separately and can explicitly return to the adopted narration text',async()=>{
  const {workspace,command}=setup();cleanup();
  render(<WorkspaceNarrationPanel episodeId="e" workspace={{...workspace,captions:[{clipId:'c',shotId:'S01',contract:{enabled:true,contentMode:'independent',text:'原字幕'}}] as ProductionWorkspace['captions']}} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
- fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'尚未生成的文案'}});fireEvent.click(screen.getByRole('tab',{name:'字幕'}));
+ fireEvent.change(screen.getByRole('textbox',{name:'口播草稿'}),{target:{value:'尚未生成的文案'}});fireEvent.click(screen.getByRole('tab',{name:'字幕'}));
  expect(screen.getByRole('textbox',{name:'字幕内容'})).toHaveProperty('value','原字幕');fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'独立修改的字幕'}});fireEvent.click(screen.getByRole('button',{name:'保存字幕'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarrationCaptions',expect.objectContaining({contentMode:'independent',text:'独立修改的字幕'})));
  await waitFor(()=>expect(screen.getByRole('button',{name:'跟随口播'})).toHaveProperty('disabled',false));fireEvent.click(screen.getByRole('button',{name:'跟随口播'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarrationCaptions',expect.objectContaining({contentMode:'follow_tts'})));
- fireEvent.click(screen.getByRole('tab',{name:'口播'}));expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','尚未生成的文案');expect(command.mock.calls.some(([name])=>name==='generateWorkspaceNarration')).toBe(false);
+ fireEvent.click(screen.getByRole('tab',{name:'口播'}));expect(screen.getByRole('textbox',{name:'口播草稿'})).toHaveProperty('value','尚未生成的文案');expect(command.mock.calls.some(([name])=>name==='generateWorkspaceNarration')).toBe(false);
 });
 
 it('uses saved episode settings across shots while leaving frozen executions unchanged',async()=>{
@@ -239,15 +239,15 @@ it('keeps the two switches independent and preserves an unsaved caption through 
  function Harness(){const [w,setW]=useState<ProductionWorkspace>(initial);return <WorkspaceNarrationPanel episodeId="e" workspace={w} selectedShotId="S01" pending={false} command={command} onChanged={setW}/>;}
  render(<Harness/>);fireEvent.click(screen.getByRole('tab',{name:'字幕'}));fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'未保存的精简字幕'}});fireEvent.click(screen.getByRole('switch',{name:'启用字幕'}));
  await waitFor(()=>expect(screen.queryByRole('textbox',{name:'字幕内容'})).toBeNull());expect(screen.queryByRole('button',{name:'保存字幕'})).toBeNull();
- fireEvent.click(screen.getByRole('tab',{name:'口播'}));expect(screen.getByRole('switch',{name:'启用口播'})).toHaveProperty('checked',true);expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','完整口播');
+ fireEvent.click(screen.getByRole('tab',{name:'口播'}));expect(screen.getByRole('switch',{name:'启用口播'})).toHaveProperty('checked',true);expect(screen.getByRole('textbox',{name:'口播草稿'})).toHaveProperty('value','完整口播');
  fireEvent.click(screen.getByRole('tab',{name:'字幕'}));fireEvent.click(screen.getByRole('switch',{name:'启用字幕'}));await waitFor(()=>expect(screen.getByRole('textbox',{name:'字幕内容'})).toHaveProperty('value','未保存的精简字幕'));
  expect(command.mock.calls.every(([name])=>name==='setWorkspaceCaptionsEnabled')).toBe(true);
 });
 
 it('switches the upper input with the bottom source picker and preserves the narration draft',async()=>{
- const {command}=setup();await sourceReady();fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'保留这份口播草稿'}});
- fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));expect(screen.queryByRole('textbox',{name:'口播文案'})).toBeNull();expect(screen.queryByRole('combobox',{name:'声音'})).toBeNull();expect(screen.queryByRole('spinbutton',{name:'语速'})).toBeNull();expect(screen.queryByRole('button',{name:'加入候选'})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'seed-tts-2.0 A · v1'}));expect(screen.getByRole('textbox',{name:'口播文案'})).toHaveProperty('value','保留这份口播草稿');expect(command).not.toHaveBeenCalled();
+ const {command}=setup();await sourceReady();fireEvent.change(screen.getByRole('textbox',{name:'口播草稿'}),{target:{value:'保留这份口播草稿'}});
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));expect(screen.queryByRole('textbox',{name:'口播草稿'})).toBeNull();expect(screen.queryByRole('combobox',{name:'声音'})).toBeNull();expect(screen.queryByRole('spinbutton',{name:'语速'})).toBeNull();expect(screen.queryByRole('button',{name:'加入候选'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('menuitemradio',{name:'seed-tts-2.0 A · v1'}));expect(screen.getByRole('textbox',{name:'口播草稿'})).toHaveProperty('value','保留这份口播草稿');expect(command).not.toHaveBeenCalled();
  expect(screen.getByRole('spinbutton',{name:'语速'}).closest('.workspace-narration-rate-control')?.querySelector('svg')).toBeTruthy();
 });
 
@@ -265,4 +265,13 @@ it('retains a failed subtitle edit for retry without changing narration',async()
  const {workspace}=setup();cleanup();const command=vi.fn(async()=>{throw Error('保存失败，请重试');});
  render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);fireEvent.click(screen.getByRole('tab',{name:'字幕'}));fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'失败后保留的字幕'}});fireEvent.click(screen.getByRole('button',{name:'保存字幕'}));
  await screen.findByRole('alert');expect(screen.getByRole('textbox',{name:'字幕内容'})).toHaveProperty('value','失败后保留的字幕');expect(screen.getByRole('button',{name:'保存字幕'})).toHaveProperty('disabled',false);expect(workspace.narration![0].text).toBe('完整口播');expect(command).toHaveBeenCalledTimes(1);
+});
+
+it('keeps the adopted wording explicit while a different narration draft is edited',async()=>{
+ const {workspace}=setup();cleanup();const command=vi.fn();
+ const current={...workspace,usedNarration:[{shotId:'S01',itemId:'workspace-narration-shot-S01',audioTrackId:'adopted',text:'成片实际采用的原口播。'}],narration:[{...workspace.narration![0],adoptedAudioTrackId:'adopted',text:'尚未采用的新草稿。'}]} as ProductionWorkspace;
+ render(<WorkspaceNarrationPanel episodeId="e" workspace={current} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
+ expect(screen.getByRole('textbox',{name:'口播草稿'})).toHaveProperty('value','尚未采用的新草稿。');
+ expect(screen.getByText('草稿未采用，成片仍使用已采用口播。')).toBeTruthy();
+ const summary=screen.getByText('成片采用的口播');fireEvent.click(summary);expect(within(summary.closest('details')!).getByText('成片实际采用的原口播。')).toBeTruthy();expect(command).not.toHaveBeenCalled();
 });

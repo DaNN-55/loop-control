@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "containers": [
+    {
+      "name": "loop-story-e2e-ff3fb24820a5",
+      "removed": true,
+      "group": "current-absence"
+    },
+    {
+      "name": "loop-story-e2e-76d04db9acfb",
+      "removed": true,
+      "group": "probe"
+    },
+    {
+      "name": "loop-story-e2e-0af19bca5534",
+      "removed": true,
+      "group": "probe-final"
+    }
+  ],
+  "removedTemporaryDirectories": [
+    "/private/tmp/loop-story-e2e-quVSqp/source",
+    "/private/tmp/loop-story-e2e-quVSqp/OpenChatCut",
+    "/private/tmp/loop-story-e2e-SvGOX9/source",
+    "/private/tmp/loop-story-e2e-SvGOX9/OpenChatCut",
+    "/private/tmp/loop-story-e2e-LEDR26/source",
+    "/private/tmp/loop-story-e2e-LEDR26/OpenChatCut",
+    "/private/tmp/loop-create-episode-audit-20261113-_5kiogxm/source",
+    "/private/tmp/loop-create-episode-audit-20261113-_5kiogxm/legacy-releases",
+    "/private/tmp/loop-create-episode-audit-20261113-_5kiogxm/dependencies"
+  ],
+  "removedCount": 9,
+  "originalPackagesPreserved": 23,
+  "dailyFunctionAndDataPreserved": true,
+  "evidenceAndPrivateProbeSourcePreserved": true,
+  "associatedWorkingDirectories": []
+}

@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "classification": {
+    "focus": "The original assertion observed DOM insertion before the passive focus effect completed.",
+    "manualReceipt": "An existing adopt button was an invalid completion signal while the reopened workspace and frozen receipt were still in flight."
+  },
+  "defaultSingleFinalRun": {
+    "files": 295,
+    "passed": 2132,
+    "failed": 0,
+    "skipped": 0
+  },
+  "integrationPassed": 55,
+  "integrationGroups": {
+    "manualReceipts": 12,
+    "deletionRecovery": 26,
+    "production": 17
+  },
+  "originalControlledReproductionFailed": 2,
+  "counterfactualFailuresDetected": 4,
+  "targetedFinalCasesInFullSuite": 19,
+  "productionCodeUnchanged": true,
+  "verifiedSourceFiles": 1332,
+  "timeoutsRetriesAndProtectionUnchanged": true,
+  "dailySnapshotUnchanged": true,
+  "frontendBackendWorkerBuildAndTypePassed": true,
+  "browser": "Actual Chromium public components, synthetic controlled HTTP boundaries; real Owner/PG contract separately covered by integration tests."
+}

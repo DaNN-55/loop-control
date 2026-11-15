@@ -1,0 +1,382 @@
+--- a/scripts/runtime/project-history.mjs
++++ b/scripts/runtime/project-history.mjs
+@@ -3,7 +3,7 @@
+ import{productionHistoryProjectionSql,productionHistoryTableSql}from'./production-history.mjs';
+ export function projectHistory(runtime=runtimeContext()){
+  return runtime.sql(`BEGIN;SET LOCAL session_replication_role=replica;
+- CREATE TEMP TABLE history_inserted(table_name text,row_key jsonb,payload_sha256 text)ON COMMIT DROP;
++ CREATE TEMP TABLE history_inserted(table_name text,row_key jsonb,payload_sha256 text,projected_key jsonb)ON COMMIT DROP;
+  CREATE INDEX ON history_inserted(table_name);
+  CREATE TEMP TABLE history_selected ON COMMIT DROP AS
+  SELECT DISTINCT ON(h.table_name,h.row_key) h.* FROM local_identity.history_versions h WHERE h.table_name LIKE 'public.%'
+@@ -44,7 +44,7 @@
+    IF r.table_name='public.tasks' AND projected_payload->>'status' IN('ready','running') THEN projected_payload:=jsonb_set(projected_payload,'{status}','"blocked"'::jsonb);projected_payload:=jsonb_set(projected_payload,'{claimed_at}','null'::jsonb);END IF;
+    EXECUTE format('INSERT INTO %s(%s)SELECT %s FROM jsonb_populate_record(NULL::%s,$1) ON CONFLICT DO NOTHING',r.table_name,cols,cols,r.table_name)USING projected_payload;
+    GET DIAGNOSTICS n=ROW_COUNT;state:=CASE WHEN n=1 THEN 'inserted' ELSE 'secondary-key-conflict' END;
+-   IF n=1 THEN INSERT INTO history_inserted VALUES(r.table_name,r.row_key,r.payload_sha256);END IF;
++   IF n=1 THEN INSERT INTO history_inserted(table_name,row_key,payload_sha256)VALUES(r.table_name,r.row_key,r.payload_sha256);END IF;
+   EXCEPTION WHEN OTHERS THEN state:='history-only:'||SQLSTATE;END;END IF;
+   INSERT INTO local_identity.history_projection_results(table_name,row_key,payload_sha256,status,detail)VALUES(r.table_name,r.row_key,r.payload_sha256,state,detail)ON CONFLICT(table_name,row_key,payload_sha256)DO UPDATE SET status=excluded.status,detail=excluded.detail,applied_at=now() WHERE local_identity.history_projection_results.status LIKE 'history-only:%';
+  END LOOP;
+@@ -72,7 +72,7 @@
+  FOR fk IN SELECT c.conrelid::regclass child,c.confrelid::regclass parent,c.conkey,c.confkey,n.nspname||'.'||t.relname child_name FROM pg_constraint c JOIN pg_namespace n ON n.oid=c.connamespace JOIN pg_class t ON t.oid=c.conrelid WHERE c.contype='f' AND (n.nspname='public' OR n.nspname||'.'||t.relname IN (${productionHistoryTableSql})) LOOP
+   SELECT string_agg(format('a.%I IS NOT NULL',attname),' AND ' ORDER BY i) INTO missing FROM unnest(fk.conkey)WITH ORDINALITY k(num,i)JOIN pg_attribute ON attrelid=fk.child AND attnum=k.num;
+   SELECT string_agg(format('a.%I=b.%I',x.attname,y.attname),' AND ' ORDER BY k.i) INTO predicate FROM unnest(fk.conkey,fk.confkey)WITH ORDINALITY k(num,ref,i)JOIN pg_attribute x ON x.attrelid=fk.child AND x.attnum=k.num JOIN pg_attribute y ON y.attrelid=fk.parent AND y.attnum=k.ref;
+-  EXECUTE format('WITH gone AS(DELETE FROM %s a USING history_inserted i WHERE i.table_name=%L AND %s AND NOT exists(SELECT 1 FROM %s b WHERE %s) AND NOT exists(SELECT 1 FROM jsonb_each_text(i.row_key) k WHERE to_jsonb(a)->>k.key IS DISTINCT FROM k.value) RETURNING i.*),marked AS(UPDATE local_identity.history_projection_results p SET status=''history-only:missing-parent'' FROM gone g WHERE p.table_name=g.table_name AND p.row_key=g.row_key AND p.payload_sha256=g.payload_sha256)DELETE FROM history_inserted i USING gone g WHERE i.table_name=g.table_name AND i.row_key=g.row_key AND i.payload_sha256=g.payload_sha256',fk.child,fk.child_name,missing,fk.parent,predicate);
++  EXECUTE format('WITH gone AS(DELETE FROM %s a USING history_inserted i WHERE i.table_name=%L AND %s AND NOT exists(SELECT 1 FROM %s b WHERE %s) AND NOT exists(SELECT 1 FROM jsonb_each_text(coalesce(i.projected_key,i.row_key)) k WHERE to_jsonb(a)->>k.key IS DISTINCT FROM k.value) RETURNING i.*),marked AS(UPDATE local_identity.history_projection_results p SET status=''history-only:missing-parent'' FROM gone g WHERE p.table_name=g.table_name AND p.row_key=g.row_key AND p.payload_sha256=g.payload_sha256)DELETE FROM history_inserted i USING gone g WHERE i.table_name=g.table_name AND i.row_key=g.row_key AND i.payload_sha256=g.payload_sha256',fk.child,fk.child_name,missing,fk.parent,predicate);
+   GET DIAGNOSTICS removed=ROW_COUNT;total:=total+removed;
+  END LOOP;
+  EXIT WHEN total=0;
+--- a/scripts/runtime/production-history.mjs
++++ b/scripts/runtime/production-history.mjs
+@@ -1,4 +1,5 @@
+ // Historical business facts only. Authentication, paid-call confirmations and runtime authority stay archived.
++import{legacyProductionHistorySql}from'./legacy-production-history.mjs';
+ export const productionHistoryTables=Object.freeze([
+  'input_episodes','production_preparation_revisions','production_shots','production_shot_versions',
+  'production_workspaces','production_workspace_versions','workspace_preparations','workspace_shot_inputs',
+@@ -16,6 +17,11 @@
+  WHERE h.table_name IN (${productionHistoryTableSql})
+  ORDER BY h.table_name,h.row_key,coalesce(h.payload->>'updated_at',h.payload->>'created_at','') DESC,length(h.payload::text) DESC,h.payload_sha256;
+  CREATE INDEX ON production_history_selected(table_name,(payload->>'id'));
++ CREATE OR REPLACE FUNCTION pg_temp.production_history_key(tab text,p jsonb) RETURNS jsonb LANGUAGE sql STABLE AS $key$
++ SELECT jsonb_object_agg(a.attname,p->a.attname) FROM pg_index ix
++  JOIN LATERAL unnest(ix.indkey)WITH ORDINALITY key(num,i)ON true
++  JOIN pg_attribute a ON a.attrelid=ix.indrelid AND a.attnum=key.num WHERE ix.indisprimary AND ix.indrelid=to_regclass(tab);
++ $key$;
+  CREATE OR REPLACE FUNCTION pg_temp.production_history_episode(p jsonb) RETURNS text LANGUAGE sql STABLE AS $episode$
+  SELECT coalesce(p->>'episode_id',
+   (SELECT w.episode_id::text FROM local_identity.production_workspaces w WHERE w.id=(p->>'workspace_id')::uuid),
+@@ -25,11 +31,11 @@
+  CREATE OR REPLACE FUNCTION pg_temp.production_history_reason(tab text,p jsonb,k jsonb,o uuid) RETURNS text LANGUAGE plpgsql AS $reason$
+  DECLARE ep text;account uuid;identity jsonb;
+  BEGIN
+-  SELECT jsonb_object_agg(a.attname,p->a.attname) INTO identity FROM pg_index ix
+-   JOIN LATERAL unnest(ix.indkey)WITH ORDINALITY key(num,i) ON true
+-   JOIN pg_attribute a ON a.attrelid=ix.indrelid AND a.attnum=key.num
+-   WHERE ix.indisprimary AND ix.indrelid=to_regclass(tab);
+-  IF identity IS NULL OR identity IS DISTINCT FROM k THEN RETURN 'invalid-key';END IF;
++  identity:=pg_temp.production_history_key(tab,p);
++  IF identity IS NULL OR identity IS DISTINCT FROM k AND NOT(tab='local_identity.production_workspace_versions'
++   AND NOT(p ? 'preparation_revision_id') AND k=jsonb_build_object('workspace_id',p->'workspace_id','project_sha256',p->'project_sha256')) THEN RETURN 'invalid-key';END IF;
++  IF tab IN('local_identity.production_workspaces','local_identity.production_workspace_versions') AND NOT(p ? 'preparation_revision_id')
++   AND p->>'storyboard_package_id' IS NULL THEN RETURN 'missing-legacy-preparation';END IF;
+   ep:=pg_temp.production_history_episode(p);
+   SELECT e.account_id INTO account FROM public.episodes e WHERE e.id=ep::uuid;
+   IF NOT FOUND THEN RETURN 'missing-episode';END IF;
+@@ -40,7 +46,9 @@
+     JOIN local_identity.historical_episodes original ON original.episode_id::text=ep
+     WHERE e.table_name='public.episodes' AND e.payload->>'id'=ep AND e.payload->>'account_id'=account::text AND e.owner_id=o) THEN RETURN 'source-owner';END IF;
+   IF EXISTS(SELECT 1 FROM history_selected e WHERE e.table_name='public.episodes' AND e.payload->>'id'=ep AND e.owner_id<>o) THEN RETURN 'source-owner';END IF;
+-  IF p ? 'owner_id' AND (p->>'owner_id')::uuid IS DISTINCT FROM o THEN RETURN 'source-owner';END IF;
++  IF p ? 'owner_id' AND (p->>'owner_id')::uuid IS DISTINCT FROM o AND NOT(tab='local_identity.input_episodes'
++   AND EXISTS(SELECT 1 FROM local_identity.historical_episodes h WHERE h.episode_id::text=ep)
++   AND EXISTS(SELECT 1 FROM public.account_memberships m WHERE m.account_id=account AND m.user_id=(p->>'owner_id')::uuid AND m.role='owner')) THEN RETURN 'source-owner';END IF;
+   IF p ? 'account_id' AND (p->>'account_id')::uuid IS DISTINCT FROM account THEN RETURN 'source-account';END IF;
+   IF tab='local_identity.production_preparation_revisions' AND
+    (p->>'source_format' NOT IN ('production-preparation/v1','storyboard/v1') OR p#>>'{manifest,version}' IS DISTINCT FROM 'production-preparation/v1') THEN RETURN 'unsupported-preparation';END IF;
+@@ -48,26 +56,30 @@
+   RETURN NULL;
+  EXCEPTION WHEN invalid_text_representation THEN RETURN 'invalid-identity';
+  END $reason$;
+- DO $restore$ DECLARE r record;reason text;cols text;predicate text;present boolean;value jsonb;n integer;detail text;
++ DO $restore$ DECLARE r record;reason text;cols text;predicate text;present boolean;value jsonb;n integer;detail text;projected_key jsonb;
+  BEGIN
+   FOR r IN SELECT * FROM production_history_selected ORDER BY table_name,row_key LOOP
+    reason:=pg_temp.production_history_reason(r.table_name,r.payload,r.row_key,r.owner_id);detail:=NULL;
+    IF reason IS NULL THEN
++    value:=r.payload;
++    IF r.table_name IN('local_identity.production_workspaces','local_identity.production_workspace_versions') AND NOT(value ? 'preparation_revision_id') THEN
++     value:=value||jsonb_build_object('preparation_revision_id',value->'storyboard_package_id');
++    END IF;
++    projected_key:=pg_temp.production_history_key(r.table_name,value);
+     SELECT string_agg(format('t.%I=%L::%s',j.key,j.value,format_type(a.atttypid,a.atttypmod)),' AND ') INTO predicate
+-     FROM jsonb_each_text(r.row_key) j JOIN pg_attribute a ON a.attrelid=r.table_name::regclass AND a.attname=j.key AND a.attnum>0;
++     FROM jsonb_each_text(projected_key) j JOIN pg_attribute a ON a.attrelid=r.table_name::regclass AND a.attname=j.key AND a.attnum>0;
+     EXECUTE format('SELECT exists(SELECT 1 FROM %s t WHERE %s)',r.table_name,predicate) INTO present;
+     IF present THEN reason:='current-preserved';
+     ELSE BEGIN
+      SELECT string_agg(quote_ident(a.attname),',' ORDER BY a.attnum) INTO cols FROM pg_attribute a
+-      WHERE a.attrelid=r.table_name::regclass AND a.attnum>0 AND NOT a.attisdropped AND a.attgenerated='' AND r.payload ? a.attname;
+-     value:=r.payload;
++      WHERE a.attrelid=r.table_name::regclass AND a.attnum>0 AND NOT a.attisdropped AND a.attgenerated='' AND value ? a.attname;
+      IF r.table_name='local_identity.input_episodes' THEN
+       SELECT jsonb_object_agg(key,CASE WHEN key='enabled' OR key LIKE '%_enabled' THEN 'false'::jsonb ELSE v END) INTO value FROM jsonb_each(value) AS item(key,v);
+       detail:='历史执行开关关闭，原值保留于历史版本。';
+      END IF;
+      EXECUTE format('INSERT INTO %s(%s)SELECT %s FROM jsonb_populate_record(NULL::%s,$1)ON CONFLICT DO NOTHING',r.table_name,cols,cols,r.table_name)USING value;
+      GET DIAGNOSTICS n=ROW_COUNT;reason:=CASE WHEN n=1 THEN 'inserted' ELSE 'secondary-key-conflict' END;
+-     IF n=1 THEN INSERT INTO history_inserted VALUES(r.table_name,r.row_key,r.payload_sha256);END IF;
++     IF n=1 THEN INSERT INTO history_inserted VALUES(r.table_name,r.row_key,r.payload_sha256,projected_key);END IF;
+     EXCEPTION WHEN OTHERS THEN reason:='history-only:'||SQLSTATE;END;END IF;
+    ELSE reason:='history-only:'||reason;
+    END IF;
+@@ -80,9 +92,9 @@
+  -- Validate scope after all selected parents have arrived. Only this transaction's new rows can be removed.
+  DO $scope$ DECLARE r record;fk record;p jsonb;ep text;predicate text;join_sql text;bad boolean;reason text;
+  BEGIN
+-  FOR r IN SELECT h.* FROM production_history_selected h JOIN history_inserted i USING(table_name,row_key,payload_sha256) LOOP
++  FOR r IN SELECT h.*,i.projected_key FROM production_history_selected h JOIN history_inserted i USING(table_name,row_key,payload_sha256) LOOP
+    SELECT string_agg(format('t.%I=%L::%s',j.key,j.value,format_type(a.atttypid,a.atttypmod)),' AND ') INTO predicate
+-    FROM jsonb_each_text(r.row_key) j JOIN pg_attribute a ON a.attrelid=r.table_name::regclass AND a.attname=j.key AND a.attnum>0;
++    FROM jsonb_each_text(coalesce(r.projected_key,r.row_key)) j JOIN pg_attribute a ON a.attrelid=r.table_name::regclass AND a.attname=j.key AND a.attnum>0;
+    EXECUTE format('SELECT to_jsonb(t) FROM %s t WHERE %s',r.table_name,predicate) INTO p;
+    ep:=pg_temp.production_history_episode(p);reason:=NULL;
+    FOR fk IN SELECT c.confrelid::regclass parent,c.conkey,c.confkey,n.nspname||'.'||t.relname parent_name FROM pg_constraint c
+@@ -106,6 +118,7 @@
+    END IF;
+   END LOOP;
+  END $scope$;
++ ${legacyProductionHistorySql}
+  INSERT INTO local_identity.history_projection_results(table_name,row_key,payload_sha256,status,detail)
+   SELECT h.table_name,h.row_key,h.payload_sha256,'history-only:excluded-local-table','仅保留原始历史；不恢复登录、调用确认或运行时授权。'
+   FROM local_identity.history_versions h WHERE h.table_name LIKE 'local_identity.%' AND h.table_name NOT IN (${productionHistoryTableSql})
+--- a/scripts/runtime/legacy-production-history.mjs
++++ b/scripts/runtime/legacy-production-history.mjs
+@@ -0,0 +1,106 @@
++// Pre-188 projection is a data conversion, never a current preparation confirmation or a file-access grant.
++export const legacyProductionHistorySql=`
++ CREATE TEMP TABLE legacy_history_refs ON COMMIT DROP AS
++ SELECT h.*,i.projected_key,(h.payload->>'episode_id')::uuid episode_id,
++  (h.payload->>'script_revision_id')::uuid script_id,(h.payload->>'storyboard_package_id')::uuid source_id
++ FROM production_history_selected h JOIN history_inserted i USING(table_name,row_key,payload_sha256)
++ WHERE h.table_name IN('local_identity.production_workspaces','local_identity.production_workspace_versions')
++  AND NOT(h.payload ? 'preparation_revision_id');
++ CREATE TEMP TABLE legacy_history_existing(table_name text,row_key jsonb)ON COMMIT DROP;
++ DO $before$ DECLARE tab text;
++ BEGIN
++  FOREACH tab IN ARRAY ARRAY['production_preparation_revisions','production_shots','production_shot_versions','workspace_caption_inputs','workspace_narration_inputs'] LOOP
++   EXECUTE format('INSERT INTO legacy_history_existing SELECT %L,pg_temp.production_history_key(%L,to_jsonb(t)) FROM local_identity.%I t WHERE episode_id IN(SELECT episode_id FROM legacy_history_refs)','local_identity.'||tab,'local_identity.'||tab,tab);
++  END LOOP;
++ END $before$;
++ CREATE OR REPLACE FUNCTION pg_temp.ensure_history_preparation(ep uuid,script uuid,source uuid,importer uuid,seen uuid[]) RETURNS uuid
++ LANGUAGE plpgsql AS $prepare$
++ DECLARE package public.review_packages;parent_id uuid;parent_script uuid;
++ BEGIN
++  IF source=ANY(seen) THEN RAISE EXCEPTION 'Historical preparation cycle' USING ERRCODE='22023';END IF;
++  SELECT * INTO package FROM public.review_packages WHERE id=source AND episode_id=ep AND stage='storyboard_review';
++  IF NOT FOUND THEN RAISE EXCEPTION 'Historical preparation package missing' USING ERRCODE='22023';END IF;
++  IF EXISTS(SELECT 1 FROM history_selected h WHERE h.owner_id<>importer AND
++    (h.table_name='public.review_packages' AND h.payload->>'id'=source::text
++     OR h.table_name='public.production_material_revisions' AND h.payload->>'id'=script::text
++     OR h.table_name='public.artifacts' AND h.payload->>'id'=package.artifact_id::text
++     OR h.table_name='public.shot_preparation_drafts' AND h.payload->>'episode_id'=ep::text AND h.payload->>'review_package_id'=source::text
++     OR h.table_name='public.audio_tracks' AND EXISTS(SELECT 1 FROM public.shot_preparation_drafts d
++       WHERE d.episode_id=ep AND d.review_package_id=source AND d.current_audio_track_id::text=h.payload->>'id')
++     OR h.table_name IN('public.artifacts','public.tasks') AND EXISTS(SELECT 1 FROM public.shot_preparation_drafts d
++       JOIN public.audio_tracks a ON a.id=d.current_audio_track_id AND a.episode_id=ep WHERE d.episode_id=ep AND d.review_package_id=source
++        AND h.payload->>'id'=CASE h.table_name WHEN 'public.artifacts' THEN a.source_artifact_id::text ELSE a.source_task_id::text END)))
++   OR EXISTS(SELECT 1 FROM production_history_selected h WHERE h.owner_id<>importer AND
++    (h.table_name='local_identity.production_preparation_revisions' AND h.payload->>'id'=source::text
++     OR h.table_name='local_identity.workspace_shot_inputs' AND h.payload->>'preparation_id'=source::text
++     OR h.table_name='local_identity.workspace_preparations' AND h.payload->>'package_id'=source::text)) THEN
++   RAISE EXCEPTION 'Historical preparation source Owner mismatch' USING ERRCODE='42501';
++  END IF;
++  IF package.context_snapshot#>'{workspace_preparation,formattingOnly}'='true'::jsonb THEN
++   parent_id:=(package.context_snapshot#>>'{workspace_preparation,sourceReviewPackageId}')::uuid;
++   parent_script:=(package.context_snapshot#>>'{continued_project,previousScriptRevisionId}')::uuid;
++   PERFORM pg_temp.ensure_history_preparation(ep,parent_script,parent_id,importer,array_append(seen,source));
++  END IF;
++  -- Reuse the same strict provenance and deterministic conversion as the forward 188 migration.
++  RETURN local_identity.import_preparation_source(ep,script,source);
++ END $prepare$;
++ -- Legacy formatting revisions did not copy drafts. Use the nearest recorded ancestor per shot,
++ -- keeping its original draft/package identity; do not invent child-package provenance.
++ CREATE OR REPLACE FUNCTION pg_temp.history_preparation_drafts(ep uuid,preparation uuid)
++ RETURNS SETOF public.shot_preparation_drafts LANGUAGE sql STABLE AS $drafts$
++ WITH RECURSIVE sources AS(
++  SELECT p.id,p.parent_preparation_revision_id,0 depth,ARRAY[p.id] seen FROM local_identity.production_preparation_revisions p WHERE p.id=preparation AND p.episode_id=ep
++  UNION ALL SELECT p.id,p.parent_preparation_revision_id,s.depth+1,array_append(s.seen,p.id)
++   FROM sources s JOIN local_identity.production_preparation_revisions p ON p.id=s.parent_preparation_revision_id AND p.episode_id=ep WHERE NOT p.id=ANY(s.seen)
++ )SELECT DISTINCT ON(d.shot_id)d.* FROM sources s JOIN public.shot_preparation_drafts d ON d.review_package_id=s.id AND d.episode_id=ep ORDER BY d.shot_id,s.depth;
++ $drafts$;
++ DO $legacy$ DECLARE ref record;w record;origin record;predicate text;
++ BEGIN
++  FOR ref IN SELECT DISTINCT episode_id,script_id,source_id,owner_id FROM legacy_history_refs ORDER BY episode_id,source_id LOOP
++   BEGIN
++    PERFORM pg_temp.ensure_history_preparation(ref.episode_id,ref.script_id,ref.source_id,ref.owner_id,ARRAY[]::uuid[]);
++    FOR w IN SELECT DISTINCT coalesce(h.payload->>'workspace_id',h.payload->>'id')::uuid id FROM legacy_history_refs h
++     WHERE h.episode_id=ref.episode_id AND h.script_id=ref.script_id AND h.source_id=ref.source_id AND h.owner_id=ref.owner_id LOOP
++     IF EXISTS(SELECT 1 FROM local_identity.production_workspaces current_workspace CROSS JOIN LATERAL jsonb_array_elements(current_workspace.bindings) b
++      WHERE current_workspace.id=w.id AND current_workspace.preparation_revision_id=ref.source_id
++       AND NOT EXISTS(SELECT 1 FROM local_identity.production_shot_versions s WHERE s.preparation_revision_id=ref.source_id AND s.episode_id=ref.episode_id AND s.shot_id=b->>'shotId')) THEN
++      RAISE EXCEPTION 'Historical binding has no proven shot' USING ERRCODE='22023';
++     END IF;
++     INSERT INTO local_identity.workspace_caption_inputs(workspace_id,episode_id,preparation_revision_id,shot_id,contract,imported_from_draft_id,imported_from_package_id,created_at,updated_at)
++      SELECT w.id,ref.episode_id,ref.source_id,d.shot_id,d.caption_contract,d.id,d.review_package_id,d.created_at,d.updated_at
++      FROM pg_temp.history_preparation_drafts(ref.episode_id,ref.source_id) d JOIN local_identity.production_shot_versions s ON s.preparation_revision_id=ref.source_id AND s.episode_id=ref.episode_id AND s.shot_id=d.shot_id
++      ON CONFLICT DO NOTHING;
++     INSERT INTO local_identity.workspace_narration_inputs(workspace_id,episode_id,preparation_revision_id,shot_id,mode,narration_text,voice,speaking_rate,language_code,voice_override,audio_track_id,imported_from_draft_id,imported_from_package_id,created_at,updated_at)
++      SELECT w.id,ref.episode_id,ref.source_id,d.shot_id,CASE d.audio_mode WHEN 'source' THEN 'manual' ELSE d.audio_mode END,
++       d.tts_text,d.tts_voice,d.tts_speaking_rate,d.tts_language_code,coalesce(length(d.tts_override_voice),0)>0,d.current_audio_track_id,d.id,d.review_package_id,d.created_at,d.updated_at
++      FROM pg_temp.history_preparation_drafts(ref.episode_id,ref.source_id) d JOIN local_identity.production_shot_versions s ON s.preparation_revision_id=ref.source_id AND s.episode_id=ref.episode_id AND s.shot_id=d.shot_id
++      ON CONFLICT DO NOTHING;
++    END LOOP;
++    UPDATE local_identity.history_projection_results p SET detail='旧工作区按原审核包接入独立基准；原始版本、文件和身份保持。'
++     FROM legacy_history_refs h WHERE h.episode_id=ref.episode_id AND h.source_id=ref.source_id AND h.script_id=ref.script_id AND p.table_name=h.table_name AND p.row_key=h.row_key AND p.payload_sha256=h.payload_sha256 AND p.status='inserted';
++   EXCEPTION WHEN OTHERS THEN
++    -- A failed conversion must not leave a workspace pointing at an existing but incompatible baseline.
++    FOR origin IN SELECT * FROM legacy_history_refs h WHERE h.episode_id=ref.episode_id AND h.source_id=ref.source_id AND h.script_id=ref.script_id AND h.owner_id=ref.owner_id LOOP
++     SELECT string_agg(format('t.%I=%L::%s',j.key,j.value,format_type(a.atttypid,a.atttypmod)),' AND ') INTO predicate
++      FROM jsonb_each_text(origin.projected_key)j JOIN pg_attribute a ON a.attrelid=origin.table_name::regclass AND a.attname=j.key AND a.attnum>0;
++     EXECUTE format('DELETE FROM %s t WHERE %s',origin.table_name,predicate);
++     UPDATE local_identity.history_projection_results SET status='history-only:legacy-adaptation:'||SQLSTATE,detail=SQLERRM
++      WHERE table_name=origin.table_name AND row_key=origin.row_key AND payload_sha256=origin.payload_sha256;
++     DELETE FROM history_inserted WHERE table_name=origin.table_name AND row_key=origin.row_key AND payload_sha256=origin.payload_sha256;
++    END LOOP;
++   END;
++  END LOOP;
++ END $legacy$;
++ -- Include only newly derived rows in the existing orphan cleanup; never remove pre-existing rows.
++ DO $derived$ DECLARE tab text;
++ BEGIN
++  FOREACH tab IN ARRAY ARRAY['production_preparation_revisions','production_shots','production_shot_versions','workspace_caption_inputs','workspace_narration_inputs'] LOOP
++   EXECUTE format('INSERT INTO history_inserted(table_name,row_key,payload_sha256,projected_key)
++    SELECT %L,k.key,encode(extensions.digest(to_jsonb(t)::text,''sha256''),''hex''),k.key FROM local_identity.%I t CROSS JOIN LATERAL(SELECT pg_temp.production_history_key(%L,to_jsonb(t)) key)k
++    WHERE t.episode_id IN(SELECT episode_id FROM legacy_history_refs)
++     AND NOT EXISTS(SELECT 1 FROM legacy_history_existing b WHERE b.table_name=%L AND b.row_key=k.key)
++     AND NOT EXISTS(SELECT 1 FROM history_inserted i WHERE i.table_name=%L AND coalesce(i.projected_key,i.row_key)=k.key)',
++    'local_identity.'||tab,tab,'local_identity.'||tab,'local_identity.'||tab,'local_identity.'||tab);
++  END LOOP;
++ END $derived$;
++`;
+--- a/src/local-app/legacyProductionHistory.integration.test.ts
++++ b/src/local-app/legacyProductionHistory.integration.test.ts
+@@ -0,0 +1,137 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {randomBytes,randomUUID,createHash} from 'node:crypto';
++import {join} from 'node:path';
++import {loadSchemaCatalog,freshSchemaTransaction,migrationTransaction} from './schemaMigrations';
++import {seedHistoricalPreparation} from './historicalPreparation.fixture';
++import {productionWorkspaceFixture} from './productionWorkspace.fixture';
++import {readFile} from 'node:fs/promises';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['original-owner','different-import-owner','formatting-local-shot','formatting-parent-inputs','formatting-foreign-parent-draft','foreign-draft-source','foreign-audio-source','foreign-audio-artifact-source','foreign-audio-task-source'] as const)('pre-188 private history respects source ownership and original identities: %s',async kind=>{
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated historical databases');
++ const {projectHistory}=await import(join(process.cwd(),'scripts/runtime/project-history.mjs'));
++ const catalog=loadSchemaCatalog(process.cwd()),old={...catalog,current:catalog.current.filter(f=>f.version<'188-')},suffix=randomBytes(6).toString('hex'),source='loop_legacy_source_'+suffix,target='loop_legacy_target_'+suffix,databases:string[]=[];
++ const sql=(q:string,db=target)=>context.sql(q,db),literal=(v:unknown)=>"'"+JSON.stringify(v).replaceAll("'","''")+"'",localOwner='644f8c5a-b668-48a3-8a25-94c4e502fa04';
++ try{
++  for(const db of [source,target]){context.sql('CREATE DATABASE '+db+' TEMPLATE template0','postgres');databases.push(db);}
++  sql(freshSchemaTransaction(old),source);const ids=seedHistoricalPreparation(q=>sql(q,source));let parentBoard:string|undefined;
++  if(kind==='formatting-local-shot'||kind==='formatting-parent-inputs'||kind==='formatting-foreign-parent-draft'){
++   parentBoard=ids.board;const child=randomUUID(),script=randomUUID();
++   sql(`INSERT INTO public.production_material_revisions SELECT * FROM jsonb_populate_record(NULL::public.production_material_revisions,(SELECT to_jsonb(m)||jsonb_build_object('id','${script}','revision_number',2,'is_main_script',false,'storage_path','formatting.md') FROM public.production_material_revisions m WHERE id='${ids.script}'));
++    INSERT INTO public.review_packages SELECT * FROM jsonb_populate_record(NULL::public.review_packages,(SELECT to_jsonb(p)||jsonb_build_object('id','${child}','revision_number',2,'context_snapshot',context_snapshot||jsonb_build_object('workspace_preparation',jsonb_build_object('formattingOnly',true,'sourceReviewPackageId','${ids.board}'),'continued_project',jsonb_build_object('previousScriptRevisionId','${ids.script}'))) FROM public.review_packages p WHERE id='${ids.board}'));
++    INSERT INTO local_identity.workspace_preparations(package_id,episode_id,script_revision_id,origin,confirmed_by)VALUES('${child}','${ids.episode}','${script}','legacy-board','${ids.owner}');
++    INSERT INTO local_identity.workspace_shot_inputs(workspace_id,preparation_id,shot_id,origin,baseline_text,snapshot)VALUES('${ids.workspace}','${ids.board}','local-extra','local-added','人工增补','{"id":"local-extra","scriptSegment":"人工增补"}');
++    ${kind==='formatting-local-shot'?`INSERT INTO public.shot_preparation_drafts SELECT * FROM jsonb_populate_record(NULL::public.shot_preparation_drafts,(SELECT to_jsonb(d)||jsonb_build_object('id','${randomUUID()}','review_package_id','${child}','tts_text','子包编辑口播') FROM public.shot_preparation_drafts d WHERE episode_id='${ids.episode}'));`:''}
++    UPDATE local_identity.production_workspaces SET script_revision_id='${script}',storyboard_package_id='${child}',bindings=bindings||'[{"id":"local-clip","itemId":"local-item","shotId":"local-extra","text":"人工增补","source":null}]'::jsonb WHERE id='${ids.workspace}';
++    UPDATE local_identity.production_workspace_versions SET script_revision_id='${script}',storyboard_package_id='${child}' WHERE workspace_id='${ids.workspace}';
++    UPDATE public.episodes SET main_script_revision_id='${script}' WHERE id='${ids.episode}';`,source);
++   ids.board=child;ids.script=script;
++  }
++  sql(`INSERT INTO local_identity.input_episodes(episode_id,owner_id,enabled,storyboard_enabled,narration_enabled,media_enabled)VALUES('${ids.episode}','${ids.owner}',true,true,true,true);`,source);
++  sql(freshSchemaTransaction(catalog));sql(`INSERT INTO local_identity.owners(id,email)VALUES('${localOwner}','current@example.invalid');`);
++  const keys=JSON.parse(sql("SELECT jsonb_object_agg(tab,cols) FROM(SELECT n.nspname||'.'||t.relname tab,jsonb_agg(a.attname::text ORDER BY k.i) cols FROM pg_index x JOIN pg_class t ON t.oid=x.indrelid JOIN pg_namespace n ON n.oid=t.relnamespace JOIN LATERAL unnest(x.indkey)WITH ORDINALITY k(num,i)ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.num WHERE x.indisprimary AND n.nspname IN('public','local_identity') GROUP BY 1)x",source));
++  const tables=JSON.parse(sql("SELECT jsonb_agg(n.nspname||'.'||c.relname ORDER BY n.nspname,c.relname)FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind='r' AND(n.nspname='public' OR n.nspname='local_identity' AND c.relname IN('owners','input_episodes','workspace_preparations','production_workspaces','production_workspace_versions','workspace_shot_inputs'))",source));
++  const originals:Record<string,any[]>={},owner=kind==='different-import-owner'?localOwner:ids.owner;
++  if(owner!==localOwner)sql(`INSERT INTO local_identity.owners(id,email)VALUES('${owner}','original-current@example.invalid');`);
++  for(const table of tables){if(!keys[table])continue;const rows=JSON.parse(sql(`SELECT coalesce(jsonb_agg(to_jsonb(t)),'[]') FROM ${table} t`,source));originals[table]=rows;
++   for(const row of rows){const key=Object.fromEntries(keys[table].map((k:string)=>[k,row[k]])),hash=createHash('sha256').update(JSON.stringify(row)).digest('hex'),sourceOwner=((kind==='foreign-draft-source'||kind==='formatting-foreign-parent-draft')&&table==='public.shot_preparation_drafts'||kind==='foreign-audio-source'&&table==='public.audio_tracks'||kind==='foreign-audio-artifact-source'&&table==='public.artifacts'&&row.id===ids.audioFile||kind==='foreign-audio-task-source'&&table==='public.tasks'&&row.id===ids.task)?localOwner:owner;sql(`INSERT INTO local_identity.history_versions(table_name,row_key,payload_sha256,owner_id,payload)VALUES('${table}',${literal(key)},'${hash}','${sourceOwner}',${literal(row)})`);}
++  }
++  const digest=()=>sql('SELECT md5(jsonb_agg(to_jsonb(h) ORDER BY table_name,row_key::text,payload_sha256)::text) FROM local_identity.history_versions h'),before=digest();
++  projectHistory({sql});
++  const workspace=JSON.parse(sql(`SELECT coalesce((SELECT to_jsonb(w) FROM local_identity.production_workspaces w WHERE id='${ids.workspace}'),'null'::jsonb)`));if(kind==='formatting-foreign-parent-draft'||kind==='foreign-draft-source'||kind==='foreign-audio-source'||kind==='foreign-audio-artifact-source'||kind==='foreign-audio-task-source'){
++   expect(sql(`SELECT count(*) FROM local_identity.workspace_narration_inputs WHERE workspace_id='${ids.workspace}'`)).toBe('0');
++   expect(sql(`SELECT count(*) FROM local_identity.workspace_caption_inputs WHERE workspace_id='${ids.workspace}'`)).toBe('0');
++   expect(sql(`SELECT status FROM local_identity.history_projection_results WHERE table_name='local_identity.production_workspaces' AND row_key->>'id'='${ids.workspace}'`)).toBe('history-only:legacy-adaptation:42501');
++   expect(digest()).toBe(before);return;
++  }
++  expect(workspace,sql('SELECT jsonb_agg(to_jsonb(r)) FROM local_identity.history_projection_results r')).not.toBeNull();expect(workspace).toMatchObject(originals['local_identity.production_workspaces'][0]);expect(workspace.preparation_revision_id).toBe(ids.board);
++  const preparation=JSON.parse(sql(`SELECT to_jsonb(p) FROM local_identity.production_preparation_revisions p WHERE id='${ids.board}'`));expect(preparation).toMatchObject({episode_id:ids.episode,script_revision_id:ids.script,source_reference_id:ids.board,source_format:'storyboard/v1',created_by:ids.owner});expect(preparation.manifest.version).toBe('production-preparation/v1');expect(preparation.manifest.shots[0]).not.toHaveProperty('shotType');
++  if(parentBoard){
++   expect(preparation.parent_preparation_revision_id).toBe(parentBoard);
++   expect(JSON.parse(sql(`SELECT jsonb_agg(jsonb_build_object('id',shot_id,'text',baseline_text,'origin',origin) ORDER BY position) FROM local_identity.production_shot_versions WHERE preparation_revision_id='${ids.board}'`))).toEqual([{id:'shot-01',text:'保留原镜头',origin:'historical-import'},{id:'local-extra',text:'人工增补',origin:'local'}]);
++  }
++  const versions=JSON.parse(sql(`SELECT jsonb_agg(to_jsonb(v)) FROM local_identity.production_workspace_versions v WHERE workspace_id='${ids.workspace}'`));expect(versions).toHaveLength(1);expect(versions[0]).toMatchObject(originals['local_identity.production_workspace_versions'][0]);expect(versions[0].preparation_revision_id).toBe(ids.board);
++  expect(JSON.parse(sql(`SELECT jsonb_build_object('owner',owner_id,'enabled',enabled,'storyboard',storyboard_enabled,'media',media_enabled) FROM local_identity.input_episodes WHERE episode_id='${ids.episode}'`))).toEqual({owner:ids.owner,enabled:false,storyboard:false,media:false});
++  expect(sql(`SELECT narration_text||':'||mode||':'||audio_track_id FROM local_identity.workspace_narration_inputs WHERE workspace_id='${ids.workspace}' AND preparation_revision_id='${ids.board}'`)).toBe((kind==='formatting-local-shot'?'子包编辑口播':'原采用口播')+':manual:'+ids.audio);
++  expect(sql(`SELECT count(*) FROM local_identity.workspace_caption_inputs WHERE workspace_id='${ids.workspace}' AND preparation_revision_id='${ids.board}'`)).toBe('1');
++  if(parentBoard)expect(sql(`SELECT imported_from_package_id::text FROM local_identity.workspace_narration_inputs WHERE workspace_id='${ids.workspace}' AND preparation_revision_id='${ids.board}'`)).toBe(kind==='formatting-parent-inputs'?parentBoard:ids.board);
++  for(const table of ['public.audio_tracks','public.review_packages','public.shot_preparation_drafts']){const rows=JSON.parse(sql(`SELECT jsonb_agg(to_jsonb(t)) FROM ${table} t`));expect(rows).toHaveLength(originals[table].length);for(const row of originals[table])expect(rows).toContainEqual(expect.objectContaining(row));}
++  expect(sql(`SELECT count(*) FROM local_identity.credentials WHERE owner_id='${ids.owner}'`)).toBe('0');expect(sql(`SELECT count(*) FROM local_identity.historical_tasks WHERE task_id='${ids.task}'`)).toBe('1');projectHistory({sql});expect(digest()).toBe(before);
++  if(kind==='different-import-owner'){
++   const restored=target+'_restore',{databaseSnapshot,assertRestored}=await import(join(process.cwd(),'scripts/runtime/clean-sql-cutover.mjs')),snapshot=databaseSnapshot(context,target,process.cwd());context.sql('CREATE DATABASE '+restored+' TEMPLATE template0','postgres');databases.push(restored);
++   sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',target]),restored);assertRestored(snapshot,databaseSnapshot(context,restored,process.cwd()));
++  }
++ }finally{for(const db of databases.reverse())context.sql('DROP DATABASE '+db+' WITH (FORCE)','postgres');}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('an old workspace-only backup keeps edited native bytes and all old version keys through actual Owner recovery',async()=>{
++ const f=await productionWorkspaceFixture();try{
++  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated historical databases');const {projectHistory}=await import(join(process.cwd(),'scripts/runtime/project-history.mjs'));
++  let response=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(response.status).toBe(200);let w=await f.fillVisuals(response.body);
++  response=await f.request('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'appearance',itemId:w.clips[0].itemId,focusX:19}});expect(response.status,JSON.stringify(response.body)).toBe(200);w=response.body;await f.closeStudio();
++  const bytes=await readFile(join(f.assetRoot,w.project.relativePath)),versions=(await f.c.query('SELECT to_jsonb(v) payload FROM local_identity.production_workspace_versions v WHERE workspace_id=$1',[w.id])).rows.map(r=>r.payload),taskIds=(await f.c.query('SELECT id FROM public.tasks WHERE episode_id=$1',[f.episode])).rows.map(r=>r.id);
++  const keys=(await f.c.query("SELECT n.nspname||'.'||t.relname tab,array_agg(a.attname::text ORDER BY k.i) keys FROM pg_index x JOIN pg_class t ON t.oid=x.indrelid JOIN pg_namespace n ON n.oid=t.relnamespace JOIN LATERAL unnest(x.indkey)WITH ORDINALITY k(num,i)ON true JOIN pg_attribute a ON a.attrelid=t.oid AND a.attnum=k.num WHERE x.indisprimary AND n.nspname IN('public','local_identity') GROUP BY 1")).rows;
++  const tables=(await f.c.query("SELECT table_schema||'.'||table_name tab,array_agg(column_name::text) cols FROM information_schema.columns WHERE table_schema IN('public','local_identity') GROUP BY 1 ORDER BY 1")).rows;
++  const newTables=new Set(['production_preparation_revisions','production_shots','production_shot_versions','workspace_caption_inputs','workspace_narration_inputs']),physical=new Set(['local_identity.episode_asset_locations','local_identity.episode_storage_lineage']);const lost:Array<{table:string;where:string;params:unknown[]}>=[];
++  for(const t of tables){if(t.tab.includes('.history')||t.tab.includes('.historical')||!keys.some(k=>k.tab===t.tab))continue;const where=t.cols.includes('episode_id')?'episode_id=$1':t.cols.includes('workspace_id')?'workspace_id=$1':t.cols.includes('task_id')?'task_id=ANY($1::uuid[])':t.tab==='public.episodes'?'id=$1':null;if(!where)continue;
++   const params=t.cols.includes('episode_id')||t.tab==='public.episodes'?[f.episode]:t.cols.includes('workspace_id')?[w.id]:[taskIds],rows=(await f.c.query(`SELECT to_jsonb(t) payload FROM ${t.tab} t WHERE ${where}`,params)).rows.map(r=>r.payload);if(!rows.length)continue;lost.push({table:t.tab,where,params});
++   if(newTables.has(t.tab.split('.')[1]))continue;
++   for(const original of rows){const row={...original};if(['local_identity.production_workspaces','local_identity.production_workspace_versions','public.audio_tracks'].includes(t.tab))delete row.preparation_revision_id;
++    const primary=t.tab==='local_identity.production_workspace_versions'?['workspace_id','project_sha256']:keys.find(k=>k.tab===t.tab)!.keys;
++    await f.c.query('INSERT INTO local_identity.history_versions(table_name,row_key,payload_sha256,owner_id,payload)VALUES($1,$2,$3,$4,$5)',[t.tab,Object.fromEntries(primary.map((k:string)=>[k,row[k]])),createHash('sha256').update(JSON.stringify(row)).digest('hex'),f.owner,row]);
++   }
++  }
++  const before=(await f.c.query('SELECT md5(jsonb_agg(to_jsonb(h) ORDER BY table_name,row_key::text,payload_sha256)::text) value FROM local_identity.history_versions h')).rows;
++  await f.c.query('BEGIN;SET LOCAL session_replication_role=replica');for(const t of lost)if(!physical.has(t.table))await f.c.query(`DELETE FROM ${t.table} WHERE ${t.where}`,t.params);await f.c.query('COMMIT');
++  projectHistory({sql:(sql:string)=>context.sql(sql,f.database)});
++  const read=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(read.status,await read.clone().text()).toBe(200);const restored=(await read.json()).workspace;expect(restored.project).toEqual(w.project);expect(restored.clips).toEqual(w.clips);expect(restored.preparationRevisionId).toBe(f.board);expect(await readFile(join(f.assetRoot,w.project.relativePath))).toEqual(bytes);
++  const after=(await f.c.query('SELECT to_jsonb(v) payload FROM local_identity.production_workspace_versions v WHERE workspace_id=$1',[w.id])).rows.map(r=>r.payload);expect(after).toHaveLength(versions.length);for(const v of versions)expect(after).toContainEqual(v);
++  const foreign=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.otherToken}});expect(foreign.status).toBe(404);projectHistory({sql:(sql:string)=>context.sql(sql,f.database)});expect((await f.c.query('SELECT md5(jsonb_agg(to_jsonb(h) ORDER BY table_name,row_key::text,payload_sha256)::text) value FROM local_identity.history_versions h')).rows).toEqual(before);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('an unsupported old version keeps its raw key and cannot delete a current version sharing the native project SHA',async()=>{
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated historical databases');
++ const {projectHistory}=await import(join(process.cwd(),'scripts/runtime/project-history.mjs'));
++ const catalog=loadSchemaCatalog(process.cwd()),old={...catalog,current:catalog.current.filter(f=>f.version<'188-')},database='loop_legacy_collision_'+randomBytes(6).toString('hex'),sql=(q:string)=>context.sql(q,database);
++ context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
++ try{
++  sql(freshSchemaTransaction(old));const ids=seedHistoricalPreparation(sql);sql(migrationTransaction(catalog.current.filter(f=>f.version>='188-')));
++  const before=sql(`SELECT jsonb_build_object('workspace',(SELECT to_jsonb(w) FROM local_identity.production_workspaces w WHERE id='${ids.workspace}'),'versions',(SELECT jsonb_agg(to_jsonb(v) ORDER BY revision) FROM local_identity.production_workspace_versions v WHERE workspace_id='${ids.workspace}'))`);
++  const script=randomUUID(),board=randomUUID(),artifact=randomUUID();
++  sql(`INSERT INTO public.production_material_revisions SELECT * FROM jsonb_populate_record(NULL::public.production_material_revisions,(SELECT to_jsonb(m)||jsonb_build_object('id','${script}','revision_number',2,'is_main_script',false,'storage_path','unsupported.md') FROM public.production_material_revisions m WHERE id='${ids.script}'));
++   INSERT INTO public.artifacts SELECT * FROM jsonb_populate_record(NULL::public.artifacts,(SELECT to_jsonb(a)||jsonb_build_object('id','${artifact}','relative_path','unsupported-board.json') FROM public.artifacts a WHERE id='${ids.boardFile}'));
++   INSERT INTO public.review_packages SELECT * FROM jsonb_populate_record(NULL::public.review_packages,(SELECT to_jsonb(p)||jsonb_build_object('id','${board}','artifact_id','${artifact}','revision_number',2,'context_snapshot','{"worker_result":{"storyboard":{"version":"storyboard/v999","shots":[{"id":"shot-01","scriptSegment":"不得接入未知版本"}]}}}'::jsonb) FROM public.review_packages p WHERE id='${ids.board}'));`);
++  const raw=JSON.parse(sql(`SELECT (to_jsonb(v)-'preparation_revision_id')||jsonb_build_object('script_revision_id','${script}','storyboard_package_id','${board}','revision',2) FROM local_identity.production_workspace_versions v WHERE workspace_id='${ids.workspace}'`));
++  const key={workspace_id:ids.workspace,project_sha256:raw.project_sha256},hash=createHash('sha256').update(JSON.stringify(raw)).digest('hex'),literal=(v:unknown)=>"'"+JSON.stringify(v).replaceAll("'","''")+"'";
++  sql(`INSERT INTO local_identity.history_versions(table_name,row_key,payload_sha256,owner_id,payload)VALUES('local_identity.production_workspace_versions',${literal(key)},'${hash}','${ids.owner}',${literal(raw)})`);
++  projectHistory({sql});
++  expect(sql(`SELECT jsonb_build_object('workspace',(SELECT to_jsonb(w) FROM local_identity.production_workspaces w WHERE id='${ids.workspace}'),'versions',(SELECT jsonb_agg(to_jsonb(v) ORDER BY revision) FROM local_identity.production_workspace_versions v WHERE workspace_id='${ids.workspace}'))`)).toBe(before);
++  expect(sql(`SELECT count(*) FROM local_identity.production_preparation_revisions WHERE id='${board}'`)).toBe('0');
++  expect(sql(`SELECT status FROM local_identity.history_projection_results WHERE payload_sha256='${hash}'`)).toBe('history-only:legacy-adaptation:22023');
++  expect(JSON.parse(sql(`SELECT payload FROM local_identity.history_versions WHERE payload_sha256='${hash}'`))).toEqual(raw);
++  projectHistory({sql});expect(sql(`SELECT count(*) FROM local_identity.production_workspace_versions WHERE workspace_id='${ids.workspace}'`)).toBe('1');
++ }finally{context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('an existing old confirmation cannot supply a new preparation when its selected history belongs to another source Owner',async()=>{
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated historical databases');
++ const {projectHistory}=await import(join(process.cwd(),'scripts/runtime/project-history.mjs'));
++ const catalog=loadSchemaCatalog(process.cwd()),old={...catalog,current:catalog.current.filter(f=>f.version<'188-')},database='loop_legacy_basis_'+randomBytes(6).toString('hex'),sql=(q:string)=>context.sql(q,database),foreign=randomUUID(),literal=(v:unknown)=>"'"+JSON.stringify(v).replaceAll("'","''")+"'";
++ context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
++ try{
++  sql(freshSchemaTransaction(old));const ids=seedHistoricalPreparation(sql);sql(migrationTransaction(catalog.current.filter(f=>f.version>='188-')));sql(`INSERT INTO local_identity.owners(id,email)VALUES('${foreign}','foreign@example.invalid');`);
++  const basis=sql(`SELECT to_jsonb(p) FROM local_identity.workspace_preparations p WHERE package_id='${ids.board}'`);
++  for(const [table,key]of [['production_workspaces',['id']],['production_workspace_versions',['workspace_id','project_sha256']],['workspace_preparations',['package_id']]]as const){
++   const rows=JSON.parse(sql(`SELECT jsonb_agg(to_jsonb(t)-'preparation_revision_id') FROM local_identity.${table} t`));
++   for(const row of rows){const hash=createHash('sha256').update(JSON.stringify(row)).digest('hex');sql(`INSERT INTO local_identity.history_versions(table_name,row_key,payload_sha256,owner_id,payload)VALUES('local_identity.${table}',${literal(Object.fromEntries(key.map(k=>[k,row[k]])))},'${hash}','${table==='workspace_preparations'?foreign:ids.owner}',${literal(row)})`);}
++  }
++  sql("BEGIN;SET LOCAL session_replication_role=replica;DELETE FROM local_identity.production_workspaces;DELETE FROM local_identity.production_workspace_versions;DELETE FROM local_identity.workspace_caption_inputs;DELETE FROM local_identity.workspace_narration_inputs;DELETE FROM local_identity.production_preparation_revisions;DELETE FROM local_identity.production_shot_versions;DELETE FROM local_identity.production_shots;COMMIT;");
++  const before=sql('SELECT md5(jsonb_agg(to_jsonb(h) ORDER BY table_name,row_key::text,payload_sha256)::text) FROM local_identity.history_versions h');projectHistory({sql});
++  expect(sql(`SELECT count(*) FROM local_identity.production_preparation_revisions WHERE id='${ids.board}'`)).toBe('0');
++  expect(sql(`SELECT count(*) FROM local_identity.production_workspaces WHERE id='${ids.workspace}'`)).toBe('0');
++  expect(sql(`SELECT status FROM local_identity.history_projection_results WHERE table_name='local_identity.production_workspaces'`)).toBe('history-only:legacy-adaptation:42501');
++  expect(sql(`SELECT to_jsonb(p) FROM local_identity.workspace_preparations p WHERE package_id='${ids.board}'`)).toBe(basis);
++  expect(sql('SELECT md5(jsonb_agg(to_jsonb(h) ORDER BY table_name,row_key::text,payload_sha256)::text) FROM local_identity.history_versions h')).toBe(before);
++ }finally{context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');}
++},120000);

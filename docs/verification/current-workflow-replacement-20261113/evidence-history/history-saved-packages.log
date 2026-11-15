@@ -1,0 +1,21 @@
+E2E evidence: /private/tmp/loop-story-e2e-JjV5Vx/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-JjV5Vx/source
+
+ ✓ src/local-app/retiredGeneratedScript.integration.test.ts (2 tests) 21591ms
+   ✓ 185 retires only the generated-script pair with a fail-closed Owner transition and preserves full original evidence and real history projection  8165ms
+   ✓ all real saved Worker and Owner command ports reject generated-script execution while retaining old storyboard approval and its projections  13425ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  17:10:40
+   Duration  22.52s (transform 5.04s, setup 9ms, collect 748ms, tests 21.59s, environment 0ms, prepare 37ms)
+
+JSON report written to /private/tmp/loop-story-e2e-JjV5Vx/evidence/vitest.json

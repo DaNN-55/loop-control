@@ -1,0 +1,911 @@
+--- WOMyG1/src/local-app/episodeCommands.ts
++++ loop-story-e2e-J0pciK/src/local-app/episodeCommands.ts
+@@ -99,7 +99,7 @@
+    }else{
+     // Older owned orders predate native execution registration. Enrol only at
+     // an explicit four-step entry; failed commands roll this back with the rest.
+-    if(['adoptLegacyWorkspace','adoptLegacyPlan','prepareWorkspace','reconfirmScript','importMaterial'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
++    if(['importLegacyDraftInputs','adoptLegacyWorkspace','adoptLegacyPlan','prepareWorkspace','reconfirmScript','importMaterial'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
+      if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
+      const legacy=(await c.query('SELECT stage,archived_at FROM public.episodes WHERE id=$1',[data.episodeId])).rows[0];
+      if(legacy.archived_at||legacy.stage==='production_completed')throw new ConfigurationError(409,'历史或已完成生产单只读。');
+@@ -108,7 +108,7 @@
+     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
+     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
+     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
+-    const inputIo=['importMaterial','reconfirmScript','configureScriptProduction','prepareWorkspace','adoptLegacyPlan'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
++    const inputIo=['importMaterial','reconfirmScript','configureScriptProduction','prepareWorkspace','adoptLegacyPlan','importLegacyDraftInputs'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
+     if(location)await requireEpisodeStorageDirectory(c,location);
+     const root=location?.assetRoot??await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
+     if(body.command!=='openDirectory'){
+--- WOMyG1/src/local-app/legacyDraftAudio.integration.test.ts
++++ loop-story-e2e-J0pciK/src/local-app/legacyDraftAudio.integration.test.ts
+@@ -0,0 +1,62 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {readFile,writeFile} from 'node:fs/promises';
++import {join} from 'node:path';
++import {execFileSync} from 'node:child_process';
++import {createHash,randomUUID} from 'node:crypto';
++import {productionWorkspaceFixture} from './productionWorkspace.fixture';
++import {defaultShotCaptionContract} from '../shotCaptions';
++import {editStudioDocument} from './studioDocument.fixture';
++
++async function registeredMusicFixture(){
++ const f=await productionWorkspaceFixture({runtime:{wake(){}}});
++ try{
++  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);
++  const track=randomUUID(),task=randomUUID(),artifact=randomUUID(),path=f.episodeRelativePath+'/registered-music.mp3';
++  execFileSync('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i','sine=frequency=220:sample_rate=48000','-t','6','-c:a','libmp3lame',join(f.assetRoot,path)]);const bytes=await readFile(join(f.assetRoot,path)),sha=createHash('sha256').update(bytes).digest('hex');
++  await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,provider,input_snapshot) VALUES($1,$2,'generate_soundtrack','completed','freesound',$3)",[task,f.episode,{original:'registered music output'}]);
++  await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'soundtrack_audio',$4,$5,$6)",[artifact,f.episode,task,path,sha,bytes.length]);
++  await f.c.query("INSERT INTO public.audio_tracks(id,episode_id,source_task_id,source_artifact_id,source_review_package_id,track_kind,cue_id,relative_path,sha256,file_size,duration_seconds) VALUES($1,$2,$3,$4,$5,'bgm','original-music',$6,$7,$8,6)",[track,f.episode,task,artifact,f.board,path,sha,bytes.length]);
++  const facts=async()=>(await f.c.query("SELECT jsonb_build_object('tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'tracks',(SELECT jsonb_agg(a ORDER BY id) FROM public.audio_tracks a WHERE episode_id=$1),'materials',(SELECT jsonb_agg(m ORDER BY id) FROM public.production_material_revisions m WHERE episode_id=$1)) value",[f.episode])).rows[0].value,before=await facts();
++  return{...f,w,track,task,artifact,path,sha,facts,before};
++ }catch(error){await f.close();throw error;}
++}
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('prepares an exact existing music track locally without manufacturing a material, task or adoption, then edits and reopens the adopted sound',async()=>{
++ const f=await registeredMusicFixture();let w=f.w;const{track,path,sha,facts,before}=f;
++ try{
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const r=await f.rawRequest('prepareWorkspaceAudio',{workspaceId:w.id,expectedRevision:w.revision,kind:'bgm',audioTrackId:track,description:'原登记配乐',durationSeconds:4,anchor:'absolute',offsetSeconds:0});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
++  const prep=w.audio.preparations[0];expect(prep).toMatchObject({status:'ready',taskId:null,audioTrackId:track,relativePath:path,sha256:sha,adoptedItemId:null});expect(w.audio.mix.sounds).toHaveLength(0);expect(await facts()).toEqual(before);
++  await send('adoptWorkspaceAudio',{preparationId:prep.id});expect(w.audio.mix.sounds).toHaveLength(1);
++  for(const clip of w.clips)await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});
++  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{expect(doc.timelines[0].items.some((i:any)=>i.kind==='audio'&&i.sourceAssetId===`audio-track-${track}`)).toBe(true);});await send('closeWorkspaceStudio');await f.restart();
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);expect((await response.json()).workspace.audio.preparations[0].audioTrackId).toBe(track);expect(await facts()).toEqual(before);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['invalidated','failed','artifact','sha'] as const)('revalidates %s source evidence after local preparation without adopting it or creating a request',async(kind)=>{
++ const f=await registeredMusicFixture();
++ try{
++  const data={workspaceId:f.w.id,expectedRevision:f.w.revision,kind:'bgm',audioTrackId:f.track,description:'本地原轨',durationSeconds:4};
++  const made=await f.rawRequest('prepareWorkspaceAudio',data);expect(made.status,JSON.stringify(made.body)).toBe(200);const p=made.body.audio.preparations[0];
++  if(kind==='invalidated')await f.c.query("UPDATE public.tasks SET invalidated_at=now(),invalidated_reason='Original invalidated' WHERE id=$1",[f.task]);
++  if(kind==='failed')await f.c.query("UPDATE public.tasks SET status='blocked',last_result=$2 WHERE id=$1",[f.task,{blockers:[{code:'provider_outcome_unknown'}]}]);
++  if(kind==='artifact')await f.c.query("UPDATE public.artifacts SET sha256=repeat('e',64) WHERE id=$1",[f.artifact]);
++  if(kind==='sha'){const bytes=await readFile(join(f.assetRoot,f.path)),bad=Buffer.from(bytes);bad[bad.length-1]^=1;await writeFile(join(f.assetRoot,f.path),bad);}
++  const before=await f.facts(),r=await f.rawRequest('adoptWorkspaceAudio',{workspaceId:f.w.id,expectedRevision:f.w.revision,preparationId:p.id});expect(r.status,JSON.stringify(r.body)).toBe(409);expect(await f.facts()).toEqual(before);
++  const read=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(read.status).toBe(200);expect((await read.json()).workspace.audio.mix.sounds).toHaveLength(0);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('rejects malformed local pointers, mixed inputs and foreign Owner while keeping the retry confirmation gate',async()=>{
++ const f=await registeredMusicFixture();
++ try{
++  const data={workspaceId:f.w.id,expectedRevision:f.w.revision,kind:'bgm',audioTrackId:f.track,description:'本地原轨',durationSeconds:4};
++  for(const audioTrackId of [null,'',0,{}]){const r=await f.rawRequest('prepareWorkspaceAudio',{...data,audioTrackId});expect(r.status,JSON.stringify(r.body)).toBe(400);}
++  expect((await f.rawRequest('prepareWorkspaceAudio',{...data,materialRevisionId:f.material})).status).toBe(400);expect((await f.rawRequest('prepareWorkspaceAudio',{...data,kind:'source'})).status).toBe(400);expect((await f.rawRequest('prepareWorkspaceAudio',data,{token:f.otherToken})).status).toBe(404);
++  const retry=await f.rawRequest('prepareWorkspaceAudio',{...data,preparationId:randomUUID(),retry:true});expect(retry.status).toBe(409);expect(retry.body.error).toContain('确认本次调用');
++  expect((await f.rawRequest('prepareWorkspaceAudio',{...data,kind:'sfx'})).status).toBe(409);expect((await f.rawRequest('prepareWorkspaceAudio',{...data,durationSeconds:8})).status).toBe(409);expect(await f.facts()).toEqual(f.before);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.workspace_audio_preparations WHERE workspace_id=$1',[f.w.id])).rows[0].n).toBe(0);
++ }finally{await f.close();}
++},90000);
+--- WOMyG1/src/local-app/legacyDraftInputs.ts
++++ loop-story-e2e-J0pciK/src/local-app/legacyDraftInputs.ts
+@@ -0,0 +1,99 @@
++import type {PoolClient} from 'pg';
++import type {ProductionWorkspace,LegacyDraftInputs} from '../productionWorkspace.js';
++import {ConfigurationError} from './configurationCommands.js';
++import {readLegacyWorkbenchSource,verifyLegacyWorkbenchBasis,type LegacyWorkbenchRecord} from './legacyWorkbenchSource.js';
++import {probeMp3Artifact} from '../worker/mediaTools.js';
++import {episodeFileIO} from './episodeFiles.js';
++import {verifyEpisodeFile} from './episodeFiles.js';
++import {registeredWorkspaceAudio} from './registeredWorkspaceAudio.js';
++import {parseShotWorkbenchClipSegments} from '../worker/shotWorkbenchStudio.js';
++import {normalizeShotCaptionContract} from '../shotCaptions.js';
++
++type Source=NonNullable<Awaited<ReturnType<typeof readLegacyWorkbenchSource>>>;
++function unavailable(error:unknown){if(error instanceof ConfigurationError&&[404,409].includes(error.status)||['ENOENT','ENOTDIR','EACCES','EPERM','EIO'].includes((error as NodeJS.ErrnoException)?.code??''))return;throw error;}
++export async function verifyLegacyDraftInputs(c:PoolClient,root:string,source:Source){
++ const {board}=await verifyLegacyWorkbenchBasis(c,root,source),s=source.record;
++ if(s.drafts.length!==board.shots.length||new Set(s.drafts.map(d=>d.shot_id)).size!==s.drafts.length)throw new ConfigurationError(409,'原镜头草稿不完整，请保留原版核对。');
++ if(s.drafts.every(d=>d.confirmation_status==='confirmed'))throw new ConfigurationError(409,'原镜头均已确认，请从原工作版本接续。');
++ for(const d of s.drafts){
++  if(!board.shots.some((shot:{id:string})=>shot.id===d.shot_id)||!['pending','skipped','confirmed'].includes(d.confirmation_status)||!['none','source','tts'].includes(d.audio_mode))throw new ConfigurationError(409,'原草稿状态或镜头映射无法核验。');
++  if(d.selected_material_revision_id&&!s.materials.some(m=>m.id===d.selected_material_revision_id)||d.current_audio_track_id&&!s.tracks.some(t=>t.id===d.current_audio_track_id))throw new ConfigurationError(409,'原草稿绑定不是同单登记来源。');
++  parseShotWorkbenchClipSegments(d.clip_segments??[]);
++  const captions=d.caption_contract as {version?:string}|null|undefined;
++  if(captions&&captions.version!=='shot-captions/v1')throw new ConfigurationError(409,'原字幕草稿协议尚未接入。');
++ }
++ for(const selection of s.selections)if(selection.material_revision_id&&!s.materials.some(m=>m.id===selection.material_revision_id)||selection.target_kind==='shot'&&!board.shots.some((shot:{id:string})=>shot.id===selection.target_id)||selection.target_kind==='episode'&&selection.target_id!==s.episodeId)throw new ConfigurationError(409,'原声音选择不是同单镜头或登记来源。');
++ return board;
++}
++export async function installLegacyDraftInputs(c:PoolClient,root:string,initial:ProductionWorkspace,source:Source,board:{shots:Array<{id:string;durationSeconds?:number}>;audioCues?:Array<{id:string;kind:string;startSeconds?:number;durationSeconds?:number}>},execute:(command:string,data:Record<string,unknown>)=>Promise<ProductionWorkspace>){
++ let state=initial;const issues:LegacyDraftInputs['issues']=[];
++ const send=async(command:string,data:Record<string,unknown>)=>state=await execute(command,{workspaceId:state.id,expectedRevision:state.revision,...data});
++ for(const draft of source.record.drafts){
++  if(draft.confirmation_status==='confirmed')continue;
++  const clips=state.clips.filter(b=>b.shotId===draft.shot_id),clip=clips[0];if(!clip)throw new ConfigurationError(409,'当前制作基准缺少原草稿镜头。');
++  const material=source.record.materials.find(m=>m.id===draft.selected_material_revision_id);
++  if(material){
++   try{await verifyEpisodeFile(c,root,state.episodeId,material.storage_path,material.sha256,Number(material.file_size));}
++   catch(error){unavailable(error);issues.push({shotId:draft.shot_id,kind:'visual_source_unavailable'});}
++   if(!issues.some(i=>i.shotId===draft.shot_id&&i.kind==='visual_source_unavailable'))for(const target of clips)await send('registerWorkspaceVisualCandidate',{targetItemId:target.itemId,materialRevisionId:material.id,usage:material.material_type==='image'?'still':'video',durationSeconds:5});
++  }
++  let voice:Awaited<ReturnType<typeof registeredWorkspaceAudio>>|null=null;
++  if(draft.audio_mode==='tts'&&draft.current_audio_track_id){
++   try{voice=await registeredWorkspaceAudio(c,root,state.episodeId,draft.current_audio_track_id,'narration');}catch(error){unavailable(error);issues.push({shotId:draft.shot_id,kind:'voice_source_unavailable'});}
++  }
++  await send('saveWorkspaceNarration',{clipId:clip.id,mode:voice?'manual':'none',text:draft.tts_text??clip.text,voice:draft.tts_voice??null,speakingRate:draft.tts_speaking_rate==null?null:Number(draft.tts_speaking_rate),...(voice?{audioTrackId:voice.track.id}:{})});
++  const captions=normalizeShotCaptionContract(draft.caption_contract,{text:draft.subtitle_text,enabled:draft.subtitles_enabled,audioMode:draft.audio_mode});
++  // Old unconfirmed cues remain in the source record; no timing/text approval is imported.
++  const mode=captions.contentMode;captions.contentMode='independent';captions.text=draft.subtitle_text;captions.cues=[];
++  await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:captions});
++  if(mode==='follow_tts'){
++   await send('saveWorkspaceNarrationCaptions',{clipId:clip.id,contentMode:'follow_tts',text:draft.subtitle_text});
++   if(!draft.subtitles_enabled)await send('setWorkspaceCaptionsEnabled',{clipId:clip.id,enabled:false});
++  }
++ }
++ for(const selection of source.record.selections){
++  const cue=board.audioCues?.find(c=>c.id===selection.cue_id&&c.kind===selection.audio_kind),shotId=selection.target_kind==='shot'?selection.target_id:null;
++  const window=shotId?Number(board.shots.find(s=>s.id===shotId)?.durationSeconds??3):board.shots.reduce((sum,s)=>sum+Number(s.durationSeconds??3),0);
++  const offset=shotId?Math.max(0,Number(cue?.startSeconds??0)-board.shots.slice(0,board.shots.findIndex(s=>s.id===shotId)).reduce((sum,s)=>sum+Number(s.durationSeconds??3),0)):0;
++  const common={kind:selection.audio_kind,description:selection.audio_kind==='bgm'?'原配乐候选':'原音效候选',anchor:shotId?'shot':'absolute',...(shotId?{shotId}:{}),offsetSeconds:offset};
++  if(selection.material_revision_id){
++   const material=source.record.materials.find(m=>m.id===selection.material_revision_id)!;let duration:number;
++   try{await verifyEpisodeFile(c,root,state.episodeId,material.storage_path,material.sha256,Number(material.file_size));duration=await probeMp3Artifact(await(await episodeFileIO(c,root,state.episodeId)).resolveReference(material.storage_path));}catch(error){unavailable(error);issues.push({shotId:shotId??'episode',kind:'sound_source_unavailable'});continue;}
++   await send('prepareWorkspaceAudio',{...common,materialRevisionId:material.id,durationSeconds:Math.min(duration,window)});
++  }else if(selection.cue_id&&cue){
++   const tracks=source.record.tracks.filter(t=>t.source_review_package_id===source.record.board.id&&t.cue_id===cue.id&&t.track_kind===selection.audio_kind);
++   for(const track of tracks){let registered:Awaited<ReturnType<typeof registeredWorkspaceAudio>>;
++    try{registered=await registeredWorkspaceAudio(c,root,state.episodeId,track.id,selection.audio_kind==='bgm'?'bgm':'sfx');}catch(error){unavailable(error);issues.push({shotId:shotId??'episode',kind:'sound_source_unavailable'});continue;}
++    await send('prepareWorkspaceAudio',{...common,audioTrackId:track.id,durationSeconds:Math.min(registered.duration,Number(cue.durationSeconds??window))});
++   }
++  }else if(selection.cue_id)issues.push({shotId:shotId??'episode',kind:'sound_selection_unavailable'});
++ }
++ return{workspace:state,issues};
++}
++
++interface Recovery {relative_path:string;sha256:string;file_size:number|string}
++async function legacyEvidence(c:PoolClient,root:string,episodeId:string,recovery:Recovery){
++ const bytes=await verifyEpisodeFile(c,root,episodeId,recovery.relative_path,recovery.sha256,Number(recovery.file_size));
++ let value;try{value=JSON.parse(bytes.toString('utf8'));}catch{throw new ConfigurationError(409,'原接入来源文件格式无效。');}
++ const source=value.source;if(source?.version!=='legacy-shot-workbench/v1')return null;
++ if(source.record?.version!=='legacy-shot-workbench/v1'||source.record.episodeId!==episodeId||!Array.isArray(source.record.drafts)||!Array.isArray(source.record.tasks))throw new ConfigurationError(409,'原接入来源协议不完整。');
++ return source as {version:string;sha256:string;record:LegacyWorkbenchRecord;importMode?:string;issues?:LegacyDraftInputs['issues']};
++}
++export async function readLegacyDraftInputs(c:PoolClient,root:string,episodeId:string,recovery:Recovery|undefined):Promise<LegacyDraftInputs|undefined>{
++ if(!recovery)return undefined;const source=await legacyEvidence(c,root,episodeId,recovery);if(source?.importMode!=='draft-inputs/v1')return undefined;
++ return{version:'legacy-draft-inputs/v1',sourceSha256:source.sha256,issues:source.issues??[],shots:source.record.drafts.map(d=>({shotId:d.shot_id,confirmationStatus:d.confirmation_status,audioMode:d.audio_mode,materialRevisionId:d.selected_material_revision_id??null,audioTrackId:d.current_audio_track_id??null,subtitleText:d.subtitle_text,ttsText:d.tts_text??null,ranges:parseShotWorkbenchClipSegments(d.clip_segments??[]),composition:d.composition??null}))};
++}
++
++/** Migration must not make an unresolved old Provider request eligible for another send. */
++export async function assertLegacyExternalRequestsResolved(c:PoolClient,root:string,row:{id:string;episode_id:string}){
++ const recovery=(await c.query('SELECT relative_path,sha256,file_size FROM local_identity.workspace_legacy_recoveries WHERE workspace_id=$1',[row.id])).rows[0];if(!recovery)return;
++ const source=await legacyEvidence(c,root,row.episode_id,recovery);if(!source)return;
++ const types=['generate_narration','generate_soundtrack','generate_static_visual','generate_shot_video','generate_a_roll','generate_b_roll'];
++ const ids=source.record.tasks.filter(t=>types.includes(t.task_type)).map(t=>t.id);if(!ids.length)return;
++ const tasks=(await c.query('SELECT t.status,t.last_result,local_identity.provider_dispatch_observation(t.id) observation FROM public.tasks t WHERE t.episode_id=$1 AND t.id=ANY($2::uuid[])',[row.episode_id,ids])).rows;
++ for(const task of tasks){
++  if(task.status==='completed')continue;
++  const result=task.last_result,unknown=[...(Array.isArray(result?.blockers)?result.blockers:[]),...(Array.isArray(result?.preflight?.checks)?result.preflight.checks:[])].some(v=>['provider_outcome_unknown','provider_result_unknown','submission_unknown'].includes(v?.code??v?.check));
++  if(task.status==='running'||unknown||task.observation&&!['preparing','reserved','rejected'].includes(task.observation.phase))throw new ConfigurationError(409,'原外部请求仍在执行或结果未知，请先核对；不会重新发送。');
++ }
++}
+--- WOMyG1/src/local-app/legacyMixedWorkspace.ts
++++ loop-story-e2e-J0pciK/src/local-app/legacyMixedWorkspace.ts
+@@ -0,0 +1,60 @@
++import type {PoolClient} from 'pg';
++import {buildOpenChatCutProject} from '../worker/openchatcutProject.js';
++import type {StoryboardManifest,WorkerTaskPackage} from '../worker/contracts.js';
++import type {WorkspaceClip} from '../productionWorkspace.js';
++import {createProductionWorkspaceProject} from './workspaceInitialProject.js';
++import {recoverImportedWorkspaceProject} from './legacyWorkspaceProject.js';
++import {readWorkspaceShots,withWorkspaceShotMetadata,workspaceShotIdentity} from '../workspaceShots.js';
++import {ConfigurationError} from './configurationCommands.js';
++
++type Render=NonNullable<WorkerTaskPackage['reviewRender']>;
++/** Preserve verified old uses; insert genuinely empty slots for unfinished shots. */
++export async function mixedLegacyWorkspace(c:PoolClient,root:string,episodeId:string,workspaceId:string,board:StoryboardManifest,render:Render){
++ const frozen=buildOpenChatCutProject(render,`loop-control-${episodeId}`),canvas=frozen.timelines[0];
++ const base=createProductionWorkspaceProject(episodeId,workspaceId,board.shots,canvas);
++ base.project=withWorkspaceShotMetadata(base.project,base.clips);
++ const adopted=await recoverImportedWorkspaceProject(c,root,episodeId,workspaceId,frozen,base.clips,render);
++ const confirmed=new Set(render.confirmedShots.map(s=>s.shotId)),native=readWorkspaceShots(frozen),pending=readWorkspaceShots(base.project);
++ const windows=new Map<string,{start:number;duration:number;previous:number;confirmed:boolean}>();let frame=0;
++ for(const shot of board.shots){
++  const known=confirmed.has(shot.id),window=(known?native:pending).find(s=>s.id===shot.id);
++  if(!window)throw new ConfigurationError(409,'原镜头的确认子集无法映射到完整作品。');
++  windows.set(shot.id,{start:frame,duration:window.durationInFrames,previous:window.startFrame,confirmed:known});frame+=window.durationInFrames;
++ }
++ const project=structuredClone(frozen),timeline=project.timelines[0];timeline.name='整期剪辑';
++ const items:typeof timeline.items=[];
++ for(const item of timeline.items){
++  const meta=item.loopControlAudio as {shotId?:string;kind?:string}|undefined,shotId=workspaceShotIdentity(item)?.shotId??meta?.shotId;
++  if(shotId){
++   const window=windows.get(shotId);if(!window?.confirmed)throw new ConfigurationError(409,'原采用内容没有准确的确认镜头。');
++   item.startFrame=Number(item.startFrame)+window.start-window.previous;
++   // A pending gap moves the adopted instance, never its verified source interval.
++   items.push(item);continue;
++  }
++  // The original selection contract permits episode BGM and shot SFX only.
++  if(item.kind!=='audio'||meta?.kind!=='sfx')throw new ConfigurationError(409,'原工程存在尚不能映射的采用内容。');
++  const member=render.members.find(m=>m.memberKind==='soundtrack'&&item.id===`soundtrack-${m.memberKey.replace(/[^a-zA-Z0-9_-]/g,'-')}`);
++  const targetId=member?.memberKey.slice(member.memberKey.indexOf(':')+1),target=targetId?windows.get(targetId):undefined;
++  if(!target?.confirmed)throw new ConfigurationError(409,'原音效缺少准确的确认镜头，未静默丢弃。');
++  const offset=Number(item.startFrame)-target.previous;
++  if(offset<0||offset+Number(item.durationInFrames)>target.duration)throw new ConfigurationError(409,'原镜头音效超出准确确认窗口，请保留原版核对。');
++  items.push({...item,startFrame:target.start+offset,loopControlAudio:{...meta,workspaceId,shotId:targetId,kind:'sfx',anchor:'shot',offsetSeconds:offset/timeline.fps}});
++ }
++ for(const item of base.project.timelines[0].items){
++  const id=workspaceShotIdentity(item)?.shotId,window=id?windows.get(id):undefined;if(!window||window.confirmed)continue;
++  items.push({...item,startFrame:Number(item.startFrame)+window.start-window.previous});
++  const track=String(item.track);timeline.tracks[track]??=base.project.timelines[0].tracks[track];if(!timeline.trackOrder.includes(track))timeline.trackOrder.unshift(track);
++ }
++ timeline.items=items;
++ for(const track of Object.values(timeline.tracks))for(const lane of track.captions?.sourceEntries??[]){
++  const id=render.confirmedShots.find(s=>lane.id===`workspace-caption-shot-${s.shotId}`)?.shotId,window=id?windows.get(id):undefined;
++  if(!window)throw new ConfigurationError(409,'原字幕不能映射到确认镜头。');
++  const shift=(window.start-window.previous)*1000/timeline.fps;for(const word of lane.words){word.start+=shift;word.end+=shift;}
++ }
++ for(const item of items){
++  const asset=project.assets.find(a=>a.id===item.sourceAssetId||a.src===item.src);
++  if(asset&&(Number(item.srcInFrame??0)<0||Number(item.srcInFrame??0)+Number(item.durationInFrames)>asset.durationInFrames+1))throw new ConfigurationError(409,'原声音或画面在完整作品中的使用窗口超出文件，未循环或重发。');
++ }
++ const clips:WorkspaceClip[]=board.shots.flatMap(s=>(confirmed.has(s.id)?adopted:base.clips).filter(b=>b.shotId===s.id));
++ return{project,clips};
++}
+--- WOMyG1/src/local-app/legacyWorkbenchAdoption.integration.test.ts
++++ loop-story-e2e-J0pciK/src/local-app/legacyWorkbenchAdoption.integration.test.ts
+@@ -1,3 +1,4 @@
++import {ownerTransaction} from './ownerTransaction';
+ // @vitest-environment node
+ import {expect,it} from 'vitest';
+ import {readFile,writeFile,mkdir} from 'node:fs/promises';
+@@ -13,7 +14,7 @@
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+ import {defaultShotCaptionContract} from '../shotCaptions';
+ const hash=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+-async function recordedWorkbench(layout:'legacy'|'registered'='legacy',mode:'none'|'source'|'tts'='none'){
++async function recordedWorkbench(layout:'legacy'|'registered'='legacy',mode:'none'|'source'|'tts'='none',shotCount=1){
+  const f=await productionWorkspaceFixture({runtime:{wake(){}},...(layout==='registered'?{episodeRelativePath:()=> '原工作版本 [D]_%/素材'}:{})});
+  try{
+   await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,2) ON CONFLICT(singleton) DO NOTHING');
+@@ -22,7 +23,7 @@
+    const bytes=await readFile(path);await writeFile(join(f.assetRoot,f.videoPath),bytes);f.files[0].sha256=hash(bytes);f.files[0].fileSize=bytes.length;
+    await f.c.query('UPDATE public.production_material_revisions SET sha256=$2,file_size=$3 WHERE id=$1',[f.material,hash(bytes),bytes.length]);await f.c.query('UPDATE public.artifacts SET sha256=$3,file_size=$4 WHERE episode_id=$1 AND relative_path=$2',[f.episode,f.videoPath,hash(bytes),bytes.length]);
+   }
+-  const board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.shots=board.shots.slice(0,1);
++  const board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.shots=board.shots.slice(0,shotCount);
+   const bytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),bytes);
+   await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(bytes),bytes.length]);
+   await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);
+@@ -30,7 +31,7 @@
+   await f.c.query("UPDATE public.shot_preparation_drafts SET audio_mode='none',subtitle_text='原字幕草稿',subtitles_enabled=false,selected_material_revision_id=$3,clip_start_seconds=0,clip_end_seconds=2,clip_segments='[{\"start_seconds\":0,\"end_seconds\":2}]',video_status='ready',video_duration_seconds=2,current_video_task_id=$4,current_video_artifact_id=(SELECT id FROM public.artifacts WHERE episode_id=$1 AND relative_path=$5 LIMIT 1) WHERE episode_id=$1 AND review_package_id=$2",[f.episode,f.board,f.material,f.task,f.videoPath]);
+   let voice:{taskId:string;trackId:string}|null=null;
+   if(mode!=='none'){
+-   const track=randomUUID(),task=randomUUID(),artifact=randomUUID(),draft=(await f.c.query('SELECT id FROM public.shot_preparation_drafts WHERE episode_id=$1',[f.episode])).rows[0].id;
++   const track=randomUUID(),task=randomUUID(),artifact=randomUUID(),draft=(await f.c.query("SELECT id FROM public.shot_preparation_drafts WHERE episode_id=$1 AND shot_id='shot-1'",[f.episode])).rows[0].id;
+    await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,$3,'completed',$4)",[task,f.episode,mode==='source'?'extract_embedded_audio':'generate_narration',{shot_preparation:{draft_id:draft},media:{narration:{text:'原口播确认正文'}}}]);
+    await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5,$6,$7)",[artifact,f.episode,task,mode==='source'?'source_audio':'narration_audio',f.episodeRelativePath+'/voice.mp3',f.files[1].sha256,f.files[1].fileSize]);
+    await f.c.query("INSERT INTO public.audio_tracks(id,episode_id,source_task_id,source_artifact_id,source_review_package_id,track_kind,cue_id,relative_path,sha256,file_size,duration_seconds) VALUES($1,$2,$3,$4,$5,$6,'shot-1',$7,$8,$9,2)",[track,f.episode,task,artifact,f.board,mode==='source'?'source':'narration',f.episodeRelativePath+'/voice.mp3',f.files[1].sha256,f.files[1].fileSize]);
+@@ -39,7 +40,7 @@
+   }
+   await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='confirmed',confirmed_at=now(),confirmed_by=$3,current_preview_task_id=$4,current_preview_input_fingerprint=preparation_input_fingerprint WHERE episode_id=$1 AND review_package_id=$2",[f.episode,f.board,f.owner,f.task]);
+   // The original task carries the exact recorded confirmation; no SDK/HTML project exists.
+-  const d=(await f.c.query('SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2',[f.episode,f.board])).rows[0];
++  const d=(await f.c.query("SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2 AND shot_id='shot-1'",[f.episode,f.board])).rows[0];
+   const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
+   snapshot.input_artifacts=f.files;snapshot.review_render.storyboard=board;snapshot.review_render.confirmed_shots=[{shot_id:d.shot_id,confirmation_status:'confirmed',input_fingerprint:d.preparation_input_fingerprint,source_material_revision_id:f.material,clip_segments:d.clip_segments,composition:d.composition,preparation_contract:d.preparation_contract,audio_mode:mode,audio_track_id:mode==='tts'?voice!.trackId:null,subtitle_text:d.subtitle_text,subtitles_enabled:false}];
+   snapshot.review_render.members=[{member_key:'shot:'+d.shot_id,member_kind:'shot_media',source_material_revision_id:f.material,relative_path:f.videoPath,sha256:f.files[0].sha256,start_seconds:0,duration_seconds:2,clip_segments:d.clip_segments,composition:d.composition,preparation_contract:d.preparation_contract,input_fingerprint:d.preparation_input_fingerprint,audio_mode:mode,subtitle_text:d.subtitle_text,subtitles_enabled:false}];
+@@ -159,8 +160,8 @@
+  }finally{await f.close();}
+ },120000);
+ 
+-it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('keeps the original frozen music A when a later unconfirmed result B exists for the same cue',async()=>{
+- const f=await recordedWorkbench();
++async function recordedMusicWorkbench(shotCount=1){
++ const f=await recordedWorkbench('legacy','none',shotCount);
+  try{
+   const cue='bgm-recorded',selection=randomUUID(),board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.audioCues=[{id:cue,kind:'bgm',description:'原配乐',startSeconds:0,durationSeconds:2}];
+   const boardBytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),boardBytes);await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(boardBytes),boardBytes.length]);await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);
+@@ -175,6 +176,13 @@
+   const draft=(await f.c.query('SELECT * FROM public.shot_preparation_drafts WHERE id=$1',[f.draft.id])).rows[0],snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
+   snapshot.review_render.storyboard=board;Object.assign(snapshot.review_render.confirmed_shots[0],{input_fingerprint:draft.preparation_input_fingerprint,preparation_contract:draft.preparation_contract});Object.assign(snapshot.review_render.members[0],{input_fingerprint:draft.preparation_input_fingerprint,preparation_contract:draft.preparation_contract});snapshot.review_render.members.push({member_key:`bgm:${f.episode}`,member_kind:'soundtrack',audio_kind:'bgm',task_id:a.task,audio_track_id:a.track,relative_path:a.path,sha256:a.sha,start_seconds:0,duration_seconds:2});snapshot.input_artifacts.push({relativePath:a.path,sha256:a.sha,fileSize:a.size});
+   await f.c.query('UPDATE public.tasks SET input_snapshot=$2 WHERE id=$1',[f.task,snapshot]);const b=await createTrack('B',880);
++  return{f,a,b};
++ }catch(error){await f.close();throw error;}
++}
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('keeps the original frozen music A when a later unconfirmed result B exists for the same cue',async()=>{
++ const {f,a,b}=await recordedMusicWorkbench();
++ try{
+   const read=await f.get();expect(read.status).toBe(200);expect(read.body.shots[0].confirmationStatus).toBe('confirmed');
+   const r=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);
+   const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${r.body.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);const project=(await response.json()).project,paths=project.timelines[0].items.filter((i:any)=>i.kind==='audio').map((i:any)=>i.src);expect(paths).toContain(a.path);expect(paths).not.toContain(b.path);
+@@ -195,3 +203,112 @@
+   expect((await f.c.query('SELECT to_jsonb(a) value FROM public.audio_tracks a WHERE id=$1',[track])).rows[0].value).toEqual(before);
+  }finally{await f.close();}
+ },90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('imports pending selections as current inputs and candidates without borrowing old confirmation, then continues through explicit adoption and native export',async()=>{
++ const f=await recordedWorkbench('legacy','tts');
++ try{
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE id=$1",[f.draft.id]);
++  const facts=async()=>(await f.c.query("SELECT jsonb_build_object('drafts',(SELECT jsonb_agg(d ORDER BY id) FROM public.shot_preparation_drafts d WHERE episode_id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'tracks',(SELECT jsonb_agg(a ORDER BY id) FROM public.audio_tracks a WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(a ORDER BY id) FROM public.approvals a WHERE episode_id=$1)) value",[f.episode])).rows[0].value,before=await facts(),source=await f.get();
++  const r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  expect(w.legacyInputs).toMatchObject({version:'legacy-draft-inputs/v1',sourceSha256:source.body.sha256,shots:[{shotId:'shot-1',confirmationStatus:'pending',audioMode:'tts'}]});
++  expect(w.readiness.placeholders).toHaveLength(1);expect(w.narration[0]).toMatchObject({mode:'manual',text:'原口播确认正文',confirmed:false,adoptedAudioTrackId:null,audioTrackId:f.draft.current_audio_track_id});expect(w.usedNarration).toHaveLength(0);expect(await facts()).toEqual(before);const events=async()=>(await f.c.query('SELECT event_type,payload FROM local_identity.production_metric_events WHERE episode_id=$1 ORDER BY id',[f.episode])).rows;expect((await events()).filter((e:any)=>['candidate_adopted','sound_used','provider_request_dispatch'].includes(e.event_type))).toHaveLength(0);
++  const candidate=w.visualCandidates.find((c:any)=>c.materialRevisionId===f.material);expect(candidate).toMatchObject({status:'available',taskId:null});
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const prepared=await send('prepareWorkspaceVisualCandidate',{candidateId:candidate.id,durationPolicy:'keep-target',sourceInSeconds:0,sourceOutSeconds:2});await send('adoptWorkspaceVisualCandidate',{candidateId:candidate.id,adoptionId:prepared.adoptionId});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});
++  const voice=await send('prepareWorkspaceCandidate',{candidateId:f.draft.current_audio_track_id,durationPolicy:'keep-target'});await send('adoptWorkspaceCandidate',{candidateId:f.draft.current_audio_track_id,adoptionId:voice.adoptionId});
++  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{expect(doc.timelines[0].items.some((i:any)=>i.sourceAssetId===`audio-track-${f.draft.current_audio_track_id}`)).toBe(true);});await send('closeWorkspaceStudio');await send('exportWorkspace');expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');
++  expect(await facts()).toEqual(before);const collected=await events();expect(collected.filter((e:any)=>e.event_type==='candidate_adopted')).toHaveLength(2);expect(collected.filter((e:any)=>e.event_type==='sound_used')).toHaveLength(1);expect(collected.filter((e:any)=>e.event_type==='provider_request_dispatch')).toHaveLength(0);await f.restart();await f.get();expect(await events()).toEqual(collected);
++ }finally{await f.close();}
++},180000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each([false,true])('keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: %s)',async(pendingFirst)=>{
++ const f=await recordedWorkbench('legacy','tts',2);
++ try{
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending',subtitle_text='第二镜未确认字幕' WHERE episode_id=$1 AND shot_id='shot-2'",[f.episode]);
++  if(pendingFirst){const board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.shots.reverse();const bytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),bytes);await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(bytes),bytes.length]);await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);await f.c.query("UPDATE public.tasks SET input_snapshot=jsonb_set(input_snapshot,'{review_render,storyboard}',$2) WHERE id=$1",[f.task,board]);}
++  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));
++
++  const facts=async()=>(await f.c.query("SELECT jsonb_build_object('drafts',(SELECT jsonb_agg(d ORDER BY id) FROM public.shot_preparation_drafts d WHERE episode_id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'tracks',(SELECT jsonb_agg(a ORDER BY id) FROM public.audio_tracks a WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(a ORDER BY id) FROM public.approvals a WHERE episode_id=$1)) value",[f.episode])).rows[0].value,before=await facts(),source=await f.get();
++  const r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  const first=w.clips.find((c:any)=>c.shotId==='shot-1'),second=w.clips.find((c:any)=>c.shotId==='shot-2');expect(first.source.materialRevisionId).toBe(f.material);expect(second.source).toBeNull();expect(w.readiness.placeholders).toEqual([second.itemId]);expect(w.usedNarration).toMatchObject([{shotId:'shot-1',audioTrackId:f.draft.current_audio_track_id,text:'原口播确认正文'}]);expect(w.legacyInputs.shots.map((s:any)=>s.confirmationStatus)).toEqual(['confirmed','pending']);expect(await facts()).toEqual(before);const observed=async()=>(await f.c.query('SELECT event_type FROM local_identity.production_metric_events WHERE episode_id=$1 ORDER BY id',[f.episode])).rows;expect((await observed()).filter((e:any)=>['candidate_adopted','sound_used','provider_request_dispatch'].includes(e.event_type))).toHaveLength(0);
++  const candidate=w.visualCandidates.find((c:any)=>c.shotId==='shot-2'&&c.materialRevisionId===f.material);expect(candidate).toMatchObject({status:'available',taskId:null});
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const prepared=await send('prepareWorkspaceVisualCandidate',{candidateId:candidate.id,durationPolicy:'keep-target',sourceInSeconds:0,sourceOutSeconds:2});await send('adoptWorkspaceVisualCandidate',{candidateId:candidate.id,adoptionId:prepared.adoptionId});await send('saveWorkspaceCaptions',{clipId:second.id,captionContract:defaultShotCaptionContract('第二镜未确认字幕','independent',false)});
++  const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const voice=doc.timelines[0].items.find((i:any)=>i.sourceAssetId===`audio-track-${f.draft.current_audio_track_id}`);expect(voice).toBeTruthy();expect(voice!.startFrame).toBe(pendingFirst?60:0);doc.timelines[0].name='混合原作品继续编辑';});w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256})).productionWorkspace;await send('closeWorkspaceStudio');await f.restart();const reloaded=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(reloaded.status).toBe(200);w=(await reloaded.json()).workspace;await send('exportWorkspace');expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');expect(await facts()).toEqual(before);expect((await observed()).filter((e:any)=>e.event_type==='candidate_adopted')).toHaveLength(1);expect((await observed()).filter((e:any)=>e.event_type==='sound_used')).toHaveLength(0);
++ }finally{await f.close();}
++},180000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('keeps unknown old voice unresolved while local candidates remain usable and current external proposals are blocked',async()=>{
++ const f=await recordedWorkbench('legacy','tts');
++ try{
++  const original=(await f.c.query('SELECT source_task_id FROM public.audio_tracks WHERE id=$1',[f.draft.current_audio_track_id])).rows[0].source_task_id;
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE id=$1",[f.draft.id]);
++  await f.c.query("UPDATE public.tasks SET status='blocked',last_result=$2 WHERE id=$1",[original,{blockers:[{code:'provider_outcome_unknown'}],retry:{shouldRetry:false}}]);
++  const source=await f.get(),r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  expect(w.narration[0].mode).toBe('none');expect(w.legacyInputs.issues).toContainEqual({shotId:'shot-1',kind:'voice_source_unavailable'});
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  const visual=w.visualCandidates.find((c:any)=>c.materialRevisionId===f.material),ready=await send('prepareWorkspaceVisualCandidate',{candidateId:visual.id,durationPolicy:'keep-target',sourceInSeconds:0,sourceOutSeconds:2});await send('adoptWorkspaceVisualCandidate',{candidateId:visual.id,adoptionId:ready.adoptionId});
++  const payload={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,reservationCents:100},before=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[original])).rows[0].value;
++  const blocked=await f.request('generateWorkspaceNarration',payload);expect(blocked.status,JSON.stringify(blocked.body)).toBe(409);expect(blocked.body.error).toContain('原外部请求仍在执行或结果未知');
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.workspace_call_confirmations WHERE workspace_id=$1',[w.id])).rows[0].n).toBe(0);expect((await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[original])).rows[0].value).toEqual(before);
++  await f.c.query("UPDATE public.tasks SET last_result=$2 WHERE id=$1",[original,{blockers:[{code:'confirmed_not_sent'}]}]);const resolved=await f.request('generateWorkspaceNarration',payload);expect(resolved.status,JSON.stringify(resolved.body)).toBe(409);expect(resolved.body.error).toContain('请先保存并确认当前口播');
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('imports every original registered music result as an unadopted local preparation and adopts only the explicitly selected result',async()=>{
++ const {f,a,b}=await recordedMusicWorkbench();
++ try{
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE id=$1",[f.draft.id]);await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));
++  const source=await f.get(),facts=async()=>(await f.c.query("SELECT jsonb_build_object('tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'tracks',(SELECT jsonb_agg(a ORDER BY id) FROM public.audio_tracks a WHERE episode_id=$1),'materials',(SELECT jsonb_agg(m ORDER BY id) FROM public.production_material_revisions m WHERE episode_id=$1)) value",[f.episode])).rows[0].value,before=await facts();
++  const r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  expect(w.audio.mix.sounds).toHaveLength(0);expect(w.audio.preparations.map((p:any)=>p.audioTrackId).sort()).toEqual([a.track,b.track].sort());for(const p of w.audio.preparations)expect(p).toMatchObject({status:'ready',taskId:null,adoptedItemId:null});expect(await facts()).toEqual(before);
++  const prep=w.audio.preparations.find((p:any)=>p.audioTrackId===b.track),adopt=await f.request('adoptWorkspaceAudio',{workspaceId:w.id,expectedRevision:w.revision,preparationId:prep.id});expect(adopt.status,JSON.stringify(adopt.body)).toBe(200);w=adopt.body;expect(w.audio.mix.sounds).toHaveLength(1);
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${w.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);expect((await response.json()).project.timelines[0].items.some((i:any)=>i.src===b.path&&i.kind==='audio')).toBe(true);expect(await readFile(join(f.assetRoot,a.path))).toBeTruthy();expect(await facts()).toEqual(before);
++  const events=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type='sound_used'",[f.episode])).rows;expect(events).toHaveLength(1);expect(events[0].payload).toMatchObject({role:'bgm',source_kind:'audio_track',source_id:b.track});
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['invalidated-confirmation','stale-source','foreign-owner','existing-workspace'] as const)('refuses %s mixed imports without changing original work or replacing current editing',async(kind)=>{
++ const f=await recordedWorkbench('legacy','tts',2);
++ try{
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE episode_id=$1 AND shot_id='shot-2'",[f.episode]);let source=await f.get();
++  if(kind==='invalidated-confirmation'){await f.c.query("UPDATE public.tasks SET invalidated_at=now(),invalidated_reason='Original preview withdrawn' WHERE id=$1",[f.task]);source=await f.get();}
++  if(kind==='stale-source')await f.c.query("UPDATE public.shot_preparation_drafts SET subtitle_text='Changed pending input' WHERE episode_id=$1 AND shot_id='shot-2'",[f.episode]);
++  if(kind==='existing-workspace')expect((await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).status).toBe(200);
++  const facts=async()=>(await f.c.query("SELECT jsonb_build_object('drafts',(SELECT jsonb_agg(d ORDER BY id) FROM public.shot_preparation_drafts d WHERE episode_id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'current',(SELECT jsonb_agg(w ORDER BY id) FROM local_identity.production_workspaces w WHERE episode_id=$1)) value",[f.episode])).rows[0].value,before=await facts();
++  const r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256},kind==='foreign-owner'?{token:f.otherToken}:{});expect(r.status,JSON.stringify(r.body)).toBe(kind==='foreign-owner'?404:409);expect(await facts()).toEqual(before);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('preserves the frozen music source interval when an unfinished shot precedes the confirmed shot, keeping the later result unadopted',async()=>{
++ const {f,a,b}=await recordedMusicWorkbench(2);
++ try{
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE episode_id=$1 AND shot_id='shot-2'",[f.episode]);
++  const board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.shots.reverse();const bytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),bytes);await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(bytes),bytes.length]);await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);await f.c.query("UPDATE public.tasks SET input_snapshot=jsonb_set(input_snapshot,'{review_render,storyboard}',$2) WHERE id=$1",[f.task,board]);
++  const source=await f.get(),r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);const w=r.body;
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${w.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);const project=(await response.json()).project,sounds=project.timelines[0].items.filter((i:any)=>i.kind==='audio');expect(sounds).toHaveLength(1);expect(sounds[0]).toMatchObject({src:a.path,srcInFrame:0,startFrame:60,durationInFrames:60});expect(sounds.some((i:any)=>i.src===b.path)).toBe(false);expect(w.audio.preparations.map((p:any)=>p.audioTrackId)).toEqual(expect.arrayContaining([a.track,b.track]));expect(w.readiness.placeholders).toHaveLength(1);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('moves a frozen shot effect with its confirmed shot after an unfinished gap without silently losing its original use',async()=>{
++ const {f,a}=await recordedMusicWorkbench(2);
++ try{
++  const board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.shots.reverse();board.audioCues[0].kind='sfx';const bytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),bytes);await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(bytes),bytes.length]);await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);
++  await f.c.query("UPDATE public.audio_tracks SET track_kind='sfx' WHERE id=$1",[a.track]);await f.c.query("UPDATE public.storyboard_audio_selections SET audio_kind='sfx',target_kind=$2,target_id=$3,cue_id=cue_id WHERE episode_id=$1",[f.episode,'shot','shot-1']);
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE episode_id=$1 AND shot_id='shot-2'",[f.episode]);await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='confirmed',confirmed_at=now(),confirmed_by=$2,current_preview_task_id=$3,current_preview_input_fingerprint=preparation_input_fingerprint WHERE id=$1",[f.draft.id,f.owner,f.task]);
++  const draft=(await f.c.query('SELECT * FROM public.shot_preparation_drafts WHERE id=$1',[f.draft.id])).rows[0],snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;snapshot.review_render.storyboard=board;Object.assign(snapshot.review_render.confirmed_shots[0],{input_fingerprint:draft.preparation_input_fingerprint,preparation_contract:draft.preparation_contract});Object.assign(snapshot.review_render.members[0],{input_fingerprint:draft.preparation_input_fingerprint,preparation_contract:draft.preparation_contract});const member=snapshot.review_render.members.find((m:any)=>m.member_kind==='soundtrack');Object.assign(member,{member_key:'sfx:shot-1',audio_kind:'sfx',start_seconds:0,duration_seconds:2});await f.c.query('UPDATE public.tasks SET input_snapshot=$2 WHERE id=$1',[f.task,snapshot]);
++  const source=await f.get();expect(source.body.shots.find((s:any)=>s.shotId==='shot-1').confirmationStatus).toBe('confirmed');const r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);const w=r.body;
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${w.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);const sounds=(await response.json()).project.timelines[0].items.filter((i:any)=>i.kind==='audio');expect(sounds).toHaveLength(1);expect(sounds[0]).toMatchObject({src:a.path,startFrame:60,durationInFrames:60,loopControlAudio:{kind:'sfx',shotId:'shot-1',anchor:'shot'}});
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('keeps a confirmed shot usable when the unfinished shot source is offline, preserving its original selection as an issue',async()=>{
++ const f=await recordedWorkbench('legacy','tts',2);
++ try{
++  const material=randomUUID(),path=f.episodeRelativePath+'/offline-pending.mp4';await f.c.query("INSERT INTO public.production_material_revisions(id,episode_id,revision_number,material_type,source_kind,source_path,storage_path,mime_type,sha256,file_size,is_main_script,created_by,material_purpose) SELECT $1,episode_id,3,material_type,source_kind,$2,$2,mime_type,sha256,file_size,false,created_by,material_purpose FROM public.production_material_revisions WHERE id=$3",[material,path,f.material]);
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending',selected_material_revision_id=$2 WHERE episode_id=$1 AND shot_id='shot-2'",[f.episode,material]);
++  const source=await f.get(),r=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);const w=r.body;
++  expect(w.usedNarration[0]).toMatchObject({shotId:'shot-1',audioTrackId:f.draft.current_audio_track_id});expect(w.clips.find((c:any)=>c.shotId==='shot-1').source.materialRevisionId).toBe(f.material);expect(w.readiness.placeholders).toHaveLength(1);expect(w.legacyInputs.issues).toContainEqual({shotId:'shot-2',kind:'visual_source_unavailable'});expect(w.legacyInputs.shots.find((d:any)=>d.shotId==='shot-2').materialRevisionId).toBe(material);expect(w.visualCandidates.some((c:any)=>c.materialRevisionId===material)).toBe(false);
++ }finally{await f.close();}
++},90000);
+--- WOMyG1/src/local-app/legacyWorkbenchSource.ts
++++ loop-story-e2e-J0pciK/src/local-app/legacyWorkbenchSource.ts
+@@ -11,7 +11,7 @@
+ 
+ 
+ type Row<K extends keyof Database['public']['Tables']>=Database['public']['Tables'][K]['Row'];
+-interface LegacyWorkbenchRecord {
++export interface LegacyWorkbenchRecord {
+  version:'legacy-shot-workbench/v1';episodeId:string;scriptRevisionId:string|null;
+  board:Row<'review_packages'>;drafts:Array<Row<'shot_preparation_drafts'>&{preparation_input_fingerprint:string|null;current_audio_track_id:string|null;current_video_artifact_id:string|null;current_video_task_id:string|null}>;tasks:Array<Row<'tasks'>&{invalidated_at:string|null}>;
+  materials:Row<'production_material_revisions'>[];tracks:Row<'audio_tracks'>[];artifacts:Row<'artifacts'>[];
+@@ -30,8 +30,22 @@
+  return{version:source.record.version,sha256:source.sha256,sourceVerification:'not_checked' as const,scriptRevisionId:source.record.scriptRevisionId,reviewPackageId:source.record.board.id,shots:source.record.drafts.map(d=>({shotId:d.shot_id,confirmationStatus:d.confirmation_status,materialRevisionId:d.selected_material_revision_id,audioTrackId:d.current_audio_track_id}))};
+ }
+ 
++/** The two import modes share original script/board identity and physical file checks. */
++export async function verifyLegacyWorkbenchBasis(c:PoolClient,root:string,source:NonNullable<Awaited<ReturnType<typeof readLegacyWorkbenchSource>>>){
++ const s=source.record;
++ if(!s.approvals.length||!s.script||s.script.material_type!=='script')throw new ConfigurationError(409,'原脚本或分镜批准来源不完整。');
++ await verifyEpisodeFile(c,root,s.episodeId,s.script.storage_path,s.script.sha256,Number(s.script.file_size));
++ const boardFile=s.artifacts.find(a=>a.id===s.board.artifact_id);
++ if(!boardFile)throw new ConfigurationError(409,'原分镜缺少同单文件登记。');
++ const bytes=await verifyEpisodeFile(c,root,s.episodeId,boardFile.relative_path,boardFile.sha256,Number(boardFile.file_size));
++ let board;try{board=JSON.parse(bytes.toString('utf8'));}catch{throw new ConfigurationError(409,'原分镜文件格式无效。');}
++ const context=s.board.context_snapshot as {worker_result?:{storyboard?:unknown};storyboard?:unknown}|null;
++ if(!isDeepStrictEqual(board,context?.worker_result?.storyboard??context?.storyboard)||board?.version!=='storyboard/v1'||!Array.isArray(board.shots)||!board.shots.length||board.shots.some((shot:{id:unknown;scriptSegment:unknown})=>typeof shot.id!=='string'||typeof shot.scriptSegment!=='string')||new Set(board.shots.map((shot:{id:string})=>shot.id)).size!==board.shots.length)throw new ConfigurationError(409,'原分镜文件与冻结记录不一致。');
++ return{board,boardFile};
++}
++
+ /** Reuse the original declared contract, never manufacture confirmation or media. */
+-export async function verifyLegacyWorkbenchSource(c:PoolClient,root:string,source:NonNullable<Awaited<ReturnType<typeof readLegacyWorkbenchSource>>>){
++export async function verifyLegacyWorkbenchSource(c:PoolClient,root:string,source:NonNullable<Awaited<ReturnType<typeof readLegacyWorkbenchSource>>>,confirmedOnly=false){
+  const s=source.record;
+  function fail(message:string):never{throw new ConfigurationError(409,message);}
+  function object(value:unknown):Record<string,unknown>{if(!value||typeof value!=='object'||Array.isArray(value))fail('原工作版本缺少可核验的声明。');return value as Record<string,unknown>;}
+@@ -46,15 +60,13 @@
+   if(!artifact||artifact.relative_path!==track.relative_path||artifact.sha256!==track.sha256||Number(artifact.file_size)!==Number(track.file_size)||artifact.producer_task_id!==track.source_task_id||track.source_task_id&&(!task||task.status!=='completed'||task.invalidated_at))fail('原音轨缺少准确且有效的完成产物。');
+   await file(track);
+  };
+- await file(s.script);
+- const boardFile=s.artifacts.find(a=>a.id===s.board.artifact_id),bytes=await file(boardFile);
+- let board;try{board=JSON.parse(bytes!.toString('utf8'));}catch{fail('原分镜文件格式无效。');}
+- const context=object(s.board.context_snapshot),recorded=context.worker_result?object(context.worker_result).storyboard:context.storyboard;
+- if(!isDeepStrictEqual(board,recorded)||!Array.isArray(board?.shots)||!board.shots.length||new Set(board.shots.map((b:{id:string})=>b.id)).size!==board.shots.length)fail('原分镜文件与冻结记录不一致。');
++ const {board,boardFile}=await verifyLegacyWorkbenchBasis(c,root,source);
+  if(board.shots.length!==s.drafts.length)fail('原镜头草稿不完整，请按原版本核对。');
+  const drafts:ShotWorkbenchStudioInput['drafts']=[];
+  const soundEvidence:Array<{shotId:string;member:NonNullable<ReturnType<typeof reviewRenderFromSnapshot>>['members'][number]}>=[];
+- for(const shot of board.shots){
++ const selectedShots=confirmedOnly?board.shots.filter((shot:{id:string})=>s.drafts.some(d=>d.shot_id===shot.id&&d.confirmation_status==='confirmed')):board.shots;
++ if(!selectedShots.length)fail('原来源没有可保留的确认镜头。');
++ for(const shot of selectedShots){
+   const d=s.drafts.find(d=>d.shot_id===shot.id);
+   if(!d||d.confirmation_status!=='confirmed'||!d.preparation_input_fingerprint||d.current_preview_input_fingerprint!==d.preparation_input_fingerprint)fail('原镜头尚未按当前输入确认，未伪造原确认。');
+   const task=s.tasks.find(t=>t.id===d.current_preview_task_id);
+@@ -85,7 +97,11 @@
+  for(const selected of s.selections){
+   if(!selected.material_revision_id&&!selected.cue_id)continue;
+   const key=selected.material_revision_id?'bgm:episode':`${selected.audio_kind}:${selected.target_id}`;
+-  const expectedShots=selected.target_kind==='episode'?drafts.map(d=>d.shotId):[selected.target_id];
++  const expectedShots=selected.target_kind==='episode'?drafts.map(d=>d.shotId):drafts.filter(d=>d.shotId===selected.target_id).map(d=>d.shotId);
++  if(!expectedShots.length){
++   if(confirmedOnly&&board.shots.some((shot:{id:string})=>shot.id===selected.target_id))continue;
++   fail('原声音选择缺少准确的确认镜头。');
++  }
+   const evidence=expectedShots.map(shotId=>{
+    const matches=soundEvidence.filter(e=>e.shotId===shotId&&e.member.memberKey===key&&e.member.audioKind===selected.audio_kind);
+    if(matches.length!==1)fail('原确认缺少唯一声音来源，未采用新的候选。');usedSounds.add(matches[0]);return matches[0].member;
+@@ -105,7 +121,7 @@
+  if(usedSounds.size!==soundEvidence.length)fail('原确认仍有未映射的声音，不会静默丢弃原采用。');
+  const composition=reviewRenderCompositionFromJson({...reviewRenderCompositionToJson(defaultReviewRenderComposition),...(s.series&&object(s.series.rules).openchatcut_composition?object(object(s.series.rules).openchatcut_composition):{})});
+  if(!composition)fail('原系列合成规则无法核验。');
+- let render=shotWorkbenchReviewRender(s.episodeId,boardFile!.relative_path,{allowedFrames:composition!.allowedFrames??2,frameRate:composition!.frameRate??30,storyboard:board,drafts,materials:s.materials.map(m=>({id:m.id,relativePath:m.storage_path,sha256:m.sha256})),audioTracks:s.tracks.filter(t=>drafts.some(d=>d.audioMode==='tts'&&d.audioTrackId===t.id)).map(t=>({id:t.id,cueId:t.cue_id!,relativePath:t.relative_path,sha256:t.sha256,startSeconds:Number(t.start_seconds),durationSeconds:Number(t.duration_seconds)})),soundtrackMembers});
++ let render=shotWorkbenchReviewRender(s.episodeId,boardFile!.relative_path,{allowedFrames:composition!.allowedFrames??2,frameRate:composition!.frameRate??30,storyboard:{...board,shots:selectedShots},drafts,materials:s.materials.map(m=>({id:m.id,relativePath:m.storage_path,sha256:m.sha256})),audioTracks:s.tracks.filter(t=>drafts.some(d=>d.audioMode==='tts'&&d.audioTrackId===t.id)).map(t=>({id:t.id,cueId:t.cue_id!,relativePath:t.relative_path,sha256:t.sha256,startSeconds:Number(t.start_seconds),durationSeconds:Number(t.duration_seconds)})),soundtrackMembers});
+  if(!composition)fail('原系列合成规则无法核验。');render.adjustments={...composition!,reason:'从原镜头绑定接入'};
+  const plan=s.plan?.plan as ResolvedProductionPlan|undefined;if(plan)render=applyScriptRenderSettings(render,scriptRenderHint(plan.settings,plan.segments));
+  return render;
+--- WOMyG1/src/local-app/legacyWorkspaceProject.ts
++++ loop-story-e2e-J0pciK/src/local-app/legacyWorkspaceProject.ts
+@@ -0,0 +1,25 @@
++import type {PoolClient} from 'pg';
++import {relative} from 'node:path';
++import {recoverLegacyBindings} from './workspacePreparation.js';
++import {resolveWorkspaceSource} from './workspaceSources.js';
++import {episodeFileIO} from './episodeFiles.js';
++import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
++import {probeMp3Artifact} from '../worker/mediaTools.js';
++import {adaptLegacyWorkspaceMetadata} from './legacyWorkspaceMetadata.js';
++import {ConfigurationError} from './configurationCommands.js';
++import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
++import type {WorkspaceClip} from '../productionWorkspace.js';
++import type {WorkerTaskPackage} from '../worker/contracts.js';
++
++/** One frozen-source and actual-window validator serves native, HTML and workbench imports. */
++export async function recoverImportedWorkspaceProject(c:PoolClient,root:string,episodeId:string,workspaceId:string,project:OpenChatCutProject,original:WorkspaceClip[],render?:NonNullable<WorkerTaskPackage['reviewRender']>){
++ const clips=await recoverLegacyBindings(c,root,episodeId,workspaceId,project,original);
++   if(render){
++    for(const member of render.members){const source=await resolveWorkspaceSource(c,root,episodeId,member.relativePath);if(source.sha256!==member.sha256)throw new ConfigurationError(409,'当前素材登记与旧工程冻结版本不一致。');}
++    // Source asset duration is the full file, not the selected legacy interval.
++    for(const asset of project.assets){const observed=asset.kind==='video'?await inspectWorkspaceVisualFile(root,relative(root,await (await episodeFileIO(c,root,episodeId)).resolveReference(asset.src)),'video'):null;asset.durationInFrames=Math.ceil((observed?.durationSeconds??await probeMp3Artifact(await (await episodeFileIO(c,root,episodeId)).resolveReference(asset.src)))*project.timelines[0].fps);if(observed)Object.assign(asset,{width:observed.width,height:observed.height});}
++    for(const item of project.timelines[0].items){const asset=project.assets.find(a=>a.id===item.sourceAssetId||a.src===item.src);if(asset&&Number(item.srcInFrame??0)+Number(item.durationInFrames)>asset.durationInFrames+1)throw new ConfigurationError(409,'旧工程的实际使用区间超出原文件，未接入不完整素材。');}
++    adaptLegacyWorkspaceMetadata(project,clips,render);
++   }
++ return clips;
++}
+--- WOMyG1/src/local-app/productionWorkspaceCommands.ts
++++ loop-story-e2e-J0pciK/src/local-app/productionWorkspaceCommands.ts
+@@ -1,3 +1,5 @@
++import {mixedLegacyWorkspace} from './legacyMixedWorkspace.js';
++import {verifyLegacyDraftInputs,installLegacyDraftInputs,readLegacyDraftInputs} from './legacyDraftInputs.js';
+ import {recordWorkspaceEditingMilestone} from './productionMilestones.js';
+ import {prepareSavedPlanAdoption,installSavedPlanInputs} from './legacyPlanAdoption.js';
+ import {workspaceStudioFingerprint} from './workspaceStudioFingerprint.js';
+@@ -5,7 +7,7 @@
+ import {recordProjectSoundChanges} from './productionSoundUse.js';
+ import {adoptProductionPreparation,verifyProductionPreparationSource} from './productionPreparationStore.js';
+ import {legacyVideoDefault} from './legacyVideoCompatibility.js';
+-import {defaultShotComposition,shotCompositionRect,shotCompositionTransform,shotCompositionSlotLabels,shotCompositionLayouts} from '../shotComposition.js';
++import {createProductionWorkspaceProject} from './workspaceInitialProject.js';
+ import type {StoryboardShotManifest} from '../worker/contracts.js';
+ import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
+ import {applyWorkspaceVideoSound} from '../workspaceVideoSound.js';
+@@ -16,7 +18,7 @@
+ import {readWorkspaceScriptResume,resumeWorkspaceScript} from './workspaceScriptResume.js';
+ import {prepareAuthoredWorkspace,syncProductionWorkspaceShots,readWorkspacePreparation,preserveLegacyWorkspace,preserveLegacyDocument,recoverLegacyBindings} from './workspacePreparation.js';
+ import {importLegacyHtmlWorkspace} from './legacyHtmlWorkspace.js';
+-import {adaptLegacyWorkspaceMetadata} from './legacyWorkspaceMetadata.js';
++import {recoverImportedWorkspaceProject} from './legacyWorkspaceProject.js';
+ import {readLegacyStudioProject} from './legacyStudioProject.js';
+ import {readLegacyWorkbenchSource,verifyLegacyWorkbenchSource} from './legacyWorkbenchSource.js';
+ import {buildOpenChatCutProject} from '../worker/openchatcutProject.js';
+@@ -41,13 +43,12 @@
+ import {matchWorkspaceImage,generateWorkspaceImage,fillWorkspaceImageResult} from './workspaceImages.js';
+ import {randomUUID,createHash} from 'node:crypto';
+ import {writeFile,mkdir} from 'node:fs/promises';
+-import {dirname,relative} from 'node:path';
++import {dirname} from 'node:path';
+ import type {PoolClient} from 'pg';
+ import {ConfigurationError} from './configurationCommands.js';
+ import {verifyNativeFile} from './localFiles.js';
+ import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
+-import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
+-import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
++import {inspectMp4Artifact} from '../worker/mediaTools.js';
+ import {inspectOpenChatCutProjectWithRuntime,type OpenChatCutProjectObservation} from '../worker/openchatcutProjectReader.js';
+ import {openOpenChatCutDraftStudio,snapshotOpenChatCutStudio,closeOpenChatCutStudio,isOpenChatCutStudio,inspectOpenChatCutStoredProject,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
+ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
+@@ -56,6 +57,10 @@
+ export interface ProductionWorkspaceRecord {id:string;episode_id:string;workflow_version:'four-step/v1';script_revision_id:string;storyboard_package_id:string|null;preparation_revision_id:string;revision:string|number;native_edit_revision:string|number;bindings:WorkspaceClip[];project_path:string;project_sha256:string;content_sha256:string;project_size:string|number}
+ const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
+ const hash=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex');
++async function requireNoRenderedLegacyProject(c:PoolClient,episodeId:string){
++ if((await c.query("SELECT 1 FROM public.artifacts a JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed' WHERE a.episode_id=$1 AND a.artifact_type IN ('review_render_project','final_render_project') AND a.relative_path ~ '\\.(json|html)$' LIMIT 1",[episodeId])).rowCount)throw new ConfigurationError(409,'已有原工程产物，请选择原工程接入，不能由绑定重建。');
++}
++
+ export async function readProductionWorkspace(c:PoolClient,episodeId:string,root:string):Promise<ProductionWorkspace|null>{
+  const row=(await c.query('SELECT w.*,e.main_script_revision_id current_script,e.stage episode_stage,p.script_revision_id preparation_script,p.file_reference preparation_file,NOT local_identity.preparation_source_current(p.id) invalidated_at FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id JOIN local_identity.production_preparation_revisions p ON p.id=w.preparation_revision_id WHERE w.episode_id=$1',[episodeId])).rows[0];
+  if(!row)return null;
+@@ -74,7 +79,7 @@
+  const history=(await c.query('SELECT revision,project_sha256,script_revision_id,reason,created_at FROM local_identity.production_workspace_versions WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 50',[row.id])).rows.map(v=>({revision:Number(v.revision),sha256:v.project_sha256,scriptRevisionId:v.script_revision_id,reason:v.reason,createdAt:v.created_at}));
+  const recovered=(await c.query('SELECT decision,relative_path,sha256,file_size FROM local_identity.workspace_legacy_recoveries WHERE workspace_id=$1',[row.id])).rows[0];
+  const config=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[episodeId])).rows[0]?.policy;
+- return{scriptResume:stale?await readWorkspaceScriptResume(c,root,row,row.current_script,row.episode_stage):undefined,selectedImages:(await c.query('SELECT s.target_item_id "targetItemId",s.candidate_id "candidateId",v.material_revision_id "materialRevisionId" FROM local_identity.workspace_visual_image_choices s JOIN local_identity.workspace_visual_candidates v ON v.id=s.candidate_id WHERE s.workspace_id=$1',[row.id])).rows,visualConfiguration:{...(config?.static_visual?.credential_ref?{imageSelection:{capability:'image' as const,provider:config.static_visual.executor?.provider,adapter:config.static_visual.executor?.adapter,model:config.static_visual.executor?.model,connectionVersionId:config.static_visual.credential_ref}}:{}),imageModel:config?.static_visual?.executor?.model??null,videoModel:legacyVideoDefault(config)?.executor?.model??null,videoProvider:legacyVideoDefault(config)?.executor?.provider??null},...(recovered?{recovery:{decision:recovered.decision,relativePath:recovered.relative_path,sha256:recovered.sha256,fileSize:Number(recovered.file_size)}}:{}),preparation:await readWorkspacePreparation(c,row),pexels:await readWorkspacePexels(c,root,row),visualCandidates:await readWorkspaceVisualCandidates(c,row,project,root),visualTasks:await readWorkspaceVisualTasks(c,row,usedContent.ids),visualTargets:await readWorkspaceVisualTargets(c,row,project),audio:await readWorkspaceAudio(c,row,project),deliveries:await readWorkspaceDeliveries(c,root,row),usedNarration:await readUsedWorkspaceNarrationVersions(c,row,project),candidates:await readWorkspaceCandidates(c,row,project),...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,preparationRevisionId:row.preparation_revision_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
++ return{legacyInputs:await readLegacyDraftInputs(c,root,episodeId,recovered),scriptResume:stale?await readWorkspaceScriptResume(c,root,row,row.current_script,row.episode_stage):undefined,selectedImages:(await c.query('SELECT s.target_item_id "targetItemId",s.candidate_id "candidateId",v.material_revision_id "materialRevisionId" FROM local_identity.workspace_visual_image_choices s JOIN local_identity.workspace_visual_candidates v ON v.id=s.candidate_id WHERE s.workspace_id=$1',[row.id])).rows,visualConfiguration:{...(config?.static_visual?.credential_ref?{imageSelection:{capability:'image' as const,provider:config.static_visual.executor?.provider,adapter:config.static_visual.executor?.adapter,model:config.static_visual.executor?.model,connectionVersionId:config.static_visual.credential_ref}}:{}),imageModel:config?.static_visual?.executor?.model??null,videoModel:legacyVideoDefault(config)?.executor?.model??null,videoProvider:legacyVideoDefault(config)?.executor?.provider??null},...(recovered?{recovery:{decision:recovered.decision,relativePath:recovered.relative_path,sha256:recovered.sha256,fileSize:Number(recovered.file_size)}}:{}),preparation:await readWorkspacePreparation(c,row),pexels:await readWorkspacePexels(c,root,row),visualCandidates:await readWorkspaceVisualCandidates(c,row,project,root),visualTasks:await readWorkspaceVisualTasks(c,row,usedContent.ids),visualTargets:await readWorkspaceVisualTargets(c,row,project),audio:await readWorkspaceAudio(c,row,project),deliveries:await readWorkspaceDeliveries(c,root,row),usedNarration:await readUsedWorkspaceNarrationVersions(c,row,project),candidates:await readWorkspaceCandidates(c,row,project),...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,preparationRevisionId:row.preparation_revision_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
+ }
+ // Creative sound notes do not alter the rendered content or its confirmed version.
+ export function workspaceContentSha256(project:OpenChatCutProject):string{
+@@ -94,6 +99,36 @@
+   if(command==='authorizeWorkspacePreparation')throw new ConfigurationError(409,'请在生成时确认本次调用，不再开启整期在线制作。');
+   if(requiresWorkspaceCall(command,data)&&!confirmedCall)throw new ConfigurationError(409,'请先确认本次调用与费用预留。');
+   let row=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE episode_id=$1 FOR UPDATE',[e.id])).rows[0] as ProductionWorkspaceRecord|undefined;
++  if(command==='importLegacyDraftInputs'){
++   if(row)throw new ConfigurationError(409,'已有当前工程，不能覆盖现有编辑。');
++   if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId)throw new ConfigurationError(409,'主脚本基准已变化。');
++   if(isOpenChatCutStudio(e.id)||await readLegacyStudioProject(c,root,e.id))throw new ConfigurationError(409,'已有原生编辑，请从原工程继续。');
++   await requireNoRenderedLegacyProject(c,e.id);
++   const source=await readLegacyWorkbenchSource(c,e.id,true);
++   if(!source||source.sha256!==data.workbenchSha256||source.record.board.id!==data.reviewPackageId||source.record.scriptRevisionId!==e.main_script_revision_id)throw new ConfigurationError(409,'原草稿来源已变化，请重新读取后确认。');
++   const draftBoard=await verifyLegacyDraftInputs(c,root,source);
++   let initial:ProductionWorkspace;
++   if(source.record.drafts.some(d=>d.confirmation_status==='confirmed')){
++    const render=await verifyLegacyWorkbenchSource(c,root,source,true),id=randomUUID();
++    // The same legacy registration preserves the whole board, not a new board containing only confirmed shots.
++    if(!(await c.query('SELECT 1 FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[data.reviewPackageId,e.id])).rowCount)await c.query('SELECT local_identity.confirm_legacy_workspace_preparation($1,$2,$3)',[e.id,e.main_script_revision_id,data.reviewPackageId]);
++    await adoptProductionPreparation(c,root,e.id,e.main_script_revision_id,String(data.reviewPackageId));
++    const imported=await mixedLegacyWorkspace(c,root,e.id,id,draftBoard,render);
++    if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');
++    await validateWorkspaceProject(c,root,e.id,imported.project,await runtime.studioRuntime());
++    const file=await persistWorkspaceProject(c,root,e.id,imported.project);
++    row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,preparation_revision_id,bindings,project_path,project_sha256,project_size,content_sha256,native_edit_revision) VALUES($1,$2,$3,$4,$4,$5,$6,$7,$8,$9,1) RETURNING *',[id,e.id,e.main_script_revision_id,data.reviewPackageId,JSON.stringify(imported.clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(imported.project)])).rows[0];
++    // Initial import observes original uses; it does not backdate or manufacture new adoption events.
++    await recordWorkspaceVersion(c,row!,'接入原确认镜头与未完成输入');await syncProductionWorkspaceShots(c,row!,root);
++    await c.query('UPDATE local_identity.input_episodes SET enabled=true WHERE episode_id=$1 AND owner_id=local_identity.owner_id()',[e.id]);
++    initial=(await readProductionWorkspace(c,e.id,root))!;
++   }else initial=await this.execute(c,e,root,runtime,'prepareWorkspace',{reviewPackageId:data.reviewPackageId,expectedScriptRevisionId:e.main_script_revision_id}) as ProductionWorkspace;
++   const installed=await installLegacyDraftInputs(c,root,initial,source,draftBoard,async(command,data)=>await this.execute(c,e,root,runtime,command,data) as ProductionWorkspace);
++   const current=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[installed.workspace.id])).rows[0] as ProductionWorkspaceRecord;
++   const project=await readWorkspaceProject(c,root,current),recovery=await preserveLegacyDocument(c,root,e.id,{project,source:{version:source.record.version,sha256:source.sha256,record:source.record,importMode:'draft-inputs/v1',issues:installed.issues}});
++   await c.query('INSERT INTO local_identity.workspace_legacy_recoveries(workspace_id,decision,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5)',[current.id,'preserve',recovery.relativePath,recovery.sha256,recovery.fileSize]);
++   return readProductionWorkspace(c,e.id,root);
++  }
+   if(command==='adoptLegacyWorkspace'){
+    if(row)throw new ConfigurationError(409,'已有可编辑工作版本，请刷新并继续该版本；不会覆盖已有编辑。');
+    if(!e.main_script_revision_id||data.expectedScriptRevisionId!==e.main_script_revision_id)throw new ConfigurationError(409,'主脚本基准已变化，请刷新生产单。');
+@@ -105,7 +140,7 @@
+    if(data.workbenchSha256!==undefined){
+     if(saved)throw new ConfigurationError(409,'已有保存的编辑，请选择原工程继续。');
+     if(data.savedProjectSha256!==undefined||data.artifactId!==undefined||data.expectedSourceSha256!==undefined||typeof data.workbenchSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.workbenchSha256))throw new ConfigurationError(400,'请只选择一个准确的原镜头工作版本。');
+-    if((await c.query("SELECT 1 FROM public.artifacts a JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed' WHERE a.episode_id=$1 AND a.artifact_type IN ('review_render_project','final_render_project') AND a.relative_path ~ '\\.(json|html)$' LIMIT 1",[e.id])).rowCount)throw new ConfigurationError(409,'已有原工程产物，请选择原工程接入，不能由绑定重建。');
++    await requireNoRenderedLegacyProject(c,e.id);
+     const source=await readLegacyWorkbenchSource(c,e.id,true);
+     if(!source||source.record.board.id!==board.id||source.record.scriptRevisionId!==e.main_script_revision_id||source.sha256!==data.workbenchSha256)throw new ConfigurationError(409,'原镜头工作版本已变化，请重新读取后确认。');
+     importedRender=await verifyLegacyWorkbenchSource(c,root,source);
+@@ -135,14 +170,7 @@
+    if(!Array.isArray(shots)||!shots.length)throw new ConfigurationError(409,'原分镜记录不可用，未重新生成工程。');
+    if(importedRender&&JSON.stringify(shots.map((s:{id:string})=>s.id))!==JSON.stringify(importedRender.storyboard.shots.map(s=>s.id)))throw new ConfigurationError(409,'旧工程未覆盖当前完整分镜，未建立缺少镜头的副本。');
+    const original:WorkspaceClip[]=shots.map((s:{id:string;scriptSegment:string})=>({id:randomUUID(),itemId:`shot-${s.id}`,shotId:s.id,text:s.scriptSegment,source:null}));
+-   const clips=await recoverLegacyBindings(c,root,e.id,id,project,original);
+-   if(importedRender){
+-    for(const member of importedRender.members){const source=await resolveWorkspaceSource(c,root,e.id,member.relativePath);if(source.sha256!==member.sha256)throw new ConfigurationError(409,'当前素材登记与旧工程冻结版本不一致。');}
+-    // Source asset duration is the full file, not the selected legacy interval.
+-    for(const asset of project.assets){const observed=asset.kind==='video'?await inspectWorkspaceVisualFile(root,relative(root,await (await episodeFileIO(c,root,e.id)).resolveReference(asset.src)),'video'):null;asset.durationInFrames=Math.ceil((observed?.durationSeconds??await probeMp3Artifact(await (await episodeFileIO(c,root,e.id)).resolveReference(asset.src)))*project.timelines[0].fps);if(observed)Object.assign(asset,{width:observed.width,height:observed.height});}
+-    for(const item of project.timelines[0].items){const asset=project.assets.find(a=>a.id===item.sourceAssetId||a.src===item.src);if(asset&&Number(item.srcInFrame??0)+Number(item.durationInFrames)>asset.durationInFrames+1)throw new ConfigurationError(409,'旧工程的实际使用区间超出原文件，未接入不完整素材。');}
+-    adaptLegacyWorkspaceMetadata(project,clips,importedRender);
+-   }
++   const clips=await recoverImportedWorkspaceProject(c,root,e.id,id,project,original,importedRender);
+    if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');
+    await validateWorkspaceProject(c,root,e.id,project,await runtime.studioRuntime());
+    const confirmed=(await c.query("SELECT 1 FROM local_identity.workspace_preparations WHERE episode_id=$1 AND script_revision_id=$2 AND package_id=$3 UNION ALL SELECT 1 FROM local_identity.production_preparation_revisions WHERE episode_id=$1 AND script_revision_id=$2 AND id=$3 AND source_reference_id=$3 AND source_format='storyboard/v1' LIMIT 1",[e.id,e.main_script_revision_id,board.id])).rowCount;
+@@ -196,31 +224,7 @@
+    if(!Array.isArray(storyboard.shots)||!storyboard.shots.length||new Set(storyboard.shots.map((s:{id:string})=>s.id)).size!==storyboard.shots.length)throw new ConfigurationError(409,'制作基准无效。');
+    const recovery=!row?await preserveLegacyWorkspace(c,root,e.id,data.legacyDecision):null;
+    const id=row?.id??randomUUID();
+-   const shots=storyboard.shots as StoryboardShotManifest[];
+-   const [width,height]=shots[0].targetSpec==='16:9'?[1920,1080]:shots[0].targetSpec==='1:1'?[1080,1080]:[1080,1920];
+-   const tracks:OpenChatCutProject['timelines'][number]['tracks']={V1:{kind:'video',name:'画面'}};
+-   let frame=0;
+-   let clips:WorkspaceClip[]=[];
+-   const items=shots.flatMap(shot=>{
+-    if(typeof shot.id!=='string'||typeof shot.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');
+-    const duration=Math.max(1,Math.round(Number(shot.durationSeconds||3)*30));
+-    const layout=shot.layout&&shotCompositionLayouts.includes(shot.layout)?shot.layout:'full';
+-    const composition=defaultShotComposition(layout);
+-    const shotItems=composition.slots.map((slot,index)=>{
+-     const clipId=randomUUID(),itemId=`shot-${shot.id}-${clipId}`,track=`V${index+1}`;
+-     const label=shotCompositionSlotLabels[slot.id];
+-     tracks[track]??={kind:'video',name:`画面 ${index+1}`};
+-     clips.push({id:clipId,itemId,shotId:shot.id,text:shot.scriptSegment,source:null});
+-     return {id:itemId,track,kind:'text',name:`${shot.id} · ${label}`,startFrame:frame,durationInFrames:duration,width,height,
+-      props:{text:`待匹配画面\n${label}`,fontSize:64,color:'#a3acc2',align:'center'},
+-      transform:{...shotCompositionTransform(shotCompositionRect(layout,slot.id),slot),rotation:0},
+-      ...(layout!=='full'?{loopControlComposition:{layout,slotId:slot.id}}:{}),
+-     };
+-    });
+-    frame+=duration;
+-    return shotItems;
+-   });
+-   let project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${e.id}`,timelines:[{id:`loop-control-${e.id}`,name:'整期剪辑',order:0,fps:30,width,height,fit:'contain',items,trackOrder:Object.keys(tracks),tracks,transitions:[],selectedId:null,captionsHidden:false}]};
++   let {project,clips}=createProductionWorkspaceProject(e.id,id,storyboard.shots as StoryboardShotManifest[]);
+    if(recovery?.decision==='preserve'){project=recovery.project;clips=await recoverLegacyBindings(c,root,e.id,id,project,clips);}
+    project=withWorkspaceShotMetadata(project,clips);
+    if(!row&&!recovery)project=await assembleWorkspaceCaptions(c,root,{id,episode_id:e.id,script_revision_id:e.main_script_revision_id,storyboard_package_id:p.legacy_package_id,preparation_revision_id:p.id,bindings:clips},project);
+--- WOMyG1/src/local-app/registeredWorkspaceAudio.ts
++++ loop-story-e2e-J0pciK/src/local-app/registeredWorkspaceAudio.ts
+@@ -0,0 +1,31 @@
++import type {PoolClient} from 'pg';
++import {ConfigurationError} from './configurationCommands.js';
++import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
++import {episodeStorageLocationAtRoot} from './episodeStorageLocation.js';
++import {probeMp3Artifact} from '../worker/mediaTools.js';
++
++/** A local preparation names the original track; it is never a new generation task. */
++export async function registeredWorkspaceAudio(c:PoolClient,root:string,episodeId:string,trackId:unknown,kind:'bgm'|'sfx'|'narration'){
++ if(typeof trackId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(trackId))throw new ConfigurationError(400,'音轨标识无效。');
++ const track=(await c.query(`SELECT a.* FROM public.audio_tracks a
++ JOIN public.artifacts f ON f.id=a.source_artifact_id AND f.episode_id=a.episode_id AND f.relative_path=a.relative_path AND f.sha256=a.sha256 AND f.file_size=a.file_size AND f.producer_task_id IS NOT DISTINCT FROM a.source_task_id
++ LEFT JOIN public.tasks t ON t.id=a.source_task_id AND t.episode_id=a.episode_id
++ WHERE a.id=$1 AND a.episode_id=$2 AND a.track_kind=$3 AND (a.source_task_id IS NULL OR t.status='completed' AND t.invalidated_at IS NULL)`,[trackId,episodeId,kind])).rows[0];
++ if(!track)throw new ConfigurationError(409,'原登记音轨缺失、来源失效或不属于本期。');
++ await verifyEpisodeFile(c,root,episodeId,track.relative_path,track.sha256,Number(track.file_size));
++ const duration=await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,episodeId),track.relative_path));
++ return{track,duration,snapshot:{version:'registered-audio-input/v1',audioTrackId:track.id,sha256:track.sha256,fileSize:Number(track.file_size),sourceTaskId:track.source_task_id,sourceArtifactId:track.source_artifact_id}};
++}
++
++/** Preserve generated preparations' join; only local references use the explicit frozen ID. */
++export const workspacePreparedAudioJoin=`LEFT JOIN public.audio_tracks a ON a.episode_id=p.episode_id AND (
++ p.task_id IS NOT NULL AND a.source_task_id=t.id
++ OR p.task_id IS NULL AND p.request_snapshot->>'version'='registered-audio-input/v1'
++ AND a.id::text=p.request_snapshot->>'audioTrackId' AND a.track_kind=p.kind
++ AND a.sha256=p.request_snapshot->>'sha256' AND a.file_size::text=p.request_snapshot->>'fileSize'
++ AND a.source_artifact_id::text=p.request_snapshot->>'sourceArtifactId'
++ AND a.source_task_id::text IS NOT DISTINCT FROM (p.request_snapshot->>'sourceTaskId')
++ AND EXISTS(SELECT 1 FROM public.artifacts f LEFT JOIN public.tasks original ON original.id=a.source_task_id AND original.episode_id=a.episode_id
++ WHERE f.id=a.source_artifact_id AND f.episode_id=a.episode_id AND f.relative_path=a.relative_path AND f.sha256=a.sha256 AND f.file_size=a.file_size AND f.producer_task_id IS NOT DISTINCT FROM a.source_task_id
++ AND (a.source_task_id IS NULL OR original.status='completed' AND original.invalidated_at IS NULL))
++)`;
+--- WOMyG1/src/local-app/workspaceAudio.ts
++++ loop-story-e2e-J0pciK/src/local-app/workspaceAudio.ts
+@@ -1,3 +1,4 @@
++import {registeredWorkspaceAudio,workspacePreparedAudioJoin} from './registeredWorkspaceAudio.js';
+ import {workspaceTaskRetryColumns,projectWorkspaceTaskRetry} from './workspaceTaskRetry.js';
+ import {canUseWorkspaceAudioMaterial} from './workspaceAudioMaterial.js';
+ import {soundIntentQuery} from '../soundIntent.js';
+@@ -25,9 +26,9 @@
+ }
+ export async function readWorkspaceAudio(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+  const entries=(await c.query(`SELECT ${workspaceTaskRetryColumns},p.*,t.status,t.last_result,t.input_snapshot,h.attempt publication_attempt,a.id audio_track_id,a.relative_path,a.sha256,a.file_size,a.duration_seconds actual_duration,m.storage_path,m.sha256 material_sha256,m.file_size material_size
+- FROM local_identity.workspace_audio_preparations p LEFT JOIN public.tasks t ON t.id=p.task_id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id LEFT JOIN public.audio_tracks a ON a.source_task_id=t.id AND a.episode_id=p.episode_id LEFT JOIN public.production_material_revisions m ON m.id=p.material_revision_id AND m.episode_id=p.episode_id WHERE p.workspace_id=$1 ORDER BY p.created_at DESC`,[row.id,row.episode_id])).rows;
++ FROM local_identity.workspace_audio_preparations p LEFT JOIN public.tasks t ON t.id=p.task_id LEFT JOIN local_identity.workspace_publication_holds($2) h ON h.task_id=t.id ${workspacePreparedAudioJoin} LEFT JOIN public.production_material_revisions m ON m.id=p.material_revision_id AND m.episode_id=p.episode_id WHERE p.workspace_id=$1 ORDER BY p.created_at DESC`,[row.id,row.episode_id])).rows;
+  const defaults=(await c.query('SELECT music_defaults FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0]?.music_defaults??null;
+- return{enabled:{bgm:readWorkspaceSoundEnabled(project,'bgm'),sfx:readWorkspaceSoundEnabled(project,'sfx')},defaults,mix:readWorkspaceAudioMix(project,workspaceAudioShotIds(row)),preparations:entries.map(p=>({...(p.task_id?{generationTask:{...projectWorkspaceTaskRetry({status:p.status,attempt:p.attempt,maxAttempts:p.maxAttempts,invalidatedAt:p.invalidatedAt??(preparationCurrent(row,project,p)?null:new Date(0)),retryAt:p.retryAt}),id:p.id,taskId:p.task_id,status:p.status,error:p.last_result?.blockers?.[0]?.detail??p.last_result?.retry?.reason??null,publicationAttempt:p.publication_attempt}}:{}),id:p.id,kind:p.kind,shotId:p.shot_id,sourceItemId:p.source_item_id,sourceSha256:p.source_sha256,description:p.description,...(p.kind==='source'?{sourceWindow:p.input_snapshot?.workspace_source??null}:{}),query:p.query,selection:p.request_snapshot?.selection??p.input_snapshot?.production_selection??null,connection:p.request_snapshot?.connection??null,anchor:p.anchor,offsetSeconds:Number(p.offset_seconds),durationSeconds:Number(p.duration_seconds),taskId:p.task_id,status:p.material_revision_id?'ready':p.status??'pending',error:['failed','blocked'].includes(p.status)?p.last_result?.blockers?.[0]?.detail??p.last_result?.retry?.reason??null:null,audioTrackId:p.audio_track_id??null,relativePath:p.relative_path??p.storage_path??null,sha256:p.sha256??p.material_sha256??null,fileSize:Number(p.file_size??p.material_size??0),adoptedItemId:p.adopted_item_id,source:p.last_result?.mediaSource??(p.material_revision_id?{provider:'manual',materialRevisionId:p.material_revision_id}:null)}))};
++ return{enabled:{bgm:readWorkspaceSoundEnabled(project,'bgm'),sfx:readWorkspaceSoundEnabled(project,'sfx')},defaults,mix:readWorkspaceAudioMix(project,workspaceAudioShotIds(row)),preparations:entries.map(p=>({...(p.task_id?{generationTask:{...projectWorkspaceTaskRetry({status:p.status,attempt:p.attempt,maxAttempts:p.maxAttempts,invalidatedAt:p.invalidatedAt??(preparationCurrent(row,project,p)?null:new Date(0)),retryAt:p.retryAt}),id:p.id,taskId:p.task_id,status:p.status,error:p.last_result?.blockers?.[0]?.detail??p.last_result?.retry?.reason??null,publicationAttempt:p.publication_attempt}}:{}),id:p.id,kind:p.kind,shotId:p.shot_id,sourceItemId:p.source_item_id,sourceSha256:p.source_sha256,description:p.description,...(p.kind==='source'?{sourceWindow:p.input_snapshot?.workspace_source??null}:{}),query:p.query,selection:p.request_snapshot?.selection??p.input_snapshot?.production_selection??null,connection:p.request_snapshot?.connection??null,anchor:p.anchor,offsetSeconds:Number(p.offset_seconds),durationSeconds:Number(p.duration_seconds),taskId:p.task_id,status:p.material_revision_id||p.request_snapshot?.version==='registered-audio-input/v1'&&p.audio_track_id?'ready':p.request_snapshot?.version==='registered-audio-input/v1'?'unavailable':p.status??'pending',error:['failed','blocked'].includes(p.status)?p.last_result?.blockers?.[0]?.detail??p.last_result?.retry?.reason??null:null,audioTrackId:p.audio_track_id??null,relativePath:p.relative_path??p.storage_path??null,sha256:p.sha256??p.material_sha256??null,fileSize:Number(p.file_size??p.material_size??0),adoptedItemId:p.adopted_item_id,source:p.request_snapshot?.version==='registered-audio-input/v1'?{provider:'registered',audioTrackId:p.request_snapshot.audioTrackId}:p.last_result?.mediaSource??(p.material_revision_id?{provider:'manual',materialRevisionId:p.material_revision_id}:null)}))};
+ }
+ async function persistEdit(c:PoolClient,root:string,row:ProductionWorkspaceRecord,_before:OpenChatCutProject,after:OpenChatCutProject,reason:string){
+  return persistWorkspaceRevision(c,root,row,after,row.bindings,reason,{nativeEdit:true});
+@@ -54,6 +55,7 @@
+  if(command==='prepareWorkspaceAudio'){
+   if(!['bgm','sfx','source'].includes(String(data.kind)))throw new ConfigurationError(400,'音频类型无效。');
+   if(data.kind!=='source'&&!readWorkspaceSoundEnabled(project,data.kind as 'bgm'|'sfx'))throw new ConfigurationError(409,'请先开启对应声音，再准备或检索。');
++  if(Object.hasOwn(data,'audioTrackId')&&(data.kind==='source'||data.materialRevisionId||data.preparationId||data.retry!==undefined||data.candidateCount!==undefined))throw new ConfigurationError(400,'原登记音轨不能与素材、重试或批量请求混用。');
+   const candidateCount=data.candidateCount??1;
+   if(!Number.isInteger(candidateCount)||Number(candidateCount)<1||Number(candidateCount)>3||data.candidateCount!==undefined&&(data.kind!=='sfx'||data.materialRevisionId||data.preparationId)||data.intent!==undefined&&(data.kind!=='sfx'||typeof data.intent!=='string'||!data.intent.trim()||data.intent.length>240))throw new ConfigurationError(400,'音效意图或候选数量无效。');
+   if(data.retry!==undefined&&typeof data.retry!=='boolean')throw new ConfigurationError(400,'重试参数无效。');
+@@ -75,9 +77,12 @@
+   }
+   if(typeof description!=='string'||!description.trim()||description.length>100||!Number.isFinite(duration)||duration<=0||duration>7200||!['absolute','shot'].includes(String(anchor))||!Number.isFinite(offset)||offset<0||anchor==='shot'&&!row.bindings.some(b=>b.shotId===shotId))throw new ConfigurationError(400,'音频说明、时长或位置无效。');
+   if(data.kind==='bgm'){anchor='absolute';offset=0;shotId=null;}
+-  if(data.kind!=='source'&&!data.materialRevisionId&&(typeof query!=='string'||!query.trim()||query.length>100||!/^[\x20-\x7e]+$/.test(query)))throw new ConfigurationError(400,'请填写不超过 100 字符的英文 Freesound 检索词。');
++  if(data.kind!=='source'&&!data.materialRevisionId&&!Object.hasOwn(data,'audioTrackId')&&(typeof query!=='string'||!query.trim()||query.length>100||!/^[\x20-\x7e]+$/.test(query)))throw new ConfigurationError(400,'请填写不超过 100 字符的英文 Freesound 检索词。');
+   let materialId=null,requestSnapshot:Record<string,unknown>={};
+-  if(data.materialRevisionId){
++  if(Object.hasOwn(data,'audioTrackId')){
++   const registered=await registeredWorkspaceAudio(c,root,row.episode_id,data.audioTrackId,data.kind==='bgm'?'bgm':'sfx');
++   if(registered.duration+.05<duration)throw new ConfigurationError(409,'原登记音轨短于请求使用时长。');requestSnapshot=registered.snapshot;query=null;
++  }else if(data.materialRevisionId){
+    const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='audio'",[data.materialRevisionId,row.episode_id])).rows[0];
+    if(!m||data.kind==='source'||!canUseWorkspaceAudioMaterial(m.material_purpose,data.kind==='bgm'?'background_music':'sound_effect'))throw new ConfigurationError(409,'请选择本期已登记的对应人工音频。');
+    await verifyEpisodeFile(c,root,row.episode_id,m.storage_path,m.sha256,Number(m.file_size));if(await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),m.storage_path))+.05<duration)throw new ConfigurationError(409,'人工音频短于请求使用时长。');materialId=m.id;query=null;
+@@ -94,7 +99,7 @@
+   const snapshot=data.candidateCount===undefined?requestSnapshot:{...requestSnapshot,candidateIndex,intent:data.intent??null};
+   const id=randomUUID(),fingerprint=hash([row.id,row.script_revision_id,data.kind,description,query,duration,anchor,offset,shotId,sourceItemId,sourceSha,source?.startSeconds??null,source?.playbackRate??null,materialId,snapshot]);
+   await c.query('INSERT INTO local_identity.workspace_audio_preparations(id,workspace_id,episode_id,kind,shot_id,source_item_id,source_sha256,description,query,anchor,offset_seconds,duration_seconds,material_revision_id,input_fingerprint,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)',[id,row.id,row.episode_id,data.kind,shotId,sourceItemId,sourceSha,description,query,anchor,offset,duration,materialId,fingerprint,snapshot]);
+-  if(!materialId)await c.query('SELECT local_identity.queue_workspace_audio($1,false,$2)',[id,source?JSON.stringify({relativePath:source.relative_path,sha256:source.sha256,fileSize:Number(source.file_size),durationSeconds:duration,startSeconds:source.startSeconds,sourceInFrame:source.sourceInFrame,sourceFrameRate:source.sourceFrameRate,playbackRate:source.playbackRate,visualDurationInFrames:source.visualDurationInFrames}):null]);
++  if(!materialId&&!Object.hasOwn(data,'audioTrackId'))await c.query('SELECT local_identity.queue_workspace_audio($1,false,$2)',[id,source?JSON.stringify({relativePath:source.relative_path,sha256:source.sha256,fileSize:Number(source.file_size),durationSeconds:duration,startSeconds:source.startSeconds,sourceInFrame:source.sourceInFrame,sourceFrameRate:source.sourceFrameRate,playbackRate:source.playbackRate,visualDurationInFrames:source.visualDurationInFrames}):null]);
+   }return;
+  }
+  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请在剪辑面板调整混音；添加音轨请先保存并返回素材准备。');
+@@ -107,8 +112,9 @@
+   await persistEdit(c,root,row,project,next,'调整实际混音');return;
+  }
+  if(command!=='adoptWorkspaceAudio')throw new ConfigurationError(400,'不支持的音频操作。');
+- const p=(await c.query(`SELECT p.*,t.input_snapshot,a.id audio_track_id,a.relative_path,a.sha256,a.file_size,a.duration_seconds actual_duration FROM local_identity.workspace_audio_preparations p LEFT JOIN public.tasks t ON t.id=p.task_id AND t.status='completed' LEFT JOIN public.audio_tracks a ON a.source_task_id=t.id WHERE p.workspace_id=$1 AND p.id=$2`,[row.id,data.preparationId])).rows[0];
++ const p=(await c.query(`SELECT p.*,t.input_snapshot,a.id audio_track_id,a.relative_path,a.sha256,a.file_size,a.duration_seconds actual_duration FROM local_identity.workspace_audio_preparations p LEFT JOIN public.tasks t ON t.id=p.task_id AND t.status='completed' ${workspacePreparedAudioJoin} WHERE p.workspace_id=$1 AND p.id=$2`,[row.id,data.preparationId])).rows[0];
+  if(!p)throw new ConfigurationError(404,'音频准备记录不存在。');
++ if(p.request_snapshot?.version==='registered-audio-input/v1'){const current=await registeredWorkspaceAudio(c,root,row.episode_id,p.request_snapshot.audioTrackId,p.kind==='bgm'?'bgm':'sfx');if(current.track.sha256!==p.request_snapshot.sha256||Number(current.track.file_size)!==p.request_snapshot.fileSize||current.track.source_artifact_id!==p.request_snapshot.sourceArtifactId||current.track.source_task_id!==p.request_snapshot.sourceTaskId)throw new ConfigurationError(409,'原登记音轨版本已变化。');}
+  if(['bgm','sfx'].includes(p.kind)&&!readWorkspaceSoundEnabled(project,p.kind))throw new ConfigurationError(409,'请先开启对应声音，再采用。');
+  let path=p.relative_path,sha=p.sha256,size=Number(p.file_size),duration=Number(p.actual_duration),assetId=`audio-track-${p.audio_track_id}`;
+  if(p.material_revision_id){const m=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 AND id=$2',[row.episode_id,p.material_revision_id])).rows[0];if(!m)throw new ConfigurationError(409,'人工音频登记已变化。');path=m.storage_path;sha=m.sha256;size=Number(m.file_size);assetId=`material-${m.id}`;}
+--- WOMyG1/src/local-app/workspaceCallConfirmation.ts
++++ loop-story-e2e-J0pciK/src/local-app/workspaceCallConfirmation.ts
+@@ -1,3 +1,4 @@
++import {assertLegacyExternalRequestsResolved} from './legacyDraftInputs.js';
+ import {resolveWorkspaceImageRequest,resolveWorkspaceVideoRequest} from './workspaceVisualRequest.js';
+ import {imageQualityLabels} from '../imageGeneration.js';
+ import {soundIntentQuery} from '../soundIntent.js';
+@@ -19,6 +20,7 @@
+ /** Resolve the same selection and native voice window used by the queue. No Provider is invoked. */
+ async function describe(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:string,payload:Record<string,unknown>){
+  if(JSON.stringify(payload).length>16384||!requiresWorkspaceCall(command,payload)||!Object.hasOwn(productionWorkspaceFields,command)||Object.keys(payload).some(k=>!productionWorkspaceFields[command].includes(k))||payload.episodeId!==row.episode_id||payload.workspaceId!==row.id||payload.expectedRevision!==Number(row.revision))throw new ConfigurationError(400,'本次调用参数无效，请重新填写。');
++ await assertLegacyExternalRequestsResolved(c,root,row);
+  let videoInputs:Awaited<ReturnType<typeof resolveWorkspaceVideoRequest>>['visual']|undefined;
+  const speech=command==='generateWorkspaceNarration',sound=command==='prepareWorkspaceAudio',image=command==='requestWorkspaceImageCandidates';
+  let selection=payload.selection,prompt=String(payload.prompt??''),target=row.bindings.find(b=>b.itemId===payload.targetItemId||b.id===payload.clipId)?.shotId??String(payload.shotId??'整期'),amount=payload.reservationCents===undefined?undefined:Number(payload.reservationCents),providerDuration:number|undefined,parameters:string[]=[],narration:unknown=null,previous:Record<string,any>|null=null;
+--- WOMyG1/src/local-app/workspaceCandidates.ts
++++ loop-story-e2e-J0pciK/src/local-app/workspaceCandidates.ts
+@@ -13,13 +13,20 @@
+  const main=(await c.query('SELECT manifest FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[row.preparation_revision_id??row.storyboard_package_id,row.episode_id])).rows[0]?.manifest?.shots??[];
+  const narration=await readWorkspaceNarration(c,row,project),decisions=(await c.query('SELECT * FROM local_identity.workspace_candidate_decisions WHERE workspace_id=$1',[row.id])).rows;
+  const results=(await c.query(`SELECT r.*,t.input_snapshot,a.id,a.relative_path,a.sha256,a.file_size,a.duration_seconds FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id AND t.status='completed' JOIN public.audio_tracks a ON a.source_task_id=t.id AND a.episode_id=r.episode_id AND a.track_kind='narration' WHERE r.workspace_id=$1 ORDER BY r.created_at DESC`,[row.id])).rows;
++ // A selected registered voice is a local candidate, not a fabricated generation request.
++ const registered=(await c.query(`SELECT a.*,n.shot_id,n.clip_id,n.input_fingerprint,t.input_snapshot FROM local_identity.workspace_narrations n
++ JOIN public.audio_tracks a ON a.id=n.manual_audio_track_id AND a.episode_id=n.episode_id AND a.track_kind='narration'
++ JOIN public.artifacts f ON f.id=a.source_artifact_id AND f.episode_id=a.episode_id AND f.relative_path=a.relative_path AND f.sha256=a.sha256 AND f.file_size=a.file_size AND f.producer_task_id IS NOT DISTINCT FROM a.source_task_id
++ LEFT JOIN public.tasks t ON t.id=a.source_task_id AND t.episode_id=a.episode_id
++ WHERE n.workspace_id=$1 AND n.mode='manual' AND (a.source_task_id IS NULL OR t.status='completed' AND t.invalidated_at IS NULL)`,[row.id])).rows;
++ for(const track of registered)if(!results.some(r=>r.id===track.id))results.push({...track,task_id:track.source_task_id,request_snapshot:{registeredAudio:true,target:{scriptRevisionId:row.script_revision_id}}});
+  return Promise.all(results.map(async r=>{
+   const n=narration.find(n=>n.shotId===r.shot_id),clip=row.bindings.find(b=>b.shotId===r.shot_id),ids=new Set(row.bindings.filter(b=>b.shotId===r.shot_id).map(b=>b.itemId)),timeline=project.timelines.find(t=>t.items.some(i=>ids.has(String(i.id)))),target=timeline?.items.find(i=>i.id===workspaceNarrationItemId(r.shot_id)),route=resolveWorkspaceMainVoice(project,r.shot_id),visuals=timeline?.items.filter(i=>ids.has(String(i.id)))??[],d=decisions.find(d=>d.candidate_id===r.id);
+   const mode=route.item?.id===workspaceNarrationItemId(r.shot_id)?'tts':route.item?'source':'none',start=mode==='tts'&&target?Number(target.startFrame):Math.min(...visuals.map(i=>Number(i.startFrame))),window=mode==='tts'&&target?Number(target.durationInFrames):Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))-start,fps=timeline?.fps??30;
+-  const savedText=r.input_snapshot?.media?.narration?.text??'',generated=r.request_snapshot?.selectionVersion===1;
++  const savedText=r.input_snapshot?.media?.narration?.text??'',generated=r.request_snapshot?.selectionVersion===1,registeredAudio=r.request_snapshot?.registeredAudio===true;
+   const sameScript=r.request_snapshot?.target?.scriptRevisionId===row.script_revision_id&&!!clip;
+-  const status=n?.adoptedAudioTrackId===r.id?'adopted':d?.decision==='rejected'?'rejected':(generated?sameScript&&n?.text===savedText:n?.inputFingerprint===r.input_fingerprint)?'available':'stale';
+-  const canRestoreNarration=status==='stale'&&sameScript&&!!n&&(generated||r.request_snapshot?.manualUpload===true);
++  const status=n?.adoptedAudioTrackId===r.id?'adopted':d?.decision==='rejected'?'rejected':(generated?sameScript&&n?.text===savedText:registeredAudio?sameScript&&n?.mode==='manual'&&n?.audioTrackId===r.id&&n?.inputFingerprint===r.input_fingerprint&&(!savedText||n?.text===savedText):n?.inputFingerprint===r.input_fingerprint)?'available':'stale';
++  const canRestoreNarration=status==='stale'&&sameScript&&!!n&&(generated||r.request_snapshot?.manualUpload===true||registeredAudio&&!!savedText);
+   return{...(r.request_snapshot?.selectionVersion===1?{speech:{selection:r.request_snapshot.selection,connectionName:r.request_snapshot.connection?.name,voice:r.input_snapshot.media.narration.voice.name,languageCode:r.input_snapshot.media.narration.voice.language_code,speakingRate:Number(r.input_snapshot.media.narration.voice.speaking_rate)}}:{}),id:r.id,kind:'audio',shotId:r.shot_id,clipId:clip?.id??r.clip_id,targetItemId:workspaceNarrationItemId(r.shot_id),taskId:r.task_id,inputFingerprint:r.input_fingerprint,text:r.input_snapshot?.media?.narration?.text??'',mainScriptText:(await resolveWorkspaceShotLineage(c,row,r.shot_id,r.input_snapshot?.workspace_narration?.preparation_revision_id??r.input_snapshot?.storyboard_review_package_id??row.preparation_revision_id??row.storyboard_package_id).catch(()=>null))?.baseline_text??main.find((s:{id:string})=>s.id===r.shot_id)?.scriptSegment??'',audioTrackId:r.id,relativePath:r.relative_path,sha256:r.sha256,fileSize:Number(r.file_size),durationSeconds:Number(r.duration_seconds),pendingConfirmation:!d&&mode==='tts'&&target?.sourceAssetId===`audio-track-${r.id}`&&!!target?.loopControlCandidate,currentVoiceMode:mode,currentDurationSeconds:route.item?Number(route.item.durationInFrames)/fps:null,targetDurationSeconds:window/fps,...(timeline&&Number.isFinite(window)?{durationImpact:{deltaSeconds:Number(r.duration_seconds)-window/fps,overlapItemIds:timeline.items.filter(i=>Math.ceil(Number(r.duration_seconds)*fps)>window&&i.id!==target?.id&&Number(i.startFrame)>=start+window&&Number(i.startFrame)<start+Math.ceil(Number(r.duration_seconds)*fps)).map(i=>String(i.id))}}:{}),status,...(canRestoreNarration?{canRestoreNarration}:{})};
+  }));
+ }
+--- WOMyG1/src/local-app/workspaceInitialProject.ts
++++ loop-story-e2e-J0pciK/src/local-app/workspaceInitialProject.ts
+@@ -0,0 +1,36 @@
++import {randomUUID} from 'node:crypto';
++import {ConfigurationError} from './configurationCommands.js';
++import {defaultShotComposition,shotCompositionRect,shotCompositionTransform,shotCompositionSlotLabels,shotCompositionLayouts} from '../shotComposition.js';
++import type {StoryboardShotManifest} from '../worker/contracts.js';
++import type {OpenChatCutProject,OpenChatCutTimeline} from '../worker/openchatcutProject.js';
++import type {WorkspaceClip} from '../productionWorkspace.js';
++
++/** Initial placeholders carry no selected media or confirmation. */
++export function createProductionWorkspaceProject(episodeId:string,id:string,shots:StoryboardShotManifest[],canvas?:Pick<OpenChatCutTimeline,'fps'|'width'|'height'>){
++   const [width,height]=canvas?[canvas.width,canvas.height]:shots[0].targetSpec==='16:9'?[1920,1080]:shots[0].targetSpec==='1:1'?[1080,1080]:[1080,1920];
++   const fps=canvas?.fps??30;
++   const tracks:OpenChatCutProject['timelines'][number]['tracks']={V1:{kind:'video',name:'画面'}};
++   let frame=0;
++   const clips:WorkspaceClip[]=[];
++   const items=shots.flatMap(shot=>{
++    if(typeof shot.id!=='string'||typeof shot.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');
++    const duration=Math.max(1,Math.round(Number(shot.durationSeconds||3)*fps));
++    const layout=shot.layout&&shotCompositionLayouts.includes(shot.layout)?shot.layout:'full';
++    const composition=defaultShotComposition(layout);
++    const shotItems=composition.slots.map((slot,index)=>{
++     const clipId=randomUUID(),itemId=`shot-${shot.id}-${clipId}`,track=`V${index+1}`;
++     const label=shotCompositionSlotLabels[slot.id];
++     tracks[track]??={kind:'video',name:`画面 ${index+1}`};
++     clips.push({id:clipId,itemId,shotId:shot.id,text:shot.scriptSegment,source:null});
++     return {id:itemId,track,kind:'text',name:`${shot.id} · ${label}`,startFrame:frame,durationInFrames:duration,width,height,
++      props:{text:`待匹配画面\n${label}`,fontSize:64,color:'#a3acc2',align:'center'},
++      transform:{...shotCompositionTransform(shotCompositionRect(layout,slot.id),slot),rotation:0},
++      ...(layout!=='full'?{loopControlComposition:{layout,slotId:slot.id}}:{}),
++     };
++    });
++    frame+=duration;
++    return shotItems;
++   });
++   const project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${episodeId}`,timelines:[{id:`loop-control-${episodeId}`,name:'整期剪辑',order:0,fps,width,height,fit:'contain',items,trackOrder:Object.keys(tracks),tracks,transitions:[],selectedId:null,captionsHidden:false}]};
++   return{project,clips};
++}
+--- WOMyG1/src/productionWorkspace.ts
++++ loop-story-e2e-J0pciK/src/productionWorkspace.ts
+@@ -7,7 +7,9 @@
+ /** Provenance bindings identify native items; the OpenChatCut document owns editing. */
+ export interface WorkspaceSource {materialRevisionId:string;relativePath:string;sha256:string;fileSize:number;kind:'video'|'image'|'audio'}
+ export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:string;soundIntent?:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
++export interface LegacyDraftInputs {version:'legacy-draft-inputs/v1';sourceSha256:string;shots:Array<{shotId:string;confirmationStatus:string;audioMode:string;materialRevisionId:string|null;audioTrackId:string|null;subtitleText:string;ttsText:string|null;ranges:Array<{startSeconds:number;endSeconds:number}>;composition:unknown}>;issues:Array<{shotId:string;kind:string}>}
+ export interface ProductionWorkspace {
++ legacyInputs?:LegacyDraftInputs;
+  scriptResume?:{canReuse:boolean;reason:string};
+  selectedImages?:Array<{targetItemId:string;candidateId:string;materialRevisionId:string}>;
+  visualConfiguration?:{imageSelection?:import('./productionSelection.js').ProductionSelection;imageModel:string|null;videoModel:string|null;videoProvider:string|null};
+@@ -20,6 +22,7 @@
+  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
+ }
+ export const productionWorkspaceFields:Record<string,string[]>={
++ importLegacyDraftInputs:['episodeId','expectedScriptRevisionId','reviewPackageId','workbenchSha256'],
+  adoptLegacyPlan:['episodeId','expectedScriptRevisionId','expectedPlanSha256'],
+  prepareWorkspaceCall:['episodeId','workspaceId','expectedRevision','callCommand','callData'],
+  confirmWorkspaceCall:['episodeId','workspaceId','expectedRevision','confirmationId','reservationCents'],
+--- WOMyG1/src/workspaceAudio.ts
++++ loop-story-e2e-J0pciK/src/workspaceAudio.ts
+@@ -7,7 +7,7 @@
+ export const workspaceAudioFields:Record<string,string[]>={
+  setWorkspaceAudioEnabled:['episodeId','workspaceId','expectedRevision','kind','enabled'],
+  saveWorkspaceAudioDefaults:['episodeId','workspaceId','expectedRevision','selection'],
+- prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','intent','candidateCount','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','retry','selection'],
++ prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','intent','candidateCount','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','audioTrackId','retry','selection'],
+  saveWorkspaceMusicSettings:['episodeId','workspaceId','expectedRevision','settings'],
+  adoptWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId'],
+  mixWorkspaceAudio:['episodeId','workspaceId','expectedRevision','edit'],
+--- WOMyG1/src/workspaceCall.ts
++++ loop-story-e2e-J0pciK/src/workspaceCall.ts
+@@ -1,7 +1,7 @@
+ /** An explicit request, never an episode-wide or future-call authorization. */
+ export const workspaceCallKinds=['requestWorkspaceImageCandidates','requestWorkspaceVisualCandidate','generateWorkspaceImage','generateWorkspaceNarration','prepareWorkspaceAudio'] as const;
+ export function requiresWorkspaceCall(command:string,data:Record<string,unknown>):boolean {
+- return workspaceCallKinds.includes(command as typeof workspaceCallKinds[number])&&(command!=='prepareWorkspaceAudio'||data.kind!=='source'&&!data.materialRevisionId);
++ return workspaceCallKinds.includes(command as typeof workspaceCallKinds[number])&&(command!=='prepareWorkspaceAudio'||data.kind!=='source'&&!data.materialRevisionId&&!(Object.hasOwn(data,'audioTrackId')&&!data.preparationId&&!data.retry));
+ }
+ export interface WorkspaceCallSummary {
+  kind:'图片生成'|'视频生成'|'口播生成'|'在线音效';target:string;provider:string;model:string;connection:string;

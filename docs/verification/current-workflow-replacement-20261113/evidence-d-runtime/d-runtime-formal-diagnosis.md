@@ -1,0 +1,6 @@
+# 正式生产回归的两个旧模型假设
+
+1. 原同批4过1失败，formal新单在saveTtsSettings返回400。最小独立Owner HTTP回归再次稳定复现，响应已留settings-response.json；有效原SQL要求旧审核工作台，新单stage为script_approved且旧包为空，不满足该入口。当前saveWorkspaceNarrationDefaults已支持显式selection，原测试改走此入口，旧SQL不改。
+2. 继续实际生产到字幕对齐前，测试访问旧shot_preparation_drafts.rows[0]报undefined。新单零旧草稿是B1要求。改为通过当前工作区响应验证被拒绝草稿正文、明确采用音轨和对齐前后audioTrack/inputFingerprint不变；不创建旧草稿迎合测试。
+
+原400、最小400和后续undefined日志均保留；修后真实formal单项通过37.54秒。受控Provider响应，无真实API；精确导出、迟到未采用、字幕对齐、交付和隔离删除回滚断言保持。每次失败均因新的可定位旧模型假设，不靠原样重跑掩盖。最终同批runtime/Worker/native恢复及全类型另做。

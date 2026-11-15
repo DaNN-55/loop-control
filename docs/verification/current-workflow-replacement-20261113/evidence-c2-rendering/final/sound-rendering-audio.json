@@ -1,0 +1,25 @@
+{
+  "kind": "audio",
+  "audioStreams": 1,
+  "samples": 50176,
+  "rms": 0,
+  "exportSha256": "cbac7261f89ead34b9365b1809acb05facfb4eda52b385ae12c09d8bae076c70",
+  "events": [
+    {
+      "event_type": "sound_withdrawn",
+      "payload": {
+        "role": "bgm",
+        "action": "withdrawn",
+        "version": "sound-use/v1",
+        "source_id": "b68112ec-acf6-4ea1-8a41-def17acd351f",
+        "use_sha256": "70553a9a367eea4a9f5febb99ef6095732fac251e99a5ed452d94a572f554015",
+        "source_kind": "material",
+        "workspace_id": "8846792d-768d-4c7e-8953-65bfb1e1b816",
+        "source_sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+        "content_sha256": "17e8aa525c56d6e77e748b951c408e726e35374f048d4b1b537f3866e7b399df",
+        "instance_sha256": "bf84211619d6a0f891ad031e45198211f41fd76438cb66e44f1b30e796fdf9a9",
+        "project_revision": 5
+      }
+    }
+  ]
+}

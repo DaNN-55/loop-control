@@ -11,7 +11,7 @@ export function storyboardFromScript(script:ProductionScript,inputs:ArtifactMani
   const settings={...defaults,...segmentSettings(script,s)},duration=settings.duration??5;
   if(settings.sfx&&settings.sfx!=='none')audioCues.push({id:'sfx-'+s.id,kind:'sfx',description:settings.sfx,searchQuery:'uploaded audio',startSeconds:start+(settings.sfxStart??0),durationSeconds:settings.sfxDuration??1});
   start+=duration;
-  return{id:s.id,scriptSegment:s.narration,durationSeconds:duration,shotType:s.shotType??'b_roll',productionMethod:s.videoPrompt,inputBasis:basis,targetSpec:settings.aspectRatio??'9:16',...(settings.layout?{layout:settings.layout}:{})};
+  return{id:s.id,scriptSegment:s.narration,durationSeconds:duration,shotType:s.shotType??'b_roll',productionMethod:script.version===3?s.visual||s.videoPrompt||'待匹配素材':s.videoPrompt,inputBasis:basis,targetSpec:settings.aspectRatio??'9:16',...(settings.layout?{layout:settings.layout}:{}),...(script.version===3?{visualSource:s.visualSource,...(settings.materialReference?{materialReference:settings.materialReference}:{})}:{})};
  });
  return{version:'storyboard/v1',shots,audioCues};
 }

@@ -1,0 +1,31 @@
+{
+  "kind": "prose",
+  "episode": "a9bd9057-0134-4fbd-97ad-58a25cfaa5e5",
+  "baselineBefore": "509d8476-1da6-4209-936d-43984664e10e",
+  "baselineAfter": "c30327a3-0b77-4d57-86dc-9e7c1058c21c",
+  "stable": [
+    {
+      "id": "e44f7c42-bd87-478e-97d9-42f475cc001f",
+      "itemId": "shot-shot-01-e44f7c42-bd87-478e-97d9-42f475cc001f",
+      "shotId": "shot-01"
+    },
+    {
+      "id": "108be1a0-a3c1-41c1-8754-bd62877fbe18",
+      "itemId": "shot-shot-02-108be1a0-a3c1-41c1-8754-bd62877fbe18",
+      "shotId": "shot-02"
+    }
+  ],
+  "manualTrack": "cf13d916-1678-46ae-866d-3692563c59cc",
+  "project": {
+    "relativePath": "未分系列--5098bc39-baef-453b-b416-f6e19ab87797/正式新单--a9bd9057-0134-4fbd-97ad-58a25cfaa5e5/production-workspace/versions/8242f808dcec8db40fd575880ae608ede4ac00b3c8a7fd51e07c7a5002de6f5d.json",
+    "sha256": "8242f808dcec8db40fd575880ae608ede4ac00b3c8a7fd51e07c7a5002de6f5d",
+    "fileSize": 8393,
+    "projectId": "loop-control-a9bd9057-0134-4fbd-97ad-58a25cfaa5e5"
+  },
+  "oldTablesEmpty": true,
+  "tasks": [
+    {
+      "task_type": "generate_narration"
+    }
+  ]
+}

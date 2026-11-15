@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "entireDailySnapshotUnchanged": true,
+  "appAndDeploymentBytesUnchanged": true,
+  "pid": 51263,
+  "http": 200,
+  "dailyMigrated": false,
+  "metricsActivated": false,
+  "serviceRestarted": false
+}

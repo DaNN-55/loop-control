@@ -1,0 +1,43 @@
+E2E evidence: /private/tmp/loop-story-e2e-F8Y3ao/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-F8Y3ao/source
+
+ ❯ src/local-app/productionScriptV3.integration.test.ts (4 tests | 2 failed | 2 skipped) 5627ms
+   ↓ a static v3 order rejects malformed structured imports and delivers without video fields or generation tasks
+   ↓ a restored invalid structured main script reports its line error and never creates a prose preparation
+   × the current default script imports as v3 and prepares without an old plan or implicit media generation 2775ms
+     → expected 2 to be 3 // Object.is equality
+   × the current example script imports as v3 and prepares without an old plan or implicit media generation 2852ms
+     → expected 2 to be 3 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionScriptV3.integration.test.ts > the current default script imports as v3 and prepares without an old plan or implicit media generation
+ FAIL  src/local-app/productionScriptV3.integration.test.ts > the current example script imports as v3 and prepares without an old plan or implicit media generation
+AssertionError: expected 2 to be 3 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 3[39m
+[31m+ 2[39m
+
+ ❯ src/local-app/productionScriptV3.integration.test.ts:60:165
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 skipped (4)
+   Start at  02:30:05
+   Duration  6.31s (transform 414ms, setup 7ms, collect 561ms, tests 5.63s, environment 0ms, prepare 26ms)
+
+JSON report written to /private/tmp/loop-story-e2e-F8Y3ao/evidence/vitest.json

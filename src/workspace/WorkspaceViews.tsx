@@ -48,6 +48,11 @@ export const stageLabels: Record<EpisodeStage, string> = {
   get render_ready(){return uiText("合成与 QC");},
   get qc_review(){return uiText("合成与 QC 审核");},
   get qc_passed(){return uiText("合成与 QC 审核");},
+  get publish_ready(){return uiText("待发布");},
+  get publishing_review(){return uiText("发布审核");},
+  get published(){return uiText("已发布");},
+  get metrics_collecting(){return uiText("数据收集");},
+  get learning_recorded(){return uiText("复盘已记录");},
   get production_completed(){return uiText("生产完成");},
 };
 

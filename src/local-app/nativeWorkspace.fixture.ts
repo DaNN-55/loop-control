@@ -80,7 +80,7 @@ export async function nativeWorkspaceFixture(options:NativeWorkspaceFixtureOptio
    handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections,recoverOutput});
    await options.onSetup?.({stage:'server',database,root,origin});return origin;
   };
-  return{database,root,pool,c,owner,other,token,otherToken,password,email,runtime,workerPool,start,
+  return{database,root,pool,c,owner,other,token,otherToken,password,email,runtime,workerPool,start,activeLocalExports:(id:string)=>commands?.activeLocalExports(id)??0,
    get origin(){return origin;},get handler(){return handler;},
    async restart(){await commands!.close();commands=createCommands();handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections,recoverOutput});},
    closeStudio:(episodeId:string)=>commands!.closeStudio(episodeId),close:resources.close,

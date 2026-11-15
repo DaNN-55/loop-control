@@ -7,6 +7,7 @@ type Task = Database["public"]["Tables"]["tasks"]["Row"];
 type TaskRun = Database["public"]["Tables"]["task_runs"]["Row"];
 
 const baseTask: Task = {
+  invalidated_at:null, invalidated_reason:null, lease_token:null, available_at:"2026-08-18T00:00:00.000Z",
   actual_cost_cents: null,
   attempt: 1,
   budget_limit_cents: 0,
@@ -26,6 +27,7 @@ const baseTask: Task = {
 };
 
 const taskRun: TaskRun = {
+  lease_token:null,
   actual_cost_cents: 0,
   attempt: 1,
   completed_at: null,

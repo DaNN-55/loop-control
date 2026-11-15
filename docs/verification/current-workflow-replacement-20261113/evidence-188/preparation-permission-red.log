@@ -1,0 +1,47 @@
+E2E evidence: /private/tmp/loop-story-e2e-IYGPcl/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-IYGPcl/source
+
+ ❯ src/local-app/productionPreparationImport.integration.test.ts (9 tests | 1 failed | 8 skipped) 1540ms
+   ↓ imports an existing preparation deterministically without rewriting the old package, project, shots, tasks or audio and refuses conflicting provenance
+   ↓ formatting-only script continuation keeps canonical shot versions and their authored origin including locally added shots
+   ↓ known canonical preparations still verify their actual frozen file on current reads and commands (missing)
+   ↓ known canonical preparations still verify their actual frozen file on current reads and commands (sha)
+   ↓ known canonical preparations still verify their actual frozen file on current reads and commands (size)
+   ↓ known canonical preparations still verify their actual frozen file on current reads and commands (manifest)
+   × known canonical preparations still verify their actual frozen file on current reads and commands (permission) 1539ms
+     → {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 409 // Object.is equality
+   ↓ current Owner preparation and native shot edits use canonical lineage without writing the old workspace shot-input table
+   ↓ 188 backfills original preparation and local-shot lineage atomically, keeps every old field and source, refuses script ambiguity and restores the nonempty graph
+ ↓ src/local-app/storyE2e.integration.test.ts (24 tests | 24 skipped)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionPreparationImport.integration.test.ts > known canonical preparations still verify their actual frozen file on current reads and commands (permission)
+AssertionError: {"code":"local_service_unavailable","error":"本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。"}: expected 503 to be 409 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 503[39m
+
+ ❯ src/local-app/productionPreparationImport.integration.test.ts:92:223
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 skipped (2)
+      Tests  1 failed | 32 skipped (33)
+   Start at  19:53:02
+   Duration  2.51s (transform 442ms, setup 7ms, collect 758ms, tests 1.54s, environment 0ms, prepare 54ms)
+
+JSON report written to /private/tmp/loop-story-e2e-IYGPcl/evidence/vitest.json

@@ -1,0 +1,20 @@
+{
+  "sourceFiles": 1356,
+  "finalIsolatedSource": "/private/tmp/loop-story-e2e-uorIbD/source",
+  "sourceHashesMatch": true,
+  "stageFiles": [
+    "scripts/runtime/project-history.mjs",
+    "scripts/runtime/production-history.mjs",
+    "scripts/runtime/legacy-production-history.mjs",
+    "src/local-app/legacyProductionHistory.integration.test.ts"
+  ],
+  "dailySnapshotMatchesPreviousStage": true,
+  "headAndPhysicalIndexUnchanged": true,
+  "metricsEnabled": false,
+  "metricEvents": 0,
+  "dailyMigrationApplied": false,
+  "tests": 42,
+  "failed": 0,
+  "skipped": 0,
+  "containerRemoved": true
+}

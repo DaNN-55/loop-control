@@ -1,0 +1,38 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-pH4d9p/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-pH4d9p/source
+
+ ❯ src/local-app/legacyPlanAdoption.integration.test.ts (1 test | 1 failed) 3389ms
+   × explicitly imports the saved plan as current preparation without treating planned references or old authorization as adopted media 3389ms
+     → {"error":"服务媒体目录与恢复部署不匹配。"}: expected 503 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyPlanAdoption.integration.test.ts > explicitly imports the saved plan as current preparation without treating planned references or old authorization as adopted media
+AssertionError: {"error":"服务媒体目录与恢复部署不匹配。"}: expected 503 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 503[39m
+
+ ❯ src/local-app/legacyPlanAdoption.integration.test.ts:22:177
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  08:19:04
+   Duration  4.14s (transform 438ms, setup 7ms, collect 627ms, tests 3.39s, environment 0ms, prepare 34ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-pH4d9p/evidence/vitest.json

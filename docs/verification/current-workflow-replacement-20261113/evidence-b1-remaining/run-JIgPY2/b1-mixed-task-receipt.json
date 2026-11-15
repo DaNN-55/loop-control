@@ -1,0 +1,32 @@
+{
+  "episode": "5d53b1f5-f0bb-4338-9962-d06a9b66fc62",
+  "preparation": "b896b002-3a44-4350-b928-4d9d65232060",
+  "taskIds": [
+    "94335c67-d330-4237-a8d3-66577cbbd32d",
+    "78a1b05d-b5b4-4a39-8df6-3e838cd24610",
+    "da1f39ef-981f-40ae-ad3a-a42db873b3c7"
+  ],
+  "sourceTrack": {
+    "id": "b4faf7b5-1810-4225-8933-bb660923b831",
+    "preparation_revision_id": "b896b002-3a44-4350-b928-4d9d65232060",
+    "source_review_package_id": null,
+    "relative_path": "未分系列--333216fb-9a35-43c7-8941-5a5b047d0d0a/正式新单--5d53b1f5-f0bb-4338-9962-d06a9b66fc62/native-tasks/da1f39ef-981f-40ae-ad3a-a42db873b3c7/16fba4bf-8d56-404d-b568-74670aa8013c.mp3",
+    "sha256": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568"
+  },
+  "projectBefore": {
+    "relativePath": "未分系列--333216fb-9a35-43c7-8941-5a5b047d0d0a/正式新单--5d53b1f5-f0bb-4338-9962-d06a9b66fc62/production-workspace/versions/6f6d2251c2e6a45483daf80da40c792ad9366a96e0e7731fc6065c9c6d37a5a6.json",
+    "sha256": "6f6d2251c2e6a45483daf80da40c792ad9366a96e0e7731fc6065c9c6d37a5a6",
+    "fileSize": 11584,
+    "projectId": "loop-control-5d53b1f5-f0bb-4338-9962-d06a9b66fc62"
+  },
+  "projectAfter": {
+    "relativePath": "未分系列--333216fb-9a35-43c7-8941-5a5b047d0d0a/正式新单--5d53b1f5-f0bb-4338-9962-d06a9b66fc62/production-workspace/versions/cdd1920d767cb95ccd70aca56836bee8d89ba4668c94d142aafddf5f9730c18d.json",
+    "sha256": "cdd1920d767cb95ccd70aca56836bee8d89ba4668c94d142aafddf5f9730c18d",
+    "fileSize": 13482,
+    "projectId": "loop-control-5d53b1f5-f0bb-4338-9962-d06a9b66fc62"
+  },
+  "sourceExplicitlyAdopted": true,
+  "imageAndSpeechNotAdopted": true,
+  "controlledImageCalls": 1,
+  "controlledSpeechCalls": 1
+}

@@ -1,0 +1,84 @@
+[
+  {
+    "name": "local_identity.request_shot_revision",
+    "args": "p_episode uuid, p_package uuid, p_operation jsonb, p_reason text",
+    "definitionSha256": "94555128fc69563d3c995f586267709b6415bc300e36d461daf31abb8a12cbd7",
+    "acl": [
+      "postgres=X/postgres",
+      "loop_owner=X/postgres"
+    ],
+    "sqlCallers": [],
+    "dependencies": []
+  },
+  {
+    "name": "public.canonical_storyboard_structure_revision_operation",
+    "args": "p_operation jsonb",
+    "definitionSha256": "3916d94f9e4650778e60c182c31e798f597f9552053f890049a7a17724621ebc",
+    "acl": [
+      "postgres=X/postgres"
+    ],
+    "sqlCallers": [
+      "public.request_shot_structure_revision"
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "public.create_storyboard_annotation",
+    "args": "p_review_package_id uuid, p_shot_id text, p_reason text",
+    "definitionSha256": "d52f72b4153c0395d50a422121ca81556f762f1aab45404f1bb963706e53a683",
+    "acl": [
+      "postgres=X/postgres",
+      "loop_owner=X/postgres"
+    ],
+    "sqlCallers": [],
+    "dependencies": []
+  },
+  {
+    "name": "public.create_storyboard_revision_review_package",
+    "args": "",
+    "definitionSha256": "0d120187bf86bc523a6abc58edf02acf80d642676f2c36f74e882d04f9dc2c99",
+    "acl": [
+      "postgres=X/postgres"
+    ],
+    "sqlCallers": [],
+    "dependencies": [
+      "trigger create_storyboard_revision_review_package_after_task on table tasks"
+    ]
+  },
+  {
+    "name": "public.create_storyboard_revision_task_after_changes_requested",
+    "args": "",
+    "definitionSha256": "c607cee8acaa060ddc0cecf94050f813d022a094419e1cc9661129420bce240f",
+    "acl": [
+      "postgres=X/postgres"
+    ],
+    "sqlCallers": [],
+    "dependencies": [
+      "trigger create_storyboard_revision_task_after_changes_requested on table approvals"
+    ]
+  },
+  {
+    "name": "public.request_shot_structure_revision",
+    "args": "p_episode_id uuid, p_review_package_id uuid, p_operation jsonb, p_reason text",
+    "definitionSha256": "6a871ccda46eb37a9948ee1c95dfed8a822fc660b7e38aa6874f77ea7cac19e0",
+    "acl": [
+      "postgres=X/postgres",
+      "loop_owner=X/postgres"
+    ],
+    "sqlCallers": [
+      "local_identity.request_shot_revision"
+    ],
+    "dependencies": []
+  },
+  {
+    "name": "public.review_pre_render_member",
+    "args": "p_review_package_id uuid, p_member_key text, p_decision text, p_reason text",
+    "definitionSha256": "7c9ea31728a44b8fc42f73a8d4a6e52985c446eb16ef1dbb6ca8807219f2b170",
+    "acl": [
+      "postgres=X/postgres",
+      "loop_owner=X/postgres"
+    ],
+    "sqlCallers": [],
+    "dependencies": []
+  }
+]

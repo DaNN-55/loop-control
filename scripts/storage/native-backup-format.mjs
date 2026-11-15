@@ -2,8 +2,10 @@ import{fingerprintFile}from'./file-io.mjs';
 import{readFileSync,lstatSync,realpathSync}from'node:fs';import{resolve,relative,isAbsolute,join}from'node:path';import{createHash}from'node:crypto';
 export const digest=b=>createHash('sha256').update(b).digest('hex');
 export function archiveCopies(text){
+ // pg_dump quotes reserved lower-case columns such as "position". Retain the
+ // paired quotes for COPY, accepting only the original safe identifier alphabet.
  const result=[];for(const m of text.matchAll(/^COPY (public|local_identity|loop_internal)\.([a-z_][a-z0-9_]*) \(([^\n]+)\) FROM stdin;\n([\s\S]*?)^\\\.\n/gm)){
-  if(!/^[a-z_][a-z0-9_]*(?:, [a-z_][a-z0-9_]*)*$/.test(m[3]))throw Error('Unsupported archive columns');const rows=m[4].split('\n').slice(0,-1).sort();result.push({table:m[1]+'.'+m[2],columns:m[3],rows:rows.length,sha256:digest(Buffer.from(rows.join('\n'))),records:m[4]});
+  if(!/^(?:[a-z_][a-z0-9_]*|"[a-z_][a-z0-9_]*")(?:, (?:[a-z_][a-z0-9_]*|"[a-z_][a-z0-9_]*"))*$/.test(m[3]))throw Error('Unsupported archive columns');const rows=m[4].split('\n').slice(0,-1).sort();result.push({table:m[1]+'.'+m[2],columns:m[3],rows:rows.length,sha256:digest(Buffer.from(rows.join('\n'))),records:m[4]});
  }if(!result.length||new Set(result.map(x=>x.table)).size!==result.length)throw Error('Unsupported or duplicate archive tables');return result;
 }
 export function archiveSequences(text){return [...text.matchAll(/^SELECT pg_catalog\.setval\('((?:public|local_identity|loop_internal)\.[a-z_][a-z0-9_]*)', ([0-9]+), (true|false)\);$/gm)].map(m=>({name:m[1],value:m[2],isCalled:m[3]==='true'}));}

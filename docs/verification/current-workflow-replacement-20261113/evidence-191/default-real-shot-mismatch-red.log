@@ -1,0 +1,44 @@
+E2E evidence: /private/tmp/loop-story-e2e-vV69XH/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-vV69XH/source
+
+ ❯ src/local-app/productionDefaultPreparation.integration.test.ts (7 tests | 1 failed | 6 skipped) 3754ms
+   ↓ new production prepares directly from an independent baseline without old packages, classifications, approvals or drafts and survives reopen
+   ↓ format-only continuation keeps an independent baseline, exact project and all input versions without creating a legacy child package
+   × a fresh independent order queues and executes an image from its own frozen baseline without consulting any review package 3753ms
+     → expected true to be false // Object.is equality
+   ↓ independent source extraction and sound search register preparation-bound audio while retired review evidence remains untouched
+   ↓ exact deletion includes registered independent preparation files and preserves unregistered user files
+   ↓ a new independent volcengine video request freezes its real basis and executes controlled transport without retired shot classification
+   ↓ a new independent bailian video request freezes its real basis and executes controlled transport without retired shot classification
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionDefaultPreparation.integration.test.ts > a fresh independent order queues and executes an image from its own frozen baseline without consulting any review package
+AssertionError: expected true to be false // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+ ❯ src/local-app/productionDefaultPreparation.integration.test.ts:60:261
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  23:11:18
+   Duration  4.48s (transform 425ms, setup 7ms, collect 603ms, tests 3.75s, environment 0ms, prepare 33ms)
+
+JSON report written to /private/tmp/loop-story-e2e-vV69XH/evidence/vitest.json

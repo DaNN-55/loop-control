@@ -1,0 +1,66 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-9o7L0X/source
+
+ ✓ src/local-app/accountCreation.integration.test.ts (4 tests) 11182ms
+   ✓ first account on a native workspace without import history owns one persisted real directory and survives replay and rename  1602ms
+   ✓ real native new installation creates its first account without import data and resumes a killed creation in the same directory  5776ms
+   ✓ creation faults preserve unknown files, clean only owned empty folders and resume the pre-marker crash window  2417ms
+   ✓ creation cleanup preserves same-byte replacement markers and final registration refuses a replacement directory  1386ms
+ ❯ src/local-app/retiredInitialization.integration.test.ts (2 tests | 2 failed) 2122ms
+   × 180 removes only unused initialization entries after restoring account, rule and delegated-task history without altering bindings or guards 737ms
+     → Command failed: docker exec -i loop-story-e2e-7b9ed30e6640 psql -XqAt -U postgres -d loop_compat_source_e59d3e0ac714 -v ON_ERROR_STOP=1
+ERROR:  23505: duplicate key value violates unique constraint "prompt_versions_account_id_capability_version_key"
+DETAIL:  Key (account_id, capability, version)=(19d12cd3-097c-4652-ad8b-458f20b1941a, script_writing, 1) already exists.
+SCHEMA NAME:  public
+TABLE NAME:  prompt_versions
+CONSTRAINT NAME:  prompt_versions_account_id_capability_version_key
+LOCATION:  _bt_check_unique, nbtinsert.c:666
+
+   × current Owner rule save, draft creation and activation preserve frozen Episode bindings after 180 1385ms
+     → expected 1 to be +0 // Object.is equality
+ ✓ src/local-app/blueprintContraction.integration.test.ts (3 tests) 8266ms
+   ✓ Owner saves creative-only accounts without media connections and retains referenced legacy blueprint evidence  1934ms
+   ✓ retired planning settings and retries retain exact historical selections and tasks  3086ms
+   ✓ v2 direct preparation needs no planner and new media requests require explicit service selection  3245ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/retiredInitialization.integration.test.ts > 180 removes only unused initialization entries after restoring account, rule and delegated-task history without altering bindings or guards
+Error: Command failed: docker exec -i loop-story-e2e-7b9ed30e6640 psql -XqAt -U postgres -d loop_compat_source_e59d3e0ac714 -v ON_ERROR_STOP=1
+ERROR:  23505: duplicate key value violates unique constraint "prompt_versions_account_id_capability_version_key"
+DETAIL:  Key (account_id, capability, version)=(19d12cd3-097c-4652-ad8b-458f20b1941a, script_writing, 1) already exists.
+SCHEMA NAME:  public
+TABLE NAME:  prompt_versions
+CONSTRAINT NAME:  prompt_versions_account_id_capability_version_key
+LOCATION:  _bt_check_unique, nbtinsert.c:666
+
+ ❯ call ../runtime-context.mjs:3:38
+
+ ❯ docker ../runtime-context.mjs:6:156
+ ❯ Object.sql ../runtime-context.mjs:7:446
+ ❯ sql src/local-app/retiredInitialization.integration.test.ts:20:44
+ ❯ src/local-app/retiredInitialization.integration.test.ts:25:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/retiredInitialization.integration.test.ts > current Owner rule save, draft creation and activation preserve frozen Episode bindings after 180
+AssertionError: expected 1 to be +0 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 0[39m
+[31m+ 1[39m
+
+ ❯ src/local-app/retiredInitialization.integration.test.ts:82:134
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 7 passed (9)
+   Start at  11:43:33
+   Duration  23.15s (transform 675ms, setup 11ms, collect 1.18s, tests 21.57s, environment 0ms, prepare 93ms)
+
+JSON report written to /private/tmp/loop-story-e2e-9o7L0X/evidence/vitest.json

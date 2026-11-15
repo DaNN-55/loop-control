@@ -1,0 +1,191 @@
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Y966Oc/source/src/orchestration/runtimeBuild.ts
++++ /Users/dan/Programs/loop-control/src/orchestration/runtimeBuild.ts
+@@ -5,11 +5,14 @@
+ type Fingerprints = Record<string, string>;
+ export interface RuntimeRelease {id:string;root:string}
+ export class RuntimePreparationError extends Error {
+- readonly code: "runtime_not_prepared"|"runtime_source_changed"|"runtime_release_invalid"|"runtime_preparing";
++ readonly code: "runtime_not_prepared"|"runtime_source_changed"|"runtime_release_invalid"|"runtime_release_retired"|"runtime_preparing";
+  constructor(code: RuntimePreparationError["code"]) {super(runtimeErrorMessages[code]);this.code=code;}
+ }
+-export const runtimeErrorMessages={runtime_not_prepared:"运行程序尚未准备，请运行 npm run runtime:prepare 后重启本机服务。",runtime_source_changed:"开发源码或编译产物已变化，请运行 npm run runtime:prepare；正在运行的固定版本不受影响。",runtime_release_invalid:"当前运行版本不完整或校验失败，已停止执行；请运行 npm run runtime:prepare 后重启本机服务。",runtime_preparing:"新运行版本正在准备，请等待当前准备完成后重试。"};
+-interface RuntimeManifest {version:4;publicationId:string;projectRoot:string;nodeMajor:string;sources:Fingerprints;outputs:Fingerprints;release:RuntimeRelease}
++export const runtimeErrorMessages={runtime_not_prepared:"运行程序尚未准备，请运行 npm run runtime:prepare 后重启本机服务。",runtime_source_changed:"开发源码或编译产物已变化，请运行 npm run runtime:prepare；正在运行的固定版本不受影响。",runtime_release_invalid:"当前运行版本不完整或校验失败，已停止执行；请运行 npm run runtime:prepare 后重启本机服务。",runtime_release_retired:"此运行包已退役，已停止执行；请运行 npm run runtime:prepare 后使用当前程序，历史工程通过当前工作区接入。",runtime_preparing:"新运行版本正在准备，请等待当前准备完成后重试。"};
++export const runtimeExecutionContract='production-workspace/v1';
++interface ReleaseContents {publicationId:string;projectRoot:string;nodeMajor:string;sources:Fingerprints;outputs:Fingerprints;release:RuntimeRelease}
++type ExecutionPolicy={version:4}|{version:5;executionContract:typeof runtimeExecutionContract};
++type RuntimeManifest=ReleaseContents&ExecutionPolicy;
+ const manifestName = "dist/runtime-manifest.json";
+ const requiredOutputs = ["dist/worker/local-app/localWorkerCli.js", "dist/local-app/local-app/localRoute.js"];
+ 
+@@ -48,19 +51,26 @@
+   return fingerprints(root, paths);
+ }
+ 
+-const releaseIdentity=(m:Pick<RuntimeManifest,'publicationId'|'projectRoot'|'nodeMajor'|'sources'|'outputs'>)=>createHash('sha256').update(JSON.stringify({publicationId:m.publicationId,projectRoot:m.projectRoot,nodeMajor:m.nodeMajor,sources:m.sources,outputs:m.outputs})).digest('hex');
++const releaseIdentity=(m:Omit<ReleaseContents,'release'>&ExecutionPolicy)=>createHash('sha256').update(JSON.stringify({publicationId:m.publicationId,projectRoot:m.projectRoot,nodeMajor:m.nodeMajor,sources:m.sources,outputs:m.outputs,...(m.version===5?{version:m.version,executionContract:m.executionContract}:{})})).digest('hex');
+ export async function assertRuntimeRelease(projectRoot:string,release:RuntimeRelease):Promise<void>{
+  try{
+   const canonical=await realpath(projectRoot),expected=join(canonical,'.loop-control/runtime-releases',release.id);
+   if(!/^[a-f0-9]{64}$/.test(release.id)||release.root!==expected||await realpath(expected)!==expected||(await lstat(expected)).isSymbolicLink())throw Error();
+   const m=JSON.parse(await readFile(join(expected,manifestName),'utf8')) as RuntimeManifest;
+-  if(m.version!==4||m.projectRoot!==canonical||m.nodeMajor!==process.versions.node.split('.')[0]||m.release.id!==release.id||m.release.root!==expected||releaseIdentity(m)!==release.id)throw Error();
+-  if(JSON.stringify(m.outputs)!==JSON.stringify(await outputs(expected)))throw Error();
++  if(![4,5].includes(m.version)||m.version===5&&m.executionContract!==runtimeExecutionContract||m.projectRoot!==canonical||m.nodeMajor!==process.versions.node.split('.')[0]||m.release.id!==release.id||m.release.root!==expected||releaseIdentity(m)!==release.id)throw Error();
++  const actual=await outputs(expected);
++  // Some original v4 manifests also froze this script outside the dist roots.
++  // Verify its bytes for archive integrity; v5 never publishes or executes it.
++  const legacyEntry='scripts/runtime/codex.mjs';
++  if(m.version===4&&Object.hasOwn(m.outputs,legacyEntry)){const path=join(expected,legacyEntry);if(!(await lstat(path)).isFile()||await realpath(path)!==path)throw Error();actual[legacyEntry]=createHash('sha256').update(await readFile(path)).digest('hex');}
++  if(Object.keys(m.outputs).length!==Object.keys(actual).length||Object.entries(m.outputs).some(([path,hash])=>!Object.hasOwn(actual,path)||actual[path]!==hash))throw Error();
+   if(await readFile(join(expected,'package.json'),'utf8')!==JSON.stringify({type:'module'})+'\n')throw Error();
+- }catch{throw new RuntimePreparationError('runtime_release_invalid');}
++  // Integrity permits reading an archive, not executing its retired contract.
++  if(m.version===4)throw new RuntimePreparationError('runtime_release_retired');
++ }catch(error){if(error instanceof RuntimePreparationError&&error.code==='runtime_release_retired')throw error;throw new RuntimePreparationError('runtime_release_invalid');}
+ }
+ export async function readPreparedRuntimeRelease(root:string):Promise<RuntimeRelease>{
+- let manifest:RuntimeManifest;try{manifest=JSON.parse(await readFile(join(root,manifestName),'utf8'));if(manifest.version!==4)throw Error();}catch{throw new RuntimePreparationError('runtime_not_prepared');}
++ let manifest:RuntimeManifest;try{manifest=JSON.parse(await readFile(join(root,manifestName),'utf8'));if(![4,5].includes(manifest.version))throw Error();}catch{throw new RuntimePreparationError('runtime_not_prepared');}
+  await assertRuntimeRelease(root,manifest.release);return manifest.release;
+ }
+ export async function assertPreparedRuntime(root:string):Promise<void>{
+@@ -76,8 +86,8 @@
+  try{
+   const before=await sources(root);await build();
+   if(JSON.stringify(before)!==JSON.stringify(await sources(root)))throw new RuntimePreparationError('runtime_source_changed');
+-  const base={publicationId:randomUUID(),projectRoot:await realpath(root),nodeMajor:process.versions.node.split('.')[0],sources:before,outputs:await outputs(root)},id=releaseIdentity(base),release={id,root:join(await realpath(root),'.loop-control/runtime-releases',id)};
+-  const manifest:RuntimeManifest={version:4,...base,release};
++  const base={version:5,executionContract:runtimeExecutionContract,publicationId:randomUUID(),projectRoot:await realpath(root),nodeMajor:process.versions.node.split('.')[0],sources:before,outputs:await outputs(root)} as const,id=releaseIdentity(base),release={id,root:join(await realpath(root),'.loop-control/runtime-releases',id)};
++  const manifest:RuntimeManifest={...base,release};
+   try{await assertRuntimeRelease(root,release);}catch{
+    // Publish only a complete new directory. Never replace an existing version:
+    // a running process can still own it, including when it is damaged.
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Y966Oc/source/scripts/runtime/recover-native-output.mjs
++++ /Users/dan/Programs/loop-control/scripts/runtime/recover-native-output.mjs
+@@ -23,4 +23,4 @@
+  else console.log(JSON.stringify({pending:(await pool.query('SELECT * FROM local_identity.pending_native_output_publications()')).rows.map(({task_id,episode_id,attempt})=>({taskId:task_id,episodeId:episode_id,attempt,status:'pending_reconciliation'}))}));
+ }finally{await pool.end();}
+ 
+-}catch(error){if(['keychain_locked','keychain_unavailable','runtime_not_prepared','runtime_release_invalid'].includes(error?.code)){console.error(JSON.stringify({code:error.code,error:error.message}));process.exitCode=1;}else throw error;}
++}catch(error){if(['keychain_locked','keychain_unavailable','runtime_not_prepared','runtime_release_invalid','runtime_release_retired'].includes(error?.code)){console.error(JSON.stringify({code:error.code,error:error.message}));process.exitCode=1;}else throw error;}
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Y966Oc/source/src/orchestration/runtimeExecutionPolicy.test.ts
++++ /Users/dan/Programs/loop-control/src/orchestration/runtimeExecutionPolicy.test.ts
+@@ -0,0 +1,63 @@
++// @vitest-environment node
++import {afterEach,expect,it} from 'vitest';
++import {mkdtemp,mkdir,readFile,writeFile,rm,realpath,access} from 'node:fs/promises';
++import {tmpdir} from 'node:os';
++import {join,dirname} from 'node:path';
++import {createHash} from 'node:crypto';
++import {execFile} from 'node:child_process';
++import {promisify} from 'node:util';
++import {assertRuntimeRelease,readPreparedRuntimeRelease,prepareRuntime} from './runtimeBuild';
++const roots:string[]=[],sha=(value:string)=>createHash('sha256').update(value).digest('hex');
++afterEach(async()=>{await Promise.all(roots.splice(0).map(root=>rm(root,{recursive:true,force:true})));});
++
++/** A valid frozen v4 wire fixture, independent of the current publisher. */
++async function legacyRelease(options:{reverseOutputOrder?:boolean;legacyEntry?:boolean}={}){
++ const root=await realpath(await mkdtemp(join(tmpdir(),'loop-retired-runtime-')));roots.push(root);const marker=join(root,'executed');
++ const sourceText:Record<string,string>={'package.json':'{}','package-lock.json':'{}','tsconfig.worker.json':JSON.stringify({include:['src/task.ts']}),'tsconfig.local-app.json':JSON.stringify({include:['src/task.ts']}),'src/task.ts':'export const value=1;'};
++ const worker=`import{writeFileSync}from'node:fs';writeFileSync(${JSON.stringify(marker)},'legacy');\n`,outputText:Record<string,string>={'dist/worker/local-app/localWorkerCli.js':worker,'dist/local-app/local-app/localRoute.js':'export const route=1;\n'};
++ if(options.legacyEntry)outputText['scripts/runtime/codex.mjs']="throw Error('An archived entry must never execute');\n";
++ const fingerprints=(values:Record<string,string>)=>Object.fromEntries(Object.keys(values).sort().map(path=>[path,sha(values[path])]));
++ const ordered=fingerprints(outputText),outputHashes=options.reverseOutputOrder?Object.fromEntries(Object.entries(ordered).reverse()):ordered;
++ const identity={publicationId:'00000000-0000-4000-8000-000000000001',projectRoot:root,nodeMajor:process.versions.node.split('.')[0],sources:fingerprints(sourceText),outputs:outputHashes},id=sha(JSON.stringify(identity)),release={id,root:join(root,'.loop-control/runtime-releases',id)},manifest={version:4,...identity,release};
++ for(const [path,text]of Object.entries({...sourceText,...outputText})){await mkdir(dirname(join(root,path)),{recursive:true});await writeFile(join(root,path),text);}
++ for(const [path,text]of Object.entries(outputText)){await mkdir(dirname(join(release.root,path)),{recursive:true});await writeFile(join(release.root,path),text);}
++ const original=JSON.stringify(manifest)+'\n';await writeFile(join(release.root,'dist/runtime-manifest.json'),original);await writeFile(join(release.root,'package.json'),JSON.stringify({type:'module'})+'\n');await writeFile(join(root,'dist/runtime-manifest.json'),original);
++ await mkdir(join(root,'scripts'),{recursive:true});await mkdir(join(root,'src/orchestration'),{recursive:true});
++ await writeFile(join(root,'scripts/run-prepared.mjs'),await readFile(new URL('../../scripts/run-prepared.mjs',import.meta.url)));
++ await writeFile(join(root,'src/orchestration/runtimeBuild.ts'),await readFile(new URL('./runtimeBuild.ts',import.meta.url)));
++ return{root,release,marker,original,worker};
++}
++it('explicitly refuses a valid frozen v4 release without changing its bytes or guessing that integrity implies current execution',async()=>{
++ const f=await legacyRelease();await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_retired'});await expect(readPreparedRuntimeRelease(f.root)).rejects.toMatchObject({code:'runtime_release_retired'});
++ expect(await readFile(join(f.release.root,'dist/runtime-manifest.json'),'utf8')).toBe(f.original);expect(await readFile(join(f.release.root,'dist/worker/local-app/localWorkerCli.js'),'utf8')).toBe(f.worker);await expect(access(f.marker)).rejects.toMatchObject({code:'ENOENT'});
++});
++it('the actual prepared CLI refuses the archived Worker before its module can execute',async()=>{
++ const f=await legacyRelease();const result=await promisify(execFile)(process.execPath,[join(f.root,'scripts/run-prepared.mjs'),'worker'],{timeout:10000}).then(value=>({code:0,...value}),error=>({code:error.code,stdout:error.stdout,stderr:error.stderr}));
++ expect(result.code).toBe(1);expect(result.stderr).toContain('runtime_release_retired');await expect(access(f.marker)).rejects.toMatchObject({code:'ENOENT'});
++});
++it('explicit preparation publishes a supported new protocol and leaves the original archive intact',async()=>{
++ const f=await legacyRelease({legacyEntry:true});let builds=0;await prepareRuntime(f.root,async()=>{builds++;await writeFile(join(f.root,'dist/worker/local-app/localWorkerCli.js'),`import{writeFileSync}from'node:fs';writeFileSync(${JSON.stringify(f.marker)},'current');\n`);});
++ expect(builds).toBe(1);const next=await readPreparedRuntimeRelease(f.root);expect(next.id).not.toBe(f.release.id);expect(JSON.parse(await readFile(join(f.root,'dist/runtime-manifest.json'),'utf8'))).toMatchObject({version:5,executionContract:'production-workspace/v1'});expect(await readFile(join(f.release.root,'dist/runtime-manifest.json'),'utf8')).toBe(f.original);
++ await expect(assertRuntimeRelease(f.root,next)).resolves.toBeUndefined();await expect(access(join(next.root,'scripts/runtime/codex.mjs'))).rejects.toMatchObject({code:'ENOENT'});await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_retired'});await promisify(execFile)(process.execPath,[join(f.root,'scripts/run-prepared.mjs'),'worker'],{timeout:10000});expect(await readFile(f.marker,'utf8')).toBe('current');
++},15000);
++it('a damaged archive remains an integrity failure instead of being relabelled a healthy retired package',async()=>{
++ const f=await legacyRelease();await writeFile(join(f.release.root,'dist/worker/local-app/localWorkerCli.js'),'damaged');await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_invalid'});
++});
++it('cannot relabel old bytes as the current protocol while retaining the old identity',async()=>{
++ const f=await legacyRelease(),manifest={...JSON.parse(f.original),version:5,executionContract:'production-workspace/v1'};
++ await writeFile(join(f.release.root,'dist/runtime-manifest.json'),JSON.stringify(manifest)+'\n');await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_invalid'});await expect(access(f.marker)).rejects.toMatchObject({code:'ENOENT'});
++});
++
++it('matches output paths and hashes independently of a frozen archive map insertion order',async()=>{
++ const f=await legacyRelease({reverseOutputOrder:true});await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_retired'});expect(await readFile(join(f.release.root,'dist/runtime-manifest.json'),'utf8')).toBe(f.original);
++});
++
++it('validates the original optional v4 entry as archived bytes without adding it to the current execution contract',async()=>{
++ const f=await legacyRelease({legacyEntry:true});await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_retired'});
++ await writeFile(join(f.release.root,'scripts/runtime/codex.mjs'),'damaged archived entry');await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_invalid'});
++});
++it('the actual application factory rejects an archived package before reading database configuration',async()=>{
++ const f=await legacyRelease(),{createNativeApplication}=await import(new URL('../../scripts/runtime/application.mjs',import.meta.url).href);
++ const input={projectRoot:f.root,runtimeRelease:f.release,get database(){throw Error('Retired application must not inspect database configuration');}};
++ await expect(createNativeApplication(input)).rejects.toMatchObject({code:'runtime_release_retired'});await expect(access(f.marker)).rejects.toMatchObject({code:'ENOENT'});
++});
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Y966Oc/source/src/orchestration/runtimeExecutionArchives.integration.test.ts
++++ /Users/dan/Programs/loop-control/src/orchestration/runtimeExecutionArchives.integration.test.ts
+@@ -0,0 +1,26 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {readFile,readdir,realpath} from 'node:fs/promises';
++import {join,dirname} from 'node:path';
++import {createHash} from 'node:crypto';
++import {assertRuntimeRelease,runtimeExecutionContract} from './runtimeBuild';
++const archivedRoot=process.env.LOOP_TEST_ARCHIVED_RELEASES_ROOT;
++async function treeFingerprint(root:string,directory=''):Promise<string>{
++ const entries=await readdir(join(root,directory),{withFileTypes:true}),rows:Array<[string,string]>=[];
++ for(const entry of entries.sort((a,b)=>a.name.localeCompare(b.name))){
++  if(entry.isSymbolicLink())throw Error('Archived runtime alias');const path=join(directory,entry.name);
++  rows.push([path,entry.isDirectory()?await treeFingerprint(root,path):createHash('sha256').update(await readFile(join(root,path))).digest('hex')]);
++ }
++ return createHash('sha256').update(JSON.stringify(rows)).digest('hex');
++}
++it.skipIf(!archivedRoot)('all 23 real archived runtimes are refused by the current execution gate with all bytes intact',async()=>{
++ const archive=await realpath(archivedRoot!),project=dirname(dirname(archive)),inventory=JSON.parse(await readFile(join(process.cwd(),'docs/runtime/runtime-support.json'),'utf8'));
++ expect(inventory.currentExecutionPolicy).toMatchObject({manifestVersion:5,executionContract:runtimeExecutionContract,archivedManifestV4:'rejected-by-current-entrypoints'});
++ expect(inventory.releases).toHaveLength(23);const receipts=[];
++ for(const entry of inventory.releases){
++  const root=join(archive,entry.id),before=await treeFingerprint(root),manifest=JSON.parse(await readFile(join(root,'dist/runtime-manifest.json'),'utf8'));
++  expect(manifest.version).toBe(4);expect(manifest.release).toEqual({id:entry.id,root});
++  await expect(assertRuntimeRelease(project,manifest.release)).rejects.toMatchObject({code:'runtime_release_retired'});expect(await treeFingerprint(root)).toBe(before);receipts.push({id:entry.id,unchanged:true});
++ }
++ expect(receipts).toHaveLength(23);
++},120000);
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Y966Oc/source/src/local-app/formalWorkflow.delivery.integration.test.ts
++++ /Users/dan/Programs/loop-control/src/local-app/formalWorkflow.delivery.integration.test.ts
+@@ -23,7 +23,7 @@
+  // Catalog registration is fixture setup; every production request below uses the actual explicit Owner command.
+  const connections:Record<string,string>={};for(const [name,provider,adapter,endpoint] of [['imageA','openai','openai_images','https://api.openai.com/v1'],['imageB','openai','openai_images','https://api.openai.com/v1'],['sound','freesound','freesound_preview','https://freesound.org/apiv2']]){const connection=randomUUID(),version=randomUUID(),secret=randomUUID();await f.c.query('BEGIN');await f.c.query('INSERT INTO public.external_connections(id,provider,adapter,name,created_by,current_version_id,endpoint) VALUES($1,$2,$3,$4,$5,$6,$7)',[connection,provider,adapter,'Formal '+name,f.owner,version,endpoint]);await f.c.query('INSERT INTO public.external_connection_versions(id,connection_id,version,provider,adapter,endpoint,vault_secret_id) VALUES($1,$2,1,$3,$4,$5,$6)',[version,connection,provider,adapter,endpoint,secret]);await f.c.query("INSERT INTO local_identity.connection_bindings(version_id,owner_id,secret_ref,store_mode) VALUES($1,$2,$3,'keychain')",[version,f.owner,secret]);await f.c.query('INSERT INTO local_identity.connection_qualifications(version_id,owner_id,qualified) VALUES($1,$2,true)',[version,f.owner]);await f.c.query("INSERT INTO local_identity.connection_probe_evidence(version_id,owner_id,mode,outcome) VALUES($1,$2,'live','verified')",[version,f.owner]);await f.c.query('COMMIT');connections[name]=version;}
+  const videoModule=join(f.root,'controlled-video.mjs'),baseVideo=join(f.root,'controlled-video-base.mjs');await writeFile(baseVideo,await readFile(videoModule));await writeFile(videoModule,`import{readFileSync}from'node:fs';import{createNarrationPorts as base}from'./controlled-video-base.mjs';export async function createNarrationPorts(){const p=await base();return{...p,fetcher:async(url,init)=>new URL(String(url)).hostname==='api.openai.com'?Response.json({data:[{b64_json:readFileSync(${JSON.stringify(workspaceTestMedia('still-striped.png'))}).toString('base64')}]}):p.fetcher(url,init)};}`);
+- const first=w.clips[0],retiredAuthorization=await f.send('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(retiredAuthorization.status).toBe(409);expect(retiredAuthorization.body.error).toContain('请在生成时确认本次调用');expect((await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1})).status).toBe(200);
++ const first=w.clips[0],retiredAuthorization=await f.send('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(retiredAuthorization.status).toBe(409);expect(retiredAuthorization.body.error).toContain('请在生成时确认本次调用');await send('saveWorkspaceNarrationDefaults',{selection:{capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:speechVersion},languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
+  async function generate(text:string){await send('saveWorkspaceNarration',{clipId:first.id,mode:'tts',selection:{capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:speechVersion},text,voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1});await send('confirmWorkspaceNarration',{clipId:first.id});await send('generateWorkspaceNarration',{clipId:first.id,reservationCents:50});return w.narration.find((n:any)=>n.shotId===first.shotId).taskId;}
+  expect((await f.controlled!.execute(await generate(first.text)))?.status).toBe('completed');await send('refreshWorkspaceNarration');let initialVoice=w.narration.find((n:any)=>n.shotId===first.shotId);expect(initialVoice.durationSeconds).toBeGreaterThan(2);const firstCandidate=w.candidates.find((c:any)=>c.taskId===initialVoice.taskId),firstAdoption=await send('prepareWorkspaceCandidate',{candidateId:firstCandidate.id,durationPolicy:'keep-target'});await send('adoptWorkspaceCandidate',{candidateId:firstCandidate.id,adoptionId:firstAdoption.adoptionId});initialVoice=w.narration.find((n:any)=>n.shotId===first.shotId);expect(initialVoice.adoptedAudioTrackId).toBeTruthy();
+  const image=await upload(workspaceTestMedia('still-striped.png'),'image','visual_reference');await send('matchWorkspaceImage',{clipId:first.id,materialRevisionId:image.id,usage:'pan-zoom',durationSeconds:initialVoice.durationSeconds,fit:'contain',focusX:0,focusY:0});
+@@ -51,11 +51,11 @@
+  let originalVoice:any;async function retimeVoice(restore=false){const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const timeline=doc.timelines[0],index=timeline.items.findIndex((i:any)=>i.id===`workspace-narration-shot-${first.shotId}`);if(restore)timeline.items[index]=originalVoice;else{originalVoice=structuredClone(timeline.items[index]);timeline.items[index].playbackRate=1.25;timeline.items[index].durationInFrames=Math.floor(Number(originalVoice.durationInFrames)/1.25);}});const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256});w=saved.productionWorkspace;await send('closeWorkspaceStudio');}
+  await retimeVoice();const retimed=await f.send('requestWorkspaceCaptionAlignment',{workspaceId:w.id,expectedRevision:w.revision,clipId:first.id,localOnly:true});expect(retimed.status,JSON.stringify(retimed.body)).toBe(409);await retimeVoice(true);
+  // Actual native alignment uses the adopted track despite newer unadopted drafts.
+- const beforeDraft=(await f.c.query('SELECT current_audio_track_id FROM public.shot_preparation_drafts WHERE episode_id=$1 AND shot_id=$2',[f.newEpisode,first.shotId])).rows[0].current_audio_track_id;
++ const beforeNarration=w.narration.find((n:any)=>n.shotId===first.shotId);expect(beforeNarration.text).toBe(rejectedText);expect(beforeNarration.adoptedAudioTrackId).toBe(candidate.id);
+  async function alignRequest(){const result=await send('requestWorkspaceCaptionAlignment',{clipId:first.id,localOnly:true});w=result.workspace;const task=result.task,claim=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:task.id,p_worker_capacity:2}) as any[])[0];expect(claim.task_id).toBe(task.id);expect(claim.input_snapshot.acoustic_alignment.confirmed_text).toBe(adoptedText);expect(claim.input_snapshot.acoustic_alignment.audio_sha256).toBe(w.usedNarration.find((n:any)=>n.shotId===first.shotId).sha256);return{task,claim,input:w.captions.find((c:any)=>c.shotId===first.shotId).inputFingerprint};}
+  async function alignComplete(claim:any){const a=claim.input_snapshot.acoustic_alignment,result={version:'acoustic-alignment/v1',status:'completed',method:'local_whisperx',granularity:'phrase',inputVersion:a.input_version,audioSha256:a.audio_sha256,textFingerprint:a.text_fingerprint,provider:'whisperx',model:claim.model,connectionVersionId:null,wordCount:1,cues:[{id:'aligned',text:a.confirmed_text,startMs:100,endMs:900}],reviewIssues:[],attempts:[],detail:'Controlled timestamp response at aligner boundary',generatedAt:new Date().toISOString()},bytes=Buffer.from(JSON.stringify(result)),path=claim.input_snapshot.output.relative_path;await mkdir(join(f.assetRoot,path.split('/').slice(0,-1).join('/')),{recursive:true});await writeFile(join(f.assetRoot,path),bytes);await nativeWorkerPort(worker).rpc('report_worker_result',{p_task_id:claim.task_id,p_attempt:claim.attempt,p_lease_token:claim.lease_token,p_result:{version:'worker-result/v1',taskId:claim.task_id,status:'completed',acousticAlignment:result,artifacts:[{artifactType:'acoustic_alignment_evidence',relativePath:path,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length}],validation:{passed:true,checks:[{name:'controlled_alignment',passed:true,detail:'Fixed boundary timestamps'}]},actualCostCents:0,blockers:[],retry:{shouldRetry:false,reason:'completed'},nextStep:'Owner checks timing'}});}
+  const aligned=await alignRequest();await alignComplete(aligned.claim);await send('applyWorkspaceCaptionAlignment',{clipId:first.id,taskId:aligned.task.id,expectedInputFingerprint:aligned.input});await send('confirmWorkspaceCaptionText',{clipId:first.id,expectedInputFingerprint:w.captions.find((c:any)=>c.shotId===first.shotId).inputFingerprint});
+- expect((await f.c.query('SELECT current_audio_track_id FROM public.shot_preparation_drafts WHERE episode_id=$1 AND shot_id=$2',[f.newEpisode,first.shotId])).rows[0].current_audio_track_id).toBe(beforeDraft);
++ expect(w.narration.find((n:any)=>n.shotId===first.shotId)).toMatchObject({audioTrackId:beforeNarration.audioTrackId,inputFingerprint:beforeNarration.inputFingerprint,text:rejectedText,adoptedAudioTrackId:candidate.id});
+  const lateAlignment=await alignRequest(),corrected=defaultShotCaptionContract(adoptedText,'follow_tts',true);corrected.cues=[{id:'owner-adjusted',text:adoptedText,startMs:0,endMs:850}];corrected.spatial.maxCharactersPerLine=10;await send('saveWorkspaceCaptions',{clipId:first.id,captionContract:corrected});await alignComplete(lateAlignment.claim);const ignored=await f.send('applyWorkspaceCaptionAlignment',{workspaceId:w.id,expectedRevision:w.revision,clipId:first.id,taskId:lateAlignment.task.id,expectedInputFingerprint:lateAlignment.input});expect(ignored.status,JSON.stringify(ignored.body)).toBe(409);await send('confirmWorkspaceCaptionText',{clipId:first.id,expectedInputFingerprint:w.captions.find((c:any)=>c.shotId===first.shotId).inputFingerprint});
+  const partial=await f.send('requestWorkspaceCaptionAlignment',{workspaceId:w.id,expectedRevision:w.revision,clipId:second.id,localOnly:true});expect(partial.status).toBe(409);
+ 

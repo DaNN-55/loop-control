@@ -1,0 +1,127 @@
+{
+  "passed": true,
+  "containers": [
+    {
+      "name": "loop-story-e2e-8843dc311c89",
+      "removed": true,
+      "group": "targets-release-contracts",
+      "evidence": "/private/tmp/loop-story-e2e-SLd7jA/evidence"
+    },
+    {
+      "name": "loop-story-e2e-af239dd692bd",
+      "removed": true,
+      "group": "guardless-counterfactual",
+      "evidence": "/private/tmp/loop-story-e2e-BSry90/evidence"
+    },
+    {
+      "name": "loop-story-e2e-aba2730fe9de",
+      "removed": true,
+      "group": "targets-clean",
+      "evidence": "/private/tmp/loop-story-e2e-jZtofl/evidence"
+    },
+    {
+      "name": "loop-story-e2e-81680c1e13b2",
+      "removed": true,
+      "group": "targets-second",
+      "evidence": "/private/tmp/loop-story-e2e-gSi9xw/evidence"
+    },
+    {
+      "name": "loop-story-e2e-b339d39c290f",
+      "removed": true,
+      "group": "targets-corrected",
+      "evidence": "/private/tmp/loop-story-e2e-FHM6qd/evidence"
+    },
+    {
+      "name": "loop-story-e2e-33a002a59501",
+      "removed": true,
+      "group": "legacy-protection",
+      "evidence": "/private/tmp/loop-story-e2e-AJc1Mr/evidence"
+    },
+    {
+      "name": "loop-story-e2e-c2c09a312aaa",
+      "removed": true,
+      "group": "targets-rechecked",
+      "evidence": "/private/tmp/loop-story-e2e-bTBMFJ/evidence"
+    },
+    {
+      "name": "loop-story-e2e-d4be99783bb5",
+      "removed": true,
+      "group": "targets-unique-packages",
+      "evidence": "/private/tmp/loop-story-e2e-JDwMiL/evidence"
+    },
+    {
+      "name": "loop-story-e2e-67491c8d7f61",
+      "removed": true,
+      "group": "targets-initial",
+      "evidence": "/private/tmp/loop-story-e2e-3l1den/evidence"
+    },
+    {
+      "name": "loop-story-e2e-07a79d2a84f8",
+      "removed": true,
+      "group": "current-recovery",
+      "evidence": "/private/tmp/loop-story-e2e-ae9QpC/evidence"
+    },
+    {
+      "name": "loop-story-e2e-d87296b9716b",
+      "removed": true,
+      "group": "targets-projection-diagnosis",
+      "evidence": "/private/tmp/loop-story-e2e-tod8ot/evidence"
+    },
+    {
+      "name": "loop-story-e2e-8d1dd5ca791d",
+      "removed": true,
+      "group": "deletion-history",
+      "evidence": "/private/tmp/loop-story-e2e-Bj9XXs/evidence"
+    },
+    {
+      "name": "loop-story-e2e-4940f20245e6",
+      "removed": true,
+      "group": "targets-final",
+      "evidence": "/private/tmp/loop-story-e2e-8DgjI3/evidence"
+    },
+    {
+      "name": "loop-clean-schema-843ba8d2ca09",
+      "removed": true,
+      "group": "schema",
+      "evidence": "/private/tmp/loop-clean-schema-uiK9rq"
+    }
+  ],
+  "removedTemporaryDirectories": [
+    "/private/tmp/loop-story-e2e-SLd7jA/source",
+    "/private/tmp/loop-story-e2e-SLd7jA/OpenChatCut",
+    "/private/tmp/loop-story-e2e-BSry90/source",
+    "/private/tmp/loop-story-e2e-BSry90/OpenChatCut",
+    "/private/tmp/loop-story-e2e-jZtofl/source",
+    "/private/tmp/loop-story-e2e-jZtofl/OpenChatCut",
+    "/private/tmp/loop-story-e2e-gSi9xw/source",
+    "/private/tmp/loop-story-e2e-gSi9xw/OpenChatCut",
+    "/private/tmp/loop-story-e2e-FHM6qd/source",
+    "/private/tmp/loop-story-e2e-FHM6qd/OpenChatCut",
+    "/private/tmp/loop-story-e2e-AJc1Mr/source",
+    "/private/tmp/loop-story-e2e-AJc1Mr/OpenChatCut",
+    "/private/tmp/loop-story-e2e-bTBMFJ/source",
+    "/private/tmp/loop-story-e2e-bTBMFJ/OpenChatCut",
+    "/private/tmp/loop-story-e2e-JDwMiL/source",
+    "/private/tmp/loop-story-e2e-JDwMiL/OpenChatCut",
+    "/private/tmp/loop-story-e2e-3l1den/source",
+    "/private/tmp/loop-story-e2e-3l1den/OpenChatCut",
+    "/private/tmp/loop-story-e2e-ae9QpC/source",
+    "/private/tmp/loop-story-e2e-ae9QpC/OpenChatCut",
+    "/private/tmp/loop-story-e2e-tod8ot/source",
+    "/private/tmp/loop-story-e2e-tod8ot/OpenChatCut",
+    "/private/tmp/loop-story-e2e-Bj9XXs/source",
+    "/private/tmp/loop-story-e2e-Bj9XXs/OpenChatCut",
+    "/private/tmp/loop-story-e2e-8DgjI3/source",
+    "/private/tmp/loop-story-e2e-8DgjI3/OpenChatCut",
+    "/private/tmp/loop-generated-script-retirement-20261113-4m4c9gfu/source",
+    "/private/tmp/loop-generated-script-retirement-20261113-4m4c9gfu/guardless-source",
+    "/private/tmp/loop-generated-script-retirement-20261113-4m4c9gfu/legacy-releases",
+    "/private/tmp/loop-generated-script-retirement-20261113-4m4c9gfu/dependencies"
+  ],
+  "removedCount": 30,
+  "originalRuntimePackagesPreserved": 23,
+  "dailyBackupAndRecoveryPreserved": true,
+  "evidencePreserved": true,
+  "associatedProcessesBeforeRemoval": [],
+  "associatedWorkingDirectoriesAfterRemoval": []
+}

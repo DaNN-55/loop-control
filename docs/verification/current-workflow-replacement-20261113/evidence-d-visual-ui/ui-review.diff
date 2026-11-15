@@ -1,0 +1,184 @@
+diff --git a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/WorkspaceVisualPreparation.tsx b/Users/dan/Programs/loop-control/src/local-app/WorkspaceVisualPreparation.tsx
+index 556fc8c5..4c58fbed 100644
+--- a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/WorkspaceVisualPreparation.tsx	
++++ b/Users/dan/Programs/loop-control/src/local-app/WorkspaceVisualPreparation.tsx
+@@ -162,7 +162,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
+     ...(c.kind==='image'
+      ?{durationPolicy:'keep-target',acceptTimelineImpact:false,motionPolicy:'preserve-target',...(choice.replaceCurrentVisual?{replaceCurrentVisual:true}:{})}
+      :{durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy:draft.usage==='pan-zoom'?'replace-motion':'preserve-target',
+-       ...(rangeStartSeconds!==0||rangeEnd?{sourceInSeconds:rangeStartSeconds,sourceOutSeconds:rangeEndSeconds}:{})})
++       sourceInSeconds:rangeStartSeconds,sourceOutSeconds:rangeEndSeconds})
+    }) as WorkspaceCandidatePreparation;
+    if(!prepared.impact)throw Error('无法读取采用影响，请刷新后重新核对。');
+    return {...prepared,kind:'adoption',candidate:c};
+@@ -322,10 +322,12 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
+  const sizePreset=imageSizePresets.find(p=>p.standard===draft.settings.size||p.high===draft.settings.size)??imageSizePresets[0];
+  function linkFirstFrame(){if(!candidate?.materialRevisionId)return;setDraft(d=>({...d,videoInputIds:prioritizeVideoInput(d,candidate.materialRevisionId!),videoModeId:'first-frame',tab:'video',origin:{...d.origin,video:'generate'}}));setNotice('已选定视频首帧，尚未提交生成。');}
+  const existingVideoIn=visual?.kind==='video'&&timeline?Number(visual.srcInFrame??0)/timeline.fps:0;
+- const rangeStartSeconds=rangeStart===''?existingVideoIn:Number(rangeStart),rangeEndSeconds=rangeEnd?Number(rangeEnd):candidate?.durationSeconds??0;
++ const currentVideo=current&&visual?.kind==='video'&&timeline?visual:undefined,previewRate=currentVideo?Number(currentVideo.playbackRate??1):1;
++ const initialVideoIn=currentVideo?existingVideoIn:candidate?.initialRange?.sourceInSeconds??existingVideoIn,initialVideoOut=currentVideo?existingVideoIn+Number(currentVideo.durationInFrames)*previewRate/timeline!.fps:candidate?.initialRange?.sourceOutSeconds??candidate?.durationSeconds??0;
++ const rangeStartSeconds=currentVideo||rangeStart===''?initialVideoIn:Number(rangeStart),rangeEndSeconds=currentVideo||rangeEnd===''?initialVideoOut:Number(rangeEnd);
+  const selectedVideoDuration=candidate?.kind==='video'?rangeEndSeconds-rangeStartSeconds:null;
+  const rangeValid=candidate?.kind!=='video'||rangeStartSeconds>=0&&Number.isFinite(selectedVideoDuration)&&selectedVideoDuration!>0&&rangeEndSeconds<=candidate.durationSeconds;
+- const previewSegment=candidate?.kind==='video'&&rangeValid&&(rangeStartSeconds>0||rangeEndSeconds<candidate.durationSeconds)
++ const previewSegment=candidate?.kind==='video'&&rangeValid&&(rangeStartSeconds>0||rangeEndSeconds<candidate.durationSeconds||previewRate!==1)
+   ?{start:rangeStartSeconds,end:rangeEndSeconds}:undefined;
+  const canAdopt=rangeValid&&!!candidate&&candidate.status==='available'&&(candidate.kind==='image'||(policy==='keep-target'?candidate.currentDurationSeconds===null||(selectedVideoDuration??candidate.durationSeconds)+0.05>=candidate.currentDurationSeconds:acceptImpact));
+  const shortCandidate=candidate?.kind==='video'&&!current&&policy==='keep-target'&&candidate.currentDurationSeconds!==null&&rangeValid&&(selectedVideoDuration??0)+.05<candidate.currentDurationSeconds;
+@@ -404,15 +406,15 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
+        {thumbnailTasks.flatMap(task=>Array.from({length:Math.max(1,Math.min(4,task.kind==='image'?task.generation?.imageSettings?.count??1:1))},(_,i)=><div className="workspace-thumbnail-pending" key={`${task.id}:${i}`}><WorkspaceVisualTaskProgress task={task} label={kindName} thumbnail/></div>))}
+       </div>}
+    <div className="workspace-unified-preview" onKeyDown={e=>{if(e.target!==e.currentTarget||entries.length<2)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(entries[(index+(e.key==='ArrowRight'?1:-1)+entries.length)%entries.length].id);}}} tabIndex={entries.length>1?0:undefined} aria-label={uiText("{value0}预览",{value0:uiText(kindName)})}>
+-    {active?.id==='current'?props.preview:candidate?(tab==='image'?imagePreviewFailed?<div className="workspace-visual-empty"><p role="alert">{uiText("图片未能加载。")}</p><Button size="sm" color="secondary" onPress={()=>{setImagePreviewError('');retryImagePreview(value=>value+1);}}>{uiText("重试预览")}</Button></div>:<img key={`${candidate.id}:${imagePreviewAttempt}`} src={url(candidate.relativePath,candidate.sha256)} alt={uiText("{value0}候选 {value1}",{value0:uiText(kindName),value1:String(index+1)})} onError={()=>setImagePreviewError(candidate.id)}/>:<VideoPreview key={candidate.id} title={uiText("视频候选预览")} aria-label={uiText("视频候选预览")} src={url(candidate.relativePath,candidate.sha256)} segment={previewSegment}/>):pendingUpload?<div className="workspace-upload-preview" role="status" aria-label={uiText("{value0}候选上传中",{value0:uiText(kindName)})}><div className="workspace-upload-preview-placeholder" style={{aspectRatio:`${target?.width??9}/${target?.height??16}`}} aria-hidden="true"/><p>{uiText("正在准备")}{kindName}{uiText("候选…")}</p><small>{pendingUpload.name}</small></div>:!showEmptyCandidateDrop&&<div className="workspace-visual-empty">{tab==='image'?<ImageIcon size={28} aria-hidden="true"/>:<Video size={28} aria-hidden="true"/>}<p>{entries.length?uiText("选择左侧缩略图预览"):uiText("尚未添加{value0}",{value0:uiText(kindName)})}</p>{!entries.length&&<span>{shelf?uiText("从左侧本期素材拖入，或使用 AI 生成"):uiText("上传素材，或使用 AI 生成")}</span>}</div>}
++    {active?.id==='current'?props.preview:candidate?(tab==='image'?imagePreviewFailed?<div className="workspace-visual-empty"><p role="alert">{uiText("图片未能加载。")}</p><Button size="sm" color="secondary" onPress={()=>{setImagePreviewError('');retryImagePreview(value=>value+1);}}>{uiText("重试预览")}</Button></div>:<img key={`${candidate.id}:${imagePreviewAttempt}`} src={url(candidate.relativePath,candidate.sha256)} alt={uiText("{value0}候选 {value1}",{value0:uiText(kindName),value1:String(index+1)})} onError={()=>setImagePreviewError(candidate.id)}/>:<VideoPreview key={candidate.id} title={uiText("视频候选预览")} aria-label={uiText("视频候选预览")} src={url(candidate.relativePath,candidate.sha256)} segment={previewSegment} playbackRate={previewRate}/>):pendingUpload?<div className="workspace-upload-preview" role="status" aria-label={uiText("{value0}候选上传中",{value0:uiText(kindName)})}><div className="workspace-upload-preview-placeholder" style={{aspectRatio:`${target?.width??9}/${target?.height??16}`}} aria-hidden="true"/><p>{uiText("正在准备")}{kindName}{uiText("候选…")}</p><small>{pendingUpload.name}</small></div>:!showEmptyCandidateDrop&&<div className="workspace-visual-empty">{tab==='image'?<ImageIcon size={28} aria-hidden="true"/>:<Video size={28} aria-hidden="true"/>}<p>{entries.length?uiText("选择左侧缩略图预览"):uiText("尚未添加{value0}",{value0:uiText(kindName)})}</p>{!entries.length&&<span>{shelf?uiText("从左侧本期素材拖入，或使用 AI 生成"):uiText("上传素材，或使用 AI 生成")}</span>}</div>}
+     {active&&<div className="workspace-preview-actions workspace-candidate-tools" role="group" aria-label={uiText("候选工具")}>
+      {tab==='image'&&candidate?.materialRevisionId&&<Tooltip title={uiText("用作视频首帧")}><Button className="workspace-candidate-tool-first-frame" size="xs" color="secondary" aria-label={uiText("用作视频首帧")} iconLeading={ImageIcon} isDisabled={disabled||!!review||candidate.status==='stale'} onPress={linkFirstFrame}>{uiText("首帧")}</Button></Tooltip>}
+      {tab==='video'&&candidate&&!current&&<DialogTrigger isOpen={trimOpen} onOpenChange={setTrimOpen}>
+       <Tooltip title={uiText("裁剪与时长")}><Button ref={trimTrigger} size="xs" color="secondary" aria-label={uiText("裁剪与时长")} iconLeading={Scissors} isDisabled={disabled||!!review}/></Tooltip>
+       <Popover className="dan-ui product-ui workspace-composer-popover workspace-candidate-trim-popover" placement="top end" offset={8} containerPadding={12} shouldFlip>
+        <Dialog aria-label={uiText("裁剪与时长")} className="workspace-composer-settings"><header><h3>{uiText("裁剪与时长")}</h3><Button size="xs" color="tertiary" onPress={()=>setTrimOpen(false)}>{uiText("完成")}</Button></header><div className="workspace-adoption-settings">
+-    <div className="workspace-visual-fields"><label>{uiText("使用起点（秒）")}<input type="number" aria-label={uiText("视频使用起点（秒）")} min="0" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeStart||String(existingVideoIn)} onChange={e=>setRangeStart(e.target.value)}/></label><label>{uiText("使用终点（秒）")}<input type="number" aria-label={uiText("视频使用终点（秒）")} min="0.1" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeEnd||candidate.durationSeconds} onChange={e=>setRangeEnd(e.target.value)}/></label></div>
+-    <label>{uiText("采用时长")}<NativeSelect size="sm" aria-label={uiText("视觉候选时长处理")} disabled={disabled} value={policy} onChange={e=>{setPolicy(e.target.value);setAcceptImpact(false);}}><option value="keep-target">{uiText("保留镜头时长")}</option><option value="use-candidate">{uiText("使用素材完整时长")}</option></NativeSelect></label>
++    <div className="workspace-visual-fields"><label>{uiText("使用起点（秒）")}<input type="number" aria-label={uiText("视频使用起点（秒）")} min="0" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeStart===''?String(initialVideoIn):rangeStart} onChange={e=>setRangeStart(e.target.value)}/></label><label>{uiText("使用终点（秒）")}<input type="number" aria-label={uiText("视频使用终点（秒）")} min="0.1" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeEnd===''?String(initialVideoOut):rangeEnd} onChange={e=>setRangeEnd(e.target.value)}/></label></div>
++    <label>{uiText("采用时长")}<NativeSelect size="sm" aria-label={uiText("视觉候选时长处理")} disabled={disabled} value={policy} onChange={e=>{setPolicy(e.target.value);setAcceptImpact(false);}}><option value="keep-target">{uiText("保留镜头时长")}</option><option value="use-candidate">{uiText(rangeStartSeconds>0||rangeEndSeconds<candidate.durationSeconds?"使用所选区间时长":"使用素材完整时长")}</option></NativeSelect></label>
+     {policy==='use-candidate'&&<label className="workspace-visual-checkbox"><input type="checkbox" disabled={disabled} checked={acceptImpact} onChange={e=>setAcceptImpact(e.target.checked)}/>{uiText("保留其他片段位置，接受空隙或覆盖")}</label>}
+     {policy==='keep-target'&&candidate.kind==='video'&&candidate.currentDurationSeconds!==null&&(!rangeValid||(selectedVideoDuration??candidate.durationSeconds)+0.05<candidate.currentDurationSeconds)&&<p role="alert">{uiText("所选区间无法保留当前片段时长，请调整起止点或采用素材区间的时长。")}</p>}
+ 
+
+diff --git a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/WorkspaceVisualCandidatesPanel.test.tsx b/Users/dan/Programs/loop-control/src/local-app/WorkspaceVisualCandidatesPanel.test.tsx
+index cfad2cc8..1a4bb20e 100644
+--- a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/WorkspaceVisualCandidatesPanel.test.tsx	
++++ b/Users/dan/Programs/loop-control/src/local-app/WorkspaceVisualCandidatesPanel.test.tsx
+@@ -19,6 +19,64 @@ async function chooseModel(kind:'图片'|'视频',model:string,connection?:strin
+ async function chooseVideo(){await chooseModel('视频','doubao-seedance-2-0-260128');}
+ afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
+ 
++it('shows and previews the verified initial video interval without adopting or generating',async()=>{
++ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}};
++ const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]}} command={command} onChange={vi.fn()} materials={[]}/>);
++ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
++ expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('1');
++ expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('2');
++ await userEvent.click(screen.getByRole('button',{name:'完成'}));
++ expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('min')).toBe('1');expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('max')).toBe('2');
++ expect(command).not.toHaveBeenCalled();
++});
++
++it('sends an explicit zero start with the displayed imported interval and waits for adoption confirmation',async()=>{
++ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}};
++ const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
++ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{...preparation,impact:{...preparation.impact,currentSeconds:1,appliedSeconds:1,deltaSeconds:0}}:w);
++ render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]}/>);
++ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
++ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
++ await userEvent.click(screen.getByRole('button',{name:'采用视频到当前镜头'}));await screen.findByRole('group',{name:'采用前核对'});
++ expect(command).toHaveBeenCalledExactlyOnceWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate',sourceInSeconds:0,sourceOutSeconds:2}));
++ await userEvent.click(screen.getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate',adoptionId:'adoption'})));
++});
++
++it('resets each selected video to its own source interval and describes the selected duration',async()=>{
++ const candidates=[{...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:.5,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}},{...workspace.visualCandidates![0],id:'other',relativePath:'other.mp4',durationSeconds:2,currentDurationSeconds:.5,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:.25,sourceOutSeconds:.75}}];
++ const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:candidates}} command={command} onChange={vi.fn()} materials={[]}/>);
++ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
++ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
++ await userEvent.click(screen.getByRole('button',{name:'预览视频候选 02'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
++ expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('0.25');expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('0.75');
++ expect(screen.getByRole('option',{name:'使用所选区间时长'})).toBeTruthy();
++ await userEvent.click(screen.getByRole('button',{name:'完成'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
++ expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('1');expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('2');expect(command).not.toHaveBeenCalled();
++});
++
++it.each([
++ {sourceFrame:0,frames:30,rate:1,start:'0',end:'1',slider:'片段进度'},
++ {sourceFrame:15,frames:30,rate:2,start:'0.5',end:'2.5',slider:'片段进度'},
++ {sourceFrame:0,frames:45,rate:2,start:'0',end:'3',slider:'视频进度'},
++])('reopens an adopted video at the actual native source window rather than its original import interval: %j',({sourceFrame,frames,rate,start,end,slider})=>{
++ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,status:'adopted' as const,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}};
++ const project={timelines:[{fps:30,items:[{id:'visual-1',kind:'video',srcInFrame:sourceFrame,durationInFrames:frames,playbackRate:rate}]}]} as unknown as import('../worker/openchatcutProject').OpenChatCutProject;
++ render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]}} command={vi.fn()} onChange={vi.fn()} materials={[]} project={project} currentVisualKind="video" currentVisualPath={candidate.relativePath}/>);
++ const video=screen.getByLabelText('视频候选预览');Object.defineProperty(video,'duration',{value:3,configurable:true});fireEvent.loadedMetadata(video);
++ expect(screen.getByRole('slider',{name:slider}).getAttribute('min')).toBe(start);expect(screen.getByRole('slider',{name:slider}).getAttribute('max')).toBe(end);expect((video as HTMLVideoElement).playbackRate).toBe(rate);
++ expect(screen.queryByRole('button',{name:'裁剪与时长'})).toBeNull();
++});
++
++it('uses the adopted native window immediately even when the pending form retained an explicit end',async()=>{
++ const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}},w={...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]},props={command:vi.fn(),onChange:vi.fn(),materials:[]};
++ const view=render(<WorkspaceVisualPreparation {...props} workspace={w}/>);await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
++ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}),{target:{value:'1.5'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
++ const project={timelines:[{fps:30,items:[{id:'visual-1',kind:'video',srcInFrame:0,durationInFrames:30}]}]} as unknown as import('../worker/openchatcutProject').OpenChatCutProject;
++ view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...w,visualCandidates:[{...candidate,status:'adopted'}]}} project={project} currentVisualKind="video" currentVisualPath={candidate.relativePath}/>);
++ const video=screen.getByLabelText('视频候选预览');Object.defineProperty(video,'duration',{value:3,configurable:true});fireEvent.loadedMetadata(video);
++ expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('min')).toBe('0');expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('max')).toBe('1');expect(props.command).not.toHaveBeenCalled();
++});
++
+ it.each(['image','video'] as const)('invalidated queued %s is historical and cannot keep the generation form busy',kind=>{
+  const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[],visualTasks:[{id:'expired',taskId:'expired-task',shotId:'S1',targetItemId:'visual-1',kind,status:'ready',invalidated:true,submissionUnknown:false,publicationAttempt:null}]} as unknown as ProductionWorkspace;
+  vi.stubGlobal('fetch',vi.fn(async()=>Response.json(videoCatalog)));
+
+diff --git a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/storyBrowser.fixture.ts b/Users/dan/Programs/loop-control/src/local-app/storyBrowser.fixture.ts
+index 7a0bfded..8f01f3e9 100644
+--- a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/storyBrowser.fixture.ts	
++++ b/Users/dan/Programs/loop-control/src/local-app/storyBrowser.fixture.ts
+@@ -10,7 +10,7 @@ const exec=promisify(execFile);
+ type Story=Awaited<ReturnType<typeof storyE2eFixture>>;
+ 
+ /** Real UI and reverse proxy. Gateway faults never synthesize a successful business result. */
+-export async function storyBrowser(f:Story,name:string){
++export async function storyBrowser(f:Pick<Story,'origin'|'root'|'episode'|'email'|'password'>,name:string,expectedTitle='末班车前的一把伞'){
+  const session='story-'+randomBytes(6).toString('hex'),evidence=process.env.LOOP_STORY_EVIDENCE!;
+  const traffic:Array<{command:string;status:number;dropped:boolean}>=[];
+  let drop:{command:string;before:boolean}|undefined,vite:ViteDevServer|undefined;
+@@ -64,7 +64,7 @@ export async function storyBrowser(f:Story,name:string){
+   await vite.listen();const url=`http://127.0.0.1:${(vite.httpServer!.address() as {port:number}).port}/__story?episode=${f.episode}`;
+   await cli('open',url);await cli('wait','--text','登录控制台');
+   await fill('邮箱',f.email);await fill('密码',f.password);await click('使用密码登录');
+-  await cli('wait','--text','末班车前的一把伞');
++  await cli('wait','--text',expectedTitle);
+   return{cli,snapshot,evaluate,wait,click,doubleClick,fill,capture,traffic,url,holdRead,failReads:(kind:ReadKind)=>{readFailures.add(kind);return()=>readFailures.delete(kind);},dropNextResponse:(command:string)=>{drop={command,before:false};},interruptNextRequest:(command:string)=>{drop={command,before:true};},close};
+  }catch(error){await close();throw error;}
+ }
+
+diff --git a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/legacyWorkbenchAdoption.integration.test.ts b/Users/dan/Programs/loop-control/src/local-app/legacyWorkbenchAdoption.integration.test.ts
+index 3be2a724..b23ca74d 100644
+--- a/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source/src/local-app/legacyWorkbenchAdoption.integration.test.ts	
++++ b/Users/dan/Programs/loop-control/src/local-app/legacyWorkbenchAdoption.integration.test.ts
+@@ -13,6 +13,7 @@ import {nativeWorkerPort} from './workerDatabase';
+ import {runWorkspaceDeliveryProcess} from './workspaceDelivery.fixture';
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+ import {defaultShotCaptionContract} from '../shotCaptions';
++import {storyBrowser} from './storyBrowser.fixture';
+ const hash=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+ async function recordedWorkbench(layout:'legacy'|'registered'='legacy',mode:'none'|'source'|'tts'='none',shotCount=1,patterned=false){
+  const f=await productionWorkspaceFixture({runtime:{wake(){}},...(layout==='registered'?{episodeRelativePath:()=> '原工作版本 [D]_%/素材'}:{})});
+@@ -55,6 +56,30 @@ async function recordedWorkbench(layout:'legacy'|'registered'='legacy',mode:'non
+   return{...f,get,draft:d};
+  }catch(e){await f.close();throw e;}
+ }
++it.skipIf(process.env.LOOP_STORY_E2E!=='1'||!process.env.LOOP_TEST_CONTEXT_MODULE||!process.env.LOOP_STORY_EVIDENCE)('browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames',async()=>{
++ const f=await recordedWorkbench('legacy','none',1,true);let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
++ try{
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending',clip_segments=$2 WHERE id=$1",[f.draft.id,JSON.stringify([{start_seconds:1,end_seconds:2}])]);
++  const before=(await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE id=$1',[f.draft.id])).rows[0].value,source=await f.get(),imported=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(imported.status,JSON.stringify(imported.body)).toBe(200);let w=imported.body;
++  expect(w.visualCandidates[0].initialRange).toEqual({version:'workspace-source-range/v1',sourceInSeconds:1,sourceOutSeconds:2});const original=await readFile(join(f.assetRoot,f.videoPath));
++  browser=await storyBrowser(f,'imported-range','四步制作 T02 验收');await browser.cli('open',browser.url+'&step=preparation');await browser.cli('wait','--text','四步制作 T02 验收');
++  await browser.wait("Array.from(document.querySelectorAll('[role=tab]')).some(e=>e.textContent==='视频')");
++  await browser.cli('find','role','tab','click','--name','视频','--exact');await browser.click('预览视频候选 01');await browser.cli('hover','[aria-label="视频候选预览播放器"]');await browser.click('裁剪与时长');
++  expect(await browser.evaluate("[document.querySelector('[aria-label=\"视频使用起点（秒）\"]').value,document.querySelector('[aria-label=\"视频使用终点（秒）\"]').value]")).toEqual(['1','2']);await browser.capture('initial');await browser.click('完成');
++  await browser.wait("document.querySelector('video[aria-label=\"视频候选预览\"]')?.readyState>=2");expect(await browser.evaluate("document.querySelector('video[aria-label=\"视频候选预览\"]').currentTime")).toBeCloseTo(1,2);
++  await browser.cli('hover','[aria-label="视频候选预览播放器"]');await browser.click('裁剪与时长');await browser.fill('视频使用起点（秒）','0');await browser.fill('视频使用终点（秒）','1.5');await browser.click('完成');
++  await browser.click('采用视频到当前镜头');await browser.cli('wait','--text','确认采用');expect(browser.traffic.filter(t=>t.command==='adoptWorkspaceVisualCandidate')).toHaveLength(0);await browser.click('确认采用');
++  await browser.wait("document.querySelector('button[aria-label=\"撤回视频采用\"]')!==null");const read=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});w=(await read.json()).workspace;
++  await browser.wait("document.querySelector('[aria-label=\"片段进度\"]')?.max==='1'");
++  const p=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(p.timelines[0].items.find((v:any)=>v.id===w.clips[0].itemId)).toMatchObject({srcInFrame:0,durationInFrames:30});
++  await browser.cli('reload');await browser.cli('wait','--text','四步制作 T02 验收');await browser.capture('adopted');expect(browser.traffic.filter(t=>t.command==='adoptWorkspaceVisualCandidate')).toHaveLength(1);expect(browser.traffic.some(t=>['requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','generateWorkspaceNarration','confirmWorkspaceCall'].includes(t.command))).toBe(false);
++  await browser.wait("document.querySelector('video[aria-label=\"视频候选预览\"]')?.readyState>=2");expect(await browser.evaluate("({start:document.querySelector('video[aria-label=\"视频候选预览\"]').currentTime,end:document.querySelector('[aria-label=\"片段进度\"]').max})")).toEqual({start:0,end:'1'});
++  await browser.cli('set','viewport','390','844');await browser.cli('scrollintoview','[aria-label="视频候选预览播放器"]');expect(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth')).toBe(true);await browser.capture('narrow');
++  expect((await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE id=$1',[f.draft.id])).rows[0].value).toEqual(before);expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(original);
++ }catch(error){await browser?.capture('failed');throw error;}
++ finally{await browser?.close();await f.close();}
++},180000);
++
+ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['legacy','registered'] as const)('continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (%s)',async(layout)=>{
+  const f=await recordedWorkbench(layout);
+  try{

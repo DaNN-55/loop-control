@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "source": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-UnpuWB/source",
+  "evidence": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-UnpuWB/evidence",
+  "container": "loop-story-e2e-753b0e00c208",
+  "containerRemoved": true,
+  "paidCalls": 0,
+  "paidCostCny": 0,
+  "maxVideoSeconds": 8
+}

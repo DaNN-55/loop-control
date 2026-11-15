@@ -1,0 +1,41 @@
+{
+  "status": "core behavior requires follow-up; no core change in C2",
+  "graphKind": "derived from final saved project by changing only root sequence track; NOT retained original first-run bytes",
+  "changes": [
+    {
+      "itemId": "scale-sequence-0",
+      "fromTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_1",
+      "toTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_3",
+      "trackKind": "audio"
+    },
+    {
+      "itemId": "scale-sequence-1",
+      "fromTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_1",
+      "toTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_3",
+      "trackKind": "audio"
+    },
+    {
+      "itemId": "scale-sequence-2",
+      "fromTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_1",
+      "toTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_3",
+      "trackKind": "audio"
+    },
+    {
+      "itemId": "scale-sequence-3",
+      "fromTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_1",
+      "toTrack": "track_loop-control-bc90b644-0651-470f-8dad-67b2faf596d2_3",
+      "trackKind": "audio"
+    }
+  ],
+  "originalFirstRunEvidence": "../first-run-insufficient-audio/",
+  "firstRunOriginalProjectBytes": "not retained; unknown",
+  "firstRunOriginalMediaBytes": "not retained; unknown",
+  "firstRunDecodedEnergy": "unknown; not measured",
+  "observedFirstRunSoundChanges": [
+    16,
+    64
+  ],
+  "observedFirstRunExportSha256": "8961ed4bcf762ff85b1733f033b44a3e218efad22e746f58aacaa4a24037032a",
+  "observedFirstRunExportBytes": 585553,
+  "derivedGraphExecuted": false
+}

@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "project": "/private/tmp/loop-prerender-cleanup-20261113-5vrn66ah/source",
+  "container": "loop-clean-schema-532046046ab0",
+  "containerRemoved": true,
+  "sourceExportProvided": false,
+  "results": {
+    "freshGeneration": true,
+    "freshLedgerDoesNotInventHistory": true,
+    "freshRerunNoOp": true,
+    "olderPrefixUpgrades": true,
+    "olderUpgradeRerunNoOp": true,
+    "InjectedFailureRollsBack": true
+  }
+}

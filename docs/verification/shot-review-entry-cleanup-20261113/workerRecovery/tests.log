@@ -1,0 +1,37 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-zp5wHc/source
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (12 tests) 87662ms
+   ✓ Owner can prepare disabled narration before editing without queuing external tasks  2608ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  8196ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  8172ms
+   ✓ both first narration tracks assemble and crop an available source without invalidating the other shot  8780ms
+   ✓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery  6968ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  8046ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=false)  22661ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=true)  4552ms
+   ✓ first speech remains a candidate after a real native save and never overwrites the edited project  6365ms
+   ✓ speech beyond the Provider maximum blocks a video submission without cutting words  2930ms
+   ✓ one shot with two visual ranges keeps one voice and its original task after deleting the first range  6671ms
+   ✓ registered completed task media resolve directly without a fake material and reject changed bytes  1705ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 71641ms
+   ✓ Owner delivery requires an exact confirmed export  3468ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  26208ms
+   ✓ a queued package cannot complete or retry against a different final export  25401ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  16563ms
+ ✓ src/local-app/restorePublication.integration.test.ts (4 tests) 143527ms
+   ✓ SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover  43063ms
+   ✓ SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover  34316ms
+   ✓ SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover  37545ms
+   ✓ SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover  28603ms
+ ✓ src/local-app/legacySqlHelpers.integration.test.ts (1 test) 2912ms
+   ✓ unused SQL routines are absent while nonempty budget history, current preparation and a full restore remain intact  2912ms
+ ✓ src/local-app/workspaceRecoveryFences.integration.test.ts (1 test) 2631ms
+   ✓ a superseded attempt cannot refresh, report, reserve submission or begin publication for the current attempt  2630ms
+
+ Test Files  5 passed (5)
+      Tests  22 passed (22)
+   Start at  09:22:15
+   Duration  311.64s (transform 1.02s, setup 26ms, collect 2.30s, tests 308.37s, environment 0ms, prepare 264ms)
+
+JSON report written to /private/tmp/loop-story-e2e-zp5wHc/evidence/vitest.json

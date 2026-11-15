@@ -22,11 +22,14 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('retires old narration entrypoi
   expect(audio.length).toBeGreaterThan(0);const bytes=await Promise.all(audio.map(a=>readFile(join(f.assetRoot,a.relative_path))));
   const commands=[['local_identity.generate_input_shot_tts($1,$2,$3,false)',[f.episode,f.board,'shot-1']],['public.generate_shot_tts($1,$2,$3,false)',[f.episode,f.board,'shot-1']],['public.generate_confirmed_shot_tts_batch($1,$2)',[f.episode,f.board]]] as const;
   for(const [call,args]of commands){
-   await expect(ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT '+call,[...args]))).rejects.toMatchObject({code:call.startsWith('local_identity.')?'0A000':'42501'});
+   await expect(ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT '+call,[...args]))).rejects.toMatchObject({code:'42883'});
 
-   await expect(ownerTransaction(f.pool,f.other,false,c=>c.query('SELECT '+call,[...args]))).rejects.toMatchObject({code:'42501'});
+   await expect(ownerTransaction(f.pool,f.other,false,c=>c.query('SELECT '+call,[...args]))).rejects.toMatchObject({code:'42883'});
   }
-  for(const name of ['orchestrate_narration_tasks','orchestrate_narration_tasks_all','orchestrate_narration_tasks_configured','orchestrate_narration_tasks_without_connection_ref'])await expect(f.c.query(`SELECT * FROM public.${name}()`)).rejects.toMatchObject({code:'0A000'});
+  for(const name of ['orchestrate_narration_tasks','orchestrate_narration_tasks_all','orchestrate_narration_tasks_configured','orchestrate_narration_tasks_without_connection_ref']){
+   expect((await f.c.query('SELECT to_regprocedure($1) value',[`public.${name}(${name.endsWith('_all')?'':'uuid'})`])).rows[0].value).toBeNull();
+   await expect(f.c.query(`SELECT * FROM public.${name}()`)).rejects.toMatchObject({code:'42883'});
+  }
   const retired=await f.request('generateTts',{reviewPackageId:f.board,shotId:'shot-1'});expect(retired.status).toBe(410);
   expect((await f.request('generateTts',{reviewPackageId:f.board,shotId:'shot-1'},{token:f.otherToken})).status).toBe(404);
   expect((await f.c.query('SELECT local_identity.current_worker_task(t) allowed FROM public.tasks t WHERE id=$1',[legacyId])).rows[0].allowed).toBe(false);

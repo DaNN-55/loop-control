@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-cmyF78/source
+
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 141839ms
+   ✓ Owner delivery requires an exact confirmed export  3945ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  46664ms
+   ✓ a queued package cannot complete or retry against a different final export  52605ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  38624ms
+ ✓ src/local-app/retiredCloudRpc.integration.test.ts (3 tests | 2 skipped) 22585ms
+   ✓ real saved connection modules create, rotate, verify and revoke through retained local contracts after 176  22584ms
+ ✓ src/local-app/restorePublication.integration.test.ts (4 tests) 154264ms
+   ✓ SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover  75023ms
+   ✓ SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover  32109ms
+   ✓ SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover  28865ms
+   ✓ SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover  18266ms
+ ✓ src/local-app/retiredSqlRuntimeCompatibility.integration.test.ts (2 tests | 1 skipped) 2596ms
+   ✓ real saved runtime modules still pass Worker startup, reject old planning and scan no enabled history after 175  2596ms
+ ✓ src/local-app/legacySqlHelpers.integration.test.ts (1 test) 2236ms
+   ✓ unused SQL routines are absent while nonempty budget history, current preparation and a full restore remain intact  2235ms
+ ✓ src/local-app/workspaceRecoveryFences.integration.test.ts (1 test) 1895ms
+   ✓ a superseded attempt cannot refresh, report, reserve submission or begin publication for the current attempt  1895ms
+
+ Test Files  6 passed (6)
+      Tests  12 passed | 3 skipped (15)
+   Start at  12:44:21
+   Duration  328.92s (transform 8.19s, setup 28ms, collect 2.59s, tests 325.41s, environment 0ms, prepare 196ms)
+
+JSON report written to /private/tmp/loop-story-e2e-cmyF78/evidence/vitest.json

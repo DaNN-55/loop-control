@@ -1,0 +1,13 @@
+{
+  "same": {
+    "snapshot": true,
+    "frozen": true,
+    "app": true,
+    "deployment": true,
+    "metrics": true
+  },
+  "metrics": {
+    "events": 0,
+    "enabled": false
+  }
+}

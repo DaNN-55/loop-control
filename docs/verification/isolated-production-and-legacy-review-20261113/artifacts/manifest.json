@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "23be133d-7552-432c-b3b1-d319563ff179",
+  "identity": {
+    "video": {
+      "sha256": "b0ceb7873baa457692953ab1bb864dd73ff226c1d4a1fc1faf3cf5d35cb10081",
+      "fileSize": 668172,
+      "artifactType": "final_render",
+      "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/workspace-exports/8e70120f-591c-4089-a2cf-6574827dc83d/b0ceb7873baa457692953ab1bb864dd73ff226c1d4a1fc1faf3cf5d35cb10081.mp4"
+    },
+    "project": {
+      "sha256": "e041da5d25c8eb0e39cf9ec107aaa6b7492c050d214702a6937b903f84db0302",
+      "fileSize": 24480,
+      "artifactType": "editable_project",
+      "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/production-workspace/versions/e041da5d25c8eb0e39cf9ec107aaa6b7492c050d214702a6937b903f84db0302.json"
+    },
+    "exportId": "8e70120f-591c-4089-a2cf-6574827dc83d",
+    "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+    "contentSha256": "f3c7696f813b988288639cbc94bb078fe3f5c525d5613662f294499b79f78362",
+    "projectContentVersion": 15
+  },
+  "artifacts": [
+    {
+      "sha256": "b0ceb7873baa457692953ab1bb864dd73ff226c1d4a1fc1faf3cf5d35cb10081",
+      "fileSize": 668172,
+      "artifactType": "final_render",
+      "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/workspace-exports/8e70120f-591c-4089-a2cf-6574827dc83d/b0ceb7873baa457692953ab1bb864dd73ff226c1d4a1fc1faf3cf5d35cb10081.mp4"
+    },
+    {
+      "sha256": "e041da5d25c8eb0e39cf9ec107aaa6b7492c050d214702a6937b903f84db0302",
+      "fileSize": 24480,
+      "artifactType": "editable_project",
+      "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/production-workspace/versions/e041da5d25c8eb0e39cf9ec107aaa6b7492c050d214702a6937b903f84db0302.json"
+    },
+    {
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "artifactType": "cover",
+      "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/workspace-deliveries/fc44f49e-5715-4470-9d71-adff951c9fb0/cover.png"
+    },
+    {
+      "sha256": "8434b177466c6a80ec5e2adcb40c744435e8f497992652f4b0fcc2cb929fca96",
+      "fileSize": 3495,
+      "artifactType": "metadata",
+      "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/workspace-deliveries/fc44f49e-5715-4470-9d71-adff951c9fb0/metadata.json"
+    },
+    {
+      "sha256": "f0f87a03345f39d85519c456a598fd85eea8b56a1ccbb472a469b4731381ad7d",
+      "fileSize": 7804,
+      "artifactType": "final_qc_report",
+      "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/workspace-deliveries/fc44f49e-5715-4470-9d71-adff951c9fb0/checks.json"
+    }
+  ]
+}

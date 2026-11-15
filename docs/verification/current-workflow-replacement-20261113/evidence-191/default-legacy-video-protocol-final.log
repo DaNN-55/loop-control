@@ -1,0 +1,54 @@
+E2E evidence: /private/tmp/loop-story-e2e-QEt5vM/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-QEt5vM/source
+
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts (23 tests | 1 failed | 21 skipped) 3657ms
+   ↓ Owner registers a local visual candidate and replaces only one source instance
+   ↓ Owner locally fills a placeholder with a registered still image without video generation
+   ↓ Owner locally fills a placeholder with a registered pan-zoom image without video generation
+   ↓ Owner registers new media into the existing live pool and can save and reopen it
+   ↓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage
+   ↓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change
+   ↓ unknown paid visual submissions cannot be bypassed by retry or a new prompt
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission (current protocol)  2304ms
+   × a visual task with a saved Provider ID resumes polling without a second paid submission (legacy protocol) 1353ms
+     → duplicate key value violates unique constraint "tasks_official_video_request_idx"
+   ↓ short visual source requires an explicit duration decision without repeating or moving other clips
+   ↓ voice gain and BGM edits do not stale a visual request or overwrite the new mix
+   ↓ an unavailable unused visual candidate does not prevent editing and cannot be adopted
+   ↓ added shots accept registered local visuals and explicitly selected generation and changed target input blocks a new paid POST
+   ↓ manual video adoption preserves the selected source interval and refuses a short range
+   ↓ video generation freezes and applies the first-frame composition without changing the source image
+   ↓ returns the used video to candidates without moving the shot and allows re-adoption
+   ↓ freezes volcengine keyframes inputs and sends the right roles to a simulated provider
+   ↓ freezes volcengine references inputs and sends the right roles to a simulated provider
+   ↓ freezes minimax keyframes inputs and sends the right roles to a simulated provider
+   ↓ freezes minimax references inputs and sends the right roles to a simulated provider
+   ↓ freezes kling keyframes inputs and sends the right roles to a simulated provider
+   ↓ freezes kling references inputs and sends the right roles to a simulated provider
+   ↓ freezes bailian references inputs and sends the right roles to a simulated provider
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceVisualCandidates.integration.test.ts > a visual task with a saved Provider ID resumes polling without a second paid submission (legacy protocol)
+error: duplicate key value violates unique constraint "tasks_official_video_request_idx"
+ ❯ ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/pg@8.23.1/node_modules/pg/lib/client.js:694:17
+ ❯ src/local-app/workspaceVisualCandidates.integration.test.ts:111:5
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 21 skipped (23)
+   Start at  23:24:02
+   Duration  4.36s (transform 424ms, setup 7ms, collect 585ms, tests 3.66s, environment 0ms, prepare 29ms)
+
+JSON report written to /private/tmp/loop-story-e2e-QEt5vM/evidence/vitest.json

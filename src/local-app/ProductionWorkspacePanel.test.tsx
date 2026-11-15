@@ -199,29 +199,29 @@ it('four-step navigation reads durable state and does not submit approvals or ge
  await screen.findByRole('button',{name:/^分镜台/});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));});expect(screen.getByText('还有 1 处占位')).toBeTruthy();await act(async()=>{fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));});expect(command).not.toHaveBeenCalled();
 });
 it('automatically prepares the persisted storyboard draft',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
+ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
  const command=vi.fn(async()=>workspace);render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" boardId="b" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByText('第一镜');expect(command).toHaveBeenCalledWith('prepareWorkspace',{episodeId:'e',reviewPackageId:'b',expectedScriptRevisionId:'s'});
 });
 it('shows the four-step shell on a new episode without mounting old workflow actions',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
+ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByRole('navigation',{name:'四步制作步骤'});expect(screen.getByRole('textbox',{name:'主脚本'})).toBeTruthy();expect(screen.queryByRole('button',{name:'旧分镜批准'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));expect(command).not.toHaveBeenCalled();expect(screen.getByText('请先确认脚本。')).toBeTruthy();
 });
 it('keeps an unsaved script draft while navigating read-only steps',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
+ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
  render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={vi.fn()} onLegacy={()=>{}}/>);
  await screen.findByRole('textbox',{name:'主脚本'});fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'未提交的脚本草稿'}});fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe('未提交的脚本草稿');
 });
 it('requires an explicit recovery choice before replacing a legacy working edit',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
+ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
  const command=vi.fn().mockRejectedValueOnce(Error('发现旧剪辑工作版本，请明确保留或封存。')).mockResolvedValue(workspace);
  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByRole('region',{name:'旧剪辑工作版本处理'});expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'保留旧编辑并继续'}));await screen.findByText('第一镜');expect(command).toHaveBeenLastCalledWith('prepareWorkspace',{episodeId:'e',expectedScriptRevisionId:'s',legacyDecision:'preserve'});
 });
 it('shows only analysis progress during preparation and retries the same local action on failure',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));
  let fail!:(error:Error)=>void;
  const command=vi.fn().mockImplementationOnce(()=>new Promise((_,reject)=>{fail=reject;})).mockResolvedValueOnce(workspace);
  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
@@ -236,7 +236,7 @@ it('shows only analysis progress during preparation and retries the same local a
 });
 
 it('keeps the workspace visible if an older backend returns a planning receipt',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));
  const command=vi.fn().mockResolvedValue({planning:true,taskId:'old-plan',status:'ready'});
  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  expect((await screen.findByRole('alert')).textContent).toContain('后端仍在使用旧版分镜流程');
@@ -362,16 +362,16 @@ it('saves optional sound intent only on request and restores the right text when
 });
 
 it('keeps revision editing unavailable until the actual script baseline has loaded',async()=>{
- let resolveScript!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')?new Promise<Response>(resolve=>{resolveScript=resolve;}):Response.json({workspace:null})));
+ let resolveScript!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')?new Promise<Response>(resolve=>{resolveScript=resolve;}):Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'baseline-script',options:[]}})));
  render(<ProductionWorkspacePanel episodeId="baseline-e" title="脚本读取" scriptRevisionId="baseline-script" stage="script_approved" materials={[{id:'baseline-script',material_type:'script',source_path:'script.md',storage_path:'script.md',is_main_script:true}]} command={vi.fn()} onLegacy={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(true);await act(async()=>resolveScript(new Response('实际服务器正文')));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('实际服务器正文');
 });
 
-it('builds the storyboard automatically for a confirmed v2 script without showing the general importer',async()=>{
+it('prepares the workspace automatically for a confirmed v3 script without showing the general importer',async()=>{
  const scriptPath='episodes/e/script.md';
  const structuredWorkspace={...workspace,clips:[{...workspace.clips[0],shotId:'shot-01'}]};
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')
   ? new Response(productionScriptTemplate)
-  : Response.json({workspace:null})));
+  : Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));
  const command=vi.fn(async()=>structuredWorkspace);
  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s"
   materials={[{id:'s',material_type:'script',source_path:'script.md',storage_path:scriptPath,is_main_script:true}]}
@@ -409,10 +409,10 @@ it('keeps a visual upload failure in transient feedback and recovery instead of 
 
 it('keeps script confirmation mounted while its saved version refreshes the real workspace parent',async()=>{
  const {useState}=await import('react');let reads=0,resolveRefresh!:(response:Response)=>void;
- vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
+ vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
  function Host(){const[id,setId]=useState<string|null>(null);return <ProductionWorkspacePanel episodeId="phase-e" title="脚本分步" scriptRevisionId={id} stage="waiting_input" materials={[]} onLegacy={()=>{}} command={async name=>{if(name==='importMaterial'){setId('saved');return{id:'saved'};}throw Error('启动中断');}}/>;}
  render(<Host/>);await screen.findByRole('button',{name:'确认脚本'});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'保留本次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(reads).toBe(2));
- await act(async()=>resolveRefresh(Response.json({workspace:null})));
+ await act(async()=>resolveRefresh(Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'saved',options:[]}})));
  expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
 });
 it('retries only unfinished shelf files and preserves successful import receipts',async()=>{

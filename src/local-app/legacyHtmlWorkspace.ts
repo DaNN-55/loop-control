@@ -1,6 +1,6 @@
 import {createHash} from 'node:crypto';
 import {extname} from 'node:path';
-import {reviewRenderFromSnapshot} from '../worker/codexRunner.js';
+import {reviewRenderFromSnapshot} from '../worker/history/reviewRenderV1.js';
 import {buildOpenChatCutProject} from '../worker/openchatcutProject.js';
 import {defaultShotCaptionContract} from '../shotCaptions.js';
 import {normalizeShotAudioMix} from '../shotAudioMix.js';

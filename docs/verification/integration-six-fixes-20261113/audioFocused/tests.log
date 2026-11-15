@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-baauCD/source
+
+ ✓ src/local-app/workspaceAudio.integration.test.ts (8 tests | 4 skipped) 36349ms
+   ✓ Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart  5226ms
+   ✓ source mode uses real native source extraction task without fabricating a legacy video-ready draft  9713ms
+   ✓ real loop_worker planning leaves historical soundtrack cues unchanged outside native workspaces  2761ms
+   ✓ nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot  18648ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed | 4 skipped (8)
+   Start at  08:27:24
+   Duration  37.23s (transform 522ms, setup 10ms, collect 696ms, tests 36.35s, environment 0ms, prepare 61ms)
+
+JSON report written to /private/tmp/loop-story-e2e-baauCD/evidence/vitest.json

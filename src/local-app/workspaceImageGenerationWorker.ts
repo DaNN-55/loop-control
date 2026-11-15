@@ -1,3 +1,4 @@
+import {observeProductionRequest} from './productionMetricWrites.js';
 import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
 import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -18,7 +19,7 @@ export async function executeWorkspaceImages(pool:Pool,p:WorkerTaskPackage,fence
   const references=await recoverProviderPreparation(pool,fence,'image',()=>Promise.all((image.references??[]).map(async ref=>({mimeType:ref.mimeType,bytes:await readFile(join(p.assets.allowedRoot,ref.relativePath))}))));
   let dispatched=false,rejected=false;
   const fetcher=createFetcher(async()=>{await prepareProviderDispatch(pool,fence,'image');},async()=>{await markProviderDispatching(pool,fence);dispatched=true;});
-  const observe:MediaFetcher=async(url,init)=>{const response=await fetcher(url,init);if(isDefiniteProviderRejection(response.status)){rejected=true;await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);}return response;};
+  const observe:MediaFetcher=async(url,init)=>{const response=await observeProductionRequest(pool,fence,'create',()=>fetcher(url,init));if(isDefiniteProviderRejection(response.status)){rejected=true;await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);}return response;};
   try{
   const images=await generateOpenAiImages({apiKey:secret,fetcher:observe,model:p.model,prompt:image.prompt,settings:image.settings,references});
   const artifacts=[];

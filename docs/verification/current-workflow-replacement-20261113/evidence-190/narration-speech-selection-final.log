@@ -1,0 +1,20 @@
+E2E evidence: /private/tmp/loop-story-e2e-50cn44/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-50cn44/source
+
+ ✓ src/local-app/speechSelection.integration.test.ts (3 tests | 2 skipped) 9441ms
+   ✓ speech validates actual choices, ownership and budget, and an unknown paid request cannot be sent again after restart  9439ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 2 skipped (3)
+   Start at  22:11:56
+   Duration  12.42s (transform 1.76s, setup 30ms, collect 2.49s, tests 9.44s, environment 0ms, prepare 128ms)
+
+JSON report written to /private/tmp/loop-story-e2e-50cn44/evidence/vitest.json

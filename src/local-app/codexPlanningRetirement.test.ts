@@ -38,12 +38,18 @@ it('retires legacy execution behind Owner and CSRF boundaries without reading re
   expect((await request('/api/local/configuration',prompt,true,false)).status).toBe(403);
   expect((await request('/api/local/configuration',prompt)).status).toBe(410);
   const key=randomUUID();
-  for(const command of ['review','annotateStoryboard','planStoryboard','requestStructureRevision','requestStudioStoryboardRevision','saveWorkspacePlanningSelection','retryWorkspacePlanning','replanWorkspace','repairConfiguration','repairConnection','configureScriptProduction']){
+  for(const command of ['review','annotateStoryboard','planStoryboard','requestStructureRevision','requestStudioStoryboardRevision','saveWorkspacePlanningSelection','retryWorkspacePlanning','replanWorkspace','repairConfiguration','repairConnection']){
    const body={command,idempotencyKey:key,data:{episodeId:episode,...(command==='replanWorkspace'?{planningTaskId:randomUUID()}:{} ),...(command==='configureScriptProduction'?{enabled:true}:{})}};
    expect((await request('/api/local/episode-commands',body,false)).status).toBe(401);
    expect((await request('/api/local/episode-commands',body,true,false)).status).toBe(403);
    const result=await request('/api/local/episode-commands',body);expect(result.status,command+"\n"+queries.join("\n")).toBe(410);expect((await result.json()).error).toContain('已退役');
    expect((await request('/api/local/episode-commands',{...body,data:{...body.data,episodeId:otherEpisode}})).status).toBe(404);
+  }
+  for(const command of ['configureScriptProduction','pauseScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','prepareScriptPublish']){
+   const body={command,idempotencyKey:key,data:{episodeId:episode}};
+   expect((await request('/api/local/episode-commands',body,false)).status).toBe(401);
+   expect((await request('/api/local/episode-commands',body,true,false)).status).toBe(403);
+   expect((await request('/api/local/episode-commands',body)).status).toBe(400);
   }
   expect(wake).not.toHaveBeenCalled();
   expect(queries.some(sql=>/command_receipts|INSERT|UPDATE|DELETE|queue_workspace_planning/.test(sql))).toBe(false);

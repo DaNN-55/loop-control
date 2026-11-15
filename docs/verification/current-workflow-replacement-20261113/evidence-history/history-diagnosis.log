@@ -1,0 +1,45 @@
+E2E evidence: /private/tmp/loop-story-e2e-SyAuFl/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-SyAuFl/source
+
+ ❯ src/local-app/historyProjectionReferences.integration.test.ts (1 test | 1 failed) 1652ms
+   × history projection restores a main script inserted later in the same batch without replacing current references 1651ms
+     → [{"table_name":"public.episodes","status":"history-only:42702","detail":null},{"table_name":"public.production_material_revisions","status":"history-only:missing-parent","detail":null}]: expected undefined to deeply equal { Object (main_script_revision_id) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/historyProjectionReferences.integration.test.ts > history projection restores a main script inserted later in the same batch without replacing current references
+AssertionError: [{"table_name":"public.episodes","status":"history-only:42702","detail":null},{"table_name":"public.production_material_revisions","status":"history-only:missing-parent","detail":null}]: expected undefined to deeply equal { Object (main_script_revision_id) }
+
+[32m- Expected:[39m 
+{
+  "main_script_revision_id": "ac1c4a24-403f-4a01-b7fd-ac127af7a2d5",
+}
+
+[31m+ Received:[39m 
+undefined
+
+ ❯ src/local-app/historyProjectionReferences.integration.test.ts:24:141
+     22|   projectHistory({sql:(sql:string)=>context.sql(sql,f.database)});
+     23|   const projection=(await f.c.query('SELECT table_name,status,detail F…
+     24|   expect((await f.c.query('SELECT main_script_revision_id FROM public.…
+       |                                                                                                                                             ^
+     25|   expect((await f.c.query('SELECT episode_id FROM public.production_ma…
+     26|   projectHistory({sql:(sql:string)=>context.sql(sql,f.database)});
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:05:44
+   Duration  2.58s (transform 541ms, setup 9ms, collect 777ms, tests 1.65s, environment 0ms, prepare 39ms)
+
+JSON report written to /private/tmp/loop-story-e2e-SyAuFl/evidence/vitest.json

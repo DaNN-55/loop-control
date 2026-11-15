@@ -1,0 +1,30 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Iv8I0B/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Iv8I0B/source
+
+(node:24929) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/legacyWorkbenchAdoption.integration.test.ts (33 tests | 26 skipped) 36380ms
+   ✓ pending two-slot composition remains an explicit current source choice with exact slot windows  9564ms
+   ✓ continues pending 'sequential' ranges with explicit adoption and preserves Owner overrides  6115ms
+   ✓ continues pending 'pip' ranges with explicit adoption and preserves Owner overrides  5276ms
+   ✓ continues pending 'grid' ranges with explicit adoption and preserves Owner overrides  5971ms
+   ✓ keeps a confirmed original shot intact while importing and adopting an unfinished parallel composition  6841ms
+   ✓ keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project  1568ms
+   ✓ retains the existing SQL rejection of unsupported original compositions without changing the draft  1044ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed | 26 skipped (33)
+   Start at  13:52:46
+   Duration  37.13s (transform 442ms, setup 6ms, collect 627ms, tests 36.38s, environment 0ms, prepare 27ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Iv8I0B/evidence/vitest.json

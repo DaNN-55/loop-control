@@ -1,0 +1,9 @@
+- button "取消" [ref=e1]
+- heading "裁剪与时长" [level=3, ref=e3]
+- button "完成" [ref=e4]
+- spinbutton "视频使用起点（秒）" [ref=e5]: 1
+- spinbutton "视频使用终点（秒）" [ref=e6]: 2
+- combobox "视觉候选时长处理" [expanded=false, ref=e7]: 保留镜头时长
+  - option "保留镜头时长" [selected, ref=e8]
+  - option "使用所选区间时长" [ref=e9]
+- button "取消" [ref=e2]

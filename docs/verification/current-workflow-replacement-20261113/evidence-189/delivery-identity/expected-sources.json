@@ -1,0 +1,12 @@
+[
+  {
+    "shotId": "shot-1",
+    "audioTrackId": "494d6e2e-c8b4-4ea8-a617-87ce7d99f15b",
+    "adoptedText": "第一镜明确采用的正文。"
+  },
+  {
+    "shotId": "shot-2",
+    "audioTrackId": "c2ac988e-9327-4097-aff6-eac3348b3113",
+    "adoptedText": "第二镜明确采用的正文。"
+  }
+]

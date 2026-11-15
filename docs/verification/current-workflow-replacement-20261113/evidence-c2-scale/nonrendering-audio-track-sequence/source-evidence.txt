@@ -1,0 +1,84 @@
+src/local-app/productionSoundUse.ts SHA256=04dcd8853940196d11b1bf52928a060efbdca151ec9691ea85159b3445e8301a
+40:   if(stack.has(id)||stack.size>32||++nodes>4096)throw Error('Sound observation sequence graph is invalid');
+41:   const timeline=project.timelines.find(t=>t.id===id);if(!timeline)throw Error('Sound observation timeline is missing');
+42:   const nextStack=new Set(stack).add(id);
+43:   for(const item of timeline.items){
+44:    const start=Number(item.startFrame),end=start+Number(item.durationInFrames),lo=Math.max(start,from),hi=Math.min(end,to);
+45:    const track=timeline.tracks[String(item.track)] as {muted?:boolean;hidden?:boolean;audioRouting?:unknown}|undefined;
+46:    if(!(hi>lo)||track?.muted||track?.hidden)continue;
+47:    // The native nested renderer propagates track mute, not the sequence item's gain/fade.
+48:    const audible=item.kind==='sequence'?'audible':audibleWindow(item,lo,hi);if(audible==='silent')continue;
+49:    const uncertain=parentUncertain||audible==='unknown'||!!item.transcript||!!item.edits;
+50:    const instancePath=[...path,timeline.id,String(item.id)],window=item.kind==='sequence'?[lo,hi,Number(item.srcInFrame??0),Number(item.playbackRate??1),timeline.fps,item.transcript??null,item.edits??null]:[lo,hi,Number(item.srcInFrame??0),Number(item.playbackRate??1),Number(item.volume??1),timeline.fps,track?.audioRouting??null,(item.keyframes as {volume?:unknown}|undefined)?.volume??null,item.fadeInFrames??0,item.fadeOutFrames??0,item.transcript??null,item.deletedWordIdx??null,item.edits??null];
+51:    if(item.kind==='sequence'){
+52:     const rate=Number(item.playbackRate??1),source=Number(item.srcInFrame??0);if(!(rate>0))continue;
+53:     const child=project.timelines.find(t=>t.id===item.timelineId);if(!child)throw Error('Sound observation timeline is missing');
+54:     const duration=Math.max(1,child.fps,...child.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)));
+55:     visit(String(item.timelineId),Math.min(duration-1,source+(lo-start)*rate),Math.min(duration,source+(hi-start)*rate),instancePath,[...parents,window],nextStack,uncertain||rate!==1);continue;
+56:    }
+57:    if(item.kind!=='audio'&&item.kind!=='video')continue;
+58:    const asset=project.assets.find(a=>a.id===item.sourceAssetId),src=typeof item.src==='string'?item.src:asset?.src;if(!src)continue;
+59:    const meta=item.loopControlAudio as {workspaceId?:string;kind?:string;sourceItemId?:string;shotId?:string}|undefined;
+60:    const origin=item.loopControlVideoSound as {videoItemId?:string;videoSourceAssetId?:string}|undefined;
+61:    const linkedSource=!!origin&&timeline.items.some(visual=>visual.kind==='video'&&visual.id===origin.videoItemId&&visual.sourceAssetId===origin.videoSourceAssetId);
+
+src/local-app/workspaceExportCommands.ts SHA256=949401f79c15c5d7f6aa8d075ab944f0b23b71ffcfde2374e108586cee606016
+25: export function usedWorkspaceContent(project:OpenChatCutProject){
+26:  project=workspaceExecutionProject(project);
+27:  const timelines=new Map(project.timelines.map(t=>[t.id,t])),ids=new Set<string>(),paths=new Set<string>(),items:Array<Record<string,unknown>>=[],visited=new Set<string>();
+28:  let nodes=0;const visit=(id:string,stack:Set<string>,from=0,to=Infinity)=>{
+29:   if(stack.has(id))throw Error('嵌套序列存在循环引用。');if(stack.size>32||++nodes>4096)throw Error('嵌套序列超出检查范围。');const t=timelines.get(id);if(!t)throw Error('已用嵌套序列不存在。');stack=new Set(stack).add(id);visited.add(id);
+30:   const scan=(value:unknown)=>{if(Array.isArray(value)){value.forEach(scan);return;}if(value&&typeof value==='object')for(const[k,v]of Object.entries(value)){if(k==='src'&&typeof v==='string')paths.add(v);else scan(v);}};
+31:   for(const item of t.items){const start=Number(item.startFrame),end=start+Number(item.durationInFrames);if(end<=from||start>=to)continue;items.push(item);ids.add(String(item.id));if(item.kind==='sequence'){const rate=Number(item.playbackRate??1),source=Number(item.srcInFrame??0);visit(String(item.timelineId),stack,source+(Math.max(from,start)-start)*rate,source+(Math.min(to,end)-start)*rate);continue;}if(['video','audio','image'].includes(String(item.kind))&&!item.src&&!item.sourceAssetId)throw Error('已用媒体缺少来源或指纹身份。');scan(item);if(!item.src&&typeof item.sourceAssetId==='string'){const a=project.assets.find(a=>a.id===item.sourceAssetId);if(!a)throw Error('已用素材身份不存在。');paths.add(a.src);}}
+32:   scan(t.tracks);
+33:  };
+34:  visit(project.activeTimelineId,new Set());return{ids,paths,items,timelineIds:visited};
+
+/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut/src/editor/TimelineComposition.tsx SHA256=4086eaa9882b6db6b7121ab00e3ba4bf553aff1e4cd7430a2986d1b67962ee06
+145:   const isMuted = (t: TimelineItem['track']) => forceMuted || (state.tracks?.[t]?.muted ?? false);
+146:   const trackIds = timelineTrackIds(state);
+147:   const visualTracks = trackIds.filter((id) => trackKind(state, id) === 'video');
+148:   // hidden track = fully disabled (no picture, no sound)
+149:   const visual = state.items.filter((it) => isVisualItemKind(it.kind) && visualTracks.includes(it.track) && !isHidden(it.track));
+150:   // Paint visual bottom-to-top. Timeline rows are stored top-to-bottom.
+151:   const ordered = [...visual].sort((a, b) => a.track === b.track
+152:     ? a.startFrame - b.startFrame
+153:     : visualTracks.indexOf(b.track) - visualTracks.indexOf(a.track));
+154:   const audio = state.items.filter((it) => it.kind === 'audio' && it.src && !isHidden(it.track));
+155:   const captionEntries = captionTrackEntries(state);
+156:   const anchorRanges = state.items.filter((item) => state.tracks?.[item.track]?.role === 'anchor'
+
+/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut/src/editor/TimelineComposition.tsx SHA256=4086eaa9882b6db6b7121ab00e3ba4bf553aff1e4cd7430a2986d1b67962ee06
+326:         const captionsOff = !captionOverlayVisible(state);
+327:         const hiddenByCaptions = captionsOff && previewTextEditFields(item) !== null;
+328:         const fillBackground = isBackgroundFillActive(state, item);
+329:         const foreground = (
+330:           <ClipWrapper item={item} frameOffset={-eb} hiddenByCaptions={hiddenByCaptions}>
+331:             {(borderRadius) => item.kind === 'sequence'
+332:               ? <VisualClipSurface item={item} fit={fit} canvasW={state.width} canvasH={state.height} borderRadius={borderRadius}>
+333:                   <NestedSequenceLayer item={item} project={project} parentWidth={state.width} parentHeight={state.height} fit={fit} frameOffset={-eb} browserRenderer={browserRenderer} sequenceLimits={sequenceLimits} muted={isMuted(item.track)} />
+334:                 </VisualClipSurface>
+335:               : item.kind === 'motion-graphic'
+336:               ? <ItemLayer item={item} canvasW={state.width} canvasH={state.height} fit={fit} borderRadius={borderRadius} />
+337:               : item.kind === 'text'
+338:               ? <TextLayer item={item} canvasW={state.width} canvasH={state.height} fit={fit} />
+339:               : item.kind === 'solid'
+
+/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut/src/editor/TimelineComposition.tsx SHA256=4086eaa9882b6db6b7121ab00e3ba4bf553aff1e4cd7430a2986d1b67962ee06
+380:         </Sequence>
+381:       ))}
+382:       {audio.map((item) => (
+383:         <AudioClip
+384:           key={item.id}
+385:           item={item}
+386:           fps={state.fps}
+387:           muted={isMuted(item.track)}
+388:           gainAt={(frame) => duckGain(item.track, frame)}
+389:           transitions={state.transitions}
+390:           premountFor={premountFrames}
+391:           browserRenderer={browserRenderer}
+392:           sourceDurationInFrames={sourceDurationOf(item)}
+393:         />
+394:       ))}
+395:       {videoAudioGroups.map((group) => (
+396:         <ContinuousVideoAudio

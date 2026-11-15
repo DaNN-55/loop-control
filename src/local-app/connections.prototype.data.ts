@@ -17,7 +17,7 @@ let connections:ExternalConnection[]=[];
 let versions:ExternalConnectionVersion[]=[];
 function add(name:string,provider:string,adapter:string,status:ExternalConnection['status']='verified'){
  const id=crypto.randomUUID();
- const c:ExternalConnection={id,name,provider,adapter,status,created_at:now,created_by:'demo',current_version_id:'',last_verification_detail:status==='retryable'?'演示：上次连接超时。':null,description:'演示连接 · 用于预览布局',last_verified_at:status==='verified'?now:null,usage};
+ const c:ExternalConnection={id,name,provider,adapter,status,endpoint:"https://example.invalid",created_at:now,created_by:'demo',current_version_id:'',last_verification_detail:status==='retryable'?'演示：上次连接超时。':null,description:'演示连接 · 用于预览布局',last_verified_at:status==='verified'?now:null,usage};
  connections=[...connections,c];rotate(c,status);return c;
 }
 function rotate(c:ExternalConnection,status:ExternalConnection['status']='unverified'){

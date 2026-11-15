@@ -2,8 +2,9 @@
 import {it,expect} from 'vitest';
 import {freshProductionFixture} from './freshProduction.fixture';
 import {productionScriptTemplate} from '../reviews/productionScript';
+import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
 it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each([
- ['plain','# 无模型正文\n\n## 正文\n\n第一段是原样保留的正文。\n\n第二段仍由Owner提供。'],['v2',productionScriptTemplate],
+ ['plain','# 无模型正文\n\n## 正文\n\n第一段是原样保留的正文。\n\n第二段仍由Owner提供。'],['v2',historicalProductionScriptV2],['v3',productionScriptTemplate],
 ])('current %s preparation works without CLI planning and retired requests preserve history',async(kind,scriptText)=>{
  const f=await freshProductionFixture({scriptText});
  try{
@@ -40,8 +41,8 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['ready','running'])('clai
   const before=await read();
   await f.c.query('SET SESSION AUTHORIZATION loop_worker');
   try{
-   expect((await f.c.query('SELECT * FROM local_identity.claim_input_task(NULL,2)')).rows).toEqual([]);
-   for(const id of ids)expect((await f.c.query('SELECT * FROM local_identity.claim_input_task($1,2)',[id])).rows).toEqual([]);
+   expect((await f.c.query('SELECT * FROM local_identity.claim_managed_worker_task(NULL,2)')).rows).toEqual([]);
+   for(const id of ids)expect((await f.c.query('SELECT * FROM local_identity.claim_managed_worker_task($1,2)',[id])).rows).toEqual([]);
   }finally{await f.c.query('SET SESSION AUTHORIZATION DEFAULT');}
   expect(await read()).toEqual(before);
  }finally{await f.close();}

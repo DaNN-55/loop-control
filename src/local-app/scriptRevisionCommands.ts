@@ -16,6 +16,6 @@ export async function reconfirmScript(c:PoolClient,root:string,episode:{id:strin
  if((await c.query("SELECT 1 FROM public.tasks WHERE episode_id=$1 AND status='running' LIMIT 1",[episode.id])).rowCount)throw new ConfigurationError(409,'制作任务正在运行，请完成或停止后修订脚本。');
  const snapshot=await snapshotInput(root,episode.id,{sourceKind:'file',sourcePath:basename(old.source_path),contentBase64:Buffer.from(data.text).toString('base64'),isMainScript:true},directoryRelativePath);
  const result=(await c.query('SELECT to_jsonb(local_identity.reconfirm_episode_script($1,$2,$3,$4,$5,$6,$7)) result',[episode.id,old.id,snapshot.sourcePath,snapshot.storagePath,snapshot.sha256,snapshot.fileSize,data.reason.trim()])).rows[0].result;
- await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[episode.id,parseStoryboardScript(data.text)?2:null]);
+ await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[episode.id,parseStoryboardScript(data.text)?.version??null]);
  return result;
 }

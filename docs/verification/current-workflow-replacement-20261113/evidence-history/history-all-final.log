@@ -1,0 +1,23 @@
+E2E evidence: /private/tmp/loop-story-e2e-1vVJuE/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+src/local-app/workspaceCaptionsCommands.ts(27,187): error TS2345: Argument of type 'Record<string, unknown> | undefined' is not assignable to parameter of type 'Pick<Record<string, unknown>, "sourceAssetId"> | undefined'.
+  Property 'sourceAssetId' is missing in type 'Record<string, unknown>' but required in type 'Pick<Record<string, unknown>, "sourceAssetId">'.
+src/local-app/workspaceNarrationSource.ts(26,42): error TS2345: Argument of type 'Record<string, unknown>' is not assignable to parameter of type 'Pick<Record<string, unknown>, "sourceAssetId">'.
+  Property 'sourceAssetId' is missing in type 'Record<string, unknown>' but required in type 'Pick<Record<string, unknown>, "sourceAssetId">'.
+file:///private/tmp/loop-story-e2e-1vVJuE/source/scripts/prepare-runtime.mjs:9
+    child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(Error(`${script} failed (${code})`)));
+                                                                                 ^
+
+Error: backend:build failed (2)
+    at ChildProcess.<anonymous> (file:///private/tmp/loop-story-e2e-1vVJuE/source/scripts/prepare-runtime.mjs:9:82)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.20.0
+Error: Isolated build failed

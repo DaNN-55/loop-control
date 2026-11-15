@@ -1,0 +1,27 @@
+E2E evidence: /private/tmp/loop-story-e2e-dReb8K/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-dReb8K/source
+
+ ✓ src/local-app/productionSoundUse.integration.test.ts (8 tests) 51668ms
+   ✓ observes actual local music adoption, gain changes, disable and re-enable without counting preparation or reopen as use  3883ms
+   ✓ does not invent sound use for a silent video registered through the real frozen legacy recovery boundary  5721ms
+   ✓ uses the native audible sequence window for local effects, replacement and track muted rather than counting the media pool  8187ms
+   ✓ uses the native audible sequence window for local effects, replacement and track hidden rather than counting the media pool  7825ms
+   ✓ uses the native audible sequence window for local effects, replacement and track keyframes rather than counting the media pool  7926ms
+   ✓ uses the native audible sequence window for local effects, replacement and track source_end rather than counting the media pool  7887ms
+   ✓ keeps sound scope and transaction protection, and never backfills edits made while collection is off  3439ms
+   ✓ records explicitly extracted current source audio through a real local Worker without creating an old draft  6796ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  04:44:18
+   Duration  52.46s (transform 467ms, setup 7ms, collect 660ms, tests 51.67s, environment 0ms, prepare 32ms)
+
+JSON report written to /private/tmp/loop-story-e2e-dReb8K/evidence/vitest.json

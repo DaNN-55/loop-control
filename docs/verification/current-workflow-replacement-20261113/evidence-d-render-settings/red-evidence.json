@@ -1,0 +1,35 @@
+[
+  {
+    "scenario": "arrays in captionStyle/transition",
+    "run": "qOrO6a",
+    "actualStatus": 200,
+    "expectedStatus": 409,
+    "classification": "boundary validation defect",
+    "resolved": true
+  },
+  {
+    "scenario": "repeat adoption after native voice edits",
+    "run": "AgWt4s",
+    "actual": "-9dB/default route/0,90,0 source window",
+    "expected": "-15dB/manual route/6,60,4",
+    "classification": "actual presentation loss",
+    "resolved": true
+  },
+  {
+    "scenario": "old source metadata lacks SHA; new extraction starts at frame3",
+    "run": "SzB1K6",
+    "actualSourceInFrame": 4,
+    "expectedSourceInFrame": 1,
+    "classification": "actual source window shift",
+    "resolved": true
+  },
+  {
+    "scenario": "pending left/right composition and two source segments",
+    "run": "CJcS4R",
+    "actualClipCount": 1,
+    "expectedClipCount": 2,
+    "classification": "next D functionality not yet implemented",
+    "resolved": false,
+    "privateOnly": true
+  }
+]

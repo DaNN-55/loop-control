@@ -1,0 +1,117 @@
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/run-Zj67Dk/source
+
+ ❯ src/local-app/productionPreparationCoverage.integration.test.ts (4 tests | 4 failed) 17180ms
+   × B1 remaining prose: independent captions, manual voice and matched media survive format continuation without retired writes 4294ms
+     → expected [ { shotId: 'shot-01', …(3) }, …(1) ] to deeply equal [ { shotId: 'shot-01', …(3) }, …(1) ]
+   × B1 remaining v2: independent captions, manual voice and matched media survive format continuation without retired writes 3623ms
+     → resumeWorkspaceEditing: {"error":"脚本正文已变化，请确认脚本并核对素材规划；原工程仍保留。"}: expected 409 to be 200 // Object.is equality
+   × B1 remaining v3-image: independent captions, manual voice and matched media survive format continuation without retired writes 4060ms
+     → expected [ { shotId: 'shot-01', …(3) } ] to deeply equal [ { shotId: 'shot-01', …(3) } ]
+   × B1 remaining v3-mixed: independent captions, manual voice and matched media survive format continuation without retired writes 5202ms
+     → expected [ { shotId: 'shot-01', …(3) }, …(3) ] to deeply equal [ { shotId: 'shot-01', …(3) }, …(3) ]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionPreparationCoverage.integration.test.ts > B1 remaining prose: independent captions, manual voice and matched media survive format continuation without retired writes
+AssertionError: expected [ { shotId: 'shot-01', …(3) }, …(1) ] to deeply equal [ { shotId: 'shot-01', …(3) }, …(1) ]
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[33m@@ -1,8 +1,8 @@[39m
+[2m  [[22m
+[2m    {[22m
+[32m-     "audioTrackId": "c41cfe50-bfa4-4143-9401-d395b07ef40b",[39m
+[31m+     "audioTrackId": null,[39m
+[2m      "mode": "manual",[22m
+[2m      "shotId": "shot-01",[22m
+[2m      "text": "人工录音正文保持。",[22m
+[2m    },[22m
+[2m    {[22m
+
+ ❯ src/local-app/productionPreparationCoverage.integration.test.ts:93:109
+     91|   expect(w.clips.map((c:any)=>({id:c.id,itemId:c.itemId,shotId:c.shotI…
+     92|   expect(w.captions.map((c:any)=>c.contract)).toEqual(prior.captions);
+     93|   expect(w.narration.map((n:any)=>({shotId:n.shotId,text:n.text,mode:n…
+       |                                                                                                             ^
+     94|   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.…
+     95|   expect((await f.c.query('SELECT * FROM local_identity.production_pre…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/local-app/productionPreparationCoverage.integration.test.ts > B1 remaining v2: independent captions, manual voice and matched media survive format continuation without retired writes
+AssertionError: resumeWorkspaceEditing: {"error":"脚本正文已变化，请确认脚本并核对素材规划；原工程仍保留。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ send src/local-app/productionPreparationCoverage.integration.test.ts:66:207
+
+ ❯ src/local-app/productionPreparationCoverage.integration.test.ts:89:3
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/local-app/productionPreparationCoverage.integration.test.ts > B1 remaining v3-image: independent captions, manual voice and matched media survive format continuation without retired writes
+AssertionError: expected [ { shotId: 'shot-01', …(3) } ] to deeply equal [ { shotId: 'shot-01', …(3) } ]
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  [[22m
+[2m    {[22m
+[32m-     "audioTrackId": "6ac4fb58-cef1-4802-bb9b-3aaa213f73b3",[39m
+[31m+     "audioTrackId": null,[39m
+[2m      "mode": "manual",[22m
+[2m      "shotId": "shot-01",[22m
+[2m      "text": "人工录音正文保持。",[22m
+[2m    },[22m
+[2m  ][22m
+
+ ❯ src/local-app/productionPreparationCoverage.integration.test.ts:93:109
+     91|   expect(w.clips.map((c:any)=>({id:c.id,itemId:c.itemId,shotId:c.shotI…
+     92|   expect(w.captions.map((c:any)=>c.contract)).toEqual(prior.captions);
+     93|   expect(w.narration.map((n:any)=>({shotId:n.shotId,text:n.text,mode:n…
+       |                                                                                                             ^
+     94|   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.…
+     95|   expect((await f.c.query('SELECT * FROM local_identity.production_pre…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/local-app/productionPreparationCoverage.integration.test.ts > B1 remaining v3-mixed: independent captions, manual voice and matched media survive format continuation without retired writes
+AssertionError: expected [ { shotId: 'shot-01', …(3) }, …(3) ] to deeply equal [ { shotId: 'shot-01', …(3) }, …(3) ]
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[33m@@ -1,8 +1,8 @@[39m
+[2m  [[22m
+[2m    {[22m
+[32m-     "audioTrackId": "73e67e1e-ab2b-4ca3-8b5c-26e58eef0420",[39m
+[31m+     "audioTrackId": null,[39m
+[2m      "mode": "manual",[22m
+[2m      "shotId": "shot-01",[22m
+[2m      "text": "人工录音正文保持。",[22m
+[2m    },[22m
+[2m    {[22m
+
+ ❯ src/local-app/productionPreparationCoverage.integration.test.ts:93:109
+     91|   expect(w.clips.map((c:any)=>({id:c.id,itemId:c.itemId,shotId:c.shotI…
+     92|   expect(w.captions.map((c:any)=>c.contract)).toEqual(prior.captions);
+     93|   expect(w.narration.map((n:any)=>({shotId:n.shotId,text:n.text,mode:n…
+       |                                                                                                             ^
+     94|   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.…
+     95|   expect((await f.c.query('SELECT * FROM local_identity.production_pre…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+   Start at  21:35:11
+   Duration  18.06s (transform 521ms, setup 6ms, collect 744ms, tests 17.18s, environment 0ms, prepare 33ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/run-Zj67Dk/evidence/vitest.json

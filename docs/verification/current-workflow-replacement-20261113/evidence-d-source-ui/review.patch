@@ -1,0 +1,684 @@
+--- before/src/workspaceSourceOptions.ts
++++ current/src/workspaceSourceOptions.ts
+@@ -0,0 +1,12 @@
++/** Read-only source identities; importing still rechecks every original boundary. */
++export type WorkspaceSourceReference=
++ |{kind:'saved-native';reviewPackageId:string;savedProjectSha256:string}
++ |{kind:'rendered-project';reviewPackageId:string;artifactId:string;expectedSourceSha256:string}
++ |{kind:'saved-plan';expectedPlanSha256:string}
++ |{kind:'shot-workbench';reviewPackageId:string;workbenchSha256:string;mode:'confirmed'|'inputs'};
++export interface WorkspaceSourceOption {
++ id:string;label:string;summary:string;source:WorkspaceSourceReference|null;unavailableReason?:string;
++}
++export interface WorkspaceSourceOptions {
++ version:'workspace-source-options/v1';scriptRevisionId:string|null;options:WorkspaceSourceOption[];
++}
+--- before/src/local-app/workspaceSourceOptions.ts
++++ current/src/local-app/workspaceSourceOptions.ts
+@@ -0,0 +1,48 @@
++import type {PoolClient} from 'pg';
++import type {WorkspaceSourceOptions,WorkspaceSourceOption} from '../workspaceSourceOptions.js';
++import {ScriptProductionStore} from './scriptProductionStore.js';
++import {readLegacyStudioProject} from './legacyStudioProject.js';
++import {ConfigurationError} from './configurationCommands.js';
++import {readLegacyWorkbenchSource} from './legacyWorkbenchSource.js';
++
++/** Called in the same Owner read as the absent workspace, before any preparation. */
++export async function readWorkspaceSourceOptions(c:PoolClient,root:string,episode:{id:string;main_script_revision_id:string|null}):Promise<WorkspaceSourceOptions>{
++ const options:WorkspaceSourceOption[]=[],result:WorkspaceSourceOptions={version:'workspace-source-options/v1',scriptRevisionId:episode.main_script_revision_id,options};
++ const board=(await c.query("SELECT id FROM public.review_packages WHERE episode_id=$1 AND stage='storyboard_review' AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1",[episode.id])).rows[0];
++ let native;
++ try{native=await readLegacyStudioProject(c,root,episode.id);}catch(error){
++  if(!(error instanceof ConfigurationError))throw error;
++  options.push({id:'saved-native',label:'原生剪辑工程',summary:'原文件保留。',source:null,unavailableReason:error.message});return result;
++ }
++ if(native){
++  const unavailableReason=!board||!episode.main_script_revision_id?'原生工程缺少当前脚本或分镜基准，请先核对原版本。':undefined;
++  options.push({id:'saved-native',label:'最近保存的原生工程',summary:'保留原编辑继续制作，接入时重新核验来源与文件。',source:unavailableReason?null:{kind:'saved-native',reviewPackageId:board.id,savedProjectSha256:native.sha256},...(unavailableReason?{unavailableReason}:{})});return result;
++ }
++ const projects=(await c.query("SELECT a.id,a.relative_path,a.sha256,t.input_snapshot FROM public.artifacts a JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed' WHERE a.episode_id=$1 AND a.artifact_type IN ('review_render_project','final_render_project') AND a.relative_path ~ '\\.(json|html)$' ORDER BY a.created_at DESC,a.id",[episode.id])).rows;
++ if(projects.length){
++  const preIds=projects.map(p=>(p.input_snapshot?.review_render??p.input_snapshot?.final_render?.review_render)?.pre_render_review_package_id).filter((id:unknown)=>typeof id==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id));
++  const bases=(await c.query("SELECT id,CASE WHEN stage='storyboard_review' THEN id::text ELSE context_snapshot->>'storyboard_review_package_id' END board FROM public.review_packages WHERE episode_id=$1 AND id=ANY($2::uuid[])",[episode.id,preIds])).rows;
++  projects.forEach((project,index)=>{
++   const pre=(project.input_snapshot?.review_render??project.input_snapshot?.final_render?.review_render)?.pre_render_review_package_id,origin=bases.find(p=>p.id===pre)?.board;
++   const unavailableReason=!episode.main_script_revision_id||!board||origin!==board.id?'原工程与当前分镜的来源关系不可核验，请先核对原版本。':undefined;
++   options.push({id:project.id,label:`原 ${project.relative_path.endsWith('.html')?'HTML':'JSON'} 工程 · 版本 ${projects.length-index}`,summary:'接入原工程继续编辑，接入时重新核验文件与来源。',source:unavailableReason?null:{kind:'rendered-project',reviewPackageId:board.id,artifactId:project.id,expectedSourceSha256:project.sha256},...(unavailableReason?{unavailableReason}:{})});
++  });
++  return result;
++ }
++ const saved=await new ScriptProductionStore(root).read(c,episode.id);
++ if(saved.plan){
++  const current=(await c.query('SELECT sha256 FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[episode.main_script_revision_id,episode.id])).rows[0];
++  const unavailableReason=!saved.v2?'原计划格式尚未支持接入。':!current||current.sha256!==saved.savedScriptSha256?'当前脚本与原计划正文不同，请先核对原版本。':undefined;
++  options.push({id:'saved-plan',label:'原保存计划',summary:'导入原镜头输入与素材候选，仍需明确采用。',source:unavailableReason?null:{kind:'saved-plan',expectedPlanSha256:saved.planSha256!},...(unavailableReason?{unavailableReason}:{})});
++ }
++ if(board){
++  const supported=(await c.query("SELECT to_regprocedure('local_identity.read_legacy_workbench_source(uuid,boolean)') IS NOT NULL present")).rows[0].present;
++  const source=supported?await readLegacyWorkbenchSource(c,episode.id):null,record=source?.record;
++  const raw=record?.board.context_snapshot as {worker_result?:{storyboard?:{shots?:Array<{id:string}>}};storyboard?:{shots?:Array<{id:string}>}}|null|undefined;
++  const shots=raw?.worker_result?.storyboard?.shots??raw?.storyboard?.shots;
++  const unavailableReason=!supported?'当前服务尚未支持原工作版本读取，请先更新本地服务。':!record||!Array.isArray(shots)||!shots.length||record.drafts.length!==shots.length||new Set(record.drafts.map(d=>d.shot_id)).size!==shots.length||shots.some(shot=>!record.drafts.some(d=>d.shot_id===shot.id))?'原镜头记录不完整，请先核对原版本。':!episode.main_script_revision_id||record.scriptRevisionId!==episode.main_script_revision_id?'原镜头与当前脚本基准不同，请先核对原版本。':record.drafts.some(d=>!['confirmed','pending','skipped'].includes(d.confirmation_status))?'原镜头确认状态尚未支持接入。':undefined;
++  const confirmed=record?.drafts.filter(d=>d.confirmation_status==='confirmed').length??0,allConfirmed=!!record&&confirmed===record.drafts.length;
++  options.push({id:'shot-workbench',label:'原镜头工作版本',summary:allConfirmed?'保留原确认的素材与声音，接入时重新核验来源。':`保留 ${confirmed} 个原确认镜头，其余只导入输入与候选，仍需明确采用。`,source:unavailableReason?null:{kind:'shot-workbench',reviewPackageId:board.id,workbenchSha256:source!.sha256,mode:allConfirmed?'confirmed':'inputs'},...(unavailableReason?{unavailableReason}:{})});
++ }
++ return result;
++}
+--- before/src/local-app/WorkspaceSourcePicker.tsx
++++ current/src/local-app/WorkspaceSourcePicker.tsx
+@@ -0,0 +1,14 @@
++import {useState} from 'react';
++import {uiText} from '../i18n/ui';
++import type {WorkspaceSourceOptions,WorkspaceSourceReference} from '../workspaceSourceOptions';
++import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
++import {Button} from '../ui/dan-ui/components/base/buttons/button';
++
++export function WorkspaceSourcePicker({options,pending,onImport}:{options:WorkspaceSourceOptions;pending:boolean;onImport:(source:WorkspaceSourceReference)=>Promise<void>}){
++ const [selected,setSelected]=useState(''),choice=options.options.find(o=>o.id===selected);
++ if(!options.options.length)return null;
++ return <section className="production-workspace-section workspace-source-options" aria-label={uiText("接入已有作品")}>
++  <header><h3>{uiText("接入已有作品")}</h3><div><label>{uiText("接入来源")}<NativeSelect size="sm" name="workspaceSource" disabled={pending} value={selected} onChange={e=>setSelected(e.target.value)}><option value="">{uiText("选择接入来源")}</option>{options.options.map(o=><option key={o.id} value={o.id}>{o.label}</option>)}</NativeSelect></label><Button size="sm" color="primary" isDisabled={pending||!choice?.source} onPress={()=>{if(choice?.source)void onImport(choice.source).catch(()=>{});}}>{pending?uiText("正在接入…"):uiText("接入当前制作")}</Button></div></header>
++  {choice?<p role={choice.unavailableReason?'status':undefined}>{choice.unavailableReason??choice.summary}</p>:<p>{uiText("选择原版本继续制作，原资料保留。")}</p>}
++ </section>;
++}
+--- before/src/local-app/ProductionWorkspacePanel.tsx
++++ current/src/local-app/ProductionWorkspacePanel.tsx
+@@ -12,7 +12,7 @@
+ import {WorkspacePreparationLayout} from './WorkspacePreparationLayout';
+ import {WorkspaceCompletedShots} from './WorkspaceCompletedShots';
+ import {WorkspaceShotPreview,workspaceShotSource} from './WorkspaceShotPreview';
+-import {LegacyPreparation,LegacyEditing,LegacyDelivery,hasLegacyProductionContent,type LegacyWorkspaceSource} from './LegacyProductionSteps';
++import {LegacyPreparation,LegacyEditing,LegacyDelivery,hasLegacyProductionContent} from './LegacyProductionSteps';
+ import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
+ import {WorkspaceScriptPanel} from './WorkspaceScriptPanel';
+ import {WorkspaceSoundIntent} from './WorkspaceSoundIntent';
+@@ -21,6 +21,8 @@
+ import {WorkspaceMaterialShelf} from './WorkspaceMaterialShelf';
+ import {workspaceUploadSessions,createWorkspaceUploadSession,readWorkspaceUploadFile,type WorkspaceUploadEntry} from './workspaceUploads';
+ import {WorkspaceVisualPreparation} from './WorkspaceVisualPreparation';
++import {WorkspaceSourcePicker} from './WorkspaceSourcePicker';
++import type {WorkspaceSourceOptions} from '../workspaceSourceOptions';
+ import {WorkspaceAudioPreparation} from './WorkspaceAudioPanel';
+ import {WorkspaceExportPanel} from './WorkspaceExportPanel';
+ import {WorkspaceNarrationPanel} from './WorkspaceNarrationPanel';
+@@ -37,7 +39,7 @@
+ interface Material {id:string;material_type:string;source_path:string;storage_path:string;is_main_script:boolean;material_purpose?:string}
+ const materialUploadSession=workspaceUploadSessions<WorkspaceUploadEntry>();
+ const steps=[workflowStepLabels.script,workflowStepLabels.preparation,workflowStepLabels.editing,workflowStepLabels.delivery] as const;
+-const operationLabels:Record<string,string>={get prepareWorkspace(){return uiText("准备分镜工程");},get replanWorkspace(){return uiText("更新分镜工程");},get openWorkspaceStudio(){return uiText("打开剪辑工作台");},get saveWorkspaceStudio(){return uiText("保存剪辑工程");},get closeWorkspaceStudio(){return uiText("结束剪辑");},get editWorkspaceStructure(){return uiText("保存镜头调整");},get adoptLegacyWorkspace(){return uiText("接续已有工程");},get resumeWorkspaceEditing(){return uiText("恢复工程编辑");},get exportWorkspace(){return uiText("导出成片");},get confirmWorkspaceExport(){return uiText("确认成片");},get prepareWorkspaceDelivery(){return uiText("生成交付包");},get retryWorkspaceDelivery(){return uiText("继续交付");},get saveWorkspaceCaptions(){return uiText("保存字幕");},get confirmWorkspaceCaptionText(){return uiText("确认字幕");},get requestWorkspaceCaptionAlignment(){return uiText("字幕校时");},get applyWorkspaceCaptionAlignment(){return uiText("采用字幕校时");},get prepareWorkspaceAudio(){return uiText("准备声音");},get adoptWorkspaceAudio(){return uiText("采用声音");},get saveWorkspaceMusicSettings(){return uiText("保存配乐设置");},get saveWorkspaceSoundIntent(){return uiText("保存声音设置");},get setWorkspaceAudioEnabled(){return uiText("切换声音");}};
++const operationLabels:Record<string,string>={get prepareWorkspace(){return uiText("准备分镜工程");},get replanWorkspace(){return uiText("更新分镜工程");},get openWorkspaceStudio(){return uiText("打开剪辑工作台");},get saveWorkspaceStudio(){return uiText("保存剪辑工程");},get closeWorkspaceStudio(){return uiText("结束剪辑");},get editWorkspaceStructure(){return uiText("保存镜头调整");},get adoptLegacyWorkspace(){return uiText("接续已有工程");},get adoptLegacyPlan(){return uiText("接入原计划");},get importLegacyDraftInputs(){return uiText("接入原镜头输入");},get resumeWorkspaceEditing(){return uiText("恢复工程编辑");},get exportWorkspace(){return uiText("导出成片");},get confirmWorkspaceExport(){return uiText("确认成片");},get prepareWorkspaceDelivery(){return uiText("生成交付包");},get retryWorkspaceDelivery(){return uiText("继续交付");},get saveWorkspaceCaptions(){return uiText("保存字幕");},get confirmWorkspaceCaptionText(){return uiText("确认字幕");},get requestWorkspaceCaptionAlignment(){return uiText("字幕校时");},get applyWorkspaceCaptionAlignment(){return uiText("采用字幕校时");},get prepareWorkspaceAudio(){return uiText("准备声音");},get adoptWorkspaceAudio(){return uiText("采用声音");},get saveWorkspaceMusicSettings(){return uiText("保存配乐设置");},get saveWorkspaceSoundIntent(){return uiText("保存声音设置");},get setWorkspaceAudioEnabled(){return uiText("切换声音");}};
+ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRevisionId,boardId,materials,command,onStudioActionChange,audioTracks,legacySnapshot,historicalReadOnly=false,stage='storyboard_approved',archivedAt,notice,preparationEntry}:{preparationEntry?:{shotId?:string;targetItemId?:string};episodeId:string;title:string;titleActions?:ReactNode;scriptRevisionId:string|null;boardId?:string;materials:Material[];command:(name:string,data:unknown)=>Promise<unknown>;onLegacy:()=>void;audioTracks?:ComponentProps<typeof WorkspaceNarrationPanel>['tracks'];onStudioActionChange?:(action:(()=>void)|null)=>void;legacySnapshot?:EpisodeProductionSnapshot;historicalReadOnly?:boolean;stage?:string;archivedAt?:string|null;notice?:ReactNode}){
+  const stepStatusId=useId();
+  const requestDraftLeave=useWorkspaceDraftLeave();
+@@ -47,6 +49,8 @@
+  const legacyContent=legacySnapshot&&hasLegacyProductionContent(legacySnapshot)?legacySnapshot:null;
+  const [workspace,setWorkspace]=useState<ProductionWorkspace|null>(null),[loaded,setLoaded]=useState(false),[loadError,setLoadError]=useState(''),[loadAttempt,setLoadAttempt]=useState(0),[step,applyStep]=useState(navigation?.step?productionSteps.indexOf(navigation.step):stage==='waiting_input'?0:preparationEntry?1:legacyContent&&['qc_review','qc_passed','production_completed'].includes(stage)?3:1),[pending,setPending]=useState(false),[error,setError]=useState(''),[script,setScript]=useState(''),[loadedScriptPath,setLoadedScriptPath]=useState('');
+  const [legacyPrompt,setLegacyPrompt]=useState(false);
++ const [sourceOptions,setSourceOptions]=useState<WorkspaceSourceOptions|null>(null);
++ const [confirmedPreparation,setConfirmedPreparation]=useState<{episodeId:string;scriptRevisionId:string;basisScriptRevisionId:string|null;reason?:string}|null>(null);
+  const [uncertainOperation,setUncertainOperation]=useState<{label:string;checked:boolean}|null>(null),[checkingOperation,setCheckingOperation]=useState(false),[operationReadError,setOperationReadError]=useState('');
+  const operationRead=useRef(0),operationReadBusy=useRef(false);
+  useEffect(()=>{setUncertainOperation(null);setCheckingOperation(false);setOperationReadError('');return()=>{operationRead.current++;operationReadBusy.current=false;};},[episodeId]);
+@@ -83,7 +87,7 @@
+  const [nativeProject,setNativeProject]=useState<OpenChatCutProject|null>(null);
+  const nativeProjectIdentity=useRef('');
+  const current=useRef<ProductionWorkspace|null>(null),openAction=useRef<()=>Promise<void>>(async()=>{});
+- const operations=useWorkspaceOperations({episodeId,readOnly,reopen:!!error,current:()=>current.current,command:run,publish:update,error:setError,recover:()=>setLoadAttempt(value=>value+1),prepared:stay=>{setLegacyPrompt(false);if(!stay)setStep(1);},opened:()=>setStep(2),closed:(destination,selection,next)=>{
++ const operations=useWorkspaceOperations({episodeId,scriptRevisionId,readOnly,reopen:!!error,current:()=>current.current,command:run,publish:update,error:setError,recover:()=>setLoadAttempt(value=>value+1),prepared:stay=>{setLegacyPrompt(false);if(!stay)setStep(1);},opened:()=>setStep(2),closed:(destination,selection,next)=>{
+   if(destination==='preparation'&&selection&&next.clips.some(clip=>clip.shotId===selection.shotId)){setSelectedShotId(selection.shotId);setPreviewItemId(selection.itemId);revealReturnedShot.current=true;}
+   studioRequested.current=false;setStep(productionSteps.indexOf(destination));
+  },missingSources:()=>{setError('请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。');setStep(1);}});
+@@ -99,10 +103,14 @@
+  useEffect(()=>{
+   let active=true;
+   const source=current.current;
+-  setLoaded(false);setLoadError('');
++  setLoaded(false);setLoadError('');setSourceOptions(null);
+   void localRequest(`episodes/${episodeId}/workspace`).then(value=>{
+    if(!active)return;
+    const next=value.workspace as ProductionWorkspace|null,accepted=current.current;
++   if(!next&&!readOnly){
++    if(value.sourceOptions?.version!=='workspace-source-options/v1'||!Array.isArray(value.sourceOptions.options))throw Error('来源读取协议尚未更新，请更新本地服务后重新读取。');
++    if(value.sourceOptions.scriptRevisionId!==scriptRevisionId)throw Error('制作来源与当前脚本基准不同，请刷新后重新读取。');
++   }
+    // A command may publish while this reload is waiting, including at the same revision.
+    const changed=accepted!==source;
+    const superseded=accepted&&next&&(next.id===accepted.id
+@@ -115,6 +123,7 @@
+     }
+     update(next);
+    }
++   if(!next&&!accepted)setSourceOptions(value.sourceOptions??null);
+    setLoaded(true);
+   }).catch(cause=>{if(active)setLoadError(cause instanceof Error?cause.message:'制作流程读取失败。');});
+   return()=>{active=false;};
+@@ -137,7 +146,6 @@
+   finally{if(request===operationRead.current){operationReadBusy.current=false;setCheckingOperation(false);}}
+  }
+  const openEditor=operations.open;
+- async function resumeLegacy(source:LegacyWorkspaceSource,edit=true){const w=await run('adoptLegacyWorkspace',{episodeId,expectedScriptRevisionId:scriptRevisionId,reviewPackageId:boardId,...source}) as ProductionWorkspace;update(w);setStep(edit?2:1);if(edit)await openEditor();}
+  openAction.current=openEditor;
+  useEffect(()=>{if(step!==2||!loaded||!workspace||session||readOnly||pending||workspace.stale||!studioRequested.current)return;studioRequested.current=false;void openAction.current().catch(()=>{});},[step,loaded,workspace?.id,session,readOnly,pending,workspace?.stale]);
+  useEffect(()=>{onStudioActionChange?.(loaded&&workspace&&!readOnly?()=>{void openAction.current().catch(()=>{});}:null);return()=>onStudioActionChange?.(null);},[loaded,workspace?.id,onStudioActionChange,readOnly]);
+@@ -167,11 +175,16 @@
+  const scriptFormat=scriptState.format;
+  const autoPreparedScript = useRef<string | null>(null);
+  useEffect(() => {
+-  if (step !== 1 || !loaded || scriptFormat==='unread' && Boolean(scriptPath) || !scriptRevisionId || stage === 'waiting_input' ||
+-      workspace || legacyContent || readOnly || pending || autoPreparedScript.current === scriptRevisionId) return;
+-  autoPreparedScript.current = scriptRevisionId;
+-  void prepare(undefined,scriptRevisionId,undefined,true).catch(() => {});
+- }, [step, loaded, scriptFormat, scriptPath, scriptRevisionId, stage, workspace, legacyContent, readOnly, pending]);
++  const confirmation=confirmedPreparation?.episodeId===episodeId&&(confirmedPreparation.scriptRevisionId===scriptRevisionId||confirmedPreparation.basisScriptRevisionId===scriptRevisionId)?confirmedPreparation:null;
++  const targetScript=confirmation?.scriptRevisionId??scriptRevisionId;
++  if (step !== 1 || !loaded || scriptFormat==='unread' && Boolean(scriptPath) || !targetScript || stage === 'waiting_input'&&!confirmation ||
++      legacyContent&&!workspace || readOnly || pending || autoPreparedScript.current === targetScript) return;
++  if(workspace){if(!confirmation||workspace.scriptRevisionId===targetScript)return;}
++  else if(!sourceOptions||sourceOptions.scriptRevisionId!==targetScript||sourceOptions.options.length>0)return;
++  autoPreparedScript.current = targetScript;
++  setConfirmedPreparation(null);
++  void prepare(undefined,targetScript,confirmation?.reason,true).catch(() => {});
++ }, [step, loaded, scriptFormat, scriptPath, scriptRevisionId, stage, workspace, legacyContent, sourceOptions, confirmedPreparation, readOnly, pending]);
+  async function processMaterialUploads(rows:WorkspaceUploadEntry[]){
+   if(readOnly||materialUploads.read().running)return;
+   const imported:string[]=[];
+@@ -233,9 +246,10 @@
+    <nav aria-label={uiText("四步制作步骤")}>{steps.map((label,index)=><button key={label} aria-label={step===index?uiText("{value0}，当前查看",{value0:uiText(label)}):uiText(label)} aria-describedby={`${stepStatusId}-${index}`} aria-current={step===index?'page':undefined} data-complete={loaded&&confirmedSteps[index]||undefined} disabled={!!session||editorOpening} onClick={()=>{if(index!==step)requestDraftLeave(()=>{manuallySelectedStep.current=true;studioRequested.current=index===2;setStep(index);});}}><span aria-hidden="true">{loaded&&confirmedSteps[index]?<Check size={14} strokeWidth={2.5}/>:index+1}</span>{uiText(label)}<small id={`${stepStatusId}-${index}`}>{loaded?uiText(stepSummaries[index]):loadError?uiText("读取失败"):uiText("读取中")}</small></button>)}</nav>{titleActions&&<div className="production-workspace-title-actions">{titleActions}</div>}</header>
+    {notice}{displayedError&&!notice&&!shotToDelete&&(uncertainOperation?<div role="alert" className="workspace-operation-error workspace-uncertain-operation"><div><strong>{uiText(uncertainOperation.label)}{uiText("结果暂未确认")}</strong><p>{uncertainOperation.checked?uiText("已重新读取当前工程，原操作是否完成仍未确认。请核对已有任务和保存结果。"):uiText("可能已提交，暂未取得可确认的回执。请先核对已保存工程和系统状态，不会自动重复提交。")}</p>{operationReadError&&<p>{uiText(operationReadError||'')}</p>}</div><Button size="sm" color="secondary" isDisabled={pending||checkingOperation} aria-busy={checkingOperation} onPress={()=>void checkSavedWorkspace()}>{checkingOperation?uiText("读取中…"):uiText("重新读取已保存工程")}</Button></div>:<p role="alert" className="workspace-operation-error">{uiText(displayedError||'')}</p>)}{legacyPrompt&&!readOnly&&<section className="production-workspace-section workspace-legacy-choice" aria-label={uiText("旧剪辑工作版本处理")}><Button size="sm" color="primary" isDisabled={pending} onPress={()=>void prepare('preserve').catch(()=>{})}>{uiText("保留旧编辑并继续")}</Button><Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare('fresh').catch(()=>{})}>{uiText("封存旧工程并建立初稿")}</Button></section>}
+    {!loaded&&!loadError&&<p role="status">{uiText("正在读取制作流程…")}</p>}{loadError&&<div role="alert"><p>{uiText(loadError||'')}</p><Button size="sm" color="secondary" onPress={()=>setLoadAttempt(value=>value+1)}>{uiText("重新读取制作流程")}</Button></div>}
++   {loaded&&!workspace&&!readOnly&&sourceOptions&&<div hidden={step!==1&&step!==2}><WorkspaceSourcePicker key={episodeId+':'+scriptRevisionId+':'+JSON.stringify(sourceOptions)} options={sourceOptions} pending={pending||preparing} onImport={async source=>{if(sourceOptions.scriptRevisionId&&await operations.adoptSource(source,sourceOptions.scriptRevisionId))setStep(1);}}/></div>}
+    {workspace?.stale&&!readOnly&&stage==='waiting_input'&&<section className="production-workspace-section workspace-replan-notice" aria-label={uiText("恢复原工程")}><p role="status">{workspace.scriptResume?.reason??uiText("脚本修改待确认，原工程已暂停编辑。请先确认脚本，原工程与素材均已保留。")}</p>{workspace.scriptResume?.canReuse?<Button size="sm" color="primary" isDisabled={pending} onPress={()=>{const w=current.current!;void run('resumeWorkspaceEditing',{episodeId,workspaceId:w.id,expectedRevision:w.revision,expectedScriptRevisionId:scriptRevisionId,expectedProjectSha256:w.project.sha256}).then(v=>{update(v as ProductionWorkspace);setStep(1);}).catch(()=>{});}}>{uiText("确认排版修订，继续原工程")}</Button>:<Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(0))}>{uiText("核对脚本")}</Button>}</section>}
+    {workspace?.stale&&!readOnly&&stage!=='waiting_input'&&!preparing&&<section className="production-workspace-section workspace-replan-notice"><p role="status">{uiText("脚本已更新，原工程与媒体已保留。")}</p>{error&&!legacyPrompt&&<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})}>{uiText("重试")}</Button>}</section>}
+-   <fieldset hidden={!loaded} ref={workspaceCanvas} disabled={readOnly&&!workspace&&!legacyContent} className="production-workspace-body"><div hidden={step!==0||!!session}><WorkspaceScriptPanel errorPresented={!!notice||!!error} episodeId={episodeId} scriptRevisionId={scriptRevisionId} script={script} stage={stage} readOnly={readOnly} pending={pending||!loaded||!!scriptPath&&loadedScriptPath!==scriptPath} command={run} onConfirmed={(confirmedScriptId,revisionReason)=>{setStep(1);if(confirmedScriptId&&!legacyContent){autoPreparedScript.current=confirmedScriptId;void prepare(undefined,confirmedScriptId,revisionReason,true).catch(()=>{});}}}/></div>{!loaded||step===0&&!session?null:!workspace&&legacyContent?(step===1?<LegacyPreparation key={episodeId} snapshot={legacyContent} onResume={source=>resumeLegacy(source,false)} pending={pending} readOnly={readOnly}/>:step===2?<LegacyEditing key={episodeId} snapshot={legacyContent} onResume={resumeLegacy} pending={pending} readOnly={readOnly}/>:<LegacyDelivery key={episodeId} snapshot={legacyContent}/>):!workspace&&step!==1?<section className="production-workspace-section"><h3>{uiText(steps[step])}</h3><p>{step===2?uiText("尚未建立剪辑工程。"):uiText("尚无导出或交付文件。")}</p><Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(step===2?1:2))}>{step===2?uiText("前往分镜台"):uiText("前往剪辑工作台")}</Button></section>:step===1&&preparing?<div className="workspace-script-analysis" role="status"><span aria-hidden="true"/>{uiText("正在分析脚本并拆分镜头…")}</div>:!workspace?<section className="production-workspace-section"><h3>{uiText(steps[step])}</h3>{!scriptRevisionId||stage==='waiting_input'?<p>{uiText("请先确认脚本。")}</p>:error&&!readOnly&&!legacyPrompt?<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})}>{uiText("重试")}</Button>:null}</section>:
++   <fieldset hidden={!loaded} ref={workspaceCanvas} disabled={readOnly&&!workspace&&!legacyContent} className="production-workspace-body"><div hidden={step!==0||!!session}><WorkspaceScriptPanel errorPresented={!!notice||!!error} episodeId={episodeId} scriptRevisionId={scriptRevisionId} script={script} stage={stage} readOnly={readOnly} pending={pending||!loaded||!!scriptPath&&loadedScriptPath!==scriptPath} command={run} onConfirmed={(confirmedScriptId,revisionReason)=>{setStep(1);if(confirmedScriptId)setConfirmedPreparation({episodeId,scriptRevisionId:confirmedScriptId,basisScriptRevisionId:scriptRevisionId,reason:revisionReason});}}/></div>{!loaded||step===0&&!session?null:!workspace&&legacyContent?(step===1?<LegacyPreparation key={episodeId} snapshot={legacyContent}/>:step===2?<LegacyEditing key={episodeId} snapshot={legacyContent}/>:<LegacyDelivery key={episodeId} snapshot={legacyContent}/>):!workspace&&step!==1?<section className="production-workspace-section"><h3>{uiText(steps[step])}</h3><p>{step===2?uiText("尚未建立剪辑工程。"):uiText("尚无导出或交付文件。")}</p><Button size="sm" color="secondary" onPress={()=>requestDraftLeave(()=>setStep(step===2?1:2))}>{step===2?uiText("前往分镜台"):uiText("前往剪辑工作台")}</Button></section>:step===1&&preparing?<div className="workspace-script-analysis" role="status"><span aria-hidden="true"/>{uiText(operations.adopting?"正在接入原版本…":"正在分析脚本并拆分镜头…")}</div>:!workspace&&sourceOptions?.options.length?null:!workspace?<section className="production-workspace-section"><h3>{uiText(steps[step])}</h3>{!scriptRevisionId||stage==='waiting_input'?<p>{uiText("请先确认脚本。")}</p>:error&&!readOnly&&!legacyPrompt&&sourceOptions?.scriptRevisionId===scriptRevisionId&&!sourceOptions.options.length?<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void prepare(undefined,scriptRevisionId,undefined,true).catch(()=>{})}>{uiText("重试")}</Button>:null}</section>:
+    session?<EmbeddedStudioHost initialShotId={selectedShot?.shotId} initialItemId={selectedPreview?.itemId} key={session.launchId} episodeId={episodeId} title={title} session={session} shots={workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index).map(c=>({id:c.shotId,text:c.text,soundIntent:c.soundIntent}))} onSave={file=>operations.save(session,file)} onClose={(destination,selection)=>operations.close(session,destination,selection)}/> :step===1?<section className="production-workspace-section workspace-preparation"><header><div className="workspace-preparation-heading"><h3>{uiText(workflowStepLabels.preparation)}</h3><span>{visualReady} / {uniqueClips.length}{uiText(" 画面就绪")}</span></div><div><Button size="sm" color="primary" isDisabled={pending||readOnly||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>{uiText("进入剪辑工作台")}</Button></div></header><WorkspaceMaterialSelectionProvider key={episodeId} materials={allMaterials}><WorkspacePreparationLayout><section className="workspace-shot-table-pane" aria-label={uiText("素材镜头列表")}><WorkspaceShotTable readOnly={readOnly} workspace={workspace} project={nativeProject} materials={allMaterials} selectedShotId={selectedShot?.shotId} disabled={pending||readOnly||workspace.stale} onSelect={setSelectedShotId} onDelete={clip=>{setError('');setShotToDelete({episodeId,workspaceId:workspace.id,revision:workspace.revision,shotId:clip.shotId,text:clip.text});}} onEdit={editShots}/><WorkspaceMaterialShelf episodeId={episodeId} scriptRevisionId={scriptRevisionId} shotCount={uniqueClips.length} materials={allMaterials}
+     readOnly={readOnly} busy={pending||materialUploadBusy} status={materialUploadStatus} notice={materialUploadNotice} onDismissNotice={id=>materialUploads.update(value=>value.notice?.id===id?{...value,notice:undefined}:value)}
+     failures={materialUploadFailures} onAbandon={()=>{if(!readOnly&&!pending)materialUploads.abandon();}} onRetry={()=>void processMaterialUploads(materialUploads.read().rows.filter(row=>row.status!=='succeeded'))} onImport={uploadMaterials}/></section><aside className="workspace-preparation-detail"><div className="workspace-detail-tabs" role="tablist" aria-label={uiText("素材设置")}>{([['visual','画面'],['voice','字幕与口播'],['sound','配乐与声音']] as const).map(([id,label])=><button key={id} id={`preparation-tab-${id}`} type="button" role="tab" aria-selected={preparationTab===id} aria-controls={`preparation-panel-${id}`} tabIndex={preparationTab===id?0:-1} onClick={()=>setPreparationTab(id)} onKeyDown={event=>{const ids=['visual','voice','sound'] as const,index=ids.indexOf(id);const next=event.key==='ArrowRight'?ids[(index+1)%3]:event.key==='ArrowLeft'?ids[(index+2)%3]:event.key==='Home'?ids[0]:event.key==='End'?ids[2]:null;if(next){event.preventDefault();setPreparationTab(next);requestAnimationFrame(()=>document.getElementById(`preparation-tab-${next}`)?.focus());}}}>{uiText(label)}</button>)}</div><div role="tabpanel" id="preparation-panel-visual" aria-labelledby="preparation-tab-visual" hidden={preparationTab!=='visual'}><section className="workspace-visual-replacement" aria-label={uiText("上传与生成画面")}>{selectedSegment?.visual&&<p><strong>{uiText("画面提示")}</strong> {selectedSegment.visual}</p>}<WorkspaceVisualPreparation workspace={workspace} command={run} onChange={update} materials={allMaterials} selectedShotId={selectedShot?.shotId} selectedTargetItemId={selectedPreview?.itemId} onTargetChange={setPreviewItemId} readOnly={readOnly} project={nativeProject} currentVisualPath={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined} currentVisualSha256={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.sha256:undefined} currentMaterialRevisionId={allMaterials.find(m=>m.storage_path===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.id??workspace.visualCandidates?.find(c=>c.relativePath===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.materialRevisionId} currentVisualKind={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.kind:undefined} preview={<WorkspaceShotPreview readOnly={readOnly} workspace={workspace} clips={selectedClips} selectedItemId={selectedPreview?.itemId} onSelect={setPreviewItemId} project={nativeProject} materials={allMaterials}/>} onImported={material=>setImportedMaterials(rows=>[...rows,{...material,is_main_script:false}])}/></section></div><div role="tabpanel" id="preparation-panel-voice" aria-labelledby="preparation-tab-voice" hidden={preparationTab!=='voice'}><fieldset className="workspace-readonly-fields"><WorkspaceNarrationPanel onImportAudio={uploadMaterials} active={preparationTab==='voice'} readOnly={readOnly} narrationConfiguration={(legacySnapshot?.blueprint?.policy&&typeof legacySnapshot.blueprint.policy==='object'&&!Array.isArray(legacySnapshot.blueprint.policy)?legacySnapshot.blueprint.policy.narration:undefined)} episodeId={episodeId} workspace={workspace} pending={pending||materialUploadBusy||readOnly} command={run} onChanged={update} tracks={audioTracks} materials={allMaterials} defaultSettings={{voice:legacySnapshot?.episode.tts_voice??null,speakingRate:legacySnapshot?.episode.tts_speaking_rate??null,languageCode:legacySnapshot?.episode.tts_language_code??null}} selectedShotId={selectedShot?.shotId}/></fieldset></div><div role="tabpanel" id="preparation-panel-sound" aria-labelledby="preparation-tab-sound" hidden={preparationTab!=='sound'}><fieldset className="workspace-readonly-fields"><WorkspaceAudioPreparation readOnly={readOnly} workspace={workspace} selectedShotId={selectedShot?.shotId} command={run} onChange={update} materials={allMaterials} project={nativeProject}/></fieldset>{readOnly&&selectedShot&&<WorkspaceSoundIntent key={selectedShot.shotId} workspace={workspace} shot={selectedShot} pending={pending} readOnly={readOnly} command={run} onChange={update}/>}</div></aside></WorkspacePreparationLayout></WorkspaceMaterialSelectionProvider></section>:step===2&&!readOnly?<section className="production-workspace-section workspace-editing-opening" aria-label={uiText("剪辑工作台连接")}><p role="status">{editorOpening?uiText("正在打开剪辑工作台…"):workspace.stale?uiText("脚本基准已变化，请先核对素材。"):uiText("剪辑工作台尚未连接。")}</p>{!editorOpening&&<Button size="sm" color="primary" isDisabled={pending||workspace.stale} onPress={()=>void openEditor().catch(()=>{})}>{uiText("重试打开剪辑工作台")}</Button>}</section>:step===2?<section className="production-workspace-section workspace-editing-entry is-readonly"><header><div><h3>{stage==='production_completed'?uiText("已完成工程"):uiText("工程查看")}</h3><p>{stage==='production_completed'?uiText("当前工程已交付，按镜头查看成片与已保存配置。"):uiText("当前工程只读，按镜头查看已保存配置。")}</p></div>{workspace.exports?.some(entry=>entry.artifact)&&<Button size="sm" color="secondary" onPress={()=>setStep(3)}>{uiText("查看成片与交付")}</Button>}</header><WorkspaceCompletedShots workspace={workspace} project={nativeProject} materials={allMaterials}/></section>:null}
+--- before/src/local-app/useWorkspaceOperations.ts
++++ current/src/local-app/useWorkspaceOperations.ts
+@@ -2,15 +2,16 @@
+ import type {ProductionWorkspace} from '../productionWorkspace';
+ import type {OpenChatCutStudioWorkspace} from '../reviews/reviewRevision';
+ import type {EmbeddedStudioSession} from './EmbeddedStudioHost';
++import type {WorkspaceSourceReference} from '../workspaceSourceOptions';
+ 
+ type Selection={shotId:string;itemId:string};
+ type State=
+- |{phase:'ready'|'preparing'|'closed'}
++ |{phase:'ready'|'preparing'|'adopting'|'closed'}
+  |{phase:'opening';session:EmbeddedStudioSession|null;destination:'editor'|'stay'}
+  |{phase:'editing'|'saving'|'closing';session:EmbeddedStudioSession};
+ type Prepare={scriptRevisionId:string;boardId?:string;reason?:string;legacyDecision?:'preserve'|'fresh';stayOnCurrentStep?:boolean};
+ interface Options {
+- episodeId:string;readOnly:boolean;reopen:boolean;
++ episodeId:string;scriptRevisionId:string|null;readOnly:boolean;reopen:boolean;
+  current:()=>ProductionWorkspace|null;
+  command:(name:string,data:unknown,owns:()=>boolean)=>Promise<unknown>;
+  publish:(workspace:ProductionWorkspace)=>void;
+@@ -50,6 +51,24 @@
+    publish(state,result as ProductionWorkspace,source);latest.current.prepared(!!input.stayOnCurrentStep);
+   }finally{if(owns(state))transition({phase:'ready'});}
+  }
++ async function adoptSource(source:WorkspaceSourceReference,scriptRevisionId:string){
++  if(!available()||owner.state.phase!=='ready'||latest.current.current())return;
++  if(latest.current.scriptRevisionId!==scriptRevisionId){latest.current.error('脚本基准已变化，请重新读取来源。');return;}
++  const state:State={phase:'adopting'};transition(state);
++  const request=source.kind==='saved-plan'?{command:'adoptLegacyPlan',data:{expectedPlanSha256:source.expectedPlanSha256}}:
++   source.kind==='shot-workbench'?{command:source.mode==='inputs'?'importLegacyDraftInputs':'adoptLegacyWorkspace',data:{reviewPackageId:source.reviewPackageId,workbenchSha256:source.workbenchSha256}}:
++   source.kind==='saved-native'?{command:'adoptLegacyWorkspace',data:{reviewPackageId:source.reviewPackageId,savedProjectSha256:source.savedProjectSha256}}:
++   {command:'adoptLegacyWorkspace',data:{reviewPackageId:source.reviewPackageId,artifactId:source.artifactId,expectedSourceSha256:source.expectedSourceSha256}};
++  const ownsInput=()=>owns(state)&&available()&&latest.current.scriptRevisionId===scriptRevisionId;
++  try{
++   const result=await latest.current.command(request.command,{episodeId:options.episodeId,expectedScriptRevisionId:scriptRevisionId,...request.data},ownsInput) as ProductionWorkspace;
++   if(!ownsInput())return;
++   if(!result||!Array.isArray(result.clips)||result.episodeId!==options.episodeId||result.scriptRevisionId!==scriptRevisionId)throw Error('未收到对应来源的当前工程，请重新读取。');
++   publish(state,result,latest.current.current());latest.current.prepared(true);return true;
++  }catch(error){
++   if(ownsInput()&&!(error instanceof Error&&error.name==='AbortError'))latest.current.error(error instanceof Error?error.message:'接入未完成，请重新读取当前工程。');throw error;
++  }finally{if(owns(state))transition({phase:'ready'});}
++ }
+  async function open(){
+   const previous=owner.state;
+   if(!available()||previous.phase!=='ready'&&(previous.phase!=='editing'||!latest.current.reopen))return;
+@@ -83,5 +102,5 @@
+  }
+  function cancelOpening(){const state=owner.state;if(owns(state)&&state.phase==='opening'){state.destination='stay';render();}}
+  const state=owner.state;
+- return {prepare,open,save,close,cancelOpening,preparing:state.phase==='preparing',opening:state.phase==='opening'&&state.destination==='editor',session:'session' in state?state.session:null};
++ return {prepare,adoptSource,open,save,close,cancelOpening,preparing:state.phase==='preparing'||state.phase==='adopting',adopting:state.phase==='adopting',opening:state.phase==='opening'&&state.destination==='editor',session:'session' in state?state.session:null};
+ }
+--- before/src/local-app/LegacyProductionSteps.tsx
++++ current/src/local-app/LegacyProductionSteps.tsx
+@@ -7,7 +7,6 @@
+ import type {OpenChatCutProject} from '../worker/openchatcutProject';
+ import {localArtifactUrl,artifactPreviewKind,useLocalArtifactBlob,useLocalArtifactText} from '../reviews/localArtifactPreview';
+ import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+-import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import {localRequest} from './client';
+ import './legacy-production.css';
+ import './legacy-production-compact.css';
+@@ -38,19 +37,16 @@
+  return values.length?<NativeSelect size="sm" aria-label={label} value={value?.id??''} onChange={e=>onChange(e.target.value)}>{values.map(p=><option key={p.id} value={p.id}>v{p.revision_number}{p.invalidated_at?uiText(" · 已失效"):p.id===values.find(v=>!v.invalidated_at)?.id?uiText(" · 当前记录"):uiText(" · 历史版本")}</option>)}</NativeSelect>:null;
+ }
+ interface LegacyShot {id:string;scriptSegment:string;shotType?:string;productionMethod?:string;targetSpec?:string;durationSeconds?:number;inputBasis?:Array<{relativePath:string}>}
+-export function LegacyPreparation({snapshot,onResume,readOnly=false,pending=false}:{snapshot:EpisodeProductionSnapshot;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
++export function LegacyPreparation({snapshot}:{snapshot:EpisodeProductionSnapshot}){
+  const boards=reviews(snapshot,'storyboard_review'),[boardId,setBoardId]=useState(''),[shotId,setShotId]=useState('');
+  const board=boards.find(p=>p.id===boardId)??boards[0],context=object(board?.context_snapshot),rawBoard=object(object(context.worker_result).storyboard??context.storyboard);
+- const [saved,setSaved]=useState<{project:OpenChatCutProject|null;sha256?:string}|null>(null);
+- useEffect(()=>{let active=true;void localRequest(`episodes/${snapshot.episode.id}/legacy-project`).then(value=>{if(active)setSaved(value);}).catch(()=>{});return()=>{active=false;};},[snapshot.episode.id]);
+- const qc=reviews(snapshot,'qc_review').find(p=>!p.invalidated_at),render=snapshot.artifacts.find(a=>a.id===qc?.artifact_id),source=snapshot.artifacts.filter(a=>['review_render_project','final_render_project'].includes(a.artifact_type)&&/\.(json|html)$/.test(a.relative_path)).sort(newest).find(a=>a.producer_task_id===render?.producer_task_id);
+  const shots=(Array.isArray(rawBoard.shots)?rawBoard.shots:[]).filter(s=>typeof object(s).id==='string'&&typeof object(s).scriptSegment==='string') as LegacyShot[];
+  const shot=shots.find(s=>s.id===shotId)??shots[0],draft=snapshot.shotPreparationDrafts?.find(d=>d.review_package_id===board?.id&&d.shot_id===shot?.id);
+  const frozenReview=reviews(snapshot,'production_ready').find(p=>object(p.context_snapshot).storyboard_review_package_id===board?.id),frozen=object(frozenReview?.context_snapshot);
+  const members=(Array.isArray(frozen.members)?frozen.members:[]).map(object),frozenVisual=object(members.find(m=>m.member_key===`shot:${shot?.id}`)?.artifact),frozenAudio=object(members.find(m=>m.member_key===`narration:${shot?.id}`)?.audio_track);
+  const selected=snapshot.materialRevisions.find(m=>m.id===draft?.selected_material_revision_id),video=snapshot.artifacts.find(a=>a.id===(draft?.current_video_artifact_id??frozenVisual.id)),audio=snapshot.audioTracks.find(a=>a.id===(draft?.current_audio_track_id??frozenAudio.id));
+  return <div className="legacy-production legacy-production-compact legacy-preparation-compact">
+-  <header className="legacy-compact-topbar"><h3>{uiText("已有分镜与匹配")}</h3><span>{shots.length}{uiText(" 个分镜")}</span><ReviewVersion values={boards} value={board} onChange={id=>{setBoardId(id);setShotId('');}} label={uiText("已有分镜版本")}/>{!readOnly&&onResume&&(source||saved?.project)&&<Button size="sm" color="primary" isDisabled={pending||!saved||board?.id!==boards.find(p=>!p.invalidated_at)?.id} onPress={()=>void onResume(saved?.project?{savedProjectSha256:saved.sha256}:{artifactId:source!.id,expectedSourceSha256:source!.sha256}).catch(()=>{})}>{pending?uiText("正在接入…"):uiText("启用逐镜头编辑")}</Button>}</header>
++  <header className="legacy-compact-topbar"><h3>{uiText("已有分镜与匹配")}</h3><span>{shots.length}{uiText(" 个分镜")}</span><ReviewVersion values={boards} value={board} onChange={id=>{setBoardId(id);setShotId('');}} label={uiText("已有分镜版本")}/></header>
+   <div className="legacy-preparation-layout">
+    <section className="legacy-shot-table-pane" aria-label={uiText("已有分镜与匹配")}>
+     {shots.length?<details className="legacy-all-shots" open><summary>{uiText("全部分镜")}</summary><div className="legacy-table-scroll"><table aria-label={uiText("已有分镜列表")}><thead><tr><th>{uiText("镜头")}</th><th>{uiText("脚本与素材")}</th><th>{uiText("时长")}</th><th>{uiText("画面")}</th><th>{uiText("声音")}</th></tr></thead><tbody>{shots.map(s=>{const rowDraft=snapshot.shotPreparationDrafts?.find(d=>d.review_package_id===board?.id&&d.shot_id===s.id),rowVisual=object(members.find(m=>m.member_key===`shot:${s.id}`)?.artifact),rowAudio=object(members.find(m=>m.member_key===`narration:${s.id}`)?.audio_track),rowMaterial=snapshot.materialRevisions.find(m=>m.id===rowDraft?.selected_material_revision_id),rowVideo=snapshot.artifacts.find(a=>a.id===(rowDraft?.current_video_artifact_id??rowVisual.id)),rowNarration=snapshot.audioTracks.find(a=>a.id===(rowDraft?.current_audio_track_id??rowAudio.id));return <tr key={s.id} className={s.id===shot?.id?'is-selected':''}><th><button type="button" aria-label={uiText("选择镜头 {value0}",{value0:String(s.id)})} aria-pressed={s.id===shot?.id} onClick={()=>setShotId(s.id)}>{s.id}</button></th><td><button type="button" className="legacy-shot-text" onClick={()=>setShotId(s.id)}><span>{s.scriptSegment}</span><small>{rowMaterial||rowVideo?uiText("素材 · {value0}",{value0:String(rowMaterial?.source_path.split('/').pop()??rowVideo?.relative_path.split('/').pop())}):uiText("未保存画面匹配")}</small></button></td><td>{s.durationSeconds??'—'}{uiText(" 秒")}</td><td><span className={rowMaterial||rowVideo?'is-ready':''}>{rowMaterial||rowVideo?uiText("已匹配"):uiText("未记录")}</span></td><td>{rowDraft?.audio_mode==='none'?uiText("静音"):rowDraft?.audio_mode==='source'?uiText("素材原声"):rowNarration?uiText("已记录"):uiText("未记录")}</td></tr>;})}</tbody></table></div></details>:<p className="legacy-empty-content">{uiText("尚无分镜记录。")}</p>}
+@@ -64,8 +60,7 @@
+  </div>;
+ }
+ 
+-export interface LegacyWorkspaceSource {artifactId?:string;expectedSourceSha256?:string;savedProjectSha256?:string}
+-export function LegacyEditing({snapshot,onResume,readOnly=false,pending=false}:{snapshot:EpisodeProductionSnapshot;onResume?:(source:LegacyWorkspaceSource)=>Promise<void>;readOnly?:boolean;pending?:boolean}){
++export function LegacyEditing({snapshot}:{snapshot:EpisodeProductionSnapshot}){
+  const qc=reviews(snapshot,'qc_review')[0],render=snapshot.artifacts.find(a=>a.id===qc?.artifact_id);
+  const allProjects=snapshot.artifacts.filter(a=>['review_render_project','final_render_project','shot_editable_project'].includes(a.artifact_type)).sort(newest);
+  const current=allProjects.find(a=>render&&a.producer_task_id===render.producer_task_id)??allProjects[0];
+@@ -83,7 +78,6 @@
+   {error&&<p role="alert" className="legacy-compact-alert">{uiText(error||'')}</p>}{!saved&&<p role="status" className="legacy-compact-alert">{uiText("正在读取已保存工程…")}</p>}
+   <div className="legacy-editing-layout">
+    <section className="legacy-editor-preview"><header><h4>{uiText("对应审核预览")}</h4>{render&&<FileLink episodeId={render.episode_id} path={render.relative_path} sha256={render.sha256}>{uiText("下载审核预览")}</FileLink>}</header>{render?<Media episodeId={render.episode_id} path={render.relative_path} sha256={render.sha256} label={uiText("已有剪辑审核预览")}/>:<div className="legacy-no-preview"><p>{uiText("尚无对应审核预览。")}</p></div>}
+-    {!readOnly&&onResume&&(selectedId==='saved'||artifact&&['review_render_project','final_render_project'].includes(artifact.artifact_type)&&/\.(json|html)$/.test(artifact.relative_path))&&<div className="legacy-edit-entry"><Button size="sm" color="primary" isDisabled={pending||!saved||artifact?.relative_path.endsWith('.json')&&!project||selectedId!=='saved'&&!!saved.project} onPress={()=>{const source=selectedId==='saved'?{savedProjectSha256:saved!.sha256}:{artifactId:artifact!.id,expectedSourceSha256:artifact!.sha256};void onResume(source).catch(()=>{});}}>{pending?uiText("正在打开…"):uiText("继续编辑原工程")}</Button><span>{uiText("编辑另存工作版本，保留原工程和审核产物。")}</span></div>}
+    </section>
+    <aside className="legacy-project-detail">
+     <section className="legacy-compact-detail-section"><h4>{uiText("工程文件")}</h4>{selectedId==='saved'&&saved?.sha256&&<a href={`/api/local/episodes/${snapshot.episode.id}/legacy-project?download=${saved.sha256}`} download>{uiText("下载已保存工程")}</a>}{artifact&&<><FileLink episodeId={artifact.episode_id} path={artifact.relative_path} sha256={artifact.sha256}>{uiText("下载工程 ")}{artifact.relative_path.split('/').pop()}</FileLink><p className="legacy-file-path">{artifact.relative_path}</p>{!artifact.relative_path.endsWith('.json')&&<details><summary>{uiText("查看原工程源码")}</summary><TextFile episodeId={artifact.episode_id} path={artifact.relative_path} sha256={artifact.sha256}/></details>}</>}{!projects.length&&!saved?.project&&saved&&<p>{uiText("尚无已保存的剪辑工程。")}</p>}</section>
+--- before/src/local-app/localRoute.ts
++++ current/src/local-app/localRoute.ts
+@@ -10,6 +10,7 @@
+ import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
+ import {readLegacyStudioProject} from './legacyStudioProject.js';
+ import {readLegacyWorkbenchSource,legacyWorkbenchSummary} from './legacyWorkbenchSource.js';
++import {readWorkspaceSourceOptions} from './workspaceSourceOptions.js';
+ import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
+ import{ownerTransaction}from'./ownerTransaction.js';
+ import {readWorkspaceSearch} from './workspaceSearch.js';
+@@ -285,7 +286,13 @@
+    const workspace=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/workspace(?:\/project)?$/);
+    if(workspace&&uuid.test(workspace[1])&&request.method==='GET'){
+     if(url.pathname.endsWith('/project')&&(!/^[a-f0-9]{64}$/.test(url.searchParams.get('sha')??'')||url.searchParams.getAll('sha').length!==1))throw new ConfigurationError(400,'工程版本指纹无效。');
+-    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):{workspace:await readProductionWorkspace(c,e.id,root)};});send(200,url.pathname.endsWith('/project')?{project:value}:value);return;
++    const value=await ownerTransaction(options.pool,session.id,true,async c=>{
++     const e=(await c.query('SELECT e.id,e.main_script_revision_id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];
++     if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);
++     if(url.pathname.endsWith('/project'))return readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??'');
++     const current=await readProductionWorkspace(c,e.id,root);
++     return{workspace:current,...(!current?{sourceOptions:await readWorkspaceSourceOptions(c,root,e)}:{})};
++    });send(200,url.pathname.endsWith('/project')?{project:value}:value);return;
+    }
+    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
+    if(episode&&uuid.test(episode[1])){
+--- before/src/local-app/productionWorkspaceCommands.ts
++++ current/src/local-app/productionWorkspaceCommands.ts
+@@ -198,6 +198,7 @@
+    if(command==='adoptLegacyPlan'&&row)throw new ConfigurationError(409,'已有当前工程，未覆盖现有编辑。');
+    if(command==='adoptLegacyPlan'&&isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并关闭原编辑器，再接入保存计划。');
+    if(command==='adoptLegacyPlan'&&await inspectOpenChatCutStoredProject(root,e.id,await episodeFileIO(c,root,e.id)))throw new ConfigurationError(409,'已有原生剪辑版本，请从原工程接入；保存计划不会替换原编辑。');
++   if(command==='adoptLegacyPlan')await requireNoRenderedLegacyProject(c,e.id);
+    if(!data.reviewPackageId&&command==='prepareWorkspace'&&row?.script_revision_id===e.main_script_revision_id){
+     await syncProductionWorkspaceShots(c,row,root);return readProductionWorkspace(c,e.id,root);
+    }
+--- before/src/local-app/ProductionWorkspacePanel.legacy.test.tsx
++++ current/src/local-app/ProductionWorkspacePanel.legacy.test.tsx
+@@ -5,10 +5,26 @@
+ const episode='legacy-order',script='main';
+ const legacySnapshot={episode:{id:episode,stage:'qc_review'},artifacts:[{id:'board-file',episode_id:episode,artifact_type:'storyboard',relative_path:'board.json',sha256:'a'.repeat(64),created_at:'2026-10-01'},{id:'render',episode_id:episode,artifact_type:'render',relative_path:'review.mp4',sha256:'b'.repeat(64),producer_task_id:'render-task',created_at:'2026-10-01'},{id:'project',episode_id:episode,artifact_type:'review_render_project',relative_path:'project.json',sha256:'c'.repeat(64),producer_task_id:'render-task',created_at:'2026-10-01'}],reviewPackages:[{id:'board',stage:'storyboard_review',revision_number:1,artifact_id:'board-file',context_snapshot:{worker_result:{storyboard:{shots:[{id:'S01',scriptSegment:'已有分镜正文',shotType:'a_roll',durationSeconds:3,productionMethod:'原画面'}]}}}},{id:'qc',stage:'qc_review',revision_number:2,artifact_id:'render',context_snapshot:{technical_evidence:{checks:[{name:'resolution',passed:true,detail:'原片分辨率通过'}]}}}],materialRevisions:[{id:script,material_type:'script',source_path:'原脚本.md',storage_path:'main.md',is_main_script:true}],shotPreparationDrafts:[],audioTracks:[],tasks:[],qcReviewIssues:[]} as unknown as EpisodeProductionSnapshot;
+ afterEach(()=>{cleanup();vi.unstubAllGlobals();});
++
++it('keeps an existing source choice after confirming the script instead of implicitly preparing a new workspace',async()=>{
++ const command=vi.fn(async(name:string)=>{if(name==='start')return{stage:'script_approved',main_script_revision_id:script};throw Error('未选择来源，不应建立新工程');});
++ vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).includes('/workspace')?Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:[{id:'saved-plan',label:'原保存计划',summary:'原镜头输入与候选',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}):new Response('# 主脚本\n\n## 正文\n保留原计划正文。')));
++ render(<ProductionWorkspacePanel episodeId={episode} title="等待选择原来源" stage="waiting_input" scriptRevisionId={script} materials={[{id:script,material_type:'script',source_path:'main.md',storage_path:'main.md',is_main_script:true}]} command={command} onLegacy={()=>{}}/>);
++ await waitFor(()=>expect((screen.getByRole('button',{name:'确认脚本'}) as HTMLButtonElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));
++ await screen.findByRole('combobox',{name:'接入来源'});expect(command.mock.calls.map(call=>call[0])).toEqual(['start']);
++});
++
++it('waits for an explicit saved-plan source choice instead of automatically preparing over it',async()=>{
++ const command=vi.fn().mockRejectedValue(new Error('原计划保留，等待核对'));
++ vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).includes('/workspace')?Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:[{id:'saved-plan',label:'原保存计划',summary:'导入原镜头输入与素材候选，仍需明确采用。',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}):new Response('# 主脚本\n\n## 正文\n保留原计划正文。')));
++ render(<ProductionWorkspacePanel episodeId={episode} title="只有保存计划的旧作品" stage="script_approved" scriptRevisionId={script} materials={[{id:script,material_type:'script',source_path:'main.md',storage_path:'main.md',is_main_script:true}]} command={command} onLegacy={()=>{}}/>);
++ const choice=await screen.findByRole('combobox',{name:'接入来源'});expect(screen.queryByRole('heading',{name:'分镜台'})).toBeNull();expect(command).not.toHaveBeenCalled();fireEvent.change(choice,{target:{value:'saved-plan'}});expect(command).not.toHaveBeenCalled();
++ fireEvent.click(screen.getByRole('button',{name:'接入当前制作'}));await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyPlan',{episodeId:episode,expectedScriptRevisionId:script,expectedPlanSha256:'f'.repeat(64)}));expect(await screen.findByText('原计划保留，等待核对')).toBeTruthy();
++});
+ function mount(snapshot:EpisodeProductionSnapshot|undefined,stage='qc_review'){
+  const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>{
+  const path=String(input);if(path.includes('/legacy-project'))return Response.json({project:null});
+- if(path.includes('workspace'))return Response.json({workspace:null});
++ if(path.includes('workspace')){const project=snapshot?.artifacts.find(a=>['review_render_project','final_render_project'].includes(a.artifact_type));return Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:project?[{id:project.id,label:'原剪辑工程',summary:'接入时核验原工程',source:{kind:'rendered-project',reviewPackageId:'board',artifactId:project.id,expectedSourceSha256:project.sha256}}]:[]}});}
+  if(path.includes('main.md'))return new Response('# 已有主脚本\n\n## 正文\n保留的脚本正文');
+  if(path.includes('/local-artifact-preview'))return Response.json({url:'/_local-artifact?ticket=test'});
+  if(path.includes('project.json'))return Response.json({version:3,assets:[],timelines:[{id:'original',name:'原有时间线',width:360,height:640,fps:30,items:[]}]});
+@@ -34,8 +50,7 @@
+ 
+ it('explicitly adopts the selected native original without requesting preparation or generation',async()=>{
+  const command=mount(legacySnapshot);command.mockRejectedValue(new Error('验收暂停于明确接入命令'));
+- fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));const button=await screen.findByRole('button',{name:'继续编辑原工程'});
+- await waitFor(()=>expect((button as HTMLButtonElement).disabled).toBe(false));fireEvent.click(button);
++ fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));const choice=await screen.findByRole('combobox',{name:'接入来源'});expect(screen.queryByRole('button',{name:'继续编辑原工程'})).toBeNull();fireEvent.change(choice,{target:{value:'project'}});expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'接入当前制作'}));
+  await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyWorkspace',{episodeId:episode,expectedScriptRevisionId:script,reviewPackageId:'board',artifactId:'project',expectedSourceSha256:'c'.repeat(64)}));
+  await screen.findByText('验收暂停于明确接入命令');
+ });
+@@ -59,7 +74,7 @@
+ 
+ it('enables per-shot editing of the current HTML order explicitly from materials without asking for generation',async()=>{
+  const snapshot=structuredClone(legacySnapshot);snapshot.artifacts.find(a=>a.id==='project')!.relative_path='original.html';
+- const command=mount(snapshot);command.mockRejectedValue(new Error('验收停在接入'));fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));const entry=await screen.findByRole('button',{name:'启用逐镜头编辑'});await waitFor(()=>expect((entry as HTMLButtonElement).disabled).toBe(false));fireEvent.click(entry);await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyWorkspace',{episodeId:episode,expectedScriptRevisionId:script,reviewPackageId:'board',artifactId:'project',expectedSourceSha256:'c'.repeat(64)}));
++ const command=mount(snapshot);command.mockRejectedValue(new Error('验收停在接入'));fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));const choice=await screen.findByRole('combobox',{name:'接入来源'});expect(screen.queryByRole('button',{name:'启用逐镜头编辑'})).toBeNull();fireEvent.change(choice,{target:{value:'project'}});expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'接入当前制作'}));await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyWorkspace',{episodeId:episode,expectedScriptRevisionId:script,reviewPackageId:'board',artifactId:'project',expectedSourceSha256:'c'.repeat(64)}));
+ });
+ 
+ it('does not report missing production content while a completed workspace is still loading',async()=>{
+--- before/src/local-app/ProductionWorkspacePanel.operations.test.tsx
++++ current/src/local-app/ProductionWorkspacePanel.operations.test.tsx
+@@ -1,4 +1,4 @@
+-import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
++import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+ import {afterEach,expect,it,vi} from 'vitest';
+ import {ProductionWorkspacePanel} from './ProductionWorkspacePanel';
+ import {WorkspaceNavigationContext} from './catalogNavigation';
+@@ -8,6 +8,25 @@
+ const opened={studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace:studio,productionWorkspace:workspace};
+ afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
+ function readWorkspace(){vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));}
++it('reports an invalid source-import receipt instead of silently leaving the user on the source picker',async()=>{
++ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[{id:'saved-plan',label:'原计划',summary:'候选仍需采用',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}})));
++ const command=vi.fn().mockResolvedValue({});render(<ProductionWorkspacePanel episodeId="e" title="接入回执" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
++ fireEvent.change(await screen.findByRole('combobox',{name:'接入来源'}),{target:{value:'saved-plan'}});fireEvent.click(screen.getByRole('button',{name:'接入当前制作'}));expect(await screen.findByRole('alert')).toHaveProperty('textContent','未收到对应来源的当前工程，请重新读取。');expect(command).toHaveBeenCalledTimes(1);
++});
++it.each(['read-only','script-change','newer-workspace'])('does not publish a late source import after %s and keeps duplicate clicks on one command',async(change)=>{
++ let latest:typeof workspace|null=null,finish!:(value:unknown)=>void;
++ vi.stubGlobal('fetch',vi.fn(async()=>Response.json(latest?{workspace:latest}:{workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[{id:'saved-plan',label:'原计划',summary:'候选仍需采用',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}})));
++ const command=vi.fn(()=>new Promise(resolve=>{finish=resolve;})),props={episodeId:'e',title:'接入生命周期',scriptRevisionId:'s',materials:[],command,onLegacy:()=>{}},app=render(<ProductionWorkspacePanel {...props}/>);
++ fireEvent.change(await screen.findByRole('combobox',{name:'接入来源'}),{target:{value:'saved-plan'}});const button=screen.getByRole('button',{name:'接入当前制作'});act(()=>{fireEvent.click(button);fireEvent.click(button);});expect(command).toHaveBeenCalledTimes(1);
++ if(change==='read-only')app.rerender(<ProductionWorkspacePanel {...props} historicalReadOnly/>);
++ else{latest={...workspace,id:'newer-workspace',scriptRevisionId:change==='script-change'?'s2':'s',clips:[{...workspace.clips[0],text:'保持当前新版本'}]};app.rerender(<ProductionWorkspacePanel {...props} scriptRevisionId={latest.scriptRevisionId} boardId="new-read"/>);await waitFor(()=>{expect(screen.queryByText('正在读取制作流程…')).toBeNull();expect(screen.queryByRole('combobox',{name:'接入来源'})).toBeNull();});}
++ await act(async()=>finish(workspace));expect(screen.queryByText('第一镜')).toBeNull();expect(command).toHaveBeenCalledTimes(1);if(change!=='read-only')expect(screen.getByText('保持当前新版本')).toBeTruthy();
++});
++it('requires a fresh read when source discovery belongs to another script instead of leaving a misleading import action',async()=>{
++ let reads=0;vi.stubGlobal('fetch',vi.fn(async()=>Response.json(++reads===1?{workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'stale-script',options:[{id:'saved-plan',label:'原计划',summary:'旧基准',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}:{workspace})));
++ const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="来源基准核对" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
++ const retry=await screen.findByRole('button',{name:'重新读取制作流程'});expect(screen.queryByRole('button',{name:'接入当前制作'})).toBeNull();expect(command).not.toHaveBeenCalled();fireEvent.click(retry);await screen.findByText('第一镜');expect(command).not.toHaveBeenCalled();
++});
+ it('offers only a read to check an unknown Studio operation result without replaying it',async()=>{
+  let reads=0;const fetcher=vi.fn(async(path:string)=>Response.json(path==='/api/local/connections'?{serviceCatalog:{version:1,groups:[]}}:{workspace:path.endsWith('/workspace')&&++reads>1?{...workspace,revision:2,clips:[{...workspace.clips[0],text:'已保存的最新镜头'}]}:workspace}));vi.stubGlobal('fetch',fetcher);
+  const command=vi.fn(async()=>{throw Object.assign(Error('本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。'),{status:503,code:'LOCAL_COMMAND_OUTCOME_UNKNOWN'});});
+@@ -20,7 +39,7 @@
+  expect(screen.getByText('打开剪辑工作台结果暂未确认').closest('[role="alert"]')?.textContent).toContain('原操作是否完成仍未确认');expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();
+ });
+ it('does not automatically prepare again when checking an unknown preparation result without a workspace',async()=>{
+- const fetcher=vi.fn(async()=>Response.json({workspace:null}));vi.stubGlobal('fetch',fetcher);
++ const fetcher=vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}}));vi.stubGlobal('fetch',fetcher);
+  const command=vi.fn(async()=>{throw Object.assign(Error('结果暂未确认'),{code:'local_service_unavailable'});});
+  render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+  await screen.findByText('准备分镜工程结果暂未确认');fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));
+@@ -106,7 +125,7 @@
+  const app=render(view('editing'));fireEvent.click(await screen.findByRole('button',{name:'重试打开剪辑工作台'}));app.rerender(view('delivery'));await act(async()=>fail(Error('响应丢失')));await screen.findByText('先导出最终视频，检查后确认这份文件。');expect(reads).toBe(2);expect(command).toHaveBeenCalledTimes(1);expect(screen.queryByText('响应丢失')).toBeNull();expect(screen.getByRole('button',{name:'检查与交付，当前查看'})).toBeTruthy();
+ });
+ it('retries preparation explicitly after failure and does not add another automatic attempt',async()=>{
+- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));let prepares=0;const command=vi.fn(async()=>{if(++prepares===1)throw Error('准备失败');return workspace;});
++ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));let prepares=0;const command=vi.fn(async()=>{if(++prepares===1)throw Error('准备失败');return workspace;});
+  render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByRole('button',{name:'重试'});expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'重试'}));await screen.findByText('第一镜');expect(command).toHaveBeenCalledTimes(2);expect(command).toHaveBeenLastCalledWith('prepareWorkspace',{episodeId:'e',expectedScriptRevisionId:'s'});
+ });
+ 
+--- before/src/local-app/ProductionWorkspacePanel.test.tsx
++++ current/src/local-app/ProductionWorkspacePanel.test.tsx
+@@ -199,29 +199,29 @@
+  await screen.findByRole('button',{name:/^分镜台/});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));});expect(screen.getByText('还有 1 处占位')).toBeTruthy();await act(async()=>{fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));});expect(command).not.toHaveBeenCalled();
+ });
+ it('automatically prepares the persisted storyboard draft',async()=>{
+- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
++ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
+  const command=vi.fn(async()=>workspace);render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" boardId="b" materials={[]} command={command} onLegacy={()=>{}}/>);
+  await screen.findByText('第一镜');expect(command).toHaveBeenCalledWith('prepareWorkspace',{episodeId:'e',reviewPackageId:'b',expectedScriptRevisionId:'s'});
+ });
+ it('shows the four-step shell on a new episode without mounting old workflow actions',async()=>{
+- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
++ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
+  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={command} onLegacy={()=>{}}/>);
+  await screen.findByRole('navigation',{name:'四步制作步骤'});expect(screen.getByRole('textbox',{name:'主脚本'})).toBeTruthy();expect(screen.queryByRole('button',{name:'旧分镜批准'})).toBeNull();
+  fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));expect(command).not.toHaveBeenCalled();expect(screen.getByText('请先确认脚本。')).toBeTruthy();
+ });
+ it('keeps an unsaved script draft while navigating read-only steps',async()=>{
+- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
++ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
+  render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={vi.fn()} onLegacy={()=>{}}/>);
+  await screen.findByRole('textbox',{name:'主脚本'});fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'未提交的脚本草稿'}});fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe('未提交的脚本草稿');
+ });
+ it('requires an explicit recovery choice before replacing a legacy working edit',async()=>{
+- vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null}),{status:200,headers:{'Content-Type':'application/json'}})));
++ vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
+  const command=vi.fn().mockRejectedValueOnce(Error('发现旧剪辑工作版本，请明确保留或封存。')).mockResolvedValue(workspace);
+  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+  await screen.findByRole('region',{name:'旧剪辑工作版本处理'});expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'保留旧编辑并继续'}));await screen.findByText('第一镜');expect(command).toHaveBeenLastCalledWith('prepareWorkspace',{episodeId:'e',expectedScriptRevisionId:'s',legacyDecision:'preserve'});
+ });
+ it('shows only analysis progress during preparation and retries the same local action on failure',async()=>{
+- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));
++ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));
+  let fail!:(error:Error)=>void;
+  const command=vi.fn().mockImplementationOnce(()=>new Promise((_,reject)=>{fail=reject;})).mockResolvedValueOnce(workspace);
+  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+@@ -236,7 +236,7 @@
+ });
+ 
+ it('keeps the workspace visible if an older backend returns a planning receipt',async()=>{
+- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));
++ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));
+  const command=vi.fn().mockResolvedValue({planning:true,taskId:'old-plan',status:'ready'});
+  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+  expect((await screen.findByRole('alert')).textContent).toContain('后端仍在使用旧版分镜流程');
+@@ -362,7 +362,7 @@
+ });
+ 
+ it('keeps revision editing unavailable until the actual script baseline has loaded',async()=>{
+- let resolveScript!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')?new Promise<Response>(resolve=>{resolveScript=resolve;}):Response.json({workspace:null})));
++ let resolveScript!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')?new Promise<Response>(resolve=>{resolveScript=resolve;}):Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'baseline-script',options:[]}})));
+  render(<ProductionWorkspacePanel episodeId="baseline-e" title="脚本读取" scriptRevisionId="baseline-script" stage="script_approved" materials={[{id:'baseline-script',material_type:'script',source_path:'script.md',storage_path:'script.md',is_main_script:true}]} command={vi.fn()} onLegacy={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(true);await act(async()=>resolveScript(new Response('实际服务器正文')));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('实际服务器正文');
+ });
+ 
+@@ -371,7 +371,7 @@
+  const structuredWorkspace={...workspace,clips:[{...workspace.clips[0],shotId:'shot-01'}]};
+  vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')
+   ? new Response(productionScriptTemplate)
+-  : Response.json({workspace:null})));
++  : Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));
+  const command=vi.fn(async()=>structuredWorkspace);
+  render(<ProductionWorkspacePanel episodeId="e" title="工程" stage="script_approved" scriptRevisionId="s"
+   materials={[{id:'s',material_type:'script',source_path:'script.md',storage_path:scriptPath,is_main_script:true}]}
+@@ -409,10 +409,10 @@
+ 
+ it('keeps script confirmation mounted while its saved version refreshes the real workspace parent',async()=>{
+  const {useState}=await import('react');let reads=0,resolveRefresh!:(response:Response)=>void;
+- vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
++ vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
+  function Host(){const[id,setId]=useState<string|null>(null);return <ProductionWorkspacePanel episodeId="phase-e" title="脚本分步" scriptRevisionId={id} stage="waiting_input" materials={[]} onLegacy={()=>{}} command={async name=>{if(name==='importMaterial'){setId('saved');return{id:'saved'};}throw Error('启动中断');}}/>;}
+  render(<Host/>);await screen.findByRole('button',{name:'确认脚本'});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'保留本次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(reads).toBe(2));
+- await act(async()=>resolveRefresh(Response.json({workspace:null})));
++ await act(async()=>resolveRefresh(Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'saved',options:[]}})));
+  expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
+ });
+ it('retries only unfinished shelf files and preserves successful import receipts',async()=>{
+--- before/src/local-app/legacyPlanAdoption.integration.test.ts
++++ current/src/local-app/legacyPlanAdoption.integration.test.ts
+@@ -10,6 +10,7 @@
+ import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+ import {productionWorkspaceFixture} from './productionWorkspace.fixture';
++import {storyBrowser} from './storyBrowser.fixture';
+ 
+ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('explicitly imports the saved plan as current preparation without treating planned references or old authorization as adopted media',async()=>{
+  const script=historicalProductionScriptV2.replace('填写已上传图片的素材名称','原图').replace('旁白音色：默认','旁白音色：归档音色').replace('生成时长（秒）：默认','生成时长（秒）：2').replace('字幕：开启','字幕：关闭').replace('背景音乐素材：默认','背景音乐素材：配乐');
+@@ -54,6 +55,50 @@
+   return{...f,snapshot};
+  }catch(error){await f.close();throw error;}
+ }
++
++it.skipIf(process.env.LOOP_STORY_E2E!=='1'||!process.env.LOOP_TEST_CONTEXT_MODULE||!process.env.LOOP_STORY_EVIDENCE)('browser: chooses the saved plan explicitly and reopens its unadopted inputs without starting generation',async()=>{
++ const f=await savedPlanFixture();let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
++ try{
++  const original=(await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value;
++  browser=await storyBrowser({...f,episode:f.newEpisode},'saved-plan-source','正式新单');await browser.cli('open',browser.url+'&step=preparation');await browser.wait("!!document.querySelector('select[name=workspaceSource]')");
++  await browser.cli('set','viewport','390','844');await browser.cli('select','select[name=workspaceSource]','saved-plan');
++  expect(await browser.evaluate("document.querySelector('select[name=workspaceSource]').labels[0].getBoundingClientRect().height>=12")).toBe(true);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);expect(await browser.evaluate('document.documentElement.scrollWidth<=innerWidth')).toBe(true);await browser.capture('narrow-choice');
++  await browser.click('接入当前制作');await browser.wait("!!document.querySelector('[aria-label=素材镜头列表]')");
++  const read=async()=>{const r=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);return r.json();};
++  const current=await read();expect(current.sourceOptions).toBeUndefined();expect(current.workspace.preparation).toMatchObject({origin:'saved-plan',authorized:false});expect(current.workspace.readiness.placeholders.length).toBeGreaterThan(0);expect(current.workspace.audio.mix.sounds).toHaveLength(0);
++  await browser.cli('reload');await browser.wait("!!document.querySelector('[aria-label=素材镜头列表]')");expect((await read()).workspace.id).toBe(current.workspace.id);await browser.cli('set','viewport','1440','960');await browser.capture('reopened');
++  expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);expect((await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value).toEqual(original);
++ }catch(error){await browser?.capture('failed');throw error;}
++ finally{await browser?.close();await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['html','json'])('keeps a registered original %s project as a blocked source instead of rebuilding it from the saved plan',async(extension)=>{
++ const f=await savedPlanFixture();
++ try{
++  const snapshot=await f.snapshot(),task=randomUUID(),artifact=randomUUID(),prefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[f.newEpisode])).rows[0].directory_relative_path;
++  const path=prefix+'/original.'+extension,bytes=Buffer.from(extension==='html'?'<html><body>原剪辑，需要核对来源</body></html>':'{"version":3,"assets":[],"timelines":[]}'),sha=createHash('sha256').update(bytes).digest('hex');await writeFile(join(f.assetRoot,path),bytes);
++  await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_review_render','completed','{}')",[task,f.newEpisode]);
++  await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'review_render_project',$4,$5,$6)",[artifact,f.newEpisode,task,path,sha,bytes.length]);
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);const read=await response.json();
++  const rejected=await f.send('adoptLegacyPlan',{expectedScriptRevisionId:f.main,expectedPlanSha256:snapshot.planSha256});expect(rejected.status,JSON.stringify(rejected.body)).toBe(409);
++  expect(read.sourceOptions.options).toEqual([expect.objectContaining({id:artifact,source:null,unavailableReason:expect.any(String)})]);
++  expect(await readFile(join(f.assetRoot,path))).toEqual(bytes);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);expect((await f.snapshot()).planSha256).toBe(snapshot.planSha256);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('lists an immutable saved plan with the absent current workspace in one Owner read without preparing or consuming old authorization',async()=>{
++ const f=await savedPlanFixture();
++ try{
++  const saved=await f.snapshot(),before=(await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value;
++  const read=async(token=f.token)=>{const r=await fetch(`${f.origin}/api/local/episodes/${f.newEpisode}/workspace`,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};};
++  const result=await read();expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body.workspace).toBeNull();
++  expect(result.body.sourceOptions).toMatchObject({version:'workspace-source-options/v1',scriptRevisionId:f.main,options:[{id:'saved-plan',label:'原保存计划',source:{kind:'saved-plan',expectedPlanSha256:saved.planSha256}}]});
++  expect((await read(f.otherToken)).status).toBe(404);expect((await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value).toEqual(before);
++  for(const table of ['production_workspaces','workspace_candidate_adoptions'])expect((await f.c.query(`SELECT count(*)::int n FROM local_identity.${table}`)).rows[0].n).toBe(0);
++  expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
++ }finally{await f.close();}
++},120000);
+ 
+ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('rejects stale identity and other Owners, replays the exact receipt and preserves existing edits and an unknown old request',async()=>{
+  const f=await savedPlanFixture();
+--- before/src/local-app/legacyWorkbenchAdoption.integration.test.ts
++++ current/src/local-app/legacyWorkbenchAdoption.integration.test.ts
+@@ -56,13 +56,27 @@
+   return{...f,get,draft:d};
+  }catch(e){await f.close();throw e;}
+ }
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['confirmed','pending','mixed'] as const)('offers the recorded %s workbench as an explicit source without preparing or changing original confirmation',async(mode)=>{
++ const f=await recordedWorkbench('legacy','none',mode==='mixed'?2:1);
++ try{
++  if(mode!=='confirmed')await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE episode_id=$1 AND ($2='pending' OR shot_id='shot-2')",[f.episode,mode]);
++  const before=(await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE episode_id=$1 ORDER BY id',[f.episode])).rows,source=await f.get();expect(source.status).toBe(200);
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);
++  expect(await response.json()).toMatchObject({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:f.script,options:[{source:{kind:'shot-workbench',reviewPackageId:f.board,workbenchSha256:source.body.sha256,mode:mode==='confirmed'?'confirmed':'inputs'}}]}});
++  expect((await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE episode_id=$1 ORDER BY id',[f.episode])).rows).toEqual(before);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);
++ }finally{await f.close();}
++},120000);
++
+ it.skipIf(process.env.LOOP_STORY_E2E!=='1'||!process.env.LOOP_TEST_CONTEXT_MODULE||!process.env.LOOP_STORY_EVIDENCE)('browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames',async()=>{
+  const f=await recordedWorkbench('legacy','none',1,true);let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
+  try{
+   await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending',clip_segments=$2 WHERE id=$1",[f.draft.id,JSON.stringify([{start_seconds:1,end_seconds:2}])]);
+-  const before=(await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE id=$1',[f.draft.id])).rows[0].value,source=await f.get(),imported=await f.request('importLegacyDraftInputs',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:source.body.sha256});expect(imported.status,JSON.stringify(imported.body)).toBe(200);let w=imported.body;
++  const before=(await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE id=$1',[f.draft.id])).rows[0].value;
++  browser=await storyBrowser(f,'imported-range','四步制作 T02 验收');await browser.cli('open',browser.url+'&step=preparation');await browser.wait("!!document.querySelector('select[name=workspaceSource]')");
++  await browser.cli('select','select[name=workspaceSource]','shot-workbench');
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);await browser.capture('before-source-import');await browser.click('接入当前制作');
++  await browser.wait("!!document.querySelector('[aria-label=素材镜头列表]')");const imported=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(imported.status).toBe(200);let w=(await imported.json()).workspace;
+   expect(w.visualCandidates[0].initialRange).toEqual({version:'workspace-source-range/v1',sourceInSeconds:1,sourceOutSeconds:2});const original=await readFile(join(f.assetRoot,f.videoPath));
+-  browser=await storyBrowser(f,'imported-range','四步制作 T02 验收');await browser.cli('open',browser.url+'&step=preparation');await browser.cli('wait','--text','四步制作 T02 验收');
+   await browser.wait("Array.from(document.querySelectorAll('[role=tab]')).some(e=>e.textContent==='视频')");
+   await browser.cli('find','role','tab','click','--name','视频','--exact');await browser.click('预览视频候选 01');await browser.cli('hover','[aria-label="视频候选预览播放器"]');await browser.click('裁剪与时长');
+   expect(await browser.evaluate("[document.querySelector('[aria-label=\"视频使用起点（秒）\"]').value,document.querySelector('[aria-label=\"视频使用终点（秒）\"]').value]")).toEqual(['1','2']);await browser.capture('initial');await browser.click('完成');
+--- before/src/local-app/legacyWorkspaceEditing.integration.test.ts
++++ current/src/local-app/legacyWorkspaceEditing.integration.test.ts
+@@ -11,6 +11,7 @@
+ import {buildOpenChatCutProject} from '../worker/openchatcutProject';
+ import {confirmedTtsRender} from '../worker/openchatcutProject.fixture';
+ import {ownerTransaction} from './ownerTransaction';
++import {storyBrowser} from './storyBrowser.fixture';
+ const hash=(s:Buffer|string)=>createHash('sha256').update(s).digest('hex');
+ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('continues the exact original native project, saves a new immutable version and restores it after restart without generation (%s)',async layout=>{
+  const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
+@@ -28,6 +29,7 @@
+   await f.c.query('DELETE FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode]);
+   const fingerprint=async()=>(await f.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(a ORDER BY id) FROM public.approvals a WHERE episode_id=$1),'materials',(SELECT jsonb_agg(m ORDER BY id) FROM public.production_material_revisions m WHERE episode_id=$1)) value",[f.episode])).rows[0].value;
+   const before=await fingerprint(),data={artifactId:artifact,expectedSourceSha256:hash(bytes),expectedScriptRevisionId:f.script,reviewPackageId:f.board};
++  const sources=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(sources.status).toBe(200);expect((await sources.json()).sourceOptions.options).toEqual([expect.objectContaining({source:{kind:'rendered-project',reviewPackageId:f.board,artifactId:artifact,expectedSourceSha256:hash(bytes)}})]);
+   const rejected=await f.request('adoptLegacyWorkspace',data,{token:f.otherToken});expect(rejected.status).toBe(404);
+   expect((await f.request('adoptLegacyWorkspace',{...data,expectedSourceSha256:'0'.repeat(64)})).status).toBe(409);
+   expect((await f.request('adoptLegacyWorkspace',{...data,reviewPackageId:randomUUID()})).status).toBe(409);
+@@ -54,16 +56,24 @@
+ 
+ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('prefers the most recently saved native edit and archives it before creating the working copy (%s)',async layout=>{
+  const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '恢复 [T09]_%/本单':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
++ let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
+  try{
+   await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
+   const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
+   await editStudioDocument(opened.body.studioUrl,opened.body.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=37;});await f.closeStudio();
+   const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/legacy-project`,{headers:{Cookie:'loop_owner_session='+f.token}}),saved=await response.json();
+   const data={expectedScriptRevisionId:f.script,reviewPackageId:f.board,savedProjectSha256:saved.sha256};
++  const sources=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(sources.status).toBe(200);
++  expect((await sources.json()).sourceOptions.options).toEqual([expect.objectContaining({source:{kind:'saved-native',reviewPackageId:f.board,savedProjectSha256:saved.sha256}})]);
+   expect((await f.request('adoptLegacyWorkspace',{...data,savedProjectSha256:'0'.repeat(64)})).status).toBe(409);
+   expect((await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,artifactId:randomUUID(),expectedSourceSha256:'0'.repeat(64)})).status).toBe(409);
+-  const result=await f.request('adoptLegacyWorkspace',data);expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
++  let result;
++  if(layout==='legacy'&&process.env.LOOP_STORY_E2E==='1'){
++   browser=await storyBrowser(f,'native-source','四步制作 T02 验收');await browser.cli('open',browser.url+'&step=editing');await browser.wait("!!document.querySelector('select[name=workspaceSource]')");await browser.cli('select','select[name=workspaceSource]','saved-native');expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);await browser.click('接入当前制作');await browser.wait("!!document.querySelector('[aria-label=素材镜头列表]')");const r=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});result={status:r.status,body:(await r.json()).workspace};await browser.capture('imported');
++  }else result=await f.request('adoptLegacyWorkspace',data);
++  expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
+   const archived=JSON.parse(await readFile(join(f.assetRoot,result.body.recovery.relativePath),'utf8'));expect(archived.project).toEqual(saved.project);
+   const working=JSON.parse(await readFile(join(f.assetRoot,result.body.project.relativePath),'utf8'));expect(working.timelines[0].items.find((i:any)=>i.kind==='video').transform.x).toBe(37);
+- }finally{await f.close();}
++  const current=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}}),read=await current.json();expect(read.workspace.id).toBe(result.body.id);expect(read.sourceOptions).toBeUndefined();
++ }finally{await browser?.close();await f.close();}
+ },120000);
+--- before/src/local-app/legacyHtmlWorkspace.integration.test.ts
++++ current/src/local-app/legacyHtmlWorkspace.integration.test.ts
+@@ -6,9 +6,11 @@
+ import {productionWorkspaceFixture} from './productionWorkspace.fixture';
+ import {confirmedTtsRender} from '../worker/openchatcutProject.fixture';
+ import {legacyHtmlFixture} from './legacyHtmlWorkspace.fixture';
++import {storyBrowser} from './storyBrowser.fixture';
+ const hash=(v:Buffer|string)=>createHash('sha256').update(v).digest('hex');
+ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records (%s)',async layout=>{
+  const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> 'HTML恢复 [T09]_%/本单':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
++ let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
+  try{
+   const render=confirmedTtsRender(),audio=randomUUID(),artifact=randomUUID(),path=`${f.episodeRelativePath}/original.html`;
+   render.preRenderReviewPackageId=f.board;render.members[0].relativePath=f.videoPath;render.members[1].relativePath=`${f.episodeRelativePath}/voice.mp3`;render.members[0].sha256=f.files[0].sha256;render.members[1].sha256=f.files[1].sha256;render.members[1].audioTrackId=audio;render.confirmedShots[0].audioTrackId=audio;
+@@ -25,7 +27,11 @@
+   const fingerprint=async()=>(await f.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'reviews',(SELECT jsonb_agg(r ORDER BY id) FROM public.review_packages r WHERE episode_id=$1),'materials',(SELECT jsonb_agg(m ORDER BY id) FROM public.production_material_revisions m WHERE episode_id=$1)) value",[f.episode])).rows[0].value,before=await fingerprint();
+   const data={artifactId:artifact,expectedSourceSha256:hash(bytes),expectedScriptRevisionId:f.script,reviewPackageId:f.board};
+   expect((await f.request('adoptLegacyWorkspace',data,{token:f.otherToken})).status).toBe(404);expect((await f.request('adoptLegacyWorkspace',{...data,expectedSourceSha256:'0'.repeat(64)})).status).toBe(409);
+-  const adopted=await f.request('adoptLegacyWorkspace',data);expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);let w=adopted.body;expect(w.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
++  let adopted;
++  if(layout==='legacy'&&process.env.LOOP_STORY_E2E==='1'){
++   browser=await storyBrowser(f,'html-source','四步制作 T02 验收');await browser.cli('open',browser.url+'&step=editing');await browser.wait("!!document.querySelector('select[name=workspaceSource]')");await browser.cli('select','select[name=workspaceSource]',artifact);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);await browser.click('接入当前制作');await browser.wait("!!document.querySelector('[aria-label=素材镜头列表]')");const r=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});adopted={status:r.status,body:(await r.json()).workspace};await browser.capture('imported');
++  }else adopted=await f.request('adoptLegacyWorkspace',data);
++  expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);let w=adopted.body;expect(w.recovery.relativePath.startsWith(f.episodeRelativePath+'/production-workspace/recoveries/')).toBe(true);
+   expect(w.clips).toHaveLength(2);expect(w.readiness.placeholders).toEqual([]);expect(w.readiness.missingSources).toEqual([]);expect(w.preparation.authorized).toBe(false);expect(w.captions).toHaveLength(1);expect(w.captions[0].textConfirmed).toBe(false);expect(w.narration[0].mode).toBe('manual');expect(w.narration[0].adoptedAudioTrackId).toBe(audio);expect(w.captions[0].contract.cues[0].endMs).toBe(2000);
+   const project=async(sha:string)=>{const r=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${sha}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);return(await r.json()).project;};
+   const original=await project(w.project.sha256);expect(original.timelines[0].items.filter((i:any)=>i.kind==='video')).toHaveLength(2);expect(original.timelines[0].items.find((i:any)=>i.kind==='audio').sourceAssetId).toBe(`audio-track-${audio}`);
+@@ -39,5 +45,5 @@
+   await f.restart();expect((await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision})).status).toBe(200);
+   expect(await readFile(join(f.assetRoot,path))).toEqual(bytes);expect(await fingerprint()).toEqual(before);expect((await f.request('adoptLegacyWorkspace',data)).status).toBe(409);
+   const flags=(await f.c.query('SELECT * FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode])).rows[0];for(const key of ['enabled','storyboard_enabled','media_enabled','narration_enabled','studio_enabled'])expect(flags[key]).toBe(false);
+- }finally{await f.close();}
++ }finally{await browser?.close();await f.close();}
+ },180000);

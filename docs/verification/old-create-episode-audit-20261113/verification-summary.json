@@ -1,0 +1,131 @@
+{
+  "passed": true,
+  "auditOnly": true,
+  "formalRemovalExecuted": false,
+  "function": "public.create_episode(uuid,uuid,uuid,text,boolean)",
+  "decision": "No required dependency found within current native creation, all 23 saved command packages, all 46 saved Workers and tested full restore/history projection contracts. Suitable for a separate forward retirement and corresponding stale RPC type removal.",
+  "integrationCasesPassed": 12,
+  "integrationFiles": 5,
+  "groups": [
+    {
+      "name": "probe-final",
+      "evidence": "/private/tmp/loop-story-e2e-LEDR26/evidence",
+      "passed": 2,
+      "files": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "current-absence",
+      "evidence": "/private/tmp/loop-story-e2e-quVSqp/evidence",
+      "passed": 10,
+      "files": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "cases": [
+    {
+      "file": "oldCreateEpisode.audit.integration.test.ts",
+      "name": "old create_episode has no restore dependency: exact isolated removal preserves all data, security and real historical projection",
+      "status": "passed"
+    },
+    {
+      "file": "oldCreateEpisode.audit.integration.test.ts",
+      "name": "current HTTP and all 23 saved command modules create and replay real owned directories without old create_episode; 46 saved Workers start unchanged",
+      "status": "passed"
+    },
+    {
+      "file": "episodeCreation.integration.test.ts",
+      "name": "formal Owner creation places each production order directly in its registered series or unassigned container",
+      "status": "passed"
+    },
+    {
+      "file": "episodeCreation.integration.test.ts",
+      "name": "pending production-order creation reserves its account against deletion and backup until the same command completes",
+      "status": "passed"
+    },
+    {
+      "file": "episodeCreation.integration.test.ts",
+      "name": "Owner imports main script and material into a newly created ..alpha series at its registered location",
+      "status": "passed"
+    },
+    {
+      "file": "episodeCreation.native.integration.test.ts",
+      "name": "fresh native process resumes one reserved episode with the original blueprint and series after SIGKILL and rule edits",
+      "status": "passed"
+    },
+    {
+      "file": "episodeCreation.native.integration.test.ts",
+      "name": "native crashes after mkdir and after COMMIT plus actual unmount/remount preserve one intent and physical directory",
+      "status": "passed"
+    },
+    {
+      "file": "episodeCreationFaults.integration.test.ts",
+      "name": "resumes mkdir/publication failures with one UUID and preserves unknown data and replaced identities",
+      "status": "passed"
+    },
+    {
+      "file": "restorePublication.integration.test.ts",
+      "name": "SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "passed"
+    },
+    {
+      "file": "restorePublication.integration.test.ts",
+      "name": "SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "passed"
+    },
+    {
+      "file": "restorePublication.integration.test.ts",
+      "name": "SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "passed"
+    },
+    {
+      "file": "restorePublication.integration.test.ts",
+      "name": "SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover",
+      "status": "passed"
+    }
+  ],
+  "savedCreationModules": 23,
+  "savedWorkerModules": 46,
+  "currentHttpAndSavedModuleRealDirectories": 24,
+  "realProcessKillAndUnmountRemountPassed": true,
+  "currentCreationFaultGuardsPassed": true,
+  "fourPhaseRestoreKillRecoveryPassed": true,
+  "allOriginalDataAndOtherCatalogAclPreservedInSimulation": true,
+  "fullDumpRestoreWithoutOldFunctionPassed": true,
+  "historyProjectionParityPassed": true,
+  "currentProductionSignatureRetained": true,
+  "freshMigrationMatrixAndFullDefaultSuiteRun": false,
+  "noProductionBehaviorChanges": true,
+  "privateRuntimeBuildAndTypecheckPassed": true,
+  "fixtureCorrection": {
+    "cause": "The generic fixture default mountPath is a directory rather than the actual committed filesystem mount; real creation preflight correctly rejected it.",
+    "fix": "Use the existing owned workspaceAudioVolume fixture and its actual mountPath for current HTTP and saved modules, as the owning creation tests do.",
+    "productionGuardsChanged": false,
+    "initialFailurePreserved": "probe.log"
+  },
+  "daily": {
+    "passed": true,
+    "signature": "public.create_episode(uuid,uuid,uuid,text,boolean)",
+    "candidate": "retirable after formal cleanup authorization",
+    "dailyFunctionStillPresent": true,
+    "currentMigration": "185-remove-retired-generated-script-chain.sql",
+    "pendingMigrations": [],
+    "effectiveFunctions": 374,
+    "customTriggers": 103,
+    "tables": 130,
+    "rows": 204,
+    "ledgerRows": 183,
+    "allDataCatalogAclRolesSequencesAndLedgerUnchanged": true,
+    "savedRuntimePackagesUnchanged": 23,
+    "frozenDatabaseUnchanged": true,
+    "productionCodeAndSqlUnchanged": true,
+    "head": "2d1a8ff46318ece0031c0810899a339df71520c9",
+    "indexUnchanged": true,
+    "pid": 51263,
+    "http": 200,
+    "serviceRestarted": false,
+    "metricsEnabled": false
+  }
+}

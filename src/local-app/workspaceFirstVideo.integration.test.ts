@@ -4,10 +4,10 @@ import {it,expect} from 'vitest';
 import {readFile} from 'node:fs/promises';
 import {formalWorkflowFixture} from './formalWorkflow.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
-import {productionScriptTemplate} from '../reviews/productionScript';
+import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh authored first video uses current preparation without a legacy approval (actual voice=%s)',async withVoice=>{
- const script=productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
+ const script=historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
  const f=await formalWorkflowFixture({controlled:true,scriptText:script});
  try{
   expect((await f.send('start')).status).toBe(200);
@@ -16,13 +16,13 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh
   const uploaded=await f.send('importMaterial',{sourceKind:'file',sourcePath:'first.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(uploaded.status).toBe(200);
 
   const payload={clipId:w.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'清晨山脊，缓慢推进。',durationSeconds:4,reservationCents:90};
-  r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.stringify(r.body)).toBe(409);expect(r.body.error).toContain('授权');
-  expect((await send('authorizeWorkspacePreparation',{enabled:true})).status).toBe(200);
+  r=await f.rawRequest('generateWorkspaceImage',{episodeId:f.newEpisode,workspaceId:w.id,expectedRevision:w.revision,selection:f.controlled!.videoSelection,...payload});expect(r.status,JSON.stringify(r.body)).toBe(409);expect(r.body.error).toContain('确认本次调用');
+  expect((await send('authorizeWorkspacePreparation',{enabled:true})).status).toBe(409);expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
   if(withVoice){
-   expect((await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1})).status).toBe(200);
-   expect((await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',text:'真实主声窗口由本次口播结果确定。'})).status).toBe(200);
+   expect((await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',...f.controlled!.narrationSettings,text:'真实主声窗口由本次口播结果确定。'})).status).toBe(200);
    expect((await send('confirmWorkspaceNarration',{clipId:w.clips[0].id})).status).toBe(200);
-   expect((await send('generateWorkspaceNarration',{clipId:w.clips[0].id})).status).toBe(200);
+   expect((await send('generateWorkspaceNarration',{clipId:w.clips[0].id,reservationCents:100})).status).toBe(200);
+   const voiceSnapshot=(await f.c.query('SELECT request_snapshot FROM local_identity.workspace_narration_requests WHERE task_id=$1',[w.narration[0].taskId])).rows[0].request_snapshot;expect(voiceSnapshot.context.voice).toMatchObject({name:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1});
    expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');
    expect((await send('refreshWorkspaceNarration')).status).toBe(200);w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
   }
@@ -42,14 +42,13 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh
 
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice',async()=>{
- const script=productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
+ const script=historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
  const f=await formalWorkflowFixture({controlled:true,scriptText:script});
  try{
   expect((await f.send('start')).status).toBe(200);
   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
   const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);if(response.body.id===w.id)w=response.body;return response;};
-  await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
-  const generate=async(text:string)=>{await send('authorizeWorkspacePreparation',{enabled:true});await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',text});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});await send('generateWorkspaceNarration',{clipId:w.clips[0].id});expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');};
+  const generate=async(text:string)=>{await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',...f.controlled!.narrationSettings,text});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});await send('generateWorkspaceNarration',{clipId:w.clips[0].id,reservationCents:100});expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');};
   await generate('重规划前的完整口播。');await send('refreshWorkspaceNarration');w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
   const oldTrack=w.narration[0].audioTrackId;expect(w.narration[0].adoptedAudioTrackId).toBe(oldTrack);
   r=await f.send('reconfirmScript',{expectedScriptRevisionId:f.main,text:script.replace('填写本段完整口播。','重新规划后的主脚本完整口播。'),reason:'验收重新规划'});expect(r.status,JSON.stringify(r.body)).toBe(200);const revised=r.body.id;

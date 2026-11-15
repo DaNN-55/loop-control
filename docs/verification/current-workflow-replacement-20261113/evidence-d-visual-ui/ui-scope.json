@@ -1,0 +1,9 @@
+{
+  "baseline": "/Volumes/Ebuget 1T/production-review-current-s6a6w66a/run-9byQac/source",
+  "paths": [
+    "src/local-app/WorkspaceVisualPreparation.tsx",
+    "src/local-app/WorkspaceVisualCandidatesPanel.test.tsx",
+    "src/local-app/storyBrowser.fixture.ts",
+    "src/local-app/legacyWorkbenchAdoption.integration.test.ts"
+  ]
+}

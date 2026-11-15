@@ -1,0 +1,42 @@
+E2E evidence: /private/tmp/loop-story-e2e-jHsA3K/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-jHsA3K/source
+
+ ❯ src/local-app/productionCaptionInputs.integration.test.ts (4 tests | 1 failed | 3 skipped) 2768ms
+   ↓ new workspace caption preparation and edits never create retired shot drafts and survive reopen
+   × adopted native audio can align and confirm current captions without any retired draft and rejects a late result after editing 2767ms
+     → requestWorkspaceCaptionAlignment: {"error":"请先采用当前成功口播或原声音轨，再对齐字幕。"}: expected 409 to be 200 // Object.is equality
+   ↓ caption inputs preserve Owner, current-preparation and direct-write fences and follow the original exact deletion protocol
+   ↓ 189 imports nonempty historical caption inputs without changing any original row and preserves atomic rollback and full restore
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionCaptionInputs.integration.test.ts > adopted native audio can align and confirm current captions without any retired draft and rejects a late result after editing
+AssertionError: requestWorkspaceCaptionAlignment: {"error":"请先采用当前成功口播或原声音轨，再对齐字幕。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ send src/local-app/productionCaptionInputs.integration.test.ts:39:235
+
+ ❯ src/local-app/productionCaptionInputs.integration.test.ts:49:17
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 skipped (4)
+   Start at  20:36:05
+   Duration  3.80s (transform 593ms, setup 9ms, collect 879ms, tests 2.77s, environment 0ms, prepare 42ms)
+
+JSON report written to /private/tmp/loop-story-e2e-jHsA3K/evidence/vitest.json

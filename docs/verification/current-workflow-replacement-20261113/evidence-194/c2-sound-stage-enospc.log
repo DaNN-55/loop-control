@@ -1,0 +1,124 @@
+E2E evidence: /private/tmp/loop-story-e2e-W9bxji/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-W9bxji/source
+
+ ✓ src/local-app/productionSoundUse.integration.test.ts (8 tests) 51898ms
+   ✓ observes actual local music adoption, gain changes, disable and re-enable without counting preparation or reopen as use  3907ms
+   ✓ does not invent sound use for a silent video registered through the real frozen legacy recovery boundary  5833ms
+   ✓ uses the native audible sequence window for local effects, replacement and track muted rather than counting the media pool  8102ms
+   ✓ uses the native audible sequence window for local effects, replacement and track hidden rather than counting the media pool  7823ms
+   ✓ uses the native audible sequence window for local effects, replacement and track keyframes rather than counting the media pool  7894ms
+   ✓ uses the native audible sequence window for local effects, replacement and track source_end rather than counting the media pool  7955ms
+   ✓ keeps sound scope and transaction protection, and never backfills edits made while collection is off  3531ms
+   ✓ records explicitly extracted current source audio through a real local Worker without creating an old draft  6850ms
+ ✓ src/local-app/productionMilestones.integration.test.ts (5 tests) 30943ms
+   ✓ real script confirmation and workspace creation record distinct current workflow milestones exactly once  3100ms
+   ✓ actual editor work and exact export confirmations produce milestones while blocked opens and repeated opens do not  18930ms
+   ✓ only newly created orders get a script-phase milestone and activation never invents an old creation  2990ms
+   ✓ milestone privileges and a failed metric transaction cannot authorize another Owner or leave a false successful start  3022ms
+   ✓ the actual Owner read retains a prior workflow anchor without counting it as a new occurrence or carrying another Owner  2898ms
+ ❯ src/local-app/productionMetricsWorkflow.integration.test.ts (3 tests | 1 failed) 7084ms
+   ✓ collects real controlled Chinese narration, frozen estimate, adoption, withdrawal, re-adoption and reopen without storing text  2603ms
+   ✓ a real SQL response-write failure never repeats a Provider transport and keeps the request marker  811ms
+   × freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package 3669ms
+     → {"id":"32a133d2-f554-46cf-bc28-fe775092aa97","projectContentVersion":5,"contentSha256":"90a2416d4fb8b34266bd92e50df6f3dfbe9796b062f80f77a147b5cecd118957","project":{"sha256":"47ab14325a65f07ee926863bfd5c3a5bb8965d1ea1ea8d93850eeb35b665614e","fileSize":8168,"relativePath":"episodes/d0b243a0-66c7-4bc4-ad54-aaa395f0532a/production-workspace/versions/47ab14325a65f07ee926863bfd5c3a5bb8965d1ea1ea8d93850eeb35b665614e.json"},"status":"failed","artifact":null,"checks":[{"name":"used_content","detail":"已核对 1 个实际来源。","passed":true,"sources":[{"sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","fileSize":210288,"relativePath":"episodes/d0b243a0-66c7-4bc4-ad54-aaa395f0532a/shot.mp4"}]},{"gaps":[],"name":"visual_coverage","detail":"整期画面连续，无未填充空档。","passed":true},{"name":"captions","detail":"已核对 0 组字幕时序，正文随最终文件一次确认。","passed":true,"evidence":[]},{"name":"native_export","detail":"Command failed: /opt/homebrew/Cellar/node@24/24.20.0/bin/node /private/tmp/loop-story-e2e-W9bxji/source/scripts/openchatcut-render.mjs /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-workspace-export-U1ZfrI/spec.json\nOpenChatCut export failed (500): {\"error\":\"ENOSPC: no space left on device, copyfile '/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut/assets/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2' -> '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/remotion-webpack-bundle-7st0iW/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2'\",\"failure\":{\"stage\":\"render\",\"code\":\"export_render_failed\",\"retryable\":true,\"cleanupStatus\":\"succeeded\",\"targetPath\":null,\"message\":\"ENOSPC: no space left on device, copyfile '/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut/assets/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2' -> '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/remotion-webpack-bundle-7st0iW/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2'\"}}\n[OpenChatCut] isolated profile 2f69363a-cfd1-4e6e-933c-ef9c37c02cc5 · /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/tk-openchatcut-L3JXCX\n\n  VITE v8.1.4  ready in 594 ms\n\n  ➜  Local:   http://127.0.0.1:55198/\n4:47:26 AM [vite] (client) Pre-transform error: Failed to load url /@fs/src/main.tsx (resolved id: /src/main.tsx). Does the file exist?\n","passed":false}],"createdAt":"2026-11-13T20:47:27.180Z","confirmedAt":null,"confirmed":false,"current":true}: expected 'failed' to be 'ready' // Object.is equality
+ ❯ src/local-app/productionMetricsShotDeletion.integration.test.ts (2 tests | 2 failed) 2472ms
+   × storyboard shot removal records one narration withdrawal and retains audio and historical project across receipt replay and reopen 1575ms
+     → {"error":"输入快照未完成，请检查存储空间与挂载后重试。"}: expected 409 to be 200 // Object.is equality
+   × native editor shot deletion records one narration withdrawal across repeated save and reopen while keeping source history 897ms
+     → ENOSPC: no space left on device, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-openchatcut-read-TovlAr/project.json'
+ ✓ src/local-app/productionMilestonesMigration.integration.test.ts (1 test) 1831ms
+   ✓ 193 keeps nonempty 192 business and collected facts unchanged, rolls back atomically, and fully restores the candidate without backfilling  1831ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionMetricsCollection.integration.test.ts [ src/local-app/productionMetricsCollection.integration.test.ts ]
+Error: ENOSPC: no space left on device, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/5fFqWZv1T3RiYlomXnbu5/ssr/757bc48e2721513b8d74f55858a9b30a1bd05190'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/local-app/productionMetricsRetry.integration.test.ts [ src/local-app/productionMetricsRetry.integration.test.ts ]
+Error: ENOSPC: no space left on device, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/5fFqWZv1T3RiYlomXnbu5/ssr/413a4dc08d2de1118573d2b0d1f02d258e54be2c'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/local-app/productionSoundUseMigration.integration.test.ts [ src/local-app/productionSoundUseMigration.integration.test.ts ]
+Error: ENOSPC: no space left on device, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/5fFqWZv1T3RiYlomXnbu5/ssr/b0dfdd8d4d9d5d7ef2d9a2ecdd70a5ca2392300c'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/productionMetricsShotDeletion.integration.test.ts > storyboard shot removal records one narration withdrawal and retains audio and historical project across receipt replay and reopen
+AssertionError: {"error":"输入快照未完成，请检查存储空间与挂载后重试。"}: expected 409 to be 200 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 409[39m
+
+ ❯ send src/local-app/productionMetricsShotDeletion.integration.test.ts:23:194
+
+ ❯ adoptedVoiceFixture src/local-app/productionMetricsShotDeletion.integration.test.ts:25:29
+ ❯ src/local-app/productionMetricsShotDeletion.integration.test.ts:41:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/local-app/productionMetricsShotDeletion.integration.test.ts > native editor shot deletion records one narration withdrawal across repeated save and reopen while keeping source history
+Error: ENOSPC: no space left on device, open '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-openchatcut-read-TovlAr/project.json'
+ ❯ inspectOpenChatCutProjectWithRuntime src/worker/openchatcutProjectReader.ts:33:3
+     31|   const directory = await mkdtemp(join(tmpdir(), "loop-control-opencha…
+     32|   const projectPath = join(directory, "project.json");
+     33|   await writeFile(projectPath, JSON.stringify(project));
+       |   ^
+     34|   try {
+     35|     const stdout = await run(nodePath, ["--import", tsxLoaderPath, ins…
+ ❯ verifyOpenChatCutProject src/worker/openchatcutProjectReader.ts:130:23
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:31:187
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:8:10
+ ❯ narrationFixture src/local-app/workspaceNarration.fixture.ts:20:10
+ ❯ adoptedVoiceFixture src/local-app/productionMetricsShotDeletion.integration.test.ts:19:10
+ ❯ src/local-app/productionMetricsShotDeletion.integration.test.ts:54:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/local-app/productionMetricsWorkflow.integration.test.ts > freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package
+AssertionError: {"id":"32a133d2-f554-46cf-bc28-fe775092aa97","projectContentVersion":5,"contentSha256":"90a2416d4fb8b34266bd92e50df6f3dfbe9796b062f80f77a147b5cecd118957","project":{"sha256":"47ab14325a65f07ee926863bfd5c3a5bb8965d1ea1ea8d93850eeb35b665614e","fileSize":8168,"relativePath":"episodes/d0b243a0-66c7-4bc4-ad54-aaa395f0532a/production-workspace/versions/47ab14325a65f07ee926863bfd5c3a5bb8965d1ea1ea8d93850eeb35b665614e.json"},"status":"failed","artifact":null,"checks":[{"name":"used_content","detail":"已核对 1 个实际来源。","passed":true,"sources":[{"sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","fileSize":210288,"relativePath":"episodes/d0b243a0-66c7-4bc4-ad54-aaa395f0532a/shot.mp4"}]},{"gaps":[],"name":"visual_coverage","detail":"整期画面连续，无未填充空档。","passed":true},{"name":"captions","detail":"已核对 0 组字幕时序，正文随最终文件一次确认。","passed":true,"evidence":[]},{"name":"native_export","detail":"Command failed: /opt/homebrew/Cellar/node@24/24.20.0/bin/node /private/tmp/loop-story-e2e-W9bxji/source/scripts/openchatcut-render.mjs /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-workspace-export-U1ZfrI/spec.json\nOpenChatCut export failed (500): {\"error\":\"ENOSPC: no space left on device, copyfile '/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut/assets/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2' -> '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/remotion-webpack-bundle-7st0iW/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2'\",\"failure\":{\"stage\":\"render\",\"code\":\"export_render_failed\",\"retryable\":true,\"cleanupStatus\":\"succeeded\",\"targetPath\":null,\"message\":\"ENOSPC: no space left on device, copyfile '/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut/assets/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2' -> '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/remotion-webpack-bundle-7st0iW/fonts/noto-sans-sc/files/noto-sans-sc-65-wght-normal.woff2'\"}}\n[OpenChatCut] isolated profile 2f69363a-cfd1-4e6e-933c-ef9c37c02cc5 · /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/tk-openchatcut-L3JXCX\n\n  VITE v8.1.4  ready in 594 ms\n\n  ➜  Local:   http://127.0.0.1:55198/\n4:47:26 AM [vite] (client) Pre-transform error: Failed to load url /@fs/src/main.tsx (resolved id: /src/main.tsx). Does the file exist?\n","passed":false}],"createdAt":"2026-11-13T20:47:27.180Z","confirmedAt":null,"confirmed":false,"current":true}: expected 'failed' to be 'ready' // Object.is equality
+
+Expected: [32m"ready"[39m
+Received: [31m"failed"[39m
+
+ ❯ src/local-app/productionMetricsWorkflow.integration.test.ts:79:90
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: ENOSPC: no space left on device, open '/private/tmp/loop-story-e2e-W9bxji/evidence/vitest.json'
+ ❯ open node:internal/fs/promises:1345:25
+ ❯ Object.writeFile node:internal/fs/promises:1965:14
+ ❯ JsonReporter.writeReport ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/index.VByaPkjc.js:1779:4
+ ❯ JsonReporter.logTasks ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/index.VByaPkjc.js:1763:3
+ ❯ JsonReporter.onFinished ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/index.VByaPkjc.js:1766:3
+ ❯ Vitest.report ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:9958:3
+ ❯ TestRun.end ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:8893:4
+ ❯ ../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/vitest@3.2.7_@types+node@24.19.2_jiti@2.7.0_jsdom@26.1.0_lightningcss@1.32.0/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:9666:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { errno: -28, code: 'ENOSPC', syscall: 'open', path: '/private/tmp/loop-story-e2e-W9bxji/evidence/vitest.json' }
+
+
+
+
+ Test Files  5 failed | 3 passed (8)
+      Tests  3 failed | 16 passed (19)
+   Start at  04:45:56
+   Duration  96.18s (transform 498ms, setup 10ms, collect 1.07s, tests 94.23s, environment 0ms, prepare 199ms)
+

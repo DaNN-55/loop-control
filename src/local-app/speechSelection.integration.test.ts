@@ -60,9 +60,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('speech requests freeze c
 },120000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted',async()=>{
- const {formalWorkflowFixture}=await import('./formalWorkflow.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{productionScriptTemplate}=await import('../reviews/productionScript'),{defaultShotCaptionContract}=await import('../shotCaptions'),{editStudioDocument}=await import('./studioDocument.fixture');
+ const {formalWorkflowFixture}=await import('./formalWorkflow.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{historicalProductionScriptV2}=await import('../reviews/productionScript.fixture'),{defaultShotCaptionContract}=await import('../shotCaptions'),{editStudioDocument}=await import('./studioDocument.fixture');
  const {execFile}=await import('node:child_process'),{promisify}=await import('node:util');
- const f=await formalWorkflowFixture({controlled:true,scriptText:productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll')});try{
+ const f=await formalWorkflowFixture({controlled:true,scriptText:historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll')});try{
  expect((await f.send('start')).status).toBe(200);let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;const clip=w.clips[0];
  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
  const a=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,selection={capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:a};
@@ -93,8 +93,11 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('speech validates actual 
  expect((await f.request('saveWorkspaceNarration',args,{token:f.otherToken})).status).toBe(404);expect((await f.request('saveWorkspaceNarration',args,{csrf:false})).status).toBe(403);
  await f.c.query('UPDATE local_identity.connection_qualifications SET qualified=false WHERE version_id=$1',[a]);expect((await f.request('saveWorkspaceNarration',args)).status).toBe(409);
  // An unused speech connection cannot prevent an explicit no-voice choice.
- expect((await f.request('saveWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[1].id,mode:'none',text:'无需语音服务。'})).status).toBe(200);
- await f.c.query('UPDATE local_identity.connection_qualifications SET qualified=true WHERE version_id=$1',[a]);let r=await f.request('saveWorkspaceNarration',args);expect(r.status).toBe(200);w=r.body;
+ const disabled=await f.request('saveWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[1].id,mode:'none',text:'无需语音服务。'});expect(disabled.status,JSON.stringify(disabled.body)).toBe(200);
+ await f.c.query('UPDATE local_identity.connection_qualifications SET qualified=true WHERE version_id=$1',[a]);
+ // Explicit no-voice updates the native project. The old revision must remain rejected.
+ const stale=await f.request('saveWorkspaceNarration',args);expect(stale.status,JSON.stringify(stale.body)).toBe(409);expect((await f.read()).project.sha256).toBe(disabled.body.project.sha256);
+ w=disabled.body;args.expectedRevision=w.revision;let r=await f.request('saveWorkspaceNarration',args);expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  r=await f.request('confirmWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id});expect(r.status).toBe(200);w=r.body;
  expect((await f.request('generateWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,reservationCents:1})).status).toBe(400);
  const generate=()=>f.request('generateWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,reservationCents:50,retry:true});expect((await f.rawRequest('generateWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,reservationCents:50,retry:true})).status).toBe(409);

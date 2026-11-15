@@ -1,0 +1,14 @@
+{
+  "technicalDeliveryCompleted": true,
+  "businessDeliveryAuditPassed": false,
+  "unfixedFinding": "delivery metadata resolves shared file path to first audio track instead of confirmed sourceAssetId",
+  "independentOrdersReproduced": 2,
+  "mismatchedShotsPerOrder": 2,
+  "metricsIntegrationCasesPassed": 13,
+  "metricsUnitTestsPassed": 25,
+  "browserHoldingFixtureSkipped": 1,
+  "videoApiCalls": 0,
+  "paidExternalCalls": 0,
+  "productCodeModified": false,
+  "dailyCollectionEnabled": false
+}

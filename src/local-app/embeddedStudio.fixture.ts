@@ -4,7 +4,7 @@ import {promisify} from 'node:util';
 import {randomUUID,createHash} from 'node:crypto';
 import {mkdir,writeFile,readFile,lstat} from 'node:fs/promises';
 import {join} from 'node:path';
-import {reviewRenderFromSnapshot} from '../worker/codexRunner';
+import {reviewRenderFromSnapshot} from '../worker/history/reviewRenderV1';
 import {verifyOpenChatCutProject} from '../worker/openchatcutProjectReader';
 import {buildOpenChatCutProject} from '../worker/openchatcutProject';
 import {confirmedTtsRender} from '../worker/openchatcutProject.fixture';

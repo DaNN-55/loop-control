@@ -9,6 +9,32 @@ afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.unstubAllGlo
 const pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
 const pngFile=(name:string)=>new File([pngBytes],name,{type:'image/png'});
 const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',status:'ready',checks:[],current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
+it('selects a registered cover only on explicit use and submits its exact identity rather than re-uploading it',async()=>{
+ const source={version:'workspace-cover-source/v1' as const,kind:'material' as const,id:'11111111-1111-4111-8111-111111111111',sha256:'a'.repeat(64)},w={...workspace(),coverInputs:[{source,name:'原封面.png',file:{relativePath:'cover.png',sha256:source.sha256,fileSize:pngBytes.length}}]};
+ const fetcher=vi.fn(async()=>new Response(pngBytes)),command=vi.fn().mockResolvedValue(w);vi.stubGlobal('fetch',fetcher);
+ render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);fireEvent.change(screen.getByLabelText('标题'),{target:{value:'原封面继续交付'}});
+ fireEvent.change(screen.getByRole('combobox',{name:'已有封面'}),{target:{value:`material:${source.id}:${source.sha256}`}});expect(fetcher).not.toHaveBeenCalled();expect(command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'使用已选封面'}));await screen.findByRole('img',{name:'交付封面预览'});expect(command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'生成并验证交付包'}));await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('prepareWorkspaceDelivery',{episodeId:'episode',workspaceId:'workspace',expectedRevision:7,exportId:'export',expectedExportSha256:'confirmed-video',expectedContentSha256:'confirmed-content',title:'原封面继续交付',description:'',tags:[],coverSource:source}));
+});
+it('keeps cover replacement and enlargement as separate controls without invoking the file picker from preview',async()=>{
+ render(<WorkspaceDeliveryPanel workspace={workspace()} pending={false} command={vi.fn()} onChange={vi.fn()}/>);
+ const input=screen.getByLabelText('封面'),picker=vi.spyOn(input,'click');
+ fireEvent.change(input,{target:{files:[pngFile('预览.png')]}});await screen.findByRole('img',{name:'交付封面预览'});
+ expect(document.querySelector('button button')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'放大交付封面预览'}));expect(await screen.findByRole('dialog',{name:'交付封面预览'})).toBeTruthy();expect(picker).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'关闭放大预览'}));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'交付封面预览'})).toBeNull());
+ fireEvent.click(screen.getByRole('button',{name:'替换封面'}));expect(picker).toHaveBeenCalledOnce();
+});
+it('keeps the current manual cover when an older registered-cover download finishes late',async()=>{
+ const source={version:'workspace-cover-source/v1' as const,kind:'material' as const,id:'11111111-1111-4111-8111-111111111111',sha256:'a'.repeat(64)},w={...workspace(),coverInputs:[{source,name:'原封面.png',file:{relativePath:'cover.png',sha256:source.sha256,fileSize:pngBytes.length}}]};
+ let reply!:(r:Response)=>void;vi.stubGlobal('fetch',vi.fn(()=>new Promise<Response>(resolve=>{reply=resolve;})));
+ const command=vi.fn().mockResolvedValue(w);render(<WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={vi.fn()}/>);
+ fireEvent.change(screen.getByLabelText('标题'),{target:{value:'当前人工封面'}});fireEvent.change(screen.getByRole('combobox',{name:'已有封面'}),{target:{value:`material:${source.id}:${source.sha256}`}});fireEvent.click(screen.getByRole('button',{name:'使用已选封面'}));
+ const manual=pngFile('当前选择.png');Object.defineProperty(manual,'arrayBuffer',{value:async()=>pngBytes.buffer});fireEvent.change(screen.getByLabelText('封面'),{target:{files:[manual]}});await screen.findByRole('img',{name:'交付封面预览'});
+ await act(async()=>reply(new Response(pngBytes)));expect(screen.getByText('当前选择.png')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'生成并验证交付包'}));await waitFor(()=>expect(command).toHaveBeenCalledOnce());expect(command.mock.calls[0][1]).toMatchObject({title:'当前人工封面',coverBase64:btoa(String.fromCharCode(...pngBytes))});expect(command.mock.calls[0][1]).not.toHaveProperty('coverSource');
+});
 it('does not publish an older delivery poll after a newer workspace was provided',async()=>{
  vi.useFakeTimers();let reply!:(value:unknown)=>void;
  const w={...workspace(),deliveries:[{id:'delivery',status:'running'}]} as ProductionWorkspace;

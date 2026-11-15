@@ -1,0 +1,577 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx (32 tests | 1 failed | 31 skipped) 227ms
+   ↓ shows and previews the verified initial video interval without adopting or generating
+   ↓ sends an explicit zero start with the displayed imported interval and waits for adoption confirmation
+   × resets each selected video to its own source interval and describes the selected duration 226ms
+     → Unable to find an accessible element with the role "option" and name "使用所选区间时长"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_i_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "完成":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_l_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_o_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  dialog:
+
+  Name "裁剪与时长":
+  [36m<section[39m
+    [33maria-label[39m=[32m"裁剪与时长"[39m
+    [33mclass[39m=[32m"workspace-composer-settings"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mid[39m=[32m"react-aria-_r_1_"[39m
+    [33mrole[39m=[32m"dialog"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "裁剪与时长":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  spinbutton:
+
+  Name "视频使用起点（秒）":
+  [36m<input[39m
+    [33maria-label[39m=[32m"视频使用起点（秒）"[39m
+    [33mmax[39m=[32m"2"[39m
+    [33mmin[39m=[32m"0"[39m
+    [33mstep[39m=[32m"0.1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0.25"[39m
+  [36m/>[39m
+
+  Name "视频使用终点（秒）":
+  [36m<input[39m
+    [33maria-label[39m=[32m"视频使用终点（秒）"[39m
+    [33mmax[39m=[32m"2"[39m
+    [33mmin[39m=[32m"0.1"[39m
+    [33mstep[39m=[32m"0.1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0.75"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "视觉候选时长处理":
+  [36m<select[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"listbox"[39m
+    [33maria-label[39m=[32m"视觉候选时长处理"[39m
+    [33mclass[39m=[32m"dan-select-trigger appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"[39m
+    [33mid[39m=[32m"select-native-_r_n_"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "保留镜头时长":
+  [36m<option[39m
+    [33mvalue[39m=[32m"keep-target"[39m
+  [36m/>[39m
+
+  Name "使用素材完整时长":
+  [36m<option[39m
+    [33mvalue[39m=[32m"use-candidate"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"镜头图片与视频"[39m
+      [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"画面类型"[39m
+          [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-visual-1"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"visual-kind-visual-1-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m图片[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-visual-1"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"visual-kind-visual-1-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m视频[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"visual-kind-visual-1-video"[39m
+        [33mclass[39m=[32m"workspace-visual-content"[39m
+        [33mid[39m=[32m"visual-content-visual-1"[39m
+        [33mrole[39m=[32m"tabpanel"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"视频候选结果"[39m
+          [33mclass[39m=[32m"workspace-visual-results"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"workspace-results-gallery"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"视频候选缩略图"[39m
+              [33mclass[39m=[32m"workspace-thumbnail-rail"[39m
+              [33mdata-kind[39m=[32m"video"[39m
+              [33mrole[39m=[32m"group"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"预览视频候选 01"[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"workspace-thumbnail-select"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-media"[39m
+                [36m>[39m
+                  [36m<video[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mpreload[39m=[32m"metadata"[39m
+                    [33msrc[39m=[32m"/_local-artifact?episode=episode&path=episodes%2Fepisode%2Fnew.mp4&sha256=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"[39m
+                  [36m/>[39m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-caption"[39m
+                [36m>[39m
+                  [0m01[0m
+                [36m</span>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"预览视频候选 02"[39m
+                [33maria-pressed[39m=[32m"true"[39m
+                [33mclass[39m=[32m"workspace-thumbnail-select"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-media"[39m
+                [36m>[39m
+                  [36m<video[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mpreload[39m=[32m"metadata"[39m
+                    [33msrc[39m=[32m"/_local-artifact?episode=episode&path=other.mp4&sha256=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"[39m
+                  [36m/>[39m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-caption"[39m
+                [36m>[39m
+                  [0m02[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"视频预览"[39m
+              [33mclass[39m=[32m"workspace-unified-preview"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33maria-label[39m=[32m"视频候选预览播放器"[39m
+                [33mclass[39m=[32m"app-video-player "[39m
+                [33mdata-controls-visible[39m=[32m""[39m
+                [33mdir[39m=[32m"ltr"[39m
+                [33mlang[39m=[32m"zh-CN"[39m
+                [33mrole[39m=[32m"group"[39m
+                [33mtabindex[39m=[32m"0"[39m
+              [36m>[39m
+                [36m<video[39m
+                  [33maria-label[39m=[32m"视频候选预览"[39m
+                  [33mplaysinline[39m=[32m""[39m
+                  [33mpreload[39m=[32m"metadata"[39m
+                  [33msrc[39m=[32m"/_local-artifact?episode=episode&path=other.mp4&sha256=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"[39m
+                [36m>[39m
+                  [36m<a[39m
+                    [33mhref[39m=[32m"https://videojs.org/help"[39m
+                  [36m>[39m
+                    [0mVideo player not working?[0m
+                  [36m</a>[39m
+                [36m</video>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"app-media-feedback"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m正在加载视频…[0m
+                [36m</p>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"app-video-controls"[39m
+                  [33mdata-interactive[39m=[32m""[39m
+                  [33mdata-user-active[39m=[32m""[39m
+                  [33mdata-visible[39m=[32m""[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maria-label[39m=[32m"片段进度"[39m
+                    [33maria-valuetext[39m=[32m"片段 0.00 / 0.50 秒"[39m
+                    [33mclass[39m=[32m"app-video-progress"[39m
+                    [33mmax[39m=[32m"0.75"[39m
+                    [33mmin[39m=[32m"0.25"[39m
+                    [33mstep[39m=[32m"0.01"[39m
+                    [33mtype[39m=[32m"range"[39m
+                    [33mvalue[39m=[32m"0.25"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33maria-label[39m=[32m"视频播放控制"[39m
+                    [33mclass[39m=[32m"app-video-toolbar"[39m
+                    [33m...
+   ↓ invalidated queued image is historical and cannot keep the generation form busy
+   ↓ invalidated queued video is historical and cannot keep the generation form busy
+   ↓ starts both tabs with placeholders and keeps API fields out of the upload flow
+   ↓ preserves each target’s generation draft across tabs and shot selection
+   ↓ image thumbnails preview without adopting or changing the explicitly chosen video first frame
+   ↓ explicit image generation freezes reference IDs, count, quality and dimensions without adopting
+   ↓ keeps the original image draft visible when its model is disabled in connection settings
+   ↓ keeps the original video draft visible when its model is disabled in connection settings
+   ↓ keeps the adopted video when manually choosing an image as fallback
+   ↓ keeps 图片 candidate actions without a generation settings entry
+   ↓ keeps 视频 candidate actions without a generation settings entry
+   ↓ retains explicit connection choices through shot switches and refresh without submitting
+   ↓ video choice and input conflicts survive refresh while actual voice is checked against the chosen model
+   ↓ formal video entry offers Pexels query without a generation model or first frame
+   ↓ keeps a cleared image override blank across target switches and reopening with a legacy default
+   ↓ keeps a cleared video override blank across target switches and reopening with a legacy default
+   ↓ keeps a cleared Pexels connection and query across target switches and reopening without searching
+   ↓ requires explicit image selection and adoption and preserves old candidates on append
+   ↓ requires explicit video selection and adoption and preserves old candidates on append
+   ↓ keeps stale and read-only candidates visible while disallowing adoption
+   ↓ adds an existing episode image to results without adopting or submitting generation
+   ↓ adds an existing episode video to results without adopting or submitting generation
+   ↓ assigns video roles by shared input order and submits only the selected mode’s compatible materials
+   ↓ returns focus to the direct image action after cancelling inline adoption
+   ↓ navigates the vertical candidate rail with up/down and retains left/right, Home/End without adopting
+   ↓ downloads the selected original image through the existing fingerprinted artifact route
+   ↓ switches video generation and Pexels in one picker while preserving independent drafts and search settings
+   ↓ restores legacy Pexels query and connection without converting them to a video generation selection
+   ↓ formats the actual voice duration without rounding the generation request
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceVisualCandidatesPanel.test.tsx > resets each selected video to its own source interval and describes the selected duration
+TestingLibraryElementError: Unable to find an accessible element with the role "option" and name "使用所选区间时长"
+
+Here are the accessible roles:
+
+  button:
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_i_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  Name "完成":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+    [33mdata-color[39m=[32m"tertiary"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_l_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Dismiss":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Dismiss"[39m
+    [33mid[39m=[32m"react-aria-_r_o_"[39m
+    [33mstyle[39m=[32m"width: 1px; height: 1px;"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  dialog:
+
+  Name "裁剪与时长":
+  [36m<section[39m
+    [33maria-label[39m=[32m"裁剪与时长"[39m
+    [33mclass[39m=[32m"workspace-composer-settings"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mid[39m=[32m"react-aria-_r_1_"[39m
+    [33mrole[39m=[32m"dialog"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "裁剪与时长":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  spinbutton:
+
+  Name "视频使用起点（秒）":
+  [36m<input[39m
+    [33maria-label[39m=[32m"视频使用起点（秒）"[39m
+    [33mmax[39m=[32m"2"[39m
+    [33mmin[39m=[32m"0"[39m
+    [33mstep[39m=[32m"0.1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0.25"[39m
+  [36m/>[39m
+
+  Name "视频使用终点（秒）":
+  [36m<input[39m
+    [33maria-label[39m=[32m"视频使用终点（秒）"[39m
+    [33mmax[39m=[32m"2"[39m
+    [33mmin[39m=[32m"0.1"[39m
+    [33mstep[39m=[32m"0.1"[39m
+    [33mtype[39m=[32m"number"[39m
+    [33mvalue[39m=[32m"0.75"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "视觉候选时长处理":
+  [36m<select[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"listbox"[39m
+    [33maria-label[39m=[32m"视觉候选时长处理"[39m
+    [33mclass[39m=[32m"dan-select-trigger appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"[39m
+    [33mid[39m=[32m"select-native-_r_n_"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "保留镜头时长":
+  [36m<option[39m
+    [33mvalue[39m=[32m"keep-target"[39m
+  [36m/>[39m
+
+  Name "使用素材完整时长":
+  [36m<option[39m
+    [33mvalue[39m=[32m"use-candidate"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33maria-hidden[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"镜头图片与视频"[39m
+      [33mclass[39m=[32m"workspace-visual-candidates workspace-visual-unified"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33maria-label[39m=[32m"画面类型"[39m
+          [33mclass[39m=[32m"workspace-visual-preview-tabs"[39m
+          [33mrole[39m=[32m"tablist"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-visual-1"[39m
+            [33maria-selected[39m=[32m"false"[39m
+            [33mid[39m=[32m"visual-kind-visual-1-image"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"-1"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m图片[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-controls[39m=[32m"visual-content-visual-1"[39m
+            [33maria-selected[39m=[32m"true"[39m
+            [33mid[39m=[32m"visual-kind-visual-1-video"[39m
+            [33mrole[39m=[32m"tab"[39m
+            [33mtabindex[39m=[32m"0"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m视频[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"visual-kind-visual-1-video"[39m
+        [33mclass[39m=[32m"workspace-visual-content"[39m
+        [33mid[39m=[32m"visual-content-visual-1"[39m
+        [33mrole[39m=[32m"tabpanel"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33maria-label[39m=[32m"视频候选结果"[39m
+          [33mclass[39m=[32m"workspace-visual-results"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"workspace-results-gallery"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"视频候选缩略图"[39m
+              [33mclass[39m=[32m"workspace-thumbnail-rail"[39m
+              [33mdata-kind[39m=[32m"video"[39m
+              [33mrole[39m=[32m"group"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"预览视频候选 01"[39m
+                [33maria-pressed[39m=[32m"false"[39m
+                [33mclass[39m=[32m"workspace-thumbnail-select"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-media"[39m
+                [36m>[39m
+                  [36m<video[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mpreload[39m=[32m"metadata"[39m
+                    [33msrc[39m=[32m"/_local-artifact?episode=episode&path=episodes%2Fepisode%2Fnew.mp4&sha256=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"[39m
+                  [36m/>[39m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-caption"[39m
+                [36m>[39m
+                  [0m01[0m
+                [36m</span>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33maria-label[39m=[32m"预览视频候选 02"[39m
+                [33maria-pressed[39m=[32m"true"[39m
+                [33mclass[39m=[32m"workspace-thumbnail-select"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-media"[39m
+                [36m>[39m
+                  [36m<video[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mpreload[39m=[32m"metadata"[39m
+                    [33msrc[39m=[32m"/_local-artifact?episode=episode&path=other.mp4&sha256=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"[39m
+                  [36m/>[39m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"workspace-thumbnail-caption"[39m
+                [36m>[39m
+                  [0m02[0m
+                [36m</span>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33maria-label[39m=[32m"视频预览"[39m
+              [33mclass[39m=[32m"workspace-unified-preview"[39m
+              [33mtabindex[39m=[32m"0"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33maria-label[39m=[32m"视频候选预览播放器"[39m
+                [33mclass[39m=[32m"app-video-player "[39m
+                [33mdata-controls-visible[39m=[32m""[39m
+                [33mdir[39m=[32m"ltr"[39m
+                [33mlang[39m=[32m"zh-CN"[39m
+                [33mrole[39m=[32m"group"[39m
+                [33mtabindex[39m=[32m"0"[39m
+              [36m>[39m
+                [36m<video[39m
+                  [33maria-label[39m=[32m"视频候选预览"[39m
+                  [33mplaysinline[39m=[32m""[39m
+                  [33mpreload[39m=[32m"metadata"[39m
+                  [33msrc[39m=[32m"/_local-artifact?episode=episode&path=other.mp4&sha256=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"[39m
+                [36m>[39m
+                  [36m<a[39m
+                    [33mhref[39m=[32m"https://videojs.org/help"[39m
+                  [36m>[39m
+                    [0mVideo player not working?[0m
+                  [36m</a>[39m
+                [36m</video>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"app-media-feedback"[39m
+                  [33mrole[39m=[32m"status"[39m
+                [36m>[39m
+                  [0m正在加载视频…[0m
+                [36m</p>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"app-video-controls"[39m
+                  [33mdata-interactive[39m=[32m""[39m
+                  [33mdata-user-active[39m=[32m""[39m
+                  [33mdata-visible[39m=[32m""[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33maria-label[39m=[32m"片段进度"[39m
+                    [33maria-valuetext[39m=[32m"片段 0.00 / 0.50 秒"[39m
+                    [33mclass[39m=[32m"app-video-progress"[39m
+                    [33mmax[39m=[32m"0.75"[39m
+                    [33mmin[39m=[32m"0.25"[39m
+                    [33mstep[39m=[32m"0.01"[39m
+                    [33mtype[39m=[32m"range"[39m
+                    [33mvalue[39m=[32m"0.25"[39m
+                  [36m/>[39m
+                  [36m<div[39m
+                    [33maria-label[39m=[32m"视频播放控制"[39m
+                    [33mclass[39m=[32m"app-video-toolbar"[39m
+                    [33m...
+ ❯ Object.getElementError node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx:52:16
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 31 skipped (32)
+   Start at  14:39:00
+   Duration  1.15s (transform 213ms, setup 7ms, collect 685ms, tests 227ms, environment 120ms, prepare 25ms)
+

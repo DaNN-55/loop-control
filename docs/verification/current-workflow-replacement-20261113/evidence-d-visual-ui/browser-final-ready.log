@@ -1,0 +1,25 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-TMGUSk/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-TMGUSk/source
+
+stderr | src/local-app/legacyWorkbenchAdoption.integration.test.ts > browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames
+[BABEL] Note: The code generator has deoptimised the styling of /private/tmp/loop-153-nOPsmw/browser-vite-cache/deps/react-dom_client.js?v=1e302e5a as it exceeds the max of 500KB.
+
+ ✓ src/local-app/legacyWorkbenchAdoption.integration.test.ts (36 tests | 35 skipped) 8460ms
+   ✓ browser: displays and explicitly adopts an imported source interval, preserving the original draft and exact native frames  8460ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 35 skipped (36)
+   Start at  14:58:08
+   Duration  9.42s (transform 521ms, setup 8ms, collect 791ms, tests 8.46s, environment 0ms, prepare 31ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-TMGUSk/evidence/vitest.json

@@ -1,5 +1,6 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
+import {tmpdir} from 'node:os';
 import {readFile,rename} from 'node:fs/promises';
 import {join} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
@@ -44,7 +45,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('adopted lineage is backe
   const plan=await post('planLegacyStorageAdoption',{});expect(plan.conflicts).toEqual([]);await post('executeAssetDirectoryMigration',{migrationId:plan.id});
   const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
   await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{doc.timelines[0].name='T13 before backup';});const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;expect((await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision})).status).toBe(200);
-  const evidence=process.env.LOOP_T13_EVIDENCE??'/private/tmp/loop-control-178-20261031/T13/restore-native-1';await mkdir(evidence,{recursive:true});
+  const evidence=process.env.LOOP_T13_EVIDENCE??(process.env.LOOP_STORY_EVIDENCE?join(process.env.LOOP_STORY_EVIDENCE,'native-adoption'):await mkdtemp(join(tmpdir(),'loop-native-adoption-evidence-')));await mkdir(evidence,{recursive:true});
   await writeFile(join(evidence,'adoption.json'),JSON.stringify(plan,null,2));
   await restoreCreatedEpisode({f,context,storage,source,target,episode:f.episode,accountId:account,prefix:plan.episodes[0].targetPrefix,w,evidence,volumeMount:'/',phase:'adopted',expectedTransformX:0});
  }finally{await f.close();await rm(storage,{recursive:true,force:true});}

@@ -4,8 +4,9 @@ import {randomUUID} from 'node:crypto';
 import {mkdir,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
+import {ownerTransaction} from './ownerTransaction';
 
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('effective SQL120 guards use literal owned prefixes and retain fixed publish identities',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('registered freezes use literal owned prefixes and retain fixed publish identities',async()=>{
  const f=await embeddedStudioFixture({storageContract:'pre-lineage',episodeRelativePath:()=> '系列 [SQL]_100%/本期 空间',migrations:['db/archive/legacy-v1/118-visual-storage-locations.sql','db/archive/legacy-v1/119-audio-caption-storage-locations.sql','db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   const signatures=['local_identity.scope_input_studio_task(uuid,text,jsonb)','public.generate_shot_review_video(uuid,uuid,jsonb,boolean,text)','public.request_review_render_revision(uuid,jsonb,text)','public.record_publish_input(uuid,text,text,text,bigint)','public.record_publish_package(uuid,text,text,bigint)','local_identity.queue_owned_final_render(uuid)'];
@@ -13,12 +14,17 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('effective SQL120 guards 
   expect(definitions).toHaveLength(6);for(const [i,d] of definitions.entries())expect(d.definition).toContain(i<3?'owned_studio_frozen_reference':'episode_storage_location');
   const ref={relative_path:`${f.episodeRelativePath}/openchatcut-frozen/${randomUUID()}/project.json`,sha256:'a'.repeat(64),file_size:100};
   const owned=async(value:unknown)=>(await f.c.query('SELECT local_identity.owned_studio_frozen_reference($1,$2) allowed',[f.episode,value])).rows[0].allowed;
-  expect(await owned(ref)).toBe(true);
+  expect(await owned(ref)).toBe(false);
+  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.register_owned_studio_freeze($1,$2,$3)',[f.episode,f.board,ref]));
+  expect(await owned(ref)).toBe(true);expect(await owned({...ref,file_size:ref.file_size+1})).toBe(false);
+  await expect(ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.register_owned_studio_freeze($1,$2,$3)',[f.episode,f.board,{...ref,relative_path:ref.relative_path.replace('_100%','X100anything')}]))).rejects.toMatchObject({code:'22023'});
   expect(await owned({...ref,relative_path:ref.relative_path.replace('_100%','X100anything')})).toBe(false);
   expect(await owned({...ref,relative_path:`episodes/${randomUUID()}/openchatcut-frozen/${randomUUID()}/project.json`})).toBe(false);
   const old={...ref,relative_path:`episodes/${f.episode}/openchatcut-frozen/${randomUUID()}/project.json`};expect(await owned(old)).toBe(false);
   await f.c.query("INSERT INTO public.artifacts(episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,'studio_frozen_project',$3,$4,$5)",[f.episode,f.task,old.relative_path,old.sha256,old.file_size]);
-  expect(await owned(old)).toBe(true);expect(await owned({...old,sha256:'b'.repeat(64)})).toBe(false);
+  // A retained historical row does not authorize an old path without completed storage lineage.
+  expect(await owned(old)).toBe(false);expect(await owned({...ref,sha256:'b'.repeat(64)})).toBe(false);
+  expect((await f.c.query('SELECT relative_path,sha256,file_size FROM public.artifacts WHERE episode_id=$1 AND relative_path=$2',[f.episode,old.relative_path])).rows).toEqual([{relative_path:old.relative_path,sha256:old.sha256,file_size:String(old.file_size)}]);
   await f.c.query("UPDATE public.episodes SET stage='qc_passed' WHERE id=$1",[f.episode]);await f.c.query('UPDATE local_identity.input_episodes SET delivery_enabled=true WHERE episode_id=$1',[f.episode]);
   const cover={artifactType:'cover',relativePath:`${f.episodeRelativePath}/publish-input/cover-v1.png`,sha256:'c'.repeat(64),fileSize:123},metadata={artifactType:'metadata',relativePath:`${f.episodeRelativePath}/publish-input/metadata-v1.json`,sha256:'d'.repeat(64),fileSize:234},pack={relativePath:`${f.episodeRelativePath}/publish-package/manifest.json`,sha256:'f'.repeat(64),fileSize:345};
   // SQL-only registration fixture; real files and Worker are exercised separately.
@@ -40,13 +46,17 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('fresh Owner Studio scope
  const f=await embeddedStudioFixture({storageContract:'pre-lineage',episodeRelativePath:()=> '系列 scope_[100%]/本期',migrations:['db/archive/legacy-v1/118-visual-storage-locations.sql','db/archive/legacy-v1/119-audio-caption-storage-locations.sql','db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   const task=randomUUID(),reference={relative_path:`${f.episodeRelativePath}/openchatcut-frozen/${randomUUID()}/project.json`,sha256:'a'.repeat(64),file_size:123};
-  await f.c.query('BEGIN');await f.c.query('UPDATE local_identity.input_episodes SET enabled=true,studio_enabled=true WHERE episode_id=$1',[f.episode]);
+  await f.c.query('UPDATE local_identity.input_episodes SET enabled=true,studio_enabled=true WHERE episode_id=$1',[f.episode]);
+  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.register_owned_studio_freeze($1,$2,$3)',[f.episode,f.board,reference]));
+  await f.c.query('BEGIN');
   await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_review_render','ready',$3)",[task,f.episode,{review_render:{adjustments:{studio_project:reference},project_relative_path:`${f.episodeRelativePath}/review-render/${task}/index.html`},output:{relative_path:`${f.episodeRelativePath}/review-render/${task}/review-render.mp4`}}]);
   await f.c.query('SET SESSION AUTHORIZATION loop_app');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);
   const scoped=(await f.c.query('SELECT to_jsonb(local_identity.scope_input_studio_task($1,$2,$3)) result',[task,'b'.repeat(64),reference])).rows[0].result;
   expect(scoped.input_snapshot.review_render.adjustments.studio_project).toEqual(reference);expect(scoped.input_snapshot.input_artifacts[0]).toMatchObject({relativePath:reference.relative_path,sha256:reference.sha256,fileSize:123});
   expect(scoped.input_snapshot.output.relative_path).toBe(`${f.episodeRelativePath}/native-tasks/${task}/review-render.mp4`);expect(scoped.input_snapshot.native_studio_fingerprint).toBe('b'.repeat(64));
+  expect((await f.c.query("SELECT producer_task_id FROM public.artifacts WHERE episode_id=$1 AND relative_path=$2 AND artifact_type='studio_frozen_project'",[f.episode,reference.relative_path])).rows).toEqual([{producer_task_id:task}]);
   await f.c.query('SAVEPOINT stale_frozen');await expect(f.c.query('SELECT local_identity.scope_input_studio_task($1,$2,$3)',[task,'b'.repeat(64),{...reference,sha256:'c'.repeat(64)}])).rejects.toThrow('Frozen Studio task differs');await f.c.query('ROLLBACK TO SAVEPOINT stale_frozen');
+  await f.c.query('SAVEPOINT wrong_size');await expect(f.c.query('SELECT local_identity.scope_input_studio_task($1,$2,$3)',[task,'b'.repeat(64),{...reference,file_size:124}])).rejects.toThrow('Frozen Studio task differs');await f.c.query('ROLLBACK TO SAVEPOINT wrong_size');
   await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.c.query('ROLLBACK');
  }finally{await f.c.query('ROLLBACK');await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.close();}
 },120000);

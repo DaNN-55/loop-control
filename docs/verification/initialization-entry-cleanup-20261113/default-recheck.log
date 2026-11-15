@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /private/tmp/loop-initialization-cleanup-20261113-wfzdexpl/source
+
+ ✓ src/local-app/MediaRootSettingsDialog.recovery.test.tsx (4 tests) 143ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  11:47:21
+   Duration  1.76s (transform 138ms, setup 8ms, collect 1.14s, tests 143ms, environment 325ms, prepare 34ms)
+
+JSON report written to /private/tmp/loop-initialization-cleanup-20261113-wfzdexpl/default-recheck.json

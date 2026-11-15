@@ -19,3 +19,14 @@ it('ordinary silent audio remains a dependency; only explicit content switches r
  const project=make();project.timelines[0].items[1].volume=0;
  expect(usedWorkspaceContent(project).paths.has('voice.mp3')).toBe(true);
 });
+it.each(['audio','caption','video'] as const)('only a sequence on a video track contributes nested export sources (%s)',kind=>{
+ const project=make(),root=project.timelines[0],child=structuredClone(root);
+ child.id='child';child.items=child.items.filter(item=>item.kind==='audio');
+ root.items=root.items.filter(item=>item.kind!=='audio');
+ root.tracks.NEST={kind,name:'嵌套轨道'};root.items.push({id:'sequence',name:'嵌套',kind:'sequence',track:'NEST',timelineId:'child',startFrame:0,durationInFrames:60,srcInFrame:0});project.timelines.push(child);
+ const used=usedWorkspaceContent(project);
+ expect([...used.paths]).toEqual(kind==='video'?['picture.png','voice.mp3','music.mp3']:['picture.png']);
+ expect(used.timelineIds.has('child')).toBe(kind==='video');
+ expect([...usedWorkspaceContent(project,'native-references').paths]).toEqual(['picture.png','voice.mp3','music.mp3']);
+ expect(project.timelines.find(t=>t.id==='child')!.items).toHaveLength(2);
+});

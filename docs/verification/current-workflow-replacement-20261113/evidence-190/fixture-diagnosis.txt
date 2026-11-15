@@ -1,0 +1,1 @@
+Independent preparation fixture failed twice before product seam: first invalidated_at lacked paired reason, second used wrong guessed column. Actual baseline constraint and existing productionWorkspace integration show invalidated_reason. Preserve constraint and use established fixture shape. No dispatch conclusion from these failures.

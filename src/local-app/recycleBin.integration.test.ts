@@ -6,6 +6,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {csrfFor} from './sessions';
+import {loadSchemaCatalog} from './schemaMigrations';
 const enabled=process.env.LOOP_RECYCLE_ACCEPTANCE==='1';
 const migration='160-episode-recycle-bin.sql';
 
@@ -86,7 +87,7 @@ it.skipIf(!enabled)('real Owner recycle hides catalog, survives restart and rest
   const counts=async()=>({tasks:(await f.c.query('SELECT id,input_snapshot FROM public.tasks WHERE episode_id=$1 ORDER BY id',[f.episode])).rows,materials:(await f.c.query('SELECT id,sha256 FROM public.production_material_revisions WHERE episode_id=$1 ORDER BY id',[f.episode])).rows});const evidence=await counts();
   expect((await f.get()).body).toMatchObject({limitBytes:5_000_000_000,items:[]});
   const removed=await f.recycle('recycleEpisode');expect(removed.status,JSON.stringify(removed.body)).toBe(200);expect(removed.body.recycled).toBe(true);expect(removed.body.sizeBytes).toBeGreaterThan(bytes.length);
-  expect((await f.c.query("SELECT local_identity.input_task_allowed($1,'draft_storyboard_revision') allowed",[f.episode])).rows[0].allowed).toBe(false);const worker=f.workerPool();expect((await worker.query('SELECT * FROM local_identity.plan_input_tasks($1)',[f.episode])).rows).toEqual([]);await worker.end();
+  expect((await f.c.query("SELECT local_identity.input_task_allowed($1,'draft_storyboard_revision') allowed",[f.episode])).rows[0].allowed).toBe(false);const worker=f.workerPool();try{await expect(worker.query('SELECT * FROM local_identity.plan_input_tasks($1)',[f.episode])).rejects.toMatchObject({code:'42883'});}finally{await worker.end();}
   expect((await f.get('catalog?view=operations&q='+f.episode)).body.episodes).toEqual([]);
   expect((await f.get('catalog?view=episodes&q='+f.episode+'&visibility=archived')).body.episodes).toEqual([]);
   const write=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(write.status,JSON.stringify(write.body)).toBe(409);
@@ -127,7 +128,10 @@ it.skipIf(!enabled)('recycle schema applies forward without rewriting existing m
   const rows=(await f.c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows;
   const after=Object.fromEntries(rows.map(row=>[row.version,row.sha256]));
   for(const [version,sha] of Object.entries(before))expect(after[version]).toBe(sha);
-  expect(after[migration]).toBe(createHash('sha256').update(await readFile('db/archive/legacy-v1/'+migration)).digest('hex'));
+  const historicalHash=createHash('sha256').update(await readFile('db/archive/legacy-v1/'+migration)).digest('hex');
+  expect(loadSchemaCatalog(process.cwd()).legacy.find(file=>file.version===migration)?.sha256).toBe(historicalHash);
+  if(Object.hasOwn(before,'clean-v2.sql')&&!Object.hasOwn(before,migration))expect(after[migration]).toBeUndefined();
+  else expect(after[migration]).toBe(historicalHash);
   expect((await f.c.query("SELECT count(*)::int count FROM local_identity.episode_recycle_bin")).rows[0].count).toBe(0);
   expect((await f.c.query("SELECT local_identity.is_recycled_episode($1) recycled",[f.episode])).rows[0].recycled).toBe(false);
   const policies=(await f.c.query("SELECT policyname FROM pg_policies WHERE schemaname='local_identity' AND tablename IN ('episode_recycle_bin','recycle_bin_settings')")).rows;

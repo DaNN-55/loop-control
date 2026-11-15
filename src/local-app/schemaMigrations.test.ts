@@ -4,7 +4,7 @@ import {loadSchemaCatalog,verifySchemaLedger,schemaMigrationPlan,freshSchemaTran
 import {planFixtureMigrations} from './fixtureSchema';
 const catalog=loadSchemaCatalog(process.cwd());
 it('fresh generations do not fabricate legacy migration executions and never replay covered history',()=>{
- const sql=freshSchemaTransaction(catalog);expect(sql).toContain("VALUES('clean-v2.sql'");expect(sql).not.toContain("VALUES('002-owner.sql'");
+ const sql=freshSchemaTransaction({...catalog,effective:undefined});expect(sql).toContain("VALUES('clean-v2.sql'");expect(sql).not.toContain("VALUES('002-owner.sql'");
  const applied={[catalog.baseline.version]:catalog.baseline.sha256};expect(verifySchemaLedger(applied,catalog)).toBe('clean-v2');expect(schemaMigrationPlan(applied,catalog,true)).toEqual(catalog.current);expect(schemaMigrationPlan({...applied,...Object.fromEntries(catalog.current.map(f=>[f.version,f.sha256]))},catalog,true)).toEqual([]);
  expect(planFixtureMigrations(applied,[...catalog.legacy,catalog.baseline],['db/local/084-four-step-workspace.sql','db/archive/legacy-v1/087-workspace-narration.sql'])).toEqual([]);
 });

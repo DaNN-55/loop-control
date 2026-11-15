@@ -1,0 +1,42 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-5kFh21/source
+
+ ✓ src/local-app/productionPexelsInputs.integration.test.ts (10 tests) 30315ms
+   ✓ independent Pexels search and preview freeze the canonical shot basis, import explicitly and leave legacy records untouched  5713ms
+   ✓ Pexels stops before transport when the frozen preparation has other-shot  3415ms
+   ✓ Pexels stops before transport when the frozen preparation has missing-reference  3442ms
+   ✓ Pexels stops before transport when the frozen preparation has future-version  3335ms
+   ✓ Pexels stops before transport when the frozen preparation has wrong-request  3400ms
+   ✓ Pexels stops before transport when the frozen preparation has wrong-target  3499ms
+   ✓ Pexels refuses an unknown legacy Pexels contract: future-protocol  1749ms
+   ✓ Pexels refuses an unknown legacy Pexels contract: wrong-target  1729ms
+   ✓ a recorded legacy Pexels search executes through its original basis without rewriting its frozen snapshot  2043ms
+   ✓ a new Pexels task cannot discard its reference and pretend to be legacy on an imported workspace  1989ms
+(node:7876) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspacePexels.integration.test.ts (6 tests) 59950ms
+   ✓ Owner queries Pexels, previews an explicit result, imports and explicitly adopts managed bytes after restart  18551ms
+   ✓ Pexels failures stay recoverable, validate external URLs and bytes, and never generate or adopt automatically  4368ms
+   ✓ queued Pexels requests retain exact credentials across rotation and old candidates remain selectable after a new query  3360ms
+   ✓ a short Pexels video gives recoverable duration feedback and only an explicit duration choice changes the native window  2657ms
+   ✓ Pexels results and unimported previews for one shot survive many searches on another shot  28905ms
+   ✓ thumbnail search metadata survives Owner reads and duplicate preview/import cannot change the project before adoption  2109ms
+ ✓ src/local-app/productionDefaultPreparation.integration.test.ts (7 tests) 25512ms
+   ✓ new production prepares directly from an independent baseline without old packages, classifications, approvals or drafts and survives reopen  3160ms
+   ✓ format-only continuation keeps an independent baseline, exact project and all input versions without creating a legacy child package  3131ms
+   ✓ a fresh independent order queues and executes an image from its own frozen baseline without consulting any review package  3601ms
+   ✓ independent source extraction and sound search register preparation-bound audio while retired review evidence remains untouched  5775ms
+   ✓ exact deletion includes registered independent preparation files and preserves unregistered user files  3021ms
+   ✓ a new independent volcengine video request freezes its real basis and executes controlled transport without retired shot classification  3408ms
+   ✓ a new independent bailian video request freezes its real basis and executes controlled transport without retired shot classification  3416ms
+ ✓ src/local-app/productionPexelsMigration.integration.test.ts (1 test) 1836ms
+   ✓ 192 preserves nonempty historical workspaces, audio, frozen tasks and permissions through atomic upgrade, rollback and full restore  1835ms
+ ✓ src/local-app/productionMetricsRetry.integration.test.ts (1 test) 1326ms
+   ✓ freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes  1325ms
+
+ Test Files  5 passed (5)
+      Tests  25 passed (25)
+   Start at  23:58:50
+   Duration  121.25s (transform 862ms, setup 13ms, collect 1.64s, tests 118.94s, environment 0ms, prepare 161ms)
+
+JSON report written to /private/tmp/loop-story-e2e-5kFh21/evidence/vitest.json

@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "results": {
+    "/api/local/session": 200,
+    "/api/local/catalog": 200,
+    "/api/local/system-status": 200,
+    "worker": {
+      "state": "healthy",
+      "heartbeatAt": "2026-11-13T00:13:56.694Z",
+      "lastScanAt": "2026-11-13T00:13:56.731Z",
+      "active": 0,
+      "capacity": 2,
+      "problem": null
+    },
+    "version": {
+      "state": "current",
+      "backendReleaseId": "e64f06409210de8590a815bb06fd318b3b1ddd10274334a1b403f62e92bbe61c",
+      "workerReleaseId": "e64f06409210de8590a815bb06fd318b3b1ddd10274334a1b403f62e92bbe61c",
+      "preparedReleaseId": "e64f06409210de8590a815bb06fd318b3b1ddd10274334a1b403f62e92bbe61c",
+      "startedAt": "2026-11-13T00:13:04.670Z",
+      "checkedAt": "2026-11-13T00:13:58.503Z"
+    },
+    "media": {
+      "state": "healthy",
+      "availableBytes": 703601475584,
+      "totalBytes": 1023999787008,
+      "minimumFreeBytes": 1073741824,
+      "sourcePath": "/Volumes/Ebuget 1T/Media",
+      "mountPath": "/Volumes/Ebuget 1T",
+      "sameVolume": false
+    },
+    "retiredBudgetStatus": 400,
+    "resourceLimits": [
+      {
+        "key": "adapter:openchatcut:openchatcut_studio",
+        "limit": 1
+      },
+      {
+        "key": "connection:openchatcut:openchatcut_studio:shared",
+        "limit": 1
+      },
+      {
+        "key": "host:cpu",
+        "limit": 1
+      },
+      {
+        "key": "host:render",
+        "limit": 1
+      },
+      {
+        "key": "provider:openchatcut",
+        "limit": 1
+      }
+    ]
+  },
+  "changedTables": [
+    "local_identity.media_root_binding"
+  ],
+  "temporaryProbeSessionRemoved": true,
+  "credentialsAndSessionsUnchanged": true,
+  "automaticBackups": false,
+  "capacity": 2
+}

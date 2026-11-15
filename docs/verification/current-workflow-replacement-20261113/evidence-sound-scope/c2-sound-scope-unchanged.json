@@ -1,0 +1,11 @@
+{
+  "sourceFiles": 1371,
+  "matchesFinalSnapshot": true,
+  "changedFilesSinceExportSlice": [
+    "src/local-app/productionSoundScope.integration.test.ts",
+    "src/worker/mediaTools.ts"
+  ],
+  "head": "2d1a8ff46318ece0031c0810899a339df71520c9",
+  "indexSha256": "06ed3c33b4711d2a3d147a743cb96b8f37fdc65282251e1116f9378225b0a6ff",
+  "sourceSnapshot": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-98Mrr3/source"
+}

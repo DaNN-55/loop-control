@@ -1,4 +1,4 @@
-import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import {ProductionWorkspacePanel} from './ProductionWorkspacePanel';
 import {WorkspaceNavigationContext} from './catalogNavigation';
@@ -8,17 +8,38 @@ const studio={projectId:'loop-control-e',relativePath:'work/project.json',sha256
 const opened={studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace:studio,productionWorkspace:workspace};
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});
 function readWorkspace(){vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));}
+it('reports an invalid source-import receipt instead of silently leaving the user on the source picker',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[{id:'saved-plan',label:'原计划',summary:'候选仍需采用',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}})));
+ const command=vi.fn().mockResolvedValue({});render(<ProductionWorkspacePanel episodeId="e" title="接入回执" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ fireEvent.change(await screen.findByRole('combobox',{name:'接入来源'}),{target:{value:'saved-plan'}});fireEvent.click(screen.getByRole('button',{name:'接入当前制作'}));expect(await screen.findByRole('alert')).toHaveProperty('textContent','未收到对应来源的当前工程，请重新读取。');expect(command).toHaveBeenCalledTimes(1);
+});
+it.each(['read-only','script-change','newer-workspace'])('does not publish a late source import after %s and keeps duplicate clicks on one command',async(change)=>{
+ let latest:typeof workspace|null=null,finish!:(value:unknown)=>void;
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json(latest?{workspace:latest}:{workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[{id:'saved-plan',label:'原计划',summary:'候选仍需采用',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}})));
+ const command=vi.fn(()=>new Promise(resolve=>{finish=resolve;})),props={episodeId:'e',title:'接入生命周期',scriptRevisionId:'s',materials:[],command,onLegacy:()=>{}},app=render(<ProductionWorkspacePanel {...props}/>);
+ fireEvent.change(await screen.findByRole('combobox',{name:'接入来源'}),{target:{value:'saved-plan'}});const button=screen.getByRole('button',{name:'接入当前制作'});act(()=>{fireEvent.click(button);fireEvent.click(button);});expect(command).toHaveBeenCalledTimes(1);
+ if(change==='read-only')app.rerender(<ProductionWorkspacePanel {...props} historicalReadOnly/>);
+ else{latest={...workspace,id:'newer-workspace',scriptRevisionId:change==='script-change'?'s2':'s',clips:[{...workspace.clips[0],text:'保持当前新版本'}]};app.rerender(<ProductionWorkspacePanel {...props} scriptRevisionId={latest.scriptRevisionId} boardId="new-read"/>);await waitFor(()=>{expect(screen.queryByText('正在读取制作流程…')).toBeNull();expect(screen.queryByRole('combobox',{name:'接入来源'})).toBeNull();});}
+ await act(async()=>finish(workspace));expect(screen.queryByText('第一镜')).toBeNull();expect(command).toHaveBeenCalledTimes(1);if(change!=='read-only')expect(screen.getByText('保持当前新版本')).toBeTruthy();
+});
+it('requires a fresh read when source discovery belongs to another script instead of leaving a misleading import action',async()=>{
+ let reads=0;vi.stubGlobal('fetch',vi.fn(async()=>Response.json(++reads===1?{workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'stale-script',options:[{id:'saved-plan',label:'原计划',summary:'旧基准',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}:{workspace})));
+ const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="来源基准核对" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ const retry=await screen.findByRole('button',{name:'重新读取制作流程'});expect(screen.queryByRole('button',{name:'接入当前制作'})).toBeNull();expect(command).not.toHaveBeenCalled();fireEvent.click(retry);await screen.findByText('第一镜');expect(command).not.toHaveBeenCalled();
+});
 it('offers only a read to check an unknown Studio operation result without replaying it',async()=>{
  let reads=0;const fetcher=vi.fn(async(path:string)=>Response.json(path==='/api/local/connections'?{serviceCatalog:{version:1,groups:[]}}:{workspace:path.endsWith('/workspace')&&++reads>1?{...workspace,revision:2,clips:[{...workspace.clips[0],text:'已保存的最新镜头'}]}:workspace}));vi.stubGlobal('fetch',fetcher);
  const command=vi.fn(async()=>{throw Object.assign(Error('本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。'),{status:503,code:'LOCAL_COMMAND_OUTCOME_UNKNOWN'});});
  render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  fireEvent.click(await screen.findByRole('button',{name:'进入剪辑工作台'}));await screen.findByText('打开剪辑工作台结果暂未确认');
+ // Finish the pending -> readable effect before issuing the next Owner action.
+ await act(async()=>{});
  expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));
  await screen.findByText('已保存的最新镜头');expect(reads).toBe(2);expect(command).toHaveBeenCalledTimes(1);
  expect(screen.getByText('打开剪辑工作台结果暂未确认').closest('[role="alert"]')?.textContent).toContain('原操作是否完成仍未确认');expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();
 });
 it('does not automatically prepare again when checking an unknown preparation result without a workspace',async()=>{
- const fetcher=vi.fn(async()=>Response.json({workspace:null}));vi.stubGlobal('fetch',fetcher);
+ const fetcher=vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}}));vi.stubGlobal('fetch',fetcher);
  const command=vi.fn(async()=>{throw Object.assign(Error('结果暂未确认'),{code:'local_service_unavailable'});});
  render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByText('准备分镜工程结果暂未确认');fireEvent.click(screen.getByRole('button',{name:'重新读取已保存工程'}));
@@ -104,7 +125,7 @@ it('recovers the authoritative revision after a cancelled open fails without rep
  const app=render(view('editing'));fireEvent.click(await screen.findByRole('button',{name:'重试打开剪辑工作台'}));app.rerender(view('delivery'));await act(async()=>fail(Error('响应丢失')));await screen.findByText('先导出最终视频，检查后确认这份文件。');expect(reads).toBe(2);expect(command).toHaveBeenCalledTimes(1);expect(screen.queryByText('响应丢失')).toBeNull();expect(screen.getByRole('button',{name:'检查与交付，当前查看'})).toBeTruthy();
 });
 it('retries preparation explicitly after failure and does not add another automatic attempt',async()=>{
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null})));let prepares=0;const command=vi.fn(async()=>{if(++prepares===1)throw Error('准备失败');return workspace;});
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}})));let prepares=0;const command=vi.fn(async()=>{if(++prepares===1)throw Error('准备失败');return workspace;});
  render(<ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByRole('button',{name:'重试'});expect(command).toHaveBeenCalledTimes(1);fireEvent.click(screen.getByRole('button',{name:'重试'}));await screen.findByText('第一镜');expect(command).toHaveBeenCalledTimes(2);expect(command).toHaveBeenLastCalledWith('prepareWorkspace',{episodeId:'e',expectedScriptRevisionId:'s'});
 });
 

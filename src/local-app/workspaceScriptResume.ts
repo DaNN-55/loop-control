@@ -1,4 +1,10 @@
+import {randomUUID,createHash} from 'node:crypto';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {dirname} from 'node:path';
+import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
+import {episodeStorageLocationAtRoot} from './episodeStorageLocation.js';
 import {verifyEpisodeFile} from './episodeFiles.js';
+import {verifyProductionPreparationSource,verifyProductionPreparationDocument} from './productionPreparationStore.js';
 import type {PoolClient} from 'pg';
 import {ConfigurationError} from './configurationCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
@@ -22,8 +28,18 @@ export async function resumeWorkspaceScript(c:PoolClient,root:string,row:Product
  const recovery=await readWorkspaceScriptResume(c,root,row,currentScript,stage);
  if(!recovery?.canReuse)throw new ConfigurationError(409,recovery?.reason??'当前脚本不符合排版修订接续条件。');
  await verifyEpisodeFile(c,root,row.episode_id,row.project_path,row.project_sha256,Number(row.project_size));
- const board=(await c.query('SELECT a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1 AND p.episode_id=$2',[row.storyboard_package_id,row.episode_id])).rows[0];
+ await verifyProductionPreparationSource(c,root,row.episode_id,row.preparation_revision_id??row.storyboard_package_id);
+ const board=(await c.query("SELECT p.file_reference->>'relativePath' relative_path,p.file_reference->>'sha256' sha256,(p.file_reference->>'fileSize')::bigint file_size FROM local_identity.production_preparation_revisions p WHERE p.id=$1 AND p.episode_id=$2",[row.preparation_revision_id??row.storyboard_package_id,row.episode_id])).rows[0];
  if(!board)throw new ConfigurationError(409,'原工程制作依据不存在。');
  await verifyEpisodeFile(c,root,row.episode_id,board.relative_path,board.sha256,Number(board.file_size));
- await c.query('SELECT local_identity.resume_workspace_formatting_revision($1,$2,$3,$4)',[row.id,Number(row.revision),currentScript,row.project_sha256]);
+ if(row.storyboard_package_id){
+  await c.query('SELECT local_identity.resume_workspace_formatting_revision($1,$2,$3,$4)',[row.id,Number(row.revision),currentScript,row.project_sha256]);
+ }else{
+  const manifest=(await c.query('SELECT manifest FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[row.preparation_revision_id,row.episode_id])).rows[0].manifest;
+  const id=randomUUID(),location=await episodeStorageLocationAtRoot(c,root,row.episode_id),bytes=Buffer.from(JSON.stringify(manifest,null,2)+'\n');
+  const file={relativePath:`${location.relativePath}/preparation/${id}.json`,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length},path=await safeAssetOutputPath(root,file.relativePath);
+  await mkdir(dirname(path),{recursive:true});await writeFile(path,bytes,{flag:'wx'});
+  await verifyProductionPreparationDocument(c,root,row.episode_id,file,manifest);
+  await c.query('SELECT local_identity.resume_production_formatting_revision($1,$2,$3,$4,$5,$6,$7)',[row.id,Number(row.revision),currentScript,row.project_sha256,id,file,manifest]);
+ }
 }

@@ -90,8 +90,8 @@ it('keeps narration preparation text after refreshed status and reopening',async
  const settings={selection,voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'},idle={...workspace,narration:workspace.narration!.map(n=>({...n,...settings,mode:'tts' as const,defaults:settings,status:'pending' as const}))},command=vi.fn();
  const props={episodeId:workspace.episodeId,pending:false,command,onChanged:vi.fn()},element=(w:ProductionWorkspace,target='S1')=><WorkspaceNarrationPanel {...props} workspace={w} selectedShotId={target}/>;
  const view=render(element(idle));await act(async()=>{});
- fireEvent.change(screen.getByRole('textbox',{name:'口播文案'}),{target:{value:'刷新后保留的口播改稿'}});
+ fireEvent.change(screen.getByRole('textbox',{name:'口播草稿'}),{target:{value:'刷新后保留的口播改稿'}});
  const refreshed={...idle,revision:4,narration:idle.narration.map(n=>({...n,status:'completed' as const}))};
  view.rerender(element(refreshed));view.rerender(element(refreshed,'S2'));view.rerender(element(refreshed));view.unmount();render(element(refreshed));await act(async()=>{});
- expect((screen.getByRole('textbox',{name:'口播文案'}) as HTMLTextAreaElement).value).toBe('刷新后保留的口播改稿');expect(command).not.toHaveBeenCalled();
+ expect((screen.getByRole('textbox',{name:'口播草稿'}) as HTMLTextAreaElement).value).toBe('刷新后保留的口播改稿');expect(command).not.toHaveBeenCalled();
 });

@@ -1,0 +1,44 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-w4T4Nc/source
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (12 tests) 89678ms
+   ✓ Owner can prepare disabled narration before editing without queuing external tasks  2380ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  8120ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  7439ms
+   ✓ both first narration tracks assemble and crop an available source without invalidating the other shot  7831ms
+   ✓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery  3741ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  5148ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=false)  29219ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=true)  6597ms
+   ✓ first speech remains a candidate after a real native save and never overwrites the edited project  5973ms
+   ✓ speech beyond the Provider maximum blocks a video submission without cutting words  3581ms
+   ✓ one shot with two visual ranges keeps one voice and its original task after deleting the first range  8340ms
+   ✓ registered completed task media resolve directly without a fake material and reject changed bytes  1308ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (6 tests | 1 skipped) 32057ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  3945ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  2402ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  17356ms
+   ✓ Owner caption errors identify the field and current shot window without changing the saved native captions  2103ms
+   ✓ percentage margins and second timings survive Owner save, native dragging, save and reopen  6250ms
+ ✓ src/local-app/productionSelection.integration.test.ts (3 tests) 7434ms
+   ✓ without any account budget, explicit image selections freeze two independent connections without blueprint image authority  2943ms
+   ✓ exceeded historical account ceilings do not block images; invalid requests and unknown submission fencing remain  2230ms
+   ✓ legacy queued image snapshots execute unchanged after content-only saves and new requests still require a selection  2260ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (6 tests) 10502ms
+   ✓ confirmation does not queue, legacy enablement cannot bypass it, and one confirmation queues exactly once without enabling the episode  2018ms
+   ✓ expired and changed-input confirmations fail without consuming the proposal or queueing a task  1629ms
+   ✓ connection or reference changes require a fresh confirmation and failed validation rolls consumption back  1492ms
+   ✓ confirmation records follow the existing guarded production-order deletion  1639ms
+   ✓ automatically estimates a call and atomically freezes the Owner-adjusted reservation in the actual queued task  2060ms
+   ✓ rolls confirmation consumption back when the real candidate write fails and permits the same confirmation after repair  1664ms
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts (1 test) 22805ms
+   ✓ native text, style and timing save once, final-file approval confirms captions and later edits invalidate it  22805ms
+ ✓ src/local-app/productionRevisions.integration.test.ts (1 test) 2905ms
+   ✓ immutable script reconfirmation preserves Owner, version, idle and idempotency fences after old shot revision removal  2904ms
+
+ Test Files  6 passed (6)
+      Tests  28 passed | 1 skipped (29)
+   Start at  11:26:01
+   Duration  168.02s (transform 853ms, setup 19ms, collect 1.95s, tests 165.38s, environment 0ms, prepare 161ms)
+
+JSON report written to /private/tmp/loop-story-e2e-w4T4Nc/evidence/vitest.json

@@ -1,0 +1,15 @@
+{
+  "removedOwnedCompletedSources": [
+    "/private/tmp/loop-story-e2e-eapywB/source",
+    "/private/tmp/loop-story-e2e-VhfSoq/source",
+    "/private/tmp/loop-story-e2e-meIG8J/source",
+    "/private/tmp/loop-story-e2e-7iNh7M/source",
+    "/private/tmp/loop-story-e2e-KqdOnk/source",
+    "/private/tmp/loop-story-e2e-D31ibz/source",
+    "/private/tmp/loop-story-e2e-82Lt4w/source",
+    "/private/tmp/loop-story-e2e-qSPp48/source",
+    "/private/tmp/loop-story-e2e-NrsJVd/source",
+    "/private/tmp/loop-story-e2e-zairjB/source"
+  ],
+  "kept": "All evidence, review snapshots, source baselines, compat bundles, review-finding red source and final source; shared SDK untouched"
+}

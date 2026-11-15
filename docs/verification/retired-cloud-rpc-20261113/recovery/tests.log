@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-eB1Ma1/source
+
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 78241ms
+   ✓ Owner delivery requires an exact confirmed export  2074ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  32462ms
+   ✓ a queued package cannot complete or retry against a different final export  25183ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  18521ms
+ ✓ src/local-app/recycleBin.integration.test.ts (6 tests) 20655ms
+   ✓ quota counts real registered bytes, sweeps safe FIFO on mutation, preserves newest and oversized item  6300ms
+   ✓ unknown and running work block entry; offline or changed files block restore; protected manual files survive quota  4904ms
+   ✓ hardlinked bytes are counted once and protected, account cannot orphan trash, concurrent restore has one winner  2308ms
+   ✓ real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state  2771ms
+   ✓ recycle enforces Owner, CSRF, revision, durable duplicate receipts and explicit permanent confirmation  3003ms
+   ✓ recycle schema applies forward without rewriting existing migration checksums  1366ms
+ ✓ src/local-app/restorePublication.integration.test.ts (4 tests) 120783ms
+   ✓ SIGKILL at restore journal retains verifiable publication proof and fresh application Owner file reads recover  41086ms
+   ✓ SIGKILL at restore receipt retains verifiable publication proof and fresh application Owner file reads recover  28795ms
+   ✓ SIGKILL at restore config retains verifiable publication proof and fresh application Owner file reads recover  31336ms
+   ✓ SIGKILL at restore ready retains verifiable publication proof and fresh application Owner file reads recover  19565ms
+ ✓ src/local-app/workspaceRecoveryFences.integration.test.ts (1 test) 2069ms
+   ✓ a superseded attempt cannot refresh, report, reserve submission or begin publication for the current attempt  2068ms
+
+ Test Files  4 passed (4)
+      Tests  15 passed (15)
+   Start at  10:25:07
+   Duration  224.11s (transform 925ms, setup 20ms, collect 1.73s, tests 221.75s, environment 0ms, prepare 134ms)
+
+JSON report written to /private/tmp/loop-story-e2e-eB1Ma1/evidence/vitest.json

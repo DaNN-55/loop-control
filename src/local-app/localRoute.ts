@@ -1,4 +1,6 @@
 import {LocalRecycleBin} from './recycleBin.js';
+import {ProductionScriptError} from '../reviews/productionScript.js';
+import {productionMetricsEnabled,readProductionQuality} from './productionQuality.js';
 import {readCommandReceipt} from './commandReceipt.js';
 import {observeLocalRequest,type RuntimeRequestLogEvent} from './runtimeRequestLog.js';
 import {readAccountDeletionStatus} from './accountDeletion.js';
@@ -7,6 +9,8 @@ import{runtimeErrorMessages}from'../orchestration/runtimeBuild.js';
 import {LocalMediaRootSettings} from './mediaRootSettings.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
 import {readLegacyStudioProject} from './legacyStudioProject.js';
+import {readLegacyWorkbenchSource,legacyWorkbenchSummary} from './legacyWorkbenchSource.js';
+import {readWorkspaceSourceOptions} from './workspaceSourceOptions.js';
 import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import{ownerTransaction}from'./ownerTransaction.js';
 import {readWorkspaceSearch} from './workspaceSearch.js';
@@ -67,7 +71,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(typeof body.email!=='string'||typeof body.password!=='string'||body.email.length>320||body.password.length>1024){send(400,{error:'登录请求格式无效。'});return;}
     const next=await establishSession(options.pool,body.email.trim(),body.password,token);
     if(!next){send(401,{error:'邮箱或密码无效，或登录暂时锁定。'});return;}
-    response.setHeader('Set-Cookie',cookieHeader(next));const owner=await lookupSession(options.pool,next);send(200,{owner:owner?{id:owner.id,email:owner.email}:null,secretAdministration:!!owner&&!!options.secrets?.allowed(owner),csrfToken:csrfFor(next)});return;
+    response.setHeader('Set-Cookie',cookieHeader(next));const owner=await lookupSession(options.pool,next);send(200,{owner:owner?{id:owner.id,email:owner.email}:null,secretAdministration:!!owner&&!!options.secrets?.allowed(owner),csrfToken:csrfFor(next),productionMetricsEnabled:!!owner&&await ownerTransaction(options.pool,owner.id,true,productionMetricsEnabled)});return;
    }
    const session=await lookupSession(options.pool,token);
    if(!session){await reject(null,'unauthenticated');response.setHeader('Set-Cookie',cookieHeader(''));send(401,{error:'请先登录所有者。'});return;}
@@ -87,7 +91,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    const recycleRead=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})(?:\/|$)/);
    if(recycleRead&&request.method==='GET'&&uuid.test(recycleRead[1])&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[recycleRead[1]])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请恢复后再打开。');
-   if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!!options.secrets?.allowed(session),csrfToken:csrfFor(session.token)});return;}
+   if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!!options.secrets?.allowed(session),csrfToken:csrfFor(session.token),productionMetricsEnabled:await ownerTransaction(options.pool,session.id,true,productionMetricsEnabled)});return;}
+   if(url.pathname==='/api/local/production-quality'&&request.method==='GET'){
+    if([...url.searchParams.keys()].some(k=>k!=='episodeId')||url.searchParams.getAll('episodeId').length!==1)throw new ConfigurationError(400,'业务质量档请求无效。');
+    send(200,await readProductionQuality(options.pool,session.id,url.searchParams.get('episodeId')??''));return;
+   }
    if(url.pathname==='/api/local/storyboard-planning')throw new ConfigurationError(410,'旧视觉与分镜规划已退役，请使用当前制作流程。');
    if(url.pathname==='/api/local/preferences'){
     if(request.method==='GET'){send(200,await readOwnerPreferences(options.pool,session.id));return;}
@@ -218,10 +226,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/workspace-search'){send(200,await readWorkspaceSearch(options.pool,session.id,url.searchParams));return;}
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id,parseCatalogQuery(url.searchParams)));return;}
-   if(url.pathname==='/api/local/script-production'){
-    const id=url.searchParams.get('episode')??'';
-    if(!uuid.test(id)||[...url.searchParams.keys()].some(k=>k!=='episode')){send(400,{error:'生产单引用无效。'});return;}
-    send(200,await ownerTransaction(options.pool,session.id,true,c=>new ScriptProductionStore(options.mediaRoot).read(c,id)));return;
+   const savedPlan=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/saved-plan$/);
+   if(savedPlan){
+    const id=savedPlan[1];
+    if(!uuid.test(id)||[...url.searchParams.keys()].length>0){send(400,{error:'生产单引用无效。'});return;}
+    send(200,await ownerTransaction(options.pool,session.id,true,c=>new ScriptProductionStore().read(c,id)));return;
    }
    if(url.pathname==='/_local-artifact'){
     const id=url.searchParams.get('episode')??'',path=url.searchParams.get('path')??'',hash=url.searchParams.get('sha256');
@@ -253,6 +262,15 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     }
     try{await serveDeliveryArchive(options.mediaRoot,entries,response,episodeId);}catch(error){if(response.headersSent)response.destroy();else throw new ConfigurationError(409,error instanceof Error?error.message:'交付下载失败。');}return;
    }
+   const legacyWorkbench=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/legacy-workbench$/);
+   if(legacyWorkbench&&uuid.test(legacyWorkbench[1])&&request.method==='GET'){
+    if(url.search)throw new ConfigurationError(400,'原镜头来源查询无效。');
+    const source=await ownerTransaction(options.pool,session.id,true,async c=>{
+     if(!(await c.query("SELECT 1 FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[legacyWorkbench[1],session.id])).rowCount)throw new ConfigurationError(404,'生产单不可见。');
+     return readLegacyWorkbenchSource(c,legacyWorkbench[1]);
+    });
+    send(200,source?legacyWorkbenchSummary(source):null);return;
+   }
    const legacyProject=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/legacy-project$/);
    if(legacyProject&&uuid.test(legacyProject[1])&&request.method==='GET'){
     const download=url.searchParams.get('download');
@@ -269,7 +287,13 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    const workspace=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/workspace(?:\/project)?$/);
    if(workspace&&uuid.test(workspace[1])&&request.method==='GET'){
     if(url.pathname.endsWith('/project')&&(!/^[a-f0-9]{64}$/.test(url.searchParams.get('sha')??'')||url.searchParams.getAll('sha').length!==1))throw new ConfigurationError(400,'工程版本指纹无效。');
-    const value=await ownerTransaction(options.pool,session.id,true,async c=>{const e=(await c.query('SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);return url.pathname.endsWith('/project')?readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??''):{workspace:await readProductionWorkspace(c,e.id,root)};});send(200,url.pathname.endsWith('/project')?{project:value}:value);return;
+    const value=await ownerTransaction(options.pool,session.id,true,async c=>{
+     const e=(await c.query('SELECT e.id,e.main_script_revision_id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\'',[workspace[1],session.id])).rows[0];
+     if(!e)throw new ConfigurationError(404,'生产单不可见。');const root=await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id);
+     if(url.pathname.endsWith('/project'))return readWorkspaceVersion(c,root,e.id,url.searchParams.get('sha')??'');
+     const current=await readProductionWorkspace(c,e.id,root);
+     return{workspace:current,...(!current?{sourceOptions:await readWorkspaceSourceOptions(c,root,e)}:{})};
+    });send(200,url.pathname.endsWith('/project')?{project:value}:value);return;
    }
    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
    if(episode&&uuid.test(episode[1])){
@@ -283,6 +307,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    send(404,{error:'本地路径尚未迁移。'});
   }catch(error){observation.fail(error);const runtimeCode=(error as {code?:string})?.code;if(runtimeCode&&Object.hasOwn(runtimeErrorMessages,runtimeCode)){send(503,{code:runtimeCode,error:runtimeErrorMessages[runtimeCode as keyof typeof runtimeErrorMessages]});return;}if(error instanceof ConfigurationError){send(error.status,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});return;}
+   if(error instanceof ProductionScriptError){send(400,{error:error.message});return;}
    if(error instanceof SecretStoreError){send(error.code==='conflict'?409:503,{...(error.code==='denied'?{code:'keychain_access_denied'}:{}),error:error.code==='conflict'?'旧密钥引用不能覆盖；请显式创建新版本。':error.code==='denied'?'本机 Keychain 已锁定或拒绝访问；请运行 npm start 解锁，若仍不可用请检查系统授权。此次操作未确认完成。':'密钥存储或验证未就绪；请检查授权、绑定和本机状态。'});return;}
    if((error as {status?:number})?.status===401){send(401,{error:'会话已失效。'});return;}
    if((error as {code?:string})?.code==='P0002'){send(404,{error:'连接或版本不可见。'});return;}

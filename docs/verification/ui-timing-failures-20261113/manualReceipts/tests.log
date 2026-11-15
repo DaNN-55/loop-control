@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-A7dPAU/source
+
+(node:98662) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceManualNarration.integration.test.ts (2 tests) 12577ms
+   ✓ unassigned MP3 can be used for narration, music and effects without provider calls  8758ms
+   ✓ first TTS draft preserves script subtitles and later drafts preserve independent captions  3819ms
+ ✓ src/local-app/workspaceCallConfirmation.integration.test.ts (6 tests) 14988ms
+   ✓ confirmation does not queue, legacy enablement cannot bypass it, and one confirmation queues exactly once without enabling the episode  2953ms
+   ✓ expired and changed-input confirmations fail without consuming the proposal or queueing a task  2816ms
+   ✓ connection or reference changes require a fresh confirmation and failed validation rolls consumption back  2068ms
+   ✓ confirmation records follow the existing guarded production-order deletion  2137ms
+   ✓ automatically estimates a call and atomically freezes the Owner-adjusted reservation in the actual queued task  2685ms
+   ✓ rolls confirmation consumption back when the real candidate write fails and permits the same confirmation after repair  2326ms
+ ✓ src/local-app/retiredHistory.integration.test.ts (2 tests) 3737ms
+   ✓ retires history HTTP and commands while current catalog, search, connection and cleanup APIs remain available  1685ms
+   ✓ finishes existing history receipts, preserves new references and changed files, and retains Owner isolation  2051ms
+ ✓ src/local-app/commandReceipt.integration.test.ts (2 tests) 2454ms
+   ✓ 5 real HTTP receipt recovery binds Owner, full payload, session and CSRF without repeating mutation  1223ms
+   ✓ 5 lifecycle receipt readback never exposes a private deletion inventory or executes cleanup  1230ms
+
+ Test Files  4 passed (4)
+      Tests  12 passed (12)
+   Start at  13:08:57
+   Duration  36.09s (transform 728ms, setup 16ms, collect 1.78s, tests 33.76s, environment 0ms, prepare 127ms)
+
+JSON report written to /private/tmp/loop-story-e2e-A7dPAU/evidence/vitest.json

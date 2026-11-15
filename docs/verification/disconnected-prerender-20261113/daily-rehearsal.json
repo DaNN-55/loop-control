@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "dailyApplied": false,
+  "pendingDaily": [
+    "177-production-metrics-collection.sql",
+    "178-remove-disconnected-prerender-functions.sql"
+  ],
+  "reason": "177 daily migration requires separate authorization; do not skip ledger prefix or apply it implicitly",
+  "isolatedRehearsal": [
+    "177-production-metrics-collection.sql",
+    "178-remove-disconnected-prerender-functions.sql"
+  ],
+  "removedFunctionsInRehearsal": [
+    "public.confirm_frozen_shot_when_ready()",
+    "public.queue_source_audio_after_frozen_clip()",
+    "public.guard_b_roll_task_claim()",
+    "public.create_pre_render_review_packages()",
+    "public.create_pre_render_review_packages_for_episode(uuid)",
+    "public.advance_production_ready_episodes(uuid)",
+    "public.recover_duration_decision_review_render_tasks()"
+  ],
+  "privateRecovery": "/Users/dan/Programs/loop-control/.loop-control/local/prerender-cleanup-178-d2ac2cd4e982",
+  "backupSha256": "72d74ea469cccce1e4ea8956f7ebdd653c0e4759e32f44f61269b6f69f91b354",
+  "dumpRestoreVerified": true,
+  "rehearsalVerified": true,
+  "unchangedDailyTables": 120,
+  "unchangedDailyRows": 204,
+  "dailyLedgerRows": 174,
+  "metricsNewEmptyTables": 10,
+  "metricsEnabled": false,
+  "cleanupAllOtherCatalogAndAclPreserved": true,
+  "sequencesAndRolesPreserved": true,
+  "unchangedRuntimePackages": 23,
+  "frozenOldDatabasePreserved": true,
+  "pid": 51263,
+  "http": 200,
+  "serviceRestarted": false,
+  "candidateRemoved": true
+}

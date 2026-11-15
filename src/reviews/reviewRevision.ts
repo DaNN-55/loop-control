@@ -19,13 +19,9 @@ export interface OpenChatCutStudioWorkspace {
   };
 }
 
-export type ReviewRevisionRequest =
-  | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: OpenChatCutStudioWorkspace }
-  | { kind: "storyboard"; reviewPackageId: string; reason: string };
+export type ReviewRevisionRequest = { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: OpenChatCutStudioWorkspace };
 
-export type ReviewRevisionOutcome =
-  | { kind: "composition"; message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" }
-  | { kind: "storyboard"; message: "分镜结构修订已提交；已返回分镜审核。" };
+export type ReviewRevisionOutcome = { kind: "composition"; message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" };
 
 export type StudioReviewRevisionRequest = {
   accessToken: string;
@@ -54,13 +50,7 @@ export function reviewRenderDurationSettingsFromRules(rules?: Json): ReviewRende
 }
 
 export async function requestReviewRevision(input: ReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
-  if (input.kind === "storyboard") {
-    const { viewTransport } = await import("../lib/viewTransport");
-    const { error } = await viewTransport.rpc("request_studio_storyboard_revision", { p_reason: input.reason, p_review_package_id: input.reviewPackageId });
-    if (error) throw error;
-    return { kind: "storyboard", message: "分镜结构修订已提交；已返回分镜审核。" };
-  }
-
+  if (input.kind !== "composition") throw new Error("旧分镜结构修订入口已退役，请使用当前制作工作区。");
   if (input.studioProject && !input.studioProject.composition) throw new Error("Studio 冻结工程缺少有效合成配置。");
   const composition = reviewRenderCompositionToJson(input.studioProject?.composition ?? input.composition ?? defaultReviewRenderComposition) as Record<string, Json>;
   const { viewTransport } = await import("../lib/viewTransport");

@@ -1,0 +1,29 @@
+E2E evidence: /private/tmp/loop-story-e2e-1vkHcE/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-1vkHcE/source
+
+ ✓ src/local-app/historyProjectionReferences.integration.test.ts (10 tests) 11524ms
+   ✓ history projection restores a main script inserted later in the same batch without replacing current references  1538ms
+   ✓ history projection repairs only a proven prior missing reference for an untouched historical order  1127ms
+   ✓ history projection repairs only a proven prior missing reference for an edited historical order  1099ms
+   ✓ history projection repairs only a proven prior missing reference for an series_edited historical order  1088ms
+   ✓ history projection repairs only a proven prior missing reference for an current_link historical order  1130ms
+   ✓ history projection preserves source evidence and refuses a missing main-script replacement  1086ms
+   ✓ history projection preserves source evidence and refuses a other_episode main-script replacement  1092ms
+   ✓ history projection preserves source evidence and refuses a other_owner main-script replacement  1133ms
+   ✓ history projection preserves source evidence and refuses a current main-script replacement  1095ms
+   ✓ history projection rolls back recovered references and historical markers when publication fails  1133ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  17:34:20
+   Duration  12.20s (transform 404ms, setup 7ms, collect 552ms, tests 11.52s, environment 0ms, prepare 31ms)
+
+JSON report written to /private/tmp/loop-story-e2e-1vkHcE/evidence/vitest.json

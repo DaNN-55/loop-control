@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "applied": "185-remove-retired-generated-script-chain.sql",
+  "removedFunctions": [
+    "public.create_script_review_package()",
+    "public.materialize_approved_script_revision()"
+  ],
+  "unchangedRuntimePackages": 23,
+  "removedTriggerFunctions": 2,
+  "removedTriggers": 2,
+  "generatedScriptSqlFailsClosed": true,
+  "retainedStoryboardCompletionGuard": true,
+  "privateRecovery": "/Users/dan/Programs/loop-control/.loop-control/local/generated-script-retirement-185-2d4b4b2d4155",
+  "backupSha256": "9919550e22836c4009adcdefbad52ce2aacad0608185f3b32716d538d6dc2d12",
+  "dumpRestoreVerified": true,
+  "rehearsalVerified": true,
+  "unchangedTables": 130,
+  "unchangedRows": 204,
+  "oldLedgerRows": 182,
+  "newLedgerRows": 183,
+  "allOtherCatalogAndAclPreserved": true,
+  "sequencesAndRolesPreserved": true,
+  "frozenOldDatabasePreserved": true,
+  "pid": 51263,
+  "http": 200,
+  "serviceRestarted": false,
+  "candidateRemoved": true,
+  "metricsEnabled": false
+}

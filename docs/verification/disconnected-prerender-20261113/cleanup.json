@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "removedTemporaryDirectories": [
+    "/private/tmp/loop-story-e2e-VP54yV/source",
+    "/private/tmp/loop-story-e2e-VP54yV/OpenChatCut",
+    "/private/tmp/loop-story-e2e-YhhzED/source",
+    "/private/tmp/loop-story-e2e-YhhzED/OpenChatCut",
+    "/private/tmp/loop-story-e2e-0nVJe5/source",
+    "/private/tmp/loop-story-e2e-0nVJe5/OpenChatCut",
+    "/private/tmp/loop-story-e2e-Ah6exp/source",
+    "/private/tmp/loop-story-e2e-Ah6exp/OpenChatCut",
+    "/private/tmp/loop-story-e2e-CCqEgo/source",
+    "/private/tmp/loop-story-e2e-CCqEgo/OpenChatCut",
+    "/private/tmp/loop-story-e2e-59P1Z2/source",
+    "/private/tmp/loop-story-e2e-59P1Z2/OpenChatCut",
+    "/private/tmp/loop-prerender-cleanup-20261113-5vrn66ah/source",
+    "/private/tmp/loop-prerender-cleanup-20261113-5vrn66ah/dependencies",
+    "/private/tmp/loop-prerender-cleanup-20261113-5vrn66ah/legacy-releases"
+  ],
+  "count": 15,
+  "e2eContainersRemoved": 6,
+  "schemaContainersRemoved": 3,
+  "originalRuntimePackagesPreserved": 23,
+  "dailyRecoveryPreserved": true,
+  "evidencePreserved": true,
+  "dailyAppliedAtTemporaryCleanup": false,
+  "dailyAppliedAfterCleanup": true
+}

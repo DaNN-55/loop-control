@@ -1,0 +1,131 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-bQkLL1/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-bQkLL1/source
+
+ ❯ src/local-app/legacyScriptPlanRead.integration.test.ts (1 test | 1 failed) 3163ms
+   × keeps the saved v2 plan readable as an immutable snapshot after the current script becomes v3 3162ms
+     → expected null to deeply equal { version: 2, script: { …(5) }, …(6) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyScriptPlanRead.integration.test.ts > keeps the saved v2 plan readable as an immutable snapshot after the current script becomes v3
+AssertionError: expected null to deeply equal { version: 2, script: { …(5) }, …(6) }
+
+[32m- Expected:[39m 
+{
+  "bgm": {
+    "candidates": [],
+    "kind": "bgm",
+    "reference": "none",
+    "status": "none",
+  },
+  "cover": {
+    "candidates": [],
+    "kind": "cover",
+    "reference": "none",
+    "status": "none",
+  },
+  "executionFingerprint": "879073650b93634207a89587051ab88b0213887308f2ec2aed41743dea06c603",
+  "issues": [
+    "填写已上传图片的素材名称：待上传",
+  ],
+  "script": {
+    "notes": [
+      "制作备注：补充说明只供审核参考，不作为可执行配置。",
+    ],
+    "segments": [
+      {
+        "id": "shot-01",
+        "narration": "填写本段完整口播。",
+        "paragraph": "01",
+        "settings": {
+          "firstFrame": "填写已上传图片的素材名称",
+          "layout": "full",
+          "sfx": "none",
+        },
+        "videoPrompt": "填写直接提交视频模型的画面与动作描述。",
+        "visual": "填写画面意图，可使用长句。",
+      },
+    ],
+    "settings": {
+      "aspectRatio": "9:16",
+      "captionAnchor": "bottom-center",
+      "captionMaxCharacters": 14,
+      "captionMaxLines": 2,
+      "captionMode": "follow_tts",
+      "captionSafeArea": "title-safe",
+      "captionsEnabled": true,
+      "transition": "cut",
+    },
+    "title": "本期标题",
+    "version": 2,
+  },
+  "segments": [
+    {
+      "firstFrame": {
+        "candidates": [],
+        "kind": "image",
+        "reference": "填写已上传图片的素材名称",
+        "status": "missing",
+      },
+      "id": "shot-01",
+      "narration": "填写本段完整口播。",
+      "settings": {
+        "aspectRatio": "9:16",
+        "captionAnchor": "bottom-center",
+        "captionMaxCharacters": 14,
+        "captionMaxLines": 2,
+        "captionMode": "follow_tts",
+        "captionSafeArea": "title-safe",
+        "captionsEnabled": true,
+        "firstFrame": "填写已上传图片的素材名称",
+        "layout": "full",
+        "sfx": "none",
+        "transition": "cut",
+      },
+      "sfx": {
+        "candidates": [],
+        "kind": "sfx",
+        "reference": "none",
+        "status": "none",
+      },
+      "subtitle": "填写本段完整口播。",
+      "videoPrompt": "填写直接提交视频模型的画面与动作描述。",
+      "visual": "填写画面意图，可使用长句。",
+    },
+  ],
+  "settings": {
+    "aspectRatio": "9:16",
+    "captionAnchor": "bottom-center",
+    "captionMaxCharacters": 14,
+    "captionMaxLines": 2,
+    "captionMode": "follow_tts",
+    "captionSafeArea": "title-safe",
+    "captionsEnabled": true,
+    "transition": "cut",
+  },
+  "version": 2,
+}
+
+[31m+ Received:[39m 
+null
+
+ ❯ src/local-app/legacyScriptPlanRead.integration.test.ts:15:101
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  07:52:07
+   Duration  3.86s (transform 420ms, setup 6ms, collect 583ms, tests 3.16s, environment 0ms, prepare 27ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-bQkLL1/evidence/vitest.json

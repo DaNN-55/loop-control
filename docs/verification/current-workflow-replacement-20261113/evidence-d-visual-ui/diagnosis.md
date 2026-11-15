@@ -1,0 +1,7 @@
+已复现UI区间0vs1及明确0被省略的两个实际错误，正式回归已修。
+首次green的预览slider断言在模态Popover仍打开时读取，被正确aria隐藏；改在完成关闭后读取，不改产品无障碍。明确0测试原clear+type会先回填再追加成10，改用真实替换值change事件测试，随后实证参数被省略。
+浏览器两次在相同裁剪按钮被video覆盖处失败：n3n2Mk、Lh8F1X。第二次记录真实hit-test：按钮中心1128,370.5；video位于730,342,501x258覆盖，该中心elementsFromPoint不含工具。不能视为等待超时或强制点击绕过。下一步检查工具父容器CSS层叠/命中，先用已固定场景定向探针定位，再做最小样式修复。
+复核后，遮挡来自现有interaction-refinement.css的意图：pointer:fine时工具默认opacity0/pointer-events:none，hover或focus-within预览才显示。测试从缩略图直接调用裁剪click，尚未把指针移入预览。修正真实操作顺序为hover预览后普通点击，保持原CSS，不强制点击、不增加z-index。
+Spec复核补两条：显式表单终点1.5采用keep-target1s后仍预览1.5（实际红灯）；完整源0–3/45frames@30/2倍速落回1（实际红灯）。均已修：已采用直接使用native窗口忽略残留表单；非1倍速也提供segment。最初pending测试把终点写成已有2未触发React change，不能当红灯；改为确实不同的1.5后得到真实反例，日志分别保留。
+osoJmb真实browser末轮在读取中早到达标题后找tab失败；截图/DOM明确workspace还在读取。修正等待具体视频tab出现，再点击，不延长超时、不更改产品。
+PCEyJX七文件94矩阵：92通过、2失败。browser是旧副本缺tab-readiness，已由TMGUSk修正复验；另一项短视觉仍409且原保护生效，但新帧边界提前给泛化提示导致原“短于”断言失败。保持原全部测试和判断顺序，只把新guard的用户提示恢复明确短源/需显式时长选择，仍在本地音频提取及采用证据写入之前拒绝。最终只重跑两个失败相关文件及最终源UI，不重复无影响的五文件。

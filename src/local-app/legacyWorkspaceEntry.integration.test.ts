@@ -24,7 +24,8 @@ it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1')('legacy orders ent
   expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
   expect(prepared.body.preparation.origin).toBe('legacy-board');
   const [input]=await registered();expect(input.owner_id).toBe(f.owner);
-  for(const key of ['enabled','storyboard_enabled','narration_enabled','media_enabled','visual_media_enabled','alignment_enabled','preview_enabled','studio_enabled','delivery_enabled'])expect(input[key],key).toBe(false);
+  expect(input.enabled).toBe(true); // Current explicit requests are active; retired automatic paths stay off.
+  for(const key of ['storyboard_enabled','narration_enabled','media_enabled','visual_media_enabled','alignment_enabled','preview_enabled','studio_enabled','delivery_enabled'])expect(input[key],key).toBe(false);
   const after=(await f.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(a ORDER BY id) FROM public.approvals a WHERE episode_id=$1)) value",[f.episode])).rows[0].value;
   expect(after).toEqual(before);
   expect((await f.request('prepareWorkspace',data)).body.id).toBe(prepared.body.id);
@@ -49,7 +50,7 @@ it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1')('legacy inspection
  const f=await productionWorkspaceFixture();
  try{
   await f.c.query('DELETE FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode]);
-  const get=async(token=f.token)=>{const r=await fetch(f.origin+`/api/local/script-production?episode=${f.episode}`,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};};
+  const get=async(token=f.token)=>{const r=await fetch(f.origin+`/api/local/episodes/${f.episode}/saved-plan`,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};};
   expect((await get()).status).toBe(200);expect((await get(f.otherToken)).status).toBe(404);
   await f.c.query("INSERT INTO public.account_memberships(account_id,user_id,role) SELECT e.account_id,o.id,'worker' FROM public.episodes e CROSS JOIN local_identity.owners o WHERE e.id=$1 AND o.id<>$2",[f.episode,f.owner]);
   expect((await get(f.otherToken)).status).toBe(404);

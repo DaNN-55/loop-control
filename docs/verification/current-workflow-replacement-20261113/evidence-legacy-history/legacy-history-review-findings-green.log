@@ -1,0 +1,21 @@
+E2E evidence: /private/tmp/loop-story-e2e-zairjB/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-zairjB/source
+
+ ✓ src/local-app/legacyProductionHistory.integration.test.ts (11 tests | 9 skipped) 6702ms
+   ✓ pre-188 private history respects source ownership and original identities: formatting-parent-inputs  5439ms
+   ✓ an existing old confirmation cannot supply a new preparation when its selected history belongs to another source Owner  1262ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 9 skipped (11)
+   Start at  02:21:37
+   Duration  7.38s (transform 401ms, setup 7ms, collect 556ms, tests 6.70s, environment 0ms, prepare 31ms)
+
+JSON report written to /private/tmp/loop-story-e2e-zairjB/evidence/vitest.json

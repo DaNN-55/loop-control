@@ -1,4 +1,4 @@
-import type { Database } from "../lib/database.types";
+import type { HistoricalDatabaseV1 as Database } from "../lib/history/databaseV1.types";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];

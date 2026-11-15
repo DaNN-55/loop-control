@@ -1,0 +1,59 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-TUyleT/source
+
+ ✓ src/local-app/secretAdministration.integration.test.ts (1 test) 1728ms
+   ✓ admin secret boundaries, metadata, password, audit and immutable references through HTTP/PG  1727ms
+ ❯ src/local-app/retiredCloudRpc.integration.test.ts (3 tests | 2 failed) 9710ms
+   × 176 removes only five unused cloud connection RPCs after nonempty history restore and preserves all other data, definitions and ACL 3306ms
+     → Command failed: docker exec -i loop-story-e2e-4dd83ebb42b5 psql -XqAt -U postgres -d loop_compat_restore_c0c9d3425ec8 -v ON_ERROR_STOP=1
+ERROR:  42P16: column "value" has pseudo-type void
+LOCATION:  CheckAttributeType, heap.c:583
+
+   × current Owner HTTP rebinds an unbound restored version with exact IDs and frozen history after 176 1055ms
+     → expected false to be true // Object.is equality
+   ✓ real saved connection modules create, rotate, verify and revoke through retained local contracts after 176  5349ms
+ ✓ src/local-app/connectionImpact.integration.test.ts (2 tests) 1955ms
+   ✓ reports exact owned version references through HTTP and revokes without replacing frozen task inputs  1080ms
+   ✓ includes saved music and narration defaults with no queued task and excludes foreign workspace references  875ms
+ ✓ src/local-app/connectionLifecycle.integration.test.ts (1 test) 442ms
+   ✓ creates, rotates and verifies every current provider through real database commands without live provider calls  442ms
+ ✓ src/local-app/connectionCatalog.integration.test.ts (1 test) 1114ms
+   ✓ exposes registered service groups and updates exact verified connection choices through Owner HTTP  1113ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/retiredCloudRpc.integration.test.ts > 176 removes only five unused cloud connection RPCs after nonempty history restore and preserves all other data, definitions and ACL
+Error: Command failed: docker exec -i loop-story-e2e-4dd83ebb42b5 psql -XqAt -U postgres -d loop_compat_restore_c0c9d3425ec8 -v ON_ERROR_STOP=1
+ERROR:  42P16: column "value" has pseudo-type void
+LOCATION:  CheckAttributeType, heap.c:583
+
+ ❯ call ../runtime-context.mjs:3:38
+
+ ❯ docker ../runtime-context.mjs:6:156
+ ❯ Object.sql ../runtime-context.mjs:7:446
+ ❯ sql src/local-app/retiredCloudRpc.integration.test.ts:21:44
+ ❯ src/local-app/retiredCloudRpc.integration.test.ts:49:4
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/retiredCloudRpc.integration.test.ts > current Owner HTTP rebinds an unbound restored version with exact IDs and frozen history after 176
+AssertionError: expected false to be true // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+ ❯ src/local-app/retiredCloudRpc.integration.test.ts:86:76
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  2 failed | 6 passed (8)
+   Start at  10:23:27
+   Duration  16.58s (transform 2.29s, setup 17ms, collect 1.06s, tests 14.95s, environment 0ms, prepare 123ms)
+
+JSON report written to /private/tmp/loop-story-e2e-TUyleT/evidence/vitest.json

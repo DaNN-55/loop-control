@@ -1,0 +1,35 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/production-metrics-c-20261113/loop-control
+
+ ✓ src/local-app/workspaceShots.integration.test.ts > Owner reorders native shot instances without rewriting registered sources or storyboard history 2521ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > a shot with two visual ranges owns one stable caption lane when its first range is removed 1604ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > native range locks, frame steps and parallel composition preserve source instances through Owner persistence 3891ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > two ranges retain one actual main voice and full following captions after deleting their first visual instance 16006ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > reopening an actively edited native structure reuses its running Studio and latest project 4083ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues 4133ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > added native shots accept registered images and source video while the approved storyboard stays unchanged 3463ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > native Owner save rejects deleting the last effective shot while retaining the recoverable document 4143ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > initial all-placeholder drafts remain saved but cannot enter native editing 1191ms
+ ✓ src/local-app/workspaceShots.integration.test.ts > removes a selected shot, retains original media and historical projects, and protects the final shot after reopening 1866ms
+ ✓ src/local-app/productionMetricsShotDeletion.integration.test.ts > storyboard shot removal records one narration withdrawal and retains audio and historical project across receipt replay and reopen 2765ms
+ ✓ src/local-app/productionMetricsShotDeletion.integration.test.ts > native editor shot deletion records one narration withdrawal across repeated save and reopen while keeping source history 5036ms
+ ✓ src/local-app/productionMetricsWorkflow.integration.test.ts > collects real controlled Chinese narration, frozen estimate, adoption, withdrawal, re-adoption and reopen without storing text 2278ms
+ ✓ src/local-app/productionMetricsWorkflow.integration.test.ts > a real SQL response-write failure never repeats a Provider transport and keeps the request marker 881ms
+ ✓ src/local-app/productionMetricsWorkflow.integration.test.ts > freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package 11244ms
+ ✓ src/local-app/productionMetricsMigration.integration.test.ts > upgrades a nonempty latest-parallel 176 fixture to 177 atomically while keeping collection off and original data and ACLs intact 2129ms
+ ✓ src/local-app/productionQuality.integration.test.ts > persists Owner-selected business quality atomically with creation and revisioned commands without changing generation settings 1633ms
+ ↓ src/local-app/productionQuality.integration.test.ts > holds a clearly isolated quality fixture for browser verification
+ ✓ src/local-app/productionMetrics.integration.test.ts > reads a nonempty Owner-scoped snapshot without writes, duplicate joins or fabricated historical facts 1498ms
+ ✓ src/local-app/productionMetricsRetry.integration.test.ts > freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes 1455ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > defaults off, bootstraps observations only, and records activation gaps 54ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > keeps events atomic and idempotent, prevents forged relationships and direct writes 26ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > freezes submission quality, separates backoff from eligible wait, and fences Worker events 142ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > keeps restored past facts and submission quality unknown while collecting later real changes 14ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > records bounded resource observations, nullable GPU and gaps without changing business records 21ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > retains only new statistics, preserves current quality and anonymous totals after permanent deletion 26ms
+
+ Test Files  8 passed (8)
+      Tests  25 passed | 1 skipped (26)
+   Start at  11:14:34
+   Duration  76.15s (transform 819ms, setup 17ms, collect 2.15s, tests 73.05s, environment 1ms, prepare 218ms)
+

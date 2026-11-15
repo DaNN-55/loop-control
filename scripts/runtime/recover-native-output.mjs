@@ -23,4 +23,4 @@ try{
  else console.log(JSON.stringify({pending:(await pool.query('SELECT * FROM local_identity.pending_native_output_publications()')).rows.map(({task_id,episode_id,attempt})=>({taskId:task_id,episodeId:episode_id,attempt,status:'pending_reconciliation'}))}));
 }finally{await pool.end();}
 
-}catch(error){if(['keychain_locked','keychain_unavailable','runtime_not_prepared','runtime_release_invalid'].includes(error?.code)){console.error(JSON.stringify({code:error.code,error:error.message}));process.exitCode=1;}else throw error;}
+}catch(error){if(['keychain_locked','keychain_unavailable','runtime_not_prepared','runtime_release_invalid','runtime_release_retired'].includes(error?.code)){console.error(JSON.stringify({code:error.code,error:error.message}));process.exitCode=1;}else throw error;}

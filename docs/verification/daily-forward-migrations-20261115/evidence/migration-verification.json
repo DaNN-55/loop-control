@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "database": "loop_control",
+  "generation": "clean-v2",
+  "oldTablesChecked": 130,
+  "changedOriginalRows": [],
+  "changedOriginalSequences": [],
+  "oldLedgerPreserved": true,
+  "rolesAndPasswordFingerprintsPreserved": true,
+  "applied": [
+    "194-production-sound-use.sql",
+    "196-saved-plan-preparation.sql",
+    "197-legacy-workbench-source.sql",
+    "200-consolidate-visual-queue.sql",
+    "193-production-workflow-milestones.sql",
+    "186-remove-unused-create-episode-rpc.sql",
+    "199-worker-responsibility-boundaries.sql",
+    "198-remove-retired-workflow-contracts.sql",
+    "187-independent-production-preparation.sql",
+    "192-independent-workspace-pexels-inputs.sql",
+    "189-independent-workspace-caption-inputs.sql",
+    "195-production-local-export-observations.sql",
+    "190-independent-workspace-narration-inputs.sql",
+    "188-import-existing-production-preparations.sql",
+    "191-default-independent-production-preparation.sql"
+  ],
+  "pending": [],
+  "tasks": {
+    "ready": 0,
+    "running": 0,
+    "accounts": 0,
+    "episodes": 0,
+    "dispatches": 0
+  }
+}

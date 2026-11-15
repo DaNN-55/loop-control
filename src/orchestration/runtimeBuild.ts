@@ -5,11 +5,14 @@ import { join, relative } from "node:path";
 type Fingerprints = Record<string, string>;
 export interface RuntimeRelease {id:string;root:string}
 export class RuntimePreparationError extends Error {
- readonly code: "runtime_not_prepared"|"runtime_source_changed"|"runtime_release_invalid"|"runtime_preparing";
+ readonly code: "runtime_not_prepared"|"runtime_source_changed"|"runtime_release_invalid"|"runtime_release_retired"|"runtime_preparing";
  constructor(code: RuntimePreparationError["code"]) {super(runtimeErrorMessages[code]);this.code=code;}
 }
-export const runtimeErrorMessages={runtime_not_prepared:"运行程序尚未准备，请运行 npm run runtime:prepare 后重启本机服务。",runtime_source_changed:"开发源码或编译产物已变化，请运行 npm run runtime:prepare；正在运行的固定版本不受影响。",runtime_release_invalid:"当前运行版本不完整或校验失败，已停止执行；请运行 npm run runtime:prepare 后重启本机服务。",runtime_preparing:"新运行版本正在准备，请等待当前准备完成后重试。"};
-interface RuntimeManifest {version:4;publicationId:string;projectRoot:string;nodeMajor:string;sources:Fingerprints;outputs:Fingerprints;release:RuntimeRelease}
+export const runtimeErrorMessages={runtime_not_prepared:"运行程序尚未准备，请运行 npm run runtime:prepare 后重启本机服务。",runtime_source_changed:"开发源码或编译产物已变化，请运行 npm run runtime:prepare；正在运行的固定版本不受影响。",runtime_release_invalid:"当前运行版本不完整或校验失败，已停止执行；请运行 npm run runtime:prepare 后重启本机服务。",runtime_release_retired:"此运行包已退役，已停止执行；请运行 npm run runtime:prepare 后使用当前程序，历史工程通过当前工作区接入。",runtime_preparing:"新运行版本正在准备，请等待当前准备完成后重试。"};
+export const runtimeExecutionContract='production-workspace/v2';
+interface ReleaseContents {publicationId:string;projectRoot:string;nodeMajor:string;sources:Fingerprints;outputs:Fingerprints;release:RuntimeRelease}
+type ExecutionPolicy={version:4}|{version:5;executionContract:'production-workspace/v1'|typeof runtimeExecutionContract};
+type RuntimeManifest=ReleaseContents&ExecutionPolicy;
 const manifestName = "dist/runtime-manifest.json";
 const requiredOutputs = ["dist/worker/local-app/localWorkerCli.js", "dist/local-app/local-app/localRoute.js"];
 
@@ -48,19 +51,26 @@ async function outputs(root: string) {
   return fingerprints(root, paths);
 }
 
-const releaseIdentity=(m:Pick<RuntimeManifest,'publicationId'|'projectRoot'|'nodeMajor'|'sources'|'outputs'>)=>createHash('sha256').update(JSON.stringify({publicationId:m.publicationId,projectRoot:m.projectRoot,nodeMajor:m.nodeMajor,sources:m.sources,outputs:m.outputs})).digest('hex');
+const releaseIdentity=(m:Omit<ReleaseContents,'release'>&ExecutionPolicy)=>createHash('sha256').update(JSON.stringify({publicationId:m.publicationId,projectRoot:m.projectRoot,nodeMajor:m.nodeMajor,sources:m.sources,outputs:m.outputs,...(m.version===5?{version:m.version,executionContract:m.executionContract}:{})})).digest('hex');
 export async function assertRuntimeRelease(projectRoot:string,release:RuntimeRelease):Promise<void>{
  try{
   const canonical=await realpath(projectRoot),expected=join(canonical,'.loop-control/runtime-releases',release.id);
   if(!/^[a-f0-9]{64}$/.test(release.id)||release.root!==expected||await realpath(expected)!==expected||(await lstat(expected)).isSymbolicLink())throw Error();
   const m=JSON.parse(await readFile(join(expected,manifestName),'utf8')) as RuntimeManifest;
-  if(m.version!==4||m.projectRoot!==canonical||m.nodeMajor!==process.versions.node.split('.')[0]||m.release.id!==release.id||m.release.root!==expected||releaseIdentity(m)!==release.id)throw Error();
-  if(JSON.stringify(m.outputs)!==JSON.stringify(await outputs(expected)))throw Error();
+  if(![4,5].includes(m.version)||m.version===5&&!['production-workspace/v1',runtimeExecutionContract].includes(m.executionContract)||m.projectRoot!==canonical||m.nodeMajor!==process.versions.node.split('.')[0]||m.release.id!==release.id||m.release.root!==expected||releaseIdentity(m)!==release.id)throw Error();
+  const actual=await outputs(expected);
+  // Some original v4 manifests also froze this script outside the dist roots.
+  // Verify its bytes for archive integrity; v5 never publishes or executes it.
+  const legacyEntry='scripts/runtime/codex.mjs';
+  if(m.version===4&&Object.hasOwn(m.outputs,legacyEntry)){const path=join(expected,legacyEntry);if(!(await lstat(path)).isFile()||await realpath(path)!==path)throw Error();actual[legacyEntry]=createHash('sha256').update(await readFile(path)).digest('hex');}
+  if(Object.keys(m.outputs).length!==Object.keys(actual).length||Object.entries(m.outputs).some(([path,hash])=>!Object.hasOwn(actual,path)||actual[path]!==hash))throw Error();
   if(await readFile(join(expected,'package.json'),'utf8')!==JSON.stringify({type:'module'})+'\n')throw Error();
- }catch{throw new RuntimePreparationError('runtime_release_invalid');}
+  // Integrity permits reading an archive, not executing its retired contract.
+  if(m.version===4||m.executionContract!==runtimeExecutionContract)throw new RuntimePreparationError('runtime_release_retired');
+ }catch(error){if(error instanceof RuntimePreparationError&&error.code==='runtime_release_retired')throw error;throw new RuntimePreparationError('runtime_release_invalid');}
 }
 export async function readPreparedRuntimeRelease(root:string):Promise<RuntimeRelease>{
- let manifest:RuntimeManifest;try{manifest=JSON.parse(await readFile(join(root,manifestName),'utf8'));if(manifest.version!==4)throw Error();}catch{throw new RuntimePreparationError('runtime_not_prepared');}
+ let manifest:RuntimeManifest;try{manifest=JSON.parse(await readFile(join(root,manifestName),'utf8'));if(![4,5].includes(manifest.version))throw Error();}catch{throw new RuntimePreparationError('runtime_not_prepared');}
  await assertRuntimeRelease(root,manifest.release);return manifest.release;
 }
 export async function assertPreparedRuntime(root:string):Promise<void>{
@@ -76,8 +86,8 @@ export async function prepareRuntime(root:string,build:()=>Promise<void>):Promis
  try{
   const before=await sources(root);await build();
   if(JSON.stringify(before)!==JSON.stringify(await sources(root)))throw new RuntimePreparationError('runtime_source_changed');
-  const base={publicationId:randomUUID(),projectRoot:await realpath(root),nodeMajor:process.versions.node.split('.')[0],sources:before,outputs:await outputs(root)},id=releaseIdentity(base),release={id,root:join(await realpath(root),'.loop-control/runtime-releases',id)};
-  const manifest:RuntimeManifest={version:4,...base,release};
+  const base={version:5,executionContract:runtimeExecutionContract,publicationId:randomUUID(),projectRoot:await realpath(root),nodeMajor:process.versions.node.split('.')[0],sources:before,outputs:await outputs(root)} as const,id=releaseIdentity(base),release={id,root:join(await realpath(root),'.loop-control/runtime-releases',id)};
+  const manifest:RuntimeManifest={...base,release};
   try{await assertRuntimeRelease(root,release);}catch{
    // Publish only a complete new directory. Never replace an existing version:
    // a running process can still own it, including when it is damaged.

@@ -8,22 +8,22 @@ import {resolveWorkspaceVisualLineage} from './workspaceVisualCandidates';
 import {formalWorkflowFixture} from './formalWorkflow.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {productionScriptTemplate} from '../reviews/productionScript';
+import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['new','legacy-script','plain'])('current %s script → neutral workspace → actual video queue and Worker',async kind=>{
- const text=kind==='plain'?'# 新镜头\n\n## 正文\n窗边的灯亮着。\n\n门外传来脚步声。':kind==='legacy-script'?productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll'):productionScriptTemplate;
+ const text=kind==='plain'?'# 新镜头\n\n## 正文\n窗边的灯亮着。\n\n门外传来脚步声。':kind==='legacy-script'?historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll'):productionScriptTemplate;
  const f=await formalWorkflowFixture({controlled:true,scriptText:text,configurePlanning:false});
  try{
   expect((await f.send('start')).status).toBe(200);
   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
   expect(w.preparation.shots.length).toBeGreaterThan(0);expect(w.preparation.shots.every((s:any)=>!('shotType'in s))).toBe(true);
-  const rows=(await f.c.query('SELECT shot_type,snapshot FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1',[w.id])).rows;expect(rows.length).toBe(w.clips.length);expect(rows.every(s=>s.shot_type===null&&!('shotType'in s.snapshot))).toBe(true);
+  const rows=(await f.c.query('SELECT snapshot FROM local_identity.production_shot_versions WHERE preparation_revision_id=$1',[w.preparationRevisionId])).rows;expect(rows.length).toBe(w.clips.length);expect(rows.every(s=>!('shotType'in s.snapshot))).toBe(true);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1',[w.id])).rows[0].n).toBe(0);
   const obsolete=await f.send('confirmWorkspaceShot',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,shotType:'a_roll'});expect(obsolete.status).toBe(400);
   if(kind==='new'){
    const old=await f.controlled!.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(old.status,JSON.stringify(old.body)).toBe(200);
    const legacy=(await f.c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[old.body.id])).rows[0],shotId=old.body.clips[0].shotId;
-   const before=(await f.c.query('SELECT snapshot FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2',[legacy.id,shotId])).rows[0].snapshot;expect(['a_roll','b_roll']).toContain(before.shotType);
-   await f.c.query('UPDATE local_identity.workspace_shot_inputs SET shot_type=NULL WHERE workspace_id=$1 AND shot_id=$2',[legacy.id,shotId]);
-   expect((await resolveWorkspaceVisualLineage(f.c,legacy,shotId)).shotType).toBe(before.shotType);
+   const before=(await f.c.query("SELECT s->>'shotType' classification FROM local_identity.production_preparation_revisions p CROSS JOIN LATERAL jsonb_array_elements(p.source_evidence#>'{package,context_snapshot,worker_result,storyboard,shots}')s WHERE p.id=$1 AND s->>'id'=$2",[legacy.preparation_revision_id,shotId])).rows[0].classification;expect(['a_roll','b_roll']).toContain(before);
+   expect((await resolveWorkspaceVisualLineage(f.c,legacy,shotId)).shotType).toBe(before);
   }
   // Input kinds stay authoritative; a visual_reference video is usable without A/B registration.
   const sourceVideo=join(f.assetRoot,'long-shot.mp4');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-stream_loop','-1','-i',workspaceTestMedia('landscape-red-blue.mp4'),'-t','8','-c','copy',sourceVideo]);

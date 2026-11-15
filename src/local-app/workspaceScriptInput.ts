@@ -17,12 +17,13 @@ export function workspaceScriptInput(source:string){
 export const workspaceScriptExample=`# 雨后的街角
 
 ## 制作设置
-- 模板版本：2
+- 模板版本：3
 - 画幅：9:16
 
 ## 正文
 ### 段落 01
 - 口播：雨停了，街角还亮着一盏灯。
-- 首帧素材：无
-- 视频生成提示词：雨后街角，暖色路灯倒映在积水中，镜头缓慢推进。
+- 画面来源：图片
+- 画面提示：雨后街角，暖色路灯倒映在积水中。
+- 镜头时长（秒）：5
 `;

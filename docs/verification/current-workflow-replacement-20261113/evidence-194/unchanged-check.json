@@ -1,0 +1,24 @@
+{
+  "sourceFiles": 1366,
+  "matchesFinalSnapshot": true,
+  "stageChanges": [
+    "src/local-app/productionSoundUse.ts",
+    "src/local-app/productionMetricsCollected.ts",
+    "src/local-app/productionSoundUse.integration.test.ts",
+    "src/local-app/productionMilestonesMigration.integration.test.ts",
+    "src/local-app/productionWorkspaceCommands.ts",
+    "src/local-app/productionSoundUseMigration.integration.test.ts",
+    "src/worker/mediaTools.ts",
+    "db/current/194-production-sound-use.sql"
+  ],
+  "headUnchanged": true,
+  "physicalIndexUnchanged": true,
+  "dailySnapshotIdenticalToC1": true,
+  "dailySchemaStill185": true,
+  "metricsStillDisabled": true,
+  "sourceSnapshot": "/private/tmp/loop-story-e2e-zHmY2s/source",
+  "ownedContainerAbsent": true,
+  "paidCalls": 0,
+  "videoApiCalls": 0,
+  "noCommitOrPush": true
+}

@@ -6,24 +6,29 @@ import {workspaceExportFields,type WorkspaceExport,type WorkspaceExportIssue} fr
 import {workspaceCaptionFields,type WorkspaceCaptionState} from './workspaceCaptions.js';
 /** Provenance bindings identify native items; the OpenChatCut document owns editing. */
 export interface WorkspaceSource {materialRevisionId:string;relativePath:string;sha256:string;fileSize:number;kind:'video'|'image'|'audio'}
-export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:string;soundIntent?:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
+export interface WorkspaceClip {voiceInput?:import('./workspaceVoiceInput.js').WorkspaceVoiceInput;renderPreferences?:import('./workspaceRenderPreferences.js').WorkspaceRenderPreferences;id:string;itemId:string;shotId:string;text:string;soundIntent?:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
+export interface LegacyDraftInputs {version:'legacy-draft-inputs/v1';sourceSha256:string;shots:Array<{shotId:string;confirmationStatus:string;audioMode:string;materialRevisionId:string|null;audioTrackId:string|null;subtitleText:string;ttsText:string|null;ranges:Array<{startSeconds:number;endSeconds:number}>;composition:unknown}>;issues:Array<{shotId:string;kind:string}>}
 export interface ProductionWorkspace {
+ coverInputs?:import('./workspaceCover.js').WorkspaceCoverInput[];
+ legacyInputs?:LegacyDraftInputs;
  scriptResume?:{canReuse:boolean;reason:string};
  selectedImages?:Array<{targetItemId:string;candidateId:string;materialRevisionId:string}>;
  visualConfiguration?:{imageSelection?:import('./productionSelection.js').ProductionSelection;imageModel:string|null;videoModel:string|null;videoProvider:string|null};
  recovery?:{decision:'preserve'|'fresh';relativePath:string;sha256:string;fileSize:number};
- preparation?:{origin:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string}>};
+ preparation?:{origin:string;planSha256?:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string;visualSource?:import('./reviews/productionScript.js').ProductionVisualSource;materialReference?:string}>};
  pexels?:import('./workspacePexels.js').WorkspacePexelsState;visualCandidates?:WorkspaceVisualCandidate[];visualTasks?:WorkspaceVisualTask[];visualTargets?:WorkspaceVisualTarget[];
- id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string;revision:number;contentSha256:string;nativeEditRevision?:number;
+ id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string|null;preparationRevisionId?:string;revision:number;contentSha256:string;nativeEditRevision?:number;
  audio?:{enabled?:{bgm:boolean;sfx:boolean};defaults?:{selection?:import('./productionSelection.js').ProductionSelection;settings?:{description:string;query:string;materialRevisionId:string}}|null;mix:WorkspaceAudioMix;preparations:Array<{generationTask?:import('./workspaceVisualCandidates.js').WorkspaceVisualTask;id:string;kind:string;shotId:string|null;sourceItemId:string|null;description:string;query:string|null;selection?:import('./productionSelection.js').ProductionSelection|null;connection?:{name:string;version:number}|null;anchor:string;offsetSeconds:number;durationSeconds:number;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;relativePath:string|null;sha256:string|null;fileSize:number;adoptedItemId:string|null;source:Record<string,unknown>|null}>};usedNarration?:WorkspaceUsedNarration[];candidates?:WorkspaceCandidate[];deliveries?:WorkspaceDelivery[];exports?:WorkspaceExport[];exportIssues?:WorkspaceExportIssue[];captions?:WorkspaceCaptionState[];narration?:WorkspaceNarration[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
  history:Array<{revision:number;sha256:string;scriptRevisionId:string;reason:string|null;createdAt?:string}>;
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
 export const productionWorkspaceFields:Record<string,string[]>={
+ importLegacyDraftInputs:['episodeId','expectedScriptRevisionId','reviewPackageId','workbenchSha256'],
+ adoptLegacyPlan:['episodeId','expectedScriptRevisionId','expectedPlanSha256'],
  prepareWorkspaceCall:['episodeId','workspaceId','expectedRevision','callCommand','callData'],
  confirmWorkspaceCall:['episodeId','workspaceId','expectedRevision','confirmationId','reservationCents'],
  resumeWorkspaceEditing:['episodeId','workspaceId','expectedRevision','expectedScriptRevisionId','expectedProjectSha256'],
- adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
+ adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','workbenchSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
  authorizeWorkspacePreparation:['episodeId','workspaceId','expectedRevision','enabled'],
  saveWorkspaceSoundIntent:['episodeId','workspaceId','expectedRevision','expectedProjectSha256','shotId','soundIntent'],
  ...workspaceVisualFields,

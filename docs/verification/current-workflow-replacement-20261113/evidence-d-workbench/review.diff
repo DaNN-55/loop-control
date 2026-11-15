@@ -1,0 +1,481 @@
+--- before/db/current/197-legacy-workbench-source.sql
++++ after/db/current/197-legacy-workbench-source.sql
+@@ -0,0 +1,43 @@
++-- Owner-scoped historical source snapshot. No old execution or table grant is restored.
++CREATE FUNCTION local_identity.read_legacy_workbench_source(p_episode uuid,p_lock boolean DEFAULT false) RETURNS jsonb
++LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
++DECLARE actor uuid:=local_identity.owner_id(); e public.episodes; b public.review_packages;
++BEGIN
++ IF session_user<>'loop_app' OR actor IS NULL OR NOT EXISTS(SELECT 1 FROM public.episodes x JOIN public.account_memberships m ON m.account_id=x.account_id WHERE x.id=p_episode AND m.user_id=actor AND m.role='owner') THEN
++  RAISE EXCEPTION 'Owned legacy source required' USING ERRCODE='42501';
++ END IF;
++ SELECT * INTO e FROM public.episodes WHERE id=p_episode;
++ SELECT * INTO b FROM public.review_packages WHERE episode_id=p_episode AND stage='storyboard_review' AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1;
++ IF b.id IS NULL OR NOT EXISTS(SELECT 1 FROM public.shot_preparation_drafts WHERE episode_id=p_episode AND review_package_id=b.id) THEN RETURN NULL;END IF;
++ IF p_lock THEN
++  IF NOT local_identity.lock_owned_input_episode(p_episode) OR e.archived_at IS NOT NULL OR e.stage='production_completed' OR local_identity.is_historical_episode(p_episode) THEN
++   RAISE EXCEPTION 'Active owned input required' USING ERRCODE='42501';
++  END IF;
++  PERFORM 1 FROM public.review_packages WHERE id=b.id FOR SHARE;
++  PERFORM 1 FROM public.shot_preparation_drafts WHERE episode_id=p_episode AND review_package_id=b.id ORDER BY id FOR SHARE;
++  PERFORM 1 FROM public.tasks WHERE episode_id=p_episode ORDER BY id FOR SHARE;
++  PERFORM 1 FROM public.production_material_revisions WHERE episode_id=p_episode ORDER BY id FOR SHARE;
++  PERFORM 1 FROM public.audio_tracks WHERE episode_id=p_episode ORDER BY id FOR SHARE;
++  PERFORM 1 FROM public.artifacts WHERE episode_id=p_episode ORDER BY id FOR SHARE;
++  PERFORM 1 FROM public.storyboard_audio_selections WHERE episode_id=p_episode AND review_package_id=b.id ORDER BY id FOR SHARE;
++  PERFORM 1 FROM public.approvals WHERE episode_id=p_episode AND review_package_id=b.id ORDER BY id FOR SHARE;
++  PERFORM 1 FROM public.material_revision_approvals a WHERE EXISTS(SELECT 1 FROM public.production_material_revisions m WHERE m.id=a.material_revision_id AND m.episode_id=p_episode) ORDER BY id FOR SHARE;
++ END IF;
++ RETURN jsonb_build_object(
++  'version','legacy-shot-workbench/v1','episodeId',p_episode,'scriptRevisionId',e.main_script_revision_id,
++  'board',(SELECT to_jsonb(p) FROM public.review_packages p WHERE p.id=b.id),
++  'drafts',coalesce((SELECT jsonb_agg(to_jsonb(d) ORDER BY d.shot_id) FROM public.shot_preparation_drafts d WHERE d.episode_id=p_episode AND d.review_package_id=b.id),'[]'::jsonb),
++  'tasks',coalesce((SELECT jsonb_agg(to_jsonb(t) ORDER BY t.id) FROM public.tasks t WHERE t.episode_id=p_episode),'[]'::jsonb),
++  'materials',coalesce((SELECT jsonb_agg(to_jsonb(m) ORDER BY m.id) FROM public.production_material_revisions m WHERE m.episode_id=p_episode),'[]'::jsonb),
++  'tracks',coalesce((SELECT jsonb_agg(to_jsonb(t) ORDER BY t.id) FROM public.audio_tracks t WHERE t.episode_id=p_episode),'[]'::jsonb),
++  'artifacts',coalesce((SELECT jsonb_agg(to_jsonb(a) ORDER BY a.id) FROM public.artifacts a WHERE a.episode_id=p_episode),'[]'::jsonb),
++  'script',(SELECT to_jsonb(m) FROM public.production_material_revisions m WHERE m.id=e.main_script_revision_id AND m.episode_id=p_episode),
++  'selections',coalesce((SELECT jsonb_agg(to_jsonb(s) ORDER BY s.id) FROM public.storyboard_audio_selections s WHERE s.episode_id=p_episode AND s.review_package_id=b.id),'[]'::jsonb),
++  'approvals',coalesce((SELECT jsonb_agg(to_jsonb(a) ORDER BY a.id) FROM public.approvals a WHERE a.episode_id=p_episode AND a.review_package_id=b.id AND a.stage='storyboard_approved' AND a.decision='approved'),'[]'::jsonb),
++  'materialApprovals',coalesce((SELECT jsonb_agg(to_jsonb(a) ORDER BY a.id) FROM public.material_revision_approvals a JOIN public.production_material_revisions m ON m.id=a.material_revision_id AND m.episode_id=p_episode),'[]'::jsonb),
++  'series',(SELECT to_jsonb(s) FROM public.series_versions s WHERE s.id=e.series_version_id AND s.account_id=e.account_id),
++  'plan',(SELECT to_jsonb(p) FROM local_identity.script_productions p WHERE p.episode_id=p_episode AND p.owner_id=actor)
++ );
++END $$;
++REVOKE ALL ON FUNCTION local_identity.read_legacy_workbench_source(uuid,boolean) FROM PUBLIC,loop_owner,loop_worker,loop_anonymous;
++GRANT EXECUTE ON FUNCTION local_identity.read_legacy_workbench_source(uuid,boolean) TO loop_app;
+--- before/src/local-app/legacyWorkbenchAdoption.integration.test.ts
++++ after/src/local-app/legacyWorkbenchAdoption.integration.test.ts
+@@ -0,0 +1,197 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {readFile,writeFile,mkdir} from 'node:fs/promises';
++import {join} from 'node:path';
++import {createHash,randomUUID} from 'node:crypto';
++import {execFileSync} from 'node:child_process';
++import {reviewRenderFromSnapshot} from '../worker/codexRunner';
++import {legacyHtmlFixture} from './legacyHtmlWorkspace.fixture';
++import {productionWorkspaceFixture} from './productionWorkspace.fixture';
++import {editStudioDocument} from './studioDocument.fixture';
++import {nativeWorkerPort} from './workerDatabase';
++import {runWorkspaceDeliveryProcess} from './workspaceDelivery.fixture';
++import {workspaceTestMedia} from './workspaceTestMedia.fixture';
++import {defaultShotCaptionContract} from '../shotCaptions';
++const hash=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
++async function recordedWorkbench(layout:'legacy'|'registered'='legacy',mode:'none'|'source'|'tts'='none'){
++ const f=await productionWorkspaceFixture({runtime:{wake(){}},...(layout==='registered'?{episodeRelativePath:()=> '原工作版本 [D]_%/素材'}:{})});
++ try{
++  await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,2) ON CONFLICT(singleton) DO NOTHING');
++  if(mode==='source'){
++   const path=join(f.root,'recorded-source.mp4');execFileSync('ffmpeg',['-nostdin','-v','error','-i',join(f.assetRoot,f.videoPath),'-i',join(f.assetRoot,f.episodeRelativePath,'voice.mp3'),'-c:v','copy','-c:a','aac','-shortest',path]);
++   const bytes=await readFile(path);await writeFile(join(f.assetRoot,f.videoPath),bytes);f.files[0].sha256=hash(bytes);f.files[0].fileSize=bytes.length;
++   await f.c.query('UPDATE public.production_material_revisions SET sha256=$2,file_size=$3 WHERE id=$1',[f.material,hash(bytes),bytes.length]);await f.c.query('UPDATE public.artifacts SET sha256=$3,file_size=$4 WHERE episode_id=$1 AND relative_path=$2',[f.episode,f.videoPath,hash(bytes),bytes.length]);
++  }
++  const board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.shots=board.shots.slice(0,1);
++  const bytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),bytes);
++  await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(bytes),bytes.length]);
++  await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);
++  await f.c.query("INSERT INTO public.approvals(episode_id,stage,decision,reason,actor_id,review_package_id) VALUES($1,'storyboard_approved','approved','Recorded workbench evidence',$2,$3)",[f.episode,f.owner,f.board]);
++  await f.c.query("UPDATE public.shot_preparation_drafts SET audio_mode='none',subtitle_text='原字幕草稿',subtitles_enabled=false,selected_material_revision_id=$3,clip_start_seconds=0,clip_end_seconds=2,clip_segments='[{\"start_seconds\":0,\"end_seconds\":2}]',video_status='ready',video_duration_seconds=2,current_video_task_id=$4,current_video_artifact_id=(SELECT id FROM public.artifacts WHERE episode_id=$1 AND relative_path=$5 LIMIT 1) WHERE episode_id=$1 AND review_package_id=$2",[f.episode,f.board,f.material,f.task,f.videoPath]);
++  let voice:{taskId:string;trackId:string}|null=null;
++  if(mode!=='none'){
++   const track=randomUUID(),task=randomUUID(),artifact=randomUUID(),draft=(await f.c.query('SELECT id FROM public.shot_preparation_drafts WHERE episode_id=$1',[f.episode])).rows[0].id;
++   await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,$3,'completed',$4)",[task,f.episode,mode==='source'?'extract_embedded_audio':'generate_narration',{shot_preparation:{draft_id:draft},media:{narration:{text:'原口播确认正文'}}}]);
++   await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5,$6,$7)",[artifact,f.episode,task,mode==='source'?'source_audio':'narration_audio',f.episodeRelativePath+'/voice.mp3',f.files[1].sha256,f.files[1].fileSize]);
++   await f.c.query("INSERT INTO public.audio_tracks(id,episode_id,source_task_id,source_artifact_id,source_review_package_id,track_kind,cue_id,relative_path,sha256,file_size,duration_seconds) VALUES($1,$2,$3,$4,$5,$6,'shot-1',$7,$8,$9,2)",[track,f.episode,task,artifact,f.board,mode==='source'?'source':'narration',f.episodeRelativePath+'/voice.mp3',f.files[1].sha256,f.files[1].fileSize]);
++   await f.c.query("UPDATE public.shot_preparation_drafts SET audio_mode=$3,current_audio_track_id=$2,tts_text=CASE WHEN $3='tts' THEN '原口播确认正文' ELSE NULL END,tts_voice=CASE WHEN $3='tts' THEN 'recorded-voice' ELSE NULL END,tts_speaking_rate=CASE WHEN $3='tts' THEN 1 ELSE NULL END WHERE id=$1",[draft,track,mode]);
++   voice={taskId:task,trackId:track};
++  }
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='confirmed',confirmed_at=now(),confirmed_by=$3,current_preview_task_id=$4,current_preview_input_fingerprint=preparation_input_fingerprint WHERE episode_id=$1 AND review_package_id=$2",[f.episode,f.board,f.owner,f.task]);
++  // The original task carries the exact recorded confirmation; no SDK/HTML project exists.
++  const d=(await f.c.query('SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2',[f.episode,f.board])).rows[0];
++  const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
++  snapshot.input_artifacts=f.files;snapshot.review_render.storyboard=board;snapshot.review_render.confirmed_shots=[{shot_id:d.shot_id,confirmation_status:'confirmed',input_fingerprint:d.preparation_input_fingerprint,source_material_revision_id:f.material,clip_segments:d.clip_segments,composition:d.composition,preparation_contract:d.preparation_contract,audio_mode:mode,audio_track_id:mode==='tts'?voice!.trackId:null,subtitle_text:d.subtitle_text,subtitles_enabled:false}];
++  snapshot.review_render.members=[{member_key:'shot:'+d.shot_id,member_kind:'shot_media',source_material_revision_id:f.material,relative_path:f.videoPath,sha256:f.files[0].sha256,start_seconds:0,duration_seconds:2,clip_segments:d.clip_segments,composition:d.composition,preparation_contract:d.preparation_contract,input_fingerprint:d.preparation_input_fingerprint,audio_mode:mode,subtitle_text:d.subtitle_text,subtitles_enabled:false}];
++  if(mode==='tts')snapshot.review_render.members.push({member_key:'narration:shot-1',member_kind:'narration',task_id:voice!.taskId,audio_track_id:voice!.trackId,audio_mode:'tts',relative_path:f.episodeRelativePath+'/voice.mp3',sha256:f.files[1].sha256,start_seconds:0,duration_seconds:2});
++  await f.c.query('UPDATE public.tasks SET input_snapshot=$2 WHERE id=$1',[f.task,snapshot]);
++  await f.c.query('DELETE FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode]);
++  const get=async(token=f.token)=>{const r=await fetch(`${f.origin}/api/local/episodes/${f.episode}/legacy-workbench`,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};};
++  return{...f,get,draft:d};
++ }catch(e){await f.close();throw e;}
++}
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['legacy','registered'] as const)('continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (%s)',async(layout)=>{
++ const f=await recordedWorkbench(layout);
++ try{
++  const facts=async()=>(await f.c.query("SELECT jsonb_build_object('tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'drafts',(SELECT jsonb_agg(d ORDER BY id) FROM public.shot_preparation_drafts d WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(a ORDER BY id) FROM public.approvals a WHERE episode_id=$1),'reviews',(SELECT jsonb_agg(p ORDER BY id) FROM public.review_packages p WHERE episode_id=$1)) value",[f.episode])).rows[0].value;
++  const before=await facts(),original=await readFile(join(f.assetRoot,f.videoPath));
++  const read=await f.get();expect(read.status,JSON.stringify(read.body)).toBe(200);expect(read.body).toMatchObject({version:'legacy-shot-workbench/v1',sourceVerification:'not_checked',shots:[{shotId:'shot-1',confirmationStatus:'confirmed'}]});
++  expect((await f.get(f.otherToken)).status).toBe(404);expect(await facts()).toEqual(before);
++  const r=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  expect(w.readiness).toMatchObject({placeholders:[],missingSources:[]});expect(w.clips[0].source.materialRevisionId).toBe(f.material);expect(w.history[0].reason).toBe('从原镜头工作版本继续编辑');
++  const recovery=JSON.parse((await readFile(join(f.assetRoot,w.recovery.relativePath))).toString());expect(recovery.source.version).toBe('legacy-shot-workbench/v1');expect(recovery.source.sha256).toBe(read.body.sha256);expect(recovery.source.record.drafts[0].id).toBe(f.draft.id);
++  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,command+JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
++  await send('saveWorkspaceCaptions',{clipId:w.clips[0].id,captionContract:defaultShotCaptionContract('原字幕草稿','independent',false)});
++  let opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{doc.timelines[0].name='原绑定接入后编辑';});
++  w=(await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256})).productionWorkspace;await send('closeWorkspaceStudio');await f.restart();opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
++  await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{expect(doc.timelines[0].name).toBe('原绑定接入后编辑');});await send('closeWorkspaceStudio');await send('exportWorkspace');expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');
++  expect(await facts()).toEqual(before);expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(original);
++  const output=w.exports[0];await send('confirmWorkspaceExport',{exportId:output.id,expectedExportSha256:output.artifact.sha256,expectedContentSha256:w.contentSha256});
++  await send('prepareWorkspaceDelivery',{exportId:output.id,expectedExportSha256:output.artifact.sha256,expectedContentSha256:w.contentSha256,title:'原绑定继续制作',description:'仅本地历史来源',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});
++  const worker=f.workerPool(),task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:w.deliveries[0].taskId,p_worker_capacity:2}))[0] as any;
++  expect(task.task_id).toBe(w.deliveries[0].taskId);const delivery=await runWorkspaceDeliveryProcess(f,task);expect(delivery.status,JSON.stringify(delivery)).toBe('completed');
++  for(const artifact of delivery.artifacts){const r=await fetch(`${f.origin}/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(artifact.relativePath)}&sha256=${artifact.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);expect(hash(Buffer.from(await r.arrayBuffer()))).toBe(artifact.sha256);}
++  expect((await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE id=$1',[f.task])).rows[0].value).toEqual(before.tasks[0]);
++  expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(before.tasks.length+1);
++  const final=await facts();expect({...final,tasks:final.tasks.filter((t:{id:string})=>t.id!==task.task_id)}).toEqual(before);
++
++ }finally{await f.close();}
++},180000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('refuses an invalidated original preview without reviving or rewriting its manual bindings',async()=>{
++ const f=await recordedWorkbench();
++ try{
++  await f.c.query("UPDATE public.tasks SET invalidated_at=now(),invalidated_reason='Recorded invalidated preview' WHERE id=$1",[f.task]);
++  const read=await f.get();expect(read.status).toBe(200);
++  const before=(await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE episode_id=$1',[f.episode])).rows;
++  const response=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(response.status,JSON.stringify(response.body)).toBe(409);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);
++  expect((await f.c.query('SELECT to_jsonb(d) value FROM public.shot_preparation_drafts d WHERE episode_id=$1',[f.episode])).rows).toEqual(before);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each(['unknown','changed-confirmation','unconfirmed','file-sha'] as const)('refuses %s workbench evidence before creating current registration',async(kind)=>{
++ const f=await recordedWorkbench();
++ try{
++  if(kind==='unknown')await f.c.query("UPDATE public.tasks SET status='blocked',last_result=$2 WHERE id=$1",[f.task,{blockers:[{code:'provider_outcome_unknown'}],retry:{shouldRetry:false}}]);
++  if(kind==='changed-confirmation')await f.c.query("UPDATE public.tasks SET input_snapshot=jsonb_set(input_snapshot,'{review_render,confirmed_shots,0,input_fingerprint}',to_jsonb(repeat('e',32))) WHERE id=$1",[f.task]);
++  if(kind==='unconfirmed')await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='pending' WHERE id=$1",[f.draft.id]);
++  if(kind==='file-sha'){const original=await readFile(join(f.assetRoot,f.videoPath)),bad=Buffer.from(original);bad[bad.length-1]^=1;await writeFile(join(f.assetRoot,f.videoPath),bad);}
++  const read=await f.get();expect(read.status).toBe(200);expect(read.body.sourceVerification).toBe('not_checked');
++  const before=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE episode_id=$1 ORDER BY id',[f.episode])).rows;
++  const response=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(response.status,JSON.stringify(response.body)).toBe(409);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);
++  expect((await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE episode_id=$1 ORDER BY id',[f.episode])).rows).toEqual(before);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('requires the exact source, replays only its receipt and preserves a different unknown request and existing current edit',async()=>{
++ const f=await recordedWorkbench();
++ try{
++  const old=randomUUID();await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot,last_result) VALUES($1,$2,'generate_narration','blocked',$3,$4)",[old,f.episode,{original:'frozen unknown input'},{blockers:[{code:'provider_outcome_unknown'}]}]);
++  const before=(await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE episode_id=$1 ORDER BY id',[f.episode])).rows;
++  const read=await f.get(),data={episodeId:f.episode,expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256};
++  expect((await f.request('adoptLegacyWorkspace',{...data,workbenchSha256:'f'.repeat(64)})).status).toBe(409);
++  expect((await f.request('adoptLegacyWorkspace',{...data,artifactId:randomUUID()})).status).toBe(400);
++  expect((await f.request('adoptLegacyWorkspace',data,{token:f.otherToken})).status).toBe(404);
++  const {csrfFor}=await import('./sessions'),key=randomUUID();
++  const post=async()=>{const r=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'adoptLegacyWorkspace',idempotencyKey:key,data})});return{status:r.status,body:await r.json()};};
++  const adopted=await post();expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);expect((await post()).body).toEqual(adopted.body);
++  const bytes=await readFile(join(f.assetRoot,adopted.body.project.relativePath));expect((await f.request('adoptLegacyWorkspace',data)).status).toBe(409);expect(await readFile(join(f.assetRoot,adopted.body.project.relativePath))).toEqual(bytes);
++  expect((await f.c.query('SELECT to_jsonb(t) value FROM public.tasks t WHERE episode_id=$1 ORDER BY id',[f.episode])).rows).toEqual(before);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('preserves a saved native document when its SQL registration is missing instead of replacing it with old bindings',async()=>{
++ const f=await recordedWorkbench();
++ try{
++  const read=await f.get(),projectId=`loop-control-${f.episode}`,work=join(f.assetRoot,f.episodeRelativePath,'openchatcut-work/current');await mkdir(join(work,'runtime'),{recursive:true});
++  const project={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:'original-edit'},assets:[],mediaFolders:[],activeTimelineId:projectId,timelines:[{id:projectId,name:'原编辑不可替换',fps:30,width:1080,height:1920,fit:'contain',items:[],tracks:{},trackOrder:[],transitions:[],selectedId:null}]};
++  const store=Buffer.from(JSON.stringify({version:1,entries:{projects:[{id:projectId,name:'原剪辑'}],[`project:${projectId}`]:project}})),metadata=Buffer.from(JSON.stringify({projectId,reverseSources:{},inputFingerprint:'original-edit'}));
++  await writeFile(join(work,'runtime/project-store-v1.json'),store,{flag:'wx'});await writeFile(join(work,'workspace.json'),metadata,{flag:'wx'});
++  const r=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(409);
++  expect(await readFile(join(work,'runtime/project-store-v1.json'))).toEqual(store);expect(await readFile(join(work,'workspace.json'))).toEqual(metadata);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('uses the original HTML project instead of rebuilding its already edited content from older bindings',async()=>{
++ const f=await recordedWorkbench();
++ try{
++  const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot,render=reviewRenderFromSnapshot(snapshot)!;
++  const html=Buffer.from(legacyHtmlFixture(render).html),path=f.episodeRelativePath+'/original-edit.html';await writeFile(join(f.assetRoot,path),html);
++  await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'review_render_project',$4,$5,$6)",[randomUUID(),f.episode,f.task,path,hash(html),html.length]);
++  const read=await f.get(),r=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(409);
++  expect(await readFile(join(f.assetRoot,path))).toEqual(html);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('continues the old source-audio protocol whose preview correctly has a null narration track identity',async()=>{
++ const f=await recordedWorkbench('legacy','source');
++ try{
++  const read=await f.get(),r=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
++  expect(w.audio.mix.voices.find((v:any)=>v.shotId==='shot-1').mode).toBe('source');expect(w.readiness.missingSources).toEqual([]);
++  const caption=await f.request('saveWorkspaceCaptions',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,captionContract:defaultShotCaptionContract('原字幕草稿','independent',false)});expect(caption.status).toBe(200);w=caption.body;
++  const output=await f.request('exportWorkspace',{workspaceId:w.id,expectedRevision:w.revision});expect(output.status).toBe(200);expect(output.body.exports[0].status,JSON.stringify(output.body.exports[0])).toBe('ready');
++  const recovery=JSON.parse((await readFile(join(f.assetRoot,w.recovery.relativePath))).toString());expect(recovery.source.record.drafts[0].current_audio_track_id).toBe(f.draft.current_audio_track_id);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('keeps the original frozen music A when a later unconfirmed result B exists for the same cue',async()=>{
++ const f=await recordedWorkbench();
++ try{
++  const cue='bgm-recorded',selection=randomUUID(),board=JSON.parse((await readFile(join(f.assetRoot,f.boardPath))).toString());board.audioCues=[{id:cue,kind:'bgm',description:'原配乐',startSeconds:0,durationSeconds:2}];
++  const boardBytes=Buffer.from(JSON.stringify(board));await writeFile(join(f.assetRoot,f.boardPath),boardBytes);await f.c.query('UPDATE public.artifacts SET sha256=$2,file_size=$3 WHERE id=(SELECT artifact_id FROM public.review_packages WHERE id=$1)',[f.board,hash(boardBytes),boardBytes.length]);await f.c.query('UPDATE public.review_packages SET context_snapshot=$2 WHERE id=$1',[f.board,{worker_result:{storyboard:board}}]);
++  const createTrack=async(label:string,frequency:number)=>{
++   const path=f.episodeRelativePath+`/music-${label}.mp3`;execFileSync('ffmpeg',['-nostdin','-v','error','-f','lavfi','-i',`sine=frequency=${frequency}:sample_rate=48000`,'-t','2','-c:a','libmp3lame',join(f.assetRoot,path)]);const bytes=await readFile(join(f.assetRoot,path)),task=randomUUID(),artifact=randomUUID(),track=randomUUID();
++   await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_soundtrack','completed',$3)",[task,f.episode,{originalResult:label}]);await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'soundtrack_audio',$4,$5,$6)",[artifact,f.episode,task,path,hash(bytes),bytes.length]);
++   await f.c.query("INSERT INTO public.audio_tracks(id,episode_id,source_task_id,source_artifact_id,source_review_package_id,track_kind,cue_id,relative_path,sha256,file_size,duration_seconds,created_at) VALUES($1,$2,$3,$4,$5,'bgm',$6,$7,$8,$9,2,clock_timestamp()+CASE WHEN $10 THEN interval '-1 hour' ELSE interval '0' END)",[track,f.episode,task,artifact,f.board,cue,path,hash(bytes),bytes.length,label==='A']);return{track,task,path,sha:hash(bytes),size:bytes.length};
++  };
++  const a=await createTrack('A',220);
++  await f.c.query("INSERT INTO public.storyboard_audio_selections(id,episode_id,review_package_id,target_kind,target_id,audio_kind,cue_id,created_by) VALUES($1,$2::uuid,$3,'episode',$2::uuid::text,'bgm',$4,$5)",[selection,f.episode,f.board,cue,f.owner]);
++  await f.c.query("UPDATE public.shot_preparation_drafts SET confirmation_status='confirmed',confirmed_at=now(),confirmed_by=$2,current_preview_task_id=$3,current_preview_input_fingerprint=preparation_input_fingerprint WHERE id=$1",[f.draft.id,f.owner,f.task]);
++  const draft=(await f.c.query('SELECT * FROM public.shot_preparation_drafts WHERE id=$1',[f.draft.id])).rows[0],snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
++  snapshot.review_render.storyboard=board;Object.assign(snapshot.review_render.confirmed_shots[0],{input_fingerprint:draft.preparation_input_fingerprint,preparation_contract:draft.preparation_contract});Object.assign(snapshot.review_render.members[0],{input_fingerprint:draft.preparation_input_fingerprint,preparation_contract:draft.preparation_contract});snapshot.review_render.members.push({member_key:`bgm:${f.episode}`,member_kind:'soundtrack',audio_kind:'bgm',task_id:a.task,audio_track_id:a.track,relative_path:a.path,sha256:a.sha,start_seconds:0,duration_seconds:2});snapshot.input_artifacts.push({relativePath:a.path,sha256:a.sha,fileSize:a.size});
++  await f.c.query('UPDATE public.tasks SET input_snapshot=$2 WHERE id=$1',[f.task,snapshot]);const b=await createTrack('B',880);
++  const read=await f.get();expect(read.status).toBe(200);expect(read.body.shots[0].confirmationStatus).toBe('confirmed');
++  const r=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:read.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);
++  const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${r.body.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);const project=(await response.json()).project,paths=project.timelines[0].items.filter((i:any)=>i.kind==='audio').map((i:any)=>i.src);expect(paths).toContain(a.path);expect(paths).not.toContain(b.path);
++  const recovered=JSON.parse((await readFile(join(f.assetRoot,r.body.recovery.relativePath))).toString());expect(recovered.source.record.tracks.map((t:any)=>t.id)).toEqual(expect.arrayContaining([a.track,b.track]));expect(await readFile(join(f.assetRoot,b.path))).toBeTruthy();
++ }finally{await f.close();}
++},90000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('preserves the exact confirmed narration track and refuses its invalidated source task',async()=>{
++ const f=await recordedWorkbench('legacy','tts');
++ try{
++  const track=f.draft.current_audio_track_id,sourceTask=(await f.c.query('SELECT source_task_id FROM public.audio_tracks WHERE id=$1',[track])).rows[0].source_task_id;
++  const read=await f.get(),before=(await f.c.query('SELECT to_jsonb(a) value FROM public.audio_tracks a WHERE id=$1',[track])).rows[0].value;
++  await f.c.query("UPDATE public.tasks SET invalidated_at=now(),invalidated_reason='Original voice withdrawn' WHERE id=$1",[sourceTask]);
++  const changed=await f.get();expect(changed.body.sha256).not.toBe(read.body.sha256);
++  const bad=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:changed.body.sha256});expect(bad.status,JSON.stringify(bad.body)).toBe(409);expect(bad.body.error).toContain('原音轨');
++  await f.c.query('UPDATE public.tasks SET invalidated_at=NULL,invalidated_reason=NULL WHERE id=$1',[sourceTask]);
++  const restored=await f.get(),r=await f.request('adoptLegacyWorkspace',{expectedScriptRevisionId:f.script,reviewPackageId:f.board,workbenchSha256:restored.body.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);expect(r.body.narration[0].adoptedAudioTrackId).toBe(track);
++  expect((await f.c.query('SELECT to_jsonb(a) value FROM public.audio_tracks a WHERE id=$1',[track])).rows[0].value).toEqual(before);
++ }finally{await f.close();}
++},90000);
+--- before/src/local-app/legacyWorkbenchMigration.integration.test.ts
++++ after/src/local-app/legacyWorkbenchMigration.integration.test.ts
+@@ -0,0 +1,42 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {randomBytes,randomUUID} from 'node:crypto';
++import {join} from 'node:path';
++import {loadSchemaCatalog,freshSchemaTransaction,migrationTransaction,schemaMigrationPlan} from './schemaMigrations';
++import {seedHistoricalPreparation} from './historicalPreparation.fixture';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('197 preserves nonempty 196 business, frozen and collected facts, rolls back atomically, and fully restores the candidate without backfilling',async()=>{
++ const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=runtimeContext();if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only isolated workbench migration');
++ const {databaseSnapshot,assertRestored}=await import(join(process.cwd(),'scripts/runtime/clean-sql-cutover.mjs'));
++ const catalog=loadSchemaCatalog(process.cwd()),old={...catalog,current:catalog.current.filter(m=>m.version<'188-')},suffix=randomBytes(6).toString('hex'),source='loop_milestones_'+suffix,restored=source+'_restored',databases:string[]=[],sql=(q:string,db=source)=>context.sql(q,db),off=randomUUID();
++ try{
++  for(const db of [source,restored]){context.sql('CREATE DATABASE '+db+' TEMPLATE template0','postgres');databases.push(db);}
++  sql(freshSchemaTransaction(old));const ids=seedHistoricalPreparation(sql);sql(migrationTransaction(catalog.current.filter(m=>m.version>='188-'&&m.version<'197-')));
++  sql(`INSERT INTO local_identity.owners(id,email)VALUES('${off}','off@example.invalid');INSERT INTO local_identity.production_metric_controls(owner_id,enabled)VALUES('${off}',false);
++   SET SESSION AUTHORIZATION loop_app;BEGIN;SELECT set_config('loop.owner_id','${ids.owner}',true);SELECT local_identity.set_production_metrics_enabled(true);
++   SELECT local_identity.record_owned_production_metric('${ids.episode}','retry_relation','retained-before-milestones',jsonb_build_object('workspace_id','${ids.workspace}','reason_code','retained_fact'));COMMIT;RESET SESSION AUTHORIZATION;`);
++  expect(sql("SELECT has_table_privilege('loop_app','public.approvals','SELECT')::text")).toBe('false');
++  const before=databaseSnapshot(context,source,process.cwd()),migration=catalog.current.find(m=>m.version.startsWith('197-'))!;expect(before.rows['local_identity.production_metric_events'].rows).toBe(2);
++  expect(()=>sql('BEGIN;'+migration.body+'SELECT 1/0;COMMIT;')).toThrow(/division by zero/);expect(databaseSnapshot(context,source,process.cwd())).toEqual(before);
++  sql(migrationTransaction([migration]));const after=databaseSnapshot(context,source,process.cwd());
++  expect(after.rows).toEqual(before.rows);expect(after.sequenceRows).toEqual(before.sequenceRows);expect(after.roles).toEqual(before.roles);
++  const addedFunctions=['read_legacy_workbench_source'],addedTriggers:string[]=[];
++  for(const key of Object.keys(before.catalog)){
++   const filtered=after.catalog[key].filter((item:any)=>key==='functions'?!addedFunctions.includes(item.name):key==='triggers'?!addedTriggers.includes(item.name):true);expect(filtered,key).toEqual(before.catalog[key]);
++  }
++  expect(after.catalog.functions.length-before.catalog.functions.length).toBe(1);expect(sql("SELECT has_function_privilege('loop_worker','local_identity.read_legacy_workbench_source(uuid,boolean)','EXECUTE')::text")).toBe('false');expect(sql("SELECT has_function_privilege('loop_app','local_identity.read_legacy_workbench_source(uuid,boolean)','EXECUTE')::text")).toBe('true');expect(after.catalog.triggers.length-before.catalog.triggers.length).toBe(0);
++  expect(after.security.filter((item:any)=>!addedFunctions.some(name=>item.kind==='function'&&item.identity.startsWith('local_identity.'+name+'(')))).toEqual(before.security);
++  for(const [version,value]of Object.entries(before.ledger))expect(after.ledger[version]).toEqual(value);
++  expect(schemaMigrationPlan(Object.fromEntries(Object.entries(after.ledger).map(([key,value])=>[key,(value as {sha256:string}).sha256])),{...catalog,current:catalog.current.filter(m=>m.version<'198-')})).toEqual([]);
++  expect(sql("SELECT count(*) FROM local_identity.production_metric_events WHERE event_type LIKE 'sound_%'")).toBe('0');expect(sql(`SELECT enabled::text FROM local_identity.production_metric_controls WHERE owner_id='${off}'`)).toBe('false');
++  expect(sql("SELECT has_function_privilege('loop_owner','local_identity.read_legacy_workbench_source(uuid,boolean)','EXECUTE')::text")).toBe('false');
++  expect(sql("SELECT has_function_privilege('loop_anonymous','local_identity.read_legacy_workbench_source(uuid,boolean)','EXECUTE')::text")).toBe('false');
++  expect(sql("SELECT has_table_privilege('loop_app','public.approvals','SELECT')::text")).toBe('false');
++  const read=(owner:string)=>sql(`SET SESSION AUTHORIZATION loop_app;BEGIN READ ONLY;SELECT set_config('loop.owner_id','${owner}',true);SELECT local_identity.read_legacy_workbench_source('${ids.episode}',false)->>'version';COMMIT;RESET SESSION AUTHORIZATION;`);
++  expect(read(ids.owner)).toContain('legacy-shot-workbench/v1');expect(()=>read(off)).toThrow(/Owned legacy source required/);
++  expect(databaseSnapshot(context,source,process.cwd())).toEqual(after);
++  sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',source]),restored);assertRestored(after,databaseSnapshot(context,restored,process.cwd()));
++  expect(sql(`SELECT current_audio_track_id::text FROM public.shot_preparation_drafts WHERE episode_id='${ids.episode}'`,restored)).toBe(ids.audio);
++  expect(sql("SELECT count(*) FROM local_identity.production_metric_events WHERE event_type LIKE 'sound_%'",restored)).toBe('0');
++ }finally{for(const db of databases.reverse())context.sql('DROP DATABASE '+db+' WITH (FORCE)','postgres');}
++},120000);
+--- before/src/local-app/legacyWorkbenchSource.ts
++++ after/src/local-app/legacyWorkbenchSource.ts
+@@ -0,0 +1,112 @@
++import type {PoolClient} from 'pg';
++import {isDeepStrictEqual} from 'node:util';
++import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
++import {verifyEpisodeFile} from './episodeFiles.js';
++import {reviewRenderFromSnapshot,shotPreparationContractFromSnapshot} from '../worker/codexRunner.js';
++import {parseShotWorkbenchClipSegments,shotWorkbenchReviewRender,type ShotWorkbenchStudioInput} from '../worker/shotWorkbenchStudio.js';
++import {defaultReviewRenderComposition,reviewRenderCompositionFromJson,reviewRenderCompositionToJson} from '../reviews/reviewComposition.js';
++import {applyScriptRenderSettings,scriptRenderHint} from '../worker/scriptRenderSettings.js';
++import type {Database} from '../lib/database.types.js';
++import type {ResolvedProductionPlan} from '../reviews/productionPlan.js';
++
++
++type Row<K extends keyof Database['public']['Tables']>=Database['public']['Tables'][K]['Row'];
++interface LegacyWorkbenchRecord {
++ version:'legacy-shot-workbench/v1';episodeId:string;scriptRevisionId:string|null;
++ board:Row<'review_packages'>;drafts:Array<Row<'shot_preparation_drafts'>&{preparation_input_fingerprint:string|null;current_audio_track_id:string|null;current_video_artifact_id:string|null;current_video_task_id:string|null}>;tasks:Array<Row<'tasks'>&{invalidated_at:string|null}>;
++ materials:Row<'production_material_revisions'>[];tracks:Row<'audio_tracks'>[];artifacts:Row<'artifacts'>[];
++ script:Row<'production_material_revisions'>|null;selections:Row<'storyboard_audio_selections'>[];
++ approvals:Row<'approvals'>[];materialApprovals:Array<{id:string;material_revision_id:string;approved_by:string;approved_at:string}>;series:Row<'series_versions'>|null;
++ plan:{plan:ResolvedProductionPlan}|null;
++}
++
++/** Saved rows are evidence, not file authority or permission to resume old execution. */
++export async function readLegacyWorkbenchSource(c:PoolClient,episodeId:string,lock=false){
++ const record=(await c.query('SELECT local_identity.read_legacy_workbench_source($1,$2) value',[episodeId,lock])).rows[0].value;
++ if(!record)return null;
++ return{record:record as LegacyWorkbenchRecord,sha256:canonicalFingerprint(record)};
++}
++export function legacyWorkbenchSummary(source:NonNullable<Awaited<ReturnType<typeof readLegacyWorkbenchSource>>>){
++ return{version:source.record.version,sha256:source.sha256,sourceVerification:'not_checked' as const,scriptRevisionId:source.record.scriptRevisionId,reviewPackageId:source.record.board.id,shots:source.record.drafts.map(d=>({shotId:d.shot_id,confirmationStatus:d.confirmation_status,materialRevisionId:d.selected_material_revision_id,audioTrackId:d.current_audio_track_id}))};
++}
++
++/** Reuse the original declared contract, never manufacture confirmation or media. */
++export async function verifyLegacyWorkbenchSource(c:PoolClient,root:string,source:NonNullable<Awaited<ReturnType<typeof readLegacyWorkbenchSource>>>){
++ const s=source.record;
++ function fail(message:string):never{throw new ConfigurationError(409,message);}
++ function object(value:unknown):Record<string,unknown>{if(!value||typeof value!=='object'||Array.isArray(value))fail('原工作版本缺少可核验的声明。');return value as Record<string,unknown>;}
++ if(!s.approvals.length)fail('原分镜缺少原批准记录，未接入旧绑定。');
++ const file=async(f:{relative_path?:unknown;storage_path?:unknown;sha256:unknown;file_size:unknown}|undefined|null)=>{
++  if(!f)fail('原绑定缺少文件登记，未接入旧工作版本。');
++  const path=f.relative_path??f.storage_path;if(typeof path!=='string'||typeof f.sha256!=='string'||!Number.isSafeInteger(Number(f.file_size))||Number(f.file_size)<=0)fail('原绑定的文件声明无效。');
++  try{return await verifyEpisodeFile(c,root,s.episodeId,path,f.sha256,Number(f.file_size));}catch{fail('原工作版本的文件缺失或指纹已变化。');}
++ };
++ const verifyTrack=async(track:Row<'audio_tracks'>)=>{
++  const artifact=s.artifacts.find(a=>a.id===track.source_artifact_id),task=s.tasks.find(t=>t.id===track.source_task_id);
++  if(!artifact||artifact.relative_path!==track.relative_path||artifact.sha256!==track.sha256||Number(artifact.file_size)!==Number(track.file_size)||artifact.producer_task_id!==track.source_task_id||track.source_task_id&&(!task||task.status!=='completed'||task.invalidated_at))fail('原音轨缺少准确且有效的完成产物。');
++  await file(track);
++ };
++ await file(s.script);
++ const boardFile=s.artifacts.find(a=>a.id===s.board.artifact_id),bytes=await file(boardFile);
++ let board;try{board=JSON.parse(bytes!.toString('utf8'));}catch{fail('原分镜文件格式无效。');}
++ const context=object(s.board.context_snapshot),recorded=context.worker_result?object(context.worker_result).storyboard:context.storyboard;
++ if(!isDeepStrictEqual(board,recorded)||!Array.isArray(board?.shots)||!board.shots.length||new Set(board.shots.map((b:{id:string})=>b.id)).size!==board.shots.length)fail('原分镜文件与冻结记录不一致。');
++ if(board.shots.length!==s.drafts.length)fail('原镜头草稿不完整，请按原版本核对。');
++ const drafts:ShotWorkbenchStudioInput['drafts']=[];
++ const soundEvidence:Array<{shotId:string;member:NonNullable<ReturnType<typeof reviewRenderFromSnapshot>>['members'][number]}>=[];
++ for(const shot of board.shots){
++  const d=s.drafts.find(d=>d.shot_id===shot.id);
++  if(!d||d.confirmation_status!=='confirmed'||!d.preparation_input_fingerprint||d.current_preview_input_fingerprint!==d.preparation_input_fingerprint)fail('原镜头尚未按当前输入确认，未伪造原确认。');
++  const task=s.tasks.find(t=>t.id===d.current_preview_task_id);
++  if(!task||task.status!=='completed'||task.invalidated_at)fail('原镜头预览尚未完成、已失效或结果未知，不会重新请求。');
++  const snapshot=object(task.input_snapshot);
++  let frozen,contract;
++  try{frozen=reviewRenderFromSnapshot(snapshot);contract=shotPreparationContractFromSnapshot(d.preparation_contract);}catch{fail('原镜头缺少可核验的版本化准备契约。');}
++  const confirmed=frozen?.confirmedShots?.filter(v=>v.shotId===shot.id);
++  const original=confirmed?.[0];
++  if(frozen?.preRenderReviewPackageId!==s.board.id||confirmed?.length!==1||!original||original.inputFingerprint!==d.preparation_input_fingerprint||!isDeepStrictEqual(original.preparationContract,contract)||original.audioMode!==d.audio_mode||original.audioTrackId!==(d.audio_mode==='tts'?d.current_audio_track_id:null)||original.subtitleText!==d.subtitle_text||original.subtitlesEnabled!==d.subtitles_enabled)fail('原预览确认与现存草稿不同，未猜测采用版本。');
++  soundEvidence.push(...frozen.members.filter(m=>m.memberKind==='soundtrack').map(member=>({shotId:d.shot_id,member})));
++  const inputs=snapshot.input_artifacts??[];if(!Array.isArray(inputs))fail('原预览输入文件声明无效。');
++  for(const input of inputs){const f=object(input);await file({relative_path:f.relativePath,sha256:f.sha256,file_size:f.fileSize});}
++  const outputs=(await c.query('SELECT * FROM public.artifacts WHERE producer_task_id=$1 AND episode_id=$2 ORDER BY id',[task.id,s.episodeId])).rows;
++  if(!outputs.length)fail('原预览结果缺失，未接入旧工作版本。');for(const f of outputs)await file(f);
++  const material=s.materials.find(m=>m.id===d.selected_material_revision_id),members=frozen!.members.filter(m=>m.memberKey===`shot:${shot.id}`&&m.memberKind==='shot_media');
++  if(!material||material.material_type!=='video'||members.length!==1||members[0].sourceMaterialRevisionId!==material.id||members[0].relativePath!==material.storage_path||members[0].sha256!==material.sha256||!isDeepStrictEqual(members[0].clipSegments,parseShotWorkbenchClipSegments(d.clip_segments))||contract!.sourceMaterialRevisionId!==material.id)fail('原视频绑定缺少准确同单来源，未建立替代素材。');
++  await file(material);
++  if(d.audio_mode==='tts'){
++   const track=s.tracks.find(t=>t.id===d.current_audio_track_id),voices=frozen!.members.filter(m=>m.memberKey===`narration:${shot.id}`&&m.memberKind==='narration');
++   if(!track||voices.length!==1||voices[0].audioTrackId!==track.id||voices[0].relativePath!==track.relative_path||voices[0].sha256!==track.sha256||track.cue_id!==shot.id)fail('原口播音轨与冻结来源不一致。');
++   if(voices[0].taskId!==undefined&&voices[0].taskId!==track.source_task_id)fail('原口播任务身份与冻结来源不一致。');await verifyTrack(track);
++  }
++  drafts.push({audioMode:d.audio_mode,audioTrackId:d.audio_mode==='none'?null:d.current_audio_track_id??null,clipSegments:parseShotWorkbenchClipSegments(d.clip_segments),composition:contract!.composition,confirmationStatus:'confirmed' as const,inputFingerprint:d.preparation_input_fingerprint,materialRevisionId:material.id,preparationContract:contract!,shotId:d.shot_id,subtitleText:d.subtitle_text,subtitlesEnabled:d.subtitles_enabled,ttsText:d.tts_text??null,videoArtifactId:d.current_video_artifact_id??null,videoTaskId:d.current_video_task_id??null});
++ }
++ const soundtrackMembers=[];
++ const usedSounds=new Set<typeof soundEvidence[number]>();
++ for(const selected of s.selections){
++  if(!selected.material_revision_id&&!selected.cue_id)continue;
++  const key=selected.material_revision_id?'bgm:episode':`${selected.audio_kind}:${selected.target_id}`;
++  const expectedShots=selected.target_kind==='episode'?drafts.map(d=>d.shotId):[selected.target_id];
++  const evidence=expectedShots.map(shotId=>{
++   const matches=soundEvidence.filter(e=>e.shotId===shotId&&e.member.memberKey===key&&e.member.audioKind===selected.audio_kind);
++   if(matches.length!==1)fail('原确认缺少唯一声音来源，未采用新的候选。');usedSounds.add(matches[0]);return matches[0].member;
++  });
++  const frozen=evidence[0];
++  if(!frozen||evidence.some(m=>m.audioTrackId!==frozen.audioTrackId||m.taskId!==frozen.taskId||m.relativePath!==frozen.relativePath||m.sha256!==frozen.sha256))fail('各镜头原确认的声音版本不同，请明确选择原版本。');
++  if(selected.material_revision_id){
++   const material=s.materials.find(m=>m.id===selected.material_revision_id);
++   if(selected.audio_kind!=='bgm'||!material||material.material_type!=='audio'||material.material_purpose!=='background_music'||!s.materialApprovals.some(a=>a.material_revision_id===material.id)||frozen.audioTrackId!==undefined||frozen.relativePath!==material.storage_path||frozen.sha256!==material.sha256)fail('原配乐选择缺少准确的同单许可来源。');
++   await file(material);soundtrackMembers.push({memberKey:'bgm:episode',memberKind:'soundtrack' as const,audioKind:'bgm' as const,relativePath:material.storage_path,sha256:material.sha256,startSeconds:0,durationSeconds:board.shots.reduce((sum:number,shot:{durationSeconds:number})=>sum+Number(shot.durationSeconds),0)});continue;
++  }
++  const cue=board.audioCues?.find((cue:{id:string;kind:string})=>cue.id===selected.cue_id&&cue.kind===selected.audio_kind);
++  const track=s.tracks.find(t=>t.id===frozen.audioTrackId&&t.source_review_package_id===s.board.id&&t.cue_id===selected.cue_id&&t.track_kind===selected.audio_kind&&t.source_task_id===frozen.taskId&&t.relative_path===frozen.relativePath&&t.sha256===frozen.sha256);
++  if(!cue||!track)fail('原配乐或音效的冻结版本缺失，不会采用新结果或重新生成。');await verifyTrack(track);
++  soundtrackMembers.push({memberKey:`${selected.audio_kind}:${selected.target_id}`,memberKind:'soundtrack' as const,audioKind:cue.kind,taskId:track.source_task_id,audioTrackId:track.id,relativePath:track.relative_path,sha256:track.sha256,startSeconds:Number(track.start_seconds??cue.startSeconds??0),durationSeconds:Number(track.duration_seconds)});
++ }
++ if(usedSounds.size!==soundEvidence.length)fail('原确认仍有未映射的声音，不会静默丢弃原采用。');
++ const composition=reviewRenderCompositionFromJson({...reviewRenderCompositionToJson(defaultReviewRenderComposition),...(s.series&&object(s.series.rules).openchatcut_composition?object(object(s.series.rules).openchatcut_composition):{})});
++ if(!composition)fail('原系列合成规则无法核验。');
++ let render=shotWorkbenchReviewRender(s.episodeId,boardFile!.relative_path,{allowedFrames:composition!.allowedFrames??2,frameRate:composition!.frameRate??30,storyboard:board,drafts,materials:s.materials.map(m=>({id:m.id,relativePath:m.storage_path,sha256:m.sha256})),audioTracks:s.tracks.filter(t=>drafts.some(d=>d.audioMode==='tts'&&d.audioTrackId===t.id)).map(t=>({id:t.id,cueId:t.cue_id!,relativePath:t.relative_path,sha256:t.sha256,startSeconds:Number(t.start_seconds),durationSeconds:Number(t.duration_seconds)})),soundtrackMembers});
++ if(!composition)fail('原系列合成规则无法核验。');render.adjustments={...composition!,reason:'从原镜头绑定接入'};
++ const plan=s.plan?.plan as ResolvedProductionPlan|undefined;if(plan)render=applyScriptRenderSettings(render,scriptRenderHint(plan.settings,plan.segments));
++ return render;
++}
+--- before/src/local-app/localRoute.ts
++++ after/src/local-app/localRoute.ts
+@@ -9,6 +9,7 @@
+ import {LocalMediaRootSettings} from './mediaRootSettings.js';
+ import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
+ import {readLegacyStudioProject} from './legacyStudioProject.js';
++import {readLegacyWorkbenchSource,legacyWorkbenchSummary} from './legacyWorkbenchSource.js';
+ import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
+ import{ownerTransaction}from'./ownerTransaction.js';
+ import {readWorkspaceSearch} from './workspaceSearch.js';
+@@ -259,6 +260,15 @@
+     }
+     try{await serveDeliveryArchive(options.mediaRoot,entries,response,episodeId);}catch(error){if(response.headersSent)response.destroy();else throw new ConfigurationError(409,error instanceof Error?error.message:'交付下载失败。');}return;
+    }
++   const legacyWorkbench=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/legacy-workbench$/);
++   if(legacyWorkbench&&uuid.test(legacyWorkbench[1])&&request.method==='GET'){
++    if(url.search)throw new ConfigurationError(400,'原镜头来源查询无效。');
++    const source=await ownerTransaction(options.pool,session.id,true,async c=>{
++     if(!(await c.query("SELECT 1 FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[legacyWorkbench[1],session.id])).rowCount)throw new ConfigurationError(404,'生产单不可见。');
++     return readLegacyWorkbenchSource(c,legacyWorkbench[1]);
++    });
++    send(200,source?legacyWorkbenchSummary(source):null);return;
++   }
+    const legacyProject=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/legacy-project$/);
+    if(legacyProject&&uuid.test(legacyProject[1])&&request.method==='GET'){
+     const download=url.searchParams.get('download');
+--- before/src/local-app/productionWorkspaceCommands.ts
++++ after/src/local-app/productionWorkspaceCommands.ts
+@@ -18,6 +18,8 @@
+ import {importLegacyHtmlWorkspace} from './legacyHtmlWorkspace.js';
+ import {adaptLegacyWorkspaceMetadata} from './legacyWorkspaceMetadata.js';
+ import {readLegacyStudioProject} from './legacyStudioProject.js';
++import {readLegacyWorkbenchSource,verifyLegacyWorkbenchSource} from './legacyWorkbenchSource.js';
++import {buildOpenChatCutProject} from '../worker/openchatcutProject.js';
+ import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
+ import {readWorkspaceVisualCandidates,readWorkspaceVisualTasks,readWorkspaceVisualTargets,validateWorkspaceVisualUses,executeWorkspaceVisualCandidate} from './workspaceVisualCandidates.js';
+ import {workspaceVisualFields} from '../workspaceVisualCandidates.js';
+@@ -100,7 +102,16 @@
+    if(!board||board.id!==data.reviewPackageId)throw new ConfigurationError(409,'当前分镜基准已变化，请刷新生产单。');
+    const saved=await readLegacyStudioProject(c,root,e.id);
+    let recovery, importedRender:ReturnType<typeof importLegacyHtmlWorkspace>['render']|undefined;
+-   if(data.savedProjectSha256!==undefined){
++   if(data.workbenchSha256!==undefined){
++    if(saved)throw new ConfigurationError(409,'已有保存的编辑，请选择原工程继续。');
++    if(data.savedProjectSha256!==undefined||data.artifactId!==undefined||data.expectedSourceSha256!==undefined||typeof data.workbenchSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.workbenchSha256))throw new ConfigurationError(400,'请只选择一个准确的原镜头工作版本。');
++    if((await c.query("SELECT 1 FROM public.artifacts a JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed' WHERE a.episode_id=$1 AND a.artifact_type IN ('review_render_project','final_render_project') AND a.relative_path ~ '\\.(json|html)$' LIMIT 1",[e.id])).rowCount)throw new ConfigurationError(409,'已有原工程产物，请选择原工程接入，不能由绑定重建。');
++    const source=await readLegacyWorkbenchSource(c,e.id,true);
++    if(!source||source.record.board.id!==board.id||source.record.scriptRevisionId!==e.main_script_revision_id||source.sha256!==data.workbenchSha256)throw new ConfigurationError(409,'原镜头工作版本已变化，请重新读取后确认。');
++    importedRender=await verifyLegacyWorkbenchSource(c,root,source);
++    const project=buildOpenChatCutProject(importedRender,`loop-control-${e.id}`);
++    recovery={...await preserveLegacyDocument(c,root,e.id,{project,source:{version:source.record.version,sha256:source.sha256,record:source.record}}),decision:'preserve' as const};
++   }else if(data.savedProjectSha256!==undefined){
+     if(data.artifactId!==undefined||data.expectedSourceSha256!==undefined||typeof data.savedProjectSha256!=='string'||!saved||saved.sha256!==data.savedProjectSha256)throw new ConfigurationError(409,'已保存工程已变化，请重新读取后继续。');
+     recovery=await preserveLegacyWorkspace(c,root,e.id,'preserve');
+     if(!recovery||hash(JSON.stringify(recovery.project,null,2)+'\n')!==data.savedProjectSha256)throw new ConfigurationError(409,'已保存工程已变化，未接入旧版本。');
+@@ -139,7 +150,7 @@
+    await adoptProductionPreparation(c,root,e.id,e.main_script_revision_id,board.id);
+    const file=await persistWorkspaceProject(c,root,e.id,project);
+    row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,preparation_revision_id,bindings,project_path,project_sha256,project_size,content_sha256,native_edit_revision) VALUES($1,$2,$3,$4,$4,$5,$6,$7,$8,$9,1) RETURNING *',[id,e.id,e.main_script_revision_id,board.id,JSON.stringify(clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(project)])).rows[0];
+-   await recordWorkspaceVersion(c,row!,importedRender?'从旧 HTML 冻结工程接入逐镜头编辑':'从原 OpenChatCut 工程继续编辑');await syncProductionWorkspaceShots(c,row!,root);
++   await recordWorkspaceVersion(c,row!,data.workbenchSha256!==undefined?'从原镜头工作版本继续编辑':importedRender?'从旧 HTML 冻结工程接入逐镜头编辑':'从原 OpenChatCut 工程继续编辑');await syncProductionWorkspaceShots(c,row!,root);
+    await c.query('INSERT INTO local_identity.workspace_legacy_recoveries(workspace_id,decision,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5)',[id,'preserve',recovery.relativePath,recovery.sha256,recovery.fileSize]);
+    return readProductionWorkspace(c,e.id,root);
+   }
+--- before/src/productionWorkspace.ts
++++ after/src/productionWorkspace.ts
+@@ -24,7 +24,7 @@
+  prepareWorkspaceCall:['episodeId','workspaceId','expectedRevision','callCommand','callData'],
+  confirmWorkspaceCall:['episodeId','workspaceId','expectedRevision','confirmationId','reservationCents'],
+  resumeWorkspaceEditing:['episodeId','workspaceId','expectedRevision','expectedScriptRevisionId','expectedProjectSha256'],
+- adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
++ adoptLegacyWorkspace:['episodeId','artifactId','savedProjectSha256','workbenchSha256','expectedSourceSha256','expectedScriptRevisionId','reviewPackageId'],
+  authorizeWorkspacePreparation:['episodeId','workspaceId','expectedRevision','enabled'],
+  saveWorkspaceSoundIntent:['episodeId','workspaceId','expectedRevision','expectedProjectSha256','shotId','soundIntent'],
+  ...workspaceVisualFields,

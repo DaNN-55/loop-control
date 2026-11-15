@@ -1,0 +1,8 @@
+{
+  "db/current/174-remove-retired-shot-review-entries.sql": "c169b9fdc87cdbedb3e16c65d981488ce779e6e9c7c0b97c718515bd789d9c5d",
+  "src/local-app/retiredShotReviewSql.integration.test.ts": "2b099a9453115858aa07c54021289ad2dce5496daa9b632acceb4d86c701c736",
+  "scripts/e2e/clean-schema.mjs": "bd0d3654ae9f02f44c2a83b594768ff330aa6ff4cdefd72f2e5b9b63776c09af",
+  "scripts/e2e/run.mjs": "066764131d077df444508184aa78c886a71d08ab520fb30f3a44373aa4af8366",
+  "src/lib/database.types.ts": "a5a42293be22c24add1e70055922e8d29620f4497683f5d8b6f2eeacc47869e4",
+  "src/local-app/productionRevisions.integration.test.ts": "6c9498f18b0d77666e7f03d813d5edc0eaebea3d2f2ce4b4261861c61b697c08"
+}

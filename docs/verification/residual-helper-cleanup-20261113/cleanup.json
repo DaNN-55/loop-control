@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "temporaryDirectoriesRemoved": [
+    "/private/tmp/loop-residual-helper-cleanup-20261113-c1sjtseg/source",
+    "/private/tmp/loop-residual-helper-cleanup-20261113-c1sjtseg/dependencies",
+    "/private/tmp/loop-residual-helper-cleanup-20261113-c1sjtseg/legacy-releases",
+    "/private/tmp/loop-story-e2e-uVIBEC/source",
+    "/private/tmp/loop-story-e2e-uVIBEC/OpenChatCut",
+    "/private/tmp/loop-story-e2e-1Z3mnd/source",
+    "/private/tmp/loop-story-e2e-1Z3mnd/OpenChatCut",
+    "/private/tmp/loop-story-e2e-yUuNcA/source",
+    "/private/tmp/loop-story-e2e-yUuNcA/OpenChatCut",
+    "/private/tmp/loop-story-e2e-tNh66O/source",
+    "/private/tmp/loop-story-e2e-tNh66O/OpenChatCut",
+    "/private/tmp/loop-story-e2e-cmyF78/source",
+    "/private/tmp/loop-story-e2e-cmyF78/OpenChatCut",
+    "/private/tmp/loop-story-e2e-gqm11B/source",
+    "/private/tmp/loop-story-e2e-gqm11B/OpenChatCut"
+  ],
+  "count": 15,
+  "noAssociatedProcesses": true,
+  "evidencePreserved": true,
+  "originalPackagesAndBackupsPreserved": true,
+  "headAndIndexUnchanged": true,
+  "verifiedSourceFilesUnchanged": 1332
+}

@@ -1,3 +1,4 @@
+import {saveHistoricalPlanFixture} from './historicalSavedPlan.fixture';
 // @vitest-environment node
 import {it,expect,vi} from 'vitest';
 import * as fs from 'node:fs/promises';
@@ -10,6 +11,7 @@ import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {collectionOwnerPost,prepareCollectionTargets,moveCollection} from './episodeCollection.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {productionScriptTemplate} from '../reviews/productionScript';
+import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
 const publicationFault=vi.hoisted(()=>({directory:'',once:false,triggered:false}));
 // Controlled fault at the system filesystem boundary; DB, HTTP and file bytes stay real.
 vi.mock('node:fs/promises',async importOriginal=>{const actual=await importOriginal<typeof import('node:fs/promises')>();return{...actual,unlink:async(path:Parameters<typeof actual.unlink>[0])=>{if(publicationFault.once&&String(path).startsWith(publicationFault.directory+'/.input-')&&/\.input-[0-9a-f-]{36}(?:\.part)?$/.test(String(path))){publicationFault.once=false;publicationFault.triggered=true;throw Object.assign(Error('controlled disk interruption after link'),{code:'EIO'});}return actual.unlink(path);}};});
@@ -29,8 +31,14 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner imports and confir
   const started=await f.request('start');expect(started.status,JSON.stringify(started.body)).toBe(200);expect(started.body.stage).toBe('script_approved');
   await rename(join(f.root,'legacy-fixture-offline'),join(f.assetRoot,'episodes'));
   const prepared=await f.request('prepareWorkspace',{expectedScriptRevisionId:imported.body.id});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
-  const detail=await(await fetch(f.origin+'/api/local/episodes/'+f.episode,{headers:{Cookie:'loop_owner_session='+f.token}})).json(),artifacts=detail.sections.artifacts??detail.patches?.artifacts?.rows,preparation=artifacts.find((a:{relative_path:string})=>a.relative_path.startsWith(prefix+'/preparation/'));expect(preparation).toBeTruthy();
-  const board=await(await preview(preparation.relative_path,preparation.sha256)).json();expect(board.shots[0].inputBasis).toContainEqual({relativePath:imported.body.storage_path,sha256:imported.body.sha256});
+  const preparation=(await f.c.query('SELECT file_reference FROM local_identity.production_preparation_revisions WHERE id=$1',[prepared.body.preparationRevisionId])).rows[0].file_reference;expect(preparation.relativePath.startsWith(prefix+'/preparation/')).toBe(true);
+  const preparationResponse=await preview(preparation.relativePath,preparation.sha256);expect(preparationResponse.status).toBe(200);const board=await preparationResponse.json();expect(board.version).toBe('production-preparation/v1');expect((await preview(preparation.relativePath,'0'.repeat(64))).status).toBe(409);
+  expect((await fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(preparation.relativePath)}&sha256=${preparation.sha256}`,{headers:{Cookie:'loop_owner_session='+f.otherToken}})).status).toBe(404);
+  expect((await fetch(f.origin+`/_local-artifact?episode=${randomUUID()}&path=${encodeURIComponent(preparation.relativePath)}&sha256=${preparation.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}})).status).toBe(404);
+  const preparationBytes=await readFile(join(f.assetRoot,preparation.relativePath)),corrupt=Buffer.from(preparationBytes);corrupt[0]^=1;
+  try{await writeFile(join(f.assetRoot,preparation.relativePath),corrupt);expect((await preview(preparation.relativePath,preparation.sha256)).status).toBe(409);}finally{await writeFile(join(f.assetRoot,preparation.relativePath),preparationBytes);}
+  const unregistered=preparation.relativePath+'.unregistered.json';await writeFile(join(f.assetRoot,unregistered),preparationBytes);expect((await preview(unregistered,preparation.sha256)).status).toBe(404);
+expect(board.shots[0].inputBasis).toContainEqual({relativePath:imported.body.storage_path,sha256:imported.body.sha256});
   await f.c.query("UPDATE public.episodes SET title='改显示名称' WHERE id=$1",[f.episode]);await f.restart();
   expect(await(await preview(imported.body.storage_path,imported.body.sha256)).text()).toBe(productionScriptTemplate);
   const revisedText=productionScriptTemplate.replace('# ', '# 修订');
@@ -51,15 +59,15 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner reuses an approved
   const foreignEpisode=await f.request('create',{episodeId:undefined,accountId:foreignAccount.id,title:'跨账号源'});expect(foreignEpisode.status,JSON.stringify(foreignEpisode.body)).toBe(200);
   const foreign=await f.request('importMaterial',{episodeId:foreignEpisode.body.id,sourceKind:'file',sourcePath:'shared.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(foreign.status,JSON.stringify(foreign.body)).toBe(200);
   const target=await f.request('create',{episodeId:undefined,accountId:account,seriesVersionId:series.body.id,title:'复用目标'});expect(target.status,JSON.stringify(target.body)).toBe(200);const id=target.body.id,prefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[id])).rows[0].directory_relative_path;
-  const text=productionScriptTemplate.replace('填写已上传图片的素材名称','shared');
+  const text=historicalProductionScriptV2.replace('填写已上传图片的素材名称','shared');
   const script=await f.request('importMaterial',{episodeId:id,sourceKind:'file',sourcePath:'script.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(text).toString('base64')});expect(script.status,JSON.stringify(script.body)).toBe(200);
-  const foreignChoice=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{'image:shared':foreign.body.id}});expect(foreignChoice.status,JSON.stringify(foreignChoice.body)).toBe(200);expect(foreignChoice.body.plan.segments[0].firstFrame.material).toBeUndefined();expect(foreignChoice.body.plan.segments[0].firstFrame.candidates.map((m:{id:string})=>m.id)).not.toContain(foreign.body.id);
-  const configured=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{}});expect(configured.status,JSON.stringify(configured.body)).toBe(200);
-  const material=configured.body.plan.segments[0].firstFrame.material;expect(material).toMatchObject({episodeId:id,sha256:source.body.sha256,path:expect.stringContaining(prefix+'/materials/'),provenance:{source:{id:source.body.id,episode_id:sourceId,storage_path:source.body.storage_path},approvals:[expect.objectContaining({approved_by:f.owner})]}});
+  const foreignChoice=await saveHistoricalPlanFixture(f,{episodeId:id,choices:{'image:shared':foreign.body.id}});expect(foreignChoice.status,JSON.stringify(foreignChoice.body)).toBe(200);expect(foreignChoice.body.plan.segments[0].firstFrame.material).toBeUndefined();expect(foreignChoice.body.plan.segments[0].firstFrame.candidates.map((m:{id:string})=>m.id)).not.toContain(foreign.body.id);
+  const configured=await saveHistoricalPlanFixture(f,{episodeId:id,choices:{}});expect(configured.status,JSON.stringify(configured.body)).toBe(200);
+  const material=configured.body.plan.segments[0].firstFrame.material;if(!material)throw Error('Historical series fixture did not resolve the approved source');expect(material).toMatchObject({episodeId:id,sha256:source.body.sha256,path:expect.stringContaining(prefix+'/materials/'),provenance:{source:{id:source.body.id,episode_id:sourceId,storage_path:source.body.storage_path},approvals:[expect.objectContaining({approved_by:f.owner})]}});
   const sourcePrefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[sourceId])).rows[0].directory_relative_path;await rename(join(f.assetRoot,sourcePrefix),join(f.root,'source-production-offline'));await f.restart();
   const preview=await fetch(f.origin+`/_local-artifact?episode=${id}&path=${encodeURIComponent(material.path)}&sha256=${material.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(preview.status).toBe(200);expect(Buffer.from(await preview.arrayBuffer())).toEqual(await readFile(workspaceTestMedia('still-striped.png')));
-  const reconfigured=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{}});expect(reconfigured.status,JSON.stringify(reconfigured.body)).toBe(200);expect(reconfigured.body.authorizationHash).toBe(configured.body.authorizationHash);
-  const read=await(await fetch(f.origin+`/api/local/script-production?episode=${id}`,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(read.inspection.segments[0].firstFrame.material.provenance).toEqual(material.provenance);
+  const reconfigured=await saveHistoricalPlanFixture(f,{episodeId:id,choices:{}});expect(reconfigured.status,JSON.stringify(reconfigured.body)).toBe(200);expect(reconfigured.body.authorizationHash).toBe(configured.body.authorizationHash);
+  const read=await(await fetch(f.origin+`/api/local/episodes/${id}/saved-plan`,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(read.inspection.segments[0].firstFrame.material.provenance).toEqual(material.provenance);
  }finally{await f.close();await volume.close();}
 },300000);
 

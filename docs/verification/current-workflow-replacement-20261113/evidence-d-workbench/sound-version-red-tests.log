@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Turu7c/source
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts (12 tests | 1 failed | 11 skipped) 1747ms
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (legacy)
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (registered)
+   ↓ refuses an invalidated original preview without reviving or rewriting its manual bindings
+   ↓ refuses unknown workbench evidence before creating current registration
+   ↓ refuses changed-confirmation workbench evidence before creating current registration
+   ↓ refuses unconfirmed workbench evidence before creating current registration
+   ↓ refuses file-sha workbench evidence before creating current registration
+   ↓ requires the exact source, replays only its receipt and preserves a different unknown request and existing current edit
+   ↓ preserves a saved native document when its SQL registration is missing instead of replacing it with old bindings
+   ↓ uses the original HTML project instead of rebuilding its already edited content from older bindings
+   ↓ continues the old source-audio protocol whose preview correctly has a null narration track identity
+   × keeps the original frozen music A when a later unconfirmed result B exists for the same cue 1747ms
+     → expected [ Array(1) ] to include 'episodes/541120dd-0b76-49ce-96c2-38d2…'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyWorkbenchAdoption.integration.test.ts > keeps the original frozen music A when a later unconfirmed result B exists for the same cue
+AssertionError: expected [ Array(1) ] to include 'episodes/541120dd-0b76-49ce-96c2-38d2…'
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts:177:354
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 skipped (12)
+   Start at  09:58:19
+   Duration  2.51s (transform 445ms, setup 7ms, collect 631ms, tests 1.75s, environment 0ms, prepare 34ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Turu7c/evidence/vitest.json

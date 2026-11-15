@@ -8,7 +8,7 @@ import {expect,it} from 'vitest';
 import {createNativeWorkspaceModules} from './openchatcut-host-modules.mjs';
 
 const sources=[
- 'src/shotComposition.ts','src/workspaceVideoSound.ts','src/workspaceCandidates.ts',
+ 'src/shotComposition.ts','src/workspaceDisplayNames.ts','src/workspaceVideoSound.ts','src/workspaceCandidates.ts',
  'src/workspaceShots.ts','src/workspaceVideo.ts','src/workspaceAudio.ts',
  'src/workspaceCaptions.ts','src/shotCaptions.ts','scripts/openchatcut-caption-drag.mjs',
  'scripts/openchatcut-caption-layout.mjs','scripts/openchatcut-bridge-retry.mjs',

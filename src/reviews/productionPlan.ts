@@ -24,7 +24,7 @@ export function resolveProductionMaterial(reference:string|undefined,kind:Materi
  return{reference:reference??'默认',kind,status:material?'bound':candidates.length?'ambiguous':'missing',...(material?{material}:{}),candidates};
 }
 export function resolveProductionPlan(text:string,defaults:ProductionSettings,materials:ProductionMaterial[],episodeId:string,seriesId:string|null,choices:Record<string,string>={}):ResolvedProductionPlan {
- const script=parseProductionScript(text);if(!script)throw Error('自动制作需要 v2 主脚本。');
+ const script=parseProductionScript(text);if(script?.version!==2)throw Error('旧制作计划仅支持 v2 主脚本，请在当前制作工作区使用新版脚本。');
  const settings={...defaults,...script.settings};
  const resolve=(ref:string|undefined,kind:MaterialResolution['kind'])=>resolveProductionMaterial(ref,kind,materials,episodeId,seriesId,ref?choices[kind+':'+ref]:undefined);
  const segments=script.segments.map(s=>{const combined={...defaults,...segmentSettings(script,s)};return{id:s.id,narration:s.narration,subtitle:s.subtitle??s.narration,visual:s.visual,videoPrompt:s.videoPrompt,...(s.shotType?{shotType:s.shotType}:{}),settings:combined,firstFrame:resolve(combined.firstFrame,'image'),sfx:resolve(combined.sfx??'none','sfx')};});

@@ -1,0 +1,81 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-z2Klp1/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-z2Klp1/source
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts (33 tests | 2 failed | 31 skipped) 2856ms
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (legacy)
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (registered)
+   ↓ refuses an invalidated original preview without reviving or rewriting its manual bindings
+   ↓ refuses unknown workbench evidence before creating current registration
+   ↓ refuses changed-confirmation workbench evidence before creating current registration
+   ↓ refuses unconfirmed workbench evidence before creating current registration
+   ↓ refuses file-sha workbench evidence before creating current registration
+   ↓ requires the exact source, replays only its receipt and preserves a different unknown request and existing current edit
+   ↓ preserves a saved native document when its SQL registration is missing instead of replacing it with old bindings
+   ↓ uses the original HTML project instead of rebuilding its already edited content from older bindings
+   ↓ continues the old source-audio protocol whose preview correctly has a null narration track identity
+   ↓ keeps the original frozen music A when a later unconfirmed result B exists for the same cue
+   ↓ preserves the exact confirmed narration track and refuses its invalidated source task
+   ↓ imports pending selections as current inputs and candidates without borrowing old confirmation, then continues through explicit adoption and native export
+   ↓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: false)
+   ↓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: true)
+   ↓ keeps unknown old voice unresolved while local candidates remain usable and current external proposals are blocked
+   ↓ imports every original registered music result as an unadopted local preparation and adopts only the explicitly selected result
+   ↓ refuses invalidated-confirmation mixed imports without changing original work or replacing current editing
+   ↓ refuses stale-source mixed imports without changing original work or replacing current editing
+   ↓ refuses foreign-owner mixed imports without changing original work or replacing current editing
+   ↓ refuses existing-workspace mixed imports without changing original work or replacing current editing
+   ↓ preserves the frozen music source interval when an unfinished shot precedes the confirmed shot, keeping the later result unadopted
+   ↓ moves a frozen shot effect with its confirmed shot after an unfinished gap without silently losing its original use
+   ↓ keeps a confirmed shot usable when the unfinished shot source is offline, preserving its original selection as an issue
+   ↓ carries original unfinished mix settings into current inputs while adoption remains explicit
+   ↓ pending two-slot composition remains an explicit current source choice with exact slot windows
+   ↓ continues pending 'sequential' ranges with explicit adoption and preserves Owner overrides
+   ↓ continues pending 'pip' ranges with explicit adoption and preserves Owner overrides
+   ↓ continues pending 'grid' ranges with explicit adoption and preserves Owner overrides
+   ↓ keeps a confirmed original shot intact while importing and adopting an unfinished parallel composition
+   × keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project 1836ms
+     → {"adoptionId":"4bbd925f-1c5b-4cfa-9ec5-df211c296ff2","candidateId":"be553aaf-2aa4-47ad-bd6d-9392cee682dc","projectSha256":"105878bf4baabe57d09a54555a579c632713b9c3807ede20f2e5897ea6a366d4","edit":{"visual":{"sourceInSeconds":0,"sourceOutSeconds":1,"usage":"video","motionPolicy":"preserve-target","acceptTimelineImpact":false,"expectedAppearance":"{\"keyframes\":null,\"transform\":{\"crop\":{\"bottom\":0,\"left\":0.25,\"right\":0.25,\"top\":0},\"rotation\":0,\"scale\":1,\"x\":-25,\"y\":0},\"zoom\":null}","placeholder":true,"shotId":"shot-1"},"shotWindow":{"startFrame":0,"durationInFrames":30},"targetItemId":"shot-shot-1-b2e5d2db-1530-4d71-8704-c9bb794c389a","expectedTarget":{"id":"shot-shot-1-b2e5d2db-1530-4d71-8704-c9bb794c389a","kind":"text","src":null,"sourceAssetId":null,"sourceRevision":null,"sourceContentHash":null,"startFrame":0,"durationInFrames":30,"srcInFrame":0,"playbackRate":1},"durationPolicy":"keep-target","source":{"id":"candidate-be553aaf-2aa4-47ad-bd6d-9392cee682dc","kind":"video","width":360,"height":640,"src":"episodes/8bbe3e9a-70b8-4114-8ddc-bd8979e3f261/shot.mp4","sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","inputFingerprint":"f600277e405e32e2b0828235b7adba62ab34a47b8f2ff76f1bfcf9026f37be6c","durationSeconds":1,"sourceInSeconds":0,"fullDurationSeconds":2},"videoSound":{"mode":"silent"}},"impact":{"currentSeconds":1,"sourceSeconds":1,"appliedSeconds":1,"deltaSeconds":0,"startSeconds":0,"endSeconds":1,"fps":30,"affectedFragments":[]}}: expected 200 to be 400 // Object.is equality
+   × refuses an unsupported pending composition before registering a current preparation and preserves the original draft 1019ms
+     → new row for relation "shot_preparation_drafts" violates check constraint "shot_preparation_drafts_composition_check"
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyWorkbenchAdoption.integration.test.ts > keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project
+AssertionError: {"adoptionId":"4bbd925f-1c5b-4cfa-9ec5-df211c296ff2","candidateId":"be553aaf-2aa4-47ad-bd6d-9392cee682dc","projectSha256":"105878bf4baabe57d09a54555a579c632713b9c3807ede20f2e5897ea6a366d4","edit":{"visual":{"sourceInSeconds":0,"sourceOutSeconds":1,"usage":"video","motionPolicy":"preserve-target","acceptTimelineImpact":false,"expectedAppearance":"{\"keyframes\":null,\"transform\":{\"crop\":{\"bottom\":0,\"left\":0.25,\"right\":0.25,\"top\":0},\"rotation\":0,\"scale\":1,\"x\":-25,\"y\":0},\"zoom\":null}","placeholder":true,"shotId":"shot-1"},"shotWindow":{"startFrame":0,"durationInFrames":30},"targetItemId":"shot-shot-1-b2e5d2db-1530-4d71-8704-c9bb794c389a","expectedTarget":{"id":"shot-shot-1-b2e5d2db-1530-4d71-8704-c9bb794c389a","kind":"text","src":null,"sourceAssetId":null,"sourceRevision":null,"sourceContentHash":null,"startFrame":0,"durationInFrames":30,"srcInFrame":0,"playbackRate":1},"durationPolicy":"keep-target","source":{"id":"candidate-be553aaf-2aa4-47ad-bd6d-9392cee682dc","kind":"video","width":360,"height":640,"src":"episodes/8bbe3e9a-70b8-4114-8ddc-bd8979e3f261/shot.mp4","sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","inputFingerprint":"f600277e405e32e2b0828235b7adba62ab34a47b8f2ff76f1bfcf9026f37be6c","durationSeconds":1,"sourceInSeconds":0,"fullDurationSeconds":2},"videoSound":{"mode":"silent"}},"impact":{"currentSeconds":1,"sourceSeconds":1,"appliedSeconds":1,"deltaSeconds":0,"startSeconds":0,"endSeconds":1,"fps":30,"affectedFragments":[]}}: expected 200 to be 400 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 400[39m
+[31m+ 200[39m
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts:388:259
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/legacyWorkbenchAdoption.integration.test.ts > refuses an unsupported pending composition before registering a current preparation and preserves the original draft
+error: new row for relation "shot_preparation_drafts" violates check constraint "shot_preparation_drafts_composition_check"
+ ❯ ../../../../../../Users/dan/Programs/loop-control/node_modules/.pnpm/pg@8.23.1/node_modules/pg/lib/client.js:694:17
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts:396:3
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 31 skipped (33)
+   Start at  13:48:21
+   Duration  3.61s (transform 446ms, setup 7ms, collect 639ms, tests 2.86s, environment 0ms, prepare 31ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-z2Klp1/evidence/vitest.json

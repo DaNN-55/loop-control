@@ -1,0 +1,24 @@
+{
+  "sourceFiles": 1370,
+  "matchesFinalTestSnapshot": true,
+  "modifiedSourceFilesSinceSound": [
+    "db/current/195-production-local-export-observations.sql",
+    "src/local-app/productionLocalExport.integration.test.ts",
+    "src/local-app/productionLocalExport.ts",
+    "src/local-app/productionLocalExportMigration.integration.test.ts",
+    "src/local-app/productionMetricsCollected.ts",
+    "src/local-app/productionMetricsSampler.test.ts",
+    "src/local-app/productionMetricsSampler.ts",
+    "scripts/e2e/clean-schema.mjs",
+    "scripts/runtime/application.mjs",
+    "scripts/runtime/application.test.mjs",
+    "src/local-app/episodeCommands.ts",
+    "src/local-app/nativeWorkspace.fixture.ts",
+    "src/local-app/workspaceAudioVolume.fixture.ts",
+    "src/local-app/workspaceExportCommands.ts"
+  ],
+  "noUnrelatedSourceDifferences": true,
+  "sourceSnapshot": "/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-LOTVI5/source",
+  "head": "2d1a8ff46318ece0031c0810899a339df71520c9",
+  "indexSha256": "06ed3c33b4711d2a3d147a743cb96b8f37fdc65282251e1116f9378225b0a6ff"
+}

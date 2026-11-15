@@ -1,0 +1,24 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-upf5Z3/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-upf5Z3/source
+
+ ✓ src/local-app/legacyWorkbenchAdoption.integration.test.ts (16 tests | 13 skipped) 26312ms
+   ✓ imports pending selections as current inputs and candidates without borrowing old confirmation, then continues through explicit adoption and native export  12865ms
+   ✓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order  11391ms
+   ✓ keeps unknown old voice unresolved while local candidates remain usable and current external proposals are blocked  2055ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 13 skipped (16)
+   Start at  11:25:53
+   Duration  27.10s (transform 455ms, setup 7ms, collect 655ms, tests 26.31s, environment 0ms, prepare 38ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-upf5Z3/evidence/vitest.json

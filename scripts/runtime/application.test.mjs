@@ -1,7 +1,8 @@
 // @vitest-environment node
 import{it,expect,vi}from'vitest';
-const ports=vi.hoisted(()=>({worker:vi.fn(async()=>({stop:vi.fn()})),connections:vi.fn(),accountClose:vi.fn(),runtime:vi.fn(()=>vi.fn()),store:vi.fn(()=>({mode:'keychain'})),probe:vi.fn(()=>({mode:'live'})),providerProbe:vi.fn((config,_transport,_readOnly,options)=>({mode:'live',networkAvailable:false,config,options}))}));
-vi.mock('../../src/orchestration/runtimeBuild.ts',()=>({readPreparedRuntimeRelease:async()=>({id:'fixture-release',root:new URL('../../',import.meta.url).pathname.replace(/\/$/,'')}),assertRuntimeRelease:async()=>{}}));
+import{fileURLToPath}from'node:url';
+const ports=vi.hoisted(()=>({worker:vi.fn(async()=>({stop:vi.fn()})),metricsStop:vi.fn(),metrics:vi.fn(),connections:vi.fn(),accountClose:vi.fn(),runtime:vi.fn(()=>vi.fn()),store:vi.fn(()=>({mode:'keychain'})),probe:vi.fn(()=>({mode:'live'})),providerProbe:vi.fn((config,_transport,_readOnly,options)=>({mode:'live',networkAvailable:false,config,options}))}));
+vi.mock('../../src/orchestration/runtimeBuild.ts',()=>({readPreparedRuntimeRelease:async()=>({id:'fixture-release',root:fileURLToPath(new URL('../../',import.meta.url)).replace(/\/$/,'')}),assertRuntimeRelease:async()=>{}}));
 vi.mock('../../dist/local-app/local-app/catalog.js',()=>({createLocalDatabase:()=>({end:vi.fn(),query:vi.fn()})}));
 vi.mock('../../dist/local-app/local-app/mediaRootSettings.js',()=>({inspectMediaRoot:async path=>({path,deviceId:'fixture-device',inodeId:'fixture-inode',mountPath:'/isolated/volume'}),verifyMediaRootBinding:async value=>value,LocalMediaRootSettings:class{close=vi.fn();}}));
 vi.mock('../../dist/local-app/local-app/runtimeStatus.js',()=>({createRuntimeStatusReader:ports.runtime}));
@@ -11,9 +12,10 @@ vi.mock('../../dist/local-app/local-app/connections.js',()=>({LocalConnections:c
 vi.mock('../../dist/local-app/local-app/keychainStore.js',()=>({configuredKeychainStore:ports.store}));
 vi.mock('../../dist/local-app/local-app/pexelsLiveProbe.js',()=>({createPexelsLiveProbe:ports.probe}));
 vi.mock('../../dist/local-app/local-app/providerProbe.js',()=>({createProviderProbe:ports.providerProbe}));
-vi.mock('../../dist/local-app/local-app/episodeCommands.js',()=>({LocalEpisodeCommands:class{close=vi.fn();startScriptContinuation=vi.fn();}}));
+vi.mock('../../dist/local-app/local-app/episodeCommands.js',()=>({LocalEpisodeCommands:class{activeLocalExports=vi.fn(()=>0);close=vi.fn();startScriptContinuation=vi.fn();}}));
 vi.mock('../../dist/local-app/local-app/accountCommands.js',()=>({LocalAccountCommands:class{close=ports.accountClose;}}));
 vi.mock('../../dist/local-app/local-app/nativeAutomation.js',()=>({startNativeAutomation:async()=>({stop:vi.fn()})}));
+vi.mock('../../dist/local-app/local-app/productionMetricsSampler.js',()=>({startOwnerProductionMetricsSampler:(options)=>{ports.metrics(options);return{stop:ports.metricsStop};}}));
 vi.mock('../../dist/local-app/local-app/nativeBackup.js',()=>({nativeBackup:vi.fn()}));
 vi.mock('../../dist/local-app/local-app/localRoute.js',()=>({createLocalHandler:vi.fn()}));
 vi.mock('../../dist/local-app/local-app/secretAdministration.js',()=>({SecretAdministration:class{}}));
@@ -54,10 +56,20 @@ it('uses configured connections for image, video and speech in the daily app and
 
 it('wires the runtime status reader into the authenticated native route',async()=>{
  ports.worker.mockResolvedValueOnce({stop:vi.fn(),runtimeRelease:{id:'worker-selected',root:'/worker-release'}});
- const d={runtimeRelease:{id:'backend-selected',root:new URL('../../',import.meta.url).pathname.replace(/\/$/,'')},runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189,worker:{mountPath:'/isolated/volume',minimumFreeBytes:1024},workerDatabase:{}};
+ const d={runtimeRelease:{id:'backend-selected',root:fileURLToPath(new URL('../../',import.meta.url)).replace(/\/$/,'')},runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189,worker:{mountPath:'/isolated/volume',minimumFreeBytes:1024},workerDatabase:{}};
  const app=await createNativeApplication(d);try{
   expect(ports.runtime).toHaveBeenLastCalledWith(expect.objectContaining({projectRoot:d.projectRoot,mediaRoot:d.mediaRoot,mountPath:d.worker.mountPath,minimumFreeBytes:1024}));
   expect(createLocalHandler).toHaveBeenLastCalledWith(expect.objectContaining({runtimeStatus:ports.runtime.mock.results.at(-1).value}));
   const selected=ports.runtime.mock.calls.at(-1)[0];expect(selected.runtimeRelease).toEqual(d.runtimeRelease);expect(selected.workerRelease()).toBe('worker-selected');
  }finally{await app.close();}
+});
+
+it('leaves production metrics unloaded by default and only starts the explicitly selected Owner',async()=>{
+ const d={runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189};
+ const before=ports.metrics.mock.calls.length,closed=ports.metricsStop.mock.calls.length;
+ const disabled=await createNativeApplication(d);await disabled.close();expect(ports.metrics.mock.calls.length).toBe(before);
+ const ownerId='a291248c-6380-4b7d-9f63-160604d8b10f',enabled=await createNativeApplication({...d,productionMetrics:{enabled:true,ownerId}});
+ expect(ports.metrics).toHaveBeenLastCalledWith(expect.objectContaining({enabled:true,ownerId}));
+ const sampling=ports.metrics.mock.calls.at(-1)[0],business=createLocalHandler.mock.calls.at(-1)[0].pool;expect(sampling.pool).not.toBe(business);expect(sampling.localExports(ownerId)).toBe(0);
+ await Promise.all([enabled.close(),enabled.close()]);expect(ports.metricsStop.mock.calls.length).toBe(closed+1);expect(sampling.pool.end).toHaveBeenCalledTimes(1);expect(business.end).toHaveBeenCalledTimes(1);
 });

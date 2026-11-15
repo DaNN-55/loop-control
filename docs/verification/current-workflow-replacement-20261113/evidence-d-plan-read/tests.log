@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/source
+
+ ✓ src/local-app/legacyWorkspaceEntry.integration.test.ts (3 tests) 3452ms
+   ✓ legacy orders enter four-step preparation only on an explicit owned command  1378ms
+   ✓ legacy script revision uses the same explicit entry and failed imports leave no registration  1054ms
+   ✓ legacy inspection stays read-only and completed, archived and historical orders are not enrolled  1019ms
+ ✓ src/local-app/inputStorageLocation.integration.test.ts (4 tests) 10764ms
+   ✓ Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart  4356ms
+   ✓ Owner reuses an approved series input as a self-contained managed copy with original source approval evidence  3734ms
+   ✓ input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions  1588ms
+   ✓ receipted input publication survives an interrupted unlink and restart without overwriting unknown targets or trusting altered receipts  1085ms
+ ✓ src/local-app/legacyScriptPlanRead.integration.test.ts (2 tests) 5803ms
+   ✓ keeps the saved v2 plan readable as an immutable snapshot after the current script becomes v3  2948ms
+   ✓ shows the saved declaration without restoring old enablement or treating it as verified executable input  2855ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  07:58:32
+   Duration  21.13s (transform 445ms, setup 8ms, collect 793ms, tests 20.02s, environment 0ms, prepare 68ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-NQOmFd/evidence/vitest.json

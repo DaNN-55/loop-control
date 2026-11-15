@@ -1,0 +1,75 @@
+// A disposable source snapshot and PostgreSQL cluster; never loads daily deployment/secrets.
+import {spawn,execFileSync} from 'node:child_process';
+import {mkdtemp,mkdir,cp,symlink,readFile,readdir,writeFile,realpath} from 'node:fs/promises';
+import {join,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {randomBytes,createHash} from 'node:crypto';
+import {loadSchemaCatalog,freshSchemaTransaction} from '/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/baseline/src/local-app/schemaMigrations.ts';
+
+const project=await realpath('/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/baseline');
+const root=await mkdtemp('/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/run-'),source=join(root,'source'),evidence=join(root,'evidence');
+const runId=randomBytes(6).toString('hex'),container='loop-story-e2e-'+runId;
+const compatibilityRoot=process.env.LOOP_TEST_COMPAT_RELEASES_ROOT?await realpath(process.env.LOOP_TEST_COMPAT_RELEASES_ROOT):undefined;
+const image='sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929';
+const env={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:process.env.TMPDIR,
+ DOCKER_HOST:process.env.DOCKER_HOST??'unix://'+join(process.env.HOME,'.colima/loop-control/docker.sock')};
+const docker=(args,input)=>execFileSync('docker',args,{env,input,encoding:'utf8',maxBuffer:64*1024*1024,stdio:['pipe','pipe','pipe']});
+const run=(cmd,args,options={})=>new Promise((resolve,reject)=>{
+ const child=spawn(cmd,args,{cwd:source,env:{...env,...options.env},stdio:['ignore','pipe','pipe']});let output='';
+ child.stdout.on('data',b=>{output+=b;process.stdout.write(b);});child.stderr.on('data',b=>{output+=b;process.stderr.write(b);});
+ child.once('error',reject);child.once('exit',code=>resolve({code,output}));
+});
+await mkdir(source);await mkdir(evidence);
+console.log('E2E evidence: '+evidence);
+let created=false,passed=false;
+try{
+ for(const entry of ['src','scripts','db','public','dev','index.html','package.json','package-lock.json','vite.config.ts',...(await readdir(project)).filter(n=>/^tsconfig.*\.json$/.test(n))]){
+  await cp(join(project,entry),join(source,entry),{recursive:true});
+ }
+ // Existing default parser regression reads these six versioned input scripts.
+ const scripts='docs/production-tests/rizhao-jinshan-20261028/scripts';
+ await mkdir(dirname(join(source,scripts)),{recursive:true});await cp(join(project,scripts),join(source,scripts),{recursive:true});
+ // SQL cleanup acceptance reuses the complete runtime snapshot comparison.
+ const fingerprint='docs/verification/clean-sql-preflight-20261112/catalog-fingerprint.sql';
+ await mkdir(dirname(join(source,fingerprint)),{recursive:true});await cp(join(project,fingerprint),join(source,fingerprint));
+ const runtimeSupport='docs/runtime/runtime-support.json';
+ await mkdir(dirname(join(source,runtimeSupport)),{recursive:true});await cp(join(project,runtimeSupport),join(source,runtimeSupport));
+ await symlink('/Users/dan/Programs/loop-control/node_modules',join(source,'node_modules'),'dir');
+ for(const name of (await readdir(source)).filter(n=>/^tsconfig.*\.json$/.test(n))){const path=join(source,name),config=JSON.parse(await readFile(path,'utf8'));if(config.compilerOptions?.tsBuildInfoFile){config.compilerOptions.tsBuildInfoFile=join(root,name+'.tsbuildinfo');await writeFile(path,JSON.stringify(config,null,2));}}
+ const original=JSON.parse(await readFile(join(project,'..','baseline-manifest.json'),'utf8'));const names=[];for(const name of [...Object.keys(original.files),'src/local-app/productionPreparationCoverage.integration.test.ts'])try{await readFile(join(source,name));names.push(name);}catch{};
+ const sourceHashes=async()=>{const files={};for(const name of names)files[name]=createHash('sha256').update(await readFile(join(source,name))).digest('hex');return files;};
+ const frozen=await sourceHashes();const sourceSha256=createHash('sha256').update(JSON.stringify(Object.fromEntries(Object.entries(frozen).sort(([a],[b])=>a.localeCompare(b))))).digest('hex');
+ await writeFile(join(evidence,'source-manifest.json'),JSON.stringify({source,recordedBeforeBuildAndTests:true,sourceSha256,fileCount:names.length,baselineManifestSha256:createHash('sha256').update(await readFile(join(project,'..','baseline-manifest.json'))).digest('hex'),files:frozen},null,2));
+ const sdkCopy='/private/tmp/loop-story-e2e-7cUCjT/OpenChatCut';
+ const build=await run('npm',['run','runtime:prepare']);await writeFile(join(evidence,'build.log'),build.output);
+ if(build.code!==0)throw Error('Isolated build failed');
+ const types=await run('npm',['run','check']);await writeFile(join(evidence,'types.log'),types.output);if(types.code!==0)throw Error('Full isolated typecheck failed');
+
+ docker(['image','inspect',image]);
+ docker(['run','--detach','--rm','--network','none','--name',container,'--label','com.loop-control.test=story-e2e-'+runId,
+  '--tmpfs','/var/lib/postgresql/data','--env','POSTGRES_HOST_AUTH_METHOD=trust',image]);created=true;
+ let ready=false;
+ for(let n=0;n<200;n++){try{if(!docker(['logs',container]).includes('PostgreSQL init process complete'))throw Error('Initializing');docker(['exec',container,'pg_isready','-U','postgres']);ready=true;break;}catch{await new Promise(r=>setTimeout(r,100));}}
+ if(!ready)throw Error('Isolated PostgreSQL did not become ready');
+ const sql=(q,db='loop_story_baseline')=>docker(['exec','-i',container,'psql','-XqAt','-U','postgres','-d',db,'-v','ON_ERROR_STOP=1'],q);
+ sql('CREATE ROLE loop_app LOGIN; CREATE ROLE loop_worker LOGIN; CREATE ROLE loop_owner; CREATE ROLE loop_anonymous; CREATE DATABASE loop_story_baseline TEMPLATE template0;','postgres');
+ sql(freshSchemaTransaction(loadSchemaCatalog(source)));
+ const context=join(root,'runtime-context.mjs');
+ await writeFile(context,`import{execFileSync}from'node:child_process';
+const container=${JSON.stringify(container)},image=${JSON.stringify(image)},label=${JSON.stringify('story-e2e-'+runId)},env=${JSON.stringify(env)};
+const call=(args,input)=>execFileSync('docker',args,{env,input,encoding:'utf8',maxBuffer:128*1024*1024,stdio:['pipe','pipe','pipe']});
+export function runtimeContext(){
+ const assertDatabase=()=>{const m=JSON.parse(call(['inspect',container]))[0];if(m.Image!==image||m.Config.Labels?.['com.loop-control.test']!==label||m.HostConfig.NetworkMode!=='none'||m.Mounts.some(x=>x.Type==='volume'))throw Error('Isolated cluster identity mismatch');};
+ const docker=(args,input)=>{assertDatabase();if(args[0]!=='exec'||!args.includes(container))throw Error('Only owned E2E container exec permitted');return call(args,input);};
+ const sql=(q,db='loop_story_baseline')=>{if(db==='postgres'){if(!/^(CREATE DATABASE loop_[a-z0-9_]+ TEMPLATE template0|DROP DATABASE loop_[a-z0-9_]+ WITH\\s*\\(FORCE\\)|SELECT count\\(\\*\\) FROM pg_database WHERE datname='loop_[a-z0-9_]+')\\s*;?$/i.test(q.trim()))throw Error('Cluster operation outside E2E scope');}else if(!/^(loop_story_baseline|loop_[a-z0-9_]+_[a-f0-9]{12}(?:_[a-z]+)?)$/.test(db))throw Error('Database outside E2E scope');return docker(['exec','-i',container,'psql','-XqAt','-U','postgres','-d',db,'-v','ON_ERROR_STOP=1'],q).trim();};
+ return{container,database:'loop_story_baseline',env,docker,sql,assertDatabase,dailyRuntime:false,isolatedFixtureContainer:true};
+}
+`,{mode:0o600});
+ const result=await run('/Users/dan/Programs/loop-control/node_modules/.bin/vitest',['run','src/local-app/productionPreparationCoverage.integration.test.ts','--maxWorkers=1','--fileParallelism=false','--reporter=default','--reporter=json','--outputFile='+join(evidence,'vitest.json'),...process.argv.slice(2)],{env:{LOOP_WORKSPACE_ACCEPTANCE:'1',LOOP_RUNTIME_VERSION_ACCEPTANCE:'1',LOOP_TEST_CONTEXT_MODULE:context,...(process.env.LOOP_WORKER_OUTCOME_ACCEPTANCE==='1'?{LOOP_WORKER_OUTCOME_RUNTIME:source}:{}),...(process.env.LOOP_METRICS_ACCEPTANCE==='1'?{LOOP_METRICS_TEST_CONTEXT:context}:{}),LOOP_TEST_OPENCHATCUT_ROOT:sdkCopy,OPENCHATCUT_ROOT:sdkCopy,LOOP_STORY_EVIDENCE:evidence,...(compatibilityRoot?{LOOP_TEST_COMPAT_RELEASES_ROOT:compatibilityRoot}:{}),...(process.env.LOOP_RECYCLE_ACCEPTANCE==='1'?{LOOP_RECYCLE_ACCEPTANCE:'1'}:{}),...(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE==='1'?{LOOP_EPISODE_DELETION_ACCEPTANCE:'1'}:{}),...(process.env.LOOP_ACCOUNT_DELETION_ACCEPTANCE==='1'?{LOOP_ACCOUNT_DELETION_ACCEPTANCE:'1'}:{}),...(process.env.LOOP_CONNECTION_ACCEPTANCE==='1'?{LOOP_CONNECTION_ACCEPTANCE:'1'}:{}),...(process.env.LOOP_SECRET_ACCEPTANCE==='1'?{LOOP_SECRET_ACCEPTANCE:'1'}:{}),...(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE==='1'?{LOOP_LEGACY_EDIT_ACCEPTANCE:'1'}:{}),...(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE==='1'?{LOOP_LEGACY_WORKSPACE_ACCEPTANCE:'1'}:{})}});
+ await writeFile(join(evidence,'tests.log'),result.output);const after=await sourceHashes();await writeFile(join(evidence,'source-unchanged.json'),JSON.stringify({sourceSha256,unchanged:JSON.stringify(after)===JSON.stringify(frozen),differences:names.filter(n=>after[n]!==frozen[n])},null,2));passed=result.code===0;
+}catch(error){await writeFile(join(evidence,'runner-error.txt'),String(error.stack??error));console.error(String(error));}
+finally{
+ if(created){const meta=JSON.parse(docker(['inspect',container]))[0];if(meta.Config.Labels?.['com.loop-control.test']!=='story-e2e-'+runId)throw Error('Cleanup identity mismatch');docker(['stop','--time','5',container]);}
+ await writeFile(join(evidence,'run.json'),JSON.stringify({passed,source,evidence,container,containerRemoved:created?!JSON.parse(docker(['ps','-a','--filter','name=^/'+container+'$','--format','json'])||'null'):true,paidCalls:0,paidCostCny:0,maxVideoSeconds:8},null,2));
+}
+process.exitCode=passed?0:1;

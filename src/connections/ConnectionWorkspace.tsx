@@ -27,7 +27,8 @@ import { Fragment, useEffect, useId, useRef, useState } from "react";
 import type { FormEvent,ReactNode,RefObject } from "react";
 import type { Database } from "../lib/database.types";
 
-export type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"] & {
+export type ExternalConnection = Omit<Database["public"]["Tables"]["external_connections"]["Row"], "status"> & {
+  status: ExternalConnectionVersion["status"];
   usage?: {currentBlueprints:number; episodes:number; tasks:number};
   region?:MiniMaxRegion;
   lastVerificationAt?:string|null;

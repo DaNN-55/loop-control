@@ -1,0 +1,14 @@
+{
+  "equal": true,
+  "snapshotEqual": true,
+  "frozenEqual": true,
+  "appEqual": true,
+  "deploymentEqual": true,
+  "beforeSnapshotSha256": "09e557257405cf65c135c54b80076081e9d4ca5707d516927667db7b3c9cda8c",
+  "afterSnapshotSha256": "09e557257405cf65c135c54b80076081e9d4ca5707d516927667db7b3c9cda8c",
+  "metrics": {
+    "events": 0,
+    "enabled": false
+  },
+  "readOnly": true
+}

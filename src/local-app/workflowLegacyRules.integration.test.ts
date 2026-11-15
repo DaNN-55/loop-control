@@ -6,7 +6,7 @@ import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
 import {join,dirname} from 'node:path';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {workspaceAudioVolume} from './workspaceAudioVolume.fixture';
-import {reviewRenderFromSnapshot} from '../worker/codexRunner';
+import {reviewRenderFromSnapshot} from '../worker/history/reviewRenderV1';
 import {buildOpenChatCutProject} from '../worker/openchatcutProject';
 import {defaultShotComposition} from '../shotComposition';
 import {defaultShotCaptionContract,shotCaptionContractToDatabase} from '../shotCaptions';
@@ -90,24 +90,26 @@ it.skipIf(!enabled)('48 composition revision freezes the current QC edit, fences
  }finally{await f.close();}
 },180000);
 
-it.skipIf(!enabled)('48 storyboard return invalidates downstream packages while retaining the approved storyboard and immutable QC files',async()=>{
+it.skipIf(!enabled)('retired Studio structural return preserves all packages, stage and immutable QC files behind Owner and CSRF checks',async()=>{
  const f=await legacyFixture();try{
   const before=await f.original(),data={reviewPackageId:f.qc,reason:'Return to approved storyboard structure'};
-  expect((await f.request('requestStudioStoryboardRevision',{...data,reviewPackageId:randomUUID()})).status).toBe(409);
-  const revised=await f.request('requestStudioStoryboardRevision',data);expect(revised.status,JSON.stringify(revised.body)).toBe(200);
-  expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('visual_approved');
-  expect((await f.c.query('SELECT id,invalidated_at FROM public.review_packages WHERE id=ANY($1::uuid[])',[ [f.qc,f.pre] ])).rows.every(row=>row.invalidated_at)).toBe(true);
-  expect((await f.c.query('SELECT invalidated_at FROM public.review_packages WHERE id=$1',[f.board])).rows[0].invalidated_at).toBeNull();
+  const state=async()=>(await f.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'packages',(SELECT jsonb_agg(to_jsonb(p) ORDER BY id) FROM public.review_packages p WHERE episode_id=$1),'tasks',(SELECT jsonb_agg(to_jsonb(t) ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'transitions',(SELECT jsonb_agg(to_jsonb(t) ORDER BY id) FROM public.state_transitions t WHERE episode_id=$1),'audit',(SELECT jsonb_agg(to_jsonb(a) ORDER BY id) FROM public.audit_events a WHERE episode_id=$1)) value",[f.episode])).rows[0].value;
+  const originalState=await state();
+  expect((await f.request('requestStudioStoryboardRevision',data,{token:f.otherToken})).status).toBe(404);
+  expect((await f.request('requestStudioStoryboardRevision',data,{csrf:false})).status).toBe(403);
+  expect((await f.request('requestStudioStoryboardRevision',{...data,reviewPackageId:randomUUID()})).status).toBe(410);
+  const revised=await f.request('requestStudioStoryboardRevision',data);expect(revised.status,JSON.stringify(revised.body)).toBe(410);
+  expect(await state()).toEqual(originalState);
   expect(await f.original()).toEqual(before);
-  expect((await f.request('requestStudioStoryboardRevision',data)).status).toBe(409);
+  expect((await f.request('requestStudioStoryboardRevision',data)).status).toBe(410);expect(await state()).toEqual(originalState);
  }finally{await f.close();}
 },120000);
 
-it.skipIf(!enabled)('48 a running storyboard revision blocks a QC structural return before any downstream evidence changes',async()=>{
+it.skipIf(!enabled)('a running historical storyboard revision cannot reactivate the retired Studio structural return',async()=>{
  const f=await legacyFixture();try{
   const before=await f.original();await f.c.query("INSERT INTO public.tasks(episode_id,task_type,status,input_snapshot) VALUES($1,'draft_storyboard_revision','running','{}')",[f.episode]);
   const revised=await f.request('requestStudioStoryboardRevision',{reviewPackageId:f.qc,reason:'Conflicting current storyboard edit'});
-  expect(revised.status,JSON.stringify(revised.body)).toBe(409);
+  expect(revised.status,JSON.stringify(revised.body)).toBe(410);
   expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('qc_review');
   expect(await f.original()).toEqual(before);
  }finally{await f.close();}

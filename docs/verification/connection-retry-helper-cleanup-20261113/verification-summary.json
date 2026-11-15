@@ -1,0 +1,33 @@
+{
+  "connections": {
+    "numPassedTests": 6,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "retry-compatibility": {
+    "numPassedTests": 15,
+    "numFailedTests": 0,
+    "numPendingTests": 3
+  },
+  "generation": {
+    "numPassedTests": 22,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "recovery": {
+    "numPassedTests": 16,
+    "numFailedTests": 0,
+    "numPendingTests": 0
+  },
+  "passed": true,
+  "defaultPassed": 2130,
+  "defaultFiles": 295,
+  "integrationPassed": 59,
+  "schemaPassed": true,
+  "verifiedSourceFiles": 1328,
+  "originalRuntimePackages": 23,
+  "actualWorkerModules": 46,
+  "actualScanners": 23,
+  "actualConnectionModules": 23,
+  "noRealPaidCalls": true
+}

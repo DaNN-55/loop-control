@@ -1,0 +1,80 @@
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-T1smBE/source/src/local-app/scriptProductionStore.ts
++++ /Users/dan/Programs/loop-control/src/local-app/scriptProductionStore.ts
+@@ -15,11 +15,18 @@
+ export class ScriptProductionStore {
+  constructor(private mediaRoot:string){}
+  async read(c:PoolClient,episodeId:string){
+-  const e=(await c.query("SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role='owner' WHERE e.id=$1",[episodeId])).rows[0] as ScriptEpisode|undefined;
++  const e=(await c.query("SELECT e.id,e.main_script_revision_id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role='owner' WHERE e.id=$1",[episodeId])).rows[0] as Pick<ScriptEpisode,'id'|'main_script_revision_id'>|undefined;
+   if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
+-  const location=await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id);await requireEpisodeStorageDirectory(c,location);
+-  const result=await this.inspect(c,e,location.assetRoot);
+-  return{v2:!!result.plan,inspection:result.plan,plan:result.record?.plan??result.plan,enabled:result.record?.enabled??false,authorizationHash:result.record?.authorization_hash,status:result.record?.last_status??'请核对素材与设置后保存制作计划'};
++  // A historical read never resolves today's script, defaults or material pool.
++  // The saved declaration is not proof that its host files are still available.
++  const record=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1',[e.id])).rows[0] as ScriptProductionRecord|undefined;
++  return{version:'legacy-production-plan/v1' as const,readOnly:true,sourceVerification:'not_checked' as const,
++   v2:record?.plan.version===2,inspection:record?.plan??null,plan:record?.plan??null,enabled:false,
++   savedEnabled:record?.enabled??false,savedAuthorizationHash:record?.authorization_hash??null,
++   savedScriptRevisionId:record?.script_revision_id??null,savedScriptSha256:record?.script_sha256??null,
++   currentScriptRevisionId:e.main_script_revision_id,scriptMatchesCurrent:record?record.script_revision_id===e.main_script_revision_id:null,
++   planSha256:record?productionHash({version:'legacy-production-plan/v1',episodeId:e.id,scriptRevisionId:record.script_revision_id,scriptSha256:record.script_sha256,plan:record.plan}):null,
++   status:record?'历史计划只读，请通过当前工作区继续制作。':'未保存旧制作计划'};
+  }
+  async alias(c:PoolClient,ownerId:string,materialId:string,name:string){
+   await c.query('INSERT INTO local_identity.material_reference_names(material_id,owner_id,name) VALUES($1,$2,$3) ON CONFLICT(material_id) DO NOTHING',[materialId,ownerId,basename(name).replace(/\.(png|jpg|jpeg|webp|mp3|wav|m4a|aac|flac|ogg|mp4|mov|webm)$/i,'').normalize('NFC')]);
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-T1smBE/source/src/local-app/legacyScriptPlanRead.integration.test.ts
++++ /Users/dan/Programs/loop-control/src/local-app/legacyScriptPlanRead.integration.test.ts
+@@ -0,0 +1,40 @@
++// @vitest-environment node
++import {expect,it} from 'vitest';
++import {formalWorkflowFixture} from './formalWorkflow.fixture';
++import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
++import {productionScriptTemplate} from '../reviews/productionScript';
++import {readFile,writeFile} from 'node:fs/promises';
++import {join} from 'node:path';
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('keeps the saved v2 plan readable as an immutable snapshot after the current script becomes v3',async()=>{
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:historicalProductionScriptV2});
++ try{
++  const saved=await f.send('configureScriptProduction',{enabled:false});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
++  const get=async(token=f.token)=>{const r=await fetch(`${f.origin}/api/local/script-production?episode=${f.newEpisode}`,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};};
++  const original=await get();expect(original.status).toBe(200);expect(original.body.plan).toEqual(saved.body.plan);
++  const revised=await f.send('reconfirmScript',{expectedScriptRevisionId:f.main,text:productionScriptTemplate,reason:'保存计划保留原版，当前主脚本改用v3'});expect(revised.status,JSON.stringify(revised.body)).toBe(200);
++  const record=async()=> (await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value;
++  const before=await record(),read=await get();expect(read.status).toBe(200);expect(read.body.plan).toEqual(saved.body.plan);
++  expect(read.body).toMatchObject({readOnly:true,enabled:false,savedScriptRevisionId:f.main,currentScriptRevisionId:revised.body.id,scriptMatchesCurrent:false});
++  expect(read.body.planSha256).toMatch(/^[a-f0-9]{64}$/);expect(read.body.planSha256).toBe(original.body.planSha256);
++  expect((await get(f.otherToken)).status).toBe(404);expect((await get()).body).toEqual(read.body);expect(await record()).toEqual(before);
++ }finally{await f.close();}
++},120000);
++
++it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('shows the saved declaration without restoring old enablement or treating it as verified executable input',async()=>{
++ const f=await formalWorkflowFixture({freshAccount:true,scriptText:historicalProductionScriptV2});
++ let file:string|undefined,original:Buffer|undefined;
++ try{
++  const saved=await f.send('configureScriptProduction',{enabled:false});expect(saved.status,JSON.stringify(saved.body)).toBe(200);expect((await f.send('start')).status).toBe(200);
++  // Represents an original enabled record; the empty retired scanner cannot run it.
++  await f.c.query('UPDATE local_identity.script_productions SET enabled=true,authorized_at=clock_timestamp() WHERE episode_id=$1',[f.newEpisode]);
++  const record=async()=> (await f.c.query('SELECT to_jsonb(p) value FROM local_identity.script_productions p WHERE episode_id=$1',[f.newEpisode])).rows[0].value;
++  const before=await record(),source=(await f.c.query('SELECT storage_path FROM public.production_material_revisions WHERE id=$1',[f.main])).rows[0];
++  file=join(f.assetRoot,source.storage_path);original=await readFile(file);await writeFile(file,'A changed source must not become trusted because its plan can be read.');
++  const response=await fetch(`${f.origin}/api/local/script-production?episode=${f.newEpisode}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);const read=await response.json();
++  expect(read.plan).toEqual(saved.body.plan);expect(read).toMatchObject({readOnly:true,enabled:false,savedEnabled:true,sourceVerification:'not_checked'});expect(await record()).toEqual(before);
++  const rejected=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(rejected.status,JSON.stringify(rejected.body)).toBe(409);
++  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_preparation_revisions WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
++  expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);expect(await record()).toEqual(before);
++ }finally{if(file&&original)await writeFile(file,original);await f.close();}
++},120000);
+--- /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-T1smBE/source/src/local-app/legacyWorkspaceEntry.integration.test.ts
++++ /Users/dan/Programs/loop-control/src/local-app/legacyWorkspaceEntry.integration.test.ts
+@@ -24,7 +24,8 @@
+   expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
+   expect(prepared.body.preparation.origin).toBe('legacy-board');
+   const [input]=await registered();expect(input.owner_id).toBe(f.owner);
+-  for(const key of ['enabled','storyboard_enabled','narration_enabled','media_enabled','visual_media_enabled','alignment_enabled','preview_enabled','studio_enabled','delivery_enabled'])expect(input[key],key).toBe(false);
++  expect(input.enabled).toBe(true); // Current explicit requests are active; retired automatic paths stay off.
++  for(const key of ['storyboard_enabled','narration_enabled','media_enabled','visual_media_enabled','alignment_enabled','preview_enabled','studio_enabled','delivery_enabled'])expect(input[key],key).toBe(false);
+   const after=(await f.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'tasks',(SELECT jsonb_agg(t ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(a ORDER BY id) FROM public.approvals a WHERE episode_id=$1)) value",[f.episode])).rows[0].value;
+   expect(after).toEqual(before);
+   expect((await f.request('prepareWorkspace',data)).body.id).toBe(prepared.body.id);

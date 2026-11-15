@@ -1,0 +1,7 @@
+{
+  "src/local-app/workspacePexels.ts": "dae1c2e5df7d0098c7f4a29cc08cb2e98517139c00125b28492b5dbf767ffdbb",
+  "src/local-app/workspacePexels.fixture.ts": "56a416e1ebdddd3780bc326f1e00434ffb3497661d79da1da953719c64021348",
+  "src/local-app/productionPexelsInputs.integration.test.ts": "90f2ca388b03815ca8591b72f831935b2d97d97777bb8eeac774e5570c8f7eca",
+  "src/local-app/productionPexelsMigration.integration.test.ts": "3664d293f11545da253f3017999e668261aaba1e2102fac5e9925b9303f842b9",
+  "db/current/192-independent-workspace-pexels-inputs.sql": "54b3616d84df50c3cbb0a8a037b697bdbdb7ceba0d9d5658146e3851dff639ab"
+}

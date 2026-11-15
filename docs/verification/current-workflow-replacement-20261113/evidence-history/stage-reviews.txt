@@ -1,0 +1,3 @@
+Standards: initial hard finding parent selected-source Owner skipped for current-preserved parent; actual red reproduced, fixed and verified, final incremental review 0 findings.
+Spec: initial P1 historical account/episode declarations could borrow current foreign Owner identity, and coverage insufficient. Actual two red cases then green; require actual projection-insert provenance + historical marker, selected-parent Owner checked for all selected versions. Real rich new production, 18 nonempty private tables, downloads/SHA and dump/restore now covered. Final review closed both findings, 0 new findings; not final G.
+Read-only review agents: /root/history_standards, /root/history_spec.

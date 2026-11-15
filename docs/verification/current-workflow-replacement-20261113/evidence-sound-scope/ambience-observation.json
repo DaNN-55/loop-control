@@ -1,0 +1,29 @@
+{
+  "voice330": 0.11868375663271383,
+  "ambience440": 0.007838471836698212,
+  "soundUse": {
+    "version": "sound-use/v1",
+    "used": 4,
+    "withdrawn": 3,
+    "changed": 1,
+    "roles": {
+      "source": {
+        "used": 2,
+        "withdrawn": 2,
+        "changed": 0
+      },
+      "narration": {
+        "used": 1,
+        "withdrawn": 0,
+        "changed": 0
+      },
+      "ambience": {
+        "used": 1,
+        "withdrawn": 1,
+        "changed": 1
+      }
+    },
+    "unknownEvents": 0
+  },
+  "oldDraftRows": 0
+}

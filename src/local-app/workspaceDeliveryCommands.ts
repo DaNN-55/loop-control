@@ -1,6 +1,7 @@
 import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
-import {isWorkspaceItemAudible} from '../workspaceAudio.js';
+import {nativeSoundWindowAudibility} from './workspaceSoundAudibility.js';
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
+import {readWorkspaceNarrationSource} from './workspaceNarrationSource.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile} from 'node:fs/promises';
 import type {PoolClient} from 'pg';
@@ -14,8 +15,11 @@ import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {normalizeDeliveryTags,deliveryTagsError} from '../publishing/deliveryMetadata.js';
 import {validateImportedMaterial} from './materialAcceptance.js';
 import {coverImageExtension} from '../publishing/coverImage.js';
+import {parseWorkspaceCoverSource,type WorkspaceCoverSource} from '../workspaceCover.js';
+import {readWorkspaceCoverInputs} from './workspaceCover.js';
 import {verifyPublishPackage} from '../publishing/publishPackage.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
+import {isWorkspaceVideoTrack} from '../workspaceExecution.js';
 export async function readWorkspaceDeliveries(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<WorkspaceDelivery[]>{
  if(!(await c.query("SELECT to_regclass('local_identity.workspace_deliveries') present")).rows[0].present)return[];
  const values=(await c.query('SELECT d.*,t.status,t.last_result FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE workspace_id=$1 ORDER BY d.created_at DESC,d.id DESC',[row.id])).rows;
@@ -37,25 +41,34 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
  if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200||typeof data.description!=='string'||data.description.length>5000)throw new ConfigurationError(400,'请填写有效交付标题和简介。');
  if(!Array.isArray(data.tags)||data.tags.some(t=>typeof t!=='string'))throw new ConfigurationError(400,'标签格式无效，请使用文字标签。');
  const tags=normalizeDeliveryTags(data.tags),tagsError=deliveryTagsError(tags);if(tagsError)throw new ConfigurationError(400,tagsError);
- if(typeof data.coverBase64!=='string'||data.coverBase64.length>28*1024*1024)throw new ConfigurationError(400,'封面不能超过 20 MB，请选择 JPG、PNG 或 WebP 图片。');
- const cover=Buffer.from(data.coverBase64,'base64'),extension=coverImageExtension(cover);if(!cover.length)throw new ConfigurationError(400,'封面为空，请重新选择。');if(cover.length>20*1024*1024)throw new ConfigurationError(400,'封面不能超过 20 MB。');if(!extension||cover.toString('base64')!==data.coverBase64)throw new ConfigurationError(400,'请上传有效 JPG、PNG 或 WebP 封面。');
+ let cover:Buffer,coverSource:WorkspaceCoverSource|undefined;
+ if(Object.hasOwn(data,'coverSource')){
+  if(Object.hasOwn(data,'coverBase64'))throw new ConfigurationError(400,'请只选择一种封面来源。');
+  try{coverSource=parseWorkspaceCoverSource(data.coverSource);}catch{throw new ConfigurationError(400,'封面来源协议或身份无效。');}
+  const candidate=(await readWorkspaceCoverInputs(c,row)).find(v=>v.source.kind===coverSource!.kind&&v.source.id===coverSource!.id&&v.source.sha256===coverSource!.sha256);
+  if(!candidate?.file||candidate.unavailableReason)throw new ConfigurationError(409,'当前封面候选不存在或已变化，请重新选择。');
+  try{cover=await verifyEpisodeFile(c,root,row.episode_id,candidate.file.relativePath,candidate.file.sha256,candidate.file.fileSize);}catch(error){
+   if(['ENOENT','ENOTDIR','EACCES','EPERM','EIO'].includes((error as NodeJS.ErrnoException).code??''))throw new ConfigurationError(409,'原封面文件不可读取，请恢复原文件或另选封面。');throw error;
+  }
+ }else{
+  if(typeof data.coverBase64!=='string'||data.coverBase64.length>28*1024*1024)throw new ConfigurationError(400,'封面不能超过 20 MB，请选择 JPG、PNG 或 WebP 图片。');
+  cover=Buffer.from(data.coverBase64,'base64');if(cover.toString('base64')!==data.coverBase64)throw new ConfigurationError(400,'请上传有效 JPG、PNG 或 WebP 封面。');
+ }
+ const extension=coverImageExtension(cover);if(!cover.length)throw new ConfigurationError(400,'封面为空，请重新选择。');if(cover.length>20*1024*1024)throw new ConfigurationError(400,'封面不能超过 20 MB。');if(!extension)throw new ConfigurationError(400,'请上传有效 JPG、PNG 或 WebP 封面。');
  await validateImportedMaterial(cover,{sourcePath:`封面.${extension}`,materialType:'image',mimeType:'',materialPurpose:'cover',isMainScript:false});
- const hasDecisions=!!(await c.query("SELECT to_regclass('local_identity.workspace_candidate_decisions') present")).rows[0].present;
  const approvedProject=JSON.parse((await verifyEpisodeFile(c,root,row.episode_id,confirmed.project.relativePath,confirmed.project.sha256,confirmed.project.fileSize)).toString()) as OpenChatCutProject,used=usedWorkspaceContent(approvedProject),narration=[];
  for(const clip of row.bindings.filter((x,i,all)=>all.findIndex(v=>v.shotId===x.shotId)===i)){
  const item=used.items.find(x=>x.id===`workspace-narration-shot-${clip.shotId}`||x.id===`workspace-narration-${clip.id}`);
- const track=item?.src?(await c.query('SELECT a.*,t.input_snapshot FROM public.audio_tracks a LEFT JOIN public.tasks t ON t.id=a.source_task_id WHERE a.episode_id=$1 AND a.relative_path=$2',[row.episode_id,item.src])).rows[0]:null;
- const marker=(item as unknown as {loopControlCandidate?:{inputFingerprint?:string}}|undefined)?.loopControlCandidate;
- const adopted=hasDecisions&&track?(await c.query("SELECT * FROM local_identity.workspace_candidate_decisions WHERE workspace_id=$1 AND candidate_id=$2 AND decision='adopted' AND source_sha256=$3 AND ($4::text IS NULL OR input_fingerprint=$4) ORDER BY created_at DESC LIMIT 1",[row.id,track.id,track.sha256,marker?.inputFingerprint??null])).rows[0]:null;
- const sourceText=adopted?.text_version??track?.input_snapshot?.media?.narration?.text??null,baselineText=(await resolveWorkspaceShotLineage(c,row,clip.shotId)).baseline_text,windows=item?usedNarrationWindows(approvedProject,String(item.id)):[];
- const fullSource=!!track&&windows.length===1&&windows[0].audible&&windows[0].srcInFrame===0&&windows[0].playbackRate===1&&Math.abs(windows[0].sourceDurationSeconds-Number(track.duration_seconds))<=1/windows[0].fps;
+ const source=item?await readWorkspaceNarrationSource(c,row,item):null,track=source?.track,adopted=source?.adoption;
+ const sourceText=source?.text??null,baselineText=(await resolveWorkspaceShotLineage(c,row,clip.shotId)).baseline_text,windows=item?usedNarrationWindows(approvedProject,String(item.id)):[];
+ const fullSource=!!track&&windows.length===1&&windows[0].audible&&windows[0].textCoverageVerified&&windows[0].srcInFrame===0&&windows[0].playbackRate===1&&Math.abs(windows[0].sourceDurationSeconds-Number(track.duration_seconds))<=1/windows[0].fps;
  const actualText=fullSource?sourceText:null;
  narration.push({shotId:clip.shotId,baselineText,sourceText,adoptedText:actualText,textCoverage:sourceText===null?'no_recorded_text':fullSource?'complete_source':'partial_or_retimed_unverified',windows,textSource:adopted?'owner_adoption':sourceText===null?'not_recorded':'frozen_task',sourceDiffersFromBaseline:sourceText===null?null:sourceText!==baselineText,differsFromBaseline:actualText===null?null:actualText!==baselineText,audioTrackId:track?.id??null,sha256:track?.sha256??null,itemId:item?.id??null,source:item?.src??null});
  }
  const id=randomUUID(),prefix=`${storage.relativePath}/workspace-deliveries/${id}`;
  const immutable=async(type:string,path:string,bytes:Buffer)=>{const a={artifactType:type,relativePath:path,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length};await writeFile(await safeAssetOutputPath(root,path),bytes,{flag:'wx',mode:0o600});return a;};
  const coverArtifact=await immutable('cover',`${prefix}/cover.${extension}`,cover);
- const metadata=await immutable('metadata',`${prefix}/metadata.json`,Buffer.from(JSON.stringify({title:data.title.trim(),description:data.description.trim(),tags,exportId:confirmed.id,contentSha256:confirmed.contentSha256,scriptRevisionId:row.script_revision_id,narration},null,2)+'\n'));
+ const metadata=await immutable('metadata',`${prefix}/metadata.json`,Buffer.from(JSON.stringify({title:data.title.trim(),description:data.description.trim(),tags,exportId:confirmed.id,contentSha256:confirmed.contentSha256,scriptRevisionId:row.script_revision_id,...(coverSource?{coverSource}:{}),narration},null,2)+'\n'));
  const checks=await immutable('final_qc_report',`${prefix}/checks.json`,Buffer.from(JSON.stringify({passed:true,exportId:confirmed.id,contentSha256:confirmed.contentSha256,checks:confirmed.checks},null,2)+'\n'));
  const identity={workspaceId:row.id,exportId:confirmed.id,projectContentVersion:confirmed.projectContentVersion,contentSha256:confirmed.contentSha256,video:{artifactType:'final_render',...confirmed.artifact},project:{artifactType:'editable_project',...confirmed.project}};
  const snapshot={capability:'workspace_delivery',workspace_delivery:{identity,artifacts:[identity.video,identity.project,coverArtifact,metadata,checks]},input_artifacts:[identity.video,identity.project,coverArtifact,metadata,checks],output:{relative_path:`${prefix}/manifest.json`,required_artifact_types:['publish_package'],content_type:'application/json'}};
@@ -65,10 +78,25 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
 // Preserve the actual used source window, including parent sequence trims/rate.
 // A partial/retimed/muted source never claims its full source text was spoken.
 function usedNarrationWindows(project:OpenChatCutProject,itemId:string){
- const windows:Array<{srcInFrame:number;usedDurationSeconds:number;sourceDurationSeconds:number;playbackRate:number;fps:number;audible:boolean}>=[];
- const visit=(id:string,from=0,to=Infinity,parentRate=1,audible=true,depth=0)=>{if(depth>32)throw Error('嵌套口播窗口超出检查范围。');const timeline=project.timelines.find(t=>t.id===id);if(!timeline)throw Error('口播所属时间线缺失。');
- for(const item of timeline.items){const start=Number(item.startFrame),end=start+Number(item.durationInFrames),left=Math.max(from,start),right=Math.min(to,end);if(right<=left)continue;const rate=Number(item.playbackRate??1),src=Number(item.srcInFrame??0)+(left-start)*rate,voice=audible&&isWorkspaceItemAudible(item,timeline);
- if(item.kind==='sequence'){visit(String(item.timelineId),src,src+(right-left)*rate,parentRate*rate,voice,depth+1);continue;}
- if(item.id===itemId)windows.push({srcInFrame:src,usedDurationSeconds:(right-left)/timeline.fps/parentRate,sourceDurationSeconds:(right-left)*rate/timeline.fps,playbackRate:rate*parentRate,fps:timeline.fps,audible:voice});
- }};visit(project.activeTimelineId);return windows;
+ type Audibility=ReturnType<typeof nativeSoundWindowAudibility>;
+ const windows:Array<{srcInFrame:number;usedDurationSeconds:number;sourceDurationSeconds:number;playbackRate:number;fps:number;audible:boolean;audibility:Audibility;textCoverageVerified:boolean}>=[];
+ const hasEdits=(item:Record<string,unknown>)=>[item.transcript,item.edits,item.deletedWordIdx].some(value=>Array.isArray(value)?value.length>0:!!value);
+ const visit=(id:string,from=0,to=Infinity,parentRate=1,parentAudibility:Audibility='audible',depth=0,parentUnverified=false)=>{
+  if(depth>32)throw Error('嵌套口播窗口超出检查范围。');
+  const timeline=project.timelines.find(t=>t.id===id);if(!timeline)throw Error('口播所属时间线缺失。');
+  for(const item of timeline.items){
+   const start=Number(item.startFrame),end=start+Number(item.durationInFrames),left=Math.max(from,start),right=Math.min(to,end);
+   if(right<=left||item.kind==='sequence'&&!isWorkspaceVideoTrack(timeline,String(item.track)))continue;
+   const rate=Number(item.playbackRate??1),src=Number(item.srcInFrame??0)+(left-start)*rate;
+   const track=timeline.tracks[String(item.track)] as {muted?:boolean;hidden?:boolean}|undefined;
+   // Native sequence gain is ignored; track mute/hidden and parent edits still apply.
+   const own:Audibility=track?.muted||track?.hidden?'silent':item.kind==='sequence'?'audible':nativeSoundWindowAudibility(item,left,right);
+   const audibility:Audibility=parentAudibility==='silent'||own==='silent'?'silent':parentAudibility==='unknown'||own==='unknown'||hasEdits(item)?'unknown':'audible';
+   const automated=Array.isArray((item.keyframes as {volume?:unknown}|undefined)?.volume)&&((item.keyframes as {volume:unknown[]}).volume.length>0);
+   const unverified=parentUnverified||hasEdits(item)||item.kind!=='sequence'&&(automated||Number(item.fadeInFrames??0)>0||Number(item.fadeOutFrames??0)>0);
+   if(item.kind==='sequence'){visit(String(item.timelineId),src,src+(right-left)*rate,parentRate*rate,audibility,depth+1,unverified||rate!==1);continue;}
+   if(item.id===itemId)windows.push({srcInFrame:src,usedDurationSeconds:(right-left)/timeline.fps/parentRate,sourceDurationSeconds:(right-left)*rate/timeline.fps,playbackRate:rate*parentRate,fps:timeline.fps,audible:audibility==='audible',audibility,textCoverageVerified:audibility==='audible'&&!unverified});
+  }
+ };
+ visit(project.activeTimelineId);return windows;
 }

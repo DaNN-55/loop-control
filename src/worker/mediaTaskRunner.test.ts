@@ -1,0 +1,560 @@
+import { describe, expect, it, vi } from "vitest";
+import {runMediaTask} from './mediaTaskRunner';
+import {shotPreparationContractFromSnapshot} from './history/reviewRenderV1';
+import {VideoGenerationError} from './videoGenerationError';
+import {ProviderOutcomeUnknownError} from "./providerOutcome";
+
+const claimedTask = {
+  taskId: "task-1",
+  taskType: "generate_static_visual",
+  attempt: 0,
+  budgetLimitCents: 0,
+  maxAttempts: 2,
+  provider: "openai" as const,
+  model: "gpt-image-2",
+  promptVersion: "static-visual-v1",
+  episodeId: "episode-1",
+  accountId: "account-1",
+  blueprintVersionId: "blueprint-1",
+  title: "一个可验证的选题",
+  allowedAssetRoot: "/Volumes/Media/loop-control/account-1",
+  inputSnapshot: {
+    capability: "static_visual_generation",
+    credential_ref: "11111111-1111-4111-8111-111111111111",
+    media: {adapter:'openai_images',static_visual:{prompt:'一张可验证的参考图片。'}},
+    allowed_tools: ["read", "write"],
+    output: { required_artifact_types: ["static_visual"], content_type: "image/png", relative_path: "episodes/episode-1/image.png", review_stage: "visual_review" },
+    input_artifacts: [],
+  },
+};
+
+describe("本地媒体 Worker runner", () => {
+  it("接受 PostgreSQL JSONB 重排后的有效镜头混音契约", () => {
+    expect(() => shotPreparationContractFromSnapshot({
+      version: "shot-preparation/v1",
+      storyboard_fingerprint: "2".repeat(32),
+      source_material_revision_id: "material-1",
+      clip_segments: [{ start_seconds: 0, end_seconds: 2 }],
+      composition: { version: "shot-composition/v1", layout: "full", slots: [{ id: "full", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }] },
+      audio_mode: "tts",
+      audio_track_id: "track-1",
+      tts_text: "测试口播",
+      tts_voice: "voice-1",
+      tts_speaking_rate: 1,
+      audio_mix: { bgm: null, sfx: null, version: "shot-audio-mix/v1", main_voice: { mode: "tts", role: "anchor", gain_db: 0, track_id: "track-1" } },
+      captions: { version: "shot-captions/v1", enabled: false, content_mode: "independent", text: "", cues: [], spatial: { version: "shot-caption-space/v1", anchor: "bottom-center", safe_area: "title-safe", max_lines: 2, max_characters_per_line: 16 } },
+      input_fingerprint: "1".repeat(32),
+    })).not.toThrow();
+  });
+
+  it("把真实内部执行阶段依次回写给控制台", async () => {
+    const reportProgress = vi.fn().mockResolvedValue(undefined);
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1", taskId: "task-1", status: "completed",
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [] }, actualCostCents: 0, blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Done.",
+    }));
+
+    await runMediaTask({ claimNextTask: async () => claimedTask, reportProgress, reportResult: vi.fn(), execute, preflight: vi.fn().mockResolvedValue({ version: "worker-preflight/v1", checks: [] }), verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
+
+    expect(reportProgress.mock.calls.map((call) => call[2].step)).toEqual(["preflight", "input_validation", "provider_execution", "output_validation"]);
+    expect(reportProgress.mock.calls.every((call) => call[2].version === "worker-progress/v1" && call[2].detail)).toBe(true);
+  });
+
+  it("没有 ready 任务时保持空闲，不调用执行器", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn();
+
+    await expect(runMediaTask({ claimNextTask: async () => null, reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "idle" });
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).not.toHaveBeenCalled();
+  });
+
+  it("关闭字幕时接受空字幕正文并进入审核渲染执行", async () => {
+    const execute = vi.fn().mockRejectedValue(new Error("stop after package validation"));
+    const reportResult = vi.fn();
+    const relativePath = "episodes/episode-1/materials/shot.mp4";
+    const sha256 = "a".repeat(64);
+    const preparationContract = {
+      version: "shot-preparation/v1",
+      storyboard_fingerprint: "2".repeat(32),
+      source_material_revision_id: "material-1",
+      clip_segments: [{ start_seconds: 0, end_seconds: 2 }],
+      composition: { version: "shot-composition/v1", layout: "full", slots: [{ id: "full", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }] },
+      audio_mode: "none",
+      tts_text: null,
+      tts_voice: null,
+      tts_speaking_rate: null,
+      audio_mix: { version: "shot-audio-mix/v1", main_voice: { mode: "none", track_id: null, gain_db: 0, role: "none" }, bgm: null, sfx: null },
+      captions: { version: "shot-captions/v1", enabled: false, content_mode: "independent", text: "", cues: [], spatial: { version: "shot-caption-space/v1", anchor: "bottom-center", safe_area: "title-safe", max_lines: 2, max_characters_per_line: 16 } },
+      input_fingerprint: "1".repeat(32),
+    };
+
+    await expect(runMediaTask({
+      claimNextTask: async () => ({ ...claimedTask, taskId: "review-render-disabled-subtitle", taskType: "generate_review_render", provider: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "review-render-v1", inputSnapshot: {
+        capability: "review_rendering", allowed_tools: ["read", "write"],
+        output: { required_artifact_types: ["render", "review_render_project", "review_qc_report"], content_type: "video/mp4", relative_path: "episodes/episode-1/review-render/v1/review-render.mp4", review_stage: "qc_review" },
+        input_artifacts: [{ artifactType: "source_video", relativePath, sha256, fileSize: 10 }],
+        review_render: {
+          project_relative_path: "episodes/episode-1/review-render/v1/index.html", project_revision: 1, pre_render_review_package_id: "package-1", confirmation_mode: "shot_preparation",
+          confirmed_shots: [{ shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "1".repeat(32), source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], preparation_contract: preparationContract, audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false }],
+          adjustments: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "minimal", pacing: "standard", crop: "cover", transition: "cut", layout: "lower_third", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6, reason: "生成审核视频。" },
+          storyboard: { version: "storyboard/v1", audioCues: [], shots: [{ id: "shot-1", scriptSegment: "等待转场", durationSeconds: 2, shotType: "b_roll", productionMethod: "素材", inputBasis: [{ relativePath, sha256 }], targetSpec: "9:16" }] },
+          members: [{ member_key: "shot:shot-1", member_kind: "shot_media", source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], preparation_contract: preparationContract, input_fingerprint: "1".repeat(32), audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false, relative_path: relativePath, sha256, start_seconds: 0, duration_seconds: 2 }],
+        },
+      } }),
+      reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0,
+    })).resolves.toEqual({ status: "failed", taskId: "review-render-disabled-subtitle" });
+
+    expect(execute).toHaveBeenCalledOnce();
+  });
+
+  it("将冻结裁剪配置解析为 Worker 的 ffmpeg 视频输入", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-clip",
+      status: "completed",
+      artifacts: [{ artifactType: "a_roll_video", relativePath: "episodes/episode-1/shot-clips/shot-1.mp4", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Await the next controlled production step.",
+    }));
+
+    await runMediaTask({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskId: "task-clip",
+        taskType: "generate_a_roll",
+        provider: "ffmpeg",
+        model: "ffmpeg",
+        promptVersion: "shot-clip-v1",
+        inputSnapshot: {
+          capability: "shot_clip_preparation",
+          allowed_tools: ["read", "write"],
+          media: { adapter: "ffmpeg_trim_video", video_clip: { source_relative_path: "episodes/episode-1/materials/source.mp4", start_seconds: 1, end_seconds: 4, target_duration_seconds: 3 } },
+          output: { required_artifact_types: ["a_roll_video"], content_type: "video/mp4", relative_path: "episodes/episode-1/shot-clips/shot-1.mp4", review_stage: "production_ready" },
+          input_artifacts: [{ artifactType: "source_video", relativePath: "episodes/episode-1/materials/source.mp4", sha256: "b".repeat(64), fileSize: 10 }],
+        },
+      }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ provider: "ffmpeg", media: { adapter: "ffmpeg_trim_video", videoClip: { sourceRelativePath: "episodes/episode-1/materials/source.mp4", startSeconds: 1, endSeconds: 4, targetDurationSeconds: 3 } } }));
+  });
+
+  it("将多段裁剪配置按原顺序交给 Worker", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1", taskId: "task-multi-clip", status: "completed", artifacts: [],
+      validation: { passed: true, checks: [] }, actualCostCents: 0, blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Done.",
+    }));
+    await runMediaTask({
+      claimNextTask: async () => ({ ...claimedTask, taskId: "task-multi-clip", taskType: "generate_a_roll", provider: "ffmpeg", model: "ffmpeg", promptVersion: "shot-clip-v2", inputSnapshot: {
+        capability: "shot_clip_preparation", allowed_tools: ["read", "write"],
+        media: { adapter: "ffmpeg_trim_video", video_clips: { source_relative_path: "episodes/episode-1/materials/source.mp4", segments: [{ start_seconds: 1, end_seconds: 2 }, { start_seconds: 4, end_seconds: 6 }], target_duration_seconds: 3 } },
+        output: { required_artifact_types: ["a_roll_video"], content_type: "video/mp4", relative_path: "episodes/episode-1/shot-clips/shot-1.mp4", review_stage: "production_ready" },
+        input_artifacts: [{ artifactType: "source_video", relativePath: "episodes/episode-1/materials/source.mp4", sha256: "b".repeat(64), fileSize: 10 }],
+      } }), reportResult: vi.fn(), execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0,
+    });
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ media: { adapter: "ffmpeg_trim_video", videoClips: { sourceRelativePath: "episodes/episode-1/materials/source.mp4", segments: [{ startSeconds: 1, endSeconds: 2 }, { startSeconds: 4, endSeconds: 6 }], targetDurationSeconds: 3 } } }));
+  });
+
+  it("将通过校验的媒体结果回写给同一个任务", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const preflight = vi.fn().mockResolvedValue({
+      version: "worker-preflight/v1",
+      checks: [{ capability: "static_visual_generation", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已注册 openai/openai_images 执行路径。", action: "none", scope: "worker" }],
+    });
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief is complete" }] },
+      actualCostCents: 999,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Create the script draft task.",
+    }));
+
+    await expect(runMediaTask({ claimNextTask: async () => claimedTask, reportResult, execute, preflight, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "completed", taskId: "task-1" });
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ actualCostCents: 0, status: "completed", preflight: expect.objectContaining({ version: "worker-preflight/v1" }) }));
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ accountId: "account-1", episode: expect.objectContaining({ blueprintVersionId: "blueprint-1" }) }));
+  });
+
+  it("把已冻结的创作委托和审核反馈原样交给媒体 Worker",async()=>{
+    const execute=vi.fn().mockRejectedValue(Error('stop after package validation'));
+    await runMediaTask({claimNextTask:async()=>({...claimedTask,inputSnapshot:{...claimedTask.inputSnapshot,commission:{creative_direction:'雨夜民俗悬疑',core_content:'仪式感与人物抉择'},review_feedback:{review_package_id:'review-1',reason:'补充人物动机'}}}),execute,reportResult:vi.fn(),verifyAssetRoot:async()=>{},verifyArtifacts:async()=>{},actualCostCents:0});
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({commission:{creativeDirection:'雨夜民俗悬疑',coreContent:'仪式感与人物抉择'},reviewFeedback:{reviewPackageId:'review-1',reason:'补充人物动机'}}));
+  });
+
+  it("把已冻结的系列基准原样交给视觉 Worker", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "visual brief is complete" }] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Submit the visual package for Owner review.",
+    }));
+
+    await runMediaTask({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        inputSnapshot: {
+          ...claimedTask.inputSnapshot,
+          series_baseline: { version_id: "series-version-3", version: 3, rules: { visual_style: "写实雨夜" } },
+        },
+      }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({
+      seriesBaseline: { versionId: "series-version-3", version: 3, rules: { visual_style: "写实雨夜" } },
+    }));
+  });
+
+  it("没有系列基准时省略可选字段", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1", taskId: "task-1", status: "completed", artifacts: [],
+      validation: { passed: true, checks: [] }, actualCostCents: 0, blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Done.",
+    }));
+
+    await runMediaTask({
+      claimNextTask: async () => ({ ...claimedTask, inputSnapshot: { ...claimedTask.inputSnapshot, series_baseline: null } }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute.mock.calls[0]?.[0]).not.toHaveProperty("seriesBaseline");
+  });
+
+
+
+  it("把冻结的分层 Prompt 上下文传给媒体 Worker", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [],
+      validation: { passed: true, checks: [] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Submit the visual package for Owner review.",
+    }));
+
+    await runMediaTask({
+      claimNextTask: async () => ({ ...claimedTask, inputSnapshot: { ...claimedTask.inputSnapshot, prompt_context: { version: "prompt-context/v1", blueprint_version_id: "blueprint-1", series_version_id: "series-version-3", account_hard_constraints: { restrictions: ["不得承诺医疗效果"] }, account_defaults: { positioning: "民俗短视频", visual_style:"账号旧风格", restrictions:["不得承诺医疗效果"] }, series_baseline: { version_id: "series-version-3", version: 3, rules: { visual_style: "写实雨夜", restrictions:"不得展示身份信息" } }, episode_input: { commission: { creative_direction: "克制", core_content: "人物选择" } }, review_feedback: { reason: "补充人物动机" }, hash: "context-hash-1" } } }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ promptContext: expect.objectContaining({ version: "prompt-context/v1", blueprintVersionId: "blueprint-1", seriesVersionId: "series-version-3", hash: "context-hash-1" }) }));
+    expect(execute.mock.calls[0][0].promptContext.accountDefaults.visual_style).toBe("账号旧风格");
+    expect(execute.mock.calls[0][0].promptContext.accountHardConstraints.restrictions).toEqual(["不得承诺医疗效果"]);
+    expect(execute.mock.calls[0][0].promptContext.seriesBaseline.rules).toEqual({visual_style:"写实雨夜",restrictions:"不得展示身份信息"});
+  });
+
+
+
+
+
+  it("把冻结的 A-roll 镜头、适配器与输入交给 Worker", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "blocked",
+      artifacts: [],
+      validation: { passed: false, checks: [] },
+      actualCostCents: 0,
+      blockers: [{ code: "adapter_unavailable", detail: "The declared adapter is unavailable." }],
+      retry: { shouldRetry: false, reason: "Owner action is required." },
+      nextStep: "Configure the frozen adapter.",
+    }));
+
+    await runMediaTask({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskType: "generate_a_roll",
+        provider: "openchatcut",model: "openchatcut@0.2.14",
+        inputSnapshot: {
+          capability: "a_roll_generation",
+          executor: { adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1", provider: "openchatcut" },
+          allowed_tools: ["read", "write"],
+          shot: {
+            id: "shot-01",
+            scriptSegment: "林砚进入古宅。",
+            durationSeconds: 4,
+            shotType: "a_roll",
+            productionMethod: "数字人表演",
+            inputBasis: [
+              { relativePath: "episodes/episode-1/main-script.md", sha256: "a".repeat(64) },
+              { relativePath: "episodes/episode-1/visual-brief.md", sha256: "b".repeat(64) },
+            ],
+            targetSpec: "9:16，1080×1920，24fps",
+          },
+          output: { required_artifact_types: ["a_roll_video"], content_type: "video/mp4", relative_path: "episodes/episode-1/a-roll/shot-01.mp4", review_stage: "production_ready" },
+          input_artifacts: [
+            { artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "a".repeat(64), fileSize: 128 },
+            { artifactType: "visual_brief", relativePath: "episodes/episode-1/visual-brief.md", sha256: "b".repeat(64), fileSize: 128 },
+          ],
+        },
+      }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({
+      aRoll: expect.objectContaining({ adapter: "openchatcut_card_video", shot: expect.objectContaining({ id: "shot-01", shotType: "a_roll" }) }),
+      assets: expect.objectContaining({ inputs: [expect.objectContaining({ artifactType: "main_script" }), expect.objectContaining({ artifactType: "visual_brief" })] }),
+    }));
+  });
+
+  it("缺少资产根目录时写入 blocked，不调用执行器", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runMediaTask({ claimNextTask: async () => ({ ...claimedTask, allowedAssetRoot: "" }), reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ status: "blocked", blockers: expect.any(Array) }));
+  });
+
+
+
+  it("资产根目录不可访问时写入 blocked，不调用执行器", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runMediaTask({
+      claimNextTask: async () => claimedTask,
+      reportResult,
+      execute,
+      actualCostCents: 0,
+      verifyAssetRoot: async () => { throw new Error("资产根目录未挂载或不可写。"); },
+      verifyArtifacts: async () => undefined,
+    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "blocked",
+      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "asset_root", action: "contact_environment_admin" })] }),
+      blockers: [expect.objectContaining({ code: "asset_root_unavailable", check: "asset_root", action: "contact_environment_admin" })],
+    }));
+  });
+
+  it("在执行前回写结构化 preflight 阻塞，不调用 Worker", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const preflight = vi.fn().mockResolvedValue({
+      version: "worker-preflight/v1",
+      checks: [{
+        capability: "b_roll_generation",
+        check: "credential_presence",
+        phase: "preflight",
+        status: "unavailable",
+        reason: "PEXELS_API_KEY 未配置。",
+        action: "contact_environment_admin",
+        scope: "worker",
+      }],
+    });
+
+    await expect(runMediaTask({ claimNextTask: async () => claimedTask, reportResult, execute, preflight, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+
+    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ capability: "static_visual_generation" }));
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "blocked",
+      preflight: expect.objectContaining({ version: "worker-preflight/v1" }),
+      blockers: [expect.objectContaining({ check: "credential_presence", action: "contact_environment_admin", scope: "worker" })],
+    }));
+  });
+
+  it("把 B-roll 的冻结连接引用交给预检和 Worker", async () => {
+    const inputBasis = [
+      { relativePath: "episodes/episode-1/script.md", sha256: "a".repeat(64) },
+      { relativePath: "episodes/episode-1/visual.png", sha256: "b".repeat(64) },
+    ];
+    const preflight = vi.fn().mockResolvedValue({
+      version: "worker-preflight/v1",
+      checks: [{ capability: "b_roll_generation", check: "credential_presence", phase: "preflight", status: "unavailable", reason: "Pexels 连接缺少凭据。", action: "contact_environment_admin", scope: "worker" }],
+    });
+
+    await runMediaTask({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskType: "generate_b_roll",
+        provider: "pexels",
+        model: "pexels-video-v1",
+        promptVersion: "b-roll-v1",
+        inputSnapshot: {
+          capability: "b_roll_generation",
+          credential_ref: "11111111-1111-4111-8111-111111111111",
+          media: { adapter: "pexels_video", b_roll: { query: "rainy street", target_duration_seconds: 3, shot: { id: "shot-1", scriptSegment: "rainy street", durationSeconds: 3, shotType: "b_roll", productionMethod: "Pexels", inputBasis, targetSpec: "9:16" } } },
+          allowed_tools: ["read", "write"],
+          output: { required_artifact_types: ["b_roll_asset"], content_type: "video/mp4", relative_path: "episodes/episode-1/b-roll/shot-1.mp4", review_stage: "production_ready" },
+          input_artifacts: [{ artifactType: "main_script", ...inputBasis[0], fileSize: 128 }, { artifactType: "static_visual", ...inputBasis[1], fileSize: 128 }],
+        },
+      }),
+      preflight,
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute: vi.fn(),
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ credentialRef: "11111111-1111-4111-8111-111111111111", media: { adapter: "pexels_video", bRoll: expect.any(Object) } }));
+  });
+
+  it("把 retryable preflight 报告为可自动重试的失败", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const execute = vi.fn();
+
+    await expect(runMediaTask({
+      claimNextTask: async () => claimedTask,
+      reportResult,
+      execute,
+      preflight: async () => ({
+        version: "worker-preflight/v1",
+        checks: [{ capability: "static_visual_generation", check: "network_request", phase: "preflight", status: "retryable", reason: "供应商连接暂时失败。", action: "retry", scope: "worker" }],
+      }),
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    })).resolves.toEqual({ status: "failed", taskId: "task-1" });
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "failed",
+      retry: { shouldRetry: true, reason: "供应商连接暂时失败。" },
+      blockers: [expect.objectContaining({ action: "retry", status: "retryable" })],
+    }));
+  });
+
+  it("输入产物校验失败时写入 blocked，不调用执行器", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runMediaTask({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        inputSnapshot: {
+          ...claimedTask.inputSnapshot,
+          input_artifacts: [{ artifactType: "research_notes", relativePath: "episodes/episode-1/research.md", sha256: "a".repeat(64), fileSize: 128 }],
+        },
+      }),
+      reportResult,
+      execute,
+      actualCostCents: 0,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async (_taskPackage, artifacts) => {
+        if (artifacts[0]?.artifactType === "research_notes") throw new Error("research.md 的 SHA-256 不匹配。");
+      },
+    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "blocked",
+      blockers: [expect.objectContaining({ code: "input_artifacts_invalid" })],
+    }));
+  });
+
+  it("产物文件无法验证时不回写 completed，而是回写 failed", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "static_visual", relativePath: "episodes/episode-1/image.png", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief is complete" }] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Create the script draft task.",
+    }));
+
+    await expect(runMediaTask({
+      claimNextTask: async () => claimedTask,
+      reportResult,
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async (_taskPackage, artifacts) => {
+        if (artifacts.length > 0) throw new Error("brief.md 的 SHA-256 不匹配。");
+      },
+      actualCostCents: 0,
+    })).resolves.toEqual({ status: "failed", taskId: "task-1" });
+
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ status: "failed" }));
+  });
+
+  it("媒体执行失败时按任务重试上限回写 failed", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runMediaTask({ claimNextTask: async () => claimedTask, reportResult, execute: async () => { throw new Error("temporary provider failure"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "failed", taskId: "task-1" });
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ status: "failed", retry: { shouldRetry: true, reason: "temporary provider failure" } }));
+  });
+
+  it("真实网络失败回写 execution 阶段网络检查", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runMediaTask({ claimNextTask: async () => claimedTask, reportResult, execute: async () => { throw new Error("供应商网络连接超时"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "failed", taskId: "task-1" });
+
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "failed",
+      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "network_connectivity", phase: "execution", status: "retryable", action: "retry" })] }),
+      blockers: [expect.objectContaining({ check: "network_connectivity", status: "retryable", action: "retry" })],
+    }));
+  });
+
+
+
+  it("OpenAI Images 模型拒绝要求修改蓝图，认证拒绝要求管理连接", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const imageTask = claimedTask;
+
+    await runMediaTask({ claimNextTask: async () => imageTask, reportResult, execute: async () => { throw new Error("OpenAI Images HTTP 400: model unsupported"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ capability: "static_visual_generation", check: "model_permission", action: "edit_blueprint", scope: "blueprint" })] }));
+
+    reportResult.mockClear();
+    await runMediaTask({ claimNextTask: async () => imageTask, reportResult, execute: async () => { throw new Error("OpenAI Images HTTP 401: invalid api key"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ capability: "static_visual_generation", check: "credential_validity", action: "manage_connection", scope: "connection" })] }));
+  });
+});
+
+it.each([new ProviderOutcomeUnknownError(),new VideoGenerationError('视频提交结果未知：供应商响应不完整','unknown')])('keeps a possibly sent request blocked for Owner reconciliation rather than automatic retry: %s',async failure=>{
+ const reportResult=vi.fn();
+ const inputBasis=[{relativePath:'episodes/episode-1/script.md',sha256:'a'.repeat(64)},{relativePath:'episodes/episode-1/visual.png',sha256:'b'.repeat(64)}];
+ const task={...claimedTask,taskType:'generate_b_roll',provider:'pexels' as const,model:'pexels-video-v1',inputSnapshot:{
+  capability:'b_roll_generation',credential_ref:'11111111-1111-4111-8111-111111111111',allowed_tools:['network','write'],
+  media:{adapter:'pexels_video',b_roll:{query:'nature',target_duration_seconds:3,shot:{id:'shot-1',scriptSegment:'nature',durationSeconds:3,shotType:'b_roll',productionMethod:'Pexels',inputBasis,targetSpec:'9:16'}}},
+  output:{required_artifact_types:['b_roll_asset'],content_type:'video/mp4',relative_path:'episodes/episode-1/b-roll.mp4',review_stage:'production_ready'},input_artifacts:[{artifactType:'main_script',...inputBasis[0],fileSize:128},{artifactType:'static_visual',...inputBasis[1],fileSize:128}]
+ }};
+ await expect(runMediaTask({claimNextTask:async()=>task,reportResult,execute:async()=>{throw failure;},verifyAssetRoot:async()=>{},verifyArtifacts:async()=>{},actualCostCents:0})).resolves.toEqual({status:'blocked',taskId:'task-1'});
+ expect(reportResult).toHaveBeenCalledOnce();
+ expect(reportResult).toHaveBeenCalledWith('task-1',0,expect.objectContaining({status:'blocked',artifacts:[],retry:{shouldRetry:false,reason:expect.stringContaining('结果未知')},blockers:[expect.objectContaining({code:'provider_result_unknown',status:'blocked',action:'contact_environment_admin'})]}));
+});

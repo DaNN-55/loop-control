@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "container": "loop-daily-backup-1558525b6287",
+  "containerRemoved": true,
+  "restoreCompared": [
+    "allTableRowsIncludingAuthentication",
+    "schemaLedger",
+    "sequences",
+    "rolesAndPasswordFingerprints",
+    "catalog",
+    "ACL"
+  ],
+  "dailyDataChanged": false,
+  "phase": "compare"
+}

@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/production-metrics-c-20261113/loop-control
+
+ ✓ src/local-app/productionMetricsWorkflow.integration.test.ts > collects real controlled Chinese narration, frozen estimate, adoption, withdrawal, re-adoption and reopen without storing text 4869ms
+ ✓ src/local-app/productionMetricsWorkflow.integration.test.ts > a real SQL response-write failure never repeats a Provider transport and keeps the request marker 1589ms
+ ✓ src/local-app/productionMetricsWorkflow.integration.test.ts > freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package 27682ms
+ ✓ src/local-app/productionMetricsMigration.integration.test.ts > upgrades a nonempty latest-parallel 176 fixture to 177 atomically while keeping collection off and original data and ACLs intact 2658ms
+ ✓ src/local-app/productionQuality.integration.test.ts > persists Owner-selected business quality atomically with creation and revisioned commands without changing generation settings 2625ms
+ ↓ src/local-app/productionQuality.integration.test.ts > holds a clearly isolated quality fixture for browser verification
+ ✓ src/local-app/productionMetrics.integration.test.ts > reads a nonempty Owner-scoped snapshot without writes, duplicate joins or fabricated historical facts 2335ms
+ ✓ src/local-app/productionMetricsRetry.integration.test.ts > freezes objective retry attribution at the real SQL request boundary without inventing rework or comparing image authorization hashes 2426ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > defaults off, bootstraps observations only, and records activation gaps 85ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > keeps events atomic and idempotent, prevents forged relationships and direct writes 50ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > freezes submission quality, separates backoff from eligible wait, and fences Worker events 234ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > keeps restored past facts and submission quality unknown while collecting later real changes 34ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > records bounded resource observations, nullable GPU and gaps without changing business records 56ms
+ ✓ src/local-app/productionMetricsCollection.integration.test.ts > C collection in an explicitly isolated PostgreSQL fixture > retains only new statistics, preserves current quality and anonymous totals after permanent deletion 66ms
+
+ Test Files  6 passed (6)
+      Tests  13 passed | 1 skipped (14)
+   Start at  10:39:01
+   Duration  48.73s (transform 624ms, setup 16ms, collect 1.71s, tests 46.15s, environment 1ms, prepare 217ms)
+

@@ -1,0 +1,20 @@
+E2E evidence: /private/tmp/loop-story-e2e-14box4/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-14box4/source
+
+ ✓ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests | 2 skipped) 4726ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)  4725ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 2 skipped (3)
+   Start at  02:44:58
+   Duration  5.41s (transform 408ms, setup 6ms, collect 562ms, tests 4.73s, environment 0ms, prepare 25ms)
+
+JSON report written to /private/tmp/loop-story-e2e-14box4/evidence/vitest.json

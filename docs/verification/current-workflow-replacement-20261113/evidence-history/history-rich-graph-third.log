@@ -1,0 +1,22 @@
+E2E evidence: /private/tmp/loop-story-e2e-qbXKX1/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-qbXKX1/source
+
+(node:45595) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/productionHistoryProjection.integration.test.ts (11 tests | 10 skipped) 20547ms
+   ✓ history projection restores an independent production graph and actual adopted sources without reviving execution or changing the archive  20546ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 10 skipped (11)
+   Start at  01:08:35
+   Duration  21.29s (transform 458ms, setup 7ms, collect 614ms, tests 20.55s, environment 0ms, prepare 32ms)
+
+JSON report written to /private/tmp/loop-story-e2e-qbXKX1/evidence/vitest.json

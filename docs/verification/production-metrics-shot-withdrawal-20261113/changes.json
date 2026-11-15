@@ -1,0 +1,17 @@
+[
+  {
+    "path": "src/local-app/productionMetricWrites.ts",
+    "before": "72f087c3224de1a8c968086cd442d0507f43883ca2a3272adb9ce68f8ddd2ff7",
+    "after": "d5cfa8920b46edbd12071be53bd54bd0d56f4812c0d2af500ca6e9c712b46147"
+  },
+  {
+    "path": "src/local-app/productionWorkspaceCommands.ts",
+    "before": "f7db5f56ad98c153ca0806b61613cb12aad1f67fa9da15e9f7193fed9da43b58",
+    "after": "77e47d5643c330881e33f8172addee9220a5b32290078c56173d402ce61e1055"
+  },
+  {
+    "path": "src/local-app/productionMetricsShotDeletion.integration.test.ts",
+    "before": null,
+    "after": "54b109920f54ebc69a0b20d595ebc0197a2cb63fd909d483bce1e35535271a86"
+  }
+]

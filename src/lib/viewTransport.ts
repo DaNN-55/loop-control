@@ -1,5 +1,5 @@
 // Shared-view contract. Production commands are injected by the local application; missing callbacks fail before network I/O.
-import type{Database}from'./database.types.js';
+import type{HistoricalDatabaseV1 as Database}from'./history/databaseV1.types.js';
 export interface Session{access_token:string;user:{id:string;email?:string};refresh_token?:string;expires_at?:number;expires_in?:number;token_type?:string}
 type ErrorValue={message:string;code?:string;details?:string;hint?:string};
 type Result<T>={data:T;error:null;count:number|null}|{data:null;error:ErrorValue;count:null};

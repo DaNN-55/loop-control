@@ -1,0 +1,5 @@
+# 两轴审查
+
+Standards与Spec均在199初审发现两项P1：内联attempt须固定candidate.id；visual必须保留原参数名并真正合并前代调用。真实红灯和隔离初始化失败已保存。随后实际回执回归发现交付变量t遮蔽通用SQL别名，已改为delivery_task，原条件不变。修复复核两轴0开放项，nativeAttemptOutput三处运行消费者均同步；200追加合并队列且不改199字节，两轴再次0项。
+
+图片旧测试失败在198基线同样复现。修正没有放宽保护：无连接仍拒绝／无任务，整期授权仍409，每次仍经prepareWorkspaceCall→confirmWorkspaceCall，真实冻结连接、Worker执行、原费用／文件和人工编辑断言保留。旧wake mock次数不作为当前确认协议的行为证明。最终三项通过，4项名称筛选未运行不计通过。

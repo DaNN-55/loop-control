@@ -1,0 +1,57 @@
+{
+  "exactNameReferences": [
+    {
+      "file": "src/local-app/retiredShotPreparation.integration.test.ts",
+      "line": 9,
+      "names": [
+        "confirm_shot_preparation",
+        "freeze_shot_preparation_batch",
+        "replace_manual_shot_media",
+        "save_shot_clip_draft",
+        "set_shot_tts_confirmation",
+        "skip_shot_preparation",
+        "restore_completed_shot_tts_track"
+      ],
+      "kind": "verification"
+    },
+    {
+      "file": "src/local-app/retiredShotPreparation.integration.test.ts",
+      "line": 40,
+      "names": [
+        "confirm_shot_preparation",
+        "freeze_shot_preparation_batch",
+        "replace_manual_shot_media",
+        "save_shot_clip_draft",
+        "set_shot_tts_confirmation",
+        "skip_shot_preparation",
+        "restore_completed_shot_tts_track"
+      ],
+      "kind": "verification"
+    },
+    {
+      "file": "scripts/e2e/clean-schema.mjs",
+      "line": 25,
+      "names": [
+        "confirm_shot_preparation",
+        "freeze_shot_preparation_batch",
+        "replace_manual_shot_media",
+        "save_shot_clip_draft",
+        "set_shot_tts_confirmation",
+        "skip_shot_preparation",
+        "restore_completed_shot_tts_track"
+      ],
+      "kind": "verification"
+    }
+  ],
+  "productionReferences": [],
+  "preservedConsumers": {
+    "draftSave": "src/local-app/episodeCommands.ts",
+    "workspaceHistory": "src/local-app/productionWorkspaceCommands.ts",
+    "legacyProject": "src/local-app/legacyStudioProject.ts",
+    "htmlAdoption": "src/local-app/legacyHtmlWorkspace.ts",
+    "frozenMetadata": "src/local-app/legacyWorkspaceMetadata.ts",
+    "narrationRead": "src/local-app/workspaceNarration.ts",
+    "freezeProtection": "public.protect_frozen_shot_preparation_inputs",
+    "audioSync": "public.sync_shot_tts_audio_after_insert"
+  }
+}

@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/run-JIgPY2/source
+
+ ✓ src/local-app/productionPreparationCoverage.integration.test.ts (5 tests) 24705ms
+   ✓ B1 remaining prose: independent captions, manual voice and matched media survive format continuation without retired writes  4660ms
+   ✓ B1 remaining v2: independent captions, manual voice and matched media survive format continuation without retired writes  3853ms
+   ✓ B1 remaining v3-image: independent captions, manual voice and matched media survive format continuation without retired writes  4010ms
+   ✓ B1 remaining v3-mixed: independent captions, manual voice and matched media survive format continuation without retired writes  5710ms
+   ✓ B1 remaining mixed tasks: image and speech candidates coexist with another shot real source-audio Worker without old records or implicit adoption  6471ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  21:50:07
+   Duration  25.89s (transform 753ms, setup 11ms, collect 1.02s, tests 24.71s, environment 0ms, prepare 40ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/run-JIgPY2/evidence/vitest.json

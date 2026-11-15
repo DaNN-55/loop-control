@@ -1,0 +1,23 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-fE0PqK/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-fE0PqK/source
+
+ ✓ src/local-app/legacyWorkbenchAdoption.integration.test.ts (35 tests | 33 skipped) 7738ms
+   ✓ imports an original image window of 0.05 seconds by its actual frames while retaining public registration limits  5930ms
+   ✓ imports an original image window of 121 seconds by its actual frames while retaining public registration limits  1808ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 33 skipped (35)
+   Start at  14:09:35
+   Duration  8.49s (transform 439ms, setup 6ms, collect 637ms, tests 7.74s, environment 0ms, prepare 31ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-fE0PqK/evidence/vitest.json

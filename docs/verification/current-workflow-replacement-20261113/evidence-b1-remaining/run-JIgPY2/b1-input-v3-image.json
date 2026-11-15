@@ -1,0 +1,26 @@
+{
+  "kind": "v3-image",
+  "episode": "ead6299d-9731-4eb1-ab92-84046066af02",
+  "baselineBefore": "f54b0afd-ee66-4293-a756-49fd14ac5a20",
+  "baselineAfter": "995357f0-07e0-41fd-9e7d-a3279897ab4b",
+  "stable": [
+    {
+      "id": "97c852c0-a237-4c88-aea9-33a692ef108b",
+      "itemId": "shot-shot-01-97c852c0-a237-4c88-aea9-33a692ef108b",
+      "shotId": "shot-01"
+    }
+  ],
+  "manualTrack": "4d3d3469-3e59-4184-a1fb-c8a6d003ca19",
+  "project": {
+    "relativePath": "未分系列--e790cf0e-f6e7-46a1-9f9b-26a5ed6fe118/正式新单--ead6299d-9731-4eb1-ab92-84046066af02/production-workspace/versions/1b0dfe0a6372d762c76e0cbf1716036f5fe6463b7540f77959fdd80f93a9f308.json",
+    "sha256": "1b0dfe0a6372d762c76e0cbf1716036f5fe6463b7540f77959fdd80f93a9f308",
+    "fileSize": 5334,
+    "projectId": "loop-control-ead6299d-9731-4eb1-ab92-84046066af02"
+  },
+  "oldTablesEmpty": true,
+  "tasks": [
+    {
+      "task_type": "generate_narration"
+    }
+  ]
+}

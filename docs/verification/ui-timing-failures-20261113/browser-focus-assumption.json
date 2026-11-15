@@ -1,0 +1,5 @@
+{
+  "observation": "A natively disabled refresh button loses focus in Chromium; jsdom retains it. This is native button behavior, not the recovery component stealing focus.",
+  "testAdjustment": "Keep user focus on an unaffected external control during the read-only refresh, then verify explicit target switching.",
+  "productChanged": false
+}

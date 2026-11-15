@@ -15,7 +15,7 @@ beforeEach(()=>{
  ports.spawn.mockImplementation(()=>{const child=new EventEmitter();child.pid=999;child.exitCode=null;child.kill=vi.fn();child.unref=vi.fn();queueMicrotask(()=>child.emit('spawn'));return child;});
  vi.spyOn(process,'kill').mockImplementation(()=>{throw Object.assign(new Error('No such process'),{code:'ESRCH'});});vi.spyOn(console,'log').mockImplementation(()=>{});
 });
-afterEach(()=>vi.restoreAllMocks());
+afterEach(()=>{vi.unstubAllEnvs();vi.restoreAllMocks();});
 it('archives a record only after confirming its process exited, then starts normally',async()=>{
  await import('./start.mjs');
  expect(process.kill).toHaveBeenCalledWith(444,0);expect(ports.rename).toHaveBeenCalledWith('/fixture/runtime/app.json',expect.stringMatching(/app\.json\.stale-\d+$/));expect(ports.spawn).toHaveBeenCalledTimes(1);expect(ports.write).toHaveBeenCalledWith('/fixture/runtime/app.json',expect.stringContaining('999'),{exclusive:true});
@@ -28,4 +28,14 @@ it('does not archive or stop a live process whose identity does not match',async
 });
 it('reuses the matching live application without preparing or spawning another instance',async()=>{
  ports.matching=true;await import('./start.mjs');expect(ports.spawn).not.toHaveBeenCalled();expect(ports.prepare).not.toHaveBeenCalled();expect(ports.rename).not.toHaveBeenCalled();
+});
+it('refuses to spawn a release that differs from the pinned adoption release',async()=>{
+ vi.stubEnv('LOOP_EXPECTED_RUNTIME_RELEASE','a'.repeat(64));
+ await expect(import('./start.mjs')).rejects.toThrow('Prepared runtime differs from expected release');
+ expect(ports.prepare).toHaveBeenCalledOnce();expect(ports.spawn).not.toHaveBeenCalled();expect(ports.write).not.toHaveBeenCalled();
+});
+it('refuses to reuse an existing application outside the pinned adoption release',async()=>{
+ ports.matching=true;vi.stubEnv('LOOP_EXPECTED_RUNTIME_RELEASE','a'.repeat(64));
+ await expect(import('./start.mjs')).rejects.toThrow('Running runtime differs from expected release');
+ expect(ports.prepare).not.toHaveBeenCalled();expect(ports.spawn).not.toHaveBeenCalled();
 });

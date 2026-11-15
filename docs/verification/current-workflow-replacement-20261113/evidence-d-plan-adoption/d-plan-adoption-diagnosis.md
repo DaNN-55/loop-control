@@ -1,0 +1,13 @@
+# D显式计划接入诊断
+
+固定起点NQOmFd。首个夹具将旧v2时长设1秒，被原2–15整数保护拒绝；修夹具2秒，未改解析器。随后实际Owner命令缺入口400为真实红灯。
+
+新增后503为错误使用resolveEpisodeStorageLocation：传入已授权账号I/O根，但此函数要求服务媒体根。改用episodeStorageLocationAtRoot；素材根只从原同账号登记及storage_physical_root取，saved root不作权限。
+
+接着409是旧计划follow_tts在none预填状态不能冒充已经采用口播。保留该保护；改用现有saveWorkspaceNarrationCaptions草稿入口建立跟随意图，通用字幕保存仅处理独立正文/布局，然后恢复原关闭状态。实际采用/确认仍由Owner后续完成。
+
+不是等待不够，不原样重跑，也不放宽SQL/字幕/费用保护；计划首帧仅候选，声音仅准备项。
+
+Spec复核指出188已有plan-import表示旧planner。真实旧基准先红（返回saved-plan）；改按source_format与source_evidence.version区分，原planner及逐镜来源保持，未改变原记录。
+
+新增原生JSON工程有文件但SQL当前行缺失反例：在隔离副本换回Czh早期命令类，实际返回200并建立新基准；现入口在任何注册/复制前检查已存原生版本并409，不让保存计划掩盖待恢复编辑，原存储字节保持。红灯Probe其余7项按-t未选中，不能计为通过。

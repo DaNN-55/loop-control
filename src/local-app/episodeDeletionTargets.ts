@@ -1,3 +1,4 @@
+import {workspaceStudioFingerprint} from './workspaceStudioFingerprint.js';
 import {lstat, realpath, readdir, readlink,readFile,mkdtemp,open,unlink,rmdir} from 'node:fs/promises';
 import {join, relative, resolve,extname} from 'node:path';
 import {assetPathWithin} from './mediaPaths.js';
@@ -84,6 +85,7 @@ export async function deletionFileFingerprint(path:string,expectedLinks=1n){
 export async function inventoryEpisodeDeletion(c:PoolClient,target:EpisodeDeletionTarget,episodeId:string){
  const rows=(await c.query(`SELECT relative_path path,sha256,file_size bytes,'artifact:'||id authority FROM public.artifacts WHERE episode_id=$1
  UNION ALL SELECT storage_path,sha256,file_size,'material:'||id FROM public.production_material_revisions WHERE episode_id=$1
+ UNION ALL SELECT file_reference->>'relativePath',file_reference->>'sha256',(file_reference->>'fileSize')::bigint,'production-preparation:'||id FROM local_identity.production_preparation_revisions WHERE episode_id=$1 AND file_reference IS NOT NULL
  UNION ALL SELECT project_path,project_sha256,project_size,'workspace:'||id FROM local_identity.production_workspaces WHERE episode_id=$1
  UNION ALL SELECT project_path,project_sha256,project_size,'workspace-version:'||workspace_id FROM local_identity.production_workspace_versions WHERE episode_id=$1
  UNION ALL SELECT r.relative_path,r.sha256,r.file_size,'legacy-recovery:'||r.workspace_id FROM local_identity.workspace_legacy_recoveries r JOIN local_identity.production_workspaces w ON w.id=r.workspace_id WHERE w.episode_id=$1
@@ -125,9 +127,9 @@ async function nativeDeletionAuthorities(c:PoolClient,target:EpisodeDeletionTarg
  const own=async(path:string,authority:string,expected?:{sha256:string;bytes:number|string})=>{try{const actual=await deletionFileFingerprint(path);if(!expected||actual.sha256===expected.sha256&&actual.bytes===Number(expected.bytes))candidates.push({path,sha256:actual.sha256,bytes:actual.bytes,authority});}catch{/* Missing or unverifiable members remain outside the owned list. */}};
  try{
   if(await hasActiveNativeStudio(target.root,episodeId,relative(target.root,target.path)))return candidates;
-  const workspace=(await c.query('SELECT id,script_revision_id,storyboard_package_id FROM local_identity.production_workspaces WHERE episode_id=$1',[episodeId])).rows[0];if(!workspace)return candidates;
+  const workspace=(await c.query('SELECT id,script_revision_id,storyboard_package_id,preparation_revision_id FROM local_identity.production_workspaces WHERE episode_id=$1',[episodeId])).rows[0];if(!workspace)return candidates;
   const metadata=await json(join(work,'workspace.json')),generated=await json(join(work,'generated-project.json')),host=await json(join(work,'project.json'));
-  const expectedInput=createHash('sha256').update(JSON.stringify({id:workspace.id,scriptRevisionId:workspace.script_revision_id,storyboardPackageId:workspace.storyboard_package_id})).digest('hex');
+  const expectedInput=workspaceStudioFingerprint(workspace);
   const validProject=(document:any)=>document?.version===3&&document.loopControl?.inputFingerprint===workspace.id&&Array.isArray(document.timelines)&&document.timelines.some((timeline:any)=>timeline.id===projectId);
   if(metadata.projectId!==projectId||metadata.inputFingerprint!==expectedInput||!validProject(generated)||!validProject(host)||metadata.baseProjectSha256!==createHash('sha256').update(JSON.stringify(generated)).digest('hex')||!metadata.reverseSources||Array.isArray(metadata.reverseSources))return candidates;
   const hostIdentity=await deletionFileFingerprint(join(work,'project.json'));if(!rows.some(row=>row.sha256===hostIdentity.sha256&&Number(row.bytes)===hostIdentity.bytes&&row.authority.startsWith('workspace')))return candidates;

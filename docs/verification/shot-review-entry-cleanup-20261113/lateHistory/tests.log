@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-03YqaZ/source
+
+ ✓ src/local-app/retiredShotReviewSql.integration.test.ts (3 tests | 2 skipped) 1506ms
+   ✓ a leased historical revision result retains evidence without producing or approving a new storyboard and keeps lease and frozen-path guards  1506ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 2 skipped (3)
+   Start at  09:34:13
+   Duration  2.27s (transform 458ms, setup 8ms, collect 637ms, tests 1.51s, environment 0ms, prepare 36ms)
+
+JSON report written to /private/tmp/loop-story-e2e-03YqaZ/evidence/vitest.json

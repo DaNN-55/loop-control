@@ -1,0 +1,22 @@
+--- a/src/local-app/workspaceFirstVideo.integration.test.ts
++++ b/src/local-app/workspaceFirstVideo.integration.test.ts
+@@ -19,10 +19,10 @@
+   r=await f.rawRequest('generateWorkspaceImage',{episodeId:f.newEpisode,workspaceId:w.id,expectedRevision:w.revision,selection:f.controlled!.videoSelection,...payload});expect(r.status,JSON.stringify(r.body)).toBe(409);expect(r.body.error).toContain('确认本次调用');
+   expect((await send('authorizeWorkspacePreparation',{enabled:true})).status).toBe(409);expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
+   if(withVoice){
+-   expect((await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1})).status).toBe(200);
+    expect((await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',...f.controlled!.narrationSettings,text:'真实主声窗口由本次口播结果确定。'})).status).toBe(200);
+    expect((await send('confirmWorkspaceNarration',{clipId:w.clips[0].id})).status).toBe(200);
+    expect((await send('generateWorkspaceNarration',{clipId:w.clips[0].id,reservationCents:100})).status).toBe(200);
++   const voiceSnapshot=(await f.c.query('SELECT request_snapshot FROM local_identity.workspace_narration_requests WHERE task_id=$1',[w.narration[0].taskId])).rows[0].request_snapshot;expect(voiceSnapshot.context.voice).toMatchObject({name:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1});
+    expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');
+    expect((await send('refreshWorkspaceNarration')).status).toBe(200);w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
+   }
+@@ -48,7 +48,6 @@
+   expect((await f.send('start')).status).toBe(200);
+   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
+   const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);if(response.body.id===w.id)w=response.body;return response;};
+-  await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
+   const generate=async(text:string)=>{await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',...f.controlled!.narrationSettings,text});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});await send('generateWorkspaceNarration',{clipId:w.clips[0].id,reservationCents:100});expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');};
+   await generate('重规划前的完整口播。');await send('refreshWorkspaceNarration');w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
+   const oldTrack=w.narration[0].audioTrackId;expect(w.narration[0].adoptedAudioTrackId).toBe(oldTrack);

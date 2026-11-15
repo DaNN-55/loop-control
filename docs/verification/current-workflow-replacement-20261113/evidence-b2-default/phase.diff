@@ -1,0 +1,307 @@
+--- a/src/local-app/ProductionWorkspacePanel.test.tsx
++++ b/src/local-app/ProductionWorkspacePanel.test.tsx
+@@ -366,7 +366,7 @@
+  render(<ProductionWorkspacePanel episodeId="baseline-e" title="脚本读取" scriptRevisionId="baseline-script" stage="script_approved" materials={[{id:'baseline-script',material_type:'script',source_path:'script.md',storage_path:'script.md',is_main_script:true}]} command={vi.fn()} onLegacy={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(true);await act(async()=>resolveScript(new Response('实际服务器正文')));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('实际服务器正文');
+ });
+ 
+-it('builds the storyboard automatically for a confirmed v2 script without showing the general importer',async()=>{
++it('prepares the workspace automatically for a confirmed v3 script without showing the general importer',async()=>{
+  const scriptPath='episodes/e/script.md';
+  const structuredWorkspace={...workspace,clips:[{...workspace.clips[0],shotId:'shot-01'}]};
+  vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')
+--- a/src/local-app/currentShotSemantics.integration.test.ts
++++ b/src/local-app/currentShotSemantics.integration.test.ts
+@@ -8,22 +8,22 @@
+ import {formalWorkflowFixture} from './formalWorkflow.fixture';
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+ import {productionScriptTemplate} from '../reviews/productionScript';
++import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
+ 
+ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['new','legacy-script','plain'])('current %s script → neutral workspace → actual video queue and Worker',async kind=>{
+- const text=kind==='plain'?'# 新镜头\n\n## 正文\n窗边的灯亮着。\n\n门外传来脚步声。':kind==='legacy-script'?productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll'):productionScriptTemplate;
++ const text=kind==='plain'?'# 新镜头\n\n## 正文\n窗边的灯亮着。\n\n门外传来脚步声。':kind==='legacy-script'?historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll'):productionScriptTemplate;
+  const f=await formalWorkflowFixture({controlled:true,scriptText:text,configurePlanning:false});
+  try{
+   expect((await f.send('start')).status).toBe(200);
+   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
+   expect(w.preparation.shots.length).toBeGreaterThan(0);expect(w.preparation.shots.every((s:any)=>!('shotType'in s))).toBe(true);
+-  const rows=(await f.c.query('SELECT shot_type,snapshot FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1',[w.id])).rows;expect(rows.length).toBe(w.clips.length);expect(rows.every(s=>s.shot_type===null&&!('shotType'in s.snapshot))).toBe(true);
++  const rows=(await f.c.query('SELECT snapshot FROM local_identity.production_shot_versions WHERE preparation_revision_id=$1',[w.preparationRevisionId])).rows;expect(rows.length).toBe(w.clips.length);expect(rows.every(s=>!('shotType'in s.snapshot))).toBe(true);expect((await f.c.query('SELECT count(*)::int n FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1',[w.id])).rows[0].n).toBe(0);
+   const obsolete=await f.send('confirmWorkspaceShot',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,shotType:'a_roll'});expect(obsolete.status).toBe(400);
+   if(kind==='new'){
+    const old=await f.controlled!.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(old.status,JSON.stringify(old.body)).toBe(200);
+    const legacy=(await f.c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[old.body.id])).rows[0],shotId=old.body.clips[0].shotId;
+-   const before=(await f.c.query('SELECT snapshot FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2',[legacy.id,shotId])).rows[0].snapshot;expect(['a_roll','b_roll']).toContain(before.shotType);
+-   await f.c.query('UPDATE local_identity.workspace_shot_inputs SET shot_type=NULL WHERE workspace_id=$1 AND shot_id=$2',[legacy.id,shotId]);
+-   expect((await resolveWorkspaceVisualLineage(f.c,legacy,shotId)).shotType).toBe(before.shotType);
++   const before=(await f.c.query("SELECT s->>'shotType' classification FROM local_identity.production_preparation_revisions p CROSS JOIN LATERAL jsonb_array_elements(p.source_evidence#>'{package,context_snapshot,worker_result,storyboard,shots}')s WHERE p.id=$1 AND s->>'id'=$2",[legacy.preparation_revision_id,shotId])).rows[0].classification;expect(['a_roll','b_roll']).toContain(before);
++   expect((await resolveWorkspaceVisualLineage(f.c,legacy,shotId)).shotType).toBe(before);
+   }
+   // Input kinds stay authoritative; a visual_reference video is usable without A/B registration.
+   const sourceVideo=join(f.assetRoot,'long-shot.mp4');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-stream_loop','-1','-i',workspaceTestMedia('landscape-red-blue.mp4'),'-t','8','-c','copy',sourceVideo]);
+--- a/src/local-app/episodeReads.ts
++++ b/src/local-app/episodeReads.ts
+@@ -21,9 +21,9 @@
+   const existing=(await c.query(`SELECT f.relative_path,f.sha256,f.file_size,local_identity.episode_asset_root(e.id) source_asset_root,coalesce(r.source_media_root,local_identity.media_deployment()->>'targetRoot') source_media_root,local_identity.media_deployment()->'sourceRoots' AS source_media_roots,local_identity.media_deployment()->>'targetRoot' AS expected_media_root FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN local_identity.import_record r ON true JOIN LATERAL(SELECT relative_path,sha256,file_size FROM public.artifacts WHERE episode_id=e.id UNION ALL SELECT storage_path,sha256,file_size FROM public.production_material_revisions WHERE episode_id=e.id)f ON true WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner' AND f.relative_path=$3 LIMIT 1`,[episodeId,ownerId,path])).rows[0];
+   const withLocation=async(file:typeof existing)=>{if(!file)return null;const location=await resolveEpisodeStorageLocation(c,mediaRoot??file.expected_media_root??file.source_media_root,episodeId);await requireEpisodeStorageDirectory(c,location);return{...file,storage_location:location,resolved_file_path:await resolveEpisodeFileReference(c,location,file.relative_path)};};
+   if(existing)return withLocation(existing);
+-  if(!(await c.query("SELECT to_regclass('local_identity.workspace_exports') present")).rows[0].present)return null;
++  const storage=(await c.query("SELECT to_regclass('local_identity.workspace_exports') exports,to_regclass('local_identity.production_preparation_revisions') preparations")).rows[0];if(!storage.exports)return null;
+   return withLocation((await c.query(`SELECT f->>'relativePath' relative_path,f->>'sha256' sha256,f->>'fileSize' file_size,local_identity.episode_asset_root(e.id) source_asset_root,coalesce(r.source_media_root,local_identity.media_deployment()->>'targetRoot') source_media_root,local_identity.media_deployment()->'sourceRoots' AS source_media_roots,local_identity.media_deployment()->>'targetRoot' AS expected_media_root
+-   FROM local_identity.workspace_exports x JOIN public.episodes e ON e.id=x.episode_id JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN local_identity.import_record r ON true CROSS JOIN LATERAL jsonb_array_elements(jsonb_build_array(x.artifact,x.project)) f
++   FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN local_identity.import_record r ON true CROSS JOIN LATERAL(SELECT f FROM local_identity.workspace_exports x CROSS JOIN LATERAL jsonb_array_elements(jsonb_build_array(x.artifact,x.project)) f WHERE x.episode_id=e.id ${storage.preparations?'UNION ALL SELECT p.file_reference FROM local_identity.production_preparation_revisions p WHERE p.episode_id=e.id':''}) files(f)
+    WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner' AND f->>'relativePath'=$3 LIMIT 1`,[episodeId,ownerId,path])).rows[0]??null);
+  });
+ }
+--- a/src/local-app/inputStorageLocation.integration.test.ts
++++ b/src/local-app/inputStorageLocation.integration.test.ts
+@@ -10,6 +10,7 @@
+ import {collectionOwnerPost,prepareCollectionTargets,moveCollection} from './episodeCollection.fixture';
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+ import {productionScriptTemplate} from '../reviews/productionScript';
++import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
+ const publicationFault=vi.hoisted(()=>({directory:'',once:false,triggered:false}));
+ // Controlled fault at the system filesystem boundary; DB, HTTP and file bytes stay real.
+ vi.mock('node:fs/promises',async importOriginal=>{const actual=await importOriginal<typeof import('node:fs/promises')>();return{...actual,unlink:async(path:Parameters<typeof actual.unlink>[0])=>{if(publicationFault.once&&String(path).startsWith(publicationFault.directory+'/.input-')&&/\.input-[0-9a-f-]{36}(?:\.part)?$/.test(String(path))){publicationFault.once=false;publicationFault.triggered=true;throw Object.assign(Error('controlled disk interruption after link'),{code:'EIO'});}return actual.unlink(path);}};});
+@@ -29,8 +30,14 @@
+   const started=await f.request('start');expect(started.status,JSON.stringify(started.body)).toBe(200);expect(started.body.stage).toBe('script_approved');
+   await rename(join(f.root,'legacy-fixture-offline'),join(f.assetRoot,'episodes'));
+   const prepared=await f.request('prepareWorkspace',{expectedScriptRevisionId:imported.body.id});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
+-  const detail=await(await fetch(f.origin+'/api/local/episodes/'+f.episode,{headers:{Cookie:'loop_owner_session='+f.token}})).json(),artifacts=detail.sections.artifacts??detail.patches?.artifacts?.rows,preparation=artifacts.find((a:{relative_path:string})=>a.relative_path.startsWith(prefix+'/preparation/'));expect(preparation).toBeTruthy();
+-  const board=await(await preview(preparation.relative_path,preparation.sha256)).json();expect(board.shots[0].inputBasis).toContainEqual({relativePath:imported.body.storage_path,sha256:imported.body.sha256});
++  const preparation=(await f.c.query('SELECT file_reference FROM local_identity.production_preparation_revisions WHERE id=$1',[prepared.body.preparationRevisionId])).rows[0].file_reference;expect(preparation.relativePath.startsWith(prefix+'/preparation/')).toBe(true);
++  const preparationResponse=await preview(preparation.relativePath,preparation.sha256);expect(preparationResponse.status).toBe(200);const board=await preparationResponse.json();expect(board.version).toBe('production-preparation/v1');expect((await preview(preparation.relativePath,'0'.repeat(64))).status).toBe(409);
++  expect((await fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(preparation.relativePath)}&sha256=${preparation.sha256}`,{headers:{Cookie:'loop_owner_session='+f.otherToken}})).status).toBe(404);
++  expect((await fetch(f.origin+`/_local-artifact?episode=${randomUUID()}&path=${encodeURIComponent(preparation.relativePath)}&sha256=${preparation.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}})).status).toBe(404);
++  const preparationBytes=await readFile(join(f.assetRoot,preparation.relativePath)),corrupt=Buffer.from(preparationBytes);corrupt[0]^=1;
++  try{await writeFile(join(f.assetRoot,preparation.relativePath),corrupt);expect((await preview(preparation.relativePath,preparation.sha256)).status).toBe(409);}finally{await writeFile(join(f.assetRoot,preparation.relativePath),preparationBytes);}
++  const unregistered=preparation.relativePath+'.unregistered.json';await writeFile(join(f.assetRoot,unregistered),preparationBytes);expect((await preview(unregistered,preparation.sha256)).status).toBe(404);
++expect(board.shots[0].inputBasis).toContainEqual({relativePath:imported.body.storage_path,sha256:imported.body.sha256});
+   await f.c.query("UPDATE public.episodes SET title='改显示名称' WHERE id=$1",[f.episode]);await f.restart();
+   expect(await(await preview(imported.body.storage_path,imported.body.sha256)).text()).toBe(productionScriptTemplate);
+   const revisedText=productionScriptTemplate.replace('# ', '# 修订');
+@@ -51,7 +58,7 @@
+   const foreignEpisode=await f.request('create',{episodeId:undefined,accountId:foreignAccount.id,title:'跨账号源'});expect(foreignEpisode.status,JSON.stringify(foreignEpisode.body)).toBe(200);
+   const foreign=await f.request('importMaterial',{episodeId:foreignEpisode.body.id,sourceKind:'file',sourcePath:'shared.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(foreign.status,JSON.stringify(foreign.body)).toBe(200);
+   const target=await f.request('create',{episodeId:undefined,accountId:account,seriesVersionId:series.body.id,title:'复用目标'});expect(target.status,JSON.stringify(target.body)).toBe(200);const id=target.body.id,prefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[id])).rows[0].directory_relative_path;
+-  const text=productionScriptTemplate.replace('填写已上传图片的素材名称','shared');
++  const text=historicalProductionScriptV2.replace('填写已上传图片的素材名称','shared');
+   const script=await f.request('importMaterial',{episodeId:id,sourceKind:'file',sourcePath:'script.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(text).toString('base64')});expect(script.status,JSON.stringify(script.body)).toBe(200);
+   const foreignChoice=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{'image:shared':foreign.body.id}});expect(foreignChoice.status,JSON.stringify(foreignChoice.body)).toBe(200);expect(foreignChoice.body.plan.segments[0].firstFrame.material).toBeUndefined();expect(foreignChoice.body.plan.segments[0].firstFrame.candidates.map((m:{id:string})=>m.id)).not.toContain(foreign.body.id);
+   const configured=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{}});expect(configured.status,JSON.stringify(configured.body)).toBe(200);
+--- a/src/local-app/planningRetirement.integration.test.ts
++++ b/src/local-app/planningRetirement.integration.test.ts
+@@ -2,8 +2,9 @@
+ import {it,expect} from 'vitest';
+ import {freshProductionFixture} from './freshProduction.fixture';
+ import {productionScriptTemplate} from '../reviews/productionScript';
++import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
+ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE).each([
+- ['plain','# 无模型正文\n\n## 正文\n\n第一段是原样保留的正文。\n\n第二段仍由Owner提供。'],['v2',productionScriptTemplate],
++ ['plain','# 无模型正文\n\n## 正文\n\n第一段是原样保留的正文。\n\n第二段仍由Owner提供。'],['v2',historicalProductionScriptV2],['v3',productionScriptTemplate],
+ ])('current %s preparation works without CLI planning and retired requests preserve history',async(kind,scriptText)=>{
+  const f=await freshProductionFixture({scriptText});
+  try{
+--- a/src/local-app/productionScriptV3.integration.test.ts
++++ b/src/local-app/productionScriptV3.integration.test.ts
+@@ -51,3 +51,16 @@
+   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_workspaces WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
+  }finally{await f.close();}
+ },90000);
++
++it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['default','example']as const)('the current %s script imports as v3 and prepares without an old plan or implicit media generation',async kind=>{
++ const {productionScriptTemplate}=await import('../reviews/productionScript'),{workspaceScriptExample}=await import('./workspaceScriptInput');
++ const source=kind==='default'?productionScriptTemplate:workspaceScriptExample,f=await formalWorkflowFixture({freshAccount:true,blank:true});
++ try{
++  const imported=await f.send('importMaterial',{sourceKind:'file',sourcePath:kind+'.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(source).toString('base64')});expect(imported.status,JSON.stringify(imported.body)).toBe(200);
++  expect((await f.c.query('SELECT script_template_version FROM local_identity.input_episodes WHERE episode_id=$1',[f.newEpisode])).rows[0].script_template_version).toBe(3);
++  expect((await f.send('start')).status).toBe(200);const prepared=await f.send('prepareWorkspace',{expectedScriptRevisionId:imported.body.id});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);
++  expect(prepared.body.preparation.shots[0]).toMatchObject({shotId:'shot-01',visualSource:kind==='default'?'unassigned':'image'});
++  expect(prepared.body.storyboardPackageId).toBeNull();expect(prepared.body.preparationRevisionId).toBeTruthy();
++  for(const table of ['public.review_packages','public.shot_preparation_drafts','public.tasks','local_identity.script_productions'])expect((await f.c.query(`SELECT count(*)::int n FROM ${table} WHERE episode_id=$1`,[f.newEpisode])).rows[0].n,table).toBe(0);
++ }finally{await f.close();}
++},120000);
+--- a/src/local-app/speechSelection.integration.test.ts
++++ b/src/local-app/speechSelection.integration.test.ts
+@@ -60,9 +60,9 @@
+ },120000);
+ 
+ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('fresh formal speech adoption drives actual video duration and invalidates subtitle evidence when a longer voice is adopted',async()=>{
+- const {formalWorkflowFixture}=await import('./formalWorkflow.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{productionScriptTemplate}=await import('../reviews/productionScript'),{defaultShotCaptionContract}=await import('../shotCaptions'),{editStudioDocument}=await import('./studioDocument.fixture');
++ const {formalWorkflowFixture}=await import('./formalWorkflow.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{historicalProductionScriptV2}=await import('../reviews/productionScript.fixture'),{defaultShotCaptionContract}=await import('../shotCaptions'),{editStudioDocument}=await import('./studioDocument.fixture');
+  const {execFile}=await import('node:child_process'),{promisify}=await import('node:util');
+- const f=await formalWorkflowFixture({controlled:true,scriptText:productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll')});try{
++ const f=await formalWorkflowFixture({controlled:true,scriptText:historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll')});try{
+  expect((await f.send('start')).status).toBe(200);let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;const clip=w.clips[0];
+  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.send(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r.body;};
+  const a=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,selection={capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:a};
+--- a/src/local-app/workspaceFirstVideo.integration.test.ts
++++ b/src/local-app/workspaceFirstVideo.integration.test.ts
+@@ -4,10 +4,10 @@
+ import {readFile} from 'node:fs/promises';
+ import {formalWorkflowFixture} from './formalWorkflow.fixture';
+ import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+-import {productionScriptTemplate} from '../reviews/productionScript';
++import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
+ 
+ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('fresh authored first video uses current preparation without a legacy approval (actual voice=%s)',async withVoice=>{
+- const script=productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
++ const script=historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
+  const f=await formalWorkflowFixture({controlled:true,scriptText:script});
+  try{
+   expect((await f.send('start')).status).toBe(200);
+@@ -16,13 +16,13 @@
+   const uploaded=await f.send('importMaterial',{sourceKind:'file',sourcePath:'first.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(uploaded.status).toBe(200);
+ 
+   const payload={clipId:w.clips[0].id,materialRevisionId:uploaded.body.id,prompt:'清晨山脊，缓慢推进。',durationSeconds:4,reservationCents:90};
+-  r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.stringify(r.body)).toBe(409);expect(r.body.error).toContain('授权');
+-  expect((await send('authorizeWorkspacePreparation',{enabled:true})).status).toBe(200);
++  r=await f.rawRequest('generateWorkspaceImage',{episodeId:f.newEpisode,workspaceId:w.id,expectedRevision:w.revision,selection:f.controlled!.videoSelection,...payload});expect(r.status,JSON.stringify(r.body)).toBe(409);expect(r.body.error).toContain('确认本次调用');
++  expect((await send('authorizeWorkspacePreparation',{enabled:true})).status).toBe(409);expect((await f.c.query('SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
+   if(withVoice){
+-   expect((await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1})).status).toBe(200);
+-   expect((await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',text:'真实主声窗口由本次口播结果确定。'})).status).toBe(200);
++   expect((await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',...f.controlled!.narrationSettings,text:'真实主声窗口由本次口播结果确定。'})).status).toBe(200);
+    expect((await send('confirmWorkspaceNarration',{clipId:w.clips[0].id})).status).toBe(200);
+-   expect((await send('generateWorkspaceNarration',{clipId:w.clips[0].id})).status).toBe(200);
++   expect((await send('generateWorkspaceNarration',{clipId:w.clips[0].id,reservationCents:100})).status).toBe(200);
++   const voiceSnapshot=(await f.c.query('SELECT request_snapshot FROM local_identity.workspace_narration_requests WHERE task_id=$1',[w.narration[0].taskId])).rows[0].request_snapshot;expect(voiceSnapshot.context.voice).toMatchObject({name:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1});
+    expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');
+    expect((await send('refreshWorkspaceNarration')).status).toBe(200);w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
+   }
+@@ -42,14 +42,13 @@
+ 
+ 
+ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice',async()=>{
+- const script=productionScriptTemplate.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
++ const script=historicalProductionScriptV2.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll');
+  const f=await formalWorkflowFixture({controlled:true,scriptText:script});
+  try{
+   expect((await f.send('start')).status).toBe(200);
+   let r=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main});expect(r.status,JSON.stringify(r.body)).toBe(200);let w=r.body;
+   const send=async(command:string,data:Record<string,unknown>={})=>{const response=await f.chosenSend(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(response.status,JSON.stringify(response.body)).toBe(200);if(response.body.id===w.id)w=response.body;return response;};
+-  await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
+-  const generate=async(text:string)=>{await send('authorizeWorkspacePreparation',{enabled:true});await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',text});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});await send('generateWorkspaceNarration',{clipId:w.clips[0].id});expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');};
++  const generate=async(text:string)=>{await send('saveWorkspaceNarration',{clipId:w.clips[0].id,mode:'tts',...f.controlled!.narrationSettings,text});await send('confirmWorkspaceNarration',{clipId:w.clips[0].id});await send('generateWorkspaceNarration',{clipId:w.clips[0].id,reservationCents:100});expect((await f.controlled!.execute(w.narration[0].taskId))?.status).toBe('completed');};
+   await generate('重规划前的完整口播。');await send('refreshWorkspaceNarration');w=await adoptInitialNarration({request:(command,data)=>f.send(command,data)},w);
+   const oldTrack=w.narration[0].audioTrackId;expect(w.narration[0].adoptedAudioTrackId).toBe(oldTrack);
+   r=await f.send('reconfirmScript',{expectedScriptRevisionId:f.main,text:script.replace('填写本段完整口播。','重新规划后的主脚本完整口播。'),reason:'验收重新规划'});expect(r.status,JSON.stringify(r.body)).toBe(200);const revised=r.body.id;
+--- a/src/local-app/workspaceScriptInput.ts
++++ b/src/local-app/workspaceScriptInput.ts
+@@ -17,12 +17,13 @@
+ export const workspaceScriptExample=`# 雨后的街角
+ 
+ ## 制作设置
+-- 模板版本：2
++- 模板版本：3
+ - 画幅：9:16
+ 
+ ## 正文
+ ### 段落 01
+ - 口播：雨停了，街角还亮着一盏灯。
+-- 首帧素材：无
+-- 视频生成提示词：雨后街角，暖色路灯倒映在积水中，镜头缓慢推进。
++- 画面来源：图片
++- 画面提示：雨后街角，暖色路灯倒映在积水中。
++- 镜头时长（秒）：5
+ `;
+--- a/src/reviews/productionScript.fixture.ts
++++ b/src/reviews/productionScript.fixture.ts
+@@ -0,0 +1,37 @@
++// Frozen v2 source for compatibility tests; never a current authoring default.
++export const historicalProductionScriptV2 = `# 本期标题
++
++## 制作设置
++
++- 模板版本：2
++- 画幅：9:16
++- 视频模型：默认
++- 视频费用预留（分/镜头）：默认
++- 旁白音色：默认
++- 旁白语速：默认
++- 背景音乐素材：默认
++- 字幕：开启
++- 字幕正文模式：follow_tts
++- 字幕样式：默认
++- 字幕位置：bottom-center
++- 字幕安全区：title-safe
++- 字幕最大行数：2
++- 每行最大字数：14
++- 转场：cut
++
++## 正文
++
++### 段落 01
++
++- 口播：填写本段完整口播。
++- 画面提示：填写画面意图，可使用长句。
++- 首帧素材：填写已上传图片的素材名称
++- 视频生成提示词：填写直接提交视频模型的画面与动作描述。
++- 生成时长（秒）：默认
++- 构图：full
++- 音效素材：无
++
++## 本期补充约束（可选）
++
++- 制作备注：补充说明只供审核参考，不作为可执行配置。
++`;
+--- a/src/reviews/productionScript.test.ts
++++ b/src/reviews/productionScript.test.ts
+@@ -3,7 +3,8 @@
+ import {parseProductionScript,productionScriptTemplate,validateProductionDefaults} from './productionScript';
+ import {mainScriptDiagnostic} from './mainScript';
+ import {resolveProductionPlan,resolveProductionMaterial,type ProductionMaterial} from './productionPlan';
+-const text=productionScriptTemplate.replace('填写已上传图片的素材名称','客厅首帧');
++import {historicalProductionScriptV2} from './productionScript.fixture';
++const text=historicalProductionScriptV2.replace('填写已上传图片的素材名称','客厅首帧');
+ describe('production script v2',()=>{
+  it('omits obsolete classification in new scripts but reads explicit legacy scripts',()=>{expect(productionScriptTemplate).not.toContain('镜头类型');expect(parseProductionScript(text)?.segments[0]).not.toHaveProperty('shotType');expect(parseProductionScript(text.replace('### 段落 01','### 段落 01\n- 镜头类型：a_roll'))?.segments[0].shotType).toBe('a_roll');});
+  it('keeps legacy scripts readable and validates typed scripts',()=>{expect(parseProductionScript('# 标题\n\n## 正文\n口播')).toBeNull();expect(mainScriptDiagnostic('# 标题\n\n## 正文\n口播')).toBeNull();expect(parseProductionScript(text)?.segments[0]).toMatchObject({id:'shot-01',videoPrompt:'填写直接提交视频模型的画面与动作描述。',settings:{firstFrame:'客厅首帧',sfx:'none'}});});
+--- a/src/reviews/productionScript.ts
++++ b/src/reviews/productionScript.ts
+@@ -158,10 +158,8 @@
+ 
+ ## 制作设置
+ 
+-- 模板版本：2
++- 模板版本：3
+ - 画幅：9:16
+-- 视频模型：默认
+-- 视频费用预留（分/镜头）：默认
+ - 旁白音色：默认
+ - 旁白语速：默认
+ - 背景音乐素材：默认
+@@ -180,15 +178,14 @@
+ 
+ - 口播：填写本段完整口播。
+ - 画面提示：填写画面意图，可使用长句。
+-- 首帧素材：填写已上传图片的素材名称
+-- 视频生成提示词：填写直接提交视频模型的画面与动作描述。
+-- 生成时长（秒）：默认
++- 画面来源：暂未选择
++- 镜头时长（秒）：5
+ - 构图：full
+ - 音效素材：无
+ 
+ ## 本期补充约束（可选）
+ 
+-- 制作备注：补充说明只供审核参考，不作为可执行配置。
++- 制作备注：补充说明不作为可执行配置。
+ `;
+ 
+ /** Ordinary prose remains supported; an explicit invalid versioned contract must be corrected. */
+--- a/src/worker/scriptPlanning.test.ts
++++ b/src/worker/scriptPlanning.test.ts
+@@ -1,9 +1,10 @@
+ import {it,expect} from 'vitest';
+-import {parseProductionScript,productionScriptTemplate} from '../reviews/productionScript';
++import {parseProductionScript} from '../reviews/productionScript';
++import {historicalProductionScriptV2} from '../reviews/productionScript.fixture';
+ import {storyboardFromScript} from './scriptPlanning';
+ import {validateStoryboardManifest} from './contracts';
+ it('produces a reviewable storyboard without asking a model to rewrite typed settings',()=>{
+- const script=parseProductionScript(productionScriptTemplate.replace('- 音效素材：无','- 音效素材：流水\n- 音效起点（秒）：0.3\n- 音效时长（秒）：1'))!;
++ const script=parseProductionScript(historicalProductionScriptV2.replace('- 音效素材：无','- 音效素材：流水\n- 音效起点（秒）：0.3\n- 音效时长（秒）：1'))!;
+  const inputs=[{artifactType:'main_script',relativePath:'episodes/e/script.md',sha256:'a'.repeat(64),fileSize:100},{artifactType:'visual_reference',relativePath:'episodes/e/first.png',sha256:'b'.repeat(64),fileSize:100}];
+  const board=storyboardFromScript(script,inputs);expect(validateStoryboardManifest(board,inputs)).toEqual(board);expect(board.shots[0].productionMethod).toBe(script.segments[0].videoPrompt);expect(board.audioCues[0]).toMatchObject({kind:'sfx',startSeconds:0.3,durationSeconds:1});
+ });

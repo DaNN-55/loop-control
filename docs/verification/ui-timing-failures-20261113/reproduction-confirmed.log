@@ -1,0 +1,184 @@
+
+ RUN  v3.2.7 /private/tmp/loop-ui-timing-fix-20261113-ezrpvi84/red-source
+
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx (11 tests | 1 failed | 10 skipped) 107ms
+   ↓ adds each dropped narration to the same audition and explicit adoption flow as TTS
+   ↓ registers every uploaded ID without waiting for parent material props
+   ↓ retries confirmation without reimporting or repeating a confirmed save
+   ↓ stops the old target after a late material registration receipt
+   ↓ retries registration from its imported material ID after an HTTP command failure
+   ↓ does not register imported files after the narration visit unmounts
+   ↓ accepts a new batch upload after adopting an earlier manual candidate
+   ↓ retains a failed confirmation across shot switching and panel reopening without repeating import or save
+   ↓ receives a late save in the original session and lets a reopened visit explicitly finish confirmation
+   × reopens after an unknown HTTP confirmation and reads its frozen receipt without confirming twice 107ms
+     → expected [ Array(1) ] to deeply equal [ …(2) ]
+   ↓ does not publish a late initial read after the manual narration visit switches shots
+stderr | src/local-app/LocalDeletionRecovery.test.tsx > reads durable tasks without retrying, distinguishes actions and focuses the requested task
+An update to LocalDeletionRecovery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LocalDeletionRecovery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/local-app/LocalDeletionRecovery.test.tsx (6 tests | 1 failed | 5 skipped) 51ms
+   × reads durable tasks without retrying, distinguishes actions and focuses the requested task 50ms
+     → expected <body><div>…(1)</div></body> to be <article …(5)>…(2)</article> // Object.is equality
+   ↓ restores an uncommitted task once even when clicked twice and leaves other tasks alone
+   ↓ keeps the task and full failure message when cleanup remains pending, then reports confirmed completion
+   ↓ shows read failures and a working refresh without presenting them as an empty queue
+   ↓ does not replace a newer queue with a late previous response
+   ↓ keeps a concrete prepared recovery failure visible while removing only the normal explanation
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalDeletionRecovery.test.tsx > reads durable tasks without retrying, distinguishes actions and focuses the requested task
+AssertionError: expected <body><div>…(1)</div></body> to be <article …(5)>…(2)</article> // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,5 +1,68 @@
++ <body>
++   <div>
++     <section
++       aria-label="待处理的文件清理"
++       class="deletion-cleanup-panel"
++     >
++       <div>
++         <article
++           aria-label="未提交的生产单"
++           class="deletion-cleanup-task"
++           data-cleanup-key="prepared-key"
++           tabindex="-1"
++         >
++           <header>
++             <div>
++               <h3>
++                 未提交的生产单
++               </h3>
++               <span>
++                 删除未生效
++               </span>
++             </div>
++             <button
++               class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"
++               data-color="secondary"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_2_"
++               tabindex="0"
++               type="button"
++             >
++               <span
++                 class="transition-inherit-all px-0.5"
++                 data-text="true"
++               >
++                 恢复文件
++               </span>
++             </button>
++           </header>
++           <details>
++             <summary>
++               查看位置
++             </summary>
++             <dl>
++               <dt>
++                 原位置
++               </dt>
++               <dd>
++                 <code>
++                   /media/order-one
++                 </code>
++               </dd>
++               <dt>
++                 暂存位置
++               </dt>
++               <dd>
++                 <code>
++                   /media/order-one/file.stage
++                 </code>
++               </dd>
++             </dl>
++           </details>
++         </article>
+          <article
+            aria-label="文件待清理的生产单"
+            class="deletion-cleanup-task"
+            data-cleanup-key="committed-key"
+            data-targeted="true"
+@@ -53,5 +116,30 @@
+                  </code>
+                </dd>
+              </dl>
+            </details>
+          </article>
++       </div>
++       <div
++         class="deletion-cleanup-toolbar"
++       >
++         <button
++           aria-label="刷新清理任务"
++           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"
++           data-color="tertiary"
++           data-rac=""
++           data-react-aria-pressable="true"
++           id="react-aria-_r_0_"
++           tabindex="0"
++           type="button"
++         >
++           <span
++             class="transition-inherit-all px-0.5"
++             data-text="true"
++           >
++             刷新
++           </span>
++         </button>
++       </div>
++     </section>
++   </div>
++ </body>
+
+ ❯ src/local-app/LocalDeletionRecovery.test.tsx:13:61
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/WorkspaceNarrationPanel.manual.test.tsx > reopens after an unknown HTTP confirmation and reads its frozen receipt without confirming twice
+AssertionError: expected [ Array(1) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+    "d0fc198f-f089-4ca2-8e77-f56fce685548",
+-   "d0fc198f-f089-4ca2-8e77-f56fce685548",
+  ]
+
+ ❯ src/local-app/WorkspaceNarrationPanel.manual.test.tsx:137:78
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 15 skipped (17)
+   Start at  13:05:44
+   Duration  2.09s (transform 257ms, setup 8ms, collect 1.31s, tests 158ms, environment 375ms, prepare 58ms)
+
+JSON report written to /private/tmp/loop-ui-timing-fix-20261113-ezrpvi84/reproduction-confirmed.json

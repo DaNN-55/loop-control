@@ -1,0 +1,72 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Pi7X86/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Pi7X86/source
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts (33 tests | 1 failed | 32 skipped) 1877ms
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (legacy)
+   ↓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (registered)
+   ↓ refuses an invalidated original preview without reviving or rewriting its manual bindings
+   ↓ refuses unknown workbench evidence before creating current registration
+   ↓ refuses changed-confirmation workbench evidence before creating current registration
+   ↓ refuses unconfirmed workbench evidence before creating current registration
+   ↓ refuses file-sha workbench evidence before creating current registration
+   ↓ requires the exact source, replays only its receipt and preserves a different unknown request and existing current edit
+   ↓ preserves a saved native document when its SQL registration is missing instead of replacing it with old bindings
+   ↓ uses the original HTML project instead of rebuilding its already edited content from older bindings
+   ↓ continues the old source-audio protocol whose preview correctly has a null narration track identity
+   ↓ keeps the original frozen music A when a later unconfirmed result B exists for the same cue
+   ↓ preserves the exact confirmed narration track and refuses its invalidated source task
+   ↓ imports pending selections as current inputs and candidates without borrowing old confirmation, then continues through explicit adoption and native export
+   ↓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: false)
+   ↓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: true)
+   ↓ keeps unknown old voice unresolved while local candidates remain usable and current external proposals are blocked
+   ↓ imports every original registered music result as an unadopted local preparation and adopts only the explicitly selected result
+   ↓ refuses invalidated-confirmation mixed imports without changing original work or replacing current editing
+   ↓ refuses stale-source mixed imports without changing original work or replacing current editing
+   ↓ refuses foreign-owner mixed imports without changing original work or replacing current editing
+   ↓ refuses existing-workspace mixed imports without changing original work or replacing current editing
+   ↓ preserves the frozen music source interval when an unfinished shot precedes the confirmed shot, keeping the later result unadopted
+   ↓ moves a frozen shot effect with its confirmed shot after an unfinished gap without silently losing its original use
+   ↓ keeps a confirmed shot usable when the unfinished shot source is offline, preserving its original selection as an issue
+   ↓ carries original unfinished mix settings into current inputs while adoption remains explicit
+   ↓ pending two-slot composition remains an explicit current source choice with exact slot windows
+   ↓ continues pending 'sequential' ranges with explicit adoption and preserves Owner overrides
+   ↓ continues pending 'pip' ranges with explicit adoption and preserves Owner overrides
+   ↓ continues pending 'grid' ranges with explicit adoption and preserves Owner overrides
+   ↓ keeps a confirmed original shot intact while importing and adopting an unfinished parallel composition
+   × keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project 1876ms
+     → {"adoptionId":"06fb3e2b-198f-4a6e-a617-5ac7bbf24ce4","candidateId":"adc03b1a-b48e-436c-935e-d78b89d6eab4","projectSha256":"bf6258cfd8da2b4c3ba7afff9e3b0254a22bc8704618fb1c3b37e026bcc5deaa","edit":{"visual":{"sourceInSeconds":1.999,"sourceOutSeconds":2,"usage":"video","motionPolicy":"preserve-target","acceptTimelineImpact":true,"expectedAppearance":"{\"keyframes\":null,\"transform\":{\"crop\":{\"bottom\":0,\"left\":0.25,\"right\":0.25,\"top\":0},\"rotation\":0,\"scale\":1,\"x\":-25,\"y\":0},\"zoom\":null}","placeholder":true,"shotId":"shot-1"},"shotWindow":{"startFrame":0,"durationInFrames":30},"targetItemId":"shot-shot-1-db85ec66-38ae-432e-8d70-c22b6c491491","expectedTarget":{"id":"shot-shot-1-db85ec66-38ae-432e-8d70-c22b6c491491","kind":"text","src":null,"sourceAssetId":null,"sourceRevision":null,"sourceContentHash":null,"startFrame":0,"durationInFrames":30,"srcInFrame":0,"playbackRate":1},"durationPolicy":"use-candidate","source":{"id":"candidate-adc03b1a-b48e-436c-935e-d78b89d6eab4","kind":"video","width":360,"height":640,"src":"episodes/d50d0510-ff52-48a3-90d6-4969d817eb75/shot.mp4","sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","inputFingerprint":"0869125199f8d2befa2dc367ae749e43c54c317415b169b8ae1b6f57191efda5","durationSeconds":0.0009999999999998899,"sourceInSeconds":1.999,"fullDurationSeconds":2},"videoSound":{"mode":"silent"}},"impact":{"currentSeconds":1,"sourceSeconds":0.0009999999999998899,"appliedSeconds":0.03333333333333333,"deltaSeconds":-0.9666666666666667,"startSeconds":0,"endSeconds":0.03333333333333333,"fps":30,"affectedFragments":[{"itemId":"shot-shot-1-071e7611-292b-4e1b-8256-b44cad7e88d8","label":"第一镜","kind":"text","track":"V2","startSeconds":0,"endSeconds":1,"changedStartSeconds":0.03333333333333333,"changedEndSeconds":1}]}}: expected 200 to be 409 // Object.is equality
+   ↓ retains the existing SQL rejection of unsupported original compositions without changing the draft
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyWorkbenchAdoption.integration.test.ts > keeps an unavailable pending range as evidence and rejects malformed public range overrides without changing the project
+AssertionError: {"adoptionId":"06fb3e2b-198f-4a6e-a617-5ac7bbf24ce4","candidateId":"adc03b1a-b48e-436c-935e-d78b89d6eab4","projectSha256":"bf6258cfd8da2b4c3ba7afff9e3b0254a22bc8704618fb1c3b37e026bcc5deaa","edit":{"visual":{"sourceInSeconds":1.999,"sourceOutSeconds":2,"usage":"video","motionPolicy":"preserve-target","acceptTimelineImpact":true,"expectedAppearance":"{\"keyframes\":null,\"transform\":{\"crop\":{\"bottom\":0,\"left\":0.25,\"right\":0.25,\"top\":0},\"rotation\":0,\"scale\":1,\"x\":-25,\"y\":0},\"zoom\":null}","placeholder":true,"shotId":"shot-1"},"shotWindow":{"startFrame":0,"durationInFrames":30},"targetItemId":"shot-shot-1-db85ec66-38ae-432e-8d70-c22b6c491491","expectedTarget":{"id":"shot-shot-1-db85ec66-38ae-432e-8d70-c22b6c491491","kind":"text","src":null,"sourceAssetId":null,"sourceRevision":null,"sourceContentHash":null,"startFrame":0,"durationInFrames":30,"srcInFrame":0,"playbackRate":1},"durationPolicy":"use-candidate","source":{"id":"candidate-adc03b1a-b48e-436c-935e-d78b89d6eab4","kind":"video","width":360,"height":640,"src":"episodes/d50d0510-ff52-48a3-90d6-4969d817eb75/shot.mp4","sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","inputFingerprint":"0869125199f8d2befa2dc367ae749e43c54c317415b169b8ae1b6f57191efda5","durationSeconds":0.0009999999999998899,"sourceInSeconds":1.999,"fullDurationSeconds":2},"videoSound":{"mode":"silent"}},"impact":{"currentSeconds":1,"sourceSeconds":0.0009999999999998899,"appliedSeconds":0.03333333333333333,"deltaSeconds":-0.9666666666666667,"startSeconds":0,"endSeconds":0.03333333333333333,"fps":30,"affectedFragments":[{"itemId":"shot-shot-1-071e7611-292b-4e1b-8256-b44cad7e88d8","label":"第一镜","kind":"text","track":"V2","startSeconds":0,"endSeconds":1,"changedStartSeconds":0.03333333333333333,"changedEndSeconds":1}]}}: expected 200 to be 409 // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 200[39m
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts:389:268
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 32 skipped (33)
+   Start at  13:57:47
+   Duration  2.63s (transform 444ms, setup 7ms, collect 637ms, tests 1.88s, environment 0ms, prepare 31ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-Pi7X86/evidence/vitest.json

@@ -1,0 +1,81 @@
+E2E evidence: /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-W4RTK4/evidence
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-W4RTK4/source
+
+(node:20537) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts (31 tests | 2 failed) 121595ms
+   ✓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (legacy)  11894ms
+   ✓ continues recorded manual bindings without a native or HTML project and preserves the old work while current editing and export work (registered)  10493ms
+   ✓ refuses an invalidated original preview without reviving or rewriting its manual bindings  1075ms
+   ✓ refuses unknown workbench evidence before creating current registration  1059ms
+   ✓ refuses changed-confirmation workbench evidence before creating current registration  1072ms
+   ✓ refuses unconfirmed workbench evidence before creating current registration  1044ms
+   ✓ refuses file-sha workbench evidence before creating current registration  1066ms
+   ✓ requires the exact source, replays only its receipt and preserves a different unknown request and existing current edit  1288ms
+   ✓ preserves a saved native document when its SQL registration is missing instead of replacing it with old bindings  1042ms
+   ✓ uses the original HTML project instead of rebuilding its already edited content from older bindings  1034ms
+   ✓ continues the old source-audio protocol whose preview correctly has a null narration track identity  5457ms
+   ✓ keeps the original frozen music A when a later unconfirmed result B exists for the same cue  1437ms
+   ✓ preserves the exact confirmed narration track and refuses its invalidated source task  1355ms
+   ✓ imports pending selections as current inputs and candidates without borrowing old confirmation, then continues through explicit adoption and native export  8508ms
+   ✓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: false)  9450ms
+   ✓ keeps the confirmed shot and exact original voice while importing the unfinished shot without confirmation, then edits and exports the whole order (pending first: true)  9466ms
+   ✓ keeps unknown old voice unresolved while local candidates remain usable and current external proposals are blocked  1759ms
+   ✓ imports every original registered music result as an unadopted local preparation and adopts only the explicitly selected result  1982ms
+   ✓ refuses invalidated-confirmation mixed imports without changing original work or replacing current editing  1074ms
+   ✓ refuses stale-source mixed imports without changing original work or replacing current editing  1062ms
+   ✓ refuses foreign-owner mixed imports without changing original work or replacing current editing  1047ms
+   ✓ refuses existing-workspace mixed imports without changing original work or replacing current editing  1145ms
+   ✓ preserves the frozen music source interval when an unfinished shot precedes the confirmed shot, keeping the later result unadopted  2045ms
+   ✓ moves a frozen shot effect with its confirmed shot after an unfinished gap without silently losing its original use  1931ms
+   ✓ keeps a confirmed shot usable when the unfinished shot source is offline, preserving its original selection as an issue  1752ms
+   ✓ carries original unfinished mix settings into current inputs while adoption remains explicit  8935ms
+   ✓ pending two-slot composition remains an explicit current source choice with exact slot windows  7958ms
+   ✓ continues pending 'sequential' ranges with explicit adoption and preserves Owner overrides  6074ms
+   × continues pending 'pip' ranges with explicit adoption and preserves Owner overrides 5362ms
+     → {"id":"cbead0c2-5206-4c3f-98c7-e3741d186e5f","projectContentVersion":7,"contentSha256":"53fca545976db301a0fd9b8ef517b930460a8b886d9e56536b333d4cc6c93269","project":{"sha256":"6c028d376b2f87df059bb6ae10a6b92f5b5d8873972fa9dad515cadfe2edd4ea","fileSize":8623,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/production-workspace/versions/6c028d376b2f87df059bb6ae10a6b92f5b5d8873972fa9dad515cadfe2edd4ea.json"},"status":"failed","artifact":{"sha256":"8a4d9203ebdf001240d6a2500f85342a9ecc8c2072b17b36140b261d81cdd14d","fileSize":398655,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/workspace-exports/cbead0c2-5206-4c3f-98c7-e3741d186e5f/8a4d9203ebdf001240d6a2500f85342a9ecc8c2072b17b36140b261d81cdd14d.mp4"},"checks":[{"name":"used_content","detail":"已核对 1 个实际来源。","passed":true,"sources":[{"sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","fileSize":210288,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/shot.mp4"}]},{"gaps":[],"name":"visual_coverage","detail":"整期画面连续，无未填充空档。","passed":true},{"name":"captions","detail":"已核对 0 组字幕时序，正文随最终文件一次确认。","passed":true,"evidence":[]},{"name":"technical","detail":"实际 MP4 技术检查未通过。","passed":false,"inspection":{"width":1080,"height":1920,"hasAudio":true,"blackFrameCount":0,"durationSeconds":1.045333},"videoFrames":30,"audioExpected":false,"videoDurationSeconds":1,"expectedDurationSeconds":0.5,"containerDurationSeconds":1.045333},{"name":"representative_frame","detail":"已实际解码代表帧。","passed":true,"artifact":{"sha256":"951a49ff78dfcf928cf97ad8c864a7ad056b0ff758ac88ea9cc1699fc7f39312","fileSize":43934,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/workspace-exports/cbead0c2-5206-4c3f-98c7-e3741d186e5f/representative.jpg"}},{"name":"export_file","detail":"最终文件已按字节 SHA-256 与大小不可变登记。","passed":true}],"createdAt":"2026-11-14T05:46:15.856Z","confirmedAt":null,"confirmed":false,"current":true}: expected 'failed' to be 'ready' // Object.is equality
+   × continues pending 'grid' ranges with explicit adoption and preserves Owner overrides 6063ms
+     → {"id":"08cd490f-0675-4306-a083-e5d25c37f566","projectContentVersion":9,"contentSha256":"4a7ca175d2b16606bb26849a78ad105cb4a51dc51e1ff7f8c53fcef23523bda3","project":{"sha256":"0501f06facfcf7c501b977ad4f46477c5e26afaab541b8a7102f0303ad564016","fileSize":13779,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/production-workspace/versions/0501f06facfcf7c501b977ad4f46477c5e26afaab541b8a7102f0303ad564016.json"},"status":"failed","artifact":{"sha256":"a8944857779641e3c85564cc08eb489e1a5aa8021f080555028aa417d632e8ce","fileSize":574623,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/workspace-exports/08cd490f-0675-4306-a083-e5d25c37f566/a8944857779641e3c85564cc08eb489e1a5aa8021f080555028aa417d632e8ce.mp4"},"checks":[{"name":"used_content","detail":"已核对 1 个实际来源。","passed":true,"sources":[{"sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","fileSize":210288,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/shot.mp4"}]},{"gaps":[],"name":"visual_coverage","detail":"整期画面连续，无未填充空档。","passed":true},{"name":"captions","detail":"已核对 0 组字幕时序，正文随最终文件一次确认。","passed":true,"evidence":[]},{"name":"technical","detail":"实际 MP4 技术检查未通过。","passed":false,"inspection":{"width":1080,"height":1920,"hasAudio":true,"blackFrameCount":0,"durationSeconds":1.045333},"videoFrames":30,"audioExpected":false,"videoDurationSeconds":1,"expectedDurationSeconds":0.5,"containerDurationSeconds":1.045333},{"name":"representative_frame","detail":"已实际解码代表帧。","passed":true,"artifact":{"sha256":"cb3033e5297f4985e6089eae916524b3f03ad3b5decff2f7cd8a75220bfd4cbe","fileSize":43933,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/workspace-exports/08cd490f-0675-4306-a083-e5d25c37f566/representative.jpg"}},{"name":"export_file","detail":"最终文件已按字节 SHA-256 与大小不可变登记。","passed":true}],"createdAt":"2026-11-14T05:46:21.905Z","confirmedAt":null,"confirmed":false,"current":true}: expected 'failed' to be 'ready' // Object.is equality
+   ✓ keeps a confirmed original shot intact while importing and adopting an unfinished parallel composition  6662ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyWorkbenchAdoption.integration.test.ts > continues pending 'pip' ranges with explicit adoption and preserves Owner overrides
+AssertionError: {"id":"cbead0c2-5206-4c3f-98c7-e3741d186e5f","projectContentVersion":7,"contentSha256":"53fca545976db301a0fd9b8ef517b930460a8b886d9e56536b333d4cc6c93269","project":{"sha256":"6c028d376b2f87df059bb6ae10a6b92f5b5d8873972fa9dad515cadfe2edd4ea","fileSize":8623,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/production-workspace/versions/6c028d376b2f87df059bb6ae10a6b92f5b5d8873972fa9dad515cadfe2edd4ea.json"},"status":"failed","artifact":{"sha256":"8a4d9203ebdf001240d6a2500f85342a9ecc8c2072b17b36140b261d81cdd14d","fileSize":398655,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/workspace-exports/cbead0c2-5206-4c3f-98c7-e3741d186e5f/8a4d9203ebdf001240d6a2500f85342a9ecc8c2072b17b36140b261d81cdd14d.mp4"},"checks":[{"name":"used_content","detail":"已核对 1 个实际来源。","passed":true,"sources":[{"sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","fileSize":210288,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/shot.mp4"}]},{"gaps":[],"name":"visual_coverage","detail":"整期画面连续，无未填充空档。","passed":true},{"name":"captions","detail":"已核对 0 组字幕时序，正文随最终文件一次确认。","passed":true,"evidence":[]},{"name":"technical","detail":"实际 MP4 技术检查未通过。","passed":false,"inspection":{"width":1080,"height":1920,"hasAudio":true,"blackFrameCount":0,"durationSeconds":1.045333},"videoFrames":30,"audioExpected":false,"videoDurationSeconds":1,"expectedDurationSeconds":0.5,"containerDurationSeconds":1.045333},{"name":"representative_frame","detail":"已实际解码代表帧。","passed":true,"artifact":{"sha256":"951a49ff78dfcf928cf97ad8c864a7ad056b0ff758ac88ea9cc1699fc7f39312","fileSize":43934,"relativePath":"episodes/c2fa24a3-dd8c-4794-9867-cb0d0563437a/workspace-exports/cbead0c2-5206-4c3f-98c7-e3741d186e5f/representative.jpg"}},{"name":"export_file","detail":"最终文件已按字节 SHA-256 与大小不可变登记。","passed":true}],"createdAt":"2026-11-14T05:46:15.856Z","confirmedAt":null,"confirmed":false,"current":true}: expected 'failed' to be 'ready' // Object.is equality
+
+Expected: [32m"ready"[39m
+Received: [31m"failed"[39m
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts:366:90
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/legacyWorkbenchAdoption.integration.test.ts > continues pending 'grid' ranges with explicit adoption and preserves Owner overrides
+AssertionError: {"id":"08cd490f-0675-4306-a083-e5d25c37f566","projectContentVersion":9,"contentSha256":"4a7ca175d2b16606bb26849a78ad105cb4a51dc51e1ff7f8c53fcef23523bda3","project":{"sha256":"0501f06facfcf7c501b977ad4f46477c5e26afaab541b8a7102f0303ad564016","fileSize":13779,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/production-workspace/versions/0501f06facfcf7c501b977ad4f46477c5e26afaab541b8a7102f0303ad564016.json"},"status":"failed","artifact":{"sha256":"a8944857779641e3c85564cc08eb489e1a5aa8021f080555028aa417d632e8ce","fileSize":574623,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/workspace-exports/08cd490f-0675-4306-a083-e5d25c37f566/a8944857779641e3c85564cc08eb489e1a5aa8021f080555028aa417d632e8ce.mp4"},"checks":[{"name":"used_content","detail":"已核对 1 个实际来源。","passed":true,"sources":[{"sha256":"a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da","fileSize":210288,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/shot.mp4"}]},{"gaps":[],"name":"visual_coverage","detail":"整期画面连续，无未填充空档。","passed":true},{"name":"captions","detail":"已核对 0 组字幕时序，正文随最终文件一次确认。","passed":true,"evidence":[]},{"name":"technical","detail":"实际 MP4 技术检查未通过。","passed":false,"inspection":{"width":1080,"height":1920,"hasAudio":true,"blackFrameCount":0,"durationSeconds":1.045333},"videoFrames":30,"audioExpected":false,"videoDurationSeconds":1,"expectedDurationSeconds":0.5,"containerDurationSeconds":1.045333},{"name":"representative_frame","detail":"已实际解码代表帧。","passed":true,"artifact":{"sha256":"cb3033e5297f4985e6089eae916524b3f03ad3b5decff2f7cd8a75220bfd4cbe","fileSize":43933,"relativePath":"episodes/a1be29a7-aa58-4931-a648-caafc90a75c1/workspace-exports/08cd490f-0675-4306-a083-e5d25c37f566/representative.jpg"}},{"name":"export_file","detail":"最终文件已按字节 SHA-256 与大小不可变登记。","passed":true}],"createdAt":"2026-11-14T05:46:21.905Z","confirmedAt":null,"confirmed":false,"current":true}: expected 'failed' to be 'ready' // Object.is equality
+
+Expected: [32m"ready"[39m
+Received: [31m"failed"[39m
+
+ ❯ src/local-app/legacyWorkbenchAdoption.integration.test.ts:366:90
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 29 passed (31)
+   Start at  13:44:26
+   Duration  122.35s (transform 448ms, setup 7ms, collect 633ms, tests 121.59s, environment 0ms, prepare 25ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-W4RTK4/evidence/vitest.json

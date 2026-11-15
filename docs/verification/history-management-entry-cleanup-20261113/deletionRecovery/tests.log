@@ -1,0 +1,39 @@
+
+ RUN  v3.2.7 /private/tmp/loop-story-e2e-2NOXjO/source
+
+ ✓ src/local-app/episodeDeletionStorage.integration.test.ts (15 tests) 91469ms
+   ✓ Owner confirms actual collection files while unknown manual files remain byte-identical  4625ms
+   ✓ another Owner business dependency blocks ordinary deletion before any file changes  3346ms
+   ✓ successful exact cleanup removes only reviewed title links to the deleted directory  2886ms
+   ✓ a retained manual document keeps its referenced owned bytes and unknown empty directory intact  3402ms
+   ✓ unknown paid submission blocks confirmed deletion without changing any registered file  3717ms
+   ✓ a safely rolled back confirmation releases its reservation for a newly reviewed inventory  3966ms
+   ✓ a new PID resumes link-before-unlink interruption using only the original durable scope  7204ms
+   ✓ a new PID resumes before-finalize interruption using only the original durable scope  6420ms
+   ✓ a new PID resumes after-first-finalize interruption using only the original durable scope  7482ms
+   ✓ a new PID resumes restore-uncommitted interruption using only the original durable scope  4383ms
+   ✓ an old cleanup receipt without exact file authority remains pending and explains its preserved staging files  1816ms
+   ✓ rollback preserves an unknown file inserted at the actual restore publication boundary  2257ms
+   ✓ staging never overwrites an unknown file inserted at the actual filesystem publication boundary  2758ms
+   ✓ a new Owner HTTP PID restores the exact staged files after SIGKILL and resumes the original confirmation  35417ms
+   ✓ a durable exact confirmation is committed before filesystem staging and survives business rollback  1784ms
+ ✓ src/local-app/recycleBin.integration.test.ts (6 tests) 22292ms
+   ✓ quota counts real registered bytes, sweeps safe FIFO on mutation, preserves newest and oversized item  6081ms
+   ✓ unknown and running work block entry; offline or changed files block restore; protected manual files survive quota  4386ms
+   ✓ hardlinked bytes are counted once and protected, account cannot orphan trash, concurrent restore has one winner  2520ms
+   ✓ real Owner recycle hides catalog, survives restart and restores IDs, frozen evidence and original archive state  3241ms
+   ✓ recycle enforces Owner, CSRF, revision, durable duplicate receipts and explicit permanent confirmation  4082ms
+   ✓ recycle schema applies forward without rewriting existing migration checksums  1980ms
+ ✓ src/local-app/deletionBackupRestore.integration.test.ts (1 test) 63616ms
+   ✓ real SQL115 prepared and committed deletion block backup while completed and rolled-back manifests restore unchanged after their source files disappear  63615ms
+ ✓ src/local-app/recycleBin.independent.integration.test.ts (3 tests) 5211ms
+   ✓ independent recycle: foreign Owner, CSRF and Origin cannot recycle or restore; membership preserves the original graph  1819ms
+   ✓ independent recycle: edited files reject restore and permanent-delete planning without losing membership or bytes  1795ms
+   ✓ independent recycle: capacity is validated at HTTP boundary and stale settings never overwrite the saved limit  1595ms
+
+ Test Files  4 passed (4)
+      Tests  25 passed (25)
+   Start at  12:17:33
+   Duration  185.22s (transform 1.11s, setup 18ms, collect 1.93s, tests 182.59s, environment 0ms, prepare 150ms)
+
+JSON report written to /private/tmp/loop-story-e2e-2NOXjO/evidence/vitest.json

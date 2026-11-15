@@ -1,0 +1,208 @@
+{
+  "passed": true,
+  "exportId": "8e70120f-591c-4089-a2cf-6574827dc83d",
+  "contentSha256": "f3c7696f813b988288639cbc94bb078fe3f5c525d5613662f294499b79f78362",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 4 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/native-tasks/ecb23107-c6ad-472e-bdef-2dc6d59b8b17/image.png"
+        },
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-coffee.png"
+        },
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-local-tone.mp3"
+        },
+        {
+          "sha256": "2a1eebdf52067b23e5cc49455694291eb22cf63688f7172cc6f24c18d1d7ca62",
+          "fileSize": 96428,
+          "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/2a1eebdf52067b23e5cc49455694291eb22cf63688f7172cc6f24c18d1d7ca62-local-bgm.mp3"
+        }
+      ]
+    },
+    {
+      "gaps": [],
+      "name": "visual_coverage",
+      "detail": "整期画面连续，无未填充空档。",
+      "passed": true
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 3 组字幕时序，正文随最终文件一次确认。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "619acaec-25e2-433a-bae8-d2a698964e51",
+          "detail": null,
+          "itemId": "shot-shot-01-619acaec-25e2-433a-bae8-d2a698964e51",
+          "shotId": "shot-01",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "owner~0",
+                "text": "清晨，先给自己一段安静。",
+                "endMs": 2500,
+                "startMs": 0
+              }
+            ],
+            "text": "清晨，先给自己一段安静。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 3000,
+          "audioTrackId": "64e2b109-11e7-4def-9f49-e49460bf0f75",
+          "narrationText": "清晨，先给自己一段安静。",
+          "textConfirmed": true,
+          "alignmentStatus": null,
+          "inputFingerprint": "9b9d293766b47a821d7da49998968d5ef722991eba6d79ab28f3be0a71275902",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "45ab6203-adca-49ec-88a6-d071e93c13a3",
+          "detail": null,
+          "itemId": "shot-shot-02-45ab6203-adca-49ec-88a6-d071e93c13a3",
+          "shotId": "shot-02",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "owner~0",
+                "text": "让热水慢慢唤醒咖啡的香气。",
+                "endMs": 2500,
+                "startMs": 0
+              }
+            ],
+            "text": "让热水慢慢唤醒咖啡的香气。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 3000,
+          "audioTrackId": "0cdbe581-7d20-4e56-bd65-b4b1dba37ff3",
+          "narrationText": "让热水慢慢唤醒咖啡的香气。",
+          "textConfirmed": true,
+          "alignmentStatus": null,
+          "inputFingerprint": "a58586ef285e2d8336bb9aa6c32c0be43db0337d7039969a525a647ce01a3c0e",
+          "alignmentInputVersion": null
+        },
+        {
+          "clipId": "69247046-7205-4d0e-9a4b-ee1d2bf64ad7",
+          "detail": null,
+          "itemId": "shot-shot-03-69247046-7205-4d0e-9a4b-ee1d2bf64ad7",
+          "shotId": "shot-03",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "owner~0",
+                "text": "端起杯子，开始今天的生活。",
+                "endMs": 2500,
+                "startMs": 0
+              }
+            ],
+            "text": "端起杯子，开始今天的生活。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "independent"
+          },
+          "durationMs": 3000,
+          "audioTrackId": "87b637fc-798c-414b-a290-4fa471d4c399",
+          "narrationText": "端起杯子，开始今天的生活。",
+          "textConfirmed": true,
+          "alignmentStatus": null,
+          "inputFingerprint": "bcb65826a5e06608afa3850a772fc36878206bf43179093c7e51d0ca12089694",
+          "alignmentInputVersion": null
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 9.045333
+      },
+      "videoFrames": 270,
+      "audioExpected": true,
+      "videoDurationSeconds": 9,
+      "expectedDurationSeconds": 9,
+      "containerDurationSeconds": 9.045333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "6c0cb45dc0afe23c51bdf5141ea48f3884bdb9ad089002f0f7aefaa27f18de6a",
+        "fileSize": 44183,
+        "relativePath": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/workspace-exports/8e70120f-591c-4089-a2cf-6574827dc83d/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/run-WufA4f/source
+
+ ✓ src/local-app/productionPreparationCoverage.integration.test.ts (4 tests) 17546ms
+   ✓ B1 remaining prose: independent captions, manual voice and matched media survive format continuation without retired writes  4406ms
+   ✓ B1 remaining v2: independent captions, manual voice and matched media survive format continuation without retired writes  3788ms
+   ✓ B1 remaining v3-image: independent captions, manual voice and matched media survive format continuation without retired writes  3756ms
+   ✓ B1 remaining v3-mixed: independent captions, manual voice and matched media survive format continuation without retired writes  5594ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  21:37:20
+   Duration  18.36s (transform 465ms, setup 6ms, collect 655ms, tests 17.55s, environment 0ms, prepare 31ms)
+
+JSON report written to /Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/run-WufA4f/evidence/vitest.json

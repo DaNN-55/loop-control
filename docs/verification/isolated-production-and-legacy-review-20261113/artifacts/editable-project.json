@@ -1,0 +1,610 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-bd1a99d2-dcd7-48a7-bb09-41e3fa91a880",
+      "name": "coffee.png",
+      "kind": "image",
+      "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-coffee.png",
+      "durationInFrames": 90,
+      "sourceRevision": "source-v1-0tlfqa50ccxzms"
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "id": "candidate-410362d8-d538-481e-9773-510348446126",
+      "name": "shot-01",
+      "kind": "image",
+      "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/native-tasks/ecb23107-c6ad-472e-bdef-2dc6d59b8b17/image.png",
+      "durationInFrames": 90,
+      "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+    },
+    {
+      "id": "audio-track-64e2b109-11e7-4def-9f49-e49460bf0f75",
+      "name": "workspace-narration-shot-shot-01",
+      "kind": "audio",
+      "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-local-tone.mp3",
+      "durationInFrames": 72,
+      "sourceRevision": "source-v1-0vxqbp6-n5uw6p"
+    },
+    {
+      "id": "audio-track-0cdbe581-7d20-4e56-bd65-b4b1dba37ff3",
+      "name": "workspace-narration-shot-shot-02",
+      "kind": "audio",
+      "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-local-tone.mp3",
+      "durationInFrames": 72,
+      "sourceRevision": "source-v1-0hr72i30z9nuqa"
+    },
+    {
+      "id": "audio-track-87b637fc-798c-414b-a290-4fa471d4c399",
+      "name": "workspace-narration-shot-shot-03",
+      "kind": "audio",
+      "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-local-tone.mp3",
+      "durationInFrames": 72,
+      "sourceRevision": "source-v1-0h1cnfs-r7vkvv"
+    },
+    {
+      "id": "material-a0387137-44f4-46c4-b709-c82cfee3404e",
+      "name": "本地测试配乐",
+      "kind": "audio",
+      "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/2a1eebdf52067b23e5cc49455694291eb22cf63688f7172cc6f24c18d1d7ca62-local-bgm.mp3",
+      "durationInFrames": 360,
+      "sourceRevision": "source-v1-0aeqisr0f2clm0"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-23be133d-7552-432c-b3b1-d319563ff179",
+  "timelines": [
+    {
+      "id": "loop-control-23be133d-7552-432c-b3b1-d319563ff179",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-619acaec-25e2-433a-bae8-d2a698964e51",
+          "track": "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_1",
+          "kind": "image",
+          "name": "shot-01",
+          "startFrame": 0,
+          "durationInFrames": 90,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 12,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-01",
+            "clipId": "619acaec-25e2-433a-bae8-d2a698964e51",
+            "text": "清晨，先给自己一段安静。",
+            "provenance": {
+              "materialRevisionId": "bd1a99d2-dcd7-48a7-bb09-41e3fa91a880",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "kind": "image"
+            }
+          },
+          "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/native-tasks/ecb23107-c6ad-472e-bdef-2dc6d59b8b17/image.png",
+          "sourceAssetId": "candidate-410362d8-d538-481e-9773-510348446126",
+          "fit": "contain",
+          "volume": 0,
+          "keyframes": {
+            "scale": [
+              {
+                "frame": 0,
+                "value": 1,
+                "easing": "linear"
+              },
+              {
+                "frame": 89,
+                "value": 1.15,
+                "easing": "linear"
+              }
+            ],
+            "x": [
+              {
+                "frame": 0,
+                "value": 0,
+                "easing": "linear"
+              },
+              {
+                "frame": 89,
+                "value": 3,
+                "easing": "linear"
+              }
+            ]
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "b2e8e0b22d110d773056591a8e027ef0d6548e54d2959642910cdc0ff5a3846e",
+            "sourceId": "candidate-410362d8-d538-481e-9773-510348446126",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 90,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 90
+            }
+          },
+          "srcInFrame": 0,
+          "loopControlAudio": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-01",
+            "voiceMode": "tts"
+          },
+          "sourceFilename": "coffee.png",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+        },
+        {
+          "id": "shot-shot-02-45ab6203-adca-49ec-88a6-d071e93c13a3",
+          "track": "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_1",
+          "kind": "image",
+          "name": "shot-02",
+          "startFrame": 90,
+          "durationInFrames": 90,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-02",
+            "clipId": "45ab6203-adca-49ec-88a6-d071e93c13a3",
+            "text": "让热水慢慢唤醒咖啡的香气。",
+            "provenance": {
+              "materialRevisionId": "bd1a99d2-dcd7-48a7-bb09-41e3fa91a880",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "kind": "image"
+            }
+          },
+          "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-coffee.png",
+          "sourceAssetId": "material-bd1a99d2-dcd7-48a7-bb09-41e3fa91a880",
+          "fit": "contain",
+          "volume": 0,
+          "keyframes": {
+            "scale": [
+              {
+                "frame": 0,
+                "value": 1,
+                "easing": "linear"
+              },
+              {
+                "frame": 89,
+                "value": 1.15,
+                "easing": "linear"
+              }
+            ],
+            "x": [
+              {
+                "frame": 0,
+                "value": 0,
+                "easing": "linear"
+              },
+              {
+                "frame": 89,
+                "value": 3,
+                "easing": "linear"
+              }
+            ]
+          },
+          "loopControlAudio": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-02",
+            "voiceMode": "tts"
+          },
+          "sourceFilename": "coffee.png",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+        },
+        {
+          "id": "shot-shot-03-69247046-7205-4d0e-9a4b-ee1d2bf64ad7",
+          "track": "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_1",
+          "kind": "image",
+          "name": "shot-03",
+          "startFrame": 180,
+          "durationInFrames": 90,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-03",
+            "clipId": "69247046-7205-4d0e-9a4b-ee1d2bf64ad7",
+            "text": "端起杯子，开始今天的生活。",
+            "provenance": {
+              "materialRevisionId": "bd1a99d2-dcd7-48a7-bb09-41e3fa91a880",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "kind": "image"
+            }
+          },
+          "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-coffee.png",
+          "sourceAssetId": "material-bd1a99d2-dcd7-48a7-bb09-41e3fa91a880",
+          "fit": "contain",
+          "volume": 0,
+          "keyframes": {
+            "scale": [
+              {
+                "frame": 0,
+                "value": 1,
+                "easing": "linear"
+              },
+              {
+                "frame": 89,
+                "value": 1.15,
+                "easing": "linear"
+              }
+            ],
+            "x": [
+              {
+                "frame": 0,
+                "value": 0,
+                "easing": "linear"
+              },
+              {
+                "frame": 89,
+                "value": 3,
+                "easing": "linear"
+              }
+            ]
+          },
+          "loopControlAudio": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-03",
+            "voiceMode": "tts"
+          },
+          "sourceFilename": "coffee.png",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+        },
+        {
+          "id": "workspace-narration-shot-shot-02",
+          "kind": "audio",
+          "name": "shot-02 口播",
+          "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-local-tone.mp3",
+          "sourceAssetId": "audio-track-0cdbe581-7d20-4e56-bd65-b4b1dba37ff3",
+          "srcInFrame": 0,
+          "startFrame": 90,
+          "durationInFrames": 72,
+          "volume": 1,
+          "track": "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_3",
+          "loopControlAudio": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-02"
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "f36ea0f6e84b8041ac8459798dcda41ad8a9a9fc38b4300035732227ae24438c",
+            "sourceId": "audio-track-0cdbe581-7d20-4e56-bd65-b4b1dba37ff3",
+            "durationPolicy": "keep-target",
+            "startFrame": 90,
+            "durationInFrames": 72,
+            "shotWindow": {
+              "startFrame": 90,
+              "durationInFrames": 90
+            }
+          },
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100"
+        },
+        {
+          "id": "workspace-narration-shot-shot-03",
+          "kind": "audio",
+          "name": "shot-03 口播",
+          "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-local-tone.mp3",
+          "sourceAssetId": "audio-track-87b637fc-798c-414b-a290-4fa471d4c399",
+          "srcInFrame": 0,
+          "startFrame": 180,
+          "durationInFrames": 72,
+          "volume": 1,
+          "track": "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_3",
+          "loopControlAudio": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-03"
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "c1bcd8eee04b073a5a0cfd16a9a68e06c5f6dbb6cd3fcad1ac2538b73ea42400",
+            "sourceId": "audio-track-87b637fc-798c-414b-a290-4fa471d4c399",
+            "durationPolicy": "keep-target",
+            "startFrame": 180,
+            "durationInFrames": 72,
+            "shotWindow": {
+              "startFrame": 180,
+              "durationInFrames": 90
+            }
+          },
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100"
+        },
+        {
+          "id": "workspace-narration-shot-shot-01",
+          "kind": "audio",
+          "name": "shot-01 口播",
+          "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-local-tone.mp3",
+          "sourceAssetId": "audio-track-64e2b109-11e7-4def-9f49-e49460bf0f75",
+          "srcInFrame": 0,
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "volume": 1,
+          "track": "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_3",
+          "loopControlAudio": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "shotId": "shot-01"
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "5cd009cc2b80b82ff8ec1df854cb7ecd1b747c104c6eac4c6e28fbe0f52901fa",
+            "sourceId": "audio-track-64e2b109-11e7-4def-9f49-e49460bf0f75",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 72,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 90
+            }
+          },
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100"
+        },
+        {
+          "id": "workspace-bgm",
+          "kind": "audio",
+          "name": "本地测试配乐",
+          "track": "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_4",
+          "src": "未分系列--9ba6937a-7ae1-411e-b976-b0207ae7e6d3/隔离验收：咖啡的三个时刻--23be133d-7552-432c-b3b1-d319563ff179/materials/2a1eebdf52067b23e5cc49455694291eb22cf63688f7172cc6f24c18d1d7ca62-local-bgm.mp3",
+          "sourceAssetId": "material-a0387137-44f4-46c4-b709-c82cfee3404e",
+          "startFrame": 0,
+          "durationInFrames": 270,
+          "srcInFrame": 0,
+          "volume": 0.251188643150958,
+          "loopControlAudio": {
+            "workspaceId": "5436a5d2-d127-4d4a-8eed-9ec7fdaebb13",
+            "kind": "bgm",
+            "preparationId": "83e40b07-da1d-4574-ac56-e3d6db804e51",
+            "anchor": "absolute"
+          },
+          "sourceContentHash": "2a1eebdf52067b23e5cc49455694291eb22cf63688f7172cc6f24c18d1d7ca62",
+          "sourceRevision": "source-sha256-2a1eebdf52067b23e5cc49455694291eb22cf63688f7172cc6f24c18d1d7ca62"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_1",
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_2",
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_3",
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_4"
+      ],
+      "tracks": {
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_2": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "owner~0",
+                    "text": "清晨，先给自己一段安静。",
+                    "start": 0,
+                    "end": 2500
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "清晨，先给自己一段安静。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "owner~0",
+                    "text": "让热水慢慢唤醒咖啡的香气。",
+                    "start": 3000,
+                    "end": 5500
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "让热水慢慢唤醒咖啡的香气。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-shot-03",
+                "itemId": "manual:workspace-caption-shot-shot-03",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-03-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "owner~0",
+                    "text": "端起杯子，开始今天的生活。",
+                    "start": 6000,
+                    "end": 8500
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "端起杯子，开始今天的生活。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-03-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-shot-03": {
+                "maxLines": 2
+              }
+            }
+          }
+        },
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_3": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        },
+        "track_loop-control-23be133d-7552-432c-b3b1-d319563ff179_4": {
+          "kind": "audio",
+          "name": "整期配乐",
+          "role": "follower",
+          "audioRouting": {
+            "duckDepthDb": -10
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

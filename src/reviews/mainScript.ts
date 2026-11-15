@@ -10,7 +10,7 @@ export function mainScriptDiagnostic(script:string):string|null {
   try{parseProductionScript(script);return null;}catch(error){return error instanceof Error?error.message:'主脚本格式无效。';}
 }
 
-/** Statistics never normalize or replace the saved source. Spoken text is authoritative only in v2. */
+/** Statistics never normalize or replace the saved source; versioned scripts identify narration explicitly. */
 export function mainScriptStatistics(script:string):{characters:number;textCharacters:number|null;textKind:'narration'|'body'} {
   const characters=Array.from(script).length;
   let production;
