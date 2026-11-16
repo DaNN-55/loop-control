@@ -61,6 +61,7 @@ interface Session {
 }
 
 export interface OpenChatCutRuntimeConfig {
+  projectName?: string;
   environment?: NodeJS.ProcessEnv;
   nodePath?: string;
   root?: string;
@@ -269,7 +270,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   }
   rewriteSources(copiedProject, new Map([...reverseSources].map(([remote, original]) => [original, remote])));
   if (!storedProject || storedMetadata?.inputFingerprint !== inputFingerprint || options.replaceWorkspace&&!recoverStored) {
-    const legacyStore = { version: 1, entries: { projects: [{ id: projectId, name: `生产单 ${episodeId}`, updatedAt: Date.now() }], [`project:${projectId}`]: copiedProject } };
+    const legacyStore = { version: 1, entries: { projects: [{ id: projectId, name: runtimeConfig.projectName ?? `生产单 ${episodeId}`, updatedAt: Date.now() }], [`project:${projectId}`]: copiedProject } };
     await writeStoredProject(dataDir, projectId, copiedProject, legacyStore);
     await writeFile(join(workRoot, "generated-project.json"), JSON.stringify(project, null, 2) + "\n");
     const metadata: WorkspaceMetadata = { baseProjectSha256: projectSha256(project), inputFingerprint, projectId, reverseSources: Object.fromEntries(reverseSources) };

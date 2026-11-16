@@ -166,6 +166,13 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     let body;try{body=await readBody(request);}catch{send(400,{error:'产物核对请求格式无效。'});return;}
     send(200,await reconcileOwnerNativeOutput(options.pool,session,body,options.recoverOutput));return;
    }
+   const studioCopy=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/studio-copy$/);
+   if(studioCopy&&uuid.test(studioCopy[1])){
+    if(request.method!=='POST')throw new ConfigurationError(405,'查看副本需要 POST。');
+    if(!options.episodes)throw new ConfigurationError(503,'本地 Studio 尚未配置。');
+    let body;try{body=await readBody(request);}catch{throw new ConfigurationError(400,'查看副本请求格式无效。');}
+    send(200,await options.episodes.completedStudioCopy(session.id,studioCopy[1],body));return;
+   }
    if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
     if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}
     let body;try{body=await readBody(request,140*1024*1024);}catch{send(400,{error:'Episode请求格式无效。'});return;}

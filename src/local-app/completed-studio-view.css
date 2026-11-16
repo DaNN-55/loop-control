@@ -1,0 +1,10 @@
+.completed-studio-view { display:flex; flex-direction:column; gap:12px; min-inline-size:0; min-block-size:0; flex:1; }
+.completed-studio-view > header { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.completed-studio-view > header > div { flex:1; min-inline-size:180px; }
+.completed-studio-view h3 { margin:0; font-size:13px; }
+.completed-studio-view header p { margin:4px 0 0; color:var(--lc-muted); font-size:12px; }
+.completed-studio-frame { position:relative; min-inline-size:0; min-block-size:520px; flex:1; block-size:calc(100dvh - 260px); border:1px solid var(--lc-line); border-radius:8px; overflow:hidden; }
+.completed-studio-frame iframe { display:block; inline-size:100%; block-size:100%; min-block-size:520px; border:0; }
+.completed-studio-frame > p { position:absolute; inset:0; display:grid; place-items:center; margin:0; background:var(--lc-surface-2); color:var(--lc-muted); font-size:13px; }
+.completed-studio-decision { display:flex; justify-content:flex-end; flex-wrap:wrap; gap:8px; margin-block-start:16px; }
+@media(max-width:700px) { .completed-studio-view > header > div { flex-basis:100%; } }

@@ -39,7 +39,7 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
  }
  return <>
   <div className="workspace-table-caption"><h3>{uiText("镜头 ")}{!readOnly&&!disabled&&<span id={helpId} >{uiText("拖动行调整顺序，或按 Alt + ↑/↓")}</span>}</h3></div>
-  <div className="workspace-shot-table-scroll">
+  <div className="workspace-shot-table-scroll" role="region" aria-label={uiText("镜头清单")} tabIndex={0}>
    <table className="workspace-shot-table" aria-label={uiText("镜头")}><thead><tr><th scope="col">{uiText("镜头")}</th><th scope="col">{uiText("脚本与素材")}</th><th scope="col">{uiText("时长")}</th><th scope="col">{uiText("画面")}</th><th scope="col">{uiText("口播")}</th>{!readOnly&&<th scope="col">{uiText("操作")}</th>}</tr></thead>
     <tbody>{clips.map((clip,index)=>{
      const shotLabel=`镜头 ${String(index+1).padStart(2,"0")}`;

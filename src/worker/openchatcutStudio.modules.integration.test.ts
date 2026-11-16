@@ -20,7 +20,7 @@ it.skipIf(!sdk)('serves the real embedded editor virtual-module dependency graph
   while(pending.length){const path=pending.shift()!;if(seen.has(path))continue;seen.add(path);const response=await fetch(new URL(path,session.studioUrl));const body=await response.text();expect(response.status,`${path}: ${body.slice(0,1800)}`).toBe(200);for(const match of body.matchAll(/["'](\/@id\/__x00__loop-control-[^"']+)["']/g))if(!seen.has(match[1]))pending.push(match[1]);}
   expect([...seen].filter(path=>path.startsWith('/@id/')).sort()).toEqual([
    'audio','bridge-retry','candidates','caption-drag','caption-layout','captions',
-   'composition','embed','ranges','shot-captions','structure','video-sound',
+   'composition','display-names','embed','ranges','shot-captions','structure','video-sound','render-preferences','audio-mix',
   ].map(name=>'/@id/__x00__loop-control-'+name).sort());
  }finally{await closeOpenChatCutStudio(episodeId);await rm(root,{recursive:true,force:true,maxRetries:5,retryDelay:100});}
 },120_000);

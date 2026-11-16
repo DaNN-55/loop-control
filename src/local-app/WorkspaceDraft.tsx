@@ -6,7 +6,7 @@ import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {useDialogFocus} from '../ui/useDialogFocus';
 import './workspace-draft.css';
 
-type DraftEntry={dirty:()=>boolean;keep:()=>boolean;discard:()=>void;beforeUnload?:()=>void;kind?:'connection'|'models';hasSecret?:()=>boolean};
+type DraftEntry={dirty:()=>boolean;keep:()=>boolean;discard:()=>void;beforeUnload?:()=>void;kind?:'connection'|'models';requestLeave?:(action:()=>void)=>void;hasSecret?:()=>boolean};
 type DraftScope='connections';
 type DraftGuard={register:(id:symbol,entry:DraftEntry)=>()=>void;request:(action:()=>void,scope?:DraftScope)=>boolean};
 const immediate:DraftGuard={register:()=>()=>{},request:action=>{action();return true;}};
@@ -18,7 +18,7 @@ export function useWorkspaceDraftLeave(scope?:DraftScope){const request=useConte
 /** Register leave callbacks and non-secret context; edited field values stay with their owning form. */
 export function useWorkspaceLeaveEntry(entry:DraftEntry){
  const guard=useContext(GuardContext),id=useRef(Symbol('workspace leave')),latest=useRef(entry);latest.current=entry;
- useEffect(()=>guard.register(id.current,{kind:entry.kind,dirty:()=>latest.current.dirty(),keep:()=>latest.current.keep(),discard:()=>latest.current.discard(),beforeUnload:()=>latest.current.beforeUnload?.(),hasSecret:()=>latest.current.hasSecret?.()??false}),[guard,entry.kind]);
+ useEffect(()=>guard.register(id.current,{kind:entry.kind,...(entry.requestLeave?{requestLeave:(action:()=>void)=>latest.current.requestLeave?.(action)}:{}),dirty:()=>latest.current.dirty(),keep:()=>latest.current.keep(),discard:()=>latest.current.discard(),beforeUnload:()=>latest.current.beforeUnload?.(),hasSecret:()=>latest.current.hasSecret?.()??false}),[guard,entry.kind]);
 }
 
 function DraftLeaveDialog({onContinue,onKeep,onDiscard,error}:{onContinue:()=>void;onKeep:()=>void;onDiscard:()=>void;error:string}){
@@ -29,7 +29,7 @@ export function WorkspaceDraftProvider({children,ownerId=''}:{children:ReactNode
  const entries=useRef(new Map<symbol,DraftEntry>()),destination=useRef<(()=>void)|null>(null),destinationScope=useRef<DraftScope|undefined>(undefined);
  const [prompt,setPrompt]=useState(false),[error,setError]=useState('');
  const [context,setContext]=useState<{kind:'connection'|'models';hasSecret:boolean}|null>(null);
- const guard=useMemo<DraftGuard>(()=>({register:(id,entry)=>{entries.current.set(id,entry);return()=>{entries.current.delete(id);};},request:(action,scope)=>{const relevant=[...entries.current.values()].filter(entry=>!scope||entry.kind==='connection'||entry.kind==='models');if(!relevant.some(entry=>entry.dirty())){action();return true;}destination.current=action;destinationScope.current=scope;const specific=relevant.find(entry=>entry.dirty()&&entry.kind);setContext(specific?.kind?{kind:specific.kind,hasSecret:relevant.some(entry=>entry.dirty()&&entry.hasSecret?.())}:null);setError('');setPrompt(true);return false;}}),[]);
+ const guard=useMemo<DraftGuard>(()=>{const api:DraftGuard={register:(id,entry)=>{entries.current.set(id,entry);return()=>{entries.current.delete(id);};},request:(action,scope)=>{const relevant=[...entries.current.values()].filter(entry=>!scope||entry.kind==='connection'||entry.kind==='models');const custom=relevant.find(entry=>entry.dirty()&&entry.requestLeave);if(custom?.requestLeave){custom.requestLeave(()=>{api.request(action,scope);});return false;}if(!relevant.some(entry=>entry.dirty())){action();return true;}destination.current=action;destinationScope.current=scope;const specific=relevant.find(entry=>entry.dirty()&&entry.kind);setContext(specific?.kind?{kind:specific.kind,hasSecret:relevant.some(entry=>entry.dirty()&&entry.hasSecret?.())}:null);setError('');setPrompt(true);return false;}};return api;},[]);
  useEffect(()=>{const beforeUnload=(event:BeforeUnloadEvent)=>{const dirty=[...entries.current.values()].filter(entry=>entry.dirty());if(!dirty.length)return;dirty.forEach(entry=>{if(entry.beforeUnload)entry.beforeUnload();else entry.keep();});event.preventDefault();event.returnValue='';};window.addEventListener('beforeunload',beforeUnload);return()=>window.removeEventListener('beforeunload',beforeUnload);},[]);
  function leave(keep:boolean){const dirty=[...entries.current.values()].filter(entry=>(!destinationScope.current||entry.kind==='connection'||entry.kind==='models')&&entry.dirty());if(keep&&dirty.some(entry=>!entry.keep())){setError('本机草稿保存失败，请继续编辑或明确放弃修改。');return;}if(!keep)dirty.forEach(entry=>entry.discard());const action=destination.current;destination.current=null;destinationScope.current=undefined;setPrompt(false);action?.();}
  return <ConnectionDraftSession onIdentityChange={()=>{destination.current=null;setPrompt(false);setContext(null);}}><GuardContext.Provider value={guard}><OwnerContext.Provider value={ownerId}>{children}{prompt&&(context?<ConnectionDraftLeaveDialog navigation hasSecret={context.hasSecret} onContinue={()=>{destination.current=null;setPrompt(false);}} onKeep={()=>leave(true)} onDiscard={()=>leave(false)}/>:<DraftLeaveDialog error={error} onContinue={()=>{destination.current=null;setPrompt(false);}} onKeep={()=>leave(true)} onDiscard={()=>leave(false)}/>)}</OwnerContext.Provider></GuardContext.Provider></ConnectionDraftSession>;

@@ -19,8 +19,8 @@ it('accepts plain prose and previews its exact paragraph subtitles before regist
  expect(new TextDecoder().decode(Uint8Array.from(atob(input.contentBase64),(c)=>c.charCodeAt(0)))).toBe('# 主脚本\n\n## 正文\n\n雨停了。\n\n街角亮着灯。\n');
 });
 it('structured script preview separates narration and visual instructions before submitting',()=>{
- const script='# 夜景\n## 制作设置\n- 模板版本：2\n## 正文\n### 段落 01\n- 口播：街角亮着灯。\n- 首帧素材：无\n- 视频生成提示词：镜头缓慢推进。';
- render(<WorkspaceScriptPanel episodeId="v2" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={vi.fn()} onConfirmed={()=>{}}/>);
+ const script='# 夜景\n## 制作设置\n- 模板版本：3\n## 正文\n### 段落 01\n- 口播：街角亮着灯。\n- 画面来源：视频\n- 视频提示词：镜头缓慢推进。';
+ render(<WorkspaceScriptPanel episodeId="v3" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={vi.fn()} onConfirmed={()=>{}}/>);
  fireEvent.click(screen.getByText(/镜头与字幕预览/));const preview=within(screen.getByRole('region',{name:'镜头与字幕预览'}));expect(preview.getByText('街角亮着灯。')).toBeTruthy();expect(preview.getByText('镜头缓慢推进。')).toBeTruthy();
 });
 it('first model selection uses the chosen model defaults including its required audio',async()=>{

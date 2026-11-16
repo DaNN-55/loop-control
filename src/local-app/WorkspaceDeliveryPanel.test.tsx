@@ -5,7 +5,7 @@ import {WorkspaceDraftProvider} from './WorkspaceDraft';
 import type {ProductionWorkspace} from '../productionWorkspace';
 const createObjectURL=vi.fn((_file:Blob)=> 'blob:cover-preview'),revokeObjectURL=vi.fn();
 beforeEach(()=>{createObjectURL.mockClear();revokeObjectURL.mockClear();Object.defineProperty(URL,'createObjectURL',{configurable:true,value:createObjectURL});Object.defineProperty(URL,'revokeObjectURL',{configurable:true,value:revokeObjectURL});});
-afterEach(()=>{cleanup();localStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();vi.restoreAllMocks();});
+afterEach(()=>{cleanup();localStorage.clear();sessionStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();vi.restoreAllMocks();});
 const pngBytes=new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0]);
 const pngFile=(name:string)=>new File([pngBytes],name,{type:'image/png'});
 const workspace=()=>({id:'workspace',episodeId:'episode',revision:7,stale:false,exports:[{id:'export',status:'ready',checks:[],current:true,confirmed:true,contentSha256:'confirmed-content',artifact:{sha256:'confirmed-video'}}]}) as unknown as ProductionWorkspace;
@@ -137,6 +137,15 @@ it('continues delivery polling when parent refreshes replace the callback',async
  expect(screen.getByRole('link',{name:'下载可编辑工程'}).getAttribute('href')).toContain('download=1');expect(screen.getByRole('link',{name:'下载全部交付文件（ZIP）'})).toBeTruthy();expect(document.querySelector('.workspace-delivery-technical')).toBeNull();expect(screen.queryByText('下载检查证据')).toBeNull();expect(screen.getByRole('button',{name:'复制标题'}).textContent).toBe('');expect(screen.getByRole('img',{name:'交付封面'})).toBeTruthy();vi.unstubAllGlobals();
 });
 
+it('shows completed delivery text in three named read-only sections with working copy actions',async()=>{
+ const w=workspace();w.deliveries=[{id:'done',status:'completed',verified:true,artifacts:[{artifactType:'metadata',relativePath:'metadata.json',sha256:'frozen',fileSize:10}]}] as ProductionWorkspace['deliveries'];
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({title:'已交付标题',description:'已交付简介',tags:['测试']})));
+ const writeText=vi.fn(async()=>{});Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText}});
+ const command=vi.fn();render(<WorkspaceDeliveryPanel completedView workspace={w} pending command={command} onChange={()=>{}}/>);
+ expect((await screen.findByRole('region',{name:'标题'})).textContent).toContain('已交付标题');expect(screen.getByRole('region',{name:'简介'}).textContent).toContain('已交付简介');expect(screen.getByRole('region',{name:'标签'}).textContent).toContain('#测试');
+ fireEvent.click(screen.getByRole('button',{name:'复制标题'}));await waitFor(()=>expect(writeText).toHaveBeenCalledWith('已交付标题'));
+ expect(screen.queryByRole('textbox')).toBeNull();expect(command).not.toHaveBeenCalled();
+});
 it('restores non-secret delivery text after reopening but requires the cover file again',()=>{
  const w=workspace(),command=vi.fn(),renderPanel=()=>render(<WorkspaceDraftProvider ownerId="delivery-owner"><WorkspaceDeliveryPanel workspace={w} pending={false} command={command} onChange={()=>{}}/></WorkspaceDraftProvider>);
  const view=renderPanel();fireEvent.change(screen.getByLabelText('标题'),{target:{value:'未提交标题'}});fireEvent.change(screen.getByLabelText('简介'),{target:{value:'未提交简介'}});fireEvent.change(screen.getByLabelText('标签'),{target:{value:'清晨,自然'}});fireEvent.change(screen.getByLabelText('封面'),{target:{files:[pngFile('封面.png')]}});view.unmount();renderPanel();
@@ -203,4 +212,14 @@ it('waits for a pending delivery read before the visibility refresh and clears a
  await act(async()=>finish(Response.json({workspace:w})));expect(read).toHaveBeenCalledTimes(2);
  expect(screen.getByRole('alert').textContent).toBe('交付状态暂不可用，请刷新重试。');
  await act(async()=>vi.advanceTimersByTimeAsync(2500));expect(read).toHaveBeenCalledTimes(3);expect(screen.queryByRole('alert')).toBeNull();
+});
+
+it('preselects the named template cover and keeps a manual selection on refresh',()=>{
+ const source={version:'workspace-cover-source/v1' as const,kind:'material' as const,id:'11111111-1111-4111-8111-111111111111',sha256:'a'.repeat(64)},other={...source,id:'22222222-2222-4222-8222-222222222222'};
+ const material={id:source.id,name:'模板.png',type:'image',purpose:'cover',sha256:source.sha256,relativePath:'cover.png',fileSize:12};
+ const w={...workspace(),templateInputs:{version:'workspace-template-inputs/v1' as const,narration:{},shots:[],cover:{reference:'模板',status:'bound' as const,material,candidates:[material]}},coverInputs:[{source,name:'模板.png',file:{relativePath:'cover.png',sha256:source.sha256,fileSize:12}},{source:other,name:'人工.png',file:{relativePath:'other.png',sha256:source.sha256,fileSize:12}}]};
+ const command=vi.fn(),props={workspace:w,pending:false,command,onChange:()=>{}};const view=render(<WorkspaceDeliveryPanel {...props}/>);
+ expect(screen.getByRole('combobox',{name:'已有封面'})).toHaveProperty('value',`material:${source.id}:${source.sha256}`);
+ fireEvent.change(screen.getByRole('combobox',{name:'已有封面'}),{target:{value:`material:${other.id}:${other.sha256}`}});view.unmount();render(<WorkspaceDeliveryPanel {...props} workspace={{...w,revision:w.revision+1}}/>);
+ expect(screen.getByRole('combobox',{name:'已有封面'})).toHaveProperty('value',`material:${other.id}:${other.sha256}`);expect(command).not.toHaveBeenCalled();
 });

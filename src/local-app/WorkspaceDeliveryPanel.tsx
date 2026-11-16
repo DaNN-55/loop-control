@@ -1,4 +1,5 @@
 import {uiText} from '../i18n/ui';
+import {templateReferenceProblem} from '../workspaceTemplateInputs';
 import {ImagePreview} from '../ui/media/ImagePreview';
 import {useEffect,useId,useRef,useState} from 'react';
 import {Image as ImageIcon,Copy,Download,FileArchive,FileJson,RefreshCw,PackageCheck} from 'lucide-react';
@@ -15,15 +16,22 @@ import type {WorkspaceCoverInput,WorkspaceCoverSource} from '../workspaceCover';
 import './workspace-compact-panels.css';
 function CopyButton({label,onCopy}:{label:string;onCopy:()=>void}){return <Tooltip title={label} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={Copy} aria-label={label} onPress={onCopy}/></Tooltip>;}
 function coverKey(source:WorkspaceCoverSource){return `${source.kind}:${source.id}:${source.sha256}`;}
-export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange}:{workspace:ProductionWorkspace;pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void}){
+export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,completedView=false}:{workspace:ProductionWorkspace;pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;completedView?:boolean}){
  const source=w.exports?.[0],draft=useWorkspaceDraft({episodeId:w.episodeId,kind:'delivery',version:JSON.stringify([w.id,source?.id,source?.contentSha256,source?.artifact?.sha256]),initial:{title:'',description:'',tags:'',coverName:''}});
  const {title,description,tags,coverName}=draft.value,setTitle=(title:string)=>draft.setValue(value=>({...value,title})),setDescription=(description:string)=>draft.setValue(value=>({...value,description})),setTags=(tags:string)=>draft.setValue(value=>({...value,tags}));
  const [coverSelection,setCoverSelection]=useState<{scope:string;file:File;source?:WorkspaceCoverSource}|null>(null),[error,setError]=useState(''),[preparing,setPreparing]=useState(false);
  const cover=coverSelection?.scope===draft.scope&&coverSelection.file.name===coverName?coverSelection.file:null,coverSource=cover?coverSelection?.source:undefined,setCover=(file:File|null,source?:WorkspaceCoverSource)=>setCoverSelection(file?{scope:draft.scope,file,...(source?{source}:{})}:null);
- const [registeredCoverKey,setRegisteredCoverKey]=useState(''),coverInputs=w.coverInputs??[],registeredCover=coverInputs.find(input=>coverKey(input.source)===registeredCoverKey);
+ const templateCover=w.templateInputs?.cover,coverInputs=w.coverInputs??[],templateCoverInput=coverInputs.find(input=>input.source.kind==='material'&&input.source.id===templateCover?.material?.id&&input.source.sha256===templateCover.material.sha256);
+ const coverChoiceStorageKey='loop-cover-source-choice:'+draft.scope;
+ let storedCoverChoice:string|null=null;try{storedCoverChoice=sessionStorage.getItem(coverChoiceStorageKey);}catch{/* Preserve the live selection without storage. */}
+ const [registeredCoverChoice,setRegisteredCoverChoice]=useState<{scope:string;value:string|null}>(()=>({scope:draft.scope,value:storedCoverChoice}));
+ const registeredCoverKey=(registeredCoverChoice.scope===draft.scope?registeredCoverChoice.value:storedCoverChoice)??(templateCoverInput?coverKey(templateCoverInput.source):'');
+ function setRegisteredCoverKey(value:string){setRegisteredCoverChoice({scope:draft.scope,value});try{sessionStorage.setItem(coverChoiceStorageKey,value);}catch{/* Keep the current form usable. */}}
+ const registeredCover=coverInputs.find(input=>coverKey(input.source)===registeredCoverKey);
  const coverInput=useRef<HTMLInputElement>(null),[coverPreview,setCoverPreview]=useState(''),[coverError,setCoverError]=useState(''),[checkingCover,setCheckingCover]=useState(false),[tagsError,setTagsError]=useState(''),coverFieldId=useId(),tagsFieldId=useId(),preparingRef=useRef(false),coverCheck=useRef(0),currentScope=useRef(draft.scope);currentScope.current=draft.scope;const currentCover=useRef(cover);currentCover.current=cover;
  useEffect(()=>{coverCheck.current++;setCheckingCover(false);setCoverError('');},[draft.scope]);
  async function selectCover(file:File|null,source?:WorkspaceCoverSource){
+  setRegisteredCoverKey(source?coverKey(source):'');
   const check=++coverCheck.current,scope=draft.scope;setCover(null);setCoverError('');setCheckingCover(false);draft.setValue(value=>({...value,coverName:file?.name??''}));if(!file)return;
   if(!file.size){setCoverError('封面为空，请重新选择。');return;}if(file.size>20*1024*1024){setCoverError('封面不能超过 20 MB，请选择较小的图片。');return;}
   setCheckingCover(true);try{const bytes=await new Promise<ArrayBuffer>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result as ArrayBuffer);reader.onerror=()=>reject(Error());reader.readAsArrayBuffer(file.slice(0,12));});if(check!==coverCheck.current||scope!==currentScope.current)return;
@@ -61,13 +69,16 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange}:{w
  const saved=published?.key===metadataKey?published:null;
  async function run(name:string,extra:Record<string,unknown>){setError('');try{reading.publish(await command(name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,...extra}) as ProductionWorkspace);return true;}catch(cause){const message=cause instanceof Error?cause.message:'交付未完成，请重试。';if(name==='prepareWorkspaceDelivery'&&message.includes('封面'))setCoverError(message);else setError(message);return false;}}
  async function prepare(){if(!cover||preparingRef.current)return;const normalizedTags=normalizeDeliveryTags(tags.split(/[,，]/).map(t=>t.trim()).filter(Boolean)),invalidTags=deliveryTagsError(normalizedTags);setTagsError(invalidTags);if(invalidTags)return;const submitted={...draft.value};preparingRef.current=true;setPreparing(true);try{let coverData:Record<string,unknown>;if(coverSource)coverData={coverSource};else{const bytes=new Uint8Array(await cover.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));coverData={coverBase64:btoa(binary)};}const e=w.exports![0];const succeeded=await run('prepareWorkspaceDelivery',{exportId:e.id,expectedExportSha256:e.artifact?.sha256,expectedContentSha256:e.contentSha256,title,description,tags:normalizedTags,...coverData});if(succeeded&&currentCover.current===cover&&draft.acknowledge(submitted,{title:'',description:'',tags:'',coverName:''}))setCover(null);}catch{setCoverError('封面读取失败，请重新选择。');}finally{preparingRef.current=false;setPreparing(false);}}
- return <section className="workspace-delivery workspace-delivery-compact" aria-label={uiText("交付包")}>
+ return <section className={`workspace-delivery workspace-delivery-compact${completedView?' completed-delivery':''}`} aria-label={uiText("交付包")}>
+ {templateReferenceProblem(templateCover)&&<p role="status">{templateReferenceProblem(templateCover)}</p>}
  <div className="workspace-review-heading"><h4>{uiText("交付包")}</h4><span>{delivery.status}</span></div>
  {stage.kind==='verified'?<>
  <div className="workspace-delivery-published">
   {stage.record.artifacts.filter(a=>a.artifactType==='cover').map(a=><div className="workspace-delivery-published-cover" key={a.relativePath}><ImagePreview src={artifactUrl(a)} alt={uiText("交付封面")}/><a className="workspace-delivery-cover-download" href={artifactUrl(a,true)} download aria-label={uiText("下载封面")} title={uiText("下载封面")}><Download size={16} aria-hidden="true"/></a></div>)}
   <div className="workspace-delivery-copy">
-   {saved?<>
+   {saved?completedView?<>
+    {([['标题',saved.title],['简介',saved.description],['标签',saved.tags.map(t=>`#${t}`).join(' ')]] as const).map(([label,text])=><section className="completed-delivery-text-section" key={label} aria-label={uiText(label)}><div className="workspace-delivery-field-heading"><h5>{uiText(label)}</h5><CopyButton label={uiText('复制{label}',{label:uiText(label)})} onCopy={()=>void copy(text,label)}/></div><p>{text||uiText('未填写')}</p></section>)}
+   </>:<>
     <div className="workspace-delivery-title-row"><h5>{saved.title}</h5><CopyButton label={uiText("复制标题")} onCopy={()=>void copy(saved.title,'标题')}/></div>
     {saved.description&&<div className="workspace-delivery-description"><div className="workspace-delivery-field-heading"><span>{uiText("简介")}</span><CopyButton label={uiText("复制简介")} onCopy={()=>void copy(saved.description,'简介')}/></div><p>{saved.description}</p></div>}
     {saved.tags.length>0&&<div className="workspace-delivery-tag-row"><p className="workspace-delivery-tags">{saved.tags.map(t=>`#${t}`).join(' ')}</p><CopyButton label={uiText("复制标签")} onCopy={()=>void copy(saved.tags.map(t=>`#${t}`).join(' '),'标签')}/></div>}
