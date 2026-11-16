@@ -52,7 +52,7 @@ npm run build
 
 `runtime:prepare` 只编译和核对本地程序，不启动任务、不执行数据库迁移或 Provider 请求。新增本地迁移使用 `npm run runtime:migrate`，它会校验已执行迁移的原始摘要，并尊重 Owner 的备份配置。
 
-日常库已为 `clean-v2`，并于 2026-11-15 在完整数据库备份及隔离还原核验后，应用 186–200 前向迁移。旧 ledger、原数据及冻结旧库保留；`clean-v3` 仍只用于全新建库。启动与数据对账见 [日常迁移验收记录](docs/verification/daily-forward-migrations-20261115/REPORT.md)。
+日常库保留 `clean-v2` 代际及原 ledger；2026-11-15 已在备份、隔离验证及日常对账后应用至 205，运行 `production-workspace/v3`。`clean-v3` 用于全新建库。当前状态见 [日常残留清理与验收](docs/verification/legacy-residue-audit-20261115/residue-cleanup/REPORT.md)，186–200 的阶段证据见 [前序迁移验收](docs/verification/daily-forward-migrations-20261115/REPORT.md)。
 
 OpenChatCut 的真实渲染集成检查需要本机对应源码与媒体工具：
 
@@ -68,7 +68,7 @@ npm run test:openchatcut-integration
 - OpenChatCut、FFmpeg 和本地语音对齐工具承担媒体生产。供应商能力及付费生成始终受当前连接、任务和预算约束。
 - `.loop-control/local/` 保存当前配置、媒体、历史内容与工具环境，受 Git 忽略；它不是可以整体删除的旧缓存。
 - `db/current/` 保存隔离验收中的当前 SQL 基线；`db/archive/legacy-v1/` 按原字节保留旧基线和迁移，通过 manifest 校验旧 ledger。日常启动不会自动跨代，历史文件、凭据引用和只读生产单保持。见 [ADR-0047](docs/adr/0047-clean-sql-baseline-generations.md)。
-- 当前源码另提供累计 `clean-v3` 新库基线与有效目录生成类型，覆盖原 clean-v2 及 166–200 前向迁移；旧库保留原 ledger 并沿原迁移升级，不自动改成 clean-v3。生成／核对方式见 [schema 产物说明](scripts/schema/README.md)，验收见 [F2 记录](docs/verification/current-workflow-replacement-20261113/f2-schema.md)。其中 clean-v3 未用于日常库；186–200 已按单独授权应用，见上方日常记录。
+- 当前源码另提供累计 `clean-v3` 新库基线与有效目录生成类型，覆盖原 clean-v2 及 166–200 前向迁移；旧库保留原 ledger 并沿原迁移升级，不自动改成 clean-v3。生成／核对方式见 [schema 产物说明](scripts/schema/README.md)，验收见 [F2 记录](docs/verification/current-workflow-replacement-20261113/f2-schema.md)。其中 clean-v3 未用于日常库；日常已前向升级至 205，见上方日常记录。
 
 制作与目录归属见 [ADR-0018](docs/adr/0018-per-request-production-and-account-storage.md)；受控验收与未执行范围见 [#166 验收记录](docs/verification/blueprint-166/REPORT.md)。
 

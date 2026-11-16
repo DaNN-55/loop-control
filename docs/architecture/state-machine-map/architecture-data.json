@@ -4,10 +4,10 @@
     "title": "Loop-Control 状态机",
     "summary": "按权威归属探索 48 个状态机族，查看事件、守卫、源码和恢复路径。",
     "project": "Loop-Control",
-    "generatedAt": "2026-11-11T10:16:00+08:00",
-    "commit": "a310349a",
+    "generatedAt": "2026-11-15T20:12:46+08:00",
+    "commit": "16f1645d",
     "dirty": true,
-    "scope": "应用状态机清单及四条源码执行场景。",
+    "scope": "应用状态机清单及四条源码场景；2026-11-15 校正当前工作区入口与历史退役边界。",
     "limitations": [
       "状态机族合并同类局部交互，数量不是每个布尔状态的计数。",
       "源码检查与受控测试不能证明外部供应商或所有跨进程故障的完整行为。",
@@ -30,31 +30,31 @@
       "path": "src/platform/types.ts",
       "locator": "episodeStages",
       "line": 1,
-      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+      "note": "阶段枚举保留历史值；当前四步通过明确脚本确认、制作工作区和已验证交付改变业务事实，旧 transition_episode 已退役。脚本再确认使下游失效，导航不是阶段枚举。验证：formalWorkflow.integration.test.ts、productionScriptV3.integration.test.ts。"
     },
     {
       "id": "source-2",
       "kind": "static",
-      "path": "db/local/c-baseline.sql",
-      "locator": "文件级实现与状态约束",
-      "line": 1,
-      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+      "path": "db/current/effective-baseline.sql",
+      "locator": "episode_stage（历史枚举与当前 schema 基线）",
+      "line": 61,
+      "note": "阶段枚举保留历史值；当前四步通过明确脚本确认、制作工作区和已验证交付改变业务事实，旧 transition_episode 已退役。脚本再确认使下游失效，导航不是阶段枚举。验证：formalWorkflow.integration.test.ts、productionScriptV3.integration.test.ts。"
     },
     {
       "id": "source-3",
       "kind": "static",
-      "path": "db/local/095-formal-workflow.sql",
-      "locator": "文件级实现与状态约束",
-      "line": 1,
-      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+      "path": "src/local-app/episodeCommands.ts",
+      "locator": "start：确认脚本后的明确启动",
+      "line": 121,
+      "note": "阶段枚举保留历史值；当前四步通过明确脚本确认、制作工作区和已验证交付改变业务事实，旧 transition_episode 已退役。脚本再确认使下游失效，导航不是阶段枚举。验证：formalWorkflow.integration.test.ts、productionScriptV3.integration.test.ts。"
     },
     {
       "id": "source-4",
       "kind": "static",
-      "path": "db/local/140-script-first-storyboard.sql",
-      "locator": "文件级实现与状态约束",
-      "line": 1,
-      "note": "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+      "path": "src/local-app/scriptRevisionCommands.ts",
+      "locator": "reconfirmScript",
+      "line": 9,
+      "note": "阶段枚举保留历史值；当前四步通过明确脚本确认、制作工作区和已验证交付改变业务事实，旧 transition_episode 已退役。脚本再确认使下游失效，导航不是阶段枚举。验证：formalWorkflow.integration.test.ts、productionScriptV3.integration.test.ts。"
     },
     {
       "id": "source-5",
@@ -67,9 +67,9 @@
     {
       "id": "source-6",
       "kind": "static",
-      "path": "db/local/009-episode-input.sql",
-      "locator": "文件级实现与状态约束",
-      "line": 1,
+      "path": "db/current/201-close-retired-manual-execution.sql",
+      "locator": "current_worker_task",
+      "line": 49,
       "note": "workerDatabase、租约约束、调度。领取、续租、结果必须匹配 task、attempt、token；发布 hold 阻止普通失败重报。验证：workerScheduler.test.ts、nativeAttemptOutput.test.ts。"
     },
     {
@@ -107,34 +107,34 @@
     {
       "id": "source-11",
       "kind": "static",
-      "path": "db/local/049-historical-generation-ledgers.sql",
+      "path": "db/archive/legacy-v1/049-historical-generation-ledgers.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
     },
     {
       "id": "source-12",
       "kind": "static",
-      "path": "db/local/136-workspace-generation-reconciliation.sql",
+      "path": "db/archive/legacy-v1/136-workspace-generation-reconciliation.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
     },
     {
       "id": "source-13",
       "kind": "static",
-      "path": "db/local/143-workspace-unknown-image-retry.sql",
+      "path": "db/archive/legacy-v1/143-workspace-unknown-image-retry.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
     },
     {
       "id": "source-14",
       "kind": "static",
-      "path": "db/local/144-workspace-video-submission-guard.sql",
+      "path": "db/archive/legacy-v1/144-workspace-video-submission-guard.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。visual request、生成账本、136、143、144。未知提交阻断新发；图片例外重试必须再次确认并绑定 retryOfTaskId。验证：workspaceGenerationState.integration.test.ts。"
     },
     {
       "id": "source-15",
@@ -195,10 +195,10 @@
     {
       "id": "source-22",
       "kind": "static",
-      "path": "db/local/133-native-output-publication-fences.sql",
+      "path": "db/archive/legacy-v1/133-native-output-publication-fences.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "nativeAttemptOutput、reconciliation、133、ADR-0023。task+attempt、租约、SHA、私有回执共同 fence；不能降格为普通重试。验证：nativeAttemptOutput.test.ts、workspaceGenerationState.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。nativeAttemptOutput、reconciliation、133、ADR-0023。task+attempt、租约、SHA、私有回执共同 fence；不能降格为普通重试。验证：nativeAttemptOutput.test.ts、workspaceGenerationState.integration.test.ts。"
     },
     {
       "id": "source-23",
@@ -211,18 +211,18 @@
     {
       "id": "source-24",
       "kind": "static",
-      "path": "db/local/134-workspace-call-confirmations.sql",
+      "path": "db/archive/legacy-v1/134-workspace-call-confirmations.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
     },
     {
       "id": "source-25",
       "kind": "static",
-      "path": "db/local/135-workspace-call-confirmation-lifecycle.sql",
+      "path": "db/archive/legacy-v1/135-workspace-call-confirmation-lifecycle.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。workspaceCallConfirmation、134、135、ADR-0024。Owner、工程版本、脚本、context hash、有效期、txid 同事务校验。验证：workspaceCallConfirmation.integration.test.ts。"
     },
     {
       "id": "source-26",
@@ -275,10 +275,10 @@
     {
       "id": "source-32",
       "kind": "static",
-      "path": "db/local/102-workspace-pexels.sql",
+      "path": "db/archive/legacy-v1/102-workspace-pexels.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "workspacePexels、102。同目标活动任务互斥；预览完成不自动采用。验证：workspacePexels.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。workspacePexels、102。同目标活动任务互斥；预览完成不自动采用。验证：workspacePexels.integration.test.ts。"
     },
     {
       "id": "source-33",
@@ -323,10 +323,10 @@
     {
       "id": "source-38",
       "kind": "static",
-      "path": "db/local/094-workspace-delivery.sql",
+      "path": "db/archive/legacy-v1/094-workspace-delivery.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "workspaceDeliveryCommands、094。只消费当前已确认导出；一个活动交付；重试保留合法导出身份。验证：formalWorkflow.delivery.integration.test.ts、workspaceDelivery.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。workspaceDeliveryCommands、094。只消费当前已确认导出；一个活动交付；重试保留合法导出身份。验证：formalWorkflow.delivery.integration.test.ts、workspaceDelivery.integration.test.ts。"
     },
     {
       "id": "source-39",
@@ -558,23 +558,23 @@
       "path": "src/local-app/EmbeddedStudioHost.tsx",
       "locator": "EmbeddedStudioSession",
       "line": 13,
-      "note": "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+      "note": "EmbeddedStudioHost、嵌入客户端、productionWorkspaceCommands 与 openchatcutStudio。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时；保存重验工程身份、文件 SHA 和原生会话。验证：EmbeddedStudioHost.test.tsx、productionWorkspace.integration.test.ts、nativeStudioPrimary.integration.test.ts。"
     },
     {
       "id": "source-68",
       "kind": "static",
       "path": "scripts/openchatcut-embed-client.mjs",
-      "locator": "redirectLoopControlImport",
-      "line": 15,
-      "note": "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+      "locator": "useLoopControlHost",
+      "line": 21,
+      "note": "EmbeddedStudioHost、嵌入客户端、productionWorkspaceCommands 与 openchatcutStudio。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时；保存重验工程身份、文件 SHA 和原生会话。验证：EmbeddedStudioHost.test.tsx、productionWorkspace.integration.test.ts、nativeStudioPrimary.integration.test.ts。"
     },
     {
       "id": "source-69",
       "kind": "static",
-      "path": "src/local-app/studioCommands.ts",
-      "locator": "StudioRuntime",
-      "line": 18,
-      "note": "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+      "path": "src/local-app/productionWorkspaceCommands.ts",
+      "locator": "openWorkspaceStudio／saveWorkspaceStudio",
+      "line": 307,
+      "note": "EmbeddedStudioHost、嵌入客户端、productionWorkspaceCommands 与 openchatcutStudio。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时；保存重验工程身份、文件 SHA 和原生会话。验证：EmbeddedStudioHost.test.tsx、productionWorkspace.integration.test.ts、nativeStudioPrimary.integration.test.ts。"
     },
     {
       "id": "source-70",
@@ -741,24 +741,24 @@
       "kind": "static",
       "path": "src/local-app/OwnerPreferencesDialog.tsx",
       "locator": "PreferencesPage",
-      "line": 13,
-      "note": "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+      "line": 15,
+      "note": "OwnerPreferencesDialog、ownerPreferences 与 avatarUpload。上传和保存请求归属、同步保存锁、错误保留草稿；个人与通知偏好分开保存。旧规划模型设置和自动规划入口已退役。验证：OwnerPreferencesDialog.test.tsx、ownerPreferences.integration.test.ts。"
     },
     {
       "id": "source-91",
       "kind": "static",
-      "path": "src/local-app/GlobalPlanningSettings.tsx",
-      "locator": "GlobalPlanningSettings",
-      "line": 8,
-      "note": "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+      "path": "src/local-app/ownerPreferences.ts",
+      "locator": "saveOwnerPreferences",
+      "line": 12,
+      "note": "OwnerPreferencesDialog、ownerPreferences 与 avatarUpload。上传和保存请求归属、同步保存锁、错误保留草稿；个人与通知偏好分开保存。旧规划模型设置和自动规划入口已退役。验证：OwnerPreferencesDialog.test.tsx、ownerPreferences.integration.test.ts。"
     },
     {
       "id": "source-92",
       "kind": "static",
-      "path": "src/local-app/WorkspacePlanningSelection.tsx",
-      "locator": "WorkspacePlanningDraft",
-      "line": 13,
-      "note": "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+      "path": "src/local-app/avatarUpload.ts",
+      "locator": "prepareOwnerAvatar",
+      "line": 3,
+      "note": "OwnerPreferencesDialog、ownerPreferences 与 avatarUpload。上传和保存请求归属、同步保存锁、错误保留草稿；个人与通知偏好分开保存。旧规划模型设置和自动规划入口已退役。验证：OwnerPreferencesDialog.test.tsx、ownerPreferences.integration.test.ts。"
     },
     {
       "id": "source-93",
@@ -779,10 +779,10 @@
     {
       "id": "source-95",
       "kind": "static",
-      "path": "db/local/115-exact-episode-deletion-intents.sql",
+      "path": "db/archive/legacy-v1/115-exact-episode-deletion-intents.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "episodeLifecycle、删除 targets、115。Owner、活动任务、未知提交、精确文件集合、设备/inode、command receipt 与 cleanup key。验证：episodeDeletion.integration.test.ts、episodeDeletionStorage.integration.test.ts、episodeDeletionTargets.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。episodeLifecycle、删除 targets、115。Owner、活动任务、未知提交、精确文件集合、设备/inode、command receipt 与 cleanup key。验证：episodeDeletion.integration.test.ts、episodeDeletionStorage.integration.test.ts、episodeDeletionTargets.test.ts。"
     },
     {
       "id": "source-96",
@@ -827,10 +827,10 @@
     {
       "id": "source-101",
       "kind": "static",
-      "path": "db/local/157-deletion-cleanup-diagnostics.sql",
+      "path": "db/archive/legacy-v1/157-deletion-cleanup-diagnostics.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。LocalDeletionRecovery、删除状态读取、实际账号删除、删除回执与恢复、AccountWorkspace、157。不扩大原删除范围；引用与恢复责任继续保护；完整服务端阻断计数。验证：cleanupRecovery.integration.test.ts、accountDeletionStatus.integration.test.ts、accountDeletionStorage.integration.test.ts、LocalDeletionRecovery.test.tsx。"
     },
     {
       "id": "source-102",
@@ -875,10 +875,10 @@
     {
       "id": "source-107",
       "kind": "static",
-      "path": "db/local/106-account-directory-migrations.sql",
+      "path": "db/archive/legacy-v1/106-account-directory-migrations.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "accountDirectoryMigration、106。盘点、目录身份、拷贝校验、锁与 Studio/未知任务阻断；保留原文件。验证：accountDirectoryMigration*.integration.test.ts、legacyAdoption*.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。accountDirectoryMigration、106。盘点、目录身份、拷贝校验、锁与 Studio/未知任务阻断；保留原文件。验证：accountDirectoryMigration*.integration.test.ts、legacyAdoption*.integration.test.ts。"
     },
     {
       "id": "source-108",
@@ -899,10 +899,10 @@
     {
       "id": "source-110",
       "kind": "static",
-      "path": "db/local/126-global-media-root-execution.sql",
+      "path": "db/archive/legacy-v1/126-global-media-root-execution.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "mediaRootExecution、mediaRootMigration、126、部署发布。不可变 manifest、全局写入 fence、private journal；COMMIT 未知不擅自回滚文件。验证：mediaRootExecutionFaults.integration.test.ts、mediaRootPublication.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。mediaRootExecution、mediaRootMigration、126、部署发布。不可变 manifest、全局写入 fence、private journal；COMMIT 未知不擅自回滚文件。验证：mediaRootExecutionFaults.integration.test.ts、mediaRootPublication.integration.test.ts。"
     },
     {
       "id": "source-111",
@@ -947,10 +947,10 @@
     {
       "id": "source-116",
       "kind": "static",
-      "path": "db/local/132-connection-billing.sql",
+      "path": "db/archive/legacy-v1/132-connection-billing.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "connectionBilling、providerUsage、132。先验证账务凭据，再 Keychain 写入与事务切换；不混用生成凭据。验证：connectionBilling.integration.test.ts、clientBilling.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。connectionBilling、providerUsage、132。先验证账务凭据，再 Keychain 写入与事务切换；不混用生成凭据。验证：connectionBilling.integration.test.ts、clientBilling.test.ts。"
     },
     {
       "id": "source-117",
@@ -979,18 +979,18 @@
     {
       "id": "source-120",
       "kind": "static",
-      "path": "db/local/036-native-automation.sql",
+      "path": "db/archive/legacy-v1/036-native-automation.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
     },
     {
       "id": "source-121",
       "kind": "static",
-      "path": "db/local/037-automation-attempts.sql",
+      "path": "db/archive/legacy-v1/037-automation-attempts.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。nativeAutomation、036、037。token、租约、续约、有限 attempt；调度扫描不能替代数据库状态。验证：automationHistory.integration.test.ts。"
     },
     {
       "id": "source-122",
@@ -1078,7 +1078,7 @@
       "path": "src/local-app/LegacyProductionSteps.tsx",
       "locator": "hasLegacyProductionContent",
       "line": 21,
-      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+      "note": "LegacyProductionSteps、历史渲染快照解析、repairTarget 与归档 schema。历史记录只读保留；接入原工程或旧输入须由 Owner 明确操作；旧审核、修复和制作命令返回退役错误，不自动续跑。验证：ProductionWorkspacePanel.legacy.test.tsx、legacyWorkspaceEntry.integration.test.ts、retiredManualExecution.integration.test.ts。"
     },
     {
       "id": "source-133",
@@ -1086,7 +1086,7 @@
       "path": "src/reviews/reviewRevision.ts",
       "locator": "ReviewRenderDurationSettings",
       "line": 7,
-      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+      "note": "LegacyProductionSteps、历史渲染快照解析、repairTarget 与归档 schema。历史记录只读保留；接入原工程或旧输入须由 Owner 明确操作；旧审核、修复和制作命令返回退役错误，不自动续跑。验证：ProductionWorkspacePanel.legacy.test.tsx、legacyWorkspaceEntry.integration.test.ts、retiredManualExecution.integration.test.ts。"
     },
     {
       "id": "source-134",
@@ -1094,23 +1094,23 @@
       "path": "src/reviews/repairTarget.ts",
       "locator": "RepairTarget",
       "line": 4,
-      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+      "note": "LegacyProductionSteps、历史渲染快照解析、repairTarget 与归档 schema。历史记录只读保留；接入原工程或旧输入须由 Owner 明确操作；旧审核、修复和制作命令返回退役错误，不自动续跑。验证：ProductionWorkspacePanel.legacy.test.tsx、legacyWorkspaceEntry.integration.test.ts、retiredManualExecution.integration.test.ts。"
     },
     {
       "id": "source-135",
       "kind": "static",
-      "path": "db/local/c-baseline.sql",
+      "path": "db/archive/legacy-v1/c-baseline.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。LegacyProductionSteps、历史渲染快照解析、repairTarget 与归档 schema。历史记录只读保留；接入原工程或旧输入须由 Owner 明确操作；旧审核、修复和制作命令返回退役错误，不自动续跑。验证：ProductionWorkspacePanel.legacy.test.tsx、legacyWorkspaceEntry.integration.test.ts、retiredManualExecution.integration.test.ts。"
     },
     {
       "id": "source-136",
       "kind": "static",
-      "path": "db/local/156-unified-shot-video-protocol.sql",
+      "path": "db/archive/legacy-v1/156-unified-shot-video-protocol.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。LegacyProductionSteps、历史渲染快照解析、repairTarget 与归档 schema。历史记录只读保留；接入原工程或旧输入须由 Owner 明确操作；旧审核、修复和制作命令返回退役错误，不自动续跑。验证：ProductionWorkspacePanel.legacy.test.tsx、legacyWorkspaceEntry.integration.test.ts、retiredManualExecution.integration.test.ts。"
     },
     {
       "id": "source-137",
@@ -1203,18 +1203,18 @@
     {
       "id": "source-148",
       "kind": "static",
-      "path": "db/local/122-automatic-episode-directories.sql",
+      "path": "db/archive/legacy-v1/122-automatic-episode-directories.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
     },
     {
       "id": "source-149",
       "kind": "static",
-      "path": "db/local/112-series-extension-rules.sql",
+      "path": "db/archive/legacy-v1/112-series-extension-rules.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
     },
     {
       "id": "source-150",
@@ -1227,10 +1227,10 @@
     {
       "id": "source-151",
       "kind": "static",
-      "path": "db/local/c-baseline.sql",
+      "path": "db/archive/legacy-v1/c-baseline.sql",
       "locator": "文件级实现与状态约束",
       "line": 1,
-      "note": "配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
+      "note": "归档迁移仅说明历史协议；当前有效定义按 db/current 顺序核对。配置命令、蓝图、系列规则、账号界面、基线。Owner、账号归属、引用与版本约束；系列／Prompt 新版本追加保存，执行快照固定原版本。验证 blueprintContraction.integration.test.ts、blueprintReviewRetirement.integration.test.ts、AccountWorkspace.test.tsx。"
     },
     {
       "id": "source-152",
@@ -1266,8 +1266,8 @@
     {
       "id": "test-M01-5",
       "kind": "test",
-      "path": "src/local-app/scriptProduction.integration.test.ts",
-      "locator": "scriptProduction.integration.test.ts",
+      "path": "src/local-app/productionScriptV3.integration.test.ts",
+      "locator": "productionScriptV3.integration.test.ts",
       "note": "现有公开行为回归入口，是否在本轮执行见报告。"
     },
     {
@@ -1525,8 +1525,8 @@
     {
       "id": "test-M25-4",
       "kind": "test",
-      "path": "src/local-app/embeddedStudio.integration.test.ts",
-      "locator": "embeddedStudio.integration.test.ts",
+      "path": "src/local-app/productionWorkspace.integration.test.ts",
+      "locator": "productionWorkspace.integration.test.ts",
       "note": "现有公开行为回归入口，是否在本轮执行见报告。"
     },
     {
@@ -1892,6 +1892,21 @@
       "path": "src/local-app/ProductionWorkspaceUploadRecovery.test.tsx",
       "locator": "Owner范围和关闭重开恢复",
       "note": "0—4项中的状态权威与公开验证入口。"
+    },
+    {
+      "id": "source-M25-runtime",
+      "kind": "static",
+      "path": "src/worker/openchatcutStudio.ts",
+      "locator": "openOpenChatCutDraftStudio",
+      "line": 190,
+      "note": "EmbeddedStudioHost、嵌入客户端、productionWorkspaceCommands 与 openchatcutStudio。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时；保存重验工程身份、文件 SHA 和原生会话。验证：EmbeddedStudioHost.test.tsx、productionWorkspace.integration.test.ts、nativeStudioPrimary.integration.test.ts。"
+    },
+    {
+      "id": "test-M25-native",
+      "kind": "test",
+      "path": "src/local-app/nativeStudioPrimary.integration.test.ts",
+      "locator": "nativeStudioPrimary.integration.test.ts",
+      "note": "当前原生字幕编辑、保存、重启、导出确认与失效行为；是否在本轮执行见报告。"
     }
   ],
   "nodes": [
@@ -1942,10 +1957,10 @@
     },
     {
       "id": "M01",
-      "label": "M01 Episode 生产阶段",
+      "label": "M01 Episode 当前阶段与历史枚举",
       "kind": "module",
       "parentId": "business",
-      "summary": "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效",
+      "summary": "当前四步围绕已确认脚本、制作工作区和交付推进至 production_completed；旧 draft／review／approved 等枚举保留历史记录",
       "status": "fact",
       "sourceIds": [
         "source-1",
@@ -1957,10 +1972,10 @@
       ],
       "note": "",
       "details": [
-        "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+        "阶段枚举保留历史值；当前四步通过明确脚本确认、制作工作区和已验证交付改变业务事实，旧 transition_episode 已退役。脚本再确认使下游失效，导航不是阶段枚举。验证：formalWorkflow.integration.test.ts、productionScriptV3.integration.test.ts。"
       ],
       "lifecycle": [
-        "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效"
+        "当前四步围绕已确认脚本、制作工作区和交付推进至 production_completed；旧 draft／review／approved 等枚举保留历史记录"
       ],
       "position": {
         "x": 0,
@@ -2565,11 +2580,13 @@
         "source-68",
         "source-69",
         "test-M25-3",
-        "test-M25-4"
+        "test-M25-4",
+        "source-M25-runtime",
+        "test-M25-native"
       ],
       "note": "",
       "details": [
-        "EmbeddedStudioHost、嵌入客户端、studioCommands。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时。验证：EmbeddedStudioHost.test.tsx、embeddedStudio.integration.test.ts。"
+        "EmbeddedStudioHost、嵌入客户端、productionWorkspaceCommands 与 openchatcutStudio。origin/source/channel/project/request ID、revision 与指纹；请求 Map、同步锁与超时；保存重验工程身份、文件 SHA 和原生会话。验证：EmbeddedStudioHost.test.tsx、productionWorkspace.integration.test.ts、nativeStudioPrimary.integration.test.ts。"
       ],
       "lifecycle": [
         "connecting → writable；request pending → result/timeout；flush/save → saved/error；失去写连接后保留编辑"
@@ -2715,10 +2732,10 @@
     },
     {
       "id": "M31",
-      "label": "M31 所有者偏好与规划设置",
+      "label": "M31 所有者偏好",
       "kind": "module",
       "parentId": "interaction",
-      "summary": "loading → editing/dirty → saving/saved/error；avatar upload、规划模型注册与测试另有 pending",
+      "summary": "loading → editing/dirty → saving/saved/error；头像上传独立归属，存储设置保留自身 busy／dirty",
       "status": "fact",
       "sourceIds": [
         "source-90",
@@ -2728,10 +2745,10 @@
       ],
       "note": "",
       "details": [
-        "OwnerPreferencesDialog、GlobalPlanningSettings、WorkspacePlanningSelection。revision、上传请求归属、错误保留草稿；默认选择不自动调用模型。验证：同名组件测试、ownerPreferences.integration.test.ts。"
+        "OwnerPreferencesDialog、ownerPreferences 与 avatarUpload。上传和保存请求归属、同步保存锁、错误保留草稿；个人与通知偏好分开保存。旧规划模型设置和自动规划入口已退役。验证：OwnerPreferencesDialog.test.tsx、ownerPreferences.integration.test.ts。"
       ],
       "lifecycle": [
-        "loading → editing/dirty → saving/saved/error；avatar upload、规划模型注册与测试另有 pending"
+        "loading → editing/dirty → saving/saved/error；头像上传独立归属，存储设置保留自身 busy／dirty"
       ],
       "position": {
         "x": 300,
@@ -3058,10 +3075,10 @@
     },
     {
       "id": "M44",
-      "label": "M44 旧协议、审核与修复兼容族",
+      "label": "M44 历史协议与来源兼容族",
       "kind": "module",
       "parentId": "recovery",
-      "summary": "历史审核修订、shot preparation 音画 pending/running/ready/failed、confirmation pending/confirmed/skipped；旧任务与旧产物保留原身份",
+      "summary": "旧任务、审核和产物保留原身份及冻结证据；历史读取、明确来源接入和准确已有结果核对继续工作，旧制作入口关闭",
       "status": "fact",
       "sourceIds": [
         "source-132",
@@ -3072,10 +3089,10 @@
       ],
       "note": "",
       "details": [
-        "LegacyProductionSteps、reviewRevision、repairTarget、baseline、156。不因当前四步 UI 删除旧协议、不可变快照或恢复责任。验证：ProductionWorkspacePanel.legacy.test.tsx、新旧任务兼容集成测试。"
+        "LegacyProductionSteps、历史渲染快照解析、repairTarget 与归档 schema。历史记录只读保留；接入原工程或旧输入须由 Owner 明确操作；旧审核、修复和制作命令返回退役错误，不自动续跑。验证：ProductionWorkspacePanel.legacy.test.tsx、legacyWorkspaceEntry.integration.test.ts、retiredManualExecution.integration.test.ts。"
       ],
       "lifecycle": [
-        "历史审核修订、shot preparation 音画 pending/running/ready/failed、confirmation pending/confirmed/skipped；旧任务与旧产物保留原身份"
+        "旧任务、审核和产物保留原身份及冻结证据；历史读取、明确来源接入和准确已有结果核对继续工作，旧制作入口关闭"
       ],
       "position": {
         "x": 0,
@@ -3199,7 +3216,7 @@
       "id": "object-episode",
       "label": "生产单",
       "kind": "object",
-      "summary": "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效",
+      "summary": "当前四步围绕已确认脚本、制作工作区和交付推进至 production_completed；旧 draft／review／approved 等枚举保留历史记录",
       "status": "fact",
       "sourceIds": [
         "source-1",
@@ -3209,10 +3226,10 @@
       ],
       "note": "",
       "details": [
-        "阶段类型、SQL 迁移、正式流程、脚本优先。transition_episode 与后续迁移共同约束；四步导航不是这个枚举。验证：formalWorkflow.integration.test.ts、scriptProduction.integration.test.ts。"
+        "阶段枚举保留历史值；当前四步通过明确脚本确认、制作工作区和已验证交付改变业务事实，旧 transition_episode 已退役。脚本再确认使下游失效，导航不是阶段枚举。验证：formalWorkflow.integration.test.ts、productionScriptV3.integration.test.ts。"
       ],
       "lifecycle": [
-        "waiting_input、脚本／画面／分镜 draft、review、approved，进入 production、render、QC，最终 production_completed；脚本再确认使下游失效"
+        "当前四步围绕已确认脚本、制作工作区和交付推进至 production_completed；旧 draft／review／approved 等枚举保留历史记录"
       ],
       "position": {
         "x": 0,
@@ -4087,6 +4104,7 @@
   "changes": [
     "复用既有 M01—M44，补入 M45—M48。",
     "标明已合入的局部 owner 与本轮刷新顺序修复。",
-    "状态机优化0—4项完成，更新字幕接续、共享上传、轮询可见性、模型归属与Studio回执入口。"
+    "状态机优化0—4项完成，更新字幕接续、共享上传、轮询可见性、模型归属与Studio回执入口。",
+    "2026-11-15：修正当前 Studio 与偏好入口、归档 SQL 路径，明确旧阶段／规划／审核制作退役边界。"
   ]
 }
