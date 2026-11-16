@@ -76,3 +76,13 @@ it.each(['关闭表单','保存'])('returns focus to the opener after %s',async(
  await user.click(opener);await user.click(screen.getByRole('button',{name:action}));
  expect(screen.queryByRole('dialog')).toBeNull();expect(document.activeElement).toBe(opener);
 });
+
+it('leaves Escape and Tab inside a native child dialog to the browser instead of closing its outer workspace',async()=>{
+ const close=vi.fn();
+ function Workspace(){const ref=useDialogFocus<HTMLElement>(true,close);return <section ref={ref} role="dialog" aria-label="生产单"><button>外层操作</button><dialog open aria-label="核对候选"><button>核对下一条</button></dialog></section>;}
+ const user=userEvent.setup();render(<Workspace/>);
+ const next=screen.getByRole('button',{name:'核对下一条'});next.focus();
+ await user.keyboard('{Escape}');expect(close).not.toHaveBeenCalled();
+ const tab=new KeyboardEvent('keydown',{key:'Tab',bubbles:true,cancelable:true});next.dispatchEvent(tab);
+ expect(tab.defaultPrevented).toBe(false);
+});

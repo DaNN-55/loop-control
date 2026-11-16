@@ -48,7 +48,7 @@ export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(isOpen: b
 
     function manageDialogFocus(event: KeyboardEvent) {
       if (event.defaultPrevented || activeDialogs.at(-1) !== dialog) return;
-      const activeDialog = document.activeElement instanceof Element ? document.activeElement.closest('[role="dialog"]') : null;
+      const activeDialog = document.activeElement instanceof Element ? document.activeElement.closest('dialog[open], [role="dialog"]') : null;
       if (activeDialog && dialogRef.current && activeDialog !== dialogRef.current && !activeDialog.contains(dialogRef.current)) return;
       if (event.key === "Escape") {
         event.preventDefault();

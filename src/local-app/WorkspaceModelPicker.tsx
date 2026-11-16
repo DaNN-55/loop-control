@@ -1,6 +1,7 @@
+import {WorkspacePopover as Popover} from './WorkspacePopover';
 import {uiText} from '../i18n/ui';
 import {useState} from 'react';
-import {Dialog,DialogTrigger,Menu,MenuItem,Popover} from 'react-aria-components';
+import {Dialog,DialogTrigger,Menu,MenuItem} from 'react-aria-components';
 import {Check,ChevronDown,Mic,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {WorkspaceModelLogo} from './WorkspaceModelLogo';

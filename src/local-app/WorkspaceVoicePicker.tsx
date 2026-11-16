@@ -1,7 +1,8 @@
+import {WorkspacePopover as Popover} from './WorkspacePopover';
 import {uiText} from '../i18n/ui';
 import {useContext,useState} from 'react';
 import {Check,ChevronDown,Volume2} from 'lucide-react';
-import {Button,ComboBox,ComboBoxStateContext,Input,ListBox,ListBoxItem,Popover} from 'react-aria-components';
+import {Button,ComboBox,ComboBoxStateContext,Input,ListBox,ListBoxItem} from 'react-aria-components';
 import '../ui/dan-ui/components/base/select/icon-combobox.css';
 import '../ui/dan-ui/components/base/select/select-menu.css';
 
