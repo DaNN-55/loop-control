@@ -43,8 +43,8 @@
 | --- | --- |
 | [最终测试](evidence-b1-remaining/run-JIgPY2/vitest.json)、[原始日志](evidence-b1-remaining/run-JIgPY2/tests.log) | 同批 5 通过／0 失败／0 筛选或跳过 |
 | [类型](evidence-b1-remaining/run-JIgPY2/types.log)、[runtime 构建](evidence-b1-remaining/run-JIgPY2/build.log) | 完整 `npm run check`、Worker／backend 准备通过 |
-| [运行前指纹](evidence-b1-remaining/run-JIgPY2/source-manifest.json)、[运行后保持](evidence-b1-remaining/run-JIgPY2/source-unchanged.json) | 固定源码与测试前后逐文件对账 |
-| [基准对账](evidence-b1-remaining/baseline-verified.json)、[汇总](evidence-b1-remaining/summary.json) | 1770 原文件、运行配置差异、调用数与逐轮真实结果 |
+| [运行前指纹](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-b1-remaining/run-JIgPY2/source-manifest.json>)、[运行后保持](evidence-b1-remaining/run-JIgPY2/source-unchanged.json) | 固定源码与测试前后逐文件对账 |
+| [基准对账](evidence-b1-remaining/baseline-verified.json)、[汇总](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-b1-remaining/summary.json>) | 1770 原文件、运行配置差异、调用数与逐轮真实结果 |
 | `run-JIgPY2/b1-input-*.json`、[任务组合回执](evidence-b1-remaining/run-JIgPY2/b1-mixed-task-receipt.json) | 稳定身份／新旧基准、人工轨、三任务、明确采用与确切原声文件 |
 | [诊断](evidence-b1-remaining/diagnosis.md)、各轮 `coverage-test.txt`／原始日志 | 保留夹具失败、断言修正与原实际测试源码，不覆盖失败证据 |
 | [清理](evidence-b1-remaining/cleanup.json) | 6 次运行均终态，6 个准确自有容器均实际查询确认移除；不动其他容器 |

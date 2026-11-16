@@ -55,7 +55,7 @@
 
 正式容器 `loop-story-e2e-f58d652942eb` 按精确标签停止并自动移除，容器查询为空，私有源码路径进程查询为空；两档夹具正常关闭 SDK、数据库和临时媒体卷。256 MiB 卷本次没有出现容量错误，没有缩减规模或放宽保护。原始输入和私有源码作为复核证据保留，不复制到日常目录。无真实 Provider／视频 API、无日常部署／重启／采集启用、无提交／推送。
 
-私有副本最终类型检查退出 0，`runtime:prepare` 退出 0。1770 个基线文件除 11 个独立 build-info 输出位置调整外保持原指纹；新增两测试文件与主工作区逐 SHA 一致。见 [源码与检查](evidence-c2-scale/source-final.json)、[正式结果](evidence-c2-scale/vitest.json)、[汇总](evidence-c2-scale/summary.json)、[清理](evidence-c2-scale/run.json)。正确工程、成片、探测参数和事件分别保存在 [小档证据](evidence-c2-scale/four-source-short/observation.json) 与 [大档证据](evidence-c2-scale/eight-source-large/observation.json) 同目录。
+私有副本最终类型检查退出 0，`runtime:prepare` 退出 0。1770 个基线文件除 11 个独立 build-info 输出位置调整外保持原指纹；新增两测试文件与主工作区逐 SHA 一致。见 [源码与检查](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-c2-scale/source-final.json>)、[正式结果](evidence-c2-scale/vitest.json)、[汇总](evidence-c2-scale/summary.json)、[清理](evidence-c2-scale/run.json)。正确工程、成片、探测参数和事件分别保存在 [小档证据](evidence-c2-scale/four-source-short/observation.json) 与 [大档证据](evidence-c2-scale/eight-source-large/observation.json) 同目录。
 
 ## 首次诊断与核心待核查
 

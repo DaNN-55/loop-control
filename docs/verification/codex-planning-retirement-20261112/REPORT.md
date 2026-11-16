@@ -38,7 +38,7 @@
 
 ## 后续方案与保留项
 
-[原生PG、干净SQL与埋点计划](../../plans/native-postgres-and-clean-schema-20261112.md)已记录用户认可方向与顺序：原生PG适配/演练→保持schema切换日常库→干净SQL在VM验收→原生库新基线→统一埋点；shadcn/ui后置。迁移方向与埋点认可不等于本轮执行了安装、切库或埋点。
+[原生PG、干净SQL与埋点计划](../../plans/native-postgres-and-clean-schema-20261112.md)已记录用户认可方向与顺序：原生PG适配/演练→保持schema切换日常库→干净SQL在VM验收→原生库新基线→统一埋点。迁移方向与埋点认可不等于本轮执行了安装、切库或埋点。
 
 WhisperX只核查代码：入口在可写Studio的OpenChatCut字幕库，默认隐藏面板，需要启用字幕与可写桥。未在具体真实生产单复现其缺失，未运行模型/手工保存或改位置。建议保留可选自动校时，在字幕工具区直接呈现；没有它仍可原生手工校时后保存并满足交付。
 
@@ -46,4 +46,4 @@ WhisperX只核查代码：入口在可写Studio的OpenChatCut字幕库，默认�
 
 本轮5299和自动验收浏览器收尾关闭；此前用户查看的WhisperX位置预览5298保留。恢复和完整日志：`/tmp/loop-codex-chain-retirement-20261112/`。截图：[旧规划修复390px](retired-repair-390.png)、[状态面板](status-after-retirement.png)。
 
-最终保护与各用例证据见 [verification.json](verification.json)。本轮一次性PG容器均由runner校验身份后清理，完成的源码/SDK隔离副本已释放，失败和成功日志保留。
+最终保护与各用例证据见 [verification.json](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/codex-planning-retirement-20261112/verification.json>)。本轮一次性PG容器均由runner校验身份后清理，完成的源码/SDK隔离副本已释放，失败和成功日志保留。

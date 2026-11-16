@@ -1,0 +1,29 @@
+# 全仓清理与文档整理（2026-11-15）
+
+## 已完成
+
+- 全仓入口调查覆盖 src 各领域、local-app HTTP／Worker、动态 SDK 宿主模块、scripts/runtime／storage／e2e、public／assets、根配置、当前及历史 SQL。结合实际入口、注册和调用关系核查，未发现新增的高置信可删运行代码。保留当前仍使用的历史只读兼容、媒体解析、未知请求和恢复保护，不按 legacy 名称删除。
+- 根 PLAN.md 原 3060 行／391698 字节完整归档，SHA-256 精确保持；当前计划缩至 20 行。归档路径及完整性见 document-checks.json。
+- README 日常状态更新为 clean-v2 前向至 205／production-workspace-v3，链接到最新日常验收；保留原迁移阶段证据。
+- 日照金山脚本使用说明改为当前四步工作区和逐请求制作选择，去除已退役六步审核／整期自动继续／手动执行旧迁移的操作建议；旧说明完整归档。素材清单区分历史“未生成”与当前实际状态。
+- 历史提案、验证、数据库迁移和全部证据保留原路径，避免破坏跨文档及恢复引用；历史生产计划增加明确状态提示。
+
+## 验证
+
+- npm run check：退出 0。
+- productionScript.test.ts：21 项通过（实际仅一个匹配文件，不把不存在的第二个筛选路径计为通过）。
+- 修改文档的本地链接检查：0 缺失；历史计划哈希与开始时一致。
+- 限定本次文档的 git diff --check：通过。
+- 本次未改运行代码、依赖、SQL、共享 SDK、日常发布版本；未执行完整默认套件或构建。现有全套结果属于前序验收，不用来冒充本次结果。
+
+## 保留项
+
+- 原有 pnpm-lock.yaml／pnpm-workspace.yaml 未跟踪且与 npm 标准不一致，但已在本轮开始前存在，归属不明；保留用户已有工作。
+- LegacyProductionSteps、videoGenerationSettings、wanVideoModels、repairTarget 和 productionScript 仍有当前或历史兼容消费者；Tailwind 依赖有实际 CLI／CSS／组件入口，均保留。
+- 全仓调查不是“证明所有潜在问题不存在”；对仓库外消费者和复杂动态行为不作无证据删除。
+
+## 清理完成时的历史快照
+
+后续两单真实测试与交付已完成；最终结果和问题见 [REPORT.md](REPORT.md)。以下仅保留清理阶段结束时的状态。
+
+两份剧本真实供应商生产尚未执行。当前 Chrome 已登录且有 gpt-image、MiniMax-H3-Lite 与豆包连接，均显示未测试；Keychain 已通过正常运行机制解锁。保存的旧登录／会话不适用于当前 Owner，未修改密码或新增身份。使用现有已登录界面继续，或取得有效的当前 API 会话。

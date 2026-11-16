@@ -1,0 +1,9 @@
+/** Internal batch application: every contract was validated by prepareWorkspaceCaptionAlignment first. */
+export async function applyPreparedWorkspaceCaptionAlignment(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,clipId:string,taskId:string,contract:ShotCaptionContract){
+ const clip=row.bindings.find(binding=>binding.id===clipId)!;
+ const next=applyWorkspaceCaptionEdit(project,clip.itemId,contract,{timingOnly:true});
+ const x=await captionContext(c,root,row,next,clipId);
+ const task=(await c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1 AND episode_id=$2',[taskId,row.episode_id])).rows[0];
+ await recordEvidence(c,row,clipId,x.inputFingerprint,x.laneFingerprint,'alignment',taskId,task.input_snapshot.acoustic_alignment.input_version);
+ return next;
+}

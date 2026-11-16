@@ -1,6 +1,6 @@
 # A–G 本地提交验收（2026-11-15）
 
-用户授权将完整 A–G 保存到本地 `main`，并清理本任务临时产物。必要的 171–185 SQL／统计前置随同保存；独立 Shadcn 迁移、包管理调整及其他界面工作保留在工作区，不推送。
+用户授权将完整 A–G 保存到本地 `main`，并清理本任务临时产物。必要的 171–185 SQL／统计前置随同保存；独立界面组件试验、包管理调整及其他界面工作当时保留在工作区，组件试验后续已撤回，不推送。
 
 ## 提交范围与验证
 
@@ -21,7 +21,7 @@ A–G 原阶段实证继续见 [最终验收](../g-acceptance.md)。这次验证
 
 ## 本地提交与实际清理结果
 
-实施已保存为 `7a73c5866c08b973c6602074151d342b5fb01499`，分支 `main`，未推送。收尾仅更新本记录和计划，不改产品行为。完整机器记录见 [cleanup-summary.json](cleanup-summary.json)。
+实施已保存为 `7a73c5866c08b973c6602074151d342b5fb01499`，分支 `main`，未推送。收尾仅更新本记录和计划，不改产品行为。完整机器记录见 [cleanup-summary.json](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/local-delivery-20261115/cleanup-summary.json>)。
 
 - 移除 362 个可重建构建缓存目录，清理前实际占用合计约 66.65 GiB；其中本机 SDK Webpack 缓存约 20.60 GiB，其余为外置盘测试 Webpack／Node 编译缓存。
 - 285 份历史源码副本按 SHA-256 去重归档为约 61.9 MiB，全部 blob 验证；另实际还原一个 1,607 条目的完整快照，通过后删除验证副本。
@@ -31,4 +31,4 @@ A–G 原阶段实证继续见 [最终验收](../g-acceptance.md)。这次验证
 - 本次 A–G 没有创建 Git 分支或 worktree，故删除数量均为 0。保留 13 个既有非 main 分支，以及两个带未提交内容的其他 worktree；其中 `0cf9` 在本轮仍有新增活动，未覆盖或删除。共享测试 SDK、日常依赖、模型、数据库、完整备份、原媒体及旧运行包保留。
 - 交付前 2,488 个既有常规文件逐字节核对，只有授权更新的 `PLAN.md` 和实施总表变化。日常 HTTP 200，数据库 dump SHA 与迁移后原记录一致。
 
-主工作区另有 869 项未提交：界面组件／交互测试 369、开发预览 93、Shadcn 工程／依赖／设计文档 48、此前独立评估方案与证据 359；原文件均保留。逐文件清单位于 `/Users/dan/Documents/Codex/2026-11-15/loop-control-local-delivery/remaining-uncommitted.txt`，并另列其他 worktree 自身状态；它们可能包含 main 已保存内容的副本，不与主清单累加。
+本地交付时主工作区另有 869 项未提交：界面组件／交互测试 369、开发预览 93、独立界面工程／依赖／设计文档 48、此前独立评估方案与证据 359；当时原文件均保留。逐文件清单位于 `/Users/dan/Documents/Codex/2026-11-15/loop-control-local-delivery/remaining-uncommitted.txt`，并另列其他 worktree 自身状态；它们可能包含 main 已保存内容的副本，不与主清单累加。

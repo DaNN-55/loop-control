@@ -1,0 +1,26 @@
+[
+  {
+    "path": "PLAN.md",
+    "sha256": "338d96477bcf0db3af4959cd3b71306ec5f7d466dc927f1bf92d7189f8c7e543"
+  },
+  {
+    "path": "docs/research/production-followup-20261116/REPORT.md",
+    "sha256": "20eafb3086c54449c68e0e66153f9f952792b8722f6d4fe43203845738275450"
+  },
+  {
+    "path": "docs/research/production-followup-20261116/timing.md",
+    "sha256": "f4e2b7d919750601e2aceaf65f0c5580673546a2e73c331b94102a54431389b6"
+  },
+  {
+    "path": "docs/verification/batch-production-20261116/PLAN.md",
+    "sha256": "7632dc7591e54df1afb92d7e1e15693c97642a543106f586a0155e194e03d346"
+  },
+  {
+    "path": "docs/verification/batch-production-20261116/BACKEND.md",
+    "sha256": "1ba07ac8d4aff334dd0a35faa75aa581c4941cd6e56f6eedb6fcaf0e936a50ce"
+  },
+  {
+    "path": "docs/verification/storyboard-layout-restore-20261116/PLAN.md",
+    "sha256": "4c5e93ffa8c39ce370e3a263c43c025fe7cc47c9d65d08b56fc70c24040b2c44"
+  }
+]

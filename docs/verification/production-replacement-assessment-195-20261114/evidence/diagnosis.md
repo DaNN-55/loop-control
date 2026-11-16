@@ -1,0 +1,1 @@
+资源专项首轮在建第二单时400。原因：嵌套fixture自动附加episodeId，create严格字段校验拒绝。仅将私有create请求episodeId设undefined，让JSON省略；不修改业务或放宽字段保护。

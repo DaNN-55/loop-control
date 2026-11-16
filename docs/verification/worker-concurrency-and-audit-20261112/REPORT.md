@@ -78,12 +78,11 @@
 
 ## 6. Dan UI 替代候选（未安装/替换）
 
-建议优先比较“直接使用现有 React Aria + 精简样式”和 shadcn/ui。易辨认取决于状态、对比、焦点、控件边界和排版，不是换名称就自动获得。轻量化需要用同样组件实测打包与渲染，未做体积排名。
+当前沿用 React Aria 与 Dan UI。易辨认取决于状态、对比、焦点、控件边界和排版，不是换名称就自动获得。轻量化需要用同样组件实测打包与渲染，未做体积排名。
 
 | 候选 | 特点与适配成本 |
 | --- | --- |
 | [React Aria + 自有薄样式](https://react-aria.adobe.com/) | 当前已有底层；保留高质量键盘、焦点和无障碍行为，逐步减少 Dan UI 包装/样式，迁移成本相对最低；外观需自己维护 |
-| [shadcn/ui](https://ui.shadcn.com/docs) | 提供可复制、可修改的组件代码和现成视觉，便于先挑样式；仍有对应的交互原语和依赖，不是零依赖方案 |
 | [Base UI](https://base-ui.com/react/overview/quick-start) | 无预设视觉、可 tree-shake，适合简洁自有设计；组件 API 与现有 React Aria 不同，需要重新适配行为 |
 | [Radix Primitives](https://www.radix-ui.com/primitives/docs/overview/introduction) | 可渐进采用的底层可访问组件；需要样式与组件契约迁移，不保证比当前组合更小 |
 
