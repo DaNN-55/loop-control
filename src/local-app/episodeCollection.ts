@@ -1,3 +1,4 @@
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import type {Pool,PoolClient} from 'pg';
 import {createHash} from 'node:crypto';
 import type {OwnerSession} from './sessions.js';
@@ -10,6 +11,7 @@ import {createStorageContainer} from './seriesDirectories.js';
 export async function readEpisodeCollection(c:Pick<PoolClient,'query'>,mediaRoot:string,episodeId:string){
  const episode=(await c.query('SELECT e.account_id,e.series_version_id,v.series_id,v.version,s.name FROM public.episodes e LEFT JOIN public.series_versions v ON v.id=e.series_version_id LEFT JOIN public.series s ON s.id=v.series_id JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role=\'owner\' WHERE e.id=$1',[episodeId])).rows[0];
  if(!episode)throw new ConfigurationError(404,'生产单不可见。');
+ recordValidatedRequestLogContext({episodeId,accountId:episode.account_id});
  const location=await resolveEpisodeStorageLocation(c,mediaRoot,episodeId),collection=await resolveEpisodeStorageCollection(c,location);
  let reason:string|undefined;try{await requireEpisodeStorageDirectory(c,location);}catch(error){reason=(error as Error).message;}
  const targets=(await c.query('SELECT s.id "seriesId",s.name,c.id "containerId" FROM public.series s LEFT JOIN local_identity.account_storage_containers c ON c.account_id=s.account_id AND c.series_id=s.id WHERE s.account_id=$1 ORDER BY s.name,s.id',[episode.account_id])).rows;

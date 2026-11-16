@@ -12,7 +12,7 @@ it.skipIf(!enabled)('reads a nonempty Owner-scoped snapshot without writes, dupl
  const {runtimeContext}=await import(process.env.LOOP_METRICS_TEST_CONTEXT!);const context=runtimeContext();
  if(context.dailyRuntime!==false||context.isolatedFixtureContainer!==true)throw Error('Only an explicitly isolated metrics fixture is allowed');
  const f=await productionWorkspaceFixture({testContextModule:process.env.LOOP_METRICS_TEST_CONTEXT});try{
-  const prepared=await f.request('prepareWorkspace',{expectedScriptRevisionId:f.script});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);const w=prepared.body;
+  const prepared=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);const w=prepared.body;
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
   const otherAccount=randomUUID(),otherEpisode=randomUUID(),testEpisode=randomUUID(),oldEpisode=randomUUID();
   await f.c.query("INSERT INTO public.accounts(id,slug,name,timezone) VALUES($1::uuid,$1::uuid::text,'Metrics other owner','Asia/Shanghai')",[otherAccount]);

@@ -1,4 +1,5 @@
 import {readEpisodeCollection,planEpisodeCollectionCommand} from './episodeCollection.js';
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {createStorageContainer,ownedContainerAccount,readStorageContainer,resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
 import {planLegacyStorageAdoption,planAccountDirectoryMigration,readAccountDirectoryMigrations,executeAccountDirectoryMigration} from './accountDirectoryMigration.js';
 import {readAccountAssetDirectory,setAccountAssetDirectory,requireAccountAssetRoot} from './accountAssetRoots.js';
@@ -30,12 +31,13 @@ export class LocalAccountCommands{
  private async account(c:PoolClient,session:OwnerSession,id:unknown){
   if(!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[id])).rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
   const row=(await c.query("SELECT a.id,a.current_blueprint_version_id,b.policy,md5(b.policy::text) revision FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id LEFT JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1 AND m.user_id=$2 AND m.role='owner' AND a.archived_at IS NULL",[id,session.id])).rows[0];
-  if(!row)throw new ConfigurationError(404,'账号不可见。');if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');return row;
+  if(!row)throw new ConfigurationError(404,'账号不可见。');if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');recordValidatedRequestLogContext({accountId:row.id});return row;
  }
  async execute(session:OwnerSession,body:Record<string,unknown>,signal?:AbortSignal){
   if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');
   if(!['readEpisodeCollection','planEpisodeCollectionMove','planLegacyStorageAdoption','readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory','chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
+  recordValidatedRequestLogContext({operation:'account.'+body.command});
   if(body.command==='readEpisodeCollection'){
    if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||Object.keys(data).some(k=>k!=='episodeId'))throw new ConfigurationError(400,'系列读取只接受生产单身份。');
    return sessionTransaction(this.pool,session,c=>readEpisodeCollection(c,this.mediaRoot,String(data.episodeId)));

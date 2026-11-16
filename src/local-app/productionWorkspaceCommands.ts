@@ -19,6 +19,7 @@ import {requiresWorkspaceCall} from '../workspaceCall.js';
 import {prepareWorkspaceCall,consumeWorkspaceCall} from './workspaceCallConfirmation.js';
 import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {readWorkspacePexels} from './workspacePexels.js';
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {readWorkspaceScriptResume,resumeWorkspaceScript} from './workspaceScriptResume.js';
 import {prepareAuthoredWorkspace,syncProductionWorkspaceShots,readWorkspacePreparation,preserveLegacyWorkspace,preserveLegacyDocument,recoverLegacyBindings} from './workspacePreparation.js';
 import {importLegacyHtmlWorkspace} from './legacyHtmlWorkspace.js';
@@ -68,6 +69,7 @@ async function requireNoRenderedLegacyProject(c:PoolClient,episodeId:string){
 export async function readProductionWorkspace(c:PoolClient,episodeId:string,root:string):Promise<ProductionWorkspace|null>{
  const row=(await c.query('SELECT w.*,e.main_script_revision_id current_script,e.stage episode_stage,p.script_revision_id preparation_script,p.file_reference preparation_file,NOT local_identity.preparation_source_current(p.id) invalidated_at FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id JOIN local_identity.production_preparation_revisions p ON p.id=w.preparation_revision_id WHERE w.episode_id=$1',[episodeId])).rows[0];
  if(!row)return null;
+ recordValidatedRequestLogContext({workspaceId:row.id});
  const project=JSON.parse((await verifyEpisodeFile(c,root,episodeId,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;
  const usedContent=usedWorkspaceContent(project),placeholders=row.bindings.filter((b:WorkspaceClip)=>usedContent.items.some(i=>i.id===b.itemId&&(!['video','image'].includes(String(i.kind))||!i.src))).map((b:WorkspaceClip)=>b.itemId),missingSources:string[]=[];
  const verifiedSources=new Map<string,string|null>();
@@ -264,6 +266,9 @@ export class ProductionWorkspaceCommands{
   if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
+  recordValidatedRequestLogContext({workspaceId:row.id});
+  const logClip=row.bindings.find(b=>b.id===data.clipId||b.shotId===data.shotId);
+  if(logClip)recordValidatedRequestLogContext({shotId:logClip.shotId,...(logClip.image?.taskId&&logClip.image.taskId===data.taskId?{taskId:logClip.image.taskId}:{})});
   if(command==='prepareWorkspaceCall')return prepareWorkspaceCall(c,root,row,project,data.callCommand,data.callData);
   if(command==='confirmWorkspaceCall'){const call=await consumeWorkspaceCall(c,root,row,project,data.confirmationId,data.reservationCents);return this.execute(c,e,root,runtime,call.command,call.payload,true);}
   if(command==='saveWorkspaceSoundIntent'){

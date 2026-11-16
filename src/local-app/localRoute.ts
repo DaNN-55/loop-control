@@ -54,6 +54,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
  const accounts=options.accounts??new LocalAccountCommands(options.pool,options.mediaRoot,options.episodes);
  return async(request:IncomingMessage,response:ServerResponse)=>{
   const observation=observeLocalRequest(request,response,options.log);
+  return observation.run(async()=>{
   response.setHeader('Cache-Control','no-store');response.setHeader('X-Content-Type-Options','nosniff');
   const send=(status:number,value:unknown)=>{response.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});response.end(JSON.stringify(value));};
   try{
@@ -313,5 +314,6 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    if((error as {code?:string})?.code==='P0002'){send(404,{error:'连接或版本不可见。'});return;}
    const code=(error as {code?:string})?.code;if(code==='42501'){send(403,{error:'所有者权限不足。'});return;}if(code==='23505'||code==='23503'){send(409,{error:'配置冲突或仍被引用。'});return;}if(code==='23514'||code?.startsWith('22')){send(400,{error:'配置校验未通过。'});return;}
    if(response.headersSent)response.destroy();else send(503,{code:'local_service_unavailable',error:request.method==='GET'?'本机服务暂不可用，请查看系统状态后重新读取。':'本机操作结果暂未确认，请查看系统状态并核对已有任务或保存结果，再继续操作。'});}
+  });
  };
 }

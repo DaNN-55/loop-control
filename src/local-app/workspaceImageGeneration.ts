@@ -1,3 +1,4 @@
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {resolveWorkspaceImageRequest} from './workspaceVisualRequest.js';
 import {currentWorkspaceCallAuthorization} from './workspaceCallConfirmation.js';
 import {requireVisualStorageLocation} from './workspaceVisualMedia.js';
@@ -22,5 +23,5 @@ export async function queueWorkspaceImageCandidates(c:PoolClient,root:string,row
   const timeline=project.timelines.find(t=>t.items.includes(item))!,expected=workspaceCandidateTarget(item),id=randomUUID();
   const snapshot={...(resolved?{selectionVersion:1,selection:resolved.selection,connection:resolved.connection,context,actualPrompt,target:{workspaceId:row.id,preparationRevisionId:row.preparation_revision_id,targetItemId:item.id,shotId:clip.shotId,workspaceRevision:Number(row.revision),projectSha256:row.project_sha256,scriptRevisionId:row.script_revision_id},costBasis:{kind:'owner-reservation',reservationCents:data.reservationCents,model:resolved.selection.model,settings:data.settings}}:{}),...(data.retryOfTaskId?{retryOfTaskId:data.retryOfTaskId}:{}),kind:'image',usage:'still',execution:config,prompt:prompt.trim(),...(data.promptReferences!==undefined?{promptReferences:data.promptReferences}:{}),imageSettings:data.settings,imageBrief:brief,references,referenceMaterialRevisionIds:ids,durationSeconds:Number(item.durationInFrames)/timeline.fps,reservationCents:data.reservationCents,authorizationHash:auth.authorization_hash};
   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,productionHash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
-  try{await c.query('SELECT local_identity.queue_workspace_images($1)',[id]);}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有图片任务正在进行或提交结果未知，请先核对已有任务。');throw error;}
+  try{const task=(await c.query('SELECT local_identity.queue_workspace_images($1) task_id',[id])).rows[0];recordValidatedRequestLogContext({taskId:task?.task_id,shotId:clip.shotId});}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有图片任务正在进行或提交结果未知，请先核对已有任务。');throw error;}
 }

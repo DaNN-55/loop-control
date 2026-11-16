@@ -4,12 +4,51 @@ import {createServer} from 'node:http';
 import {once} from 'node:events';
 import type {Pool} from 'pg';
 import {createLocalHandler} from './localRoute';
-import type {RuntimeRequestLogEvent} from './runtimeRequestLog';
+import {observeLocalRequest,recordValidatedRequestLogContext,type RuntimeRequestLogEvent} from './runtimeRequestLog';
 import {mkdtemp,appendFile,rm,realpath} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {readRuntimeLogs} from './runtimeLogs';
 import {csrfFor} from './sessions';
+
+it('names command routes and isolates verified context across concurrent HTTP requests',async()=>{
+ const events:RuntimeRequestLogEvent[]=[];
+ const episode='11111111-1111-4111-8111-111111111111',account='22222222-2222-4222-8222-222222222222';
+ const server=createServer((q,r)=>{
+  const observation=observeLocalRequest(q,r,e=>events.push(e));
+  void observation.run(async()=>{
+   observation.start();
+   recordValidatedRequestLogContext({operation:q.url?.includes('episode-commands')?'episode.openDirectory':'account.readAssetDirectory'});
+   await new Promise(resolve=>setTimeout(resolve,q.url?.includes('episode-commands')?15:1));
+   recordValidatedRequestLogContext(q.url?.includes('episode-commands')?{episodeId:episode}:{accountId:account});
+   if(q.url?.includes('episode-commands')){
+    recordValidatedRequestLogContext({taskId:'33333333-3333-4333-8333-333333333333'});
+    recordValidatedRequestLogContext({taskId:'44444444-4444-4444-8444-444444444444'});
+   }
+   r.end('{}');
+  });
+ });
+ server.listen(0,'127.0.0.1');await once(server,'listening');
+ const origin='http://127.0.0.1:'+(server.address() as {port:number}).port;
+ try{
+  await Promise.all(['episode-commands','account-commands'].map(path=>fetch(origin+'/api/local/'+path,{method:'POST'})));
+  const finished=events.filter(e=>e.phase==='responded');expect(finished).toHaveLength(2);
+  expect(finished.find(e=>e.operation==='episode.openDirectory')).toMatchObject({route:'/api/local/episode-commands',episodeId:episode});
+  expect(finished.find(e=>e.operation==='episode.openDirectory')).not.toHaveProperty('accountId');
+  expect(finished.find(e=>e.operation==='episode.openDirectory')?.taskIds).toEqual(['33333333-3333-4333-8333-333333333333','44444444-4444-4444-8444-444444444444']);
+  expect(finished.find(e=>e.operation==='account.readAssetDirectory')).toMatchObject({route:'/api/local/account-commands',accountId:account});
+  expect(finished.find(e=>e.operation==='account.readAssetDirectory')).not.toHaveProperty('episodeId');
+  expect(events.filter(e=>e.phase==='started').every(e=>!e.episodeId&&!e.accountId)).toBe(true);
+ }finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+});
+
+it('does not attribute a raw URL identity before ownership validation or let a failed log sink fail HTTP',async()=>{
+ const events:RuntimeRequestLogEvent[]=[];
+ const server=createServer((q,r)=>{const observation=observeLocalRequest(q,r,e=>{events.push(e);throw Error('sink failed');});observation.run(()=>{observation.start();r.statusCode=404;r.end('{}');});});
+ server.listen(0,'127.0.0.1');await once(server,'listening');
+ try{const response=await fetch('http://127.0.0.1:'+(server.address() as {port:number}).port+'/api/local/episodes/11111111-1111-4111-8111-111111111111',{method:'POST'});expect(response.status).toBe(404);expect(events.every(e=>!e.episodeId)).toBe(true);}
+ finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+});
 
 it('records real successful and unknown writes with one request identity without logging credentials or treating HTTP success as production completion',async()=>{
  const token='a'.repeat(64),events:RuntimeRequestLogEvent[]=[];let fail=false;const root=await realpath(await mkdtemp(join(tmpdir(),'request-log-'))),file=join(root,'events.log');

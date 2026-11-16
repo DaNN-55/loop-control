@@ -1,3 +1,4 @@
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {validateWorkspaceSourceRange,type WorkspaceSourceRange} from '../workspaceVisualDraft.js';
 import {recordOwnedProductionMetric,metricRequestKey} from './productionMetricWrites.js';
 import {workspaceUnknownRetryAllowed,workspaceTaskRetryColumns,projectWorkspaceTaskRetry} from './workspaceTaskRetry.js';
@@ -69,6 +70,7 @@ export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,ro
   await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,hash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
   let taskId:string;
   try{taskId=(await c.query('SELECT local_identity.queue_workspace_visual($1) id',[id])).rows[0].id;}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。');if((error as {code?:string}).code==='22023')throw new ConfigurationError(409,'本次视频费用预留或生成参数无效，请检查后重试。');throw error;}
+  recordValidatedRequestLogContext({taskId,shotId:clip.shotId});
   return{id,taskId,clip,item,targetSeconds,providerSeconds:seconds};
 }
 interface WorkspaceVisualInitialUse {durationInFrames:number;sourceRange?:WorkspaceSourceRange}

@@ -1,3 +1,4 @@
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {adoptWorkspaceRecordedVoice} from './workspaceRecordedVoice.js';
 import {installWorkspaceMusic} from '../workspaceMusicAdoption.js';
 import {workspaceRenderPreferences} from '../workspaceRenderPreferences.js';
@@ -86,7 +87,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
    if(['bgm','sfx'].includes(p.kind)&&!readWorkspaceSoundEnabled(project,p.kind))throw new ConfigurationError(409,'请先开启对应声音，再重试。');
    const task=(await c.query('SELECT input_snapshot,invalidated_at FROM public.tasks WHERE id=$1',[p.task_id])).rows[0];
    if(task?.invalidated_at||!await preparationCurrent(c,root,row,project,{...p,input_snapshot:task?.input_snapshot}))throw new ConfigurationError(409,'目标或输入已失效，请核对当前内容后重新准备。');
-   await audioRuntime(runtime,p.kind,task?.input_snapshot);await c.query('SELECT local_identity.queue_workspace_audio($1,true)',[p.id]);return;
+   await audioRuntime(runtime,p.kind,task?.input_snapshot);const queued=(await c.query('SELECT local_identity.queue_workspace_audio($1,true) task_id',[p.id])).rows[0];recordValidatedRequestLogContext({taskId:queued?.task_id});return;
   }
   let duration=Number(data.durationSeconds),description=data.description??'原片音轨',query=data.query??null,anchor=data.anchor??'absolute',offset=Number(data.offsetSeconds??0),shotId=data.shotId??null,sourceItemId=data.sourceItemId??null,sourceSha:string|null=null,source:any=null;
   if(data.intent&&!query)query=soundIntentQuery(String(data.intent));
@@ -120,7 +121,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
   const snapshot=data.candidateCount===undefined?requestSnapshot:{...requestSnapshot,candidateIndex,intent:data.intent??null};
   const id=randomUUID(),fingerprint=hash([row.id,row.script_revision_id,data.kind,description,query,duration,anchor,offset,shotId,sourceItemId,sourceSha,source?.startSeconds??null,source?.playbackRate??null,materialId,snapshot]);
   await c.query('INSERT INTO local_identity.workspace_audio_preparations(id,workspace_id,episode_id,kind,shot_id,source_item_id,source_sha256,description,query,anchor,offset_seconds,duration_seconds,material_revision_id,input_fingerprint,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)',[id,row.id,row.episode_id,data.kind,shotId,sourceItemId,sourceSha,description,query,anchor,offset,duration,materialId,fingerprint,snapshot]);
-  if(!materialId&&!Object.hasOwn(data,'audioTrackId'))await c.query('SELECT local_identity.queue_workspace_audio($1,false,$2)',[id,source?JSON.stringify({relativePath:source.relative_path,sha256:source.sha256,fileSize:Number(source.file_size),durationSeconds:duration,startSeconds:source.startSeconds,sourceInFrame:source.sourceInFrame,sourceFrameRate:source.sourceFrameRate,playbackRate:source.playbackRate,visualDurationInFrames:source.visualDurationInFrames}):null]);
+  if(!materialId&&!Object.hasOwn(data,'audioTrackId')){const queued=(await c.query('SELECT local_identity.queue_workspace_audio($1,false,$2) task_id',[id,source?JSON.stringify({relativePath:source.relative_path,sha256:source.sha256,fileSize:Number(source.file_size),durationSeconds:duration,startSeconds:source.startSeconds,sourceInFrame:source.sourceInFrame,sourceFrameRate:source.sourceFrameRate,playbackRate:source.playbackRate,visualDurationInFrames:source.visualDurationInFrames}):null])).rows[0];recordValidatedRequestLogContext({taskId:queued?.task_id,...(typeof shotId==='string'?{shotId}: {})});}
   }return;
  }
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请在剪辑面板调整混音；添加音轨请先保存并返回素材准备。');

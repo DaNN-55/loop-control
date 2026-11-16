@@ -20,6 +20,7 @@
     "src/local-app/runtimeStatus.ts",
     "src/local-app/productionMetricsSampler.ts",
     "src/local-app/productionMetricsCollected.ts",
+    "src/local-app/productionMetricsReport.ts",
     "src/local-app/runtimeLogs.ts",
     "src/local-app/keychainStore.ts",
     "src/local-app/pexelsLiveProbe.ts",

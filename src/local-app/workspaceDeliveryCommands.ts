@@ -1,3 +1,4 @@
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
 import {nativeSoundWindowAudibility} from './workspaceSoundAudibility.js';
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
@@ -35,7 +36,7 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
  const old=(await c.query('SELECT d.*,t.input_snapshot,t.status FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.id=$1 AND d.workspace_id=$2',[data.deliveryId,row.id])).rows[0];
  if(!old||!['failed','blocked'].includes(old.status)||old.export_id!==confirmed.id)throw new ConfigurationError(409,'只能重试当前已确认文件的失败交付。');
  const snapshot=structuredClone(old.input_snapshot);delete snapshot.native_output_namespace;delete snapshot.runtime_constraints;delete snapshot.allowed_tools;const id=randomUUID();snapshot.output.relative_path=`${storage.relativePath}/workspace-deliveries/${id}/manifest.json`;
- await c.query('SELECT local_identity.queue_workspace_delivery($1,$2,$3,$4)',[id,row.id,confirmed.id,snapshot]);return;
+ const queued=(await c.query('SELECT local_identity.queue_workspace_delivery($1,$2,$3,$4) task_id',[id,row.id,confirmed.id,snapshot])).rows[0];recordValidatedRequestLogContext({taskId:queued?.task_id});return;
  }
  if(data.exportId!==confirmed.id||data.expectedExportSha256!==confirmed.artifact.sha256||data.expectedContentSha256!==confirmed.contentSha256)throw new ConfigurationError(409,'请为这份已确认文件重新准备交付。');
  if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200||typeof data.description!=='string'||data.description.length>5000)throw new ConfigurationError(400,'请填写有效交付标题和简介。');
@@ -72,7 +73,7 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
  const checks=await immutable('final_qc_report',`${prefix}/checks.json`,Buffer.from(JSON.stringify({passed:true,exportId:confirmed.id,contentSha256:confirmed.contentSha256,checks:confirmed.checks},null,2)+'\n'));
  const identity={workspaceId:row.id,exportId:confirmed.id,projectContentVersion:confirmed.projectContentVersion,contentSha256:confirmed.contentSha256,video:{artifactType:'final_render',...confirmed.artifact},project:{artifactType:'editable_project',...confirmed.project}};
  const snapshot={capability:'workspace_delivery',workspace_delivery:{identity,artifacts:[identity.video,identity.project,coverArtifact,metadata,checks]},input_artifacts:[identity.video,identity.project,coverArtifact,metadata,checks],output:{relative_path:`${prefix}/manifest.json`,required_artifact_types:['publish_package'],content_type:'application/json'}};
- await c.query('SELECT local_identity.queue_workspace_delivery($1,$2,$3,$4)',[id,row.id,confirmed.id,snapshot]);
+ const queued=(await c.query('SELECT local_identity.queue_workspace_delivery($1,$2,$3,$4) task_id',[id,row.id,confirmed.id,snapshot])).rows[0];recordValidatedRequestLogContext({taskId:queued?.task_id});
 }
 
 // Preserve the actual used source window, including parent sequence trims/rate.

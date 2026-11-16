@@ -1,3 +1,4 @@
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {workspaceShotMediaName} from '../workspaceDisplayNames.js';
 import {workspaceRenderPreferences} from '../workspaceRenderPreferences.js';
 import {legacyVideoDefault} from './legacyVideoCompatibility.js';
@@ -149,6 +150,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
   const context=(await c.query('SELECT e.account_id,e.blueprint_version_id,e.series_version_id,b.policy,s.rules,s.series_id FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
   const snapshot={...(data.retryOfTaskId?{retryOfTaskId:data.retryOfTaskId}:{}),selectionVersion:1,selection:resolved.selection,connection:resolved.connection,execution:resolved.execution,inputFingerprint:n.inputFingerprint,authorizationHash:authorized.authorization_hash,reservationCents:data.reservationCents,context:{accountId:context.account_id,blueprintVersionId:context.blueprint_version_id,accountRules:creativeAccountRules(context.policy),seriesVersionId:context.series_version_id,seriesId:context.series_id,seriesRules:context.rules,text:n.text,voice:{name:n.voice,languageCode:n.languageCode,speakingRate:n.speakingRate}},target:{workspaceId:row.id,shotId:clip.shotId,clipId:clip.id,scriptRevisionId:row.script_revision_id,preparationRevisionId:row.preparation_revision_id??row.storyboard_package_id,projectSha256:row.project_sha256,nativeEditRevision:Number(row.native_edit_revision??0),workspaceRevision:Number(row.revision)},costBasis:{reservationCents:data.reservationCents,kind:'owner_reservation',minimumCents:Math.max(1,n.text.length)}};
   const t=(await c.query('SELECT to_jsonb(local_identity.queue_selected_workspace_narration($1,$2,$3,$4)) result',[row.id,clip.shotId,JSON.stringify(snapshot),data.retryOfTaskId?true:data.retry??false])).rows[0].result;
+  recordValidatedRequestLogContext({taskId:t.id,shotId:clip.shotId});
   await c.query('UPDATE local_identity.workspace_narrations SET task_id=$3,requested_project_sha256=$4,requested_native_edit_revision=$5 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,t.id,row.project_sha256,Number(row.native_edit_revision??0)]);return;
  }
  throw new ConfigurationError(data.retry===true?409:400,data.retry===true?'旧口播生成入口已退役；请选择本次制作服务并重新确认。':'请选择本次制作服务。');

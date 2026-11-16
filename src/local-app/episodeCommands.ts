@@ -1,4 +1,5 @@
 import {localExportActivity,type LocalExportActivity} from './productionLocalExport.js';
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {validateImportedMaterial} from './materialAcceptance.js';
 import{RuntimePreparationError}from'../orchestration/runtimeBuild.js';
 import {setProductionQuality} from './productionQuality.js';
@@ -66,19 +67,34 @@ export class LocalEpisodeCommands {
   
   Object.assign(allowed,productionWorkspaceFields);
   if(!retiredPlanning&&!retiredNarration&&!retiredExecution&&Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
-  if(body.command==='create')return createEpisodeDirectory(this.pool,session as OwnerSession,body.idempotencyKey,hash,data,this.mediaRoot,(c,account,policy)=>this.preflight(c,account,policy,false,'input'));
+  recordValidatedRequestLogContext({operation:'episode.'+body.command});
+  if(body.command==='create'){
+   const created=await createEpisodeDirectory(this.pool,session as OwnerSession,body.idempotencyKey,hash,data,this.mediaRoot,(c,account,policy)=>this.preflight(c,account,policy,false,'input'));
+   recordValidatedRequestLogContext({episodeId:String(created.id)});return created;
+  }
   const result=await transaction(async c=>{
    if(retiredPlanning||retiredNarration||retiredExecution){
     if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId))throw new ConfigurationError(400,'生产单标识无效。');
     if(!(await c.query("SELECT 1 FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[data.episodeId,session.id])).rowCount)throw new ConfigurationError(404,'本地生产单不可见。');
+    recordValidatedRequestLogContext({episodeId:data.episodeId});
     throw new ConfigurationError(410,retiredExecution?'旧任务修复与自动续跑已退役，请使用当前制作工作区。':retiredNarration?'旧口播生成入口已退役，请在分镜台选择本次制作服务。':'旧视觉与分镜规划已退役，请使用当前制作流程。');
    }
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
    const old=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey])).rows[0];
-   if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(!['openDirectory','openStudio','openStandaloneStudio','openWorkspaceStudio'].includes(body.command as string))return old.result;}
+   if(old){
+    if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');
+    if(!['openDirectory','openStudio','openStandaloneStudio','openWorkspaceStudio'].includes(body.command as string)){
+     // The matching Owner receipt proves the original result, without re-running
+     // its command or attributing an unverified identity from the new request.
+     if(old.result?.episodeId===data.episodeId)recordValidatedRequestLogContext({episodeId:old.result.episodeId,workspaceId:old.result.id});
+     else if(old.result?.id===data.episodeId)recordValidatedRequestLogContext({episodeId:old.result.id});
+     return old.result;
+    }
+   }
    let value;
    if(body.command==='setProductionQuality'){
     value=await setProductionQuality(c,data.episodeId,data.tier,data.expectedRevision);
+    recordValidatedRequestLogContext({episodeId:String(data.episodeId)});
    }else if(body.command==='openStandaloneStudio'){
     if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');
     await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':standalone-studio']);
@@ -90,6 +106,7 @@ export class LocalEpisodeCommands {
    }else if(body.command==='openDirectory'){
     if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId))throw new ConfigurationError(400,'生产单标识无效。');
     if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0]?.owned)throw new ConfigurationError(404,'生产单不可见。');
+    recordValidatedRequestLogContext({episodeId:data.episodeId});
     const location=await resolveEpisodeStorageLocation(c,this.mediaRoot,data.episodeId);
     const path=await requireEpisodeStorageDirectory(c,location);
     try{if(this.runtime.openDirectory)await this.runtime.openDirectory(path);else await promisify(execFile)('/usr/bin/open',[path],{env:{PATH:'/usr/bin:/bin'},timeout:5000});}
@@ -107,6 +124,7 @@ export class LocalEpisodeCommands {
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
+    recordValidatedRequestLogContext({accountId:e.account_id,episodeId:e.id});
     const inputIo=['importMaterial','reconfirmScript','prepareWorkspace','adoptLegacyPlan','importLegacyDraftInputs'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
     if(location)await requireEpisodeStorageDirectory(c,location);
     const root=location?.assetRoot??await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);

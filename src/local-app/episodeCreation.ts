@@ -1,4 +1,5 @@
 import type {Pool,PoolClient} from 'pg';
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {join} from 'node:path';
 import type {OwnerSession} from './sessions.js';
@@ -23,6 +24,7 @@ export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:
   if(data.businessQualityTier!==undefined&&!await productionMetricsEnabled(c))throw new ConfigurationError(409,'生产统计采集尚未启用。');
   if(!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId])).rows[0]?.owned)throw new ConfigurationError(404,'账号不可见。');
   const a=(await c.query("SELECT a.*,b.policy FROM public.accounts a JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id AND b.account_id=a.id AND b.is_active AND b.archived_at IS NULL WHERE a.id=$1 AND a.archived_at IS NULL",[data.accountId])).rows[0];if(!a)throw new ConfigurationError(404,'账号不可见。');
+  recordValidatedRequestLogContext({accountId:a.id});
   let seriesId:string|null=null;
   if(data.seriesVersionId){const version=(await c.query('SELECT series_id FROM public.series_versions WHERE id=$1 AND account_id=$2',[data.seriesVersionId,a.id])).rows[0];if(!version)throw new ConfigurationError(400,'系列版本不属于此账号。');seriesId=version.series_id;}
   const root=await requireAccountAssetRoot(c,mediaRoot,a.id);

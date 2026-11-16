@@ -1,3 +1,4 @@
+import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import type {Pool,PoolClient} from 'pg';
 import {randomUUID} from 'node:crypto';
 import {access,lstat,realpath} from 'node:fs/promises';
@@ -16,7 +17,7 @@ interface Intent{owner_id:string;idempotency_key:string;payload_hash:string;cont
 export interface StorageContainer{containerId:string|null;accountId:string;seriesId:string|null;kind:Kind;assetRoot:string|null;relativePath:string|null;directoryPath:string|null;deviceId:string|null;inodeId:string|null;status:'ready'|'legacy-unmanaged'|'unset'|'unavailable';reason?:string}
 export async function ownedContainerAccount(c:Client,seriesId:string|null,accountId?:string){
  if(seriesId){const row=(await c.query('SELECT s.account_id FROM public.series s JOIN public.account_memberships m ON m.account_id=s.account_id AND m.user_id=local_identity.owner_id() AND m.role=\'owner\' WHERE s.id=$1',[seriesId])).rows[0];if(!row||accountId&&row.account_id!==accountId)throw new ConfigurationError(404,'系列不可见。');accountId=row.account_id;}
- if(!accountId||!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[accountId])).rows[0].owned)throw new ConfigurationError(404,'账号不可见。');return accountId;
+ if(!accountId||!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[accountId])).rows[0].owned)throw new ConfigurationError(404,'账号不可见。');recordValidatedRequestLogContext({accountId});return accountId;
 }
 /** Persisted account-relative identity; lookup never creates a folder or business series. */
 export async function resolveStorageContainer(c:Client,_mediaRoot:string,accountId:string,seriesId:string|null):Promise<StorageContainer>{
