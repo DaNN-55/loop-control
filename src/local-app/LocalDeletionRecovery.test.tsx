@@ -37,6 +37,13 @@ it('keeps the task and full failure message when cleanup remains pending, then r
 it('shows read failures and a working refresh without presenting them as an empty queue',async()=>{
  vi.mocked(localRequest).mockRejectedValueOnce(new Error('读取失败。')).mockResolvedValue([]);const user=userEvent.setup();render(<LocalDeletionRecovery revision={1}/>);expect((await screen.findByRole('alert')).textContent).toBe('读取失败。');expect(screen.queryByText('暂无待处理任务。')).toBeNull();await user.click(screen.getByRole('button',{name:'刷新清理任务'}));await screen.findByText('暂无待处理任务。');expect(screen.queryByRole('alert')).toBeNull();
 });
+it('releases the confirmed recovery while its queue refresh remains pending',async()=>{
+ let rejectRead!:(reason:Error)=>void;vi.mocked(localRequest).mockResolvedValueOnce([prepared,committed]).mockImplementation(()=>new Promise((_resolve,reject)=>{rejectRead=reject;}));
+ vi.mocked(localCommand).mockResolvedValue({cleanupPending:false,recovered:true});const state=vi.fn(),resolved=vi.fn();render(<LocalDeletionRecovery revision={1} onStateChange={state} onResolved={resolved}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'恢复文件'}));await screen.findByText('文件已恢复，请重新核对后再删除。');
+ await waitFor(()=>expect(state).toHaveBeenLastCalledWith({busy:false,dirty:false}));expect(resolved).toHaveBeenCalledWith(prepared.cleanupKey);expect(screen.queryByRole('article',{name:prepared.title})).toBeNull();
+ await act(async()=>rejectRead(Error('queue unavailable')));expect((await screen.findByRole('alert')).textContent).toContain('操作已保存');
+});
 it('does not replace a newer queue with a late previous response',async()=>{
  let old!:(value:any)=>void;vi.mocked(localRequest).mockImplementationOnce(()=>new Promise(resolve=>{old=resolve;})).mockResolvedValue([committed]);const view=render(<LocalDeletionRecovery revision={1}/>);view.rerender(<LocalDeletionRecovery revision={2}/>);await screen.findByRole('article',{name:committed.title});old([prepared]);await waitFor(()=>expect(screen.queryByRole('article',{name:prepared.title})).toBeNull());expect(screen.getByRole('article',{name:committed.title})).toBeTruthy();
 });

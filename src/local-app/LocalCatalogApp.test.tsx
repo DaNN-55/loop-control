@@ -20,7 +20,7 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
   const json=(value:unknown,status=200)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json'}});
   if(path.endsWith('/session'))return json({owner:{id:ownerId},csrfToken:'synthetic-csrf'});
   if(path.endsWith('/configuration')){posts++;expect(JSON.parse(String(init?.body)).command).toBe('createSeriesVersion');saved=true;return json({...version,id:'10000000-0000-4000-8000-000000000006',version:2,rules:{positioning:'saved'}});}
-  if(saved&&!readFailure){readFailure=true;return json({error:'induced catalog read failure'},503);}
+  if(saved&&!readFailure&&path.includes('/catalog?')){readFailure=true;return json({error:'induced catalog read failure'},503);}
   return json(saved?{...catalog,seriesVersions:[{...version,id:'10000000-0000-4000-8000-000000000006',version:2,rules:{positioning:'saved'}},version]}:catalog);
  }));
  // Open the real account workspace from the new home before checking its save semantics.

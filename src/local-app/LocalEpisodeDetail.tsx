@@ -24,9 +24,20 @@ export function LocalEpisodeDetail({productionMetricsEnabled=false,episodeId,own
  const changeWorkspaceAction=useCallback((action:(()=>void)|null)=>setWorkspaceStudioAction(()=>action),[]);
  const [preflight,setPreflight]=useState<WorkerPreflightResult|null>(null);
  const previous=useRef<LocalEpisodeSnapshot|null>(null),changed=useRef(onChanged);changed.current=onChanged;
- const reader=useMemo(()=>createEpisodeReader<LocalEpisodeSnapshot>(async(id,known)=>localRequest(`episodes/${id}?known=${encodeURIComponent(JSON.stringify(known))}`)),[episodeId]);
+ const access=useRef({episodeId,ownerId,active:true});
+ const commandGeneration=useRef(0);
+ if(access.current.episodeId!==episodeId||access.current.ownerId!==ownerId)access.current={episodeId,ownerId,active:true};
+ useEffect(()=>{const visit=access.current;visit.active=true;return()=>{visit.active=false;};},[episodeId,ownerId]);
+ const reading=useMemo(()=>{let controller:AbortController|undefined,active=true;return{
+  load:createEpisodeReader<LocalEpisodeSnapshot>(async(id,known)=>{if(!active)throw new DOMException('Production view closed','AbortError');controller?.abort();controller=new AbortController();return localRequest(`episodes/${id}?known=${encodeURIComponent(JSON.stringify(known))}`,{signal:controller.signal});}),
+  open:()=>{active=true;},
+  // StrictMode reconnects effects immediately; cancel only a detached visit.
+  close:()=>{active=false;queueMicrotask(()=>{if(!active)controller?.abort();});},
+ };},[episodeId,ownerId]);
+ const reader=reading.load;
+ useEffect(()=>{reading.open();return()=>reading.close();},[reading]);
  const reschedule=useRef<()=>void>(()=>{});
- async function refresh(){const next=await reader(episodeId,'',true);previous.current=next;setSnapshot(next);reschedule.current();}
+ async function refresh(request=commandGeneration.current){const visit=access.current,next=await reader(episodeId,'',true,request);if(access.current!==visit||!visit.active||request!==commandGeneration.current)return;previous.current=next;setSnapshot(next);reschedule.current();}
  useEffect(()=>{
   let current=true,busy=false,resumeRequested=false,timer:ReturnType<typeof setTimeout>|undefined;
   const schedule=()=>{clearTimeout(timer);if(!current||document.hidden)return;const s=previous.current;
@@ -36,8 +47,9 @@ export function LocalEpisodeDetail({productionMetricsEnabled=false,episodeId,own
   };
   async function poll(fresh=false){
    clearTimeout(timer);if(!current||document.hidden)return;if(busy){if(fresh)resumeRequested=true;return;}busy=true;
-   try{const s=await reader(episodeId,'',fresh);if(current){const changedCatalog=episodeCatalogChanged(previous.current,s);previous.current=s;setSnapshot(s);if(changedCatalog)void changed.current().catch(()=>{});}}
-   catch(e){if(current)setError(e instanceof Error?e.message:String(e));}
+   const generation=commandGeneration.current;
+   try{const s=await reader(episodeId,'',fresh,generation);if(current&&generation===commandGeneration.current){const changedCatalog=episodeCatalogChanged(previous.current,s);previous.current=s;setSnapshot(s);if(changedCatalog)void changed.current().catch(()=>{});}}
+   catch(e){if(current&&generation===commandGeneration.current)setError(e instanceof Error?e.message:String(e));}
    finally{busy=false;if(current){if(resumeRequested&&!document.hidden){resumeRequested=false;void poll(true);}else schedule();}}
   }
   const visibility=()=>{clearTimeout(timer);if(!document.hidden)void poll(true);};
@@ -45,12 +57,14 @@ export function LocalEpisodeDetail({productionMetricsEnabled=false,episodeId,own
   return()=>{current=false;clearTimeout(timer);reschedule.current=()=>{};document.removeEventListener('visibilitychange',visibility);};
  },[episodeId,reader]);
  async function command(name:string,data:unknown){
+  const visit=access.current,request=++commandGeneration.current;
   setError('');setPreflight(null);
   let result:unknown;
   try{result=await localCommand(name,data,undefined,'episode-commands');}
-  catch(e){if(e&&typeof e==='object'&&'preflight'in e)setPreflight(e.preflight as WorkerPreflightResult);throw e;}
-  const refreshed=await Promise.allSettled([refresh(),Promise.resolve().then(onChanged)]);
-  if(refreshed.some(value=>value.status==='rejected'))setError('操作已完成，页面信息更新失败，请重新打开生产单核对。');
+  catch(e){if(access.current===visit&&visit.active&&request===commandGeneration.current&&e&&typeof e==='object'&&'preflight'in e)setPreflight(e.preflight as WorkerPreflightResult);throw e;}
+  if(access.current===visit&&visit.active&&request===commandGeneration.current)for(const reading of [refresh(request),Promise.resolve().then(onChanged)])void reading.catch(()=>{
+   if(access.current===visit&&visit.active&&request===commandGeneration.current)setError('操作已完成，页面信息更新失败，请重新打开生产单核对。');
+  });
   return result;
  }
  const studioListener=useRef(onStudioAction);studioListener.current=onStudioAction;

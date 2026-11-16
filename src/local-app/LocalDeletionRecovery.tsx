@@ -10,10 +10,10 @@ export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChange
  useEffect(()=>{onStateChange?.({busy:!!pending,dirty:false});return()=>onStateChange?.({busy:false,dirty:false});},[pending,onStateChange]);
  const mounted=useRef(false),generation=useRef(0),busy=useRef(false),focused=useRef(''),list=useRef<HTMLDivElement>(null);
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;generation.current++;};},[]);
- const refresh=useCallback(async()=>{
+ const refresh=useCallback(async(saved=false)=>{
   const request=++generation.current;setLoading(true);setError('');
   try{const next:PendingCleanup[]=await localRequest('deletion-cleanups');if(mounted.current&&request===generation.current)setItems(next);}
-  catch(reason){if(mounted.current&&request===generation.current)setError(reason instanceof Error?reason.message:uiText("无法读取清理任务，请重试。"));}
+  catch(reason){if(mounted.current&&request===generation.current)setError(saved?uiText('操作已保存；清理任务刷新失败，请重新读取。'):reason instanceof Error?reason.message:uiText("无法读取清理任务，请重试。"));}
   finally{if(mounted.current&&request===generation.current)setLoading(false);}
  },[]);
  useEffect(()=>{void refresh();},[revision,refresh]);
@@ -27,11 +27,11 @@ export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChange
   if(busy.current)return;busy.current=true;setPending(item.cleanupKey);setNotice('');setMessages(current=>({...current,[item.cleanupKey]:''}));
   try{
    const result=await localCommand<{cleanupPending:boolean;recovered?:boolean;message?:string}>('retryDeletionCleanup',{deletionKey:item.cleanupKey},undefined,'episode-lifecycle');
-   if(!result.cleanupPending){onResolved?.(item.cleanupKey);onChanged?.();}
    if(!mounted.current)return;
    if(result.cleanupPending)setMessages(current=>({...current,[item.cleanupKey]:result.message??uiText("文件处理尚未完成，请检查原位置后重试。")}));
    else{setItems(current=>current?.filter(row=>row.cleanupKey!==item.cleanupKey)??[]);setNotice(result.recovered?uiText("文件已恢复，请重新核对后再删除。"):uiText("文件清理已完成。"));}
-   await refresh();
+   void refresh(!result.cleanupPending);
+   if(!result.cleanupPending){try{onResolved?.(item.cleanupKey);onChanged?.();}catch{setError(uiText('操作已保存；目录刷新失败，请重新读取。'));}}
   }catch(reason){if(mounted.current)setMessages(current=>({...current,[item.cleanupKey]:reason instanceof Error?reason.message:uiText("处理未确认完成，请重新读取任务后再试。")}));}
   finally{busy.current=false;if(mounted.current)setPending('');}
  }

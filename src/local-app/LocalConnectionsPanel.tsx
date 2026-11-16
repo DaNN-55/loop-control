@@ -15,6 +15,7 @@ interface ConnectionsRead {serviceCatalog:ProductionServiceCatalog;connections:E
 export function LocalConnectionsPanel({inlineBilling=false,settingsLayout=false,inlineEditor=false,onStateChange,onOpenSecrets,initialConnectionId,onHeaderChange}:{inlineBilling?:boolean;settingsLayout?:boolean;inlineEditor?:boolean;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void;onOpenSecrets?:(connectionId:string,connectionName?:string)=>void;initialConnectionId?:string;onHeaderChange?:(header:ConnectionSettingsHeader)=>void}={}){
  const navigation=useCatalogPanelNavigation('connections');
  const [data,setData]=useState<ConnectionsRead|null>(null);
+ const [readError,setReadError]=useState('');
  const reading=useRef({active:false,sequence:0,controller:null as AbortController|null});
  const savedModels=useRef(false);
  const billingEpoch=useRef<Record<string,number>>({});
@@ -39,14 +40,16 @@ export function LocalConnectionsPanel({inlineBilling=false,settingsLayout=false,
   const visit=reading.current;if(!visit.active)return;
   const request=++visit.sequence;visit.controller?.abort();const controller=new AbortController();visit.controller=controller;
   const owns=()=>visit.active&&request===visit.sequence&&!controller.signal.aborted;
-  try{const value=await localRequest('connections',{signal:controller.signal});if(owns()){setData(value);savedModels.current=false;setError('');}}
-  catch(cause){if(owns()){setError(savedModels.current?'模型设置已保存；连接目录刷新失败，请重新读取。':'连接目录读取失败，请重试。');throw cause;}}
+  try{const value=await localRequest('connections',{signal:controller.signal});if(owns()){setData(value);savedModels.current=false;setReadError('');}}
+  catch(cause){if(owns()){setReadError(savedModels.current?'模型设置已保存；连接目录刷新失败，请重新读取。':'连接目录读取失败，请重试。');throw cause;}}
   finally{if(request===visit.sequence)visit.controller=null;}
  }
- const {command,error,setError,pending}=useConnectionActions(refresh);
+ const {command,error:mutationError,setError,pending}=useConnectionActions(refresh);
+ const error=mutationError||readError;
+ const reload=()=>{setError('');void refresh().catch(()=>{});};
  useEffect(()=>{const visit=reading.current;visit.active=true;void refresh().catch(()=>{});return()=>{visit.active=false;visit.sequence++;visit.controller?.abort();};},[]);
  const Workspace=settingsLayout?CompactConnectionWorkspace:ConnectionWorkspace;
- return <section aria-label={uiText("本地连接")} className="dan-ui local-connections-panel">{error&&!data&&<div className="form-error" role="alert"><p>{uiText(error||'')}</p><Button color="secondary" size="sm" onPress={()=>void refresh().catch(()=>{})}>{uiText("重新读取连接")}</Button></div>}{data&&<><Workspace onHeaderChange={onHeaderChange} inlineBilling={inlineBilling} settingsLayout={settingsLayout} inlineEditor={inlineEditor} onStateChange={onStateChange} onOpenSecrets={onOpenSecrets} initialConnectionId={initialConnectionId} navigation={navigation} usageByVersion={usage} serviceCatalog={data.serviceCatalog} errorMessage={error} verificationByProvider={data.capabilities.verificationByProvider} statusMessage={data?.capabilities.verificationAvailable?uiText("测试已启用 · 内容生成需单独授权"):data?.capabilities.secrets==='keychain'&&data.capabilities.networkAvailable===false?uiText("凭据仅保存到本机 Keychain · 在线验证已锁定"):data?.capabilities.externalReady?uiText("已启用 · 每个版本需独立验证"):uiText("真实Keychain和在线验证尚未启用；保存或模拟检查不能作为生产就绪证明。")} onRefresh={()=>void refresh().catch(()=>{})} connections={data.connections} versions={data.versions} secretStorage="本机 Keychain（需授权）" isPending={pending} verificationEnabled={data.capabilities.verificationAvailable??data.capabilities.networkAvailable!==false}
+ return <section aria-label={uiText("本地连接")} className="dan-ui local-connections-panel">{error&&!data&&<div className="form-error" role="alert"><p>{uiText(error||'')}</p><Button color="secondary" size="sm" onPress={reload}>{uiText("重新读取连接")}</Button></div>}{data&&<><Workspace onHeaderChange={onHeaderChange} inlineBilling={inlineBilling} settingsLayout={settingsLayout} inlineEditor={inlineEditor} onStateChange={onStateChange} onOpenSecrets={onOpenSecrets} initialConnectionId={initialConnectionId} navigation={navigation} usageByVersion={usage} serviceCatalog={data.serviceCatalog} errorMessage={error} verificationByProvider={data.capabilities.verificationByProvider} statusMessage={data?.capabilities.verificationAvailable?uiText("测试已启用 · 内容生成需单独授权"):data?.capabilities.secrets==='keychain'&&data.capabilities.networkAvailable===false?uiText("凭据仅保存到本机 Keychain · 在线验证已锁定"):data?.capabilities.externalReady?uiText("已启用 · 每个版本需独立验证"):uiText("真实Keychain和在线验证尚未启用；保存或模拟检查不能作为生产就绪证明。")} onRefresh={reload} connections={data.connections} versions={data.versions} secretStorage="本机 Keychain（需授权）" isPending={pending} verificationEnabled={data.capabilities.verificationAvailable??data.capabilities.networkAvailable!==false}
  onCreateConnection={async input=>{try{return (await command<{connection:ExternalConnection}>('create',input)).connection;}catch{return null;}}}
  onRotateConnection={async input=>{try{return (await command<{connection:ExternalConnection}>('rotate',input)).connection;}catch{return null;}}}
  onChangeRegion={async input=>{try{return (await command<{connection:ExternalConnection}>('region',input)).connection;}catch{return null;}}}

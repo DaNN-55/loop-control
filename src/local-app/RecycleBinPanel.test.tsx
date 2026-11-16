@@ -19,6 +19,16 @@ it('binds restore to membership revision and keeps a failed entry visible',async
  reads();vi.mocked(localCommand).mockRejectedValue(new Error('存储位置离线。'));render(<RecycleBinDialog {...props}/>);fireEvent.click(await screen.findByRole('button',{name:'恢复'}));
  await screen.findByText('存储位置离线。');expect(screen.getByText(item.title)).toBeTruthy();expect(localCommand).toHaveBeenCalledWith('restoreRecycledEpisode',{episodeId:item.episodeId,revision:item.revision},undefined,'recycle-bin');
 });
+it('acknowledges a committed restore without holding parent navigation for its background list read',async()=>{
+ let rejectRead!:(reason:Error)=>void,reads=0;
+ vi.mocked(localRequest).mockImplementation(path=>path==='recycle-bin'?(++reads===1?Promise.resolve(summary):new Promise((_resolve,reject)=>{rejectRead=reject;})):Promise.resolve([]));
+ vi.mocked(localCommand).mockResolvedValue({});const state=vi.fn(),changed=vi.fn();render(<RecycleBinDialog {...props} onStateChange={state} onChanged={changed}/>);
+ fireEvent.click(await screen.findByRole('button',{name:'恢复'}));await screen.findByText('生产单已恢复到原账号与系列。');
+ await waitFor(()=>expect(changed).toHaveBeenCalledTimes(1));expect(state).toHaveBeenLastCalledWith({busy:false,dirty:false});expect(screen.getByRole('button',{name:'关闭回收站'})).not.toHaveProperty('disabled',true);
+ // Revision-dependent operations still wait for the authoritative list.
+ expect(screen.getByRole('button',{name:'恢复'})).toHaveProperty('disabled',true);
+ await act(async()=>rejectRead(Error('read unavailable')));expect((await screen.findByRole('alert')).textContent).toContain('操作已保存');
+});
 it('locks parent navigation while permanent confirmation is open and requires its current plan name',async()=>{
  reads();vi.mocked(localCommand).mockResolvedValue({confirmation:item.title,path:'/isolated/order',paths:['/isolated/order'],revision:'plan',files:[],preserved:[]});const state=vi.fn();render(<RecycleBinDialog {...props} onStateChange={state}/>);
  fireEvent.click(await screen.findByRole('button',{name:'永久删除 咖啡测试'}));await screen.findByRole('textbox',{name:'永久删除确认文本'});

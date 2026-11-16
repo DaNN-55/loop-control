@@ -60,7 +60,9 @@ function LocalCatalogContent(){
  const [access,setAccess]=useState<'checking'|'loading'|'ready'|'anonymous'|'error'>('checking');
  const [catalog,setCatalog]=useState<LocalCatalog|null>(null),[error,setError]=useState(''),[savedRefreshNotice,setSavedRefreshNotice]=useState(''),[pending,setPending]=useState(''),[csrf,setCsrf]=useState('');
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[selectedId,setSelectedId]=useState(initialNavigation.account),[newAccount,setNewAccount]=useState(false),[view,setView]=useState<NativeView>(initialNavigation.view);
- const [connections,setConnections]=useState<ExternalConnection[]>([]),[connectionVersions,setConnectionVersions]=useState<ExternalConnectionVersion[]>([]);
+ const [connections,setConnections]=useState<ExternalConnection[]>([]),[connectionVersions,setConnectionVersions]=useState<ExternalConnectionVersion[]>([]),[connectionReadError,setConnectionReadError]=useState('');
+ const connectionReadGeneration=useRef(0);
+ function resetConnectionReading(){connectionReadGeneration.current++;setConnections([]);setConnectionVersions([]);setConnectionReadError('');}
  const[theme,setTheme]=useState<'light'|'dark'>(()=>localStorage.getItem('loop-control.theme.v1')==='dark'?'dark':'light');
  useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.dataset.interface='impeccable';return()=>{delete document.documentElement.dataset.theme;delete document.documentElement.dataset.interface;};},[theme]);
  const[collapsed,setCollapsed]=useState(()=>localStorage.getItem('loop-control.sidebar.v1')==='collapsed');
@@ -120,6 +122,7 @@ function LocalCatalogContent(){
  const detailOrigin=useRef<{episodeId:string;trigger:HTMLElement|null}|null>(null);
  const closingDetail=useRef(false);
  const [newEpisode,setNewEpisode]=useState(false),[episodeId,applyEpisodeId]=useState(initialNavigation.episode);
+ useEffect(()=>{setNewAccount(false);setNewEpisode(false);},[ownerId]);
  function setEpisodeId(id:string){applyEpisodeId(id);setWorkspaceStep(null);setWorkspaceTab('visual');}
  function openCatalogEpisode(id:string){
   if(id===episodeId)return;
@@ -146,24 +149,32 @@ function LocalCatalogContent(){
   if(accountDirty&&!sameAccountRules&&!window.confirm('当前配置有未保存修改，确定放弃吗？'))return false;
   return requestOwnerLeave(()=>{if(!sameAccountRules)setAccountDirty(false);action();},true);
  });
+ async function refreshConnections(){
+  if(!authenticated.current)return;
+  const request=++connectionReadGeneration.current,session=sessionGeneration.current;
+  try{
+   const choices=await localRequest('connections');
+   if(!authenticated.current||request!==connectionReadGeneration.current||session!==sessionGeneration.current)return;
+   setConnections(Array.isArray(choices.connections)?choices.connections:[]);setConnectionVersions(Array.isArray(choices.versions)?choices.versions:[]);setConnectionReadError('');
+  }catch(cause){if(authenticated.current&&request===connectionReadGeneration.current&&session===sessionGeneration.current)setConnectionReadError(cause instanceof Error?cause.message:'制作连接读取失败。');}
+ }
  async function refresh(catalogOnly=false,clearReadError=false){
   if(!authenticated.current)return;
   const request=++requestGeneration.current,session=sessionGeneration.current,key=queryRef.current;
   const params=new URLSearchParams(Object.entries(JSON.parse(key)).map(([k,v])=>[k,String(v)]));
   if(params.get('catalogStage')==='all')params.delete('catalogStage');
+  if(!catalogOnly)void refreshConnections();
   try{
   const next:LocalCatalog=await localRequest('catalog?'+params);
   if(request!==requestGeneration.current||session!==sessionGeneration.current||key!==queryRef.current)return;
-  const choices=catalogOnly?null:await localRequest('connections');
-  if(request!==requestGeneration.current||session!==sessionGeneration.current||key!==queryRef.current)return;
   const requested=JSON.parse(key) as typeof filters;const missingAccount=Boolean(requested.accountId&&!next.accounts.some(a=>a.id===requested.accountId)),missingSeries=!['all','unassigned','unavailable'].includes(requested.seriesId)&&!next.series.some(s=>s.id===requested.seriesId&&(!requested.accountId||s.account_id===requested.accountId));if(missingAccount||missingSeries){setError('原账号或系列已不可用，已清除对应筛选。');filter({...(missingAccount?{accountId:''}:{}),seriesId:'all'});}
-  if(choices){setConnections(Array.isArray(choices.connections)?choices.connections:[]);setConnectionVersions(Array.isArray(choices.versions)?choices.versions:[]);}setCatalog(next);setCatalogKey(key);setSavedRefreshNotice('');savedWrite.current=null;if(clearReadError)setError('');setSelectedId(id=>{if(next.accounts.some(a=>a.id===id))return id;if(id)setError('原账号已不可用，请从当前账号中重新选择。');return id?'':next.accounts[0]?.id??'';});
+  setCatalog(next);setCatalogKey(key);setSavedRefreshNotice('');savedWrite.current=null;if(clearReadError)setError('');setSelectedId(id=>{if(next.accounts.some(a=>a.id===id))return id;if(id)setError('原账号已不可用，请从当前账号中重新选择。');return id?'':next.accounts[0]?.id??'';});
   }catch(error){if(request===requestGeneration.current&&session===sessionGeneration.current&&key===queryRef.current){if(savedWrite.current?.session===session)setSavedRefreshNotice(savedWrite.current.message+'；目录刷新失败，请重新读取。');throw error;}}
  }
  const refreshRef=useRef(refresh);refreshRef.current=refresh;
  useEffect(()=>{if(authenticated.current)void refreshRef.current().catch(e=>setError(e instanceof Error?e.message:String(e)));},[queryKey]);
  useEffect(()=>{const visible=()=>{if(authenticated.current&&!document.hidden)void refreshRef.current().catch(e=>setError(e instanceof Error?e.message:String(e)));};document.addEventListener('visibilitychange',visible);return()=>document.removeEventListener('visibilitychange',visible);},[]);
- useEffect(()=>{const expired=()=>{if(!authenticated.current)return;sessionGeneration.current++;requestGeneration.current++;authenticated.current=false;setAccess('anonymous');clearLocalArtifactCache();setCatalog(null);setOwnerId('');setOwnerEmail('');setCanManageSecrets(false);setSecrets(false);setCsrf('');setEpisodeId('');setError('会话已失效，请重新登录。');};window.addEventListener('loop-local-session-expired',expired);return()=>window.removeEventListener('loop-local-session-expired',expired);},[]);
+ useEffect(()=>{const expired=()=>{if(!authenticated.current)return;sessionGeneration.current++;requestGeneration.current++;authenticated.current=false;resetConnectionReading();setPending('');setAccess('anonymous');clearLocalArtifactCache();setCatalog(null);setOwnerId('');setOwnerEmail('');setCanManageSecrets(false);setSecrets(false);setCsrf('');setEpisodeId('');setError('会话已失效，请重新登录。');};window.addEventListener('loop-local-session-expired',expired);return()=>window.removeEventListener('loop-local-session-expired',expired);},[]);
  // The list updates quietly without a permanent toolbar refresh control.
  useEffect(()=>{
   if(view!=='episodes'||episodeId||pending||!catalog)return;
@@ -174,14 +185,24 @@ function LocalCatalogContent(){
   },15000);
   return()=>window.clearInterval(timer);
  },[view,episodeId,pending,Boolean(catalog),catalogKey]);
- const connectionActions=useConnectionActions(refresh);
+ const connectionActions=useConnectionActions(refresh,ownerId);
  async function restoreAccess(){const session=sessionGeneration.current;setError('');setAccess(authenticated.current?'loading':'checking');try{if(!authenticated.current){const value=await localRequest('session');if(session!==sessionGeneration.current)return;authenticated.current=true;setOwnerId(value.owner?.id??'');setOwnerEmail(value.owner?.email??'');setCanManageSecrets(value.secretAdministration===true);setProductionMetricsEnabled(value.productionMetricsEnabled===true);setCsrf(value.csrfToken);}setAccess('loading');await refreshRef.current();if(session===sessionGeneration.current)setAccess('ready');}catch(cause){if(session!==sessionGeneration.current)return;setCatalog(null);if((cause as {status?:number}).status===401){authenticated.current=false;setAccess('anonymous');}else{setAccess('error');setError(cause instanceof Error?cause.message:'无法读取工作区，请重试。');}}}
  useEffect(()=>{void restoreAccess();return()=>{sessionGeneration.current++;requestGeneration.current++;};},[]);
- async function login(event:FormEvent){event.preventDefault();notifyIdentityChange();setPending('login');setAccess('loading');setError('');sessionGeneration.current++;requestGeneration.current++;try{const result=await localRequest('login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});authenticated.current=true;setOwnerId(result.owner?.id??'');setOwnerEmail(result.owner?.email??'');setCanManageSecrets(result.secretAdministration===true);setProductionMetricsEnabled(result.productionMetricsEnabled===true);setCsrf(result.csrfToken);setPassword('');await refresh();setAccess('ready');}catch(e){setAccess(authenticated.current?'error':'anonymous');setError(e instanceof Error?e.message:String(e));}finally{setPending('');}}
+ async function login(event:FormEvent){
+  event.preventDefault();notifyIdentityChange();setPending('login');setAccess('loading');setError('');
+  const session=++sessionGeneration.current;requestGeneration.current++;resetConnectionReading();
+  try{
+   const result=await localRequest('login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+   if(session!==sessionGeneration.current)return;
+   authenticated.current=true;setOwnerId(result.owner?.id??'');setOwnerEmail(result.owner?.email??'');setCanManageSecrets(result.secretAdministration===true);setProductionMetricsEnabled(result.productionMetricsEnabled===true);setCsrf(result.csrfToken);setPassword('');
+   await refresh();if(session===sessionGeneration.current)setAccess('ready');
+  }catch(e){if(session===sessionGeneration.current){setAccess(authenticated.current?'error':'anonymous');setError(e instanceof Error?e.message:String(e));}}
+  finally{if(session===sessionGeneration.current)setPending('');}
+ }
  useEffect(()=>{if(typeof window.BroadcastChannel!=='function')return;const channel=new BroadcastChannel('loop-local-identity');channel.onmessage=event=>{if(event.data?.kind==='changed'&&event.data.sender!==identitySender)window.dispatchEvent(new Event('loop-local-session-expired'));};return()=>channel.close();},[]);
  async function logout(){
   notifyIdentityChange();
-  const session=++sessionGeneration.current;requestGeneration.current++;authenticated.current=false;setAccess('anonymous');setSecrets(false);setCanManageSecrets(false);
+  const session=++sessionGeneration.current;requestGeneration.current++;authenticated.current=false;resetConnectionReading();setAccess('anonymous');setSecrets(false);setCanManageSecrets(false);
   try{await localRequest('logout',{method:'POST',headers:{'X-CSRF-Token':csrf}});}
   catch{if(session===sessionGeneration.current)setError('未能确认退出，请重新登录。');}
   finally{if(session===sessionGeneration.current){clearLocalArtifactCache();setEpisodeId('');setView('accounts');setCatalog(null);setOwnerId('');setOwnerEmail('');setCanManageSecrets(false);setSecrets(false);setCsrf('');}}
@@ -192,7 +213,7 @@ function LocalCatalogContent(){
   void refresh().catch(()=>{});
  }
  useEffect(()=>{savedWrite.current=null;setSavedRefreshNotice('');},[ownerId]);
- async function command<T>(label:string,name:string,data:unknown,revision?:string):Promise<T>{setPending(label);setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const result=await localCommand<T>(name,data,revision);try{await refresh();}catch{setSavedRefreshNotice('配置已保存；目录刷新失败，请重新读取。');}return result;}catch(e){setError(e instanceof Error?e.message:String(e));throw e;}finally{setPending('');}}
+ async function command<T>(label:string,name:string,data:unknown,revision?:string,onCommitted?:(result:T)=>void):Promise<T>{const session=sessionGeneration.current;setPending(label);setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const result=await localCommand<T>(name,data,revision);if(!authenticated.current||session!==sessionGeneration.current)throw Error('会话已变化，请重新打开后操作。');onCommitted?.(result);refreshAfterWrite('配置已保存');return result;}catch(e){if(session===sessionGeneration.current)setError(e instanceof Error?e.message:String(e));throw e;}finally{if(session===sessionGeneration.current)setPending('');}}
  const account=catalog?.accounts.find(a=>a.id===selectedId)??null;
  async function openSidebarStudio(){
   if(studio.current){studio.current();return;}
@@ -213,7 +234,7 @@ function LocalCatalogContent(){
  const selectedEpisode=catalog.episodes.find(e=>e.id===episodeId)??null;
  const page={page:catalog.page,total:catalog.total,pageSize:filters.pageSize,onPageChange:(page:number)=>filter({page}),onPageSizeChange:(pageSize:typeof filters.pageSize)=>filter({pageSize})};
  const life=async<T=void,>(command:string,data:unknown,notifyError=true,endpoint='episode-lifecycle')=>{setPending(command);setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const result=await localCommand<T>(command,data,undefined,endpoint);refreshAfterWrite('操作已保存');return result;}catch(e){if(notifyError)setError(e instanceof Error?e.message:String(e));throw e;}finally{setPending('');}};
- const errorMessage=[savedRefreshNotice,error||connectionActions.error].filter(Boolean).join(' ');
+ const errorMessage=[savedRefreshNotice,error||connectionActions.error,connectionReadError?'制作连接读取失败：'+connectionReadError:''].filter(Boolean).join(' ');
  const pendingReviewCount=catalog.statusCounts?.review??catalog.pending.total;
  function selectAccount(id:string, search?:CatalogNavigation['panels']['search']){
   if(view==='accounts'&&id!==selectedId){
@@ -248,7 +269,7 @@ function LocalCatalogContent(){
  </nav>
  <div className="sidebar-footer"><Tooltip title={studioReady?uiText("打开当前生产单工程"):uiText("打开独立剪辑工作区")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-label={studioReady?uiText("打开当前生产单的 OpenChatCut"):uiText("打开 OpenChatCut 独立剪辑")} className="sidebar-studio-shortcut" iconLeading={Video} isDisabled={studioOpening} onClick={()=>requestDraftLeave(()=>void openSidebarStudio())} type="button"><span>{studioOpening?uiText("正在打开…"):"OpenChatCut"}</span></Button></Tooltip>
  <div className="sidebar-utilities"><LocalSystemStatus triggerLabel={uiText("系统状态")} queueRequest={queueRequest} onQueueChange={setTaskQueue} onOpenEpisode={id=>{return navigate('episodes',()=>setEpisodeId(id));}}/><Tooltip title={collapsed?uiText("展开侧栏"):uiText("收起侧栏")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" type="button" className="sidebar-collapse-button sidebar-utility" aria-pressed={collapsed} aria-label={collapsed?uiText("展开侧栏"):uiText("收起侧栏")} onClick={()=>setSidebarCollapsed(!collapsed)}><Icon name="PanelLeft"/><span className="sidebar-tool-label">{collapsed?uiText("展开侧栏"):uiText("收起侧栏")}</span></Button></Tooltip></div></div></aside>
- {(errorMessage||cleanupNotice)&&<div className="floating-notices" aria-live="polite">{errorMessage&&<div role="alert" className="error-message"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{uiText(errorMessage||'')}</span><div className="notice-actions">{(savedRefreshNotice||view==='episodes'&&error)&&<Button size="sm" color="tertiary" onPress={()=>void refresh(false,true).catch(e=>setError(e instanceof Error?e.message:String(e)))}>{uiText("重新读取")}</Button>}<Button size="sm" color="tertiary" type="button" aria-label={uiText("关闭错误通知")} onClick={()=>{setError('');setSavedRefreshNotice('');savedWrite.current=null;connectionActions.setError('');}}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}{cleanupNotice&&<div role="status" className="error-message deletion-cleanup-notice"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{uiText("生产单记录已删除，文件清理尚未完成。")}</span><div className="notice-actions"><Button size="sm" color="tertiary" onPress={()=>openCleanup(cleanupNotice.key)}>{uiText("查看清理任务")}</Button><Button size="sm" color="tertiary" aria-label={uiText("关闭清理通知")} onPress={()=>setCleanupNotice(null)}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}</div>}
+ {(errorMessage||cleanupNotice)&&<div className="floating-notices" aria-live="polite">{errorMessage&&<div role="alert" className="error-message"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{uiText(errorMessage||'')}</span><div className="notice-actions">{(savedRefreshNotice||view==='episodes'&&error)&&<Button size="sm" color="tertiary" onPress={()=>void refresh(false,true).catch(e=>setError(e instanceof Error?e.message:String(e)))}>{uiText("重新读取")}</Button>}{connectionReadError&&<Button size="sm" color="tertiary" onPress={()=>void refreshConnections()}>{uiText("重新读取连接")}</Button>}<Button size="sm" color="tertiary" type="button" aria-label={uiText("关闭错误通知")} onClick={()=>{setError('');setSavedRefreshNotice('');savedWrite.current=null;connectionActions.setError('');setConnectionReadError('');}}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}{cleanupNotice&&<div role="status" className="error-message deletion-cleanup-notice"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{uiText("生产单记录已删除，文件清理尚未完成。")}</span><div className="notice-actions"><Button size="sm" color="tertiary" onPress={()=>openCleanup(cleanupNotice.key)}>{uiText("查看清理任务")}</Button><Button size="sm" color="tertiary" aria-label={uiText("关闭清理通知")} onPress={()=>setCleanupNotice(null)}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}</div>}
  <section inert={Boolean(episodeId)||panels.connections.open||cleanupOpen||logsOpen} className={`content-pane${view === 'accounts' ? ' account-workspace-page' : ''}`} id="main-content" aria-label={uiText("平台工作台")} tabIndex={-1}><header className="page-header"><nav className="workspace-breadcrumbs" aria-label={uiText("当前位置")}><span>{uiText("个人工作区")}</span><ChevronRight size={14} aria-hidden="true"/><strong aria-current="page">{pageLabel}</strong></nav><div className="page-header-actions">{!episodeId&&topbar}</div></header>{view!=='operations'&&view!=='accounts'&&<div className="workspace-page-heading"><h1>{pageLabel}</h1>{view==='episodes'&&workspaceActions}</div>}
 
  {view==='accounts'?<>
@@ -280,8 +301,8 @@ function LocalCatalogContent(){
  </OwnerSettingsDialog>}
  <ConfirmationModalPresence>{ownerLeavePrompt&&<ConfirmationModal title={uiText("离开当前设置？")} confirmLabel={uiText("放弃修改并离开")} cancelLabel={uiText("继续编辑")} tone="danger" onCancel={()=>{setOwnerLeavePrompt(false);pendingOwnerLeave.current=null;}} onConfirm={()=>{const leave=pendingOwnerLeave.current;pendingOwnerLeave.current=null;setOwnerLeavePrompt(false);ownerPaneState.current={busy:false,dirty:false};leave?.();}}><p>{uiText("当前设置有未保存修改，离开后会丢失。")}</p></ConfirmationModal>}</ConfirmationModalPresence>
  {newEpisode&&<EpisodeForm productionMetricsEnabled={productionMetricsEnabled} initialAccountId={creationAccountId} initialSeriesVersionId={creationSeriesVersion?.id} accounts={catalog.accounts.filter(a=>!a.archived_at)} series={catalog.series} seriesVersions={catalog.seriesVersions} isPending={pending==='episode'} onClose={()=>setNewEpisode(false)} onSubmit={async input=>{setPending('episode');setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const e=await localCommand<{id:string}>('create',input,undefined,'episode-commands');setEpisodeId(e.id);setNewEpisode(false);setView('episodes');filter({view:'episodes'});refreshAfterWrite('生产单已创建');}catch(e){setError(e instanceof Error?e.message:String(e));if(e&&typeof e==='object'&&'preflight'in e)return e.preflight as import('../worker/contracts').WorkerPreflightResult;throw e;}finally{setPending('');}return null;}}/>}
- {newAccount&&<AccountForm isPending={pending==='account'} onClose={()=>setNewAccount(false)} onSubmit={async input=>{const created=await command<LocalCatalog['accounts'][number]>('account','createAccount',input);navigate('accounts',()=>{
+ {newAccount&&<AccountForm isPending={pending==='account'} onClose={()=>setNewAccount(false)} onSubmit={async input=>{await command<LocalCatalog['accounts'][number]>('account','createAccount',input,undefined,created=>navigate('accounts',()=>{
    setAccountDirty(false);setSelectedId(created.id);setNewAccount(false);
    setPanels(current=>({...current,rules:{series:'__common',q:'',page:1}}));
-  });}}/>}</div></WorkspaceNavigationContext.Provider></CatalogPanelNavigationContext.Provider>;
+  }));}}/>}</div></WorkspaceNavigationContext.Provider></CatalogPanelNavigationContext.Provider>;
 }

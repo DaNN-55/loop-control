@@ -1,5 +1,5 @@
 import {beforeEach,afterEach,it,expect,vi} from 'vitest';
-import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
+import {act,render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import {webcrypto} from 'node:crypto';
 import {LocalConnectionsPanel} from './LocalConnectionsPanel';
 import {localRequest} from './client';
@@ -54,6 +54,29 @@ it('keeps one locked rotation in flight and reuses its operation ID after an unc
  expect(posts[1].idempotencyKey).toBe(posts[0].idempotencyKey);
  expect(sessionStorage.length).toBe(0);
  expect(screen.getByRole('alert').textContent).toContain('未再次写入密钥');
+});
+it.each(['success','failure'] as const)('does not let an older committed-write directory %s overwrite a newer rotation error',async(readOutcome)=>{
+ vi.stubGlobal('crypto',webcrypto);const connection={id:'10000000-0000-4000-8000-000000000041',name:'Background read Pexels',provider:'pexels',adapter:'pexels_video',status:'retryable'};
+ const data={connections:[connection],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}};let posts=0,reads=0,finishRead!:(response:Response)=>void;
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(init?.method==='POST')return ++posts===1?Response.json({connection}):Response.json({error:'new rotation rejected'},{status:503});
+  if(path.endsWith('/connections')&&++reads===2)return new Promise<Response>(resolve=>{finishRead=resolve;});return Response.json(data);
+ }));
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:connection.name}));fireEvent.click(screen.getByRole('button',{name:'编辑连接'}));const input=screen.getByLabelText(/^新的 API Key/) as HTMLInputElement;
+ fireEvent.change(input,{target:{value:'first-synthetic-secret'}});fireEvent.click(screen.getByRole('button',{name:'保存更新'}));await waitFor(()=>expect(input.value).toBe(''));await waitFor(()=>expect(finishRead).toBeTypeOf('function'));
+ fireEvent.change(input,{target:{value:'second-synthetic-secret'}});fireEvent.click(screen.getByRole('button',{name:'保存更新'}));await waitFor(()=>expect(screen.getByRole('alert').textContent).toContain('new rotation rejected'));
+ await act(async()=>finishRead(readOutcome==='success'?Response.json(data):Response.json({error:'old read unavailable'},{status:503})));expect(screen.getByRole('alert').textContent).toContain('new rotation rejected');expect(input.value).toBe('second-synthetic-secret');expect(posts).toBe(2);
+});
+it.each(['success','failure'] as const)('does not let an earlier manual directory %s replace a later mutation error',async(readOutcome)=>{
+ vi.stubGlobal('crypto',webcrypto);const connection={id:'10000000-0000-4000-8000-000000000051',name:'Manual read Pexels',provider:'pexels',adapter:'pexels_video',status:'retryable'};
+ const data={connections:[connection],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}};let posts=0,reads=0,finishRead!:(response:Response)=>void;
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(init?.method==='POST')return Response.json({error:++posts===1?'first mutation rejected':'later mutation rejected'},{status:503});
+  if(path.endsWith('/connections')&&++reads===2)return new Promise<Response>(resolve=>{finishRead=resolve;});return Response.json(data);
+ }));
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:connection.name}));fireEvent.click(screen.getByRole('button',{name:'编辑连接'}));fireEvent.change(screen.getByLabelText(/^新的 API Key/),{target:{value:'synthetic-new-secret'}});fireEvent.click(screen.getByRole('button',{name:'保存更新'}));await waitFor(()=>expect(screen.getByRole('alert').textContent).toContain('first mutation rejected'));
+ fireEvent.click(screen.getByRole('button',{name:'重新读取连接'}));await waitFor(()=>expect(finishRead).toBeTypeOf('function'));fireEvent.click(screen.getByRole('button',{name:'保存更新'}));await waitFor(()=>expect(screen.getByRole('alert').textContent).toContain('later mutation rejected'));
+ await act(async()=>finishRead(readOutcome==='success'?Response.json(data):Response.json({error:'earlier manual read failed'},{status:503})));expect(screen.getByRole('alert').textContent).toContain('later mutation rejected');
 });
 it('restores a missing binding in locked mode without testing or promoting its qualification',async()=>{
  vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('confirm',vi.fn().mockReturnValue(true));

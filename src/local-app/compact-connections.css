@@ -1,13 +1,15 @@
 /* Fixed Owner connection detail: one scroll area and one action baseline. */
 html[data-interface="impeccable"] .product-ui .owner-settings-pane.connections-settings-dialog>.local-connections-panel:has(.compact-connection-workspace){display:flex;flex-direction:column;min-height:0;overflow:hidden;padding:0;align-content:normal;gap:0}
 .compact-connection-workspace{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0;color:var(--lc-ink);font-size:13px}
-.compact-connection-toolbar{display:flex;align-items:center;gap:8px;padding:12px 28px;flex:none}
-.compact-connection-toolbar form{display:flex;align-items:center;gap:8px;flex:1;min-width:0;border:1px solid var(--lc-line);border-radius:7px;padding-inline:10px;background:var(--lc-surface)}
+.compact-connection-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 28px;flex:none}
+.compact-connection-toolbar form{display:flex;align-items:center;gap:8px;flex:1 1 240px;min-width:0;border:1px solid var(--lc-line);border-radius:7px;padding-inline:10px;background:var(--lc-surface)}
 .compact-connection-toolbar form svg{flex:none;color:var(--lc-muted)}
 .compact-connection-toolbar input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:inherit;min-height:34px;font:inherit}
 .compact-connection-toolbar form:focus-within{outline:2px solid var(--lc-accent);outline-offset:2px}
 .compact-connection-toolbar form button{border:0;background:transparent;color:var(--lc-muted);font:inherit;font-size:12px;cursor:pointer}
-.compact-connection-toolbar>div:has(select){width:132px;flex:none}
+/* Flex basis overrides the select wrapper's full-width utility within this row. */
+.compact-connection-toolbar>.dan-select-field{flex:0 0 132px;min-width:0}
+.compact-connection-toolbar>button,.compact-connection-toolbar form button{flex:none;white-space:nowrap}
 .compact-connection-scroll{flex:1;min-height:0;min-width:0;overflow:auto;padding:16px 28px;overscroll-behavior:contain;scrollbar-color:var(--lc-line) transparent}
 .compact-connection-list-columns,.compact-connection-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,1fr) 36px;gap:20px;align-items:center}
 .compact-connection-list-columns{padding:0 0 8px;border-bottom:1px solid var(--lc-line);color:var(--lc-muted);font-size:11px}
@@ -50,7 +52,7 @@ html[data-interface="impeccable"] .product-ui .owner-settings-pane.connections-s
 .compact-connection-empty{padding:24px 0;color:var(--lc-muted)}.compact-connection-notice{color:var(--lc-success,#137457);font-size:12px;line-height:1.6}
 .compact-connection-workspace button:focus-visible,.compact-connection-workspace input:focus-visible,.compact-connection-workspace textarea:focus-visible{outline:2px solid var(--lc-accent);outline-offset:3px}
 .compact-connection-header-title{display:flex;align-items:center;gap:10px;min-width:0}.compact-connection-header-title h2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(max-width:1000px){.compact-connection-toolbar{flex-wrap:wrap}.compact-connection-toolbar form{flex-basis:100%}.compact-connection-toolbar>div:has(select){flex:1;width:auto}.compact-connection-toolbar>button{margin-left:auto}}
+@media(max-width:1000px){.compact-connection-toolbar form{flex-basis:100%}.compact-connection-toolbar>.dan-select-field{flex:1 1 132px}.compact-connection-toolbar>button{margin-inline-start:auto}}
 @media(max-width:720px){.compact-connection-toolbar,.compact-connection-scroll,.compact-connection-workspace .connection-embedded-pane>.connection-models-body{padding-inline:20px}.compact-connection-meta,.compact-connection-tabs{padding-inline:20px}.compact-connection-tabs{gap:18px;overflow:auto}.compact-connection-field{grid-template-columns:1fr;gap:4px;padding-block:8px}.compact-connection-label{padding-top:0}.compact-connection-list-columns{display:none}.compact-connection-row{grid-template-columns:minmax(0,1fr) 36px;gap:4px 12px}.compact-connection-row>div:nth-child(2){grid-column:1;grid-row:2}.compact-connection-row>.dan-ui-tooltip{grid-column:2;grid-row:1/3}.compact-connection-footer,.compact-connection-workspace .connection-embedded-pane>.reference-connections-dialog-footer{padding-inline:20px}.compact-connection-history-columns,.compact-connection-history-row{grid-template-columns:60px minmax(0,1fr) 70px 36px;gap:8px}.compact-connection-facts{grid-template-columns:1fr;gap:4px}.compact-connection-facts dd{margin-bottom:10px}.compact-connection-model-summary{white-space:normal;overflow-wrap:anywhere}.compact-connection-workspace .connection-models-meta{display:none}}
 @media(prefers-reduced-motion:reduce){.compact-connection-workspace *{scroll-behavior:auto!important}}
 /* The embedded body is the only scrolling region; the standalone dialog's grid

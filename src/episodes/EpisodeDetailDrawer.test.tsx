@@ -11,3 +11,7 @@ it('放大预览打开时按 Escape 不关闭生产单详情',async()=>{
  const user=userEvent.setup(),onClose=vi.fn();render(<EpisodeDetailDrawer isOpen onClose={onClose}><div aria-modal="true" role="dialog">放大预览</div></EpisodeDetailDrawer>);
  await user.keyboard('{Escape}');expect(onClose).not.toHaveBeenCalled();
 });
+it('原生核对弹窗打开时 Escape 只交给内层，不退出生产单',async()=>{
+ const user=userEvent.setup(),onClose=vi.fn();render(<EpisodeDetailDrawer isOpen onClose={onClose}><dialog open aria-label="素材预览"><button>下一条</button></dialog></EpisodeDetailDrawer>);
+ screen.getByRole('button',{name:'下一条'}).focus();await user.keyboard('{Escape}');expect(onClose).not.toHaveBeenCalled();
+});

@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {act,cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {webcrypto} from 'node:crypto';
 import {LocalCatalogApp} from './LocalCatalogApp';
@@ -67,4 +67,33 @@ it('shows five active accounts, keeps archived accounts reachable, and opens a n
  await user.click(dialog.getByRole('button',{name:'创建账号'}));
  expect(await screen.findByRole('heading',{name:created.name,level:1})).toBeTruthy();
  expect(sidebar.getByRole('button',{name:created.name}).getAttribute('aria-current')).toBe('page');
+});
+
+it('closes acknowledged account creation while its independent catalog refresh remains pending',async()=>{
+ vi.stubGlobal('crypto',webcrypto);let saved=false,posts=0;const reads:Array<(value:Response)=>void>=[];
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(path.endsWith('/session'))return Response.json({owner:{id:'account-write-owner'},csrfToken:'fixture'});
+  if(path.endsWith('/configuration')&&init?.method==='POST'){saved=true;posts++;return Response.json({...catalog().accounts[0],id:'created-account',name:'已保存账号'});}
+  if(path.includes('/catalog?'))return saved?new Promise<Response>(resolve=>reads.push(resolve)):Response.json(catalog());
+  return Response.json({connections:[],versions:[]});
+ }));
+ render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建账号'}));const dialog=within(screen.getByRole('dialog',{name:'新建账号'}));
+ fireEvent.change(dialog.getByRole('textbox',{name:'账号名称'}),{target:{value:'已保存账号'}});fireEvent.change(dialog.getByRole('textbox',{name:'账号标识'}),{target:{value:'saved-account'}});fireEvent.click(dialog.getByRole('button',{name:'创建账号'}));
+ await waitFor(()=>expect(reads.length).toBeGreaterThan(0));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建账号'})).toBeNull());expect(posts).toBe(1);
+ await act(async()=>{for(const finish of reads)finish(Response.json({error:'catalog unavailable'},{status:503}));});expect((await screen.findByRole('alert')).textContent).toContain('配置已保存');expect(posts).toBe(1);
+});
+
+it('does not navigate or publish an earlier Owner account acknowledgement after switching identity',async()=>{
+ vi.stubGlobal('crypto',webcrypto);let owner='first-owner',finish!:(value:Response)=>void,reads=0;
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(path.endsWith('/session'))return Response.json({owner:{id:owner},csrfToken:'fixture'});
+  if(path.endsWith('/login')){owner='next-owner';return Response.json({owner:{id:owner},csrfToken:'next'});}
+  if(path.endsWith('/configuration')&&init?.method==='POST')return new Promise<Response>(resolve=>{finish=resolve;});
+  if(path.includes('/catalog?')){reads++;return Response.json(owner==='first-owner'?catalog():{...catalog(),accounts:[],blueprints:[]});}
+  return Response.json({connections:[],versions:[]});
+ }));
+ render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建账号'}));const dialog=within(screen.getByRole('dialog',{name:'新建账号'}));
+ fireEvent.change(dialog.getByRole('textbox',{name:'账号名称'}),{target:{value:'旧身份新账号'}});fireEvent.change(dialog.getByRole('textbox',{name:'账号标识'}),{target:{value:'old-owner-account'}});fireEvent.click(dialog.getByRole('button',{name:'创建账号'}));await waitFor(()=>expect(finish).toBeTypeOf('function'));
+ fireEvent(window,new Event('loop-local-session-expired'));await screen.findByRole('heading',{name:'登录控制台'});fireEvent.change(screen.getByLabelText('邮箱'),{target:{value:'next@example.invalid'}});fireEvent.change(screen.getByLabelText('密码'),{target:{value:'next-owner-password'}});fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));await screen.findByRole('button',{name:'新建生产单'});const before=reads,notice=screen.queryByRole('alert')?.textContent;
+ await act(async()=>finish(Response.json({...catalog().accounts[0],id:'old-created',name:'旧身份新账号'})));expect(screen.queryByRole('heading',{name:'旧身份新账号'})).toBeNull();expect(screen.queryByRole('dialog',{name:'新建账号'})).toBeNull();expect(screen.queryByRole('alert')?.textContent).toBe(notice);expect(reads).toBe(before);
 });

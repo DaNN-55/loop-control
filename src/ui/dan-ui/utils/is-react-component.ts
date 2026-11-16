@@ -1,7 +1,5 @@
 import type React from "react";
 
-// Below the import on purpose: the shadcn CLI drops comments that come before a file's first
-// statement, which would drop this directive and fail lint in projects installed that way.
 // `any` is required here: with `unknown`, the type guards below stop narrowing to component types.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
