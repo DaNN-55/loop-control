@@ -11,3 +11,8 @@ it('区分缺少一级标题、缺少正文与正文为空，保留有效标题�
  expect(mainScriptDiagnostic('# 我的标题\n\n## 正文\n\n')).toBe('第 3 行：“## 正文”下没有内容，请填写正文。');
  expect(mainScriptDiagnostic('# 我的标题\n\n## 正文\n\n口播')).toBeNull();
 });
+it('rejects new v2 writes with an upgrade message while the history parser remains available',async()=>{
+ const text='# 历史\n## 制作设置\n- 模板版本：2\n## 正文\n### 段落 01\n- 口播：历史口播\n- 首帧素材：无\n- 视频生成提示词：历史画面\n';
+ expect(mainScriptDiagnostic(text)).toMatch(/版本 3/);
+ const {parseProductionScript}=await import('./productionScript');expect(parseProductionScript(text)?.version).toBe(2);
+});

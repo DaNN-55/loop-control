@@ -4,6 +4,12 @@ import {applyWorkspaceCaptionEdit,readWorkspaceCaption} from './workspaceCaption
 import type {OpenChatCutProject} from './worker/openchatcutProject';
 const project=():OpenChatCutProject=>({version:3,activeTimelineId:'main',assets:[],mediaFolders:[],timelines:[{id:'main',name:'main',order:0,fps:30,width:1080,height:1920,fit:'contain',items:[{id:'shot-one',kind:'image',track:'V1',startFrame:60,durationInFrames:90,transform:{scale:1.2},keyframes:{x:[{frame:0,value:3}]}}],trackOrder:['V1'],tracks:{V1:{kind:'video',name:'video'}},transitions:[],selectedId:null,captionsHidden:false}]});
 describe('native workspace captions',()=>{
+ it.each([14,10])('fits %s full-width glyphs plus the actual native text-box padding inside the 80-percent container',characters=>{
+  const contract=defaultShotCaptionContract('一'.repeat(characters),'independent');contract.spatial.maxCharactersPerLine=characters;contract.cues=[{id:'fit',text:contract.text,startMs:0,endMs:1000}];
+  const next=applyWorkspaceCaptionEdit(project(),'shot-one',contract),lane=Object.values(next.timelines[0].tracks).find(t=>t.captions)!.captions!.sourceEntries[0];
+  const pixels=Number(lane.style?.fontSize)*1920;
+  expect(pixels*characters+pixels*.84).toBeLessThanOrEqual(1080*.8);
+ });
  it('renders explicit character budgets as manual pages at absolute timeline milliseconds without changing the picture',()=>{
   const original=project(),contract=defaultShotCaptionContract('一二三四五六七八九十','independent');contract.spatial.maxCharactersPerLine=3;contract.spatial.maxLines=2;contract.cues=[{id:'cue-one',text:contract.text,startMs:0,endMs:2000}];
   const next=applyWorkspaceCaptionEdit(original,'shot-one',contract);

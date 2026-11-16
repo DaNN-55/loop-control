@@ -6,7 +6,7 @@ import {join,dirname} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {ownerTransaction} from './ownerTransaction';
 import {formalWorkflowFixture} from './formalWorkflow.fixture';
-import {seedHistoricalPreparation} from './historicalPreparation.fixture';
+import {seedHistoricalPreparation,seedRecordedWorkspacePreparation} from './historicalPreparation.fixture';
 import {loadSchemaCatalog,freshSchemaTransaction,migrationTransaction,schemaMigrationPlan} from './schemaMigrations';
 
 it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('imports an existing preparation deterministically without rewriting the old package, project, shots, tasks or audio and refuses conflicting provenance',async()=>{
@@ -52,7 +52,7 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('formatting-only script continu
   // This case intentionally preserves populated authored-era input rows. New default preparations no longer create that legacy source.
   const id=randomUUID(),location=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[f.newEpisode])).rows[0],source=(await f.c.query('SELECT storage_path,sha256 FROM public.production_material_revisions WHERE id=$1',[f.main])).rows[0];
   const board={version:'storyboard/v1',audioCues:[],shots:['第一段。','第二段。'].map((scriptSegment,index)=>({id:'shot-'+String(index+1).padStart(2,'0'),scriptSegment,durationSeconds:5,targetSpec:'9:16',shotType:'b_roll',productionMethod:'历史作者基准',inputBasis:[{relativePath:source.storage_path,sha256:source.sha256}]}))},bytes=Buffer.from(JSON.stringify(board)+'\n'),file={relativePath:`${location.directory_relative_path}/preparation/${id}.json`,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length};
-  await mkdir(dirname(join(f.assetRoot,file.relativePath)),{recursive:true});await writeFile(join(f.assetRoot,file.relativePath),bytes,{flag:'wx'});await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.register_workspace_preparation($1,$2,$3,$4,$5,$6)',[f.newEpisode,f.main,id,file,board,'script-segment']));
+  await mkdir(dirname(join(f.assetRoot,file.relativePath)),{recursive:true});await writeFile(join(f.assetRoot,file.relativePath),bytes,{flag:'wx'});await seedRecordedWorkspacePreparation(f.c,{episodeId:f.newEpisode,scriptRevisionId:f.main!,preparationId:id,ownerId:f.owner,file,board});
   const made=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main,reviewPackageId:id});expect(made.status,JSON.stringify(made.body)).toBe(200);let w=made.body;
   const inserted=await f.send('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'人工新增镜头'}});expect(inserted.status,JSON.stringify(inserted.body)).toBe(200);w=inserted.body;
   const previous=w.storyboardPackageId,oldProject=w.project,oldClips=w.clips;

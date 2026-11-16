@@ -1,0 +1,1 @@
+module.exports=function(source){const done=this.async();import('./openchatcut-transition-placement.mjs').then(({patchTransitionPlacement})=>done(null,patchTransitionPlacement(source)),done).catch(done);};

@@ -5,7 +5,7 @@ export function requiresWorkspaceCall(command:string,data:Record<string,unknown>
 }
 export interface WorkspaceCallSummary {
  kind:'图片生成'|'视频生成'|'口播生成'|'在线音效';target:string;provider:string;model:string;connection:string;
- parameters:string[];inputs:string[];prompt:string;reservationCents:number;estimate?:WorkspaceCallEstimate;retryOfTaskId?:string;
+ parameters:string[];inputs:string[];prompt:string;reservationCents:number;reservationPrefilled?:boolean;estimate?:WorkspaceCallEstimate;retryOfTaskId?:string;
 }
 export interface WorkspaceCallProposal {confirmationId:string;expiresAt:string;summary:WorkspaceCallSummary}
 

@@ -7,7 +7,7 @@ export function mainScriptDiagnostic(script:string):string|null {
     return narrationLine>=0?`第 ${narrationLine+1} 行：缺少“## 正文”区块；可将“## 旁白脚本”改为“## 正文”。`:'第 1 行：缺少“## 正文”区块，请在正文前添加该标题。';
   }
   if(!script.split(/^##\s+正文\s*$/m)[1]?.trim())return `第 ${script.slice(0,body.index).split('\n').length} 行：“## 正文”下没有内容，请填写正文。`;
-  try{parseProductionScript(script);return null;}catch(error){return error instanceof Error?error.message:'主脚本格式无效。';}
+  try{const parsed=parseProductionScript(script);if(parsed?.version===2)return '当前新建或修订脚本仅支持模板版本 3。请改用“画面来源”“视频提示词”和“镜头时长（秒）”，首帧在制作面板选择；历史脚本仍可查看。';return null;}catch(error){return error instanceof Error?error.message:'主脚本格式无效。';}
 }
 
 /** Statistics never normalize or replace the saved source; versioned scripts identify narration explicitly. */

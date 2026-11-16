@@ -6,9 +6,9 @@ import {uiText} from '../i18n/ui';
 import {localCommand,localRequest} from './client';
 
 /** Owner-selected business tier; selecting an option never changes production. */
-export function BusinessQualitySelect({value,onChange,disabled=false}:{value:BusinessQualityTier;onChange:(value:BusinessQualityTier)=>void;disabled?:boolean}){
+export function BusinessQualitySelect({value,onChange,disabled=false,inline=false}:{value:BusinessQualityTier;onChange:(value:BusinessQualityTier)=>void;disabled?:boolean;inline?:boolean}){
  const id=useId();
- return <NativeSelect id={id} label={uiText('业务质量档')} name="businessQualityTier" size="sm" disabled={disabled} value={value} onChange={event=>onChange(event.target.value as BusinessQualityTier)}>{businessQualityTiers.map(tier=><option key={tier} value={tier}>{uiText(businessQualityLabels[tier])}</option>)}</NativeSelect>;
+ return <NativeSelect id={id} label={inline?undefined:uiText('业务质量档')} aria-label={inline?uiText('业务质量档'):undefined} name="businessQualityTier" size="sm" disabled={disabled} value={value} onChange={event=>onChange(event.target.value as BusinessQualityTier)}>{businessQualityTiers.map(tier=><option key={tier} value={tier}>{uiText(inline&&tier==='unspecified'?'业务质量档':businessQualityLabels[tier])}</option>)}</NativeSelect>;
 }
 
 export function ProductionQualityField({episodeId,readOnly=false}:{episodeId:string;readOnly?:boolean}){
@@ -28,9 +28,8 @@ export function ProductionQualityField({episodeId,readOnly=false}:{episodeId:str
   finally{setPending(false);}
  }
  if(saved?.enabled===false)return null;
- return <form className="workspace-actions" aria-label={uiText('业务质量档')} aria-busy={pending} aria-describedby={error?errorId:undefined} onSubmit={event=>void save(event)}>
-  <span className="field-label">{uiText('业务质量档')}</span>
-  <BusinessQualitySelect value={draft} onChange={value=>{setDraft(value);setError('');setNotice('');}} disabled={pending||readOnly||!saved}/>
+ return <form className="workspace-actions production-quality-inline" aria-label={uiText('业务质量档')} aria-busy={pending} aria-describedby={error?errorId:undefined} onSubmit={event=>void save(event)}>
+  <BusinessQualitySelect inline value={draft} onChange={value=>{setDraft(value);setError('');setNotice('');}} disabled={pending||readOnly||!saved}/>
   {saved&&!readOnly&&draft!==saved.tier?<Button type="submit" size="sm" color="secondary" isDisabled={pending}>{uiText(pending?'正在保存…':'保存质量档')}</Button>:null}
   {error?<span id={errorId} role="alert" className="form-error">{uiText(error)}</span>:null}
   {notice?<span role="status">{uiText(notice)}</span>:null}

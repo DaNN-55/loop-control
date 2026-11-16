@@ -275,3 +275,24 @@ it('keeps the adopted wording explicit while a different narration draft is edit
  expect(screen.getByText('草稿未采用，成片仍使用已采用口播。')).toBeTruthy();
  const summary=screen.getByText('成片采用的口播');fireEvent.click(summary);expect(within(summary.closest('details')!).getByText('成片实际采用的原口播。')).toBeTruthy();expect(command).not.toHaveBeenCalled();
 });
+
+it('seeds speech settings from the selected template shot and keeps manual settings after remount',async()=>{
+ const base=setup();cleanup();
+ const current={...base.workspace,templateInputs:{version:'workspace-template-inputs/v1' as const,narration:{voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:.9},shots:[{shotId:'S01',imagePrompt:'',videoPrompt:'',narration:{voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1.2}}]},narration:base.workspace.narration!.map(n=>({...n,selection:null,defaults:null,voice:null,speakingRate:null,languageCode:null}))};
+ const props={episodeId:'e',workspace:current,selectedShotId:'S01',pending:false,command:base.command,onChanged:vi.fn()};
+ const view=render(<WorkspaceNarrationPanel {...props}/>);
+ expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','1.2');
+ fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'1.35'}});view.unmount();render(<WorkspaceNarrationPanel {...props}/>);
+ expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','1.35');expect(base.command).not.toHaveBeenCalled();
+});
+it('keeps unsaved speech drafts scoped to template shots when switching back and forth',()=>{
+ const base=setup();cleanup();
+ const current={...base.workspace,templateInputs:{version:'workspace-template-inputs/v1' as const,narration:{speakingRate:.9},shots:[{shotId:'S01',imagePrompt:'',videoPrompt:'',narration:{speakingRate:1.2}},{shotId:'S02',imagePrompt:'',videoPrompt:'',narration:{speakingRate:.9}}]},narration:['S01','S02'].map((shotId,i)=>({...base.workspace.narration![0],clipId:'c'+i,shotId,selection:null,defaults:null}))};
+ const props={episodeId:'e',workspace:current,pending:false,command:base.command,onChanged:vi.fn()};
+ const view=render(<WorkspaceNarrationPanel {...props} selectedShotId="S01"/>);
+ fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'1.35'}});
+ view.rerender(<WorkspaceNarrationPanel {...props} selectedShotId="S02"/>);
+ expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','0.9');
+ view.rerender(<WorkspaceNarrationPanel {...props} selectedShotId="S01"/>);
+ expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','1.35');
+});

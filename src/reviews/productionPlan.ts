@@ -38,6 +38,6 @@ export function productionCompositionSettings(settings:ProductionSettings):Recor
  const fields:Partial<Record<keyof ProductionSettings,string>>={aspectRatio:'aspect_ratio',captionsEnabled:'captions_enabled',captionStyle:'caption_style',narrationGainDb:'narration_gain_db',bgmGainDb:'bgm_gain_db',sfxGainDb:'sfx_gain_db'};
  for(const [key,target]of Object.entries(fields)){const value=settings[key as keyof ProductionSettings];if(value!==undefined)result[target]=value;}
  if(settings.aspectRatio){const [width,height]=settings.aspectRatio==='16:9'?[1920,1080]:settings.aspectRatio==='1:1'?[1080,1080]:[1080,1920];result.width=width;result.height=height;}
- if(settings.transition&&settings.transition!=='studio')result.transition=settings.transition;
+ if(settings.transition==='cut'||settings.transition==='fade')result.transition=settings.transition;
  return result;
 }

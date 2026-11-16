@@ -9,7 +9,7 @@ import {createHash} from 'node:crypto';
 import {isValidAcousticAlignmentResult} from '../worker/acousticAlignmentContract.js';
 import type {PoolClient} from 'pg';
 import {applyWorkspaceCaptionEdit,readWorkspaceCaption,setWorkspaceCaptionText,type WorkspaceCaptionState} from '../workspaceCaptions.js';
-import {defaultShotCaptionContract,isValidShotCaptionContract,normalizeShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionContract} from '../shotCaptions.js';
+import {defaultShotCaptionContract,isValidShotCaptionContract,normalizeShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionContract,type ShotCaptionAnchor} from '../shotCaptions.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
@@ -63,7 +63,7 @@ export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:Pic
   if(seen.has(clip.shotId)||readWorkspaceCaption(next,clip.itemId))continue;seen.add(clip.shotId);
   const x=await captionContext(c,root,row,next,clip.id),segment=script?.segments.find(segment=>segment.id===clip.shotId),settings=script&&segment?segmentSettings(script,segment):null;
   // The initial native lane must match the confirmed script's subtitle content and switch.
-  const base=segment?{...x.contract,text:segment.subtitle??segment.narration,enabled:settings?.captionsEnabled!==false,contentMode:settings?.captionMode??'follow_tts' as const,cues:[]}:x.contract;
+  const base=segment?{...x.contract,text:segment.subtitle??segment.narration,enabled:settings?.captionsEnabled??x.contract.enabled,contentMode:settings?.captionMode??x.contract.contentMode,cues:[],spatial:{...x.contract.spatial,...(settings?.captionAnchor===undefined?{}:{anchor:settings.captionAnchor as ShotCaptionAnchor}),...(settings?.captionSafeArea===undefined?{}:{safeArea:settings.captionSafeArea}),...(settings?.captionMaxLines===undefined?{}:{maxLines:settings.captionMaxLines}),...(settings?.captionMaxCharacters===undefined?{}:{maxCharactersPerLine:settings.captionMaxCharacters})}}:x.contract;
   if(!base.text.trim()||!base.enabled&&!segment)continue;
   const contract={...base,cues:base.cues.length?base.cues:[{id:`initial-${clip.shotId}`,text:base.text,startMs:0,endMs:Math.round(Number(x.item.durationInFrames)*1000/x.timeline.fps)}]};
   next=applyWorkspaceCaptionEdit(next,clip.itemId,contract);

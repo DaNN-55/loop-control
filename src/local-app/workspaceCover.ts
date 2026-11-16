@@ -4,10 +4,11 @@ import {parseWorkspaceCoverSource,type WorkspaceCoverInput,type WorkspaceCoverSo
 import {ConfigurationError} from './configurationCommands.js';
 
 /** Cover inputs are optional candidates, never an adopted cover or file authority. */
-export async function readWorkspaceCoverInputs(c:PoolClient,row:{episode_id:string;preparation_revision_id:string}):Promise<WorkspaceCoverInput[]>{
+export async function readWorkspaceCoverInputs(c:PoolClient,row:{episode_id:string;preparation_revision_id:string},template?:{id:string;sha256:string}):Promise<WorkspaceCoverInput[]>{
  const declared=(await c.query('SELECT manifest->\'coverInputs\' inputs FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[row.preparation_revision_id,row.episode_id])).rows[0]?.inputs??[];
  let sources:WorkspaceCoverSource[];
  try{if(!Array.isArray(declared))throw Error();sources=declared.map(parseWorkspaceCoverSource);}catch{throw new ConfigurationError(409,'制作基准的封面输入协议无法核验。');}
+ if(template&&!sources.some(source=>source.kind==='material'&&source.id===template.id))sources.push({version:'workspace-cover-source/v1',kind:'material',id:template.id,sha256:template.sha256});
  const materialIds=sources.filter(s=>s.kind==='material').map(s=>s.id);
  const records=(await c.query(`SELECT 'material'::text kind,id,source_path name,storage_path path,sha256,file_size FROM public.production_material_revisions WHERE episode_id=$1 AND material_type='image' AND (material_purpose='cover' OR id=ANY($2::uuid[]))
  UNION ALL SELECT 'artifact',id,relative_path,relative_path,sha256,file_size FROM public.artifacts WHERE episode_id=$1 AND artifact_type='cover'`,[row.episode_id,materialIds])).rows;

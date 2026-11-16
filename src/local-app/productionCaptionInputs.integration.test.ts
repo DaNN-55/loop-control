@@ -72,8 +72,16 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('adopted native audio can
   await send('saveWorkspaceCaptions',{captionContract:contract});
   // Retain the original unversioned task contract: readable only against its proven original baseline.
   // Explicit historical fixture: current manual upload no longer fabricates this retired row.
-  await f.c.query("INSERT INTO public.shot_preparation_drafts(episode_id,review_package_id,shot_id,audio_mode,subtitle_text,current_audio_track_id) VALUES($1,$2,$3,'source',$4,$5) ON CONFLICT(episode_id,review_package_id,shot_id) DO UPDATE SET subtitle_text=excluded.subtitle_text,current_audio_track_id=excluded.current_audio_track_id",[f.episode,f.board,w.clips[0].shotId,contract.text,candidate.id]);
-  const old=await ownerTransaction(f.pool,f.owner,false,async c=>(await c.query('SELECT to_jsonb(local_identity.request_workspace_caption_alignment($1,$2,$3,true,$4,$5,$6)) task',[f.episode,f.board,w.clips[0].shotId,candidate.id,contract.text,w.id])).rows[0].task);
+  const oldDraft=(await f.c.query("INSERT INTO public.shot_preparation_drafts(episode_id,review_package_id,shot_id,audio_mode,subtitle_text,current_audio_track_id) VALUES($1,$2,$3,'source',$4,$5) ON CONFLICT(episode_id,review_package_id,shot_id) DO UPDATE SET subtitle_text=excluded.subtitle_text,current_audio_track_id=excluded.current_audio_track_id RETURNING id",[f.episode,f.board,w.clips[0].shotId,contract.text,candidate.id])).rows[0].id;
+  expect((await f.c.query("SELECT to_regprocedure('local_identity.request_workspace_caption_alignment(uuid,uuid,text,boolean,uuid,text,uuid)') value")).rows[0].value).toBeNull();
+  // Recorded unversioned task, created only by the fixture: no legacy queue is retained.
+  const oldId=randomUUID(),oldAudio=(await f.c.query('SELECT relative_path,sha256,file_size FROM public.audio_tracks WHERE id=$1',[candidate.id])).rows[0],oldModel='jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn';
+  const oldSnapshot={capability:'acoustic_alignment',workspace_caption:{workspace_id:w.id,shot_id:w.clips[0].shotId},shot_preparation:{draft_id:oldDraft,review_package_id:f.board,shot_id:w.clips[0].shotId},
+   executor:{provider:'whisperx',adapter:'whisperx_local',model:oldModel,prompt_version:'whisperx-alignment-v1'},
+   acoustic_alignment:{confirmed_text:contract.text,text_fingerprint:createHash('sha256').update(contract.text).digest('hex'),audio_relative_path:oldAudio.relative_path,audio_sha256:oldAudio.sha256,input_version:createHash('sha256').update('retained pre-independent alignment').digest('hex'),voice:'',speaking_rate:1,strategy:'local'},
+   input_artifacts:[{artifactType:'audio_track',relativePath:oldAudio.relative_path,sha256:oldAudio.sha256,fileSize:Number(oldAudio.file_size)}],
+   output:{required_artifact_types:['acoustic_alignment_evidence'],content_type:'application/json',relative_path:`${f.episodeRelativePath}/alignment/${oldId}.json`,review_stage:'production_ready'},allowed_tools:['read','write']};
+  const old=(await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot,budget_limit_cents,max_attempts,provider,model,prompt_version) VALUES($1,$2,'align_shot_captions','ready',$3,0,2,'whisperx',$4,'whisperx-alignment-v1') RETURNING *",[oldId,f.episode,oldSnapshot,oldModel])).rows[0];
   await f.c.query("UPDATE local_identity.workspace_caption_evidence SET task_id=$2,method='waiting' WHERE workspace_id=$1 AND shot_id=$3",[w.id,old.id,w.clips[0].shotId]);
   await complete(await claim(old.id));
   expect((await f.request('prepareWorkspaceCaptionAlignment',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,taskId:old.id,expectedInputFingerprint:w.captions[0].inputFingerprint})).status).toBe(200);

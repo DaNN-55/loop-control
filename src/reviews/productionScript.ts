@@ -1,6 +1,7 @@
 export type MaterialReference = string;
 export const productionVisualSources=['image','video','material','unassigned']as const;
 export type ProductionVisualSource=typeof productionVisualSources[number];
+export type ProductionTransition='cut'|'fade'|'studio'|'cross-dissolve'|'dip-to-black'|'soft-wipe'|'anticipation-zoom';
 export interface ProductionSettings {
   aspectRatio?: '9:16' | '16:9' | '1:1';
   voice?: string; speakingRate?: number; language?: string;
@@ -8,7 +9,8 @@ export interface ProductionSettings {
   captionAnchor?: string; captionSafeArea?: 'title-safe' | 'action-safe';
   captionMaxLines?: number; captionMaxCharacters?: number;
   captionStyle?: 'minimal' | 'cinematic';
-  transition?: 'cut' | 'fade' | 'studio';
+  transition?: ProductionTransition;transitionDuration?:number;transitionDirection?:'left'|'right'|'up'|'down';
+  scale?:number;animation?:'none'|'slow-push'|'zoom-out';animationAmount?:number;
   layout?: 'full' | '2up-horizontal' | '2up-vertical' | 'pip' | 'grid-4';
   narrationGainDb?: number; bgmGainDb?: number; sfxGainDb?: number;
   bgmDucking?: 'off' | 'light' | 'medium' | 'strong';
@@ -44,6 +46,7 @@ const reference = (value: string) => {
   if (!value || value.length > 200 || /[\\/\x00-\x1f]/.test(value)) throw Error('请填写素材名称，不填写文件路径');
   return value;
 };
+const aliases=(map:Record<string,string>,values:readonly string[])=>(value:string)=>choices(values)(map[value]??value);
 const fields: Record<string, { key: keyof ProductionSettings; parse: (s: string) => unknown }> = {
   '画幅': { key: 'aspectRatio', parse: choices(['9:16', '16:9', '1:1']) },
   '旁白音色': { key: 'voice', parse: s => s },
@@ -56,7 +59,12 @@ const fields: Record<string, { key: keyof ProductionSettings; parse: (s: string)
   '字幕最大行数': { key: 'captionMaxLines', parse: number(1, 2, true) },
   '每行最大字数': { key: 'captionMaxCharacters', parse: number(1, 24, true) },
   '字幕样式': { key: 'captionStyle', parse: choices(['minimal', 'cinematic']) },
-  '转场': { key: 'transition', parse: choices(['cut', 'fade', 'studio']) },
+  '转场': { key: 'transition', parse: aliases({'无':'cut','关闭':'cut','硬切':'cut','轻推':'anticipation-zoom','推进转场':'anticipation-zoom','叠化':'cross-dissolve','淡出到黑':'dip-to-black','柔和擦除':'soft-wipe'},['cut','fade','studio','cross-dissolve','dip-to-black','soft-wipe','anticipation-zoom']) },
+  '转场时长（秒）': {key:'transitionDuration',parse:number(0,5)},
+  '转场方向': {key:'transitionDirection',parse:aliases({'左':'left','右':'right','上':'up','下':'down'},['left','right','up','down'])},
+  '缩放': {key:'scale',parse:number(.05,16)},
+  '动画': {key:'animation',parse:aliases({'无':'none','关闭':'none','慢推':'slow-push','拉远':'zoom-out'},['none','slow-push','zoom-out'])},
+  '动画幅度（%）': {key:'animationAmount',parse:number(0,100)},
   '构图': { key: 'layout', parse: choices(['full','2up-horizontal','2up-vertical','pip','grid-4']) },
   '旁白音量（dB）': { key: 'narrationGainDb', parse: number(-60, 12) },
   '音乐音量（dB）': { key: 'bgmGainDb', parse: number(-60, 12) },
@@ -126,7 +134,8 @@ export function parseProductionScript(text: string): ProductionScript | null {
     }
     if(!segment&&section!=='制作设置') throw new ProductionScriptError('字段须位于制作设置或正文段落中',i+1);
     if(seen.has(name)) throw new ProductionScriptError('字段重复：'+name,i+1);seen.add(name);
-    if(!value) throw new ProductionScriptError('字段不能为空；继承时填写“默认”',i+1);
+    if(result.version===3&&['首帧素材','生成时长（秒）','视频生成提示词','镜头类型','视频模型'].includes(name))throw new ProductionScriptError('当前模板版本不支持字段：'+name,i+1);
+    if(!value){if(result.version===3&&Object.hasOwn(fields,name))continue;throw new ProductionScriptError('字段不能为空；继承时填写“默认”',i+1);}
     try {
       if(result.version===2&&['素材名称','镜头时长（秒）','画面来源','视频提示词'].includes(name)||result.version===3&&['首帧素材','生成时长（秒）','视频生成提示词','镜头类型'].includes(name))throw Error('当前模板版本不支持字段：'+name);
       if(name==='模板版本'&&!segment) continue;
@@ -161,8 +170,11 @@ export const productionScriptTemplate = `# 本期标题
 - 模板版本：3
 - 画幅：9:16
 - 旁白音色：默认
+- 旁白语言：zh-CN
 - 旁白语速：默认
 - 背景音乐素材：默认
+- 封面素材：默认
+- 视频费用预留（分/镜头）：默认
 - 字幕：开启
 - 字幕正文模式：follow_tts
 - 字幕样式：默认
@@ -170,7 +182,18 @@ export const productionScriptTemplate = `# 本期标题
 - 字幕安全区：title-safe
 - 字幕最大行数：2
 - 每行最大字数：14
+- 旁白音量（dB）：0
+- 音乐音量（dB）：-18
+- 音乐闪避：medium
+- 音效音量（dB）：-6
+- 音效起点（秒）：默认
+- 音效时长（秒）：默认
 - 转场：cut
+- 转场时长（秒）：默认
+- 转场方向：默认
+- 缩放：默认
+- 动画：默认
+- 动画幅度（%）：默认
 
 ## 正文
 
@@ -179,13 +202,17 @@ export const productionScriptTemplate = `# 本期标题
 - 口播：填写本段完整口播。
 - 画面提示：填写画面意图，可使用长句。
 - 画面来源：暂未选择
+- 素材名称：默认
+- 视频提示词：填写视频动作与运镜，可与画面提示不同。
+- 音效素材：默认
 - 镜头时长（秒）：5
 - 构图：full
-- 音效素材：无
+- 音效起点（秒）：默认
+- 音效时长（秒）：默认
 
 ## 本期补充约束（可选）
 
-- 制作备注：补充说明不作为可执行配置。
+- 制作备注：画面与视频提示词会预填，已有人工修改优先；口播、音乐和音效需在素材准备中选择并采用。
 `;
 
 /** Ordinary prose remains supported; an explicit invalid versioned contract must be corrected. */

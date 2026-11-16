@@ -34,3 +34,9 @@ it('preserves an edited Studio project and honors per-shot subtitle changes',()=
  const edited={...render,studioProject:{relativePath:'edited.json',sha256:'a'.repeat(64),fileSize:10}};
  expect(applyScriptRenderSettings(edited,{settings:{captionStyle:'cinematic'}})).toBe(edited);
 });
+it('keeps unspecified effect presentation and inherits an explicit episode offset of zero',()=>{
+ const render=confirmedTtsRender();render.members.push({memberKey:'sfx:shot-1',memberKind:'soundtrack',audioKind:'sfx',relativePath:'sfx.mp3',sha256:'a'.repeat(64),startSeconds:.6,durationSeconds:.4});
+ expect(applyScriptRenderSettings(render,{settings:{},segments:[{id:'shot-1',settings:{}}]}).members.at(-1)).toEqual(render.members.at(-1));
+ expect(applyScriptRenderSettings(render,{settings:{sfxStart:0},segments:[{id:'shot-1',settings:{}}]}).members.at(-1)).toMatchObject({startSeconds:0,durationSeconds:.4});
+ expect(()=>applyScriptRenderSettings(render,{settings:{sfxDuration:1}})).toThrow('音效源短于指定时长');
+});

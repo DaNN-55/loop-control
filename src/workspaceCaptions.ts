@@ -38,7 +38,9 @@ export function applyWorkspaceCaptionEdit(project:OpenChatCutProject,itemId:stri
  });
  // Native manual lanes consume explicit newlines. Never rely on the unsupported
  // maxCharactersPerLine knob or on generated-lane fixed 24-character paging.
- const fontSize=Math.min(.045,width*timeline.width/(timeline.height*Math.max(1,spatial.maxCharactersPerLine)*1.1),height/(spatial.maxLines*1.5));
+ // The native container has 10% padding on EACH side; its whole-line text box
+ // also reserves .42em per side, including for transparent backgrounds.
+ const fontSize=Math.min(.045,Math.min(.8,width)*timeline.width/(timeline.height*(Math.max(1,spatial.maxCharactersPerLine)+.84)*1.1),height/(spatial.maxLines*1.5));
  const lane={...existing,id:laneId,itemId:`manual:${laneId}`,label:'字幕',slotId,visible:contract.enabled,anchor,offsetXRatio:offsetX,offsetYRatio:offsetY,widthRatio:width,heightRatio:height,words,style:{fontFamily:preset?'Noto Sans SC':'sans-serif',fontWeight:preset==='cinematic'?700:600,color:'#ffffff',...(preset?{highlightColor:'#ffffff',strokeColor:'#000000',strokeWidth:preset==='cinematic'?0:2.5,background:preset==='cinematic'?'#000000c9':'transparent'}:{}),...existing?.style,fontSize,wholeLine:true},loopControl:{version:'workspace-caption/v1',contentMode:contract.contentMode,text:contract.text,spatial:structuredClone(spatial)}};
  const applied=options.timingOnly&&existing?{...existing,words,loopControl:lane.loopControl}:lane;
  captions.sourceEntries=existing?captions.sourceEntries.map(e=>e.id===laneId?applied:e):[...(captions.sourceEntries??[]),lane];

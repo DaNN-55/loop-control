@@ -7,7 +7,7 @@ import {ownerTransaction} from './ownerTransaction';
 import {registerProductionPreparation} from './productionPreparationStore';
 import {formalWorkflowFixture} from './formalWorkflow.fixture';
 import {loadSchemaCatalog,freshSchemaTransaction,migrationTransaction,schemaMigrationPlan} from './schemaMigrations';
-import {seedHistoricalPreparation} from './historicalPreparation.fixture';
+import {seedHistoricalPreparation,seedRecordedWorkspacePreparation} from './historicalPreparation.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('current manual narration saves independent inputs and preparation-bound audio without creating retired shot drafts',async()=>{
@@ -48,7 +48,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([[false,false],[true
    legacyPreparation=randomUUID();const location=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[f.newEpisode])).rows[0],source=(await f.c.query('SELECT storage_path,sha256 FROM public.production_material_revisions WHERE id=$1',[f.main])).rows[0];
    const board={version:'storyboard/v1',audioCues:[],shots:[{id:'shot-01',scriptSegment:'当前确认的独立口播。',durationSeconds:5,targetSpec:'9:16',shotType:'b_roll',productionMethod:'历史测试来源',inputBasis:[{relativePath:source.storage_path,sha256:source.sha256}]}]},bytes=Buffer.from(JSON.stringify(board)+'\n'),file={relativePath:`${location.directory_relative_path}/preparation/${legacyPreparation}.json`,sha256:createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length};
    await mkdir(dirname(join(f.assetRoot,file.relativePath)),{recursive:true});await writeFile(join(f.assetRoot,file.relativePath),bytes,{flag:'wx'});
-   await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.register_workspace_preparation($1,$2,$3,$4,$5,$6)',[f.newEpisode,f.main,legacyPreparation,file,board,'script-segment']));
+   await seedRecordedWorkspacePreparation(f.c,{episodeId:f.newEpisode,scriptRevisionId:f.main!,preparationId:legacyPreparation,ownerId:f.owner,file,board});
   }
   const made=await f.send('prepareWorkspace',{expectedScriptRevisionId:f.main,...(legacyPreparation?{reviewPackageId:legacyPreparation}:{})});expect(made.status,JSON.stringify(made.body)).toBe(200);let w=made.body;const clip=w.clips[0],settings=f.controlled!.narrationSettings;
   let preparation=w.preparationRevisionId;

@@ -44,7 +44,7 @@ export async function executeWorkspaceCandidateCommand(c:PoolClient,root:string,
  const selected=restoring?{...candidate,status:'available' as const}:candidate;
  const restoreFingerprint=restoring?current!.inputFingerprint:undefined;
  if(command==='prepareWorkspaceCandidate'){
-  const prepared=await prepareRegisteredWorkspaceCandidate(c,root,row,project,selected,data.durationPolicy,restoreFingerprint);
+  const prepared=await prepareRegisteredWorkspaceCandidate(c,root,row,project,selected,data.durationPolicy,restoreFingerprint,current?.inputFingerprint);
   return restoring?{...prepared,restoration:{currentText:current!.text,restoredText:candidate.text}}:prepared;
  }
  if(command!=='adoptWorkspaceCandidate')throw new ConfigurationError(400,'候选操作无效。');

@@ -1,4 +1,6 @@
+import {WorkspacePopover as Popover} from './WorkspacePopover';
 import {uiText} from '../i18n/ui';
+import {templateReferenceProblem} from '../workspaceTemplateInputs';
 import {WorkspaceResolutionChoices,WorkspaceVideoModeChoices,WorkspaceDurationControl,WorkspaceFrameFitChoices} from './WorkspaceGenerationChoices';
 import {promptReferenceOptions,type PromptReferenceBinding} from '../promptReferences';
 import {minimaxVideoModels} from '../worker/videoProviderCatalog';
@@ -36,7 +38,7 @@ import {productionModelSelection} from './productionModelSelection';
 import {WorkspacePexelsSearch} from './WorkspacePexelsSearch';
 import {useEffect,useId,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
 import {Check,Upload,Image as ImageIcon,Video,Maximize2,Download,Scissors,AudioLines,Trash2} from 'lucide-react';
-import {Dialog,DialogTrigger,Popover} from 'react-aria-components';
+import {Dialog,DialogTrigger} from 'react-aria-components';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
@@ -70,13 +72,14 @@ function prioritizeVideoInput(draft:Draft,id:string){
  return [id,...videoDraftIds(draft).filter(value=>value!==id)];
 }
 function initialDraft(props:VisualPreparationProps,targetItemId:string):Draft {
+ const shotId=props.workspace.clips.find(clip=>clip.itemId===targetItemId)?.shotId,template=props.workspace.templateInputs?.shots.find(shot=>shot.shotId===shotId);
  const sizeTarget=props.workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),ratio=(sizeTarget?.width??9)/(sizeTarget?.height??16),size:ImageGenerationSettings['size']=[...imageSizePresets].sort((a,b)=>Math.abs(Number(a.ratio.split(':')[0])/Number(a.ratio.split(':')[1])-ratio)-Math.abs(Number(b.ratio.split(':')[0])/Number(b.ratio.split(':')[1])-ratio))[0].standard;
  const selected=props.workspace.selectedImages?.find(s=>s.targetItemId===targetItemId)?.materialRevisionId;
  let pexelsSelection:ProductionSelection|null|undefined;try{pexelsSelection=JSON.parse(sessionStorage.getItem(`loop-pexels-draft:${props.workspace.id}:${targetItemId}`)??'null')?.selection;}catch{/* Keep an empty search selection. */}
  let defaults:Partial<Draft>={};try{defaults={...JSON.parse(sessionStorage.getItem(`loop-image-default:${props.workspace.id}`)??'{}'),...JSON.parse(sessionStorage.getItem(`loop-video-default:${props.workspace.id}`)??'{}')};}catch{/* Empty default. */}
  const window=props.project?readWorkspaceShotWindow(props.project,targetItemId):undefined;
  const seconds=sizeTarget?.durationSeconds??(window?window.durationInFrames/window.timeline.fps:Math.max(3,sizeTarget?.minimumSeconds??2));
- return {...defaults,pexelsSelection,imageBrief:{...emptyImageBrief,references:[]},videoSelection:defaults.videoSelection??sizeTarget?.defaultSelection,imageSelection:defaults.imageSelection??props.workspace.visualConfiguration?.imageSelection,videoSettings:defaults.videoSettings??((defaults.videoSelection??sizeTarget?.defaultSelection)?.provider==='bailian'?defaultWanModelSettings((defaults.videoSelection??sizeTarget?.defaultSelection)?.model??''):{...defaultWanSettings}),firstFrameFit:'contain',tab:props.currentVisualKind==='video'?'video':'image',origin:{image:'material',video:'material'},imagePrompt:'',videoPrompt:'',references:[],firstFrame:selected??(props.currentVisualKind==='image'?props.currentMaterialRevisionId??'':''),settings:defaults.settings??{size,quality:'auto',count:1},duration:String(seconds),usage:'still',selected:{image:'',video:''}};
+ return {...defaults,pexelsSelection,imageBrief:{...emptyImageBrief,references:[]},videoSelection:defaults.videoSelection??sizeTarget?.defaultSelection,imageSelection:defaults.imageSelection??props.workspace.visualConfiguration?.imageSelection,videoSettings:defaults.videoSettings??((defaults.videoSelection??sizeTarget?.defaultSelection)?.provider==='bailian'?defaultWanModelSettings((defaults.videoSelection??sizeTarget?.defaultSelection)?.model??''):{...defaultWanSettings}),firstFrameFit:'contain',tab:props.currentVisualKind==='video'?'video':'image',origin:{image:'material',video:'material'},imagePrompt:template?.imagePrompt??'',videoPrompt:template?.videoPrompt??'',references:[],firstFrame:selected??(props.currentVisualKind==='image'?props.currentMaterialRevisionId??'':''),settings:defaults.settings??{size,quality:'auto',count:1},duration:String(seconds),usage:'still',selected:{image:'',video:''}};
 }
 export function WorkspaceVisualPreparation(props:VisualPreparationProps){
  const options=props.selectedShotId?props.workspace.clips.filter(c=>c.shotId===props.selectedShotId):props.workspace.clips;
@@ -88,6 +91,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const {workspace,command,onChange:updated,targetItemId,options}=props,storageKey=`loop-visual-draft:${workspace.id}:${targetItemId}`;
  const timeline=props.project?.timelines.find(timeline=>timeline.items.some(item=>item.id===targetItemId));
  const visual=timeline?.items.find(item=>item.id===targetItemId);
+ const template=workspace.templateInputs?.shots.find(shot=>shot.shotId===options.find(clip=>clip.itemId===targetItemId)?.shotId),templateMaterial=template?.visual?.material;
  const canSplitVideo=timeline&&visual?.kind==='video'&&!hasSeparatedVideoSound(timeline,visual);
  const shelf=useWorkspaceMaterialSelection();
  const adoptionDescriptionId=useId();
@@ -374,6 +378,8 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  return <section className="workspace-visual-candidates workspace-visual-unified" aria-label={uiText("镜头图片与视频")}>
   <header><div className="workspace-visual-preview-tabs" role="tablist" aria-label={uiText("画面类型")}>{(['image','video'] as const).map(kind=><button key={kind} id={`visual-kind-${targetItemId}-${kind}`} type="button" role="tab" aria-selected={tab===kind} aria-controls={`visual-content-${targetItemId}`} tabIndex={tab===kind?0:-1} onClick={()=>change('tab',kind)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const next=e.key==='Home'?'image':e.key==='End'?'video':tab==='image'?'video':'image';change('tab',next);document.getElementById(`visual-kind-${targetItemId}-${next}`)?.focus();}}}>{kind==='image'?uiText("图片"):uiText("视频")}</button>)}</div></header>
   <WorkspaceUploadFeedback rows={uploadRows} running={uploading} disabled={disabled} notice={uploadNotice} onDismiss={id=>uploadState.update(value=>value.notice?.id===id?{...value,notice:undefined}:value)} onAbandon={()=>{if(!disabled)uploadState.abandon();}} onRetry={()=>void processUploads(uploadRows.filter(row=>row.status==='failed'||row.status==='pending'))}/>
+  {templateReferenceProblem(template?.visual)&&<p role="status">{templateReferenceProblem(template?.visual)}</p>}
+  {!props.currentVisualPath&&!draft.selected[tab]&&templateMaterial?.type===tab&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void run(()=>register(templateMaterial.id,tab))}>{`准备素材：${templateMaterial.name}`}</Button>}
   {options.length>1&&<label>{uiText("目标片段")}<NativeSelect size="sm" aria-label={uiText("画面候选目标")} value={targetItemId} disabled={disabled} onChange={e=>props.onTargetChange?.(e.target.value)}>{options.map((clip,index)=>{
     const item=timeline?.items.find(entry=>entry.id===clip.itemId);
     const slot=(item?.loopControlComposition as {slotId?:string}|undefined)?.slotId;

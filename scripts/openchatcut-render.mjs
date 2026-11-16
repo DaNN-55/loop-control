@@ -8,6 +8,8 @@ import {extname,isAbsolute,join,relative,resolve} from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { pruneOpenChatCutCache } from './openchatcut-cache.mjs';
+import {buildTransitionRenderBundle} from './openchatcut-transition-bundle.mjs';
+import {needsTemplateAudioAlignment,alignTemplateAudioExport} from './openchatcut-audio-timing.mjs';
 
 async function main() {
 if (process.argv[2] === "--version") {
@@ -52,25 +54,29 @@ try {
   }
   rewriteSources(state, copied);
   if(project) rewriteSources(project, copied);
+  const hasNativeTransition=[state,...(project?.timelines??[])].some(tl=>(tl.transitions??[]).some(t=>t.enabled!==false&&t.type!=='audio-cross-fade'));
+  const transitionBundle=hasNativeTransition?await buildTransitionRenderBundle(root,join(dataDir,'transition-bundle')):undefined;
   const port = await availablePort();
   const child = spawn(nodePath, openChatCutViteArguments(root, port), {
     cwd: root,
-    env: openChatCutRenderEnvironment(process.env, dataDir, randomUUID()),
+    env: {...openChatCutRenderEnvironment(process.env, dataDir, randomUUID()),...(transitionBundle?{CC_REMOTION_BUNDLE:transitionBundle}:{})},
     stdio: ["ignore", "pipe", "pipe"],
   });
   child.stdout?.on("data", (chunk) => logs.push(String(chunk)));
   child.stderr?.on("data", (chunk) => logs.push(String(chunk)));
   try {
     await waitForServer(`http://127.0.0.1:${port}`, child, logs);
-    const response = await fetch(`http://127.0.0.1:${port}/export`, {
+    const exportOrigin=`http://127.0.0.1:${port}`,exportHeaders={ "Content-Type": "application/json", Origin:exportOrigin, "Sec-Fetch-Site": "same-origin" },exportBody={ state, ...openChatCutExportRange(state), ...(project ? { project, timelineId: spec.timelineId || project.activeTimelineId } : {}), format: "video", codec: "h264", name: "loop-control" };
+    const response = await fetch(exportOrigin+'/export', {
       method: "POST",
-      headers: { "Content-Type": "application/json", Origin: `http://127.0.0.1:${port}`, "Sec-Fetch-Site": "same-origin" },
-      body: JSON.stringify({ state, ...openChatCutExportRange(state), ...(project ? { project, timelineId: spec.timelineId || project.activeTimelineId } : {}), format: "video", codec: "h264", name: "loop-control" }),
+      headers:exportHeaders,
+      body: JSON.stringify(exportBody),
     });
     if (!response.ok) throw new Error(`OpenChatCut export failed (${response.status}): ${await response.text()}`);
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (bytes.byteLength === 0) throw new Error("OpenChatCut returned an empty video.");
     await writeFile(outputPath, bytes);
+    if(needsTemplateAudioAlignment(state))await alignTemplateAudioExport({origin:exportOrigin,headers:exportHeaders,body:exportBody,outputPath,dataDir});
   } finally {
     if (child.exitCode === null) {
       child.kill("SIGTERM");

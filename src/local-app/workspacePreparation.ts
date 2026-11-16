@@ -22,6 +22,7 @@ export async function prepareAuthoredWorkspace(c:PoolClient,root:string,e:{id:st
  if(!source)throw new ConfigurationError(409,'请先确认主脚本。');
  const text=(await verifyEpisodeFile(c,root,e.id,source.storage_path,source.sha256,Number(source.file_size))).toString('utf8');
  const script=parseStoryboardScript(text);
+ if(script?.version===2)throw new ConfigurationError(409,'旧 v2 脚本仅保留历史读取，请修订为模板版本 3 后再准备新工程。');
  const inputs=[{artifactType:'main_script',relativePath:source.storage_path,sha256:source.sha256,fileSize:Number(source.file_size)}];
  const paragraphs=script?[]:plainScriptParagraphs(text);
  if(!script&&!paragraphs.length)throw new ConfigurationError(409,'脚本正文为空，请补充正文后重新确认。');

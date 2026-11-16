@@ -10,7 +10,7 @@ import {createNativeWorkspaceModules} from './openchatcut-host-modules.mjs';
 const sources=[
  'src/shotComposition.ts','src/workspaceDisplayNames.ts','src/workspaceVideoSound.ts','src/workspaceCandidates.ts',
  'src/workspaceShots.ts','src/workspaceVideo.ts','src/workspaceAudio.ts',
- 'src/workspaceCaptions.ts','src/shotCaptions.ts','scripts/openchatcut-caption-drag.mjs',
+ 'src/workspaceCaptions.ts','src/shotCaptions.ts','src/workspaceRenderPreferences.ts','src/shotAudioMix.ts','scripts/openchatcut-caption-drag.mjs',
  'scripts/openchatcut-caption-layout.mjs','scripts/openchatcut-bridge-retry.mjs',
  'scripts/openchatcut-embed-client.mjs',
 ];
@@ -19,6 +19,18 @@ async function fixture(){
  for(const file of sources){await mkdir(dirname(join(root,file)),{recursive:true});await copyFile(new URL('../'+file,import.meta.url),join(root,file));}
  return {root,sourceRoot:pathToFileURL(root+'/'),close:()=>rm(root,{recursive:true,force:true})};
 }
+
+it('serves the real caption module and every registered transitive dependency through Vite',async()=>{
+ const f=await fixture();let server;
+ try{
+  server=await createServer({configFile:false,envFile:false,root:f.root,logLevel:'silent',plugins:[await createNativeWorkspaceModules({sourceRoot:f.sourceRoot,transformWithEsbuild})],server:{host:'127.0.0.1',port:0}});
+  await server.listen();const origin=`http://127.0.0.1:${server.httpServer.address().port}`;
+  const pending=['/@id/__x00__loop-control-captions'],seen=new Set();
+  while(pending.length){const path=pending.shift();if(seen.has(path))continue;seen.add(path);const response=await fetch(origin+path),code=await response.text();expect(response.status,`${path}: ${code.slice(0,1600)}`).toBe(200);for(const match of code.matchAll(/["'](\/@id\/__x00__loop-control-[^"']+)["']/g))pending.push(match[1]);}
+  expect(seen.has('/@id/__x00__loop-control-render-preferences')).toBe(true);
+  expect(seen.has('/@id/__x00__loop-control-audio-mix')).toBe(true);
+ }finally{await server?.close();await f.close();}
+});
 
 it('serves a new import between registered modules through real Vite without an importer-specific mapping',async()=>{
  const f=await fixture();let server;

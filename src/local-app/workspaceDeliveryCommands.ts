@@ -18,6 +18,7 @@ import {validateImportedMaterial} from './materialAcceptance.js';
 import {coverImageExtension} from '../publishing/coverImage.js';
 import {parseWorkspaceCoverSource,type WorkspaceCoverSource} from '../workspaceCover.js';
 import {readWorkspaceCoverInputs} from './workspaceCover.js';
+import {readWorkspaceTemplateInputs} from './workspaceTemplateInputs.js';
 import {verifyPublishPackage} from '../publishing/publishPackage.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {isWorkspaceVideoTrack} from '../workspaceExecution.js';
@@ -46,7 +47,8 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
  if(Object.hasOwn(data,'coverSource')){
   if(Object.hasOwn(data,'coverBase64'))throw new ConfigurationError(400,'请只选择一种封面来源。');
   try{coverSource=parseWorkspaceCoverSource(data.coverSource);}catch{throw new ConfigurationError(400,'封面来源协议或身份无效。');}
-  const candidate=(await readWorkspaceCoverInputs(c,row)).find(v=>v.source.kind===coverSource!.kind&&v.source.id===coverSource!.id&&v.source.sha256===coverSource!.sha256);
+  const templateInputs=await readWorkspaceTemplateInputs(c,root,row);
+  const candidate=(await readWorkspaceCoverInputs(c,row,templateInputs?.cover?.material)).find(v=>v.source.kind===coverSource!.kind&&v.source.id===coverSource!.id&&v.source.sha256===coverSource!.sha256);
   if(!candidate?.file||candidate.unavailableReason)throw new ConfigurationError(409,'当前封面候选不存在或已变化，请重新选择。');
   try{cover=await verifyEpisodeFile(c,root,row.episode_id,candidate.file.relativePath,candidate.file.sha256,candidate.file.fileSize);}catch(error){
    if(['ENOENT','ENOTDIR','EACCES','EPERM','EIO'].includes((error as NodeJS.ErrnoException).code??''))throw new ConfigurationError(409,'原封面文件不可读取，请恢复原文件或另选封面。');throw error;

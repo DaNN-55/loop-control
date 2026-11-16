@@ -50,3 +50,11 @@ it('keeps read-only quality visible without a save affordance',async()=>{
  await waitFor(()=>expect((screen.getByRole('combobox',{name:'业务质量档'}) as HTMLSelectElement).value).toBe('high'));
  expect((screen.getByRole('combobox',{name:'业务质量档'}) as HTMLSelectElement).disabled).toBe(true);expect(screen.queryByRole('button')).toBeNull();expect(command).not.toHaveBeenCalled();
 });
+
+it('shows an inline quality placeholder with an accessible name and no duplicate visible title',async()=>{
+ request.mockResolvedValue({enabled:true,tier:'unspecified',revision:0});
+ const {container}=render(<ProductionQualityField episodeId="episode"/>);
+ await waitFor(()=>expect((screen.getByRole('combobox',{name:'业务质量档'}) as HTMLSelectElement).disabled).toBe(false));
+ expect(screen.getByRole('option',{name:'业务质量档'})).toBeTruthy();
+ expect(container.querySelector('label,.field-label')).toBeNull();
+});

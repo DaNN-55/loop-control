@@ -1,4 +1,5 @@
 import {uiText} from '../i18n/ui';
+import {templateReferenceProblem} from '../workspaceTemplateInputs';
 import {WorkspaceAudioSourceOptions} from './WorkspaceAudioSourceOptions';
 import {Paperclip,Save,SlidersHorizontal} from 'lucide-react';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
@@ -34,7 +35,9 @@ export function WorkspaceAudioPreparation(props:Props){
  return props.readOnly?<WorkspaceAudioRecord workspace={props.workspace} project={props.project} selectedShotId={props.selectedShotId}/>:<EditableWorkspaceAudioPreparation {...props}/>;
 }
 function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materials=[],project,bridge,selectedShotId,readOnly=false}:Props){
- const key=w.id+':'+(selectedShotId??'episode'),initial=():AudioDraft=>{const empty=emptyAudioDraft();try{const stored=sessionStorage.getItem(`loop-audio-draft-v2:${key}`),saved=JSON.parse(stored??sessionStorage.getItem(`loop-audio-draft:${key}`)??'{}');return {...empty,...(['bgm','source'].includes(saved.kind)||stored&&saved.kind==='sfx'?saved:{})};}catch{return empty;}};
+ const templateShot=w.templateInputs?.shots.find(shot=>shot.shotId===(selectedShotId??w.clips[0]?.shotId));
+ function seeded(kind:'bgm'|'sfx'):AudioDraft{const preferences=w.clips.find(clip=>clip.shotId===(selectedShotId??w.clips[0]?.shotId))?.renderPreferences,reference=kind==='bgm'?w.templateInputs?.bgm:templateShot?.sfx;return{...emptyAudioDraft(),kind,manual:reference?.material?.id??'',description:reference?.material?.name??(kind==='bgm'?'整期配乐':'导入音效'),...(kind==='sfx'?{anchor:'shot',shot:selectedShotId??w.clips[0]?.shotId??'',...(preferences?.sfxDuration===undefined?{}:{duration:preferences.sfxDuration}),...(preferences?.sfxStart===undefined?{}:{offset:preferences.sfxStart})}:{})};}
+ const key=w.id+':'+(selectedShotId??'episode'),initial=():AudioDraft=>{try{const stored=sessionStorage.getItem(`loop-audio-draft-v2:${key}`),saved=JSON.parse(stored??sessionStorage.getItem(`loop-audio-draft:${key}`)??'{}');return {...seeded(stored&&saved.kind==='sfx'?'sfx':'bgm'),...(['bgm','source'].includes(saved.kind)||stored&&saved.kind==='sfx'?saved:{})};}catch{return seeded('bgm');}};
  const [uploadStatus,setUploadStatus]=useState(''),[expandedCandidate,setExpandedCandidate]=useState('');
  const [musicSettingsSaved,setMusicSettingsSaved]=useState(false);
  const [drafts,setDrafts]=useState<Record<string,AudioDraft>>({}),[uploaded,setUploaded]=useState<NonNullable<Props['materials']>>([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[live,setLive]=useState<OpenChatCutProject|null>(null);
@@ -45,7 +48,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const kind=localDraft.kind==='sfx'?'sfx':'bgm';
  useEffect(()=>setExpandedCandidate(''),[kind,selectedShotId]);
  const musicKey=w.id+':episode-music';
- function initialMusic():AudioDraft{try{const stored=sessionStorage.getItem(`loop-audio-draft-v2:${musicKey}`);if(stored)return {...emptyAudioDraft(),...JSON.parse(stored)};}catch{/* Retain saved production-order settings. */}const saved=w.audio?.defaults?.settings;return saved?{...emptyAudioDraft(),description:saved.description,query:saved.query,manual:saved.materialRevisionId}:localDraft.kind==='bgm'?localDraft:emptyAudioDraft();}
+ function initialMusic():AudioDraft{try{const stored=sessionStorage.getItem(`loop-audio-draft-v2:${musicKey}`);if(stored)return {...seeded('bgm'),...JSON.parse(stored)};}catch{/* Retain saved production-order settings. */}const saved=w.audio?.defaults?.settings;return saved?{...seeded('bgm'),description:saved.description,query:saved.query,manual:saved.materialRevisionId}:localDraft.kind==='bgm'?localDraft:seeded('bgm');}
  const draft=kind==='bgm'?(drafts[musicKey]??initialMusic()):localDraft;
  useEffect(()=>{if(kind==='bgm')try{sessionStorage.setItem(`loop-audio-draft-v2:${musicKey}`,JSON.stringify(draft));}catch{/* Keep the live draft. */}},[kind,musicKey,draft]);
  const {description:storedDescription,query,duration,anchor,offset}=kind===draft.kind?draft:emptyAudioDraft();
@@ -61,7 +64,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  const catalogReading=useProductionServiceCatalog({scope:JSON.stringify([w.episodeId,w.id])});
  const services=catalogReading.catalog?.groups.find(g=>g.capability==='music_sound')?.services??[],catalogError=catalogReading.error?'无法读取音频连接，请刷新页面后重试。':'';
  const service=services.find(s=>s.connectionVersionId===selection?.connectionVersionId&&s.provider===selection?.provider&&s.adapter===selection?.adapter);
- function change(patch:Partial<AudioDraft>){setMusicSettingsSaved(false);const target=Object.hasOwn(patch,'kind')?key:kind==='bgm'?musicKey:key;setDrafts(values=>{const next={...(values[target]??(target===musicKey?initialMusic():initial())),...patch};try{sessionStorage.setItem(`loop-audio-draft-v2:${target}`,JSON.stringify(next));}catch{/* Keep the live form. */}return {...values,[target]:next};});}
+ function change(patch:Partial<AudioDraft>){setMusicSettingsSaved(false);const target=Object.hasOwn(patch,'kind')?key:kind==='bgm'?musicKey:key;setDrafts(values=>{const previous=values[target]??(target===musicKey?initialMusic():initial()),next={...(patch.kind&&patch.kind!=='source'&&patch.kind!==previous.kind?seeded(patch.kind):previous),...patch};try{sessionStorage.setItem(`loop-audio-draft-v2:${target}`,JSON.stringify(next));}catch{/* Keep the live form. */}return {...values,[target]:next};});}
  const intentShot=w.clips.find(clip=>clip.shotId===shot);
  const prompt=draft.prompt??(kind==='sfx'?draft.query||intentShot?.soundIntent||'':query);
  const soundQuery=soundIntentQuery(prompt);
@@ -153,6 +156,8 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
   {kind==='sfx'&&!!absoluteEffects.length&&<section className="workspace-audio-group" aria-label={uiText("整期定位音效")}><h4>{uiText("整期定位音效")}</h4>{absoluteEffects.map(candidate)}</section>}
   {!!other.length&&<section className="workspace-audio-group" aria-label={uiText("配乐与原声")}><h4>{uiText("配乐与原声")}</h4>{other.map(candidate)}</section>}
   <input ref={input} aria-label={kind==='sfx'?uiText("上传音效"):uiText("上传配乐")} hidden type="file" accept=".mp3,audio/mpeg" disabled={disabled||!!bridge} onChange={event=>{const file=event.target.files?.[0];event.target.value='';if(file)void upload(file);}}/>
+  {templateReferenceProblem(kind==='bgm'?w.templateInputs?.bgm:templateShot?.sfx)&&<p role="status">{templateReferenceProblem(kind==='bgm'?w.templateInputs?.bgm:templateShot?.sfx)}</p>}
+  {selectedMaterial&&<Button size="sm" color="secondary" isDisabled={disabled||!!bridge} onPress={()=>void addLocalMaterial(manual,selectedMaterial.source_path)}>{`准备${kind==='bgm'?'配乐':'音效'}：${selectedMaterial.source_path}`}</Button>}
   <div className="workspace-generation-composer workspace-audio-composer" data-audio-kind={kind}>
    <div className="workspace-audio-composer-input workspace-audio-single-input" role="group" aria-label={uiText("音频输入")} onDragOver={event=>{if(event.dataTransfer.types.includes('Files')||event.dataTransfer.types.includes(workspaceMaterialDragType))event.preventDefault();}} onDrop={event=>{if(event.defaultPrevented||disabled)return;const id=event.dataTransfer.getData(workspaceMaterialDragType),material=eligibleMaterials.find(m=>m.id===id);if(material){event.preventDefault();void addLocalMaterial(material.id,material.source_path.split('/').pop());}else if(event.dataTransfer.files?.length){event.preventDefault();void upload(event.dataTransfer.files[0]);}}}>
     <WorkspaceMaterialDrop label={kind==='sfx'?uiText("使用已选音效"):uiText("使用已选配乐")} kind="audio" purpose={audioPurpose} surface="preview" disabled={disabled} onSelect={id=>{const m=eligibleMaterials.find(m=>m.id===id);void addLocalMaterial(id,m?.source_path.split('/').pop());}}/>

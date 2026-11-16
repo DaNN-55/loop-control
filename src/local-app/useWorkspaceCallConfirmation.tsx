@@ -35,7 +35,7 @@ export function useWorkspaceCallConfirmation(command:(name:string,data:unknown)=
   try{
    const proposal=await action.current('prepareWorkspaceCall',{episodeId:data.episodeId,workspaceId:data.workspaceId,expectedRevision:data.expectedRevision,callCommand:name,callData:data}) as WorkspaceCallProposal;
    if(!owns(preparing))return;
-   transition({phase:'review',request:preparing.request,proposal,reservation:proposal.summary.estimate?.manualReservation?'':(proposal.summary.reservationCents/100).toFixed(2)});
+   transition({phase:'review',request:preparing.request,proposal,reservation:proposal.summary.estimate?.manualReservation&&!proposal.summary.reservationPrefilled?'':(proposal.summary.reservationCents/100).toFixed(2)});
   }catch(cause){if(owns(preparing)){transition({phase:'idle'});preparing.request.reject(cause);}}
  }
  async function request(name:string,value:unknown){

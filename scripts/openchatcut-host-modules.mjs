@@ -14,6 +14,8 @@ const modules=[
  ['bridge-retry','scripts/openchatcut-bridge-retry.mjs',true],
  ['embed','scripts/openchatcut-embed-client.mjs',true],
  ['captions','src/workspaceCaptions.ts',true],
+ ['render-preferences','src/workspaceRenderPreferences.ts'],
+ ['audio-mix','src/shotAudioMix.ts'],
  ['shot-captions','src/shotCaptions.ts'],
 ];
 

@@ -122,3 +122,12 @@ it('requires a manually entered reservation when the model has no valid output-t
  fireEvent.change(screen.getByLabelText('本次费用预留（元）'),{target:{value:'2.00'}});fireEvent.click(screen.getByRole('button',{name:'确认并提交本次调用'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('confirmWorkspaceCall',expect.objectContaining({reservationCents:200})));
 });
+
+it('prefills a template reservation even for manually priced models and retains the edited final amount',async()=>{
+ const estimate={manualReservation:true,minimumCents:1,maximumCents:100000,suggestedCents:1,basis:'按本次确认预留'};
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceCall'?{...proposal,summary:{...proposal.summary,kind:'视频生成',estimate,reservationCents:250,reservationPrefilled:true}}:{});
+ render(<Host command={command}/>);fireEvent.click(screen.getByRole('button',{name:'生成图片'}));await screen.findByRole('dialog');
+ expect(screen.getByRole('spinbutton',{name:'本次费用预留（元）'})).toHaveProperty('value','2.50');
+ fireEvent.change(screen.getByRole('spinbutton',{name:'本次费用预留（元）'}),{target:{value:'3.21'}});fireEvent.click(screen.getByRole('button',{name:'确认并提交本次调用'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('confirmWorkspaceCall',expect.objectContaining({reservationCents:321})));
+});

@@ -6,6 +6,12 @@ import type {ProductionWorkspace} from '../productionWorkspace';
 const workspace={id:'w',episodeId:'e',revision:2,project:{sha256:'h'},clips:[{id:'c',itemId:'visual',shotId:'S1',text:'镜头',source:null}],audio:{mix:{voices:[{shotId:'S1',mode:'none',gainDb:0,ambienceGainDb:null,sourceItemId:null,sourceAssetId:null}],sounds:[]},preparations:[]}} as unknown as ProductionWorkspace;
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.useRealTimers();sessionStorage.clear();});
 function selectAudio(id:string){fireEvent.drop(screen.getByRole('group',{name:'音频输入'}),{dataTransfer:{types:['application/x-loop-workspace-material'],getData:()=>id,files:[]}});}
+it.each([0,.75])('uses filled script effect timing (%s) when explicitly preparing a local sound',async offset=>{
+ const value=structuredClone(workspace);value.clips[0].renderPreferences={version:'workspace-render-preferences/v2',sfxStart:offset,sfxDuration:.4};
+ const command=vi.fn(async()=>value);render(<WorkspaceAudioPreparation workspace={value} command={command} onChange={()=>{}} selectedShotId="S1" materials={[{id:'effect',material_type:'audio',source_path:'effect.mp3',material_purpose:'sound_effect'}]}/>);
+ fireEvent.click(screen.getByRole('button',{name:'音效'}));expect(command).not.toHaveBeenCalled();selectAudio('effect');
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({durationSeconds:.4,offsetSeconds:offset,anchor:'shot',shotId:'S1'})));
+});
 it('editing the main-voice form does not alter the native timeline until explicit apply',async()=>{
  const command=vi.fn(async()=>workspace);render(<WorkspaceAudioPanel workspace={workspace} command={command} onChange={()=>{}}/>);fireEvent.change(screen.getByLabelText('主声音'),{target:{value:'tts'}});expect(command).not.toHaveBeenCalled();expect((screen.getByLabelText('保留低音量原声') as HTMLInputElement).checked).toBe(false);fireEvent.click(screen.getByRole('button',{name:'应用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('mixWorkspaceAudio',expect.objectContaining({edit:expect.objectContaining({mode:'tts',ambienceGainDb:null,visualItemIds:['visual']})})));
 });
@@ -225,4 +231,15 @@ it('selects a current audio connection without refresh or default-saving control
  fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'calm piano'}});
  fireEvent.click(screen.getByRole('button',{name:'检索并获取'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({selection:{capability:'music_sound',provider:'freesound',adapter:'freesound_preview',connectionVersionId:'version-1'},query:'calm piano'})));
+});
+
+it('preselects named template music and effects without preparing until the user asks',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace,serviceCatalog:{groups:[]}})));
+ const sound={id:'effect',name:'轻响.mp3',type:'audio',purpose:'sound_effect',sha256:'effect',relativePath:'effect.mp3',fileSize:100},music={...sound,id:'music',name:'背景.mp3',purpose:'background_music'};
+ const current={...workspace,templateInputs:{version:'workspace-template-inputs/v1' as const,narration:{},bgm:{reference:'背景',status:'bound' as const,material:music,candidates:[music]},shots:[{shotId:'S1',imagePrompt:'',videoPrompt:'',narration:{},sfx:{reference:'轻响',status:'bound' as const,material:sound,candidates:[sound]}}]}};
+ const command=vi.fn(async()=>current),materials=[sound,music].map(m=>({id:m.id,material_type:m.type,source_path:m.name,material_purpose:m.purpose}));
+ render(<WorkspaceAudioPreparation workspace={current} command={command} onChange={()=>{}} selectedShotId="S1" materials={materials}/>);
+ expect(screen.getByRole('button',{name:'准备配乐：背景.mp3'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'音效'}));fireEvent.click(screen.getByRole('button',{name:'准备音效：轻响.mp3'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',materialRevisionId:'effect',shotId:'S1',anchor:'shot'})));
 });

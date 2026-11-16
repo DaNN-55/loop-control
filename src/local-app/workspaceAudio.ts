@@ -89,7 +89,8 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
    if(task?.invalidated_at||!await preparationCurrent(c,root,row,project,{...p,input_snapshot:task?.input_snapshot}))throw new ConfigurationError(409,'目标或输入已失效，请核对当前内容后重新准备。');
    await audioRuntime(runtime,p.kind,task?.input_snapshot);const queued=(await c.query('SELECT local_identity.queue_workspace_audio($1,true) task_id',[p.id])).rows[0];recordValidatedRequestLogContext({taskId:queued?.task_id});return;
   }
-  let duration=Number(data.durationSeconds),description=data.description??'原片音轨',query=data.query??null,anchor=data.anchor??'absolute',offset=Number(data.offsetSeconds??0),shotId=data.shotId??null,sourceItemId=data.sourceItemId??null,sourceSha:string|null=null,source:any=null;
+  const preferences=data.kind==='sfx'&&typeof data.shotId==='string'?workspaceRenderPreferences(project,data.shotId):undefined;
+  let duration=Number(data.durationSeconds??preferences?.sfxDuration),description=data.description??'原片音轨',query=data.query??null,anchor=data.anchor??(data.kind==='sfx'&&data.shotId?'shot':'absolute'),offset=Number(data.offsetSeconds??preferences?.sfxStart??0),shotId=data.shotId??null,sourceItemId=data.sourceItemId??null,sourceSha:string|null=null,source:any=null;
   if(data.intent&&!query)query=soundIntentQuery(String(data.intent));
   if(data.kind==='source'){
    const clip=row.bindings.find(b=>b.itemId===sourceItemId&&(!shotId||b.shotId===shotId)),item=project.timelines.flatMap(t=>t.items).find(i=>i.id===sourceItemId);
@@ -98,6 +99,11 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
    const timeline=project.timelines.find(t=>t.items.includes(item))!,rate=Number(item.playbackRate??1),start=Number(item.srcInFrame??0)/timeline.fps;duration=Number(item.durationInFrames)*rate/timeline.fps;if(!Number.isFinite(rate)||rate<=0||!Number.isFinite(start)||start<0||!Number.isFinite(duration)||duration<=0||start+duration>observed.durationSeconds+.025)throw new ConfigurationError(409,'所选原片使用窗口无效或超出实际源长。');sourceSha=source.sha256;shotId=clip.shotId;anchor='shot';offset=0;description=`${clip.shotId} 原片 ${start.toFixed(2)}–${(start+duration).toFixed(2)}s`;source={...source,duration,startSeconds:start,sourceInFrame:Number(item.srcInFrame??0),sourceFrameRate:timeline.fps,playbackRate:rate,visualDurationInFrames:Number(item.durationInFrames)};
   }
   if(typeof description!=='string'||!description.trim()||description.length>100||!Number.isFinite(duration)||duration<=0||duration>7200||!['absolute','shot'].includes(String(anchor))||!Number.isFinite(offset)||offset<0||anchor==='shot'&&!row.bindings.some(b=>b.shotId===shotId))throw new ConfigurationError(400,'音频说明、时长或位置无效。');
+  if(data.kind==='sfx'&&anchor==='shot'&&(preferences?.sfxStart!==undefined||preferences?.sfxDuration!==undefined)){
+   const ids=new Set(workspaceAudioShotIds(row)[String(shotId)]??[]),timeline=project.timelines.find(t=>t.items.some(i=>ids.has(String(i.id)))),items=timeline?.items.filter(i=>ids.has(String(i.id)))??[];
+   const shotFrames=items.length?Math.max(...items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))-Math.min(...items.map(i=>Number(i.startFrame))):0;
+   if(!timeline||Math.round(offset*timeline.fps)+Math.max(1,Math.round(duration*timeline.fps))>shotFrames)throw new ConfigurationError(409,'音效区间超出实际镜头时长，请调整起点或时长。');
+  }
   if(data.kind==='bgm'){anchor='absolute';offset=0;shotId=null;}
   if(data.kind!=='source'&&!data.materialRevisionId&&!Object.hasOwn(data,'audioTrackId')&&(typeof query!=='string'||!query.trim()||query.length>100||!/^[\x20-\x7e]+$/.test(query)))throw new ConfigurationError(400,'请填写不超过 100 字符的英文 Freesound 检索词。');
   let materialId=null,requestSnapshot:Record<string,unknown>={};
@@ -172,7 +178,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
  const shotIds=p.anchor==='shot'?new Set(workspaceAudioShotIds(row)[p.shot_id]??[]):null,anchorItems=shotIds?tl.items.filter(i=>shotIds.has(String(i.id))):[];
  if(shotIds&&!anchorItems.length)throw new ConfigurationError(409,'音效锚点镜头已删除。');
  const start=(anchorItems.length?Math.min(...anchorItems.map(i=>Number(i.startFrame))):0)+Math.round(Number(p.offset_seconds)*tl.fps);
- const frames=Math.round(Number(p.duration_seconds)*tl.fps);
+ const frames=Math.max(1,Math.round(Number(p.duration_seconds)*tl.fps));
  itemId=`workspace-sfx-${p.id}`;const previous=tl.items.find(i=>i.id===itemId),track=typeof previous?.track==='string'?previous.track:`workspace-sfx-${p.id}`;
  const actualStart=Number(previous?.startFrame??start),actualFrames=Number(previous?.durationInFrames??frames),sourceIn=Number(previous?.srcInFrame??0),rate=Number(previous?.playbackRate??1);
  if(duration+.05<(sourceIn+actualFrames*rate)/tl.fps)throw new ConfigurationError(409,'音频短于当前整期或音效窗口，请重新准备；不会自动循环。');

@@ -9,6 +9,7 @@ export interface WorkspaceSource {materialRevisionId:string;relativePath:string;
 export interface WorkspaceClip {voiceInput?:import('./workspaceVoiceInput.js').WorkspaceVoiceInput;renderPreferences?:import('./workspaceRenderPreferences.js').WorkspaceRenderPreferences;id:string;itemId:string;shotId:string;text:string;soundIntent?:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
 export interface LegacyDraftInputs {version:'legacy-draft-inputs/v1';sourceSha256:string;shots:Array<{shotId:string;confirmationStatus:string;audioMode:string;materialRevisionId:string|null;audioTrackId:string|null;subtitleText:string;ttsText:string|null;ranges:Array<{startSeconds:number;endSeconds:number}>;composition:unknown}>;issues:Array<{shotId:string;kind:string}>}
 export interface ProductionWorkspace {
+ templateInputs?:import('./workspaceTemplateInputs.js').WorkspaceTemplateInputs;
  coverInputs?:import('./workspaceCover.js').WorkspaceCoverInput[];
  legacyInputs?:LegacyDraftInputs;
  scriptResume?:{canReuse:boolean;reason:string};

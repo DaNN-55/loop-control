@@ -33,3 +33,7 @@ describe('uploaded material matching',()=>{
  it('does not treat dotted material names as arbitrary file extensions',()=>{expect(resolveProductionMaterial('scene.02','image',[material({alias:'scene.01'})],'current','series').status).toBe('missing');});
  it('checks purpose and type and honors explicit no sound',()=>{expect(resolveProductionMaterial('music','sfx',[material({type:'audio',purpose:'background_music',alias:'music'})],'current','series').status).toBe('missing');expect(resolveProductionMaterial('none','sfx',[],'current',null).status).toBe('none');});
 });
+it.each(['首帧素材','生成时长（秒）','视频生成提示词','镜头类型','视频模型'])('rejects removed current-template field %s even when blank',field=>{
+ const text=`# 当前\n## 制作设置\n- 模板版本：3\n## 正文\n### 段落 01\n- 口播：当前口播\n- 画面来源：图片\n- ${field}：\n`;
+ expect(()=>parseProductionScript(text)).toThrow(/不支持字段/);
+});

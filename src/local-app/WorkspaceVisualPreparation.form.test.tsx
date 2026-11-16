@@ -97,3 +97,28 @@ it('空提示词不重复显示填写提示，仍阻止生成并保留超限错�
  expect(screen.getByRole('button',{name:'生成图片'})).toHaveProperty('disabled',true);
  expect(command).not.toHaveBeenCalled();
 });
+
+it('prefills separate template prompts and preserves a manually emptied prompt after refresh',async()=>{
+ const template={version:'workspace-template-inputs/v1' as const,narration:{},shots:[{shotId:'shot',imagePrompt:'模板静态构图',videoPrompt:'模板运镜',narration:{}}]};
+ const current={...workspace,templateInputs:template};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:current,serviceCatalog:{groups:[{capability:'image',services:[service]}]}})));
+ const command=vi.fn(async()=>current),props={workspace:current,materials:[],command,onChange:()=>{}};
+ const view=render(<WorkspaceVisualPreparation {...props}/>);
+ fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));
+ expect(screen.getByRole('textbox',{name:'图片提示词'})).toHaveProperty('value','模板静态构图');
+ fireEvent.change(screen.getByRole('textbox',{name:'图片提示词'}),{target:{value:''}});
+ view.unmount();render(<WorkspaceVisualPreparation {...props} workspace={{...current,templateInputs:{...template,shots:[{...template.shots[0],imagePrompt:'后来变化的模板'}]}}}/>);
+ expect(screen.getByRole('textbox',{name:'图片提示词'})).toHaveProperty('value','');expect(command).not.toHaveBeenCalled();
+});
+
+it('prefills the video prompt independently and offers a named visual only on explicit preparation',()=>{
+ sessionStorage.setItem('loop-visual-draft:form-workspace:target',JSON.stringify({tab:'image',origin:{image:'generate',video:'generate'},settings:{size:'1024x1536',quality:'auto',count:1}}));
+ const material={id:'named-image',name:'产品.png',type:'image',purpose:'visual_reference',sha256:'a',relativePath:'media/product.png',fileSize:100};
+ const current={...workspace,templateInputs:{version:'workspace-template-inputs/v1' as const,narration:{},shots:[{shotId:'shot',imagePrompt:'静态构图',videoPrompt:'独立运镜提示',narration:{},visual:{reference:'产品',status:'bound' as const,material,candidates:[material]}}]}};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:current,serviceCatalog:{groups:[{capability:'image',services:[service]}]}})));
+ const command=vi.fn(async()=>current);render(<WorkspaceMaterialSelectionProvider materials={[]}><WorkspaceVisualPreparation workspace={current} materials={[]} command={command} onChange={()=>{}}/></WorkspaceMaterialSelectionProvider>);
+ expect(screen.getByRole('textbox',{name:'图片提示词'})).toHaveProperty('value','静态构图');fireEvent.click(screen.getByRole('tab',{name:'视频'}));
+ expect(screen.getByRole('textbox',{name:'画面动作'})).toHaveProperty('value','独立运镜提示');
+ fireEvent.click(screen.getByRole('tab',{name:'图片'}));
+ expect(screen.getByRole('button',{name:'准备素材：产品.png'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
+});
