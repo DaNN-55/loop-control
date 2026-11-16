@@ -98,3 +98,11 @@ HTTP 验证包含账号和生产单命令、工作区/镜头关联、非法和�
 集成初跑因新工作树缺少 SDK/准备构建而有环境失败；随后使用工作树自有 SDK 源码副本和临时运行构建，未修改共享 SDK。额外的既有 `productionMetrics.integration.test.ts` 漏传 `reviewPackageId`，在完全未修改的 main 工作树同样于准备阶段报 `Owned confirmed script required`。仅补入夹具已有的 `f.board`，让测试走其原有制作基准；未修改断言、业务代码或权限保护，完整用例随后通过。
 
 这份独立 main 版本没有混合工作区中的 UI 失败；原工作区其他未提交功能仍应由其各自任务验收。证据目录为前述私有目录下 `integration-main/`：`unit.log`、`build.log`、`backend-build.log`、`worker-build.log`、`runtime-prepare.log`、`integration-final.log`、`retained-baseline.log`、`retained-final.log`、`check-final.log`、`scope.json` 和 `staged.patch`。
+
+## 本地整合结果
+
+实现提交 `a7f28fa8387d698abaf0d899e052c3c0356a4e67`（`feat: correlate local logs and export read-only production metrics`）已在独立 main 工作树通过 `git merge --ff-only` 合入本地 main。只涉及本次 22 个文件，没有将界面、模板、旧流程清理或迁移一起提交。当前段落作为独立文档补记提交，再快进 main；最终提交号由本聊天交付回执记录。
+
+原工作区仍保留 `codex/completed-works-review` 分支及其全部其他未提交工作。确认原暂存区为空后，用 `reset --mixed` 仅将该分支和 index 快进到已合入的提交，Git 没有重写任何工作文件；只同步本任务独占的入口/报告文件及上述测试输入修正。同步前后其他 8194 个修改/未跟踪路径的内容指纹一致，意外变更为 0，暂存区为空。根 PLAN.md、规则、共享 SDK、日常部署配置与运行服务不变。
+
+独立测试集群在确认客户端为 0、夹具数据库均已删除后关闭并删除，未影响日常 PostgreSQL。对照 main 工作树已清理，提交用工作树在最终快进后清理。证据为 `integration-main/merge.json`、`preservation.json`、`cleanup.json` 和最终 Git 回执。没有推送、部署、开启日常采集或写入生产数据。
