@@ -13,3 +13,6 @@ it('allows local media tool readiness without enabling online execution',async()
 });
 
 it.each(['generate_a_roll','generate_b_roll'])('accepts %s through the native Wan media Worker',type=>{expect(nativeMediaTask(type,'bailian')).toBe(true);});
+
+it.each(['generate_review_render','generate_final_render','generate_shot_sync_preview'])('does not register retired %s execution',type=>{expect(nativeMediaTask(type,'openchatcut')).toBe(false);});
+it.each(['generate_shot_video','generate_a_roll','generate_b_roll'])('keeps current %s card-video execution registered',type=>{expect(nativeMediaTask(type,'openchatcut')).toBe(true);});

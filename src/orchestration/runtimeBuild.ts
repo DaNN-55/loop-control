@@ -9,9 +9,9 @@ export class RuntimePreparationError extends Error {
  constructor(code: RuntimePreparationError["code"]) {super(runtimeErrorMessages[code]);this.code=code;}
 }
 export const runtimeErrorMessages={runtime_not_prepared:"运行程序尚未准备，请运行 npm run runtime:prepare 后重启本机服务。",runtime_source_changed:"开发源码或编译产物已变化，请运行 npm run runtime:prepare；正在运行的固定版本不受影响。",runtime_release_invalid:"当前运行版本不完整或校验失败，已停止执行；请运行 npm run runtime:prepare 后重启本机服务。",runtime_release_retired:"此运行包已退役，已停止执行；请运行 npm run runtime:prepare 后使用当前程序，历史工程通过当前工作区接入。",runtime_preparing:"新运行版本正在准备，请等待当前准备完成后重试。"};
-export const runtimeExecutionContract='production-workspace/v2';
+export const runtimeExecutionContract='production-workspace/v3';
 interface ReleaseContents {publicationId:string;projectRoot:string;nodeMajor:string;sources:Fingerprints;outputs:Fingerprints;release:RuntimeRelease}
-type ExecutionPolicy={version:4}|{version:5;executionContract:'production-workspace/v1'|typeof runtimeExecutionContract};
+type ExecutionPolicy={version:4}|{version:5;executionContract:'production-workspace/v1'|'production-workspace/v2'|typeof runtimeExecutionContract};
 type RuntimeManifest=ReleaseContents&ExecutionPolicy;
 const manifestName = "dist/runtime-manifest.json";
 const requiredOutputs = ["dist/worker/local-app/localWorkerCli.js", "dist/local-app/local-app/localRoute.js"];
@@ -57,7 +57,7 @@ export async function assertRuntimeRelease(projectRoot:string,release:RuntimeRel
   const canonical=await realpath(projectRoot),expected=join(canonical,'.loop-control/runtime-releases',release.id);
   if(!/^[a-f0-9]{64}$/.test(release.id)||release.root!==expected||await realpath(expected)!==expected||(await lstat(expected)).isSymbolicLink())throw Error();
   const m=JSON.parse(await readFile(join(expected,manifestName),'utf8')) as RuntimeManifest;
-  if(![4,5].includes(m.version)||m.version===5&&!['production-workspace/v1',runtimeExecutionContract].includes(m.executionContract)||m.projectRoot!==canonical||m.nodeMajor!==process.versions.node.split('.')[0]||m.release.id!==release.id||m.release.root!==expected||releaseIdentity(m)!==release.id)throw Error();
+  if(![4,5].includes(m.version)||m.version===5&&!['production-workspace/v1','production-workspace/v2',runtimeExecutionContract].includes(m.executionContract)||m.projectRoot!==canonical||m.nodeMajor!==process.versions.node.split('.')[0]||m.release.id!==release.id||m.release.root!==expected||releaseIdentity(m)!==release.id)throw Error();
   const actual=await outputs(expected);
   // Some original v4 manifests also froze this script outside the dist roots.
   // Verify its bytes for archive integrity; v5 never publishes or executes it.

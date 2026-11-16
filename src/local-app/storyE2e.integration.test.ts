@@ -191,7 +191,8 @@ it.skipIf(!enabled).each(['image','speech'] as const)('story 2: %s generation re
    command='requestWorkspaceImageCandidates';data={targetItemId:clip.itemId,selection:f.selections.image,prompt:'站台长椅旁的黄色雨伞，雨已停，保持故事人物和构图。',settings:{size:'864x1536',quality:'low',count:1},referenceMaterialRevisionIds:[f.materials.first.id],reservationCents:20};
    expect((await f.send(command,{...data,prompt:''})).status).toBe(400);
   }else{
-   await f.ok(f.request('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1}));
+   // Retained Episode defaults are historical fixture data, not a legacy API call.
+   await f.c.query("UPDATE public.episodes SET tts_language_code='zh-CN',tts_voice='zh_female_vv_uranus_bigtts',tts_speaking_rate=1 WHERE id=$1",[f.episode]);
    const settings={clipId:clip.id,mode:'tts',selection:f.selections.speech,text:storyLines[0],voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1};
    expect((await f.send('saveWorkspaceNarration',{...settings,selection:undefined})).status).toBe(400);
    await f.ok(f.send('saveWorkspaceNarration',settings));await f.ok(f.send('confirmWorkspaceNarration',{clipId:clip.id}));
@@ -276,7 +277,8 @@ it.skipIf(!enabled).each(['image','video'] as const)('story 3: saved native %s r
 it.skipIf(!enabled)('story 3: saved native speech recovers its missing receipt without regenerating or substituting the story text',async()=>{
  const f=await storyE2eFixture();try{
   await f.fill();const clip=f.workspace.clips[0];
-  await f.ok(f.request('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1}));
+  // Retained Episode defaults are historical fixture data, not a legacy API call.
+  await f.c.query("UPDATE public.episodes SET tts_language_code='zh-CN',tts_voice='zh_female_vv_uranus_bigtts',tts_speaking_rate=1 WHERE id=$1",[f.episode]);
   await f.ok(f.send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',selection:f.selections.speech,text:storyLines[0],voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1}));
   await f.ok(f.send('confirmWorkspaceNarration',{clipId:clip.id}));await f.ok(f.send('generateWorkspaceNarration',{clipId:clip.id,reservationCents:20}));
   const result=await f.execute(f.workspace.narration![0].taskId!);expect(result.status,JSON.stringify(result)).toBe('completed');await f.ok(f.send('refreshWorkspaceNarration'));

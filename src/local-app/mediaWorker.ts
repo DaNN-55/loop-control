@@ -30,7 +30,7 @@ export async function assertMediaReady(config:NativeMediaConfiguration|undefined
  for(const c of Object.values(policy) as Array<{execution_path?:string;executor?:{provider?:string}}>)if(c?.execution_path==='local'&&c.executor?.provider==='openchatcut'){const i=runtimeCommandInvocation('openchatcut',['--version']);await promisify(execFile)(i.command,i.argumentsList,{env:environment,timeout:5000,maxBuffer:65536});}
  if(external){const ports=await narrationPorts(config.mode==='local'?undefined:config,config.mode==='live'&&config.workspaceGenerationFromConnections);if(ports.store.mode!=='keychain')throw Error('在线媒体密钥存储尚未配置。');}
 }
-export function nativeMediaTask(type:string,provider:string){return (['search_shot_video','preview_shot_video'].includes(type)&&provider==='pexels')||(type==='generate_static_visual'&&provider==='openai')||(['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(type)&&provider==='openchatcut')||(['generate_shot_video','generate_a_roll','generate_b_roll'].includes(type)&&(['openchatcut','ffmpeg','pexels','bailian'].includes(provider)||isVideoProvider(provider)))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
+export function nativeMediaTask(type:string,provider:string){return (['search_shot_video','preview_shot_video'].includes(type)&&provider==='pexels')||(type==='generate_static_visual'&&provider==='openai')||(['generate_shot_video','generate_a_roll','generate_b_roll'].includes(type)&&(['openchatcut','ffmpeg','pexels','bailian'].includes(provider)||isVideoProvider(provider)))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
 // A frozen reference may come from the Episode blueprint even for a local clip.
 // Only the registered executor determines whether execution needs credentials.
 export function nativeMediaRequiresExternal(p:WorkerTaskPackage){
@@ -52,8 +52,8 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
  try{
   let output:string;
   if(p.provider==='openchatcut'){
-   if(!['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(p.task.type)&&p.aRoll?.adapter!=='openchatcut_card_video'&&p.media?.adapter!=='openchatcut_card_video')throw Error();
-   output=await executeOpenChatCutRender({taskPackage:p,...(p.finalRender?{getApprovedReuseSource:async()=>{const result=(await pool.query('SELECT local_identity.input_final_reuse_source($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.result;if(!result)throw Error('Final approval or lease unavailable');return result;}}:{}),validateMp4:validateMp4Artifact,inspectMp4:inspectMp4Artifact,async run(command,args){const invocation=runtimeCommandInvocation(command,args);await promisify(execFile)(invocation.command,invocation.argumentsList,{timeout:300000,maxBuffer:4*1024*1024});}});
+   if(p.aRoll?.adapter!=='openchatcut_card_video'&&p.media?.adapter!=='openchatcut_card_video')throw Error('Unregistered OpenChatCut media adapter');
+   output=await executeOpenChatCutRender({taskPackage:p,validateMp4:validateMp4Artifact,inspectMp4:inspectMp4Artifact,async run(command,args){const invocation=runtimeCommandInvocation(command,args);await promisify(execFile)(invocation.command,invocation.argumentsList,{timeout:300000,maxBuffer:4*1024*1024});}});
   }else{
    const secret=external?await resolve(p.credentialRef,p.provider,p.media!.adapter):undefined;
    const denied=async():Promise<never>=>{throw Error('External media not configured');};

@@ -83,14 +83,13 @@ class HistoricalPlanFixtureStore {
    VALUES($1,$2,$3,$4,$5,$6,$7,CASE WHEN $6 THEN clock_timestamp() ELSE NULL END,$8,$9)
    ON CONFLICT(episode_id) DO UPDATE SET script_revision_id=excluded.script_revision_id,script_sha256=excluded.script_sha256,plan=excluded.plan,enabled=excluded.enabled,authorization_hash=excluded.authorization_hash,
    authorized_at=excluded.authorized_at,progress=excluded.progress,last_status=excluded.last_status,updated_at=clock_timestamp()`,[e.id,ownerId,e.main_script_revision_id,inspected.script.sha256,plan,enabled,hash,progress,enabled?'已启用，等待当前审核或执行条件':'已保存，自动继续已暂停']);
-  await c.query('SELECT local_identity.record_script_production_configuration($1,$2)',[e.id,hash]);
   return{plan,enabled,authorizationHash:hash};
  }
 
 }
 
 /** Seed a pre-retirement saved declaration; current HTTP never exposes this writer. */
-export async function saveHistoricalPlanFixture(f:{pool:import('pg').Pool;owner:string;root:string;assetRoot:string;newEpisode?:string;episode:string},options:{episodeId?:string;choices?:Record<string,string>}={}){
+export async function saveHistoricalPlanFixture(f:{c:PoolClient;pool:import('pg').Pool;owner:string;root:string;assetRoot:string;newEpisode?:string;episode:string},options:{episodeId?:string;choices?:Record<string,string>}={}){
  const {ownerTransaction}=await import('./ownerTransaction');
  const body=await ownerTransaction(f.pool,f.owner,false,async c=>{
   const episodeId=options.episodeId??f.newEpisode??f.episode;
@@ -98,5 +97,7 @@ export async function saveHistoricalPlanFixture(f:{pool:import('pg').Pool;owner:
   const location=await resolveEpisodeStorageLocation(c,f.root,e.id);
   return new HistoricalPlanFixtureStore(f.root).configure(c,e,location.assetRoot,f.owner,false,options.choices??{});
  });
+ // Preserve an explicit historical audit row without retaining its retired writer.
+ await f.c.query("INSERT INTO public.audit_events(account_id,episode_id,event_type,payload,actor_id) SELECT e.account_id,e.id,'script_production_configured',jsonb_build_object('script_sha256',p.script_sha256,'authorization_hash',p.authorization_hash,'enabled',p.enabled),p.owner_id FROM local_identity.script_productions p JOIN public.episodes e ON e.id=p.episode_id WHERE p.episode_id=$1 AND p.authorization_hash=$2",[options.episodeId??f.newEpisode??f.episode,body.authorizationHash]);
  return{status:200,body};
 }

@@ -4,15 +4,21 @@ import {it,expect} from 'vitest';
 import {readFile,lstat} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
+import {openOpenChatCutStudio,closeOpenChatCutStudio} from '../worker/openchatcutStudio';
+import {reviewRenderFromSnapshot} from '../worker/history/reviewRenderV1';
+import {episodeFileIO} from './episodeFiles';
 it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (%s)',async layout=>{
  const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '旧工程 [T09]_%/本期':undefined,migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql']});
  try{
   const get=async(suffix='',token=f.token)=>fetch(`${f.origin}/api/local/episodes/${f.episode}/legacy-project${suffix}`,{headers:{Cookie:'loop_owner_session='+token}});
   const missing=await get();expect(missing.status).toBe(200);expect(await missing.json()).toEqual({project:null});await expect(lstat(`${f.assetRoot}/${f.episodeRelativePath}/openchatcut-work`)).rejects.toMatchObject({code:'ENOENT'});
   await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
-  const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
+  // Construct an already existing historical edit through the test SDK, without
+  // restoring the retired HTTP entrypoint or its SQL grants.
+  const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
+  const opened=await openOpenChatCutStudio(f.assetRoot,f.episode,reviewRenderFromSnapshot(snapshot)!,f.runtime,{storage:await episodeFileIO(f.c,f.assetRoot,f.episode)});
   const base=`${f.assetRoot}/${f.episodeRelativePath}/openchatcut-work/current`;
-  await editStudioDocument(opened.body.studioUrl,opened.body.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=37;});await f.closeStudio();
+  await editStudioDocument(opened.studioUrl!,opened.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=37;});await closeOpenChatCutStudio(f.episode);
   const path=base+'/runtime/project-store-v1.sqlite3';
   await f.c.query('DELETE FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode]);
   const digest=async(p:string)=>createHash('sha256').update(await readFile(p)).digest('hex'),before=[await digest(path),await digest(base+'/workspace.json')];
@@ -24,5 +30,5 @@ it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','re
   expect((await get('',f.otherToken)).status).toBe(404);expect((await get('','missing')).status).toBe(401);
   expect((await get('?download='+'f'.repeat(64))).status).toBe(409);expect((await get('?download=invalid')).status).toBe(400);
   expect(await fingerprint()).toEqual(state);expect([await digest(path),await digest(base+'/workspace.json')]).toEqual(before);
- }finally{await f.close();}
+ }finally{await closeOpenChatCutStudio(f.episode);await f.close();}
 },120000);

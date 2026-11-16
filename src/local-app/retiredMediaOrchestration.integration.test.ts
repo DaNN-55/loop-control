@@ -9,6 +9,6 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('obsolete bulk media entrypoint
    await expect(f.c.query(`SELECT * FROM public.${name}()`)).rejects.toMatchObject({code:'42883'});
   }
   expect((await f.c.query("SELECT coalesce(jsonb_agg(to_jsonb(t) ORDER BY id),'[]') tasks FROM public.tasks t")).rows[0].tasks).toEqual(before);
-  for(const signature of ['public.orchestrate_review_render_tasks(uuid)','public.orchestrate_final_render_tasks(uuid)'])expect((await f.c.query('SELECT to_regprocedure($1) IS NOT NULL present',[signature])).rows[0].present).toBe(true);
+  for(const signature of ['public.orchestrate_review_render_tasks(uuid)','public.orchestrate_final_render_tasks(uuid)'])expect((await f.c.query('SELECT to_regprocedure($1) IS NOT NULL present',[signature])).rows[0].present).toBe(false);
  }finally{await f.close();}
 },120000);

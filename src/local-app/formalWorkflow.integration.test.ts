@@ -6,6 +6,8 @@ import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+import {openOpenChatCutStudio,closeOpenChatCutStudio} from '../worker/openchatcutStudio';
+import {reviewRenderFromSnapshot} from '../worker/history/reviewRenderV1';
 const fresh=()=>freshProductionFixture();
 async function confirmScriptWithoutPlanner(f:Awaited<ReturnType<typeof fresh>>|Awaited<ReturnType<typeof formalWorkflowFixture>>){
  const started=await f.send('start');expect(started.status,JSON.stringify(started.body)).toBe(200);expect(started.body.stage).toBe('script_approved');
@@ -23,21 +25,23 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner builds a formal incom
  const authorized=await f.send('authorizeWorkspacePreparation',{workspaceId:w.id,expectedRevision:w.revision,enabled:true});expect(authorized.status).toBe(409);expect(authorized.body.error).toContain('请在生成时确认本次调用');
  const added=await f.send('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'新增的本地口播。'}});expect(added.status,JSON.stringify(added.body)).toBe(200);w=added.body;const local=w.clips.find((c:any)=>c.shotId.startsWith('added-'));
  const saved=await f.send('saveWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:local.id,mode:'none',text:'新增的本地口播。'});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
- expect((await f.c.query('SELECT shot_type FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2',[w.id,local.shotId])).rows[0].shot_type).toBeNull();
- expect((await f.c.query('SELECT baseline_text,origin FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND shot_id=$2',[w.id,local.shotId])).rows[0]).toEqual({baseline_text:'',origin:'local-added'});
+ expect((await f.c.query('SELECT local_identity.historical_preparation_shot_classification($1,$2) shot_type',[w.preparationRevisionId,local.shotId])).rows[0].shot_type).toBeNull();
+ expect((await f.c.query('SELECT baseline_text,origin FROM local_identity.production_shot_versions WHERE preparation_revision_id=$1 AND shot_id=$2',[w.preparationRevisionId,local.shotId])).rows[0]).toEqual({baseline_text:'',origin:'local'});
  expect((await f.c.query('SELECT count(*)::int n FROM public.approvals WHERE episode_id=$1',[f.newEpisode])).rows[0].n).toBe(0);
  }finally{await f.close();}},120000);
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('first formal adoption preserves the latest unsubmitted legacy Studio document',async()=>{
  const f=await productionWorkspaceFixture();try{
  await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
- const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
+ // Seed an already existing SDK document without reopening the retired HTTP API.
+ const original=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
+ const opened=await openOpenChatCutStudio(f.assetRoot,f.episode,reviewRenderFromSnapshot(original)!,f.runtime);expect(opened.studioUrl).toBeTruthy();
  const {editStudioDocument}=await import('./studioDocument.fixture');
- await editStudioDocument(opened.body.studioUrl,opened.body.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=19;});
+ await editStudioDocument(opened.studioUrl!,opened.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=19;});
  const data={reviewPackageId:f.board,expectedScriptRevisionId:f.script};const denied=await f.request('prepareWorkspace',data);expect(denied.status,JSON.stringify(denied.body)).toBe(409);
  const kept=await f.request('prepareWorkspace',{...data,legacyDecision:'preserve'});expect(kept.status,JSON.stringify(kept.body)).toBe(200);
  const doc=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${kept.body.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(doc.status).toBe(200);expect((await doc.json()).project.timelines[0].items.find((i:any)=>i.kind==='video').transform.x).toBe(19);
  expect(kept.body.recovery.decision).toBe('preserve');const backup=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${kept.body.recovery.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(backup.status).toBe(200);expect((await backup.json()).project.timelines[0].items.find((i:any)=>i.kind==='video').transform.x).toBe(19);
- }finally{await f.close();}
+ }finally{await closeOpenChatCutStudio(f.episode);await f.close();}
 },120000);
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('late legacy render reports retain artifacts without advancing or approving the adopted workspace',async()=>{
  const f=await productionWorkspaceFixture();const worker=f.workerPool();try{
@@ -46,14 +50,20 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('late legacy render reports 
  const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
  snapshot.output={required_artifact_types:['render','review_qc_report'],relative_path:video,review_stage:'qc_review',content_type:'video/mp4'};
  await f.c.query("UPDATE local_identity.input_episodes SET enabled=true,studio_enabled=true WHERE episode_id=$1",[f.episode]);await f.c.query("UPDATE public.episodes SET stage='render_ready' WHERE id=$1",[f.episode]);
- await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot,provider,model,prompt_version) VALUES($1,$2,'generate_review_render','ready',$3,'openchatcut','openchatcut@0.2.14','review-render-v1')",[task,f.episode,snapshot]);
- const claimed=(await port.rpc('claim_next_worker_task',{p_task_id:task,p_worker_capacity:1}) as any[])[0];expect(claimed).toBeTruthy();
+ // This lease and run predate retirement; current code must reconcile them without
+ // claiming, executing or republishing a new legacy task.
+ const lease=randomUUID();
+ await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot,provider,model,prompt_version,attempt,lease_token,claimed_at) VALUES($1,$2,'generate_review_render','running',$3,'openchatcut','openchatcut@0.2.14','review-render-v1',1,$4,clock_timestamp())",[task,f.episode,snapshot,lease]);
+ const claimed=(await f.c.query('SELECT id task_id,input_snapshot,lease_token,0 attempt FROM public.tasks WHERE id=$1',[task])).rows[0];
+ await f.c.query("INSERT INTO public.task_runs(task_id,attempt,status,lease_token,task_package) SELECT t.id,0,'running',t.lease_token,jsonb_build_object('version','worker-task/v1','task_id',t.id,'task_type',t.task_type,'attempt',0,'budget_limit_cents',t.budget_limit_cents,'max_attempts',t.max_attempts,'provider',t.provider,'model',t.model,'prompt_version',t.prompt_version,'episode_id',e.id,'account_id',e.account_id,'blueprint_version_id',e.blueprint_version_id,'allowed_asset_root',$2::text,'input_snapshot',t.input_snapshot,'lease_token',t.lease_token) FROM public.tasks t JOIN public.episodes e ON e.id=t.episode_id WHERE t.id=$1",[task,f.assetRoot]);
+ expect(await port.rpc('claim_next_worker_task',{p_task_id:task,p_worker_capacity:1})).toEqual([]);
  const w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;expect(w.id).toBeTruthy();
  const artifacts=[];for(const[ordinal,artifactType]of claimed.input_snapshot.output.required_artifact_types.entries()){const path=ordinal===0?claimed.input_snapshot.output.relative_path:`${(await import('node:path')).dirname(claimed.input_snapshot.review_render.project_relative_path)}/${artifactType.includes('qc')?'qc-report.json':artifactType.includes('runtime')?'openchatcut-runtime.json':'project.json'}`;await fs.mkdir((await import('node:path')).dirname(`${f.assetRoot}/${path}`),{recursive:true});if(artifactType==='render')await fs.copyFile(`${f.assetRoot}/${f.videoPath}`,`${f.assetRoot}/${path}`);else await fs.writeFile(`${f.assetRoot}/${path}`,JSON.stringify({fixture:'late legacy',artifactType}));const bytes=await fs.readFile(`${f.assetRoot}/${path}`);artifacts.push({artifactType,relativePath:path,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),fileSize:bytes.length});}
  await port.rpc('report_worker_result',{p_task_id:task,p_attempt:claimed.attempt,p_lease_token:claimed.lease_token,p_result:{version:'worker-result/v1',taskId:task,status:'completed',artifacts,validation:{passed:true,checks:[{name:'controlled_late_result',passed:true,detail:'Existing valid fixture bytes registered after workspace adoption.'}]},actualCostCents:0,retry:{shouldRetry:false,reason:'Legacy result retained.'},blockers:[],nextStep:'Historical evidence only.'}});
  const current=await fetch(`${f.origin}/api/local/episodes/${f.episode}`,{headers:{Cookie:'loop_owner_session='+f.token}}),raw=await current.json(),body={...raw.sections,tasks:raw.sections.tasks??raw.patches?.tasks?.rows,artifacts:raw.sections.artifacts??raw.patches?.artifacts?.rows};expect(body.episode.stage).toBe('render_ready');expect(body.tasks.find((t:any)=>t.id===task).status).toBe('completed');expect(body.artifacts.some((a:any)=>a.producer_task_id===task)).toBe(true);expect((await f.c.query('SELECT count(*)::int n FROM public.approvals WHERE episode_id=$1',[f.episode])).rows[0].n).toBe(0);
  const read=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect((await read.json()).workspace.project.sha256).toBe(w.project.sha256);
- await f.c.query('BEGIN');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('SET LOCAL ROLE loop_owner');await expect(f.c.query('SELECT public.record_publish_package_verification($1,$2,1)',[f.episode,'a'.repeat(64)])).rejects.toThrow('exact confirmed workspace delivery');await f.c.query('ROLLBACK');
+ expect((await f.c.query("SELECT to_regprocedure('public.record_publish_package_verification(uuid,text,bigint)') IS NULL absent")).rows[0].absent).toBe(true);
+ await f.c.query('BEGIN');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('SET LOCAL ROLE loop_owner');await expect(f.c.query('SELECT public.record_publish_package_verification($1,$2,1)',[f.episode,'a'.repeat(64)])).rejects.toMatchObject({code:'42883'});await f.c.query('ROLLBACK');
  }finally{await worker.end();await f.close();}
 },120000);
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shots generate through the real controlled Provider Worker without legacy approval',async()=>{
@@ -63,7 +73,7 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('fresh formal and added shot
  const send=async(name:string,extra={})=>{const result=await f.send(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});expect(result.status,JSON.stringify(result.body)).toBe(200);w=result.body;return result.body;};
  const speechVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='volcengine_tts'")).rows[0].id,videoVersion=(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='seedance_video'")).rows[0].id;
 
- await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});
+ expect((await f.send('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1})).status).toBe(410);
  await send('editWorkspaceStructure',{operation:{kind:'insert',afterShotId:w.clips[0].shotId,text:'新增正文不是主脚本基准。'}});
  for(const clip of [w.clips[0],w.clips.find((c:any)=>c.shotId.startsWith('added-'))]){
   await send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',selection:{capability:'speech',provider:'volcengine_tts',adapter:'volcengine_tts',model:'seed-tts-2.0',connectionVersionId:speechVersion},text:clip.text,voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1});await send('confirmWorkspaceNarration',{clipId:clip.id});await send('generateWorkspaceNarration',{clipId:clip.id,reservationCents:50});

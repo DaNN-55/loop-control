@@ -11,7 +11,7 @@ const roots:string[]=[],sha=(value:string)=>createHash('sha256').update(value).d
 afterEach(async()=>{await Promise.all(roots.splice(0).map(root=>rm(root,{recursive:true,force:true})));});
 
 /** A valid frozen v4 wire fixture, independent of the current publisher. */
-async function legacyRelease(options:{reverseOutputOrder?:boolean;legacyEntry?:boolean;contract?:'production-workspace/v1'}={}){
+async function legacyRelease(options:{reverseOutputOrder?:boolean;legacyEntry?:boolean;contract?:'production-workspace/v1'|'production-workspace/v2'}={}){
  const root=await realpath(await mkdtemp(join(tmpdir(),'loop-retired-runtime-')));roots.push(root);const marker=join(root,'executed');
  const sourceText:Record<string,string>={'package.json':'{}','package-lock.json':'{}','tsconfig.worker.json':JSON.stringify({include:['src/task.ts']}),'tsconfig.local-app.json':JSON.stringify({include:['src/task.ts']}),'src/task.ts':'export const value=1;'};
  const worker=`import{writeFileSync}from'node:fs';writeFileSync(${JSON.stringify(marker)},'legacy');\n`,outputText:Record<string,string>={'dist/worker/local-app/localWorkerCli.js':worker,'dist/local-app/local-app/localRoute.js':'export const route=1;\n'};
@@ -37,14 +37,14 @@ it('the actual prepared CLI refuses the archived Worker before its module can ex
 });
 it('explicit preparation publishes a supported new protocol and leaves the original archive intact',async()=>{
  const f=await legacyRelease({legacyEntry:true});let builds=0;await prepareRuntime(f.root,async()=>{builds++;await writeFile(join(f.root,'dist/worker/local-app/localWorkerCli.js'),`import{writeFileSync}from'node:fs';writeFileSync(${JSON.stringify(f.marker)},'current');\n`);});
- expect(builds).toBe(1);const next=await readPreparedRuntimeRelease(f.root);expect(next.id).not.toBe(f.release.id);expect(JSON.parse(await readFile(join(f.root,'dist/runtime-manifest.json'),'utf8'))).toMatchObject({version:5,executionContract:'production-workspace/v2'});expect(await readFile(join(f.release.root,'dist/runtime-manifest.json'),'utf8')).toBe(f.original);
+ expect(builds).toBe(1);const next=await readPreparedRuntimeRelease(f.root);expect(next.id).not.toBe(f.release.id);expect(JSON.parse(await readFile(join(f.root,'dist/runtime-manifest.json'),'utf8'))).toMatchObject({version:5,executionContract:'production-workspace/v3'});expect(await readFile(join(f.release.root,'dist/runtime-manifest.json'),'utf8')).toBe(f.original);
  await expect(assertRuntimeRelease(f.root,next)).resolves.toBeUndefined();await expect(access(join(next.root,'scripts/runtime/codex.mjs'))).rejects.toMatchObject({code:'ENOENT'});await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_retired'});await promisify(execFile)(process.execPath,[join(f.root,'scripts/run-prepared.mjs'),'worker'],{timeout:10000});expect(await readFile(f.marker,'utf8')).toBe('current');
 },15000);
 it('a damaged archive remains an integrity failure instead of being relabelled a healthy retired package',async()=>{
  const f=await legacyRelease();await writeFile(join(f.release.root,'dist/worker/local-app/localWorkerCli.js'),'damaged');await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_invalid'});
 });
 it('cannot relabel old bytes as the current protocol while retaining the old identity',async()=>{
- const f=await legacyRelease(),manifest={...JSON.parse(f.original),version:5,executionContract:'production-workspace/v2'};
+ const f=await legacyRelease(),manifest={...JSON.parse(f.original),version:5,executionContract:'production-workspace/v3'};
  await writeFile(join(f.release.root,'dist/runtime-manifest.json'),JSON.stringify(manifest)+'\n');await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_invalid'});await expect(access(f.marker)).rejects.toMatchObject({code:'ENOENT'});
 });
 
@@ -62,8 +62,8 @@ it('the actual application factory rejects an archived package before reading da
  await expect(createNativeApplication(input)).rejects.toMatchObject({code:'runtime_release_retired'});await expect(access(f.marker)).rejects.toMatchObject({code:'ENOENT'});
 });
 
-it('retires a valid v5 first-generation contract before Worker or application execution and preserves its bytes',async()=>{
- const f=await legacyRelease({contract:'production-workspace/v1'});
+it.each(['production-workspace/v1','production-workspace/v2'] as const)('retires a valid v5 %s contract before Worker or application execution and preserves its bytes',async contract=>{
+ const f=await legacyRelease({contract});
  await expect(assertRuntimeRelease(f.root,f.release)).rejects.toMatchObject({code:'runtime_release_retired'});
  const result=await promisify(execFile)(process.execPath,[join(f.root,'scripts/run-prepared.mjs'),'worker'],{timeout:10000}).then(value=>({code:0,...value}),error=>({code:error.code,stdout:error.stdout,stderr:error.stderr}));
  expect(result.code).toBe(1);expect(result.stderr).toContain('runtime_release_retired');await expect(access(f.marker)).rejects.toMatchObject({code:'ENOENT'});

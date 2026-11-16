@@ -6,6 +6,7 @@ import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {narrationFixture} from './workspaceNarration.fixture';
 import {productionScriptTemplate} from '../reviews/productionScript';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+import {installHistoricalMainScriptFixture} from './historicalMainScript.fixture';
 export async function formalWorkflowFixture(options:{origin?:string;controlled?:boolean;databaseName?:string;mountPath?:string;videoConfiguration?:Parameters<typeof narrationFixture>[2];scriptText?:string;blank?:boolean;freshAccount?:boolean;configurePlanning?:boolean;onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void}={}){
  const volume=await workspaceAudioVolume({mountPath:options.mountPath});const base=options.controlled?await narrationFixture(options.origin,options.onBase,options.videoConfiguration??true,true,{databaseName:options.databaseName,voice:workspaceTestMedia('controlled-narration-tone.mp3'),video:workspaceTestMedia('landscape-red-blue.mp4'),testRootParent:volume.mountPath,mountPath:volume.mountPath}):await productionWorkspaceFixture({databaseName:options.databaseName,origin:options.origin,testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}}});const f={...base,close:async()=>{await base.close();await volume.close();}};
  try{
@@ -22,7 +23,8 @@ export async function formalWorkflowFixture(options:{origin?:string;controlled?:
  const send=(command:string,data:Record<string,unknown>={})=>f.request(command,{episodeId,...data});
  const chosenSend=(command:string,data:Record<string,unknown>={})=>options.controlled?(base as Awaited<ReturnType<typeof narrationFixture>>).chosenRequest(command,{episodeId,...data}):send(command,data);
  if(options.blank)return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,chosenSend,newEpisode:episodeId,main:null};
- const imported=await send('importMaterial',{sourceKind:'file',sourcePath:'formal.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(options.scriptText??productionScriptTemplate).toString('base64')});assert.equal(imported.status,200,JSON.stringify(imported.body));
+ const scriptText=options.scriptText??productionScriptTemplate;
+ const imported=/^-\s*模板版本[：:]\s*2\s*$/m.test(scriptText)?{status:200,body:await installHistoricalMainScriptFixture(f.c,assetRoot,episodeId,f.owner,scriptText)}:await send('importMaterial',{sourceKind:'file',sourcePath:'formal.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(scriptText).toString('base64')});assert.equal(imported.status,200,JSON.stringify(imported.body));
  return{...f,assetRoot,controlled:options.controlled&&'execute'in base?base as Awaited<ReturnType<typeof narrationFixture>>:null,mountPath:volume.mountPath,send,chosenSend,newEpisode:episodeId,main:imported.body.id};
  }catch(error){await f.close();throw error;}
 }

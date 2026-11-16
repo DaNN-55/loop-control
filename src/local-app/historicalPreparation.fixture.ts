@@ -1,4 +1,18 @@
 import {randomUUID} from 'node:crypto';
+import type {PoolClient} from 'pg';
+
+/** Seed only recorded preparation rows; never reopen the retired registration API. */
+export async function seedRecordedWorkspacePreparation(c:PoolClient,input:{episodeId:string;scriptRevisionId:string;preparationId:string;ownerId:string;file:{relativePath:string;sha256:string;fileSize:number};board:unknown}){
+ const {episodeId,scriptRevisionId,preparationId,ownerId,file,board}=input;
+ await c.query('BEGIN');
+ try{
+  const artifact=(await c.query("INSERT INTO public.artifacts(episode_id,artifact_type,relative_path,sha256,file_size) VALUES($1,'storyboard',$2,$3,$4) RETURNING id",[episodeId,file.relativePath,file.sha256,file.fileSize])).rows[0].id;
+  await c.query("INSERT INTO public.review_packages(id,episode_id,artifact_id,stage,revision_number,context_snapshot) SELECT $1,$2,$3,'storyboard_review',coalesce(max(revision_number),0)+1,$4 FROM public.review_packages WHERE episode_id=$2 AND stage='storyboard_review'",[preparationId,episodeId,artifact,{worker_result:{storyboard:board},workspace_preparation:{script_revision_id:scriptRevisionId,origin:'script-segment'}}]);
+  await c.query("INSERT INTO local_identity.workspace_preparations(package_id,episode_id,script_revision_id,origin,confirmed_by) VALUES($1,$2,$3,'script-segment',$4)",[preparationId,episodeId,scriptRevisionId,ownerId]);
+  await c.query('UPDATE local_identity.input_episodes SET enabled=true,storyboard_enabled=true WHERE episode_id=$1',[episodeId]);
+  await c.query('COMMIT');
+ }catch(error){await c.query('ROLLBACK');throw error;}
+}
 
 /** Recorded pre-independent-model rows, with original project, draft, audio and frozen task. */
 export function seedHistoricalPreparation(sql:(query:string)=>unknown){

@@ -39,6 +39,8 @@ export async function storyBrowser(f:Pick<Story,'origin'|'root'|'episode'|'email
  const close=async()=>{try{await cli('close');}finally{await vite?.close();}};
  try{
   vite=await createServer({configFile:false,envFile:false,root:process.cwd(),cacheDir:join(f.root,'browser-vite-cache'),
+   // Historical HTML evidence is not an entry to the application under test.
+   optimizeDeps:{entries:['src/local-app/main.tsx']},
    define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('local')},
    plugins:[react(),{name:'story-e2e-real-page',configureServer(server){
     server.middlewares.use('/api',async(req,res)=>{
@@ -60,7 +62,7 @@ export async function storyBrowser(f:Pick<Story,'origin'|'root'|'episode'|'email
      }catch(error){if(!res.destroyed){res.statusCode=502;res.end(JSON.stringify({error:String(error)}));}}
     });
     server.middlewares.use('/__story',async(_req,res)=>{res.setHeader('Content-Type','text/html');res.end(await server.transformIndexHtml('/__story','<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>雨伞故事 · 隔离 E2E</title><div id="root"></div><script type="module" src="/src/local-app/main.tsx"></script>'));});
-   }}],server:{host:'127.0.0.1',port:0,proxy:{'/_local-artifact':{target:f.origin,changeOrigin:true}}}});
+   }}],server:{host:'127.0.0.1',port:0,hmr:false,watch:null,proxy:{'/_local-artifact':{target:f.origin,changeOrigin:true}}}});
   await vite.listen();const url=`http://127.0.0.1:${(vite.httpServer!.address() as {port:number}).port}/__story?episode=${f.episode}`;
   await cli('open',url);await cli('wait','--text','登录控制台');
   await fill('邮箱',f.email);await fill('密码',f.password);await click('使用密码登录');

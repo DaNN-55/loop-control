@@ -20,7 +20,8 @@ it.skipIf(!enabled)('caption preparation browser: selected-shot alignment, adopt
   await exec('ffmpeg',['-nostdin','-y','-v','error','-f','lavfi','-i','sine=frequency=660:sample_rate=48000','-t','3','-c:a','libmp3lame',f.files.voice]);
   // The existing controlled speech provider returns the fixture's local MP3.
   // No external provider or WhisperX model is contacted by this acceptance.
-  await f.ok(f.request('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1}));
+  // Historical Episode defaults belong to this fixture, not an executable legacy API.
+  await f.c.query("UPDATE public.episodes SET tts_language_code='zh-CN',tts_voice='zh_female_vv_uranus_bigtts',tts_speaking_rate=1 WHERE id=$1",[f.episode]);
   await f.ok(f.send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',selection:f.selections.speech,text:storyLines[0],voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1}));
   await f.ok(f.send('confirmWorkspaceNarration',{clipId:clip.id}));
   await f.ok(f.send('generateWorkspaceNarration',{clipId:clip.id,reservationCents:20}));
@@ -118,6 +119,10 @@ it.skipIf(!enabled)('caption preparation browser: selected-shot alignment, adopt
   await browser.capture('saved-reopened');
   await browser.click('保存并返回分镜台');await browser.wait("!document.querySelector('.embedded-studio')");
   await writeFile(join(process.env.LOOP_STORY_EVIDENCE!,'caption-workspace-result.json'),JSON.stringify({alignmentModelExecuted:false,alignerSeam:'controlled',speechProvider:'controlled-local-mp3',caption:saved,workspaceId:f.workspace.id,projectSha256:f.workspace.project.sha256},null,2));
- }catch(error){await browser?.cli('frame','main').catch(()=>{});await browser?.capture('failed');throw error;}
+ }catch(error){
+  await browser?.cli('frame','main').catch(()=>{});
+  if(browser)await writeFile(join(process.env.LOOP_STORY_EVIDENCE!,'caption-workspace-diagnostics.json'),JSON.stringify({errors:await browser.cli('errors').catch(cause=>String(cause)),console:await browser.cli('console').catch(cause=>String(cause)),failedRequests:await browser.cli('network','requests','--status','400-599').catch(cause=>String(cause)),frames:await browser.evaluate("Array.from(document.querySelectorAll('iframe')).map(frame=>({src:frame.src,inert:frame.inert,busy:frame.getAttribute('aria-busy')}))").catch(cause=>String(cause))},null,2));
+  await browser?.capture('failed');throw error;
+ }
  finally{await browser?.close();await f.close();}
 },240000);

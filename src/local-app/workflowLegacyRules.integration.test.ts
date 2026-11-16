@@ -11,7 +11,6 @@ import {buildOpenChatCutProject} from '../worker/openchatcutProject';
 import {defaultShotComposition} from '../shotComposition';
 import {defaultShotCaptionContract,shotCaptionContractToDatabase} from '../shotCaptions';
 import {nativeWorkerPort} from './workerDatabase';
-import {runWorkspaceDeliveryProcess} from './workspaceDelivery.fixture';
 import {ownerTransaction} from './ownerTransaction';
 
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1';
@@ -20,7 +19,7 @@ const sha=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
 async function legacyFixture(){
  const volume=await workspaceAudioVolume();let f:Awaited<ReturnType<typeof embeddedStudioFixture>>|undefined;
  try{
-  f=await embeddedStudioFixture({testRootParent:volume.mountPath,migrations:['db/archive/legacy-v1/158-workspace-unused-queued-tasks.sql','db/archive/legacy-v1/159-owned-studio-freeze-registration.sql'],runtime:{mountPath:volume.mountPath,postReady:async()=>{},localClipReady:async()=>{},mediaReady:async()=>{},wake(){}}});
+  f=await embeddedStudioFixture({testRootParent:volume.mountPath,migrations:['db/archive/legacy-v1/158-workspace-unused-queued-tasks.sql','db/archive/legacy-v1/159-owned-studio-freeze-registration.sql'],runtime:{mountPath:volume.mountPath,postReady:async()=>{},mediaReady:async()=>{},wake(){}}});
   const base=f,pre=randomUUID(),material=randomUUID();
   const qc=(await base.c.query("SELECT id FROM public.review_packages WHERE episode_id=$1 AND stage='qc_review'",[base.episode])).rows[0].id;
   const snapshot=(await base.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[base.task])).rows[0].input_snapshot;
@@ -49,46 +48,43 @@ async function legacyFixture(){
   const video=base.files.find(file=>file.relativePath===base.videoPath)!;
   await base.c.query("INSERT INTO public.production_material_revisions(id,episode_id,revision_number,material_type,source_kind,source_path,storage_path,mime_type,sha256,file_size,is_main_script,created_by,material_purpose) VALUES($1,$2,1,'video','file',$3,$3,'video/mp4',$4,$5,false,$6,'a_roll')",[material,base.episode,video.relativePath,video.sha256,video.fileSize,base.owner]);
   await base.c.query('INSERT INTO public.material_revision_approvals(material_revision_id,approved_by) VALUES($1,$2)',[material,base.owner]);
-  // The old editable shot record exists before a QC input revision is requested.
+  // Admin-only fixture seeding records the pre-retirement editable shot.
   await base.c.query("SELECT set_config('loop.owner_id',$1,true)",[base.owner]);
-  await base.c.query('SET SESSION AUTHORIZATION loop_app');
-  await base.c.query("SELECT public.save_shot_preparation_draft($1,$2,'shot-1','none','Original retained input',false,NULL,NULL,NULL)",[base.episode,base.board]);
-  await base.c.query('SET SESSION AUTHORIZATION DEFAULT');
+  await base.c.query("INSERT INTO public.shot_preparation_drafts(episode_id,review_package_id,shot_id,audio_mode,subtitle_text,subtitles_enabled,tts_text,tts_language_code,audio_status) VALUES($1,$2,'shot-1','none','Original retained input',false,'Original retained input','zh-CN','ready')",[base.episode,base.board]);
   await base.c.query('COMMIT');
   const original=async()=>({qc:(await base.c.query('SELECT context_snapshot FROM public.review_packages WHERE id=$1',[qc])).rows[0].context_snapshot,pre:(await base.c.query('SELECT context_snapshot FROM public.review_packages WHERE id=$1',[pre])).rows[0].context_snapshot,task:(await base.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[base.task])).rows[0].input_snapshot,files:await Promise.all([...base.files.map(f=>f.relativePath),base.boardPath,projectPath].map(async path=>({path,sha:sha(await readFile(join(base.assetRoot,path)))})))});
-  return{...base,qc,pre,material,projectPath,original,close:async()=>{try{await base.close();}finally{await volume.close();}}};
+  const state=async()=>(await base.c.query("SELECT jsonb_build_object('episode',(SELECT to_jsonb(e) FROM public.episodes e WHERE id=$1),'packages',(SELECT jsonb_agg(to_jsonb(p) ORDER BY id) FROM public.review_packages p WHERE episode_id=$1),'tasks',(SELECT jsonb_agg(to_jsonb(t) ORDER BY id) FROM public.tasks t WHERE episode_id=$1),'drafts',(SELECT jsonb_agg(to_jsonb(d) ORDER BY id) FROM public.shot_preparation_drafts d WHERE episode_id=$1),'artifacts',(SELECT jsonb_agg(to_jsonb(a) ORDER BY id) FROM public.artifacts a WHERE episode_id=$1),'approvals',(SELECT jsonb_agg(to_jsonb(a) ORDER BY id) FROM public.approvals a WHERE episode_id=$1),'transitions',(SELECT jsonb_agg(to_jsonb(t) ORDER BY id) FROM public.state_transitions t WHERE episode_id=$1),'audit',(SELECT jsonb_agg(to_jsonb(a) ORDER BY id) FROM public.audit_events a WHERE episode_id=$1),'receipts',(SELECT jsonb_agg(to_jsonb(r) ORDER BY idempotency_key) FROM local_identity.command_receipts r WHERE owner_id=$2)) value",[base.episode,base.owner])).rows[0].value;
+  return{...base,qc,pre,material,projectPath,original,state,close:async()=>{try{await base.close();}finally{await volume.close();}}};
  }catch(error){try{await f?.close();}finally{await volume.close();}throw error;}
 }
 
-it.skipIf(!enabled)('48 composition revision freezes the current QC edit, fences permission/stale/running requests and preserves prior evidence',async()=>{
+it.skipIf(!enabled)('retired composition revisions cannot freeze a QC edit or change its historical evidence',async()=>{
  const f=await legacyFixture();try{
   const before=await f.original(),data={reviewPackageId:f.qc,reason:'Only revise native composition'};
+  const originalState=await f.state();
   expect((await f.request('requestStudioCompositionRevision',data,{token:f.otherToken})).status).toBe(404);
   expect((await f.request('requestStudioCompositionRevision',data,{csrf:false})).status).toBe(403);
-  expect((await f.request('requestStudioCompositionRevision',{...data,reviewPackageId:randomUUID()})).status).toBe(409);
+  expect((await f.request('requestStudioCompositionRevision',{...data,reviewPackageId:randomUUID()})).status).toBe(410);
+  expect((await f.request('requestStudioCompositionRevision',data)).status).toBe(410);
+  expect(await f.state()).toEqual(originalState);
   const running=randomUUID();await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_review_render','running','{}')",[running,f.episode]);
-  const conflict=await f.request('requestStudioCompositionRevision',data);expect(conflict.status,JSON.stringify(conflict.body)).toBe(409);
+  const protectedState=await f.state();
+  expect((await f.request('requestStudioCompositionRevision',data)).status).toBe(410);
+  expect(await f.state()).toEqual(protectedState);
   expect(await f.original()).toEqual(before);
   expect(await readdir(join(f.assetRoot,f.episodeRelativePath,'openchatcut-frozen')).catch(()=>[])).toEqual([]);
   expect((await f.c.query("SELECT has_table_privilege('loop_app','public.tasks','UPDATE') allowed")).rows[0].allowed).toBe(false);
-  await f.c.query("UPDATE public.tasks SET status='failed',invalidated_at=now(),invalidated_reason='Controlled conflict finished' WHERE id=$1",[running]);
-  const revised=await f.request('requestStudioCompositionRevision',data);expect(revised.status,JSON.stringify(revised.body)).toBe(200);
-  expect(revised.body).toMatchObject({task_type:'generate_review_render',status:'ready'});
-  const frozen=revised.body.input_snapshot.review_render.adjustments.studio_project;
-  expect(frozen.relative_path).toContain('/openchatcut-frozen/');expect(sha(await readFile(join(f.assetRoot,frozen.relative_path)))).toBe(frozen.sha256);
   const register=(owner:string,basis:string,reference:unknown)=>ownerTransaction(f.pool,owner,false,c=>c.query('SELECT local_identity.register_owned_studio_freeze($1,$2,$3)',[f.episode,basis,reference]));
-  await expect(register(f.other,f.qc,frozen)).rejects.toMatchObject({code:'42501'});
-  await expect(register(f.owner,randomUUID(),frozen)).rejects.toMatchObject({code:'55000'});
-  for(const reference of [{...frozen,relative_path:'../outside/openchatcut-frozen/'+randomUUID()+'/project.json'},{...frozen,sha256:'invalid'},{...frozen,file_size:0}])await expect(register(f.owner,f.qc,reference)).rejects.toMatchObject({code:'22023'});
-  await expect(register(f.owner,f.qc,{...frozen,sha256:'0'.repeat(64)})).rejects.toMatchObject({code:'55000'});
-  await register(f.owner,f.qc,frozen);
-  expect((await f.c.query("SELECT producer_task_id FROM public.artifacts WHERE episode_id=$1 AND relative_path=$2 AND artifact_type='studio_frozen_project'",[f.episode,frozen.relative_path])).rows).toEqual([{producer_task_id:revised.body.id}]);
-  expect((await f.c.query('SELECT count(*)::int n FROM public.review_render_composition_revisions WHERE pre_render_review_package_id=$1',[f.pre])).rows[0].n).toBe(1);
-  expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('render_ready');
-  expect(await f.original()).toEqual(before);
-  expect((await f.request('requestStudioCompositionRevision',data)).status).toBe(409);
+  const frozen={relative_path:f.projectPath,sha256:sha(await readFile(join(f.assetRoot,f.projectPath))),file_size:(await readFile(join(f.assetRoot,f.projectPath))).length};
+  expect((await f.c.query("SELECT to_regprocedure('local_identity.register_owned_studio_freeze(uuid,uuid,jsonb)') IS NULL absent")).rows[0].absent).toBe(true);
+  await expect(register(f.other,f.qc,frozen)).rejects.toMatchObject({code:'42883'});
+  await expect(register(f.owner,f.qc,frozen)).rejects.toMatchObject({code:'42883'});
+  expect((await f.c.query("SELECT count(*)::int n FROM public.artifacts WHERE episode_id=$1 AND artifact_type='studio_frozen_project'",[f.episode])).rows[0].n).toBe(0);
+  expect((await f.c.query('SELECT count(*)::int n FROM public.review_render_composition_revisions WHERE pre_render_review_package_id=$1',[f.pre])).rows[0].n).toBe(0);
+  expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('qc_review');
+  expect(await f.state()).toEqual(protectedState);expect(await f.original()).toEqual(before);
  }finally{await f.close();}
-},180000);
+},120000);
 
 it.skipIf(!enabled)('retired Studio structural return preserves all packages, stage and immutable QC files behind Owner and CSRF checks',async()=>{
  const f=await legacyFixture();try{
@@ -115,32 +111,21 @@ it.skipIf(!enabled)('a running historical storyboard revision cannot reactivate 
  }finally{await f.close();}
 },120000);
 
-it.skipIf(!enabled)('48 per-shot input changes remain drafts until a new local preview is confirmed and a new review snapshot is frozen',async()=>{
+it.skipIf(!enabled)('retired per-shot editing, preview and review commands preserve original drafts and cannot queue work',async()=>{
  const f=await legacyFixture(),worker=f.workerPool();try{
   const before=await f.original(),data={reviewPackageId:f.board,shotId:'shot-1',materialRevisionId:f.material,clipSegments:[{start_seconds:0,end_seconds:1}],composition:defaultShotComposition('full',1),sourceVideoDurationSeconds:2,audioMode:'none',subtitleText:'Owner revised shot input',subtitlesEnabled:false,captionContract:shotCaptionContractToDatabase(defaultShotCaptionContract('Owner revised shot input','independent',false))};
-  expect((await f.request('saveMediaDraft',{...data,reviewPackageId:randomUUID()})).status).toBe(409);
+  const state=await f.state();
+  expect((await f.request('saveMediaDraft',{...data,reviewPackageId:randomUUID()})).status).toBe(410);
   expect((await f.request('saveMediaDraft',data,{token:f.otherToken})).status).toBe(404);
   expect((await f.request('saveMediaDraft',data,{csrf:false})).status).toBe(403);
-  const saved=await f.request('saveMediaDraft',data);expect(saved.status,JSON.stringify(saved.body)).toBe(200);
-  expect(saved.body.confirmation_status).toBe('pending');expect(await f.original()).toEqual(before);
-  expect((await f.request('openStudio',{projectRelativePath:f.boardPath})).status).toBe(409);
-  const queued=await f.request('generateSyncPreview',{reviewPackageId:f.board,shotId:'shot-1'});expect(queued.status,JSON.stringify(queued.body)).toBe(200);
-  const claim=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:queued.body.id,p_worker_capacity:1}) as any[])[0];expect(claim?.task_id).toBe(queued.body.id);
-  const result=await runWorkspaceDeliveryProcess(f,claim,{mountPath:dirname(f.root),media:{mode:'local'},shotPreview:true,});expect(result.status,JSON.stringify((await f.c.query('SELECT last_result FROM public.tasks WHERE id=$1',[queued.body.id])).rows[0])).toBe('completed');
-  const confirmed=await f.request('confirmSyncPreview',{reviewPackageId:f.board,shotId:'shot-1',deviationResolution:'none'});expect(confirmed.status,JSON.stringify(confirmed.body)).toBe(200);
-  const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
-  const reviewed=await f.request('generateReviewVideo',{reviewPackageId:f.board,sourceProjectRelativePath:f.boardPath,workspaceRelativePath:opened.body.workspace.relativePath});
-  if(reviewed.status!==200){
-   // Explain a fixture-only SQL precondition instead of hiding it behind HTTP's safe message.
-   const prefix=f.episodeRelativePath+'/openchatcut-frozen',revision=(await readdir(join(f.assetRoot,prefix)))[0],path=prefix+'/'+revision+'/project.json',bytes=await readFile(join(f.assetRoot,path));let diagnostic='';
-   await f.c.query('BEGIN');await f.c.query('SET SESSION AUTHORIZATION loop_app');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);
-   try{await f.c.query('SELECT public.generate_shot_review_video($1,$2,$3,false,NULL)',[f.episode,f.board,{relative_path:path,sha256:sha(bytes),file_size:bytes.length}]);}catch(error){diagnostic=String(error);}finally{await f.c.query('ROLLBACK');await f.c.query('SET SESSION AUTHORIZATION DEFAULT');}
-   throw Error(JSON.stringify(reviewed.body)+' '+diagnostic);
-  }
-  const snapshot=reviewed.body.input_snapshot.review_render;
-  expect(snapshot.pre_render_review_package_id).not.toBe(f.pre);expect(snapshot.confirmed_shots[0]).toMatchObject({shot_id:'shot-1',audio_mode:'none',subtitles_enabled:false});
-  expect(snapshot.members.find((member:any)=>member.member_key==='shot:shot-1').clip_segments).toEqual([{start_seconds:0,end_seconds:1}]);
-  expect(await f.original()).toEqual(before);
-  expect((await f.request('requestStudioCompositionRevision',{reviewPackageId:f.qc,reason:'The earlier QC cannot approve newer shot inputs'})).status).toBe(409);
+  for(const [command,input]of [
+   ['saveMediaDraft',data],['planMedia',{reviewPackageId:f.board}],['generateClip',{reviewPackageId:f.board,shotId:'shot-1'}],
+   ['openStudio',{projectRelativePath:f.boardPath}],['generateSyncPreview',{reviewPackageId:f.board,shotId:'shot-1'}],
+   ['confirmSyncPreview',{reviewPackageId:f.board,shotId:'shot-1',deviationResolution:'none'}],
+   ['generateReviewVideo',{reviewPackageId:f.board,sourceProjectRelativePath:f.boardPath,workspaceRelativePath:f.projectPath}],
+   ['requestStudioCompositionRevision',{reviewPackageId:f.qc,reason:'Earlier QC cannot approve new inputs'}],
+  ]as const){const result=await f.request(command,input);expect(result.status,command+': '+JSON.stringify(result.body)).toBe(410);expect(await f.state()).toEqual(state);}
+  expect(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_worker_capacity:1})).toEqual([]);
+  expect(await f.state()).toEqual(state);expect(await f.original()).toEqual(before);
  }finally{await worker.end();await f.close();}
-},240000);
+},120000);

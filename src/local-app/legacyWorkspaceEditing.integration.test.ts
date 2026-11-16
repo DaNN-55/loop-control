@@ -5,7 +5,8 @@ import {join} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
-import type {OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio';
+import {openOpenChatCutStudio,closeOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio';
+import {episodeFileIO} from './episodeFiles';
 import {editStudioDocument} from './studioDocument.fixture';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {buildOpenChatCutProject} from '../worker/openchatcutProject';
@@ -98,8 +99,10 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registe
  let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
   await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
-  const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
-  await editStudioDocument(opened.body.studioUrl,opened.body.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=37;});await f.closeStudio();
+  // Construct the already saved legacy version without restoring old HTTP writes.
+  const snapshot=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[f.task])).rows[0].input_snapshot;
+  const opened=await openOpenChatCutStudio(f.assetRoot,f.episode,reviewRenderFromSnapshot(snapshot)!,f.runtime,{storage:await episodeFileIO(f.c,f.assetRoot,f.episode)});
+  await editStudioDocument(opened.studioUrl!,opened.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=37;});await closeOpenChatCutStudio(f.episode);
   const response=await fetch(`${f.origin}/api/local/episodes/${f.episode}/legacy-project`,{headers:{Cookie:'loop_owner_session='+f.token}}),saved=await response.json();
   const data={expectedScriptRevisionId:f.script,reviewPackageId:f.board,savedProjectSha256:saved.sha256};
   const sources=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(sources.status).toBe(200);
@@ -114,5 +117,5 @@ it.skipIf(process.env.LOOP_LEGACY_EDIT_ACCEPTANCE!=='1').each(['legacy','registe
   const archived=JSON.parse(await readFile(join(f.assetRoot,result.body.recovery.relativePath),'utf8'));expect(archived.project).toEqual(saved.project);
   const working=JSON.parse(await readFile(join(f.assetRoot,result.body.project.relativePath),'utf8'));expect(working.timelines[0].items.find((i:any)=>i.kind==='video').transform.x).toBe(37);
   const current=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}}),read=await current.json();expect(read.workspace.id).toBe(result.body.id);expect(read.sourceOptions).toBeUndefined();
- }finally{await browser?.close();await f.close();}
+ }finally{await browser?.close();await closeOpenChatCutStudio(f.episode);await f.close();}
 },120000);

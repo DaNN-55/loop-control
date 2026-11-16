@@ -13,7 +13,8 @@ it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1')('legacy orders ent
   expect(await get(`episodes/${f.episode}/workspace`)).toMatchObject({status:200,body:{workspace:null}});
   expect(await registered()).toHaveLength(0);
   const data={reviewPackageId:f.board,expectedScriptRevisionId:f.script};
-  expect((await f.request('setAudioSourceMode',{audioSourceMode:'tts'})).status).toBe(404);
+  expect((await f.request('setAudioSourceMode',{audioSourceMode:'tts'},{token:f.otherToken})).status).toBe(404);
+  expect((await f.request('setAudioSourceMode',{audioSourceMode:'tts'})).status).toBe(410);
   expect(await registered()).toHaveLength(0);
   expect((await f.request('prepareWorkspace',data,{token:f.otherToken})).status).toBe(404);
   expect(await registered()).toHaveLength(0);
