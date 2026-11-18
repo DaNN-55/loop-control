@@ -594,21 +594,15 @@ export type Database = {
     Relationships: [{"columns":["owner_id"],"isOneToOne":false,"foreignKeyName":"production_metric_coverage_periods_owner_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"owners"}];
    };
    "production_metric_daily": {
-    Row: { "owner_id": string; "day": string; "event_type": string; "quality_tier": string; "currency": string; "is_test": boolean; "count": number; "amount_cents": number; };
-    Insert: { "owner_id": string; "day": string; "event_type": string; "quality_tier": string; "currency"?: string; "is_test"?: boolean; "count": number; "amount_cents"?: number; };
-    Update: { "owner_id"?: string; "day"?: string; "event_type"?: string; "quality_tier"?: string; "currency"?: string; "is_test"?: boolean; "count"?: number; "amount_cents"?: number; };
+    Row: { "owner_id": string; "day": string; "event_type": string; "currency": string; "is_test": boolean; "count": number; "amount_cents": number; };
+    Insert: { "owner_id": string; "day": string; "event_type": string; "currency"?: string; "is_test"?: boolean; "count": number; "amount_cents"?: number; };
+    Update: { "owner_id"?: string; "day"?: string; "event_type"?: string; "currency"?: string; "is_test"?: boolean; "count"?: number; "amount_cents"?: number; };
     Relationships: [{"columns":["owner_id"],"isOneToOne":false,"foreignKeyName":"production_metric_daily_owner_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"owners"}];
    };
-   "production_metric_delivery_quality": {
-    Row: { "owner_id": string; "delivery_id": string; "episode_id": string; "tier": string; "revision": number; "frozen_at": string; };
-    Insert: { "owner_id": string; "delivery_id": string; "episode_id": string; "tier": string; "revision": number; "frozen_at"?: string; };
-    Update: { "owner_id"?: string; "delivery_id"?: string; "episode_id"?: string; "tier"?: string; "revision"?: number; "frozen_at"?: string; };
-    Relationships: [{"columns":["delivery_id"],"isOneToOne":false,"foreignKeyName":"production_metric_delivery_quality_delivery_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"workspace_deliveries"},{"columns":["episode_id"],"isOneToOne":false,"foreignKeyName":"production_metric_delivery_quality_episode_id_fkey","referencedSchema":"public","referencedColumns":["id"],"referencedRelation":"episodes"},{"columns":["owner_id"],"isOneToOne":false,"foreignKeyName":"production_metric_delivery_quality_owner_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"owners"}];
-   };
    "production_metric_events": {
-    Row: { "id": number; "owner_id": string; "episode_id": string; "event_type": string; "source_key": string; "occurred_at": string; "quality_tier": string; "payload": Json; };
-    Insert: { "id"?: never; "owner_id": string; "episode_id": string; "event_type": string; "source_key": string; "occurred_at"?: string; "quality_tier": string; "payload": Json; };
-    Update: { "id"?: never; "owner_id"?: string; "episode_id"?: string; "event_type"?: string; "source_key"?: string; "occurred_at"?: string; "quality_tier"?: string; "payload"?: Json; };
+    Row: { "id": number; "owner_id": string; "episode_id": string; "event_type": string; "source_key": string; "occurred_at": string; "payload": Json; };
+    Insert: { "id"?: never; "owner_id": string; "episode_id": string; "event_type": string; "source_key": string; "occurred_at"?: string; "payload": Json; };
+    Update: { "id"?: never; "owner_id"?: string; "episode_id"?: string; "event_type"?: string; "source_key"?: string; "occurred_at"?: string; "payload"?: Json; };
     Relationships: [{"columns":["episode_id"],"isOneToOne":false,"foreignKeyName":"production_metric_events_episode_id_fkey","referencedSchema":"public","referencedColumns":["id"],"referencedRelation":"episodes"},{"columns":["owner_id"],"isOneToOne":false,"foreignKeyName":"production_metric_events_owner_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"owners"}];
    };
    "production_metric_export_resources": {
@@ -616,12 +610,6 @@ export type Database = {
     Insert: { "owner_id": string; "sampled_at": string; "active_exports": number; };
     Update: { "owner_id"?: string; "sampled_at"?: string; "active_exports"?: number; };
     Relationships: [{"columns":["owner_id","sampled_at"],"isOneToOne":true,"foreignKeyName":"production_metric_export_resources_owner_id_sampled_at_fkey","referencedSchema":"local_identity","referencedColumns":["owner_id","sampled_at"],"referencedRelation":"production_metric_resources"}];
-   };
-   "production_metric_quality_versions": {
-    Row: { "owner_id": string; "episode_id": string; "revision": number; "tier": string; "created_at": string; };
-    Insert: { "owner_id": string; "episode_id": string; "revision": number; "tier": string; "created_at"?: string; };
-    Update: { "owner_id"?: string; "episode_id"?: string; "revision"?: number; "tier"?: string; "created_at"?: string; };
-    Relationships: [{"columns":["episode_id"],"isOneToOne":false,"foreignKeyName":"production_metric_quality_versions_episode_id_fkey","referencedSchema":"public","referencedColumns":["id"],"referencedRelation":"episodes"},{"columns":["owner_id"],"isOneToOne":false,"foreignKeyName":"production_metric_quality_versions_owner_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"owners"}];
    };
    "production_metric_queue_cycles": {
     Row: { "owner_id": string; "task_id": string; "episode_id": string; "attempt": number; "enqueued_at": string; "eligible_at": string; "claimed_at": string | null; "observed_only": boolean; };
@@ -640,12 +628,6 @@ export type Database = {
     Insert: { "owner_id": string; "sampled_at": string; "cpu_percent"?: number | null; "memory_used_bytes"?: number | null; "memory_total_bytes"?: number | null; "queue_count": number; "running_count": number; "resource_wait_count": number; "gpu_percent"?: number | null; "gap_seconds"?: number; };
     Update: { "owner_id"?: string; "sampled_at"?: string; "cpu_percent"?: number | null; "memory_used_bytes"?: number | null; "memory_total_bytes"?: number | null; "queue_count"?: number; "running_count"?: number; "resource_wait_count"?: number; "gpu_percent"?: number | null; "gap_seconds"?: number; };
     Relationships: [{"columns":["owner_id"],"isOneToOne":false,"foreignKeyName":"production_metric_resources_owner_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"owners"}];
-   };
-   "production_metric_task_quality": {
-    Row: { "owner_id": string; "task_id": string; "episode_id": string; "tier": string; "revision": number; "frozen_at": string; };
-    Insert: { "owner_id": string; "task_id": string; "episode_id": string; "tier": string; "revision": number; "frozen_at"?: string; };
-    Update: { "owner_id"?: string; "task_id"?: string; "episode_id"?: string; "tier"?: string; "revision"?: number; "frozen_at"?: string; };
-    Relationships: [{"columns":["episode_id"],"isOneToOne":false,"foreignKeyName":"production_metric_task_quality_episode_id_fkey","referencedSchema":"public","referencedColumns":["id"],"referencedRelation":"episodes"},{"columns":["owner_id"],"isOneToOne":false,"foreignKeyName":"production_metric_task_quality_owner_id_fkey","referencedSchema":"local_identity","referencedColumns":["id"],"referencedRelation":"owners"},{"columns":["task_id"],"isOneToOne":false,"foreignKeyName":"production_metric_task_quality_task_id_fkey","referencedSchema":"public","referencedColumns":["id"],"referencedRelation":"tasks"}];
    };
    "production_preparation_revisions": {
     Row: { "id": string; "episode_id": string; "script_revision_id": string; "script_sha256": string; "revision_number": number; "origin": string; "source_format": string; "file_reference": Json | null; "manifest": Json; "content_sha256": string; "source_reference_id": string | null; "source_evidence": Json | null; "created_by": string; "created_at": string; "invalidated_at": string | null; "parent_preparation_revision_id": string | null; };
@@ -922,7 +904,6 @@ export type Database = {
    "current_workspace_call_hash": { Args: { "p_workspace": string | null; }; Returns: string };
    "delete_owned_input_episode": { Args: { "p_episode_id": string | null; }; Returns: Json };
    "episode_asset_root": { Args: { "p_episode": string | null; }; Returns: string };
-   "episode_business_quality": { Args: { "p_episode": string | null; }; Returns: Json };
    "episode_completed_storage_lineage": { Args: { "p_episode": string | null; }; Returns: Database["local_identity"]["Tables"]["episode_storage_lineage"]['Row'][] };
    "episode_current_reference": { Args: { "p_episode": string | null; "p_reference": string | null; }; Returns: string };
    "episode_deletion_has_dependencies": { Args: { "p_episode": string | null; }; Returns: boolean };
@@ -1019,7 +1000,6 @@ export type Database = {
    "save_recycle_limit": { Args: { "p_bytes": number | null; "p_revision": number | null; }; Returns: number };
    "script_material_is_approved": { Args: { "p_material": string | null; }; Returns: boolean };
    "secret_reference_inventory": { Args: { "p_session_hash": string | null; }; Returns: Json };
-   "set_episode_business_quality": { Args: { "p_episode": string | null; "p_tier": string | null; "p_expected_revision"?: number | null; }; Returns: Json };
    "set_production_metrics_enabled": { Args: { "p_enabled": boolean | null; }; Returns: Json };
    "stop_workspace_queued_tasks": { Args: { "p_workspace": string | null; "p_kind": string | null; "p_shot"?: string | null; }; Returns: number };
    "storage_physical_root": { Args: { "p_root": string | null; }; Returns: string };

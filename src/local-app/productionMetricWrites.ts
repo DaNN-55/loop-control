@@ -2,9 +2,14 @@ import {createHash,randomUUID} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {ProviderOutcomeUnknownError,ProviderRequestNotSentError} from '../worker/providerOutcome.js';
-import {productionMetricsEnabled} from './productionQuality.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import type {NativeAttemptFence} from './nativeAttemptOutput.js';
+
+/** An uninstalled or explicitly disabled metrics schema must preserve old behavior. */
+export async function productionMetricsEnabled(c:PoolClient):Promise<boolean>{
+ if(!(await c.query("SELECT to_regprocedure('local_identity.production_metrics_enabled()') IS NOT NULL present")).rows[0]?.present)return false;
+ return(await c.query('SELECT local_identity.production_metrics_enabled() enabled')).rows[0]?.enabled===true;
+}
 
 /** Only machine facts cross this boundary. The SQL boundary validates scope and keys. */
 export async function recordOwnedProductionMetric(c:PoolClient,episodeId:string,type:string,key:string,payload:Record<string,unknown>){

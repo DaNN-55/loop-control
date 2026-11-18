@@ -6,6 +6,14 @@ import type {Database} from '../lib/database.types';
 type Account=Database['public']['Tables']['accounts']['Row'];
 const accounts=[{id:'fixture',name:'测试账号',current_blueprint_version_id:'blueprint'}] as Account[];
 afterEach(cleanup);
+it('creates orders without business quality even when collection is enabled',async()=>{
+ const submit=vi.fn(async()=>null),user=userEvent.setup();
+ render(<EpisodeForm {...{productionMetricsEnabled:true}} accounts={accounts} isPending={false} onClose={()=>{}} onSubmit={submit} series={[]} seriesVersions={[]}/>);
+ expect(screen.queryByRole('combobox',{name:'业务质量档'})).toBeNull();
+ expect(screen.getAllByRole('combobox')).toHaveLength(2);
+ await user.click(screen.getByRole('button',{name:'创建生产单'}));
+ expect(submit).toHaveBeenCalledWith({accountId:'fixture',title:'',isTest:false,seriesVersionId:null});
+});
 it('opens a new production order at its working title',()=>{
  render(<EpisodeForm accounts={accounts} isPending={false} onClose={()=>{}} onSubmit={async()=>null} series={[]} seriesVersions={[]}/>);
  expect(document.activeElement).toBe(screen.getByRole('textbox',{name:'工作标题（可留空）'}));

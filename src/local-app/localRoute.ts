@@ -1,6 +1,5 @@
 import {LocalRecycleBin} from './recycleBin.js';
 import {ProductionScriptError} from '../reviews/productionScript.js';
-import {productionMetricsEnabled,readProductionQuality} from './productionQuality.js';
 import {readCommandReceipt} from './commandReceipt.js';
 import {observeLocalRequest,type RuntimeRequestLogEvent} from './runtimeRequestLog.js';
 import {readAccountDeletionStatus} from './accountDeletion.js';
@@ -72,7 +71,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(typeof body.email!=='string'||typeof body.password!=='string'||body.email.length>320||body.password.length>1024){send(400,{error:'登录请求格式无效。'});return;}
     const next=await establishSession(options.pool,body.email.trim(),body.password,token);
     if(!next){send(401,{error:'邮箱或密码无效，或登录暂时锁定。'});return;}
-    response.setHeader('Set-Cookie',cookieHeader(next));const owner=await lookupSession(options.pool,next);send(200,{owner:owner?{id:owner.id,email:owner.email}:null,secretAdministration:!!owner&&!!options.secrets?.allowed(owner),csrfToken:csrfFor(next),productionMetricsEnabled:!!owner&&await ownerTransaction(options.pool,owner.id,true,productionMetricsEnabled)});return;
+    response.setHeader('Set-Cookie',cookieHeader(next));const owner=await lookupSession(options.pool,next);send(200,{owner:owner?{id:owner.id,email:owner.email}:null,secretAdministration:!!owner&&!!options.secrets?.allowed(owner),csrfToken:csrfFor(next)});return;
    }
    const session=await lookupSession(options.pool,token);
    if(!session){await reject(null,'unauthenticated');response.setHeader('Set-Cookie',cookieHeader(''));send(401,{error:'请先登录所有者。'});return;}
@@ -92,11 +91,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    const recycleRead=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})(?:\/|$)/);
    if(recycleRead&&request.method==='GET'&&uuid.test(recycleRead[1])&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[recycleRead[1]])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请恢复后再打开。');
-   if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!!options.secrets?.allowed(session),csrfToken:csrfFor(session.token),productionMetricsEnabled:await ownerTransaction(options.pool,session.id,true,productionMetricsEnabled)});return;}
-   if(url.pathname==='/api/local/production-quality'&&request.method==='GET'){
-    if([...url.searchParams.keys()].some(k=>k!=='episodeId')||url.searchParams.getAll('episodeId').length!==1)throw new ConfigurationError(400,'业务质量档请求无效。');
-    send(200,await readProductionQuality(options.pool,session.id,url.searchParams.get('episodeId')??''));return;
-   }
+   if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!!options.secrets?.allowed(session),csrfToken:csrfFor(session.token)});return;}
    if(url.pathname==='/api/local/storyboard-planning')throw new ConfigurationError(410,'旧视觉与分镜规划已退役，请使用当前制作流程。');
    if(url.pathname==='/api/local/preferences'){
     if(request.method==='GET'){send(200,await readOwnerPreferences(options.pool,session.id));return;}

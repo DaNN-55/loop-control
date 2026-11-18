@@ -73,9 +73,8 @@ export function summarizeProductionMetrics(facts:ProductionMetricFacts,input:Met
   time:{recordedRunSlotSeconds:slotSeconds,recordedRunUnionSeconds:unionSeconds(intervals),invalidIntervals,unclosedInactiveIntervals:unfinishedIntervals,cpuGpuUsage:null,perAttemptQueueWaitSeconds:null},
   money:{unit:'application_cents',supplierPaidCents:null,reportedPositiveCentsForStartedAttempts:positiveCost|| (unknownExternalCost?null:0),unpricedGenerationAttemptsStarted:unknownExternalCost,reservationsCreated:reservations.length,grossReservedCentsCreated:reservations.reduce((n,r)=>n+r.reservedCents,0),releasedCents:null,estimatedCents:null,requestStatesSnapshot:requestStates,dispatchPhasesSnapshot:dispatchPhases,submissionOutcomesSnapshot:submissionOutcomes},
   candidates:{retainedDecisionRecords:decisions.length,firstRecordedDecisions:decisionCounts,fullAdoptionEventCount:null,reworkCount:null},
-  businessQualityTier:null,
   byDay:Object.entries(days).map(([date,value])=>({date,...value})),byService:[...services.values()].sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b))),
-  unavailable:['stage_residence_history','per_attempt_queue_wait','supplier_paid_settlement_and_currency','reservation_release_history','complete_adoption_and_rework_history','business_quality_tier','provider_http_request_count','cpu_gpu_utilization','deleted_or_standalone_history','historical_month_end_state','unambiguous_frozen_estimate_aggregation'],
+  unavailable:['stage_residence_history','per_attempt_queue_wait','supplier_paid_settlement_and_currency','reservation_release_history','complete_adoption_and_rework_history','provider_http_request_count','cpu_gpu_utilization','deleted_or_standalone_history','historical_month_end_state','unambiguous_frozen_estimate_aggregation'],
  };
 }
 

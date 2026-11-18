@@ -68,11 +68,11 @@ it.skipIf(!contextPath)('a real SQL response-write failure never repeats a Provi
  }finally{await f.close();}
 },120000);
 
-it.skipIf(!contextPath)('freezes the confirmed delivery tier while a real isolated Worker verifies and completes the package',async()=>{
+it.skipIf(!contextPath)('records delivery confirmation and completion while a real isolated Worker verifies the package',async()=>{
  await isolated();const f=await productionWorkspaceFixture({testContextModule:contextPath,runtime:{wake(){}}});
  try{
   await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,2)');
-  await ownerTransaction(f.pool,f.owner,false,async c=>{await c.query('SELECT local_identity.set_production_metrics_enabled(true)');await c.query("SELECT local_identity.set_episode_business_quality($1,'low',0)",[f.episode]);});
+  await ownerTransaction(f.pool,f.owner,false,c=>c.query('SELECT local_identity.set_production_metrics_enabled(true)'));
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);
   const send=async(command:string,extra:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...extra});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;};
   for(const clip of w.clips)await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});
@@ -80,11 +80,8 @@ it.skipIf(!contextPath)('freezes the confirmed delivery tier while a real isolat
   const output=w.exports[0];await send('confirmWorkspaceExport',{exportId:output.id,expectedExportSha256:output.artifact.sha256,expectedContentSha256:w.contentSha256});
   await send('prepareWorkspaceDelivery',{exportId:output.id,expectedExportSha256:output.artifact.sha256,expectedContentSha256:w.contentSha256,title:'隔离统计交付',description:'',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});
   const delivery=w.deliveries[0];
-  expect((await f.c.query('SELECT tier,revision FROM local_identity.production_metric_delivery_quality WHERE delivery_id=$1',[delivery.id])).rows[0]).toEqual({tier:'low',revision:1});
-  await ownerTransaction(f.pool,f.owner,false,c=>c.query("SELECT local_identity.set_episode_business_quality($1,'high',1)",[f.episode]));
   const worker=f.workerPool(),claimed=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_worker_capacity:2}))[0]as any;expect(claimed?.task_id).toBe(delivery.taskId);
   const result=await runWorkspaceDeliveryProcess(f,claimed);expect(result.status,JSON.stringify(result)).toBe('completed');
-  expect((await f.c.query("SELECT quality_tier,payload->>'quality_snapshot_known' known FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type='delivery_completed'",[f.episode])).rows).toEqual([{quality_tier:'low',known:'true'}]);
-  expect((await f.c.query('SELECT tier FROM local_identity.production_metric_task_quality WHERE task_id=$1',[delivery.taskId])).rows[0].tier).toBe('low');
+  expect((await f.c.query("SELECT payload->>'delivery_id' delivery FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type='delivery_completed'",[f.episode])).rows).toEqual([{delivery:delivery.id}]);
  }finally{await f.close();}
 },180000);

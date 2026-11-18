@@ -1,5 +1,5 @@
 import type {PoolClient} from 'pg';
-import {productionMetricsEnabled} from './productionQuality.js';
+import {productionMetricsEnabled} from './productionMetricWrites.js';
 
 /** One application instance only; restored Owner UUIDs in another instance
  * never share in-flight counts. Nothing is persisted while collection is off. */

@@ -1,4 +1,3 @@
-import {ProductionQualityField} from './ProductionQualityField';
 import {uiText} from '../i18n/ui';
 import {WorkspaceDraftOwner} from './WorkspaceDraft';
 import {EpisodeCollectionDialog} from './EpisodeCollectionDialog';
@@ -15,7 +14,7 @@ import {createEpisodeReader} from '../episodes/episodeReadService';
 import {localCommand,localRequest} from './client';
 import type {WorkerPreflightResult} from '../worker/contracts';
 type LocalEpisodeSnapshot=EpisodeProductionSnapshot&{localAssetRoot?:string;localDirectoryPath?:string;historicalReadOnly?:boolean};
-export function LocalEpisodeDetail({productionMetricsEnabled=false,episodeId,ownerId='',onChanged,onStudioAction,onOpenAccount,preparationEntry}:{productionMetricsEnabled?:boolean;preparationEntry?:{shotId?:string;targetItemId?:string};episodeId:string;ownerId?:string;onClose:()=>void;onChanged:()=>Promise<void>;onStudioAction?:(action:(()=>void)|null)=>void;onOpenAccount?:(accountId:string,context?:{blocker:WorkerBlocker;blueprintVersionId:string;episodeId:string})=>void}){
+export function LocalEpisodeDetail({episodeId,ownerId='',onChanged,onStudioAction,onOpenAccount,preparationEntry}:{preparationEntry?:{shotId?:string;targetItemId?:string};episodeId:string;ownerId?:string;onClose:()=>void;onChanged:()=>Promise<void>;onStudioAction?:(action:(()=>void)|null)=>void;onOpenAccount?:(accountId:string,context?:{blocker:WorkerBlocker;blueprintVersionId:string;episodeId:string})=>void}){
  const [snapshot,setSnapshot]=useState<LocalEpisodeSnapshot|null>(null),[error,setError]=useState('');
  const [collectionOpen,setCollectionOpen]=useState(false);
  const [directoryPending,setDirectoryPending]=useState(false),[directoryNotice,setDirectoryNotice]=useState('');
@@ -73,7 +72,6 @@ export function LocalEpisodeDetail({productionMetricsEnabled=false,episodeId,own
 
  const directoryActions = (
   <div className="production-directory">
-   {productionMetricsEnabled?<ProductionQualityField key={episodeId} episodeId={episodeId} readOnly={snapshot.historicalReadOnly||!!snapshot.episode.archived_at||snapshot.episode.stage==='production_completed'}/>:null}
    <Dropdown.Root>
     <Button size="sm" color="tertiary" aria-label={uiText("文件夹更多操作")} iconLeading={MoreHorizontal}/>
     <Dropdown.Popover className="dan-ui product-ui production-directory-menu">

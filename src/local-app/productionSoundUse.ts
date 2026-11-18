@@ -4,7 +4,7 @@ import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {workspaceExecutionProject,isWorkspaceVideoTrack} from '../workspaceExecution.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
-import {productionMetricsEnabled} from './productionQuality.js';
+import {productionMetricsEnabled} from './productionMetricWrites.js';
 import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {episodeStorageLocationAtRoot} from './episodeStorageLocation.js';
 import {inspectAudioStream} from '../worker/mediaTools.js';

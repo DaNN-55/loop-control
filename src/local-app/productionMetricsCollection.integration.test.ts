@@ -47,17 +47,14 @@ describe.skipIf(!contextPath)('C collection in an explicitly isolated PostgreSQL
   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_metric_events WHERE owner_id=$1',[f.owner])).rows[0].n).toBe(count);
   await expect(query('SELECT local_identity.record_owned_production_metric($1,$2,$3,$4)',[otherEpisode,'retry_relation',randomUUID(),payload])).rejects.toMatchObject({code:'42501'});
   await expect(query('SELECT local_identity.record_owned_production_metric($1,$2,$3,$4)',[episode,'retry_relation',randomUUID(),{prompt:'Never store raw prompts'}])).rejects.toThrow();
-  await expect(query("INSERT INTO local_identity.production_metric_events(owner_id,episode_id,event_type,source_key,quality_tier,payload) VALUES($1,$2,'forged','forged','unspecified','{}')",[f.owner,episode])).rejects.toMatchObject({code:'42501'});
+  await expect(query("INSERT INTO local_identity.production_metric_events(owner_id,episode_id,event_type,source_key,payload) VALUES($1,$2,'forged','forged','{}')",[f.owner,episode])).rejects.toMatchObject({code:'42501'});
   await expect(query('SELECT local_identity.append_production_metric($1,$2,$3,$4,$5)',[f.owner,episode,'forged','forged',{}])).rejects.toMatchObject({code:'42501'});
   expect((await query('SELECT count(*)::int n FROM local_identity.production_metric_events WHERE owner_id=$1',[f.owner],f.other)).rows[0].n).toBe(0);
  });
 
- it('freezes submission quality, separates backoff from eligible wait, and fences Worker events',async()=>{
-  await query("SELECT local_identity.set_episode_business_quality($1,'low',0)",[episode]);
+ it('separates backoff from eligible wait and fences Worker events without a quality dimension',async()=>{
   const task=randomUUID(),lease=randomUUID(),run=randomUUID();
   await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,provider,model,input_snapshot,available_at,max_attempts) VALUES($1,$2,'generate_narration','ready','volcengine_tts','seed-tts-2.0','{}',clock_timestamp()+interval '2 seconds',2)",[task,episode]);
-  await query("SELECT local_identity.set_episode_business_quality($1,'high',1)",[episode]);
-  expect((await f.c.query('SELECT tier,revision FROM local_identity.production_metric_task_quality WHERE task_id=$1',[task])).rows[0]).toEqual({tier:'low',revision:1});
   await f.c.query("UPDATE public.tasks SET status='running',attempt=1,lease_token=$2,claimed_at=clock_timestamp()+interval '3 seconds' WHERE id=$1",[task,lease]);
   await f.c.query("INSERT INTO public.task_runs(id,task_id,attempt,task_package,status,lease_token) VALUES($1,$2,0,'{}','running',$3)",[run,task,lease]);
   const cycle=(await f.c.query('SELECT payload FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type=\'task_claimed\' AND payload->>\'task_id\'=$2',[episode,task])).rows[0].payload;
@@ -70,28 +67,26 @@ describe.skipIf(!contextPath)('C collection in an explicitly isolated PostgreSQL
   const alien=randomUUID();await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_narration','completed','{}')",[alien,otherEpisode]);
   await expect(query('SELECT local_identity.record_owned_production_metric($1,$2,$3,$4)',[episode,'retry_relation',randomUUID(),{retry_of_task_id:alien}])).rejects.toMatchObject({code:'42501'});
   await f.c.query("UPDATE public.task_runs SET status='completed',completed_at=clock_timestamp(),actual_cost_cents=7 WHERE id=$1",[run]);
-  const finished=(await f.c.query("SELECT quality_tier,payload FROM local_identity.production_metric_events WHERE event_type='attempt_finished' AND payload->>'task_id'=$1",[task])).rows[0];
-  expect(finished.quality_tier).toBe('low');expect(finished.payload.reported_cents).toBe(7);
+  const finished=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE event_type='attempt_finished' AND payload->>'task_id'=$1",[task])).rows[0];
+  expect(finished).not.toHaveProperty('quality_tier');expect(finished.payload.reported_cents).toBe(7);
  });
 
- it('keeps restored past facts and submission quality unknown while collecting later real changes',async()=>{
+ it('keeps restored past facts unknown while collecting later real changes',async()=>{
   const restored=randomUUID(),task=randomUUID(),oldRun=randomUUID(),newRun=randomUUID(),lease=randomUUID(),past=new Date(Date.now()-86400000).toISOString();
   await f.c.query("INSERT INTO public.episodes(id,account_id,blueprint_version_id,title,created_at) VALUES($1,$2,$2,'Restored isolated',$3)",[restored,account,past]);
   await f.c.query('INSERT INTO local_identity.input_episodes(episode_id,owner_id) VALUES($1,$2)',[restored,f.owner]);
   expect((await f.c.query("SELECT count(*)::int n FROM local_identity.production_metric_events WHERE episode_id=$1 AND event_type='episode_created'",[restored])).rows[0].n).toBe(0);
-  await query("SELECT local_identity.set_episode_business_quality($1,'medium',0)",[restored]);
   await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,provider,input_snapshot,created_at,max_attempts) VALUES($1,$2,'generate_narration','ready','volcengine_tts','{}',$3,2)",[task,restored,past]);
   await f.c.query("INSERT INTO public.task_runs(id,task_id,attempt,task_package,status,started_at,completed_at) VALUES($1,$2,0,'{}','failed',$3,$3)",[oldRun,task,past]);
   await f.c.query("INSERT INTO local_identity.provider_dispatch_facts(task_id,attempt,lease_token,kind,request_hash,phase,updated_at) VALUES($1,0,$2,'speech',repeat('a',32),'preparing',$3)",[task,lease,past]);
-  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_metric_task_quality WHERE task_id=$1',[task])).rows[0].n).toBe(0);
   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_metric_queue_cycles WHERE task_id=$1',[task])).rows[0].n).toBe(0);
   expect((await f.c.query("SELECT count(*)::int n FROM local_identity.production_metric_events WHERE payload->>'task_id'=$1",[task])).rows[0].n).toBe(0);
   await f.c.query("UPDATE public.tasks SET status='running',attempt=2,lease_token=$2,claimed_at=clock_timestamp() WHERE id=$1",[task,lease]);
   await f.c.query("INSERT INTO public.task_runs(id,task_id,attempt,task_package,status,lease_token) VALUES($1,$2,1,'{}','running',$3)",[newRun,task,lease]);
   const claim=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE event_type='task_claimed' AND payload->>'task_id'=$1",[task])).rows[0].payload;
   expect(claim).toMatchObject({observed_only:true,backoff_seconds:null,eligible_wait_seconds:null});
-  const start=(await f.c.query("SELECT quality_tier,payload FROM local_identity.production_metric_events WHERE event_type='attempt_started' AND payload->>'task_id'=$1",[task])).rows[0];
-  expect(start.quality_tier).toBe('unspecified');expect(start.payload.quality_snapshot_known).toBe(false);
+  const start=(await f.c.query("SELECT payload FROM local_identity.production_metric_events WHERE event_type='attempt_started' AND payload->>'task_id'=$1",[task])).rows[0];
+  expect(start.payload).not.toHaveProperty('quality_snapshot_known');
   await f.c.query("UPDATE public.task_runs SET status='completed',completed_at=clock_timestamp() WHERE id=$1",[newRun]);
  });
 
@@ -112,24 +107,21 @@ describe.skipIf(!contextPath)('C collection in an explicitly isolated PostgreSQL
   expect(await snapshot()).toBe(before);
  });
 
- it('retains only new statistics, preserves current quality and anonymous totals after permanent deletion',async()=>{
+ it('retains only new statistics and preserves anonymous totals after permanent deletion',async()=>{
   const disposable=randomUUID();await f.c.query("INSERT INTO public.episodes(id,account_id,blueprint_version_id,title) VALUES($1,$2,$2,'Disposable isolated')",[disposable,account]);
   await f.c.query('INSERT INTO local_identity.input_episodes(episode_id,owner_id) VALUES($1,$2)',[disposable,f.owner]);
-  await query("SELECT local_identity.set_episode_business_quality($1,'medium',0)",[disposable]);
   const at=new Date(Date.now()-400*86400000).toISOString();
-  await f.c.query("INSERT INTO local_identity.production_metric_events(owner_id,episode_id,event_type,source_key,quality_tier,payload,occurred_at) VALUES($1,$2,'retention_fixture','old','unspecified','{}',$3)",[f.owner,episode,at]);
+  await f.c.query("INSERT INTO local_identity.production_metric_events(owner_id,episode_id,event_type,source_key,payload,occurred_at) VALUES($1,$2,'retention_fixture','old','{}',$3)",[f.owner,episode,at]);
   await f.c.query("INSERT INTO local_identity.production_metric_resources(owner_id,sampled_at,queue_count,running_count,resource_wait_count) VALUES($1,clock_timestamp()-interval '31 days',0,0,0)",[f.owner]);
-  await f.c.query("INSERT INTO local_identity.production_metric_daily(owner_id,day,event_type,quality_tier,count) VALUES($1,current_date-interval '25 months','expired','unspecified',1)",[f.owner]);
-  await f.c.query("UPDATE local_identity.production_metric_quality_versions SET created_at=clock_timestamp()-interval '13 months' WHERE owner_id=$1",[f.owner]);
+  await f.c.query("INSERT INTO local_identity.production_metric_daily(owner_id,day,event_type,count) VALUES($1,current_date-interval '25 months','expired',1)",[f.owner]);
   const before=(await f.c.query("SELECT md5(jsonb_agg(to_jsonb(t) ORDER BY id)::text) digest FROM public.episodes t")).rows[0].digest;
   const pruned=(await query('SELECT local_identity.prune_production_metrics() result')).rows[0].result;
   expect(pruned).toMatchObject({events:1,resources:1,daily:1});
-  expect((await query('SELECT local_identity.episode_business_quality($1) value',[episode])).rows[0].value).toEqual({tier:'high',revision:2});
   expect((await f.c.query("SELECT md5(jsonb_agg(to_jsonb(t) ORDER BY id)::text) digest FROM public.episodes t")).rows[0].digest).toBe(before);
   const dailyBefore=(await f.c.query('SELECT sum(count)::text n FROM local_identity.production_metric_daily WHERE owner_id=$1',[f.owner])).rows[0].n;
   await f.c.query('UPDATE public.episodes SET archived_at=clock_timestamp() WHERE id=$1',[disposable]);
   await query('SELECT local_identity.delete_owned_input_episode($1)',[disposable]);
-  for(const table of ['production_metric_events','production_metric_quality_versions','production_metric_task_quality','production_metric_delivery_quality','production_metric_queue_cycles'])expect((await f.c.query(`SELECT count(*)::int n FROM local_identity.${table} WHERE episode_id=$1`,[disposable])).rows[0].n).toBe(0);
+  for(const table of ['production_metric_events','production_metric_queue_cycles'])expect((await f.c.query(`SELECT count(*)::int n FROM local_identity.${table} WHERE episode_id=$1`,[disposable])).rows[0].n).toBe(0);
   expect((await f.c.query('SELECT sum(count)::text n FROM local_identity.production_metric_daily WHERE owner_id=$1',[f.owner])).rows[0].n).toBe(dailyBefore);
   const columns=(await f.c.query("SELECT column_name FROM information_schema.columns WHERE table_schema='local_identity' AND table_name='production_metric_daily'")).rows.map(r=>r.column_name);
   expect(columns.some(column=>['episode_id','account_id','task_id','payload','title','path'].includes(column))).toBe(false);

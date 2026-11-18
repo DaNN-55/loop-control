@@ -6,7 +6,6 @@ import {ownerTransaction} from './ownerTransaction.js';
 import {localExportActivity,type LocalExportActivity} from './productionLocalExport.js';
 import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {validateImportedMaterial} from './materialAcceptance.js';
-import {setProductionQuality} from './productionQuality.js';
 import {createEpisodeDirectory} from './episodeCreation.js';
 import {verifyEpisodeFile} from './episodeFiles.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
@@ -64,14 +63,13 @@ export class LocalEpisodeCommands {
  }
  async execute(session:OwnerSession,body:Record<string,unknown>){return this.executeCommand(session,body,run=>sessionTransaction(this.pool,session,run));}
  private async executeCommand(session:{id:string},body:Record<string,unknown>,transaction:<T>(run:(c:PoolClient)=>Promise<T>)=>Promise<T>){
-  if(typeof body.command!=='string'||!retiredPlanningCommands.has(body.command)&&!retiredManualCommands.has(body.command)&&!['generateTts','repairConnection','repairConfiguration'].includes(body.command)&&!Object.hasOwn(productionWorkspaceFields,body.command)&&!['create','setProductionQuality','start','reconfirmScript','importMaterial','openDirectory','openStandaloneStudio'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
+  if(typeof body.command!=='string'||!retiredPlanningCommands.has(body.command)&&!retiredManualCommands.has(body.command)&&!['generateTts','repairConnection','repairConfiguration'].includes(body.command)&&!Object.hasOwn(productionWorkspaceFields,body.command)&&!['create','start','reconfirmScript','importMaterial','openDirectory','openStandaloneStudio'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
   const data=body.data as Record<string,unknown>,hash=canonicalFingerprint(body);
   const retiredNarration=body.command==='generateTts';
   const retiredManual=retiredManualCommands.has(body.command);
   const retiredExecution=['repairConfiguration','repairConnection'].includes(body.command);
   const retiredPlanning=retiredPlanningCommands.has(body.command)||body.command==='replanWorkspace'&&Object.hasOwn(data,'planningTaskId');
-  const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest','businessQualityTier'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],openDirectory:['episodeId']};
-  allowed.setProductionQuality=['episodeId','tier','expectedRevision'];
+  const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],openDirectory:['episodeId']};
   allowed.start=['episodeId'];
   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
   allowed.openStandaloneStudio=[];
@@ -102,10 +100,7 @@ export class LocalEpisodeCommands {
     }
    }
    let value;
-   if(body.command==='setProductionQuality'){
-    value=await setProductionQuality(c,data.episodeId,data.tier,data.expectedRevision);
-    recordValidatedRequestLogContext({episodeId:String(data.episodeId)});
-   }else if(body.command==='openStandaloneStudio'){
+   if(body.command==='openStandaloneStudio'){
     if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');
     await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':standalone-studio']);
     const config=await this.runtime.studioRuntime();

@@ -8,6 +8,15 @@ beforeEach(()=>{vi.resetModules();sessionStorage.clear();vi.stubGlobal('crypto',
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
 const snapshot=(id:string)=>({episode:{id,account_id:'account',title:id,stage:'waiting_input',archived_at:null,main_script_revision_id:null},reviewPackages:[],tasks:[]});
 
+it('opens the order without fetching or displaying business quality',async()=>{
+ const request=vi.fn(async(path:string)=>Response.json(path.endsWith('/session')?{csrfToken:'fixture-csrf',productionMetricsEnabled:true}:{hashes:{},sections:snapshot('without-quality')}));
+ vi.stubGlobal('fetch',request);
+ render(<LocalEpisodeDetail {...{productionMetricsEnabled:true}} episodeId="without-quality" onClose={()=>{}} onChanged={async()=>{}}/>);
+ await screen.findByRole('heading',{name:'without-quality'});
+ expect(screen.queryByRole('combobox',{name:'业务质量档'})).toBeNull();
+ expect(request.mock.calls.every(([path])=>!path.includes('production-quality'))).toBe(true);
+});
+
 it('does not let a completed command background read replace the next episode or Owner access',async()=>{
  let writes=0,releaseEpisode!:(value:Response)=>void,rejectCatalog!:(reason:Error)=>void;
  const oldEpisode=new Promise<Response>(resolve=>{releaseEpisode=resolve;}),oldCatalog=new Promise<void>((_,reject)=>{rejectCatalog=reject;});

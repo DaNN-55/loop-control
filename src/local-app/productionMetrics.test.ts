@@ -16,7 +16,7 @@ it('counts retained delivery identities, retries and Shanghai-calendar boundarie
  expect(s.attempts.successRateKnownOutcomes).toBeCloseTo(2/3);expect(s.attempts.durationSeconds).toEqual({sample:3,p50:20,p95:20});
  expect(s.time).toMatchObject({recordedRunSlotSeconds:60,recordedRunUnionSeconds:40,unclosedInactiveIntervals:1,perAttemptQueueWaitSeconds:null});
  expect(s.money).toMatchObject({grossReservedCentsCreated:100,reservationsCreated:1,reportedPositiveCentsForStartedAttempts:7,unpricedGenerationAttemptsStarted:1,supplierPaidCents:null,releasedCents:null,estimatedCents:null});
- expect(s.byDay[0]).toMatchObject({date:'2026-11-01',episodesCreated:1,firstDeliveries:1,attemptsStarted:3});expect(s.byDay.at(-1)?.date).toBe('2026-11-30');expect(s.businessQualityTier).toBeNull();
+ expect(s.byDay[0]).toMatchObject({date:'2026-11-01',episodesCreated:1,firstDeliveries:1,attemptsStarted:3});expect(s.byDay.at(-1)?.date).toBe('2026-11-30');expect(s).not.toHaveProperty('businessQualityTier');
  expect(s.candidates).toMatchObject({retainedDecisionRecords:1,fullAdoptionEventCount:null,reworkCount:null});
 });
 it('keeps all-zero external costs unknown and omits fallback attempts absent from task_runs',()=>{const f=facts();f.tasks=[{id:'no-run',createdAt:'2026-11-02T00:00:00Z',status:'completed',generation:true,retryLinked:true}];f.runs=[run('unknown',0,'2026-11-02T00:00:00Z','2026-11-02T00:00:10Z')];const s=summarizeProductionMetrics(f,window);expect(s.money.reportedPositiveCentsForStartedAttempts).toBeNull();expect(s.money.unpricedGenerationAttemptsStarted).toBe(1);expect(s.attempts.started).toBe(1);expect(s.tasks.retryLinkedTasksCreated).toBe(1);});
