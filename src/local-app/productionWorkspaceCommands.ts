@@ -83,7 +83,8 @@ export async function readProductionWorkspace(c:PoolClient,episodeId:string,root
   const path=row.preparation_file?.relativePath??'制作基准文件';if(!missingSources.includes(path))missingSources.push(path);
  }
  let captionProblem=false;const captions=await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter((b:WorkspaceClip)=>usedContent.ids.has(b.itemId))},project).catch(()=>{captionProblem=true;return[];});
- const exportState=await readWorkspaceExports(c,root,row),inputsReady=!placeholders.length&&!missingSources.length&&!captionProblem&&captions.filter(x=>usedContent.ids.has(x.itemId)&&x.contract.enabled).every(x=>x.timing==='current'&&x.textConfirmed),stale=row.current_script!==row.script_revision_id||row.preparation_script!==row.script_revision_id||!!row.invalidated_at;
+ const sourceVoicesCurrent=row.bindings.filter((b:WorkspaceClip)=>usedContent.ids.has(b.itemId)).every((b:WorkspaceClip)=>resolveWorkspaceMainVoice(project,b.shotId).sourceCurrent!==false);
+ const exportState=await readWorkspaceExports(c,root,row),inputsReady=sourceVoicesCurrent&&!placeholders.length&&!missingSources.length&&!captionProblem&&captions.filter(x=>usedContent.ids.has(x.itemId)&&x.contract.enabled).every(x=>x.timing==='current'&&x.textConfirmed),stale=row.current_script!==row.script_revision_id||row.preparation_script!==row.script_revision_id||!!row.invalidated_at;
  if(!inputsReady||stale)for(const e of exportState.exports)e.confirmed=false;
  const deliverable=inputsReady&&!stale&&!!exportState.exports[0]?.current&&exportState.exports[0].status==='ready'&&exportState.exports[0].checks.every(x=>x.passed);
  const history=(await c.query('SELECT revision,project_sha256,script_revision_id,reason,created_at FROM local_identity.production_workspace_versions WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 50',[row.id])).rows.map(v=>({revision:Number(v.revision),sha256:v.project_sha256,scriptRevisionId:v.script_revision_id,reason:v.reason,createdAt:v.created_at}));
@@ -317,7 +318,7 @@ export class ProductionWorkspaceCommands{
   const validate=async(doc:OpenChatCutProject,observation?:OpenChatCutProjectObservation)=>{await validateWorkspaceProject(c,root,e.id,doc,config,project,observation);await validateWorkspaceCandidateUses(c,row!,project,doc);await validateWorkspaceVisualUses(c,root,row!,project,doc);};
   if(command==='openWorkspaceStudio'){
    const state=await readProductionWorkspace(c,e.id,root);
-   if(state?.readiness.placeholders.length||state?.readiness.missingSources.length){const ids=row.bindings.filter(b=>state!.readiness.placeholders.includes(b.itemId)).map(b=>b.shotId);throw new ConfigurationError(409,ids.length?`请先采用有效图片或视频：${[...new Set(ids)].join('、')}。`:'当前采用的画面素材不可读取，请重新匹配后进入剪辑。');}
+   if(state?.readiness.missingSources.length)throw new ConfigurationError(409,'当前采用的画面素材不可读取，请重新匹配后进入剪辑。');
 
    if((await c.query("SELECT 1 FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.workspace_id=$1 AND t.status IN ('ready','running') LIMIT 1",[row.id])).rowCount)throw new ConfigurationError(409,'交付正在排队或校验，请等待结果后再编辑。');
    const editable=await assembleWorkspaceCaptions(c,root,row,migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings))),paths=[...usedWorkspaceContent(editable).paths];for(const asset of editable.assets)if(!paths.includes(asset.src))try{await resolveWorkspaceSource(c,root,e.id,asset.src);paths.push(asset.src);}catch{/* Unused unavailable library media does not block editing. */}const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,workspaceStudioFingerprint(row),config,validate,await episodeFileIO(c,root,e.id,true));

@@ -47,3 +47,15 @@ it.each(['read-only','pending','stale','inactive'] as const)('does not submit a 
  const w={...workspace(),stale:state==='stale'},command=vi.fn();render(<WorkspaceSourceVoicePanel workspace={w} project={project()} selectedShotId="shot-1" pending={state==='pending'} readOnly={state==='read-only'} active={state!=='inactive'} command={command} onChanged={vi.fn()}/>);
  const button=screen.getByRole('button',{name:'采用原登记原声'})as HTMLButtonElement;expect(button.disabled).toBe(true);fireEvent.click(button);expect(command).not.toHaveBeenCalled();
 });
+
+it('prepares the new video source when a retained preparation belongs to the previous file on the same item',async()=>{
+ const w=workspace();delete w.clips[0].voiceInput;
+ w.audio!.mix.voices=[{shotId:'shot-1',mode:'source',sourceItemId:'video',sourceCurrent:false}] as any;
+ w.audio!.preparations=[{id:'old',kind:'source',shotId:'shot-1',sourceItemId:'video',sourceSha256:'a'.repeat(64),status:'completed',audioTrackId:source.id,relativePath:'old.mp3',sha256:source.sha256}] as any;
+ const p=project();p.timelines[0].items[0].sourceContentHash='b'.repeat(64);
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
+ const command=vi.fn(async(_name:string,_data:unknown)=>w);render(<WorkspaceSourceVoicePanel workspace={w} project={p} selectedShotId="shot-1" pending={false} connect command={command} onChanged={vi.fn()}/>);
+ fireEvent.click(screen.getByRole('button',{name:'使用视频原声'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'source',sourceItemId:'video'})));
+ expect(command.mock.calls.some(c=>c[0]==='adoptWorkspaceAudio')).toBe(false);
+});

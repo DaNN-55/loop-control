@@ -2,10 +2,11 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
 import type {WorkspaceReading} from './useWorkspaceReading';
+import {needsCandidateImpactDialog} from './WorkspaceCandidateImpact';
 
 interface ReviewPlan {candidateId:string;projectSha256:string;}
 /** The two media protocols own their commands; this module owns review lifetime. */
-export function useCandidateReviewLifecycle<Choice,Plan extends ReviewPlan>({workspace,scope,reader,prepare:preparePlan,adopt}:{workspace:ProductionWorkspace;scope:string;reader:WorkspaceReading;prepare:(current:ProductionWorkspace,choice:Choice)=>Promise<Plan>;adopt:(current:ProductionWorkspace,plan:Plan)=>Promise<ProductionWorkspace>}){
+export function useCandidateReviewLifecycle<Choice,Plan extends ReviewPlan>({workspace,scope,reader,prepare:preparePlan,adopt,autoAdopt,onAdopted}:{workspace:ProductionWorkspace;scope:string;reader:WorkspaceReading;prepare:(current:ProductionWorkspace,choice:Choice)=>Promise<Plan>;adopt:(current:ProductionWorkspace,plan:Plan)=>Promise<ProductionWorkspace>;autoAdopt?:(plan:Plan)=>boolean;onAdopted?:(changed:ProductionWorkspace,plan:Plan)=>void}){
  const identity=JSON.stringify([workspace.episodeId,workspace.id,scope]);
  const owner=useMemo(()=>({active:true,sequence:0,stage:'idle' as 'idle'|'prepare-read'|'preparing'|'confirm-read'|'adopting',latest:workspace,provided:workspace}),[identity]);
  const active=useRef(owner);active.current=owner;
@@ -29,6 +30,14 @@ export function useCandidateReviewLifecycle<Choice,Plan extends ReviewPlan>({wor
    const current=await reader.read();if(!ownsRequest(sequence))return;
    owner.latest=current;owner.stage='preparing';
    const prepared=await preparePlan(current,choice);if(!ownsRequest(sequence)||prepared.projectSha256!==owner.latest.project?.sha256)return;
+   if(autoAdopt?.(prepared)){
+    owner.stage='confirm-read';const latest=await reader.read();if(!ownsRequest(sequence))return;
+    owner.latest=latest;if(latest.project?.sha256!==prepared.projectSha256)throw Error('工程已变化，请重新核对采用影响。');
+    owner.stage='adopting';const changed=await adopt(latest,prepared);
+    if(owns())reader.publish(changed);
+    if(ownsRequest(sequence))onAdopted?.(changed,prepared);
+    return;
+   }
    setReview({owner,sequence,plan:prepared});
   }catch(error){if(ownsRequest(sequence))throw error;}
   finally{if(ownsRequest(sequence)){owner.stage='idle';setPending(null);}}
@@ -44,7 +53,7 @@ export function useCandidateReviewLifecycle<Choice,Plan extends ReviewPlan>({wor
    const changed=await adopt(current,plan);
    // A posted command can complete after local cancellation; publishing does not undo it.
    if(owns())reader.publish(changed);
-   if(ownsRequest(sequence))onConfirmed?.(changed,plan);
+   if(ownsRequest(sequence)){onAdopted?.(changed,plan);onConfirmed?.(changed,plan);}
   }catch(error){if(ownsRequest(sequence))throw error;}
   finally{if(owns()&&(ownsRequest(sequence)||owner.stage==='adopting')){owner.stage='idle';setPending(null);}}
  }
@@ -55,6 +64,7 @@ export function useCandidateReviewLifecycle<Choice,Plan extends ReviewPlan>({wor
 /** Narration keeps its command fields and restoration semantics at this adapter. */
 export function useWorkspaceCandidateReview({workspace,scope,reader,command}:{workspace:ProductionWorkspace;scope:string;reader:WorkspaceReading;command:(name:string,data:unknown)=>Promise<unknown>}){
  const review=useCandidateReviewLifecycle({workspace,scope,reader,
+  autoAdopt:(plan:WorkspaceCandidatePreparation)=>!plan.restoration&&!needsCandidateImpactDialog(plan.impact),
   prepare:async(current,choice:{candidateId:string;restoreNarration:boolean})=>{
    const prepared=await command('prepareWorkspaceCandidate',{episodeId:workspace.episodeId,workspaceId:current.id,expectedRevision:current.revision,candidateId:choice.candidateId,durationPolicy:'use-candidate',...(choice.restoreNarration?{restoreNarration:true}:{})}) as WorkspaceCandidatePreparation;
    if(!prepared.impact||choice.restoreNarration&&!prepared.restoration)throw Error('无法读取采用影响，请刷新后重新核对。');

@@ -31,7 +31,15 @@ export async function adoptWorkspaceRecordedVoice(c:PoolClient,root:string,row:P
  const trustedReceipt=priorReceipt&&typeof priorReceipt.sourceFrameRate==='number'&&Number.isFinite(priorReceipt.sourceFrameRate)&&priorReceipt.sourceFrameRate>0;
  const repeated=!!currentAsset&&existing?.sourceAssetId===assetId&&existing.src===recorded.track.relative_path&&existing.sourceContentHash===recorded.track.sha256;
  // An explicit repeat must not reset the Owner's trims, routing, gain or mute.
- if(repeated&&trustedReceipt)return;
+ if(repeated&&trustedReceipt){
+  const muted=existing.loopControlMainVoiceMute as {hadVolume:boolean;volume:number}|undefined;
+  if(muted){
+   const next=structuredClone(project),voice=next.timelines.flatMap(t=>t.items).find(i=>i.id===voiceId)!;
+   if(muted.hadVolume)voice.volume=muted.volume;else delete voice.volume;delete voice.loopControlMainVoiceMute;
+   await persistWorkspaceRevision(c,root,row,next,row.bindings,'恢复原片主声',{nativeEdit:true});
+  }
+  return;
+ }
  const expected=workspaceVisualDraftInstances(input.visualDraft,window.timeline.fps);
  if(!input.visual||expected.length!==clips.length)throw new ConfigurationError(409,'当前画面与原声输入不同，请按当前原片准备原声。');
  for(const [index,clip]of clips.entries()){
@@ -53,6 +61,8 @@ export async function adoptWorkspaceRecordedVoice(c:PoolClient,root:string,row:P
  timeline.items=timeline.items.filter(i=>!oldIds.has(String(i.id)));
  const track=typeof primary?.track==='string'?primary.track:'workspace-main-voice';
  const voice:OpenChatCutProject['timelines'][number]['items'][number]={...primary,id:voiceId,kind:'audio',name:primary?.name??'原登记原声',track,src:recorded.track.relative_path,sourceAssetId:assetId,sourceContentHash:recorded.track.sha256,startFrame:start,durationInFrames:duration,srcInFrame:sourceIn,playbackRate:rate,volume:primary?.volume??10**((workspaceRenderPreferences(project,data.shotId)?.voiceGainDb??0)/20),loopControlAudio:{workspaceId:row.id,shotId:data.shotId,voiceMode:'source',sourceItemId:clips[0].itemId,sourceAssetId:assetId}};
+ const muted=primary?.loopControlMainVoiceMute as {hadVolume:boolean;volume:number}|undefined;
+ if(muted){if(muted.hadVolume)voice.volume=muted.volume;else delete voice.volume;delete voice.loopControlMainVoiceMute;}
  delete voice.loopControlCandidate;delete voice.loopControlVideoSound;delete voice.sourceFilename;delete voice.loopControlNarrationEnabled;voice.sourceRevision='source-sha256-'+recorded.track.sha256;timeline.items.push(voice);
  if(timeline.linkGroups)timeline.linkGroups=timeline.linkGroups.map(group=>{const ids=[...new Set(group.itemIds.map(id=>id===primary?.id?voiceId:id).filter(id=>!oldIds.has(id)||id===voiceId))];return{...group,itemIds:ids,anchorItemId:ids.includes(String(group.anchorItemId))?group.anchorItemId:ids[0]};}).filter(group=>group.itemIds.length>1);
  const selected=timeline as unknown as {selectedId:string|null;selectedIds?:string[]};if(oldIds.has(String(selected.selectedId)))selected.selectedId=voiceId;

@@ -30,3 +30,14 @@ it('audio tails and hidden visual layers cannot stand in for picture coverage',a
  expect(await coverage([solid(0,60),{id:'tail',kind:'audio',track:'A1',startFrame:0,durationInFrames:90}])).toMatchObject({passed:false,detail:expect.stringContaining('2.00–3.00')});
  expect(await coverage([{...solid(0,90),hidden:true}])).toMatchObject({passed:false});
 });
+
+it('blocks export of original audio retained from a replaced video on the same used shot',async()=>{
+ const project={activeTimelineId:'main',assets:[{id:'original-audio',kind:'audio',src:'old.mp3',durationInFrames:150,loopControlAudioSource:{videoAssetId:'old-video'}}],timelines:[timeline([
+  {id:'visual',kind:'video',track:'V1',sourceAssetId:'new-video',src:'new.mp4',startFrame:0,durationInFrames:150,loopControlShot:{shotId:'s1'}},
+  {id:'workspace-source-shot-s1',kind:'audio',track:'A1',sourceAssetId:'original-audio',src:'old.mp3',startFrame:0,durationInFrames:150,volume:1,loopControlAudio:{shotId:'s1',sourceItemId:'visual'}}
+ ])]} as unknown as OpenChatCutProject;
+ const c={query:vi.fn(async()=>({rows:[]}))} as unknown as PoolClient;
+ const row={id:'w',episode_id:'e',bindings:[{shotId:'s1',itemId:'visual'}]} as unknown as ProductionWorkspaceRecord;
+ const check=(await workspaceExportReadiness(c,'/tmp',row,project)).checks.find(c=>c.name==='used_content');
+ expect(check).toMatchObject({passed:false,detail:expect.stringContaining('重新接入当前视频原声')});
+});

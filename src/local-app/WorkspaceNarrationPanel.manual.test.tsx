@@ -41,9 +41,7 @@ it('adds each dropped narration to the same audition and explicit adoption flow 
  expect(f.calls.filter(c=>c.name==='saveWorkspaceNarration').map(c=>c.data.materialRevisionId)).toEqual(['first','second']);
  expect(f.calls.some(c=>c.name.startsWith('adopt'))).toBe(false);
  fireEvent.click(screen.getAllByRole('button',{name:'采用'})[1]);
- const review=await screen.findByRole('group',{name:'采用前核对'});expect(review).toBeTruthy();
- expect(f.calls.some(c=>c.name==='adoptWorkspaceCandidate')).toBe(false);
- fireEvent.click(screen.getByRole('button',{name:'确认采用'}));
+ expect(screen.queryByRole('group',{name:'采用前核对'})).toBeNull();
  await waitFor(()=>expect(f.command).toHaveBeenCalledWith('adoptWorkspaceCandidate',expect.objectContaining({candidateId:'track-second',adoptionId:'adoption'})));
  expect(f.calls.some(c=>c.name==='generateWorkspaceNarration')).toBe(false);
 });
@@ -94,7 +92,7 @@ it('does not register imported files after the narration visit unmounts',async()
 
 it('accepts a new batch upload after adopting an earlier manual candidate',async()=>{
  const f=setup(),upload=vi.fn(async()=>['third','fourth']);render(<f.View onImportAudio={upload}/>);
- drop('first');fireEvent.click(await screen.findByRole('button',{name:'采用'}));await screen.findByRole('group',{name:'采用前核对'});fireEvent.click(screen.getByRole('button',{name:'确认采用'}));
+ drop('first');fireEvent.click(await screen.findByRole('button',{name:'采用'}));
  await waitFor(()=>expect(f.calls.some(c=>c.name==='adoptWorkspaceCandidate')).toBe(true));
  const input=screen.getByLabelText('导入人工口播');await waitFor(()=>expect(input).not.toHaveProperty('disabled',true));
  fireEvent.change(input,{target:{files:[new File(['three'],'third.mp3',{type:'audio/mpeg'}),new File(['four'],'fourth.mp3',{type:'audio/mpeg'})]}});

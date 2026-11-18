@@ -14,15 +14,15 @@ const selection={capability:'speech' as const,provider:'volcengine_tts',adapter:
 function setup(candidates:unknown[]=[]){const choice=registeredAdapters.productionChoices().find(c=>c.capability==='speech')!;const services=['a','b'].map(id=>({...choice,id,connectionVersionId:id,connectionName:id.toUpperCase(),connectionVersion:1,executable:true}));vi.stubGlobal('fetch',vi.fn(async(path:string)=>({ok:true,json:async()=>path.endsWith('/workspace')?{workspace}:{serviceCatalog:{groups:[{capability:'speech',services}]}}})));
  const workspace={id:'w',episodeId:'e',revision:1,stale:false,project:{sha256:'saved-sha'},clips:[{id:'c',itemId:'native',shotId:'S01',text:'完整口播'}],candidates,narration:[{clipId:'c',shotId:'S01',mode:'tts',text:'完整口播',voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN',selection,inputFingerprint:'f',status:'pending',defaults:{selection,voice:'zh_female_vv_uranus_bigtts',speakingRate:1,languageCode:'zh-CN'}}]} as unknown as ProductionWorkspace;const command=vi.fn(async(_name:string,_data?:unknown)=>workspace);render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);return{workspace,command};}
 async function sourceReady(){await waitFor(()=>expect(screen.getByRole('button',{name:'口播来源'}).textContent).toContain('seed-tts-2.0'));}
-it('places timing under the selected shot captions and blocks it until the subtitle draft is saved',async()=>{
+it('places subtitle readiness under the selected shot and blocks local timing edits until the text draft is saved',async()=>{
  const {workspace}=setup();cleanup();const contract=defaultShotCaptionContract('已有字幕','independent');
- const current={...workspace,captions:[{clipId:'c',itemId:'native',shotId:'S01',contract,inputFingerprint:'caption-input',timing:'current',audioTrackId:'audio',taskId:null}]} as ProductionWorkspace;
+ const current={...workspace,captions:[{clipId:'c',itemId:'native',shotId:'S01',contract,inputFingerprint:'caption-input',timing:'current',audioTrackId:'audio',taskId:null,durationMs:2400}]} as ProductionWorkspace;
  const command=vi.fn(async()=>current);
  render(<WorkspaceNarrationPanel episodeId="e" workspace={current} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
- fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByRole('button',{name:'声学对齐'})).toHaveProperty('disabled',false);expect(screen.queryByRole('combobox',{name:'字幕片段'})).toBeNull();
- fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'未保存的字幕'}});expect(screen.getByRole('button',{name:'声学对齐'})).toHaveProperty('disabled',true);expect(command).not.toHaveBeenCalled();
- fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'已有字幕'}});fireEvent.click(screen.getByRole('button',{name:'声学对齐'}));
- await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceCaptionAlignment',expect.objectContaining({clipId:'c',localOnly:true})));
+ fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByText('字幕已就绪')).toBeTruthy();expect(screen.getByRole('button',{name:'调整字幕'})).toHaveProperty('disabled',false);expect(screen.queryByRole('button',{name:'声学对齐'})).toBeNull();
+ fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'未保存的字幕'}});expect(screen.getByRole('button',{name:'调整字幕'})).toHaveProperty('disabled',true);expect(command).not.toHaveBeenCalled();
+ fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'已有字幕'}});fireEvent.click(screen.getByRole('button',{name:'调整字幕'}));
+ expect(screen.getByRole('textbox',{name:'第 1 句字幕'})).toHaveProperty('value','已有字幕');expect(command).not.toHaveBeenCalled();
 });
 it('uses the saved episode voice even when the shot has an older voice and rate',async()=>{
  const {workspace,command}=setup();cleanup();
@@ -52,20 +52,14 @@ it('retains an incompatible saved voice and explains the conflict instead of rep
 
 it('adopts a completed candidate through the public candidate command fields without submitting speech',async()=>{const{command,workspace}=setup([{id:'candidate',kind:'audio',shotId:'S01',text:'完整口播',relativePath:'voice.mp3',durationSeconds:2.4,targetDurationSeconds:2.4,status:'available'}]);command.mockImplementation(async(name:string)=>name==='prepareWorkspaceCandidate'?plan as unknown as ProductionWorkspace:workspace);fireEvent.click(screen.getByRole('button',{name:'采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceCandidate',{episodeId:'e',workspaceId:'w',expectedRevision:1,candidateId:'candidate',durationPolicy:'use-candidate'}));expect(command.mock.calls.some(call=>call[0]==='adoptWorkspaceCandidate')).toBe(false);expect(screen.getByRole('dialog',{name:'采用前核对'}).textContent).toContain('下一镜头');fireEvent.click(screen.getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceCandidate',{episodeId:'e',workspaceId:'w',expectedRevision:1,candidateId:'candidate',adoptionId:'adoption'}));});
 
-it('confirms an unchanged duration in its own candidate card and cancels with Escape',async()=>{
+it('uses an unchanged-duration candidate in one action while preserving the server-side adoption protocol',async()=>{
  const candidate={id:'candidate',kind:'audio',shotId:'S01',text:'完整口播',relativePath:'voice.mp3',durationSeconds:2.4,status:'available'};
  const {command,workspace}=setup([candidate,{...candidate,id:'other',text:'另一段口播'}]);
  command.mockImplementation(async(name:string)=>name==='prepareWorkspaceCandidate'
-  ?{...plan,impact:{...plan.impact,appliedSeconds:2.4,deltaSeconds:0,affectedFragments:[]}} as unknown as ProductionWorkspace
-  :workspace);
+  ?{...plan,impact:{...plan.impact,appliedSeconds:2.4,deltaSeconds:0,affectedFragments:[]}} as unknown as ProductionWorkspace:workspace);
  fireEvent.click(screen.getAllByRole('button',{name:'采用'})[0]);
- const controls=await screen.findByRole('group',{name:'采用前核对'});
- expect(controls.closest('article')?.textContent).toContain('完整口播');
- expect(screen.getAllByRole('button',{name:'采用'})).toHaveLength(1);
- expect(screen.queryByRole('dialog',{name:'采用前核对'})).toBeNull();
- fireEvent.keyDown(controls,{key:'Escape'});
- expect(screen.queryByRole('group',{name:'采用前核对'})).toBeNull();
- expect(command).toHaveBeenCalledTimes(1);
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceCandidate',expect.objectContaining({candidateId:'candidate',adoptionId:'adoption'})));
+ expect(screen.queryByRole('group',{name:'采用前核对'})).toBeNull();expect(screen.queryByRole('dialog',{name:'采用前核对'})).toBeNull();expect(command).toHaveBeenCalledTimes(2);
 });
 
 it('hides narration completely when switched off and restores the draft when reenabled',async()=>{

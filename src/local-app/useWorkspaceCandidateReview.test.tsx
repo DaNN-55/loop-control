@@ -2,12 +2,25 @@ import {act,cleanup,renderHook,waitFor} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
-import {useWorkspaceCandidateReview} from './useWorkspaceCandidateReview';
+import {useWorkspaceCandidateReview,useCandidateReviewLifecycle} from './useWorkspaceCandidateReview';
 import {useWorkspaceReading} from './useWorkspaceReading';
 
 const workspace={id:'w',episodeId:'e',revision:1,project:{sha256:'original'}} as ProductionWorkspace;
 const plan={adoptionId:'adoption',candidateId:'candidate',projectSha256:'original',edit:{source:{kind:'audio'}},impact:{currentSeconds:2,sourceSeconds:4,appliedSeconds:4,deltaSeconds:2,affectedFragments:[]}} as unknown as WorkspaceCandidatePreparation;
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
+it('uses an impact-free prepared choice once, with a fresh authoritative project check',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+ const changed={...workspace,revision:2},adopt=vi.fn(async()=>changed),onChanged=vi.fn();
+ const hook=renderHook(()=>useCandidateReviewLifecycle({workspace,scope:'visual',reader:useWorkspaceReading(workspace,onChanged,'S1','读取失败'),prepare:async()=>plan,adopt,autoAdopt:()=>true}));
+ await act(async()=>{await hook.result.current.prepare('choice');});
+ expect(adopt).toHaveBeenCalledExactlyOnceWith(workspace,plan);expect(onChanged).toHaveBeenCalledWith(changed);expect(hook.result.current.plan).toBeNull();
+});
+it('does not apply an impact-free choice if the project changed during preparation',async()=>{
+ let latest=workspace;vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:latest})));
+ const adopt=vi.fn();
+ const hook=renderHook(()=>useCandidateReviewLifecycle({workspace,scope:'visual',reader:useWorkspaceReading(workspace,vi.fn(),'S1','读取失败'),prepare:async()=>{latest={...workspace,revision:2,project:{...workspace.project,sha256:'new'}};return plan;},adopt,autoAdopt:()=>true}));
+ await act(async()=>{await expect(hook.result.current.prepare('choice')).rejects.toThrow('工程已变化');});expect(adopt).not.toHaveBeenCalled();
+});
 function setup(command:(name:string,data:unknown)=>Promise<unknown>){
  let current=workspace;
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:current})));

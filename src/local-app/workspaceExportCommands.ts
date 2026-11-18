@@ -1,3 +1,4 @@
+import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {readFile,writeFile,mkdir,mkdtemp,rm} from 'node:fs/promises';
@@ -39,6 +40,7 @@ export async function workspaceExportReadiness(c:PoolClient,root:string,row:Prod
  const checks:WorkspaceExportCheck[]=[],sources:Array<{relativePath:string;sha256:string;fileSize:number}>=[];let used:ReturnType<typeof usedWorkspaceContent>|null=null,dependencies:ReturnType<typeof usedWorkspaceContent>|null=null;
  try{used=usedWorkspaceContent(project);if(!used.items.length)throw Error('当前时间线没有内容。');
   const placeholders=row.bindings.filter(b=>used!.items.some(i=>i.id===b.itemId&&i.kind==='text'&&!i.src&&!b.source));if(placeholders.length)throw Error(`还有 ${placeholders.length} 处已用画面占位。`);
+  if(row.bindings.some(b=>used!.ids.has(b.itemId)&&resolveWorkspaceMainVoice(project,b.shotId).sourceCurrent===false))throw Error('视频画面已更换，请重新接入当前视频原声，或切换为上传/生成口播。');
   dependencies=usedWorkspaceContent(project,'native-references');
   for(const path of dependencies.paths){const s=await resolveWorkspaceSource(c,root,row.episode_id,path);sources.push({relativePath:s.relative_path,sha256:s.sha256,fileSize:Number(s.file_size)});}
   checks.push({name:'used_content',passed:true,detail:`已核对 ${used.paths.size} 个实际来源。`,sources:sources.filter(source=>used!.paths.has(source.relativePath))});
