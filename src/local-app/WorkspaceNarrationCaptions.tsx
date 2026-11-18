@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {uiText} from '../i18n/ui';
 import {useEffect,useId,useState,type ReactNode} from 'react';
 import {Link} from 'lucide-react';
@@ -22,7 +23,7 @@ export function WorkspaceNarrationCaptions({storageKey,contract,followText,disab
    </div>
   </div>
   {!following&&<p className="workspace-caption-reference" title={followText}>{uiText("口播原文 ")}<span>{followText}</span></p>}
-  {notice&&<p className="workspace-caption-feedback" role="status">{notice}</p>}
+  <FeedbackNotice message={notice} onDismiss={()=>setNotice('')}/>
   {renderTiming?.(dirty)}
  </section>;
 }

@@ -1,3 +1,4 @@
+import {FeedbackNotice,FeedbackProvider} from '../ui/FeedbackNotice';
 import {I18nProvider} from 'react-aria-components';
 import {uiText,useUiLocale,setUiLocale} from '../i18n/ui';
 import type {AccountDeletionStatus} from '../accounts/accountDeletionStatus';
@@ -9,7 +10,7 @@ import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationMod
 import {OwnerPreferencesDialog,type PreferencesPage} from './OwnerPreferencesDialog';
 import {defaultOwnerPreferences,parseOwnerPreferences,type OwnerPreferences} from '../preferences/preferences';
 import {WorkspaceTopbar} from "./WorkspaceTopbar";
-import {Video,LayoutDashboard,Clapperboard,Users,Plus,ChevronRight,CircleAlert,X as XClose} from 'lucide-react';
+import {Video,LayoutDashboard,Clapperboard,Users,Plus,ChevronRight} from 'lucide-react';
 import {LoopControlMark} from './LoopControlMark';
 import './brand-mark.css';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
@@ -41,7 +42,7 @@ const nativeNavigation=[{id:'operations',get label(){return uiText("工作台");
 type Blueprint=LocalCatalog['blueprints'][number];
 const identitySender=crypto.randomUUID();
 function notifyIdentityChange(){if(typeof window.BroadcastChannel!=='function')return;const channel=new BroadcastChannel('loop-local-identity');channel.postMessage({kind:'changed',sender:identitySender});channel.close();}
-export function LocalCatalogApp(){const locale=useUiLocale();return <I18nProvider locale={locale}><WorkspaceDraftProvider><LocalCatalogContent/></WorkspaceDraftProvider></I18nProvider>;}
+export function LocalCatalogApp(){const locale=useUiLocale();return <I18nProvider locale={locale}><FeedbackProvider><WorkspaceDraftProvider><LocalCatalogContent/></WorkspaceDraftProvider></FeedbackProvider></I18nProvider>;}
 function LocalCatalogContent(){
  const uiLocale=useUiLocale();
  const requestDraftLeave=useWorkspaceDraftLeave(),requestSettingsDraftLeave=useWorkspaceDraftLeave('connections');
@@ -268,7 +269,8 @@ function LocalCatalogContent(){
  </nav>
  <div className="sidebar-footer"><Tooltip title={studioReady?uiText("打开当前生产单工程"):uiText("打开独立剪辑工作区")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-label={studioReady?uiText("打开当前生产单的 OpenChatCut"):uiText("打开 OpenChatCut 独立剪辑")} className="sidebar-studio-shortcut" iconLeading={Video} isDisabled={studioOpening} onClick={()=>requestDraftLeave(()=>void openSidebarStudio())} type="button"><span>{studioOpening?uiText("正在打开…"):"OpenChatCut"}</span></Button></Tooltip>
  <div className="sidebar-utilities"><LocalSystemStatus triggerLabel={uiText("系统状态")} queueRequest={queueRequest} onQueueChange={setTaskQueue} onOpenEpisode={id=>{return navigate('episodes',()=>setEpisodeId(id));}}/><Tooltip title={collapsed?uiText("展开侧栏"):uiText("收起侧栏")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" type="button" className="sidebar-collapse-button sidebar-utility" aria-pressed={collapsed} aria-label={collapsed?uiText("展开侧栏"):uiText("收起侧栏")} onClick={()=>setSidebarCollapsed(!collapsed)}><Icon name="PanelLeft"/><span className="sidebar-tool-label">{collapsed?uiText("展开侧栏"):uiText("收起侧栏")}</span></Button></Tooltip></div></div></aside>
- {(errorMessage||cleanupNotice)&&<div className="floating-notices" aria-live="polite">{errorMessage&&<div role="alert" className="error-message"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{uiText(errorMessage||'')}</span><div className="notice-actions">{(savedRefreshNotice||view==='episodes'&&error)&&<Button size="sm" color="tertiary" onPress={()=>void refresh(false,true).catch(e=>setError(e instanceof Error?e.message:String(e)))}>{uiText("重新读取")}</Button>}{connectionReadError&&<Button size="sm" color="tertiary" onPress={()=>void refreshConnections()}>{uiText("重新读取连接")}</Button>}<Button size="sm" color="tertiary" type="button" aria-label={uiText("关闭错误通知")} onClick={()=>{setError('');setSavedRefreshNotice('');savedWrite.current=null;connectionActions.setError('');setConnectionReadError('');}}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}{cleanupNotice&&<div role="status" className="error-message deletion-cleanup-notice"><CircleAlert className="notice-icon" size={18} aria-hidden="true"/><span className="notice-copy">{uiText("生产单记录已删除，文件清理尚未完成。")}</span><div className="notice-actions"><Button size="sm" color="tertiary" onPress={()=>openCleanup(cleanupNotice.key)}>{uiText("查看清理任务")}</Button><Button size="sm" color="tertiary" aria-label={uiText("关闭清理通知")} onPress={()=>setCleanupNotice(null)}><XClose aria-hidden="true" width={16} height={16}/></Button></div></div>}</div>}
+ {errorMessage&&<FeedbackNotice message={errorMessage} tone="error" duration={null} label="错误通知" closeLabel="关闭错误通知" onDismiss={()=>{setError('');setSavedRefreshNotice('');savedWrite.current=null;connectionActions.setError('');setConnectionReadError('');}}>{(savedRefreshNotice||view==='episodes'&&error)&&<Button size="sm" color="tertiary" onPress={()=>void refresh(false,true).catch(e=>setError(e instanceof Error?e.message:String(e)))}>{uiText("重新读取")}</Button>}{connectionReadError&&<Button size="sm" color="tertiary" onPress={()=>void refreshConnections()}>{uiText("重新读取连接")}</Button>}</FeedbackNotice>}
+ {cleanupNotice&&<FeedbackNotice message="生产单记录已删除，文件清理尚未完成。" identity={cleanupNotice.key} tone="warning" duration={null} label="文件清理提示" closeLabel="关闭清理通知" onDismiss={()=>setCleanupNotice(null)}><Button size="sm" color="tertiary" onPress={()=>openCleanup(cleanupNotice.key)}>{uiText("查看清理任务")}</Button></FeedbackNotice>}
  <section inert={Boolean(episodeId)||panels.connections.open||cleanupOpen||logsOpen} className={`content-pane${view === 'accounts' ? ' account-workspace-page' : ''}`} id="main-content" aria-label={uiText("平台工作台")} tabIndex={-1}><header className="page-header"><nav className="workspace-breadcrumbs" aria-label={uiText("当前位置")}><span>{uiText("个人工作区")}</span><ChevronRight size={14} aria-hidden="true"/><strong aria-current="page">{pageLabel}</strong></nav><div className="page-header-actions">{!episodeId&&topbar}</div></header>{view!=='operations'&&view!=='accounts'&&<div className="workspace-page-heading"><h1>{pageLabel}</h1>{view==='episodes'&&workspaceActions}</div>}
 
  {view==='accounts'?<>

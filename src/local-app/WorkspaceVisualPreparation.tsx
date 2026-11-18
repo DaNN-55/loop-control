@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {WorkspacePopover as Popover} from './WorkspacePopover';
 import {uiText} from '../i18n/ui';
 import {templateReferenceProblem} from '../workspaceTemplateInputs';
@@ -531,7 +532,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    <p>{clearVisual.sourcePath?uiText("当前片段将恢复为待匹配，时长保持原样。素材留在候选区，可重新采用。"):uiText("图片将取消备用，仍留在候选区。")}</p>
    {clearError&&<p role="alert">{uiText(clearError||'')}</p>}
   </ConfirmationModal>}</ConfirmationModalPresence>
-  {notice&&<p role="status">{notice}</p>}{(error||pollingError)&&<p role="alert">{error||uiText("任务状态暂时无法更新，将自动重试。")}</p>}
+  <FeedbackNotice message={notice} onDismiss={()=>setNotice('')}/>{(error||pollingError)&&<p role="alert">{error||uiText("任务状态暂时无法更新，将自动重试。")}</p>}
   {!shelf&&<input ref={fileInput} hidden aria-label={uiText("上传{value0}素材",{value0:uiText(kindName)})} type="file" multiple={tab==='image'} accept={tab==='image'?'image/png,image/jpeg,image/webp,image/bmp':'video/mp4'} disabled={disabled} onChange={e=>{const files=[...e.target.files??[]];e.target.value='';if(files.length)void upload(files);}}/>}
   {tab==='video'&&<input ref={referenceInput} hidden aria-label={uiText("上传画面素材文件")} type="file" multiple accept="image/png,image/jpeg,image/webp,image/bmp,video/mp4,video/quicktime,video/webm" disabled={disabled} onChange={e=>{const files=[...e.target.files??[]];e.target.value='';if(files.length)void upload(files,true);}}/>}
   {zoom&&candidate&&<ImageFocusDialog src={url(candidate.relativePath,candidate.sha256)} title={uiText("图片大图预览")} imageAlt="图片候选大图" closeLabel={uiText("关闭大图预览")} onClose={()=>setZoom(false)}/>}

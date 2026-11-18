@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {uiText,getUiLocale} from '../i18n/ui';
 import {useWorkspaceLeaveEntry} from '../local-app/WorkspaceDraft';
 import {connectionDraftBaseline,useConnectionDrafts} from './ConnectionDraftSession';
@@ -151,7 +152,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
     {!selectedConnection&&compatibleConnections.length>0?<p className="field-hint">{selectedVersionId?uiText("原连接当前不可用，请显式选择可用版本。"):uiText("请选择要关联的已验证连接。")}</p>:null}
     {!selectedConnection&&compatibleConnections.length===0 ? workspaceField : null}
     {officialEndpoint || selectedVersion ? <p className="field-hint">{uiText("官方 Endpoint：")}{officialEndpoint ?? selectedVersion?.endpoint}</p> : null}
-    {notice&&<p role="status" className="muted-copy">{notice}</p>}
+    <FeedbackNotice message={notice} tone="info" onDismiss={()=>setNotice('')}/>
     {error ? <p className="form-error" role="alert">{error}</p> : null}
   </div>;
 }

@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {useMemo,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
@@ -39,7 +40,7 @@ export function WorkspaceCompletedReview({workspace:w,project,materials,view,onO
  return <>
   <section hidden={view!=='shots'} className="production-workspace-section completed-overview" aria-label={uiText('已完成作品分镜台')}>
    <header><div><h3>{uiText('分镜台')}</h3><span>{readyCount} / {shots.length} {uiText('画面就绪')}</span></div><div className="completed-overview-actions"><span>{uiText('只读')}</span><Button size="sm" color="tertiary" aria-label={uiText('在 OpenChatCut 中查看')} onPress={onOpenProject}>{uiText('在 OpenChatCut 中查看')} ↗</Button></div></header>
-   {copyNotice&&<p role="status" className="completed-record-note">{uiText(copyNotice)}</p>}
+   <FeedbackNotice message={copyNotice} onDismiss={()=>setCopyNotice('')}/>
    {activeTimeline&&<div className="completed-overview-meta"><span>{shots.length}{uiText(' 个镜头')}</span><span>{activeTimeline.width} × {activeTimeline.height} · {activeTimeline.fps} fps</span></div>}
    {!project&&<p role={projectError?'alert':'status'}>{projectError||uiText('尚未读取到已保存工程，最终配置暂不可核对。')}<Button size="sm" color="secondary" onPress={onRetryProject}>{uiText('重新读取工程')}</Button></p>}
    <div className="completed-table-scroll" role="region" aria-label={uiText('全片镜头表格')} tabIndex={0}><table aria-label={uiText('全片镜头总览')}>

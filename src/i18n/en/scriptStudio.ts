@@ -1,4 +1,6 @@
 export const scriptStudioMessages:Record<string,string>={
+ '草稿信息':'Draft details',
+
  '对话 {value0}':'Conversation {value0}','新开对话':'New conversation','正在新开对话…':'Creating conversation…','对话列表读取失败，请重试。':'Could not load conversations. Try again.','对话列表读取失败。':'Could not load conversations.','新对话读取失败，请刷新核对。':'Could not read the new conversation. Refresh to check.','新对话未完成，请核对后重试。':'The new conversation is unconfirmed. Check before retrying.','参考附件':'Reference attachments',
 
  '优化拍法':'Improve filming','推荐拍法':'Recommended filming plan',

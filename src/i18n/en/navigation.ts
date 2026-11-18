@@ -1,4 +1,6 @@
 export const navigationMessages:Record<string,string>={
+  "操作提示": "Action feedback", "关闭操作提示": "Dismiss action feedback", "错误通知": "Error notification", "文件清理提示": "File cleanup notice", "，有可用操作。": ", actions available.", "有未提交修改": "Unsubmitted changes",
+
   "搜索标题或编号": "Search title or ID",
   "清除搜索": "Clear search",
   "搜索": "Search",

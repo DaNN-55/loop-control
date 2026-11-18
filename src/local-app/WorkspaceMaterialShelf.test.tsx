@@ -4,6 +4,10 @@ import {WorkspaceMaterialShelf} from './WorkspaceMaterialShelf';
 import {WorkspaceMaterialSelectionProvider,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 const materials=[{id:'image',material_type:'image',source_path:'very-long-参考图片.png',storage_path:'image.png'},{id:'audio',material_type:'audio',source_path:'voice.mp3',storage_path:'voice.mp3'},{id:'script',material_type:'script',source_path:'script.md',storage_path:'script.md'}];
+it('keeps older failures actionable without repeating a later upload success above the inventory',()=>{
+ const retry=vi.fn();render(<WorkspaceMaterialShelf episodeId="e" shotCount={1} materials={materials} readOnly={false} busy={false} status="已导入 1 项素材" failures={['older.png：未完成']} onImport={vi.fn()} onRetry={retry}/>);
+ fireEvent.click(screen.getByRole('button',{name:'本期素材 · 3'}));expect(screen.getByLabelText('素材导入结果').textContent).not.toContain('已导入 1 项素材');expect(screen.getByLabelText('素材导入结果').textContent).toContain('older.png');fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));expect(retry).toHaveBeenCalledOnce();
+});
 it('filters the real inventory without discarding selection and keeps drag data unchanged',()=>{
  const imported=vi.fn();render(<WorkspaceMaterialSelectionProvider materials={materials}><WorkspaceMaterialShelf episodeId="e" shotCount={2} materials={materials} readOnly={false} busy={false} status="" failures={[]} onImport={imported}/></WorkspaceMaterialSelectionProvider>);
  fireEvent.click(screen.getByRole('button',{name:'本期素材 · 3'}));const image=screen.getByRole('button',{name:'预览 very-long-参考图片.png'});fireEvent.click(image);expect(image.getAttribute('aria-pressed')).toBe('true');fireEvent.click(image);expect(image.getAttribute('aria-pressed')).toBe('false');fireEvent.click(image);

@@ -49,7 +49,7 @@ it('shows a dismissible success toast from the actual shelf upload and retains t
  fireEvent.change(screen.getByLabelText('上传制作素材'),{target:{files:[new File(['image'],'image.png',{type:'image/png'})]}});
  expect((await screen.findByRole('status',{name:'上传提示'})).textContent).toContain('已导入 1 项素材');
  fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();
- expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 1');expect(within(screen.getByRole('list',{name:'素材清单'})).getByRole('button',{name:'预览 image.png'})).toBeTruthy();expect(screen.getByText('已导入 1 项素材')).toBeTruthy();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
+ expect(screen.getByRole('button',{name:'收起本期素材'}).textContent).toBe('本期素材 · 1');expect(within(screen.getByRole('list',{name:'素材清单'})).getByRole('button',{name:'预览 image.png'})).toBeTruthy();expect(screen.queryByText('已导入 1 项素材')).toBeNull();expect(screen.queryByLabelText('素材导入结果')).toBeNull();expect(command).toHaveBeenCalledExactlyOnceWith('importMaterial',expect.objectContaining({sourcePath:'image.png'}));
 });
 it('shows shelf validation failures in the same toast and can reopen their retained details',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn();

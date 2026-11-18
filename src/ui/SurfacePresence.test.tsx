@@ -43,13 +43,13 @@ it('keeps pending confirmation locked and invokes the allowed action without wai
  expect(confirm).toHaveBeenCalledTimes(1);expect(screen.queryByRole('dialog')).toBeNull();expect(document.querySelector('.modal-backdrop')).toBeTruthy();await finish();
 });
 
-it('honors the original toast expiry and replaces a retiring notice without losing unfinished upload details',async()=>{
+it('honors upload expiry and replaces feedback in the shared lane without losing unfinished details',async()=>{
  vi.useFakeTimers();const dismissed=vi.fn();let replace!:(notice:UploadNotice)=>void;
  function Host(){const [notice,setNotice]=useState<UploadNotice|undefined>({id:1,message:'首次结果',failed:true,expiresAt:Date.now()+5000});replace=setNotice;return <WorkspaceUploadFeedback rows={[{id:1,name:'file.png',status:'failed'}]} running={false} disabled={false} notice={notice} onDismiss={id=>{dismissed(id);setNotice(undefined);}} onRetry={()=>{}}/>;}
  render(<Host/>);await finish();await act(async()=>vi.advanceTimersByTime(5000));expect(dismissed).toHaveBeenCalledWith(1);
- expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();expect(document.querySelector('.workspace-upload-toast')?.hasAttribute('inert')).toBe(true);
- const old=animations.at(-1)!;await act(async()=>replace({id:2,message:'最新结果',failed:false,expiresAt:Date.now()+5000}));
- await act(async()=>old.finish());expect(screen.getByRole('status',{name:'上传提示'}).textContent).toContain('最新结果');expect(screen.getByRole('region',{name:'上传结果'})).toBeTruthy();
+ expect(screen.queryByRole('status',{name:'上传提示'})).toBeNull();expect(document.querySelector('.app-feedback-card')).toBeNull();
+ await act(async()=>replace({id:2,message:'最新结果',failed:false,expiresAt:Date.now()+5000}));
+ expect(screen.getByRole('status',{name:'上传提示'}).textContent).toContain('最新结果');expect(screen.getByRole('region',{name:'上传结果'})).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'关闭上传提示'}));expect(dismissed).toHaveBeenCalledWith(2);await finish();expect(document.querySelector('.workspace-upload-toast')).toBeNull();expect(screen.getByRole('region',{name:'上传结果'})).toBeTruthy();
 });
 

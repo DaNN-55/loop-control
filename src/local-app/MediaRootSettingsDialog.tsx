@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {getUiLocale,uiText} from '../i18n/ui';
 import {useEffect,useRef,useState} from 'react';
 import {FolderOpen,FolderSearch,LoaderCircle,X} from 'lucide-react';
@@ -62,7 +63,6 @@ export function MediaRootSettingsDialog({csrf,onClose,embedded=false,onStateChan
  useEffect(()=>{setConfirmed(false);},[plan?.id,path]);
  const storageReadFeedback=readError||(root?.status==='unavailable'&&plan?.status!=='committed'?root.reason:'');
  const active=['copying','failed','committed'].includes(plan?.status??''),feedback=error||plan?.error;
- useEffect(()=>{if(!message)return;const timer=setTimeout(()=>setMessage(''),5000);return()=>clearTimeout(timer);},[message]);
  const content=<section className="media-root-content" aria-label={uiText("存储位置")}>
   <h3>{uiText("存储位置")}</h3>
   {root?<>
@@ -74,7 +74,7 @@ export function MediaRootSettingsDialog({csrf,onClose,embedded=false,onStateChan
   </>:<p role="status">{busy?uiText("正在读取存储位置…"):uiText("存储位置未读取。")}</p>}
   {storageReadFeedback&&<div className="media-root-read-error"><p role="alert" className="form-error">{uiText(storageReadFeedback)}</p><Button size="sm" color="secondary" type="button" isDisabled={reading||!!pending&&pending!=='executeMigration'} onClick={()=>void reload()}>{uiText("重新读取存储位置")}</Button></div>}
   {feedback&&<p role="alert" className="form-error">{uiText(feedback)}</p>}
-  {message&&<p role="status" className="media-root-feedback">{uiText(message)}</p>}
+  <FeedbackNotice message={message} tone="info" onDismiss={()=>setMessage('')}/>
   {m&&plan&&!['completed','rolled_back'].includes(plan.status)&&<div className="media-root-plan" aria-label={uiText("迁移进度")}>
    <div className="media-root-plan-path"><span>{observing?<LoaderCircle className="media-root-spinner" size={16} aria-hidden="true"/>:null}{observing?uiText("正在迁移"):plan.status==='copying'?uiText("迁移已中断"):plan.status==='failed'?uiText("迁移未完成"):plan.status==='committed'?uiText("切换待恢复"):uiText("迁移到")}</span><span className="media-root-path" title={m.targetBinding.path}>{m.targetBinding.path}</span></div>
    {plan.status!=='planned'?<div className="media-root-copy-progress" role="status" aria-live="polite"><progress aria-label={uiText("文件复制进度")} max={m.totalBytes||1} value={m.totalBytes?Math.min(progress?.copiedBytes??0,m.totalBytes):undefined}/><p>{uiText('{copied} / {total} 个文件 · {bytes} / {totalBytes}',{copied:progress?.copiedFiles??0,total:m.fileCount,bytes:bytes(progress?.copiedBytes??0),totalBytes:bytes(m.totalBytes)})}</p><p className="media-root-help">{plan.status==='committed'?uiText("文件已验证，正在恢复新位置。"):(progress?.copiedBytes??0)>=m.totalBytes?uiText("复制完成，尚需验证文件并切换位置。"):observing?uiText("正在复制文件，随后验证并切换位置。"):uiText("迁移尚未完成，可继续同一计划或回滚。")}</p></div>:<p>{uiText('{accounts} 个账号 · {episodes} 个生产单 · {files} 个文件 · {bytes}',{accounts:m.accounts.length,episodes:m.episodes.length,files:m.fileCount,bytes:bytes(m.totalBytes)})}</p>}

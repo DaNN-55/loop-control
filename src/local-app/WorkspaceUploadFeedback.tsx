@@ -1,9 +1,7 @@
 import {uiText} from '../i18n/ui';
 import {useEffect,useRef} from 'react';
-import {createPortal} from 'react-dom';
-import {AlertCircle,Check,X} from 'lucide-react';
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {SurfacePresence,useSurfacePresence} from '../ui/SurfacePresence';
 import './workspace-upload-feedback.css';
 
 export interface UploadNotice {id:number;message:string;failed:boolean;expiresAt:number}
@@ -21,16 +19,9 @@ export function WorkspaceUploadFeedback({rows,running,disabled,notice,onDismiss,
 }
 
 export function WorkspaceUploadToast({notice,onDismiss,onView}:{notice?:UploadNotice;onDismiss:(id:number)=>void;onView?:()=>void}){
- useEffect(()=>{if(!notice)return;const timer=setTimeout(()=>onDismiss(notice.id),Math.max(0,notice.expiresAt-Date.now()));return()=>clearTimeout(timer);},[notice,onDismiss]);
- return createPortal(<SurfacePresence kind="toast">{notice&&notice.expiresAt>Date.now()?<UploadToast notice={notice} onDismiss={onDismiss} onView={onView}/>:null}</SurfacePresence>,document.body);
-}
-
-function UploadToast({notice,onDismiss,onView}:{notice:UploadNotice;onDismiss:(id:number)=>void;onView?:()=>void}){
- const presence=useSurfacePresence(),present=presence?.present??true;
- return <div ref={presence?.ref} className="dan-ui product-ui workspace-upload-toast" role="status" aria-label={uiText("上传提示")} inert={!present} aria-hidden={!present||undefined} style={!present?{pointerEvents:'none'}:undefined}>
-   {notice.failed?<AlertCircle size={18} className="workspace-upload-toast-error" aria-hidden="true"/>:<Check size={18} className="workspace-upload-toast-success" aria-hidden="true"/>}
-   <p>{uiText(notice.message)}</p>
-   {onView&&<Button size="xs" color="tertiary" onPress={onView}>{uiText("查看")}</Button>}
-   <Button size="xs" color="tertiary" aria-label={uiText("关闭上传提示")} iconLeading={X} onPress={()=>onDismiss(notice.id)}/>
-  </div>;
+ const initial=useRef<{id:number;duration:number}|null>(null);
+ if(notice&&initial.current?.id!==notice.id)initial.current={id:notice.id,duration:Math.max(0,notice.expiresAt-Date.now())};
+ const dismiss=useRef(onDismiss);dismiss.current=onDismiss;
+ useEffect(()=>{if(notice&&initial.current?.duration===0)dismiss.current(notice.id);},[notice?.id]);
+ return notice?<FeedbackNotice message={initial.current?.duration?notice.message:''} identity={notice.id} label="上传提示" closeLabel="关闭上传提示" tone={notice.failed?'warning':'success'} duration={initial.current?.duration??0} onDismiss={()=>onDismiss(notice.id)}>{onView&&<Button size="xs" color="tertiary" onPress={onView}>{uiText('查看')}</Button>}</FeedbackNotice>:null;
 }

@@ -1,4 +1,4 @@
-import type {ReactNode} from 'react';
+import {useId,type ReactNode} from 'react';
 import {Dialog,DialogTrigger} from 'react-aria-components';
 import {Check,ChevronDown,RefreshCw,Settings2,X,type LucideIcon} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -9,8 +9,8 @@ import type {useScriptStudioAssistant} from './useScriptStudioAssistant';
 import {WorkspaceModelLogo} from './WorkspaceModelLogo';
 import {WorkspacePopover} from './WorkspacePopover';
 
-export function ScriptStudioIcon({label,tip,icon,onPress,disabled,active}:{label:string;tip?:string;icon:LucideIcon;onPress?:()=>void;disabled?:boolean;active?:boolean}){
- return <Tooltip title={uiText(tip??label)}><Button type="button" size="sm" color="tertiary" className={"script-studio-icon"+(active?" is-active":"")} aria-label={uiText(label)} iconLeading={icon} isDisabled={disabled} onPress={onPress}/></Tooltip>;
+export function ScriptStudioIcon({label,tip,description,icon,onPress,disabled,active}:{label:string;tip?:string;description?:string;icon:LucideIcon;onPress?:()=>void;disabled?:boolean;active?:boolean}){
+ const descriptionId=useId();return <><Tooltip title={uiText(tip??label)}><Button type="button" size="sm" color="tertiary" className={"script-studio-icon"+(active?" is-active":"")} aria-label={uiText(label)} aria-describedby={description?descriptionId:undefined} iconLeading={icon} isDisabled={disabled} onPress={onPress}/></Tooltip>{description&&<span id={descriptionId} className="sr-only">{description}</span>}</>;
 }
 export function ScriptStudioPopup({label,trigger,children,open,onOpenChange,headerActions,nonModal=false,className=''}:{label:string;trigger:ReactNode;children:ReactNode|((close:()=>void)=>ReactNode);open?:boolean;onOpenChange?:(open:boolean)=>void;headerActions?:ReactNode;nonModal?:boolean;className?:string}){
  return <DialogTrigger isOpen={open} onOpenChange={onOpenChange}>{trigger}<WorkspacePopover className={"dan-ui product-ui script-studio-popover "+className} placement="bottom end" offset={6} containerPadding={12} shouldFlip isNonModal={nonModal}><Dialog aria-label={uiText(label)}>{({close})=><><header><h4>{uiText(label)}</h4><div className="script-studio-actions">{headerActions}<ScriptStudioIcon label="关闭" icon={X} onPress={close}/></div></header>{typeof children==='function'?children(close):children}</>}</Dialog></WorkspacePopover></DialogTrigger>;

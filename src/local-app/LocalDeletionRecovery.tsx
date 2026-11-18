@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {uiText} from '../i18n/ui';
 import {useState,useEffect,useRef,useCallback} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -36,7 +37,7 @@ export function LocalDeletionRecovery({revision,targetKey='',onResolved,onChange
   finally{busy.current=false;if(mounted.current)setPending('');}
  }
  return <section className="deletion-cleanup-panel" aria-label={uiText("待处理的文件清理")}>
-  {notice&&<p role="status" className="deletion-cleanup-success">{uiText(notice)}</p>}
+  <FeedbackNotice message={notice} onDismiss={()=>setNotice('')}/>
   {error&&<p role="alert" className="deletion-cleanup-error">{uiText(error)}</p>}
   {items===null&&loading&&<p role="status">{uiText("正在读取清理任务…")}</p>}
   {items?.length===0&&!error&&!notice&&<p className="deletion-cleanup-empty">{uiText("暂无待处理任务。")}</p>}

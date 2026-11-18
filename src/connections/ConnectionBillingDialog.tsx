@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {uiText} from '../i18n/ui';
 import {useEffect,useRef,useState} from 'react';
 import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
@@ -80,7 +81,7 @@ export function ConnectionBillingDialog({embedded=false,connection,onClose,onRea
     {metricNotes.map(item=><p className="reference-connections-note" key={item.label}>{uiText(item.detail)}</p>)}
    </Disclosure>}
    {usageError&&<div><p role="alert">{uiText("账务数据读取失败。")}</p><Button color="secondary" size="sm" isDisabled={busy} onPress={()=>{setUsageError(false);setUsageLoading(true);setUsageAttempt(value=>value+1);}}>{uiText("重试读取数据")}</Button></div>}
-   {message?<p role="status">{message}</p>:null}{error?<p role="alert" className="form-error">{error}</p>:null}
+   <FeedbackNotice message={message} onDismiss={()=>setMessage('')}/>{error?<p role="alert" className="form-error">{error}</p>:null}
   </div>
   {embedded&&<footer className="reference-connections-dialog-footer"><Button size="sm" color="secondary" isDisabled={busy||!dirty&&!replacing} onPress={()=>{clear();setReplacing(false);setError('');}}>{uiText("取消")}</Button><Button size="sm" color="primary" isLoading={operation==='save'} showTextWhileLoading isDisabled={busy||!settings||!editing||(provider==='openai'?!apiKey.trim():!accessKeyId.trim()||!accessKeySecret.trim())} onPress={()=>void run('save')}>{uiText("保存")}</Button></footer>}</>;
  return <>{embedded?<section className="connection-embedded-pane" aria-label={uiText("账务设置")}>{content}</section>:<><ModalOverlay className="product-ui reference-connections-overlay" isOpen isDismissable={!busy&&!leavePrompt} isKeyboardDismissDisabled={busy||leavePrompt} onOpenChange={open=>{if(!open)requestClose();}}><Modal className="reference-connections-modal"><Dialog aria-label={uiText("{value0} 账务设置",{value0:connection.name})} className="dan-ui connection-workspace reference-connections reference-connections-dialog">

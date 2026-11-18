@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {uiText} from '../i18n/ui';
 import {WorkspaceDraftOwner} from './WorkspaceDraft';
 import {EpisodeCollectionDialog} from './EpisodeCollectionDialog';
@@ -17,8 +18,7 @@ type LocalEpisodeSnapshot=EpisodeProductionSnapshot&{localAssetRoot?:string;loca
 export function LocalEpisodeDetail({episodeId,ownerId='',onChanged,onStudioAction,onOpenAccount,preparationEntry}:{preparationEntry?:{shotId?:string;targetItemId?:string};episodeId:string;ownerId?:string;onClose:()=>void;onChanged:()=>Promise<void>;onStudioAction?:(action:(()=>void)|null)=>void;onOpenAccount?:(accountId:string,context?:{blocker:WorkerBlocker;blueprintVersionId:string;episodeId:string})=>void}){
  const [snapshot,setSnapshot]=useState<LocalEpisodeSnapshot|null>(null),[error,setError]=useState('');
  const [collectionOpen,setCollectionOpen]=useState(false);
- const [directoryPending,setDirectoryPending]=useState(false),[directoryNotice,setDirectoryNotice]=useState('');
- useEffect(()=>{if(!directoryNotice)return;const timer=setTimeout(()=>setDirectoryNotice(''),5000);return()=>clearTimeout(timer);},[directoryNotice]);
+ const [directoryPending,setDirectoryPending]=useState(false),[directoryNotice,setDirectoryNotice]=useState(''),[directoryNoticeSequence,setDirectoryNoticeSequence]=useState(0);
  const [workspaceStudioAction,setWorkspaceStudioAction]=useState<(()=>void)|null>(null);
  const changeWorkspaceAction=useCallback((action:(()=>void)|null)=>setWorkspaceStudioAction(()=>action),[]);
  const [preflight,setPreflight]=useState<WorkerPreflightResult|null>(null);
@@ -82,13 +82,13 @@ export function LocalEpisodeDetail({episodeId,ownerId='',onChanged,onStudioActio
         setDirectoryPending(true);
         setError('');
         void localCommand('openDirectory',{episodeId},undefined,'episode-commands')
-         .then(()=>setDirectoryNotice('已打开本地文件夹。'))
+         .then(()=>{setDirectoryNotice('已打开本地文件夹。');setDirectoryNoticeSequence(value=>value+1);})
          .catch(e=>setError(e instanceof Error?e.message:String(e)))
          .finally(()=>setDirectoryPending(false));
        }}>{uiText("打开文件夹")}</Dropdown.Item>
        <Dropdown.Item id="copy-path" icon={Copy} isDisabled={!snapshot.localDirectoryPath} onAction={()=>{
         void navigator.clipboard.writeText(snapshot.localDirectoryPath!)
-         .then(()=>setDirectoryNotice('已复制路径。'))
+         .then(()=>{setDirectoryNotice('已复制路径。');setDirectoryNoticeSequence(value=>value+1);})
          .catch(()=>setError('路径复制失败，请选中路径后复制。'));
        }}>{uiText("复制路径")}</Dropdown.Item>
        <Dropdown.Item id="collection" icon={Layers} onAction={()=>setCollectionOpen(true)}>{uiText("调整系列")}</Dropdown.Item>
@@ -102,7 +102,7 @@ export function LocalEpisodeDetail({episodeId,ownerId='',onChanged,onStudioActio
  return <section className="local-episode-detail">
   {collectionOpen?<EpisodeCollectionDialog episodeId={episodeId} onClose={()=>setCollectionOpen(false)} onChanged={async()=>{await refresh();await onChanged();}}/>:null}
   {error&&<p role="alert" className="form-error">{uiText(error||'')}</p>}
-  {directoryNotice&&<p role="status">{directoryNotice}</p>}
+  <FeedbackNotice message={directoryNotice} identity={directoryNoticeSequence} onDismiss={()=>setDirectoryNotice('')}/>
   <WorkspaceDraftOwner ownerId={ownerId}><ProductionWorkspacePanel titleActions={directoryActions} preparationEntry={preparationEntry} notice={preflight&&<section className="workspace-preflight-notice" aria-label={uiText("制作前置检查")} role="alert"><div><strong>{uiText("在线制作暂不可用")}</strong><ul>{preflight.checks.filter(check=>check.status!=='passed').map((check,index)=><li key={index}>{check.check==='provider_network_policy'?uiText("本机在线制作授权或请求预算不可用，不会发出在线请求。手动连接测试使用独立授权。"):check.reason==='连接版本不可见。'?uiText("当前配置引用的连接不属于本地执行所有者，或连接已不可用。请在账号配置中重新选择可用连接。"):check.reason}</li>)}</ul></div>{onOpenAccount&&<Button size="sm" color="secondary" onPress={()=>onOpenAccount(snapshot.episode.account_id)}>{uiText("打开账号配置")}</Button>}</section>} key={episodeId} legacySnapshot={snapshot} historicalReadOnly={snapshot.historicalReadOnly} episodeId={episodeId} title={snapshot.episode.title} stage={snapshot.episode.stage} archivedAt={snapshot.episode.archived_at} scriptRevisionId={snapshot.episode.main_script_revision_id??null} boardId={board?.id} materials={snapshot.materialRevisions} audioTracks={snapshot.audioTracks} command={command} onLegacy={()=>{}} onStudioActionChange={changeWorkspaceAction}/></WorkspaceDraftOwner>
  </section>;
 }

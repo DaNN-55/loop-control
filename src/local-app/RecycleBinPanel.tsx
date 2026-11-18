@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {useState,useEffect,useCallback,useRef,type RefObject} from 'react';
 import {ArchiveRestore,Check,Info,RefreshCw,Trash2,X} from 'lucide-react';
 import {uiText,getUiLocale} from '../i18n/ui';
@@ -31,7 +32,7 @@ export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStat
  const content=<section ref={embedded?undefined:dialog} className={`modal-card recycle-bin-dialog${embedded?' owner-settings-pane':''}`} role={embedded?undefined:'dialog'} aria-modal={embedded?undefined:true} aria-label={embedded?undefined:uiText('回收站')}>
   <header><h2>{uiText('回收站')}</h2><div><Tooltip title={uiText('刷新')} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label={uiText('刷新')} isDisabled={busy||loading||dirty} onPress={()=>void refresh()}/></Tooltip><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText('关闭回收站')} isDisabled={busy||recoveryBusy} onPress={onClose}/></div></header>
   <div className="recycle-bin-body">
-   {error&&<p role="alert" className="recycle-bin-error">{uiText(error)}</p>}{notice&&<p role="status" className="recycle-bin-notice">{uiText(notice)}</p>}
+   {error&&<p role="alert" className="recycle-bin-error">{uiText(error)}</p>}<FeedbackNotice message={notice} onDismiss={()=>setNotice('')}/>
    {summary&&<>
     <section className="recycle-bin-settings" aria-label={uiText('回收站设置')}>
      <div className="recycle-bin-capacity"><span className="recycle-bin-capacity-label">{uiText('已用')}<Tooltip title={uiText('移入或保存上限时检查容量，超限按最早安全项清理。刚移入、单项超限、共享、未登记、离线及变化文件保留。')} isOpen={policyOpen} onOpenChange={setPolicyOpen} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" className="recycle-bin-policy-button" iconLeading={Info} aria-label={uiText('清理规则说明')} onPress={()=>setPolicyOpen(true)} onKeyDown={event=>{if(event.key==='Escape'&&policyOpen){event.preventDefault();setPolicyOpen(false);}}}/></Tooltip></span><strong>{size(summary.usedBytes)} <span>/ {size(summary.limitBytes)}</span></strong><meter aria-label={uiText('回收站已用容量')} value={summary.usedBytes} min={0} max={Math.max(summary.usedBytes,summary.limitBytes)} high={summary.limitBytes*.85} optimum={0}/></div>

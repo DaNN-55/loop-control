@@ -85,7 +85,7 @@ function ConnectionModelsSession({embedded=false,connection,onClose,onReadModels
   <div className="connection-models-body">
    <div className="connection-models-heading"><strong hidden={embedded}>{connection.name}</strong>{embedded&&settings&&<p className="reference-connections-note">{discoveredCount?uiText("已读取 {value0} 个供应商模型。目录未列出的已支持模型仍保留；能否生成取决于服务权限和额度。",{value0:discoveredCount}):uiText(settings.discovery.detail)}</p>}{settings?.discovery.supported&&<Button color="secondary" size="sm" iconLeading={RefreshCw} isLoading={operation==='syncing'} showTextWhileLoading isDisabled={busy||!onSyncModels} onPress={()=>void sync()}>{operation==='syncing'?uiText("读取中…"):uiText("读取模型")}</Button>}</div>
    {operation==='loading'&&<p role="status">{uiText("正在读取模型设置…")}</p>}
-   {draftNotice&&<p className="reference-connections-note" role="status">{draftNotice}</p>}
+   {draftNotice&&draftNotice!==uiText("已保存")&&<p className="reference-connections-note" role="status">{draftNotice}</p>}
    {settings&&<>
     {!embedded&&<p className="reference-connections-note" role="status">{changed?uiText("未保存修改"):uiText("尚未修改")}</p>}
     {!embedded&&<p className="reference-connections-note" role="status">{discoveredCount?uiText("已读取 {value0} 个供应商模型。目录未列出的已支持模型仍保留；能否生成取决于服务权限和额度。",{value0:discoveredCount}):uiText(settings.discovery.detail)}</p>}

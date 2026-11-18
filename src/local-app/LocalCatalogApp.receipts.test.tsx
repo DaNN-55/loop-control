@@ -19,7 +19,7 @@ it.each(['retry','dismiss','stale'])('accepts the created order after refresh fa
  render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建生产单'}));
  fireEvent.change(screen.getByRole('textbox',{name:'工作标题（可留空）'}),{target:{value:'已确认创建'}});fireEvent.click(screen.getByRole('button',{name:'创建生产单'}));
  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'})).toBeNull());
- expect(screen.getByRole('alert').textContent).toContain('生产单已创建');expect(posts).toBe(1);
+ expect((await screen.findByRole('alert')).textContent).toContain('生产单已创建');expect(posts).toBe(1);
  if(action==='stale'){holdNext=true;fireEvent.click(screen.getByRole('button',{name:'重新读取'}));fireEvent.click(screen.getByRole('button',{name:'重新读取'}));await act(async()=>{});await act(async()=>release(Response.json({...draftCatalog,episodes:[]})));expect(screen.getByRole('alert').textContent).toContain('生产单已创建');}
  if(action==='dismiss'){fireEvent.click(screen.getByRole('button',{name:'关闭错误通知'}));expect(screen.queryByRole('alert')).toBeNull();}
  offline=false;await act(async()=>{if(action!=='dismiss')fireEvent.click(screen.getByRole('button',{name:'重新读取'}));else document.dispatchEvent(new Event('visibilitychange'));});
