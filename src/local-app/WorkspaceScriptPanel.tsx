@@ -1,3 +1,5 @@
+import {useScriptStudioSessions} from './useScriptStudioSessions';
+import type {ScriptStudioAttachmentMaterial} from '../scriptStudioAttachments';
 import {uiText} from '../i18n/ui';
 import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -22,7 +24,7 @@ import './script-studio-chat.css';
 
 interface Props {
  episodeId:string;scriptRevisionId:string|null;script:string;stage:string;readOnly:boolean;pending:boolean;
- command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;
+ command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;materials?:readonly ScriptStudioAttachmentMaterial[];onMaterialImported?:(material:ScriptStudioAttachmentMaterial)=>void;
 }
 type Basis={id:string|null;text:string;duration:string};
 type ScriptIntent={baseline:Basis;source:Basis;text:string;duration:string;reason:string;finish:(id:string)=>void};
@@ -41,7 +43,7 @@ function WorkspaceScriptSource(props:Props){
  const retained=loaded.current?.revisionId===props.scriptRevisionId?loaded.current.value:null;
  return <WorkspaceScriptEditor {...props} retained={retained??source.value} sourceReady={!!retained} sourceLoading={source.loading} sourceError={source.error} retrySource={source.retry}/>;
 }
-function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
+function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false,materials=[],onMaterialImported,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
  const [flow,setFlow]=useState<ScriptConfirmationState>({phase:'idle'});
  const baseline:Basis='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:retained.sourceText,duration:retained.targetDuration===null?'':String(retained.targetDuration)};
  const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??'new',initial:{text:baseline.text,duration:baseline.duration,reason:'',filename:'script.md'},legacyInitial:baseline.id===scriptRevisionId?{text:script,reason:'',filename:'script.md'}:undefined,enabled:!readOnly&&(sourceReady||flow.phase!=='idle')});
@@ -55,7 +57,9 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly
  const changed=text!==savedSource.text||duration!==savedSource.duration;
  const canResume=flow.phase==='start_failed'&&!changed;
  const targetDuration=duration.trim()?Number(duration):null;
- const assistant=useScriptStudioAssistant({episodeId,scriptRevisionId:basisId,source:text,targetDuration,disabled});
+ const sessions=useScriptStudioSessions({episodeId,scriptRevisionId:basisId,source:text,targetDuration,disabled});
+ const sessionWaiting=sessions.loading||sessions.creating;
+ const assistant=useScriptStudioAssistant({episodeId,scriptRevisionId:basisId,source:text,targetDuration,conversationId:sessions.activeId??undefined,disabled:disabled||sessions.loading||sessions.creating||!!sessions.error});
  const proposal=assistant.result?.plan?assistant.result:null,showError=!errorPresented||flow.phase==='start_failed'&&flow.readError;
  useEffect(()=>{if(assistant.needsChoice){setChatCollapsed(false);setModelOpen(true);}},[assistant.needsChoice]);
  useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
@@ -88,7 +92,7 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly
   }catch(cause){if(active.current){setFlow({phase:'start_failed',intent,savedId:id,readError:!commandStarted});setError(cause instanceof Error?cause.message:'制作启动未完成。');}}
  }
  async function confirm(adopt=false){
-  if(disabled||lock.current||assistant.busy||editingShot||!validate())return;
+  if(disabled||sessionWaiting||lock.current||assistant.busy||editingShot||!validate())return;
   setHistoryOpen(false);
   if(adopt&&(assistant.unresolved||assistant.conversationLoading||!proposal?.plan?.canProceed||!proposal.requestId))return;
   if(basisId&&!changed&&!adopt&&flow.phase==='idle'&&stage!=='waiting_input'){onConfirmed(basisId);return;}
@@ -107,7 +111,7 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly
   }catch(cause){if(active.current){setFlow({phase:'save_failed',intent});setError(cause instanceof Error?cause.message:'脚本保存未完成。');}}
   finally{lock.current=false;}
  }
- async function resume(){if(disabled||lock.current||flow.phase!=='start_failed'||!canResume)return;lock.current=true;setError('');try{await startSaved(flow.intent,flow.savedId,true);}finally{lock.current=false;}}
+ async function resume(){if(disabled||sessionWaiting||lock.current||flow.phase!=='start_failed'||!canResume)return;lock.current=true;setError('');try{await startSaved(flow.intent,flow.savedId,true);}finally{lock.current=false;}}
  async function readScriptFile(file:File){
   if(disabled)return;
   const sequence=editSequence.current;
@@ -134,18 +138,18 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly
     {error&&showError&&<p id={errorId} role="alert" className="form-error">{uiText(error)}</p>}
     <div className={'script-studio-grid'+(collapsed?' is-middle-collapsed':'')+(chatCollapsed?' is-chat-collapsed':'')}>
      <form id={formId} className="script-studio-editor" aria-label={uiText('脚本正文')} noValidate onSubmit={event=>{event.preventDefault();if(proposal)return;if(canResume)void resume();else void confirm();}}>
-      <div className="script-studio-pane-heading script-studio-input-heading"><div><label htmlFor={textId}>{uiText('脚本正文')}</label><span role="status" className="script-studio-badge">{status}</span></div><div className="script-studio-actions"><ScriptStudioPopup label="使用示例" open={examplesOpen} onOpenChange={setExamplesOpen} trigger={<ScriptStudioIcon label="使用示例" tip="选择普通文本或完整分镜示例，会替换当前正文。" icon={BookOpen} disabled={disabled}/>}>
+      <div className="script-studio-pane-heading script-studio-input-heading"><div><label htmlFor={textId}>{uiText('脚本正文')}</label><span role="status" className="script-studio-badge">{status}</span></div><div className="script-studio-actions"><ScriptStudioPopup label="使用示例" className="script-studio-examples-popover" open={examplesOpen} onOpenChange={setExamplesOpen} trigger={<ScriptStudioIcon label="使用示例" tip="选择普通文本或完整分镜示例，会替换当前正文。" icon={BookOpen} disabled={disabled}/>}>
        <div className="script-studio-example-options"><Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setField('text','一个人推门走进咖啡馆，门铃轻响。他走到窗边坐下，望向对面的空座位，等待朋友。');setField('duration','15');setExamplesOpen(false);}}>{uiText('普通文本')}</Button><Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setField('text',workspaceScriptExample);setExamplesOpen(false);}}>{uiText('完整分镜')}</Button></div>
       </ScriptStudioPopup><Tooltip title={uiText(draft.storageError?'本机草稿暂无法保存':'本机草稿已保存')}><Button type="button" size="sm" color="tertiary" className="script-studio-icon" aria-label={uiText(draft.storageError?'本机草稿暂无法保存':'本机草稿已保存')} iconLeading={CloudCheck}/></Tooltip></div></div>
       <div className="script-studio-drop" onDragOver={event=>{if(!disabled)event.preventDefault();}} onDrop={event=>{event.preventDefault();const file=event.dataTransfer.files[0];if(file)void readScriptFile(file);}}><textarea ref={textInput} id={textId} name="script" required value={text} disabled={disabled} aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} onChange={event=>setField('text',event.target.value)} placeholder={uiText('粘贴故事、文案或已写好的分镜，也可拖入 TXT / Markdown。')}/></div>
      </form>
      <aside className="script-studio-middle" aria-label={uiText('分镜预览')}>
-      {collapsed?<div className="script-studio-middle-rail"><ScriptStudioIcon label="展开分镜" icon={PanelLeftOpen} onPress={()=>setMiddleCollapsed(false)}/></div>:assistant.busy&&assistant.activity==='model'?<div className="script-studio-pending"><header className="script-studio-pane-heading"><h4>{uiText('分镜')}</h4><ScriptStudioIcon label="收起分镜" icon={PanelLeftOpen} onPress={()=>setMiddleCollapsed(true)}/></header><div role="status" aria-label={uiText('拍法生成进度')}><LoaderCircle size={18} className="script-studio-spinner" aria-hidden="true"/><p>{uiText('正在生成拍法，原文和总时长保持不变…')}</p><div className="script-studio-skeleton" aria-hidden="true"><i/><i/><i/></div></div></div>:proposal&&<ScriptStudioProposal key={proposal.requestId} result={proposal} onCollapse={()=>setMiddleCollapsed(true)} busy={assistant.busy} disabled={disabled} error={assistant.error} onSave={assistant.saveShot} onDelete={assistant.deleteShot} onEditingChange={setEditingShot}/>}
+      {collapsed?<div className="script-studio-middle-rail"><ScriptStudioIcon label="展开分镜" icon={PanelLeftOpen} onPress={()=>setMiddleCollapsed(false)}/></div>:assistant.busy&&assistant.activity==='model'?<div className="script-studio-pending"><header className="script-studio-pane-heading"><h4>{uiText('分镜')}</h4><ScriptStudioIcon label="收起分镜" icon={PanelLeftOpen} onPress={()=>setMiddleCollapsed(true)}/></header><div role="status" aria-label={uiText('拍法生成进度')}><LoaderCircle size={18} className="script-studio-spinner" aria-hidden="true"/><p>{uiText('正在生成拍法，原文和总时长保持不变…')}</p><div className="script-studio-skeleton" aria-hidden="true"><i/><i/><i/></div></div></div>:proposal&&<ScriptStudioProposal key={proposal.requestId} result={proposal} onCollapse={()=>setMiddleCollapsed(true)} busy={assistant.busy} disabled={disabled||sessionWaiting} error={assistant.error} onSave={assistant.saveShot} onDelete={assistant.deleteShot} onEditingChange={setEditingShot}/>}
       {!collapsed&&!middleVisible&&<><header className="script-studio-pane-heading"><h4>{uiText('分镜')}</h4></header><p className="script-studio-middle-empty">{uiText('优化拍法后在此查看分镜。')}</p></>}
      </aside>
-     <ScriptStudioChat assistant={assistant} episodeId={episodeId} revisionId={basisId} disabled={disabled||editingShot} collapsed={chatCollapsed} onCollapse={()=>setChatCollapsed(value=>!value)} modelOpen={modelOpen} onModelOpen={setModelOpen} onSend={async(mode,instruction,previous)=>{if(validate()){if(mode!=='discuss')setMiddleCollapsed(false);return assistant.send(mode,instruction,previous);}}}/>
+     <ScriptStudioChat assistant={assistant} sessions={sessions} materials={materials} importMaterial={async data=>{const material=await command('importMaterial',data) as ScriptStudioAttachmentMaterial;onMaterialImported?.(material);return material;}} episodeId={episodeId} revisionId={basisId} disabled={disabled||editingShot||sessions.loading||sessions.creating||!!sessions.error} collapsed={chatCollapsed} onCollapse={()=>setChatCollapsed(value=>!value)} modelOpen={modelOpen} onModelOpen={setModelOpen} onSend={async(mode,instruction,previous,attachments)=>{if(validate()){if(mode!=='discuss')setMiddleCollapsed(false);const value=await assistant.send(mode,instruction,previous,attachments);if(value&&!sessions.items.some(item=>item.id===sessions.activeId))await sessions.refresh();return value;}}}/>
     </div>
-    <div className="script-studio-next" role="group" aria-label={uiText('制作操作')}>{proposal&&<span className="script-studio-next-status">{uiText('当前拍法待采用')}</span>}<div className="script-studio-actions">{proposal?<><Button type="button" size="sm" color="tertiary" isDisabled={disabled||assistant.busy||editingShot} onPress={()=>void confirm()}>{uiText('按原方案继续')}</Button><Button type="button" size="sm" color="primary" isDisabled={disabled||assistant.busy||editingShot||assistant.unresolved||assistant.conversationLoading||!proposal.plan?.canProceed} onPress={()=>void confirm(true)}>{uiText('采用并继续')}</Button></>:<Button type="submit" form={formId} size="sm" color="primary" isDisabled={disabled||assistant.busy}>{uiText(continueLabel)}</Button>}</div></div>
+    <div className="script-studio-next" role="group" aria-label={uiText('制作操作')}>{proposal&&<span className="script-studio-next-status">{uiText('当前拍法待采用')}</span>}<div className="script-studio-actions">{proposal?<><Button type="button" size="sm" color="tertiary" isDisabled={disabled||sessionWaiting||assistant.busy||editingShot} onPress={()=>void confirm()}>{uiText('按原方案继续')}</Button><Button type="button" size="sm" color="primary" isDisabled={disabled||sessionWaiting||assistant.busy||editingShot||assistant.unresolved||assistant.conversationLoading||!proposal.plan?.canProceed} onPress={()=>void confirm(true)}>{uiText('采用并继续')}</Button></>:<Button type="submit" form={formId} size="sm" color="primary" isDisabled={disabled||sessionWaiting||assistant.busy}>{uiText(continueLabel)}</Button>}</div></div>
    </>}
   </div>
   <ConfirmationModalPresence>{discardOpen&&<ConfirmationModal title={uiText('还原已确认脚本')} confirmLabel={uiText('还原脚本')} tone="danger" onCancel={()=>{setDiscardOpen(false);setHistoryOpen(true);}} onConfirm={()=>{draft.reset();setError('');setInvalid(null);setFlow({phase:'idle'});setDiscardOpen(false);}}><p>{uiText('本次未确认的原文、时长与备注会被放弃，已确认脚本和媒体保留。')}</p></ConfirmationModal>}</ConfirmationModalPresence>

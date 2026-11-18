@@ -1,3 +1,4 @@
+import type {ScriptStudioAttachmentRef} from './scriptStudioAttachments.js';
 import {parseProductionScript,productionSettingFields,segmentSettings} from './reviews/productionScript.js';
 import {recognizedScriptText,type RecognitionSetting} from './scriptFormat.js';
 export const scriptStudioContractVersion='script-studio/v1';
@@ -7,11 +8,12 @@ export type ScriptStudioMode='optimize'|'revision';
 export interface ScriptStudioShot {title:string;durationSeconds:number;narration:string;subtitle:string|null;visual:string;videoPrompt:string;camera:string;visualSource:'image'|'video'|'material'|'unassigned';settings:RecognitionSetting[]}
 export interface ScriptStudioPlan {title:string;durationSeconds:number;summary:string;sourceUse:string;narrationEnabled:boolean;captionsEnabled:boolean;settings:RecognitionSetting[];shots:ScriptStudioShot[];changes:string[];warnings:string[];canProceed:boolean}
 export interface ScriptStudioDiagnostic {responseId:string;usage:{inputTokens:number|null;outputTokens:number|null};modelOutput:unknown}
-export interface ScriptStudioResult {requestId:string;status:'pending'|'completed'|'failed'|'unknown';plan?:ScriptStudioPlan;modifiedShotIndexes?:number[];message?:string;responseId?:string;usage?:{inputTokens:number|null;outputTokens:number|null};diagnostic?:ScriptStudioDiagnostic}
+export interface ScriptStudioResult {requestId:string;status:'pending'|'completed'|'failed'|'unknown';plan?:ScriptStudioPlan;modifiedShotIndexes?:number[];message?:string;responseId?:string;usage?:{inputTokens:number|null;outputTokens:number|null};diagnostic?:ScriptStudioDiagnostic;attachments?:ScriptStudioAttachmentRef[]}
 export type ScriptStudioChatMode='optimize'|'discuss';
-export interface ScriptStudioMessage {role:'user'|'assistant';content:string}
-export interface ScriptStudioTurn {requestId:string;mode:ScriptStudioMode|'discuss'|'edit';model?:string;provider?:string;instruction:string;answer:string;status:ScriptStudioResult['status']}
-export interface ScriptStudioConversation {turns:ScriptStudioTurn[];result:ScriptStudioResult|null;latest?:ScriptStudioResult;latestRequestId?:string;mode:ScriptStudioMode}
+export interface ScriptStudioMessage {role:'user'|'assistant';content:string;attachments?:ScriptStudioAttachmentRef[]}
+export interface ScriptStudioTurn {requestId:string;mode:ScriptStudioMode|'discuss'|'edit';model?:string;provider?:string;instruction:string;answer:string;status:ScriptStudioResult['status'];attachments?:ScriptStudioAttachmentRef[]}
+export interface ScriptStudioConversationSession {id:string|null;number:number;createdAt:string}
+export interface ScriptStudioConversation {turns:ScriptStudioTurn[];result:ScriptStudioResult|null;latest?:ScriptStudioResult;latestRequestId?:string;mode:ScriptStudioMode;attachments?:ScriptStudioAttachmentRef[]}
 export interface ScriptStudioOptions {targetDuration:number|null;mode:ScriptStudioMode;instruction?:string}
 const normal=(s:string)=>s.replace(/\s+/g,' ').trim().replace(/([\p{Script=Han}，。！？；：、]) +(?=[\p{Script=Han}，。！？；：、])/gu,'$1');
 export function validateStudioDuration(value:unknown):asserts value is number|null{if(value!==null&&(typeof value!=='number'||!Number.isFinite(value)||value<.1||value>3600||Math.abs(value*100-Math.round(value*100))>1e-6))throw Error('总时长须为 0.1–3600 秒，最多两位小数。');}

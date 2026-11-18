@@ -1,4 +1,4 @@
-import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {CompletedStudioView} from './CompletedStudioView';
 import {WorkspaceDraftProvider,useWorkspaceDraftLeave} from './WorkspaceDraft';
@@ -28,6 +28,7 @@ it('keeps edits inside the copy, guards external navigation, and saves before di
  function Leave(){const leave=useWorkspaceDraftLeave();return <button onClick={()=>leave(navigated)}>离开生产单</button>;}
  render(<WorkspaceDraftProvider><Leave/><CompletedStudioView episodeId="episode" title="已完成" onClose={()=>{}}/></WorkspaceDraftProvider>);
  const iframe=await screen.findByTitle('OpenChatCut 查看副本') as HTMLIFrameElement,url=new URL(iframe.src),win=iframe.contentWindow!,channel=url.searchParams.get('lcChannel'),projectId=url.searchParams.get('lcProject');
+ await act(async()=>{});
  const document={timelines:[{width:1080,selectedId:null}]};
  vi.spyOn(win,'postMessage').mockImplementation((message)=>{const data=message as {requestId:string;action:string};queueMicrotask(()=>fireEvent(window,new MessageEvent('message',{source:win,origin:url.origin,data:{type:'loop-control:result',channel,projectId,requestId:data.requestId,ok:true,result:data.action==='inspect'?{document:structuredClone(document)}:undefined}})));});
  fireEvent(window,new MessageEvent('message',{source:win,origin:'http://127.0.0.1:9999',data:{type:'loop-control:state',channel,projectId,writable:true}}));

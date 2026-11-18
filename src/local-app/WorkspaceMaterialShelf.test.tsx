@@ -40,3 +40,12 @@ it('shows only the explicitly current script while retaining all media',async()=
  expect(await screen.findByText('当前脚本')).toBeTruthy();
  expect(screen.getByRole('dialog')).toBeTruthy();
 });
+
+it('keeps all uploaded reference documents visible and downloadable without treating them as shot media',()=>{
+ const documents=['brief.pdf','notes.txt','draft.md','data.csv','facts.json','plan.docx'].map((name,index)=>({id:'doc-'+index,material_type:'reference',source_path:name,storage_path:'materials/'+name})),all=[...materials,...documents],fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);
+ render(<WorkspaceMaterialSelectionProvider materials={all}><WorkspaceMaterialShelf episodeId="e" shotCount={2} materials={all} readOnly={false} busy={false} status="" failures={[]} onImport={vi.fn()}/></WorkspaceMaterialSelectionProvider>);
+ fireEvent.click(screen.getByRole('button',{name:'本期素材 · 9'}));expect(screen.getByLabelText('上传制作素材').getAttribute('accept')).toBe('.png,.jpg,.jpeg,.webp,.bmp,.mp4,.mov,.webm,.mp3');
+ fireEvent.click(screen.getByRole('button',{name:'文档'}));expect(screen.queryByRole('button',{name:'预览 very-long-参考图片.png'})).toBeNull();
+ for(const doc of documents){const button=screen.getByRole('button',{name:'预览 '+doc.source_path});expect(button.draggable).toBe(false);const setData=vi.fn();fireEvent.dragStart(button,{dataTransfer:{setData}});expect(setData).not.toHaveBeenCalled();}
+ fireEvent.click(screen.getByRole('button',{name:'预览素材 brief.pdf'}));const dialog=screen.getByRole('dialog',{name:'brief.pdf'}),download=within(dialog).getByRole('link',{name:'下载文档'});expect(download.getAttribute('href')).toContain('episode=e');expect(download.getAttribute('href')).toContain('download=1');expect(download.getAttribute('download')).toBe('brief.pdf');expect(dialog.querySelector('audio,video,iframe')).toBeNull();expect(fetcher).not.toHaveBeenCalled();
+});

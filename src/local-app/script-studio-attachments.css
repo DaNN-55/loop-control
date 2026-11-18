@@ -1,0 +1,28 @@
+.script-studio-attachment-input{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.script-studio-popover.script-studio-attachments-popover{inline-size:240px;padding:10px}
+.script-studio-attachments-popover [role=dialog]{position:relative}
+.script-studio-attachments-popover [role=dialog]>header{position:absolute;inset-block-start:0;inset-inline-end:0;z-index:1;margin:0}
+.script-studio-attachments-popover header h4{display:none}
+.script-studio-attachments-popover header .script-studio-icon{--lc-icon-control-size:24px}
+.script-studio-attachment-picker{inline-size:100%}
+.script-studio-attachment-upload{display:grid;justify-items:center;gap:5px;inline-size:100%;min-block-size:96px;padding:12px 8px;border:1px dashed var(--lc-line);border-radius:8px;background:transparent;color:var(--lc-muted);cursor:pointer;text-align:center;font:inherit}
+.script-studio-attachment-upload strong{color:var(--lc-ink);font-size:13px;font-weight:600}
+.script-studio-attachment-upload span,.script-studio-attachment-upload small{font-size:10px;line-height:1.4}
+.script-studio-attachment-upload:focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
+.script-studio-attachment-upload:hover:not(:disabled){border-color:var(--lc-accent)}
+.script-studio-attachment-upload:disabled{cursor:default;opacity:.5}
+.script-studio-attachment-previews{display:flex;gap:8px;max-inline-size:100%;overflow-x:auto;list-style:none;padding:4px;margin:0}
+.script-studio-attachment-previews>li{position:relative;flex:0 0 64px;min-inline-size:0}
+.script-studio-attachment-previews a{display:block;border:1px solid var(--lc-line);border-radius:6px;overflow:hidden}
+.script-studio-attachment-previews img{display:block;inline-size:62px;block-size:54px;object-fit:cover}
+/* Button's scoped .relative utility is !important; keep this override local to removals. */
+.script-studio-attachment-previews .script-studio-attachment-remove{--lc-icon-control-size:24px;position:absolute!important;inset-block-start:0;inset-inline-end:0;z-index:1;background:var(--lc-surface);border-radius:50%;opacity:0;pointer-events:none}
+.script-studio-attachment-previews>li:is(:hover,:focus-within)>.script-studio-attachment-remove{opacity:1;pointer-events:auto}
+.script-studio-attachment-remove:focus-visible{outline:2px solid var(--lc-accent);outline-offset:1px}
+.script-studio-attachment-previews a:focus-visible{outline:2px solid var(--lc-accent);outline-offset:2px}
+.script-studio-attachment-missing{display:grid;place-items:center;gap:4px;block-size:54px;padding:2px;border:1px dashed var(--lc-line);border-radius:6px;color:var(--lc-muted);font-size:10px;overflow:hidden}
+.script-studio-attachment-missing>span{max-inline-size:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.script-studio-chat-form.is-dragging-images{outline:2px dashed var(--lc-accent);outline-offset:2px}
+@media(pointer:coarse){.script-studio-attachment-previews>li{flex-basis:100px}.script-studio-attachment-previews img{inline-size:98px;block-size:72px}.script-studio-attachment-previews .script-studio-attachment-remove{--lc-icon-control-size:48px;opacity:1;pointer-events:auto}.script-studio-attachments-popover header .script-studio-icon{--lc-icon-control-size:48px}}
+
+@media(hover:none){.script-studio-attachment-previews .script-studio-attachment-remove{opacity:1;pointer-events:auto}}

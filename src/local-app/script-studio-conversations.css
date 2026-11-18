@@ -1,0 +1,11 @@
+.script-studio .script-studio-conversations{--conversation-size:30px;position:relative;display:flex;flex:none;gap:6px;inline-size:144px;max-inline-size:100%;padding:3px;margin-inline-start:auto;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;scrollbar-width:thin;box-sizing:border-box}
+.script-studio-conversations>:first-child{margin-inline-start:auto}
+html[data-interface="impeccable"] .product-ui .script-studio-conversations .script-studio-conversation-button{position:relative;display:grid;place-items:center;flex:0 0 var(--conversation-size);inline-size:var(--conversation-size);block-size:var(--conversation-size);min-block-size:var(--conversation-size);padding:0;border:1px solid var(--lc-line);border-radius:4px;background:var(--lc-surface);color:var(--lc-muted);font-size:12px;line-height:1;cursor:pointer;box-sizing:border-box}
+html[data-interface="impeccable"] .product-ui .script-studio-conversations .script-studio-conversation-button[aria-pressed=true]{border-color:var(--lc-accent);color:var(--lc-accent)}
+.script-studio-conversation-button[aria-pressed=true]::after{content:"";position:absolute;inset:auto 6px 3px;border-block-end:2px solid currentColor}
+html[data-interface="impeccable"] .product-ui .script-studio-conversations .script-studio-conversation-new{border:2px dashed var(--lc-muted);background:transparent}
+.script-studio-conversation-button:focus-visible{outline:2px solid var(--lc-accent);outline-offset:1px}
+.script-studio-conversation-button:disabled{opacity:.5;cursor:default}
+@media(pointer:coarse){.script-studio .script-studio-conversations{--conversation-size:44px;inline-size:200px}}
+
+html[data-interface="impeccable"] .product-ui .script-studio-conversations .script-studio-conversation-new:is(:hover,:focus-visible):not(:disabled){border-color:var(--lc-accent);background:var(--lc-accent-soft)}

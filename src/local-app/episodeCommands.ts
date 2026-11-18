@@ -6,6 +6,7 @@ import {episodeFileIO} from './episodeFiles.js';
 import {ownerTransaction} from './ownerTransaction.js';
 import {localExportActivity,type LocalExportActivity} from './productionLocalExport.js';
 import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
+import {validateScriptStudioAttachmentUpload} from './scriptStudioDocuments.js';
 import {validateImportedMaterial} from './materialAcceptance.js';
 import {createEpisodeDirectory} from './episodeCreation.js';
 import {verifyEpisodeFile} from './episodeFiles.js';
@@ -71,7 +72,7 @@ export class LocalEpisodeCommands {
   const retiredManual=retiredManualCommands.has(body.command);
   const retiredExecution=['repairConfiguration','repairConnection'].includes(body.command);
   const retiredPlanning=retiredPlanningCommands.has(body.command)||body.command==='replanWorkspace'&&Object.hasOwn(data,'planningTaskId');
-  const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],openDirectory:['episodeId']};
+  const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh','scriptStudioAttachment'],openDirectory:['episodeId']};
   allowed.start=['episodeId'];
   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
   allowed.confirmRecognizedScript=['episodeId','expectedScriptRevisionId','text','reason','recognitionRequestId'];
@@ -79,6 +80,7 @@ export class LocalEpisodeCommands {
   allowed.openStandaloneStudio=[];
   Object.assign(allowed,productionWorkspaceFields);
   if(!retiredManual&&!retiredPlanning&&!retiredNarration&&!retiredExecution&&Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
+  if(body.command==='importMaterial'&&Object.hasOwn(data,'scriptStudioAttachment')&&data.scriptStudioAttachment!==true)throw new ConfigurationError(400,'附件校验标记无效。');
   recordValidatedRequestLogContext({operation:'episode.'+body.command});
   if(body.command==='create'){
    const created=await createEpisodeDirectory(this.pool,session as OwnerSession,body.idempotencyKey,hash,data,this.mediaRoot,(c,_account,policy)=>this.preflight(c,policy));
@@ -156,7 +158,7 @@ export class LocalEpisodeCommands {
      if(!purposes.includes(String(data.materialPurpose))||typeof data.materialType!=='string'||typeof data.mimeType!=='string'||typeof data.isMainScript!=='boolean')throw new ConfigurationError(400,'材料类型无效。');
      if(typeof data.sourceKind!=='string'||typeof data.sourcePath!=='string'||data.logicalName!==undefined&&typeof data.logicalName!=='string')throw new ConfigurationError(400,'材料路径无效。');
      let mimeType=data.mimeType;
-     const snapshot=await snapshotInput(root,e.id,data as never,location!.relativePath,async bytes=>{mimeType=await validateImportedMaterial(bytes,data as never);});
+     const snapshot=await snapshotInput(root,e.id,data as never,location!.relativePath,async bytes=>{if(data.scriptStudioAttachment===true){try{mimeType=validateScriptStudioAttachmentUpload(bytes,data as never);}catch(error){throw new ConfigurationError(400,(error as Error).message);}}const accepted=await validateImportedMaterial(bytes,data as never);if(data.scriptStudioAttachment!==true)mimeType=accepted;});
      const previous=!data.isMainScript?(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 AND material_type=$2 AND source_path=$3 ORDER BY revision_number DESC LIMIT 1',[e.id,data.materialType.trim(),snapshot.sourcePath.trim()])).rows[0]:undefined;
      // Reusing the same validated bytes is not a source revision. In particular,
      // another shot uploading the same reference must not invalidate paid work.

@@ -10,7 +10,8 @@ import {createScriptStudioReader,createScriptStudioDiscussionReader} from './scr
 import {localScriptStudioPlan,estimateScriptDuration,studioShotNarrationEnabled,studioShotCaptionsEnabled} from '../scriptStudio';
 import {workspaceScriptExample} from './workspaceScriptInput';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
-import {readFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
+import {scriptStudioAttachmentRef,type ScriptStudioAttachmentRef} from '../scriptStudioAttachments';
 import {join} from 'node:path';
 import type {SecretStore} from './connectionPorts';
 import type {MediaFetcher} from '../worker/mediaProviders';
@@ -19,7 +20,8 @@ import {canonicalFingerprint} from './configurationCommands';
 const contextPath=process.env.LOOP_SCRIPT_STUDIO_TEST_CONTEXT;
 let f:Awaited<ReturnType<typeof productionWorkspaceFixture>>,provider:ReturnType<typeof createServer>,providerOrigin='',posts=0,version='',textConnection='';
 const providerEfforts:string[]=[];
-const providerInputs:{conversation?:{role:string;content:string}[];previousPlan?:{shots:{visual:string}[]}}[]=[];
+const providerImageParts:string[][]=[],providerFileParts:string[][]=[],providerInstructions:string[]=[];
+const providerInputs:{conversation?:{role:string;content:string}[];previousPlan?:{shots:{visual:string}[]};attachments?:ScriptStudioAttachmentRef[];documents?:{name:string;text:string}[]}[]=[];
 let mode:'ok'|'hold'|'drop'|'duration'|'empty-voice'|'empty-caption'|'request-setting'='ok',release:(()=>void)|undefined;
 const source='一个人推门走进咖啡馆，门铃轻响。他走到窗边坐下，望向对面的空座位，等待朋友。';
 const secrets=new Map<string,string>();
@@ -29,9 +31,11 @@ async function post(d:Record<string,unknown>,id=randomUUID(),token?:string,csrf=
 beforeAll(async()=>{
  if(!contextPath)return;const {runtimeContext}=await import(contextPath),context=runtimeContext();if(context.dailyRuntime!==false||!(context.isolatedFixtureContainer||context.isolatedFixtureNative&&context.nativeConnection))throw Error('Only explicitly isolated fixture');
  provider=createServer(async(req,res)=>{
-  let body='';for await(const chunk of req)body+=chunk;if(req.method==='GET'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({data:[{id:'gpt-5.6-luna'},{id:'gpt-6.1-sol'}]}));return;}
-  posts++;if(mode==='drop'){req.socket.destroy();return;}if(mode==='hold')await new Promise<void>(r=>{release=r;});
-  const wire=JSON.parse(body);providerEfforts.push(wire.reasoning.effort);const d=JSON.parse(wire.input[0].content);providerInputs.push(d);if(JSON.parse(body).text.format.name==='script_studio_discussion_v1'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({id:'resp_'+randomUUID(),status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({reply:'继续保留口播，不增加人物。'})}]}],usage:{input_tokens:35,output_tokens:15}}));return;}const plan=localScriptStudioPlan(d.source,d.targetDuration);plan.sourceUse='画面描述';plan.summary='增加两个视觉落点，保持原文与总时长。';
+  let body='';for await(const chunk of req)body+=chunk;if(req.url==='/__fixture/state'){res.setHeader('Content-Type','application/json');if(req.method==='POST'){const requested=JSON.parse(body).mode;if(!['ok','drop'].includes(requested)){res.statusCode=400;res.end('{}');return;}mode=requested;}res.end(JSON.stringify({posts,mode,imageCounts:providerImageParts.map(parts=>parts.length),lastInput:providerInputs.at(-1),lastInstructions:providerInstructions.at(-1)}));return;}if(req.method==='GET'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({data:[{id:'gpt-5.6-luna'},{id:'gpt-6.1-sol'},{id:'deepseek-flash'},{id:'deepseek-v4-pro'}]}));return;}
+  posts++;const wire=JSON.parse(body),content=wire.input[0].content,parts=typeof content==='string'?[]:content as {type:string;text?:string;image_url?:string;file_data?:string}[];
+  const d=JSON.parse(typeof content==='string'?content:parts.find(part=>part.type==='input_text')!.text!);providerInputs.push(d);providerEfforts.push(wire.reasoning.effort);providerImageParts.push(parts.filter(part=>part.type==='input_image').map(part=>part.image_url!));providerFileParts.push(parts.filter(part=>part.type==='input_file').map(part=>part.file_data!));providerInstructions.push(wire.instructions);
+  if(mode==='drop'){req.socket.destroy();return;}if(mode==='hold')await new Promise<void>(r=>{release=r;});
+  if(JSON.parse(body).text.format.name==='script_studio_discussion_v1'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify({id:wire.model.startsWith('deepseek-')?randomUUID():'resp_'+randomUUID(),status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({reply:'继续保留口播，不增加人物。'})}]}],usage:{input_tokens:35,output_tokens:15}}));return;}const plan=localScriptStudioPlan(d.source,d.targetDuration);plan.sourceUse='画面描述';plan.summary='增加两个视觉落点，保持原文与总时长。';
   if(!d.instruction.includes('单镜头')){const durations=[Number((plan.durationSeconds*.2).toFixed(2)),Number((plan.durationSeconds*.4).toFixed(2))];durations.push(Number((plan.durationSeconds-durations[0]-durations[1]).toFixed(2)));plan.shots=Array.from({length:3},(_,i)=>({...plan.shots[0],title:'镜头 '+(i+1),durationSeconds:durations[i],camera:'缓慢前移',videoPrompt:'缓慢前移，表达等待。'}));}
   if(/加旁白|加口播/.test([...(d.conversation??[]).filter((m:{role:string})=>m.role==='user').map((m:{content:string})=>m.content),d.instruction].join('\n'))){plan.narrationEnabled=true;plan.captionsEnabled=true;let cursor=0;const spoken=localScriptStudioPlan(d.source,d.targetDuration).shots.map(s=>s.narration).join(' ')||d.source;plan.shots=plan.shots.map((shot,i)=>{const end=i===plan.shots.length-1?spoken.length:Math.round(spoken.length*plan.shots.slice(0,i+1).reduce((n,s)=>n+s.durationSeconds,0)/plan.durationSeconds),narration=spoken.slice(cursor,end);cursor=end;return{...shot,narration};});}
   if(mode==='empty-voice'){plan.narrationEnabled=true;plan.shots[0].narration=d.source;}
@@ -40,11 +44,11 @@ beforeAll(async()=>{
   if(mode==='request-setting')plan.settings.push({field:'targetDuration',value:String(d.targetDuration)});
   const {durationSeconds:_,narrationEnabled:__,captionsEnabled:___,canProceed:____,shots,...metadata}=plan;
   const direction={...metadata,shots:shots.map(shot=>{const {durationSeconds,...rest}=shot;return{...rest,timingWeight:mode==='duration'?0:Math.max(1,Math.round(durationSeconds*10)),narrationEnabled:studioShotNarrationEnabled(plan,shot),captionsEnabled:studioShotCaptionsEnabled(plan,shot),settings:shot.settings.filter(s=>!['口播启用','旁白启用','字幕'].includes(s.field))};}),settings:plan.settings.filter(s=>!['口播启用','旁白启用','字幕'].includes(s.field))};
-  res.setHeader('Content-Type','application/json');res.end(JSON.stringify({id:'resp_'+randomUUID(),status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(direction)}]}],usage:{input_tokens:123,output_tokens:45}}));
+  res.setHeader('Content-Type','application/json');res.end(JSON.stringify({id:wire.model.startsWith('deepseek-')?randomUUID():'resp_'+randomUUID(),status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(direction)}]}],usage:{input_tokens:123,output_tokens:45}}));
  });provider.listen(0,'127.0.0.1');await once(provider,'listening');providerOrigin=`http://127.0.0.1:${(provider.address() as {port:number}).port}`;
  const transport:MediaFetcher=(url,init)=>fetch(providerOrigin+new URL(String(url)).pathname,init),store:SecretStore={mode:'keychain',async putImmutable(ref,value){if(secrets.has(ref)&&secrets.get(ref)!==value)throw Error('immutable');secrets.set(ref,value);},async get(ref){if(!secrets.has(ref))throw Error('missing');return secrets.get(ref)!;}};
  const probe=createProviderProbe({directory:'/not-used',policySha256:''},transport,undefined,{manualVerification:true});
- f=await productionWorkspaceFixture({testContextModule:contextPath,migrations:['db/local/209-script-studio.sql','db/local/210-script-language-models.sql'],runtime:{mountPath:'/'},connections:pool=>new LocalConnections(pool,store,probe,undefined,undefined,undefined,undefined,createScriptStudioReader(transport),createScriptStudioDiscussionReader(transport))});
+ f=await productionWorkspaceFixture({testContextModule:contextPath,migrations:['db/local/209-script-studio.sql','db/local/210-script-language-models.sql','db/local/211-script-studio-conversations.sql'],runtime:{mountPath:'/'},connections:pool=>new LocalConnections(pool,store,probe,undefined,undefined,undefined,undefined,createScriptStudioReader(transport),createScriptStudioDiscussionReader(transport))});
  const created=await f.post('connections','create',{name:'Script studio fixture',provider:'openai',adapter:'openai_responses',secret:'synthetic-script-studio'});expect(created.status,JSON.stringify(created.body)).toBe(200);version=created.body.connection.current_version_id;textConnection=created.body.connection.id;
  expect((await f.post('connections','verify',{connectionId:created.body.connection.id})).status).toBe(200);
 },90000);
@@ -185,8 +189,8 @@ it.skipIf(!contextPath)('uses manually edited enabled narration and captions in 
 });
 it.skipIf(!contextPath||!process.env.LOOP_SCRIPT_STUDIO_UI_FIXTURE)('holds an isolated script studio browser fixture',async()=>{
  const {createServer:createVite}=await import('vite'),{default:react}=await import('@vitejs/plugin-react'),{writeFile,access}=await import('node:fs/promises');
- const app=await createVite({configFile:false,root:process.cwd(),envFile:false,cacheDir:'.scratch/script-shot-models-20261118/vite-cache',plugins:[react()],optimizeDeps:{entries:['index.html']},server:{host:'127.0.0.1',port:0,proxy:Object.fromEntries(['/api/local','/_local-artifact'].map(path=>[path,{target:f.origin,changeOrigin:true,headers:{Origin:f.origin}}]))}});
- try{await app.listen();const origin=`http://127.0.0.1:${(app.httpServer!.address() as {port:number}).port}`,output=process.env.LOOP_SCRIPT_STUDIO_UI_FIXTURE!,accountId=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,created=await f.post('episode-commands','create',{accountId,title:'脚本改版浏览器验收'});expect(created.status,JSON.stringify(created.body)).toBe(200);await writeFile(output,JSON.stringify({origin,email:f.email,password:f.password,episodeId:created.body.id,stopFile:output+'.stop'}),{mode:0o600});const deadline=Date.now()+600000;while(Date.now()<deadline){try{await access(output+'.stop');break;}catch{await new Promise(r=>setTimeout(r,250));}}}finally{await app.close();}
+ const app=await createVite({configFile:false,root:process.cwd(),envFile:false,cacheDir:'.scratch/script-chat-features-20261118/vite-cache',plugins:[react()],optimizeDeps:{entries:['index.html']},server:{host:'127.0.0.1',port:0,proxy:Object.fromEntries(['/api/local','/_local-artifact'].map(path=>[path,{target:f.origin,changeOrigin:true,headers:{Origin:f.origin}}]))}});
+ try{await app.listen();const origin=`http://127.0.0.1:${(app.httpServer!.address() as {port:number}).port}`,output=process.env.LOOP_SCRIPT_STUDIO_UI_FIXTURE!,accountId=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,created=await f.post('episode-commands','create',{accountId,title:'新对话与图片附件浏览器验收'});expect(created.status,JSON.stringify(created.body)).toBe(200);await writeFile(output,JSON.stringify({origin,email:f.email,password:f.password,episodeId:created.body.id,providerOrigin,stopFile:output+'.stop'}),{mode:0o600});const deadline=Date.now()+600000;while(Date.now()<deadline){try{await access(output+'.stop');break;}catch{await new Promise(r=>setTimeout(r,250));}}}finally{await app.close();}
 },630000);
 
 it.skipIf(!contextPath)('persists multi-turn discussion, restores without a provider call and retains the plan through discussion and manual edits',async()=>{
@@ -223,4 +227,105 @@ it.skipIf(!contextPath)('deletes a shot through an immutable receipt, restores m
  const one=await post({...edit,previousRequestId:removed.body.requestId,index:0},randomUUID(),undefined,true,'deleteShot');expect(one.body.plan.shots).toHaveLength(1);expect((await post({...edit,previousRequestId:one.body.requestId,index:0},randomUUID(),undefined,true,'deleteShot')).body.error).toContain('至少保留');expect(posts).toBe(sent);
  const saved=await f.request('confirmScriptStudio',{expectedScriptRevisionId:f.script,text:d.text,targetDuration:15,reason:'删除镜头验收',requestId:removed.body.requestId});expect(saved.status,JSON.stringify(saved.body)).toBe(200);expect((await f.request('start')).status).toBe(200);
  try{const old=(await f.c.query('SELECT id,revision FROM local_identity.production_workspaces WHERE episode_id=$1',[f.episode])).rows[0],prepared=await f.request(old?'replanWorkspace':'prepareWorkspace',{...(old?{workspaceId:old.id,expectedRevision:Number(old.revision),reason:'删除镜头实际准备'}:{}),expectedScriptRevisionId:saved.body.id});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);expect(prepared.body.clips).toHaveLength(2);const project=JSON.parse(await readFile(join(f.assetRoot,prepared.body.project.relativePath),'utf8'));expect(project.timelines[0].items.filter((item:{kind:string})=>item.kind!=='audio').reduce((end:number,item:{startFrame:number;durationInFrames:number})=>Math.max(end,item.startFrame+item.durationInFrames),0)).toBe(15*project.timelines[0].fps);const read=await fetch(f.origin+`/api/local/script-studio?episodeId=${f.episode}&scriptRevisionId=${saved.body.id}`,{headers:{Cookie:'loop_owner_session='+f.token}}).then(r=>r.json());expect(read.sourceText).toBe(d.text);expect(read.plan.shots).toHaveLength(2);}finally{await f.c.query("UPDATE public.episodes SET main_script_revision_id=$2,stage='storyboard_approved' WHERE id=$1",[f.episode,f.script]);}
+});
+
+
+async function importedImage(name:string,episodeId=f.episode){
+ const bytes=await readFile(workspaceTestMedia('still-striped.png')),result=await f.request('importMaterial',{episodeId,materialType:'image',sourceKind:'file',sourcePath:name,mimeType:'image/png',contentBase64:bytes.toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
+ expect(result.status,JSON.stringify(result.body)).toBe(200);return{material:result.body,ref:scriptStudioAttachmentRef(result.body),bytes};
+}
+function conversationScope(d:ReturnType<typeof data>){return{episodeId:d.episodeId,expectedScriptRevisionId:d.expectedScriptRevisionId,text:d.text,targetDuration:d.targetDuration};}
+
+it.skipIf(!contextPath)('imports a real image once, sends actual image parts and persists only immutable references with idempotent replay',async()=>{
+ const sent=posts,count=Number((await f.c.query('SELECT count(*) FROM public.production_material_revisions WHERE episode_id=$1',[f.episode])).rows[0].count),image=await importedImage('assistant-upload.png');
+ expect(posts).toBe(sent);expect((await importedImage('assistant-upload.png')).ref).toEqual(image.ref);expect(Number((await f.c.query('SELECT count(*) FROM public.production_material_revisions WHERE episode_id=$1',[f.episode])).rows[0].count)).toBe(count+1);
+ const d={...data(source+' 图片实际传输'),instruction:'参考图片优化镜头，保留原文。',attachments:[image.ref]},id=randomUUID(),result=await post(d,id);
+ expect(result.status,JSON.stringify(result.body)).toBe(200);expect(result.body.status).toBe('completed');expect(result.body.attachments).toEqual([image.ref]);expect(providerImageParts.at(-1)).toEqual(['data:image/png;base64,'+image.bytes.toString('base64')]);expect(providerInputs.at(-1)?.attachments).toEqual([image.ref]);expect(providerInstructions.at(-1)).toContain('原文');
+ const row=(await f.c.query('SELECT request_snapshot FROM local_identity.script_format_requests WHERE id=$1',[id])).rows[0],serialized=JSON.stringify(row.request_snapshot);expect(row.request_snapshot.attachments).toEqual([image.ref]);expect(row.request_snapshot.data.attachments).toEqual([image.ref]);expect(typeof row.request_snapshot.body.input[0].content).toBe('string');expect(serialized).not.toContain('data:image');expect(serialized).not.toContain(image.bytes.toString('base64'));expect(Buffer.byteLength(serialized)).toBeLessThan(128*1024);
+ expect((await post(d,id)).body).toEqual(result.body);expect((await post(d)).body).toEqual(result.body);expect(posts).toBe(sent+1);expect((await post({...d,attachments:[{...image.ref,sha256:'0'.repeat(64)}]},id)).status).toBe(409);expect(posts).toBe(sent+1);
+ expect((await f.c.query('SELECT main_script_revision_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].main_script_revision_id).toBe(f.script);
+});
+
+it.skipIf(!contextPath)('carries sent image references through later text, discussion and manual shot changes while a new conversation starts without images',async()=>{
+ const a=await importedImage('assistant-chain-a.png'),b=await importedImage('assistant-chain-b.png'),d=data(source+' 图片会话链'),scope=conversationScope(d),first=await post({...d,attachments:[a.ref]});expect(first.body.status,JSON.stringify(first.body)).toBe('completed');
+ const talk=await post({...d,mode:'discuss',instruction:'',attachments:[b.ref],previousRequestId:first.body.requestId});expect(talk.body.status,JSON.stringify(talk.body)).toBe('completed');expect(talk.body.attachments).toEqual([a.ref,b.ref]);expect(providerImageParts.at(-1)).toHaveLength(2);
+ const talkSnapshot=(await f.c.query('SELECT request_snapshot FROM local_identity.script_format_requests WHERE id=$1',[talk.body.requestId])).rows[0].request_snapshot;expect(talkSnapshot.data.attachments).toEqual([b.ref]);expect(talkSnapshot.attachments).toEqual([a.ref,b.ref]);
+ const sent=posts,edited=await post({...scope,previousRequestId:talk.body.requestId,index:0,fields:{visual:'保留柔光。'}},randomUUID(),undefined,true,'editShot');expect(edited.body.status).toBe('completed');expect(edited.body.attachments).toEqual([a.ref,b.ref]);expect(posts).toBe(sent);
+ const removed=await post({...scope,previousRequestId:edited.body.requestId,index:1},randomUUID(),undefined,true,'deleteShot');expect(removed.body.status).toBe('completed');expect(removed.body.attachments).toEqual([a.ref,b.ref]);expect(posts).toBe(sent);
+ const next=await post({...d,instruction:'保持整体节奏',previousRequestId:removed.body.requestId});expect(next.body.status,JSON.stringify(next.body)).toBe('completed');expect(providerImageParts.at(-1)).toHaveLength(2);expect(providerInputs.at(-1)?.attachments).toEqual([a.ref,b.ref]);
+ const restored=await post(scope,randomUUID(),undefined,true,'conversation');expect(restored.body.attachments).toEqual([a.ref,b.ref]);expect(restored.body.turns[0].attachments).toEqual([a.ref]);expect(restored.body.turns[1].attachments).toEqual([b.ref]);expect(restored.body.turns.at(-1)).not.toHaveProperty('attachments');
+ const created=await post(scope,randomUUID(),undefined,true,'newConversation');expect(created.status,JSON.stringify(created.body)).toBe(200);const conversationId=created.body.id;
+ const empty=await post({...scope,conversationId},randomUUID(),undefined,true,'conversation');expect(empty.body.turns).toEqual([]);expect(empty.body).not.toHaveProperty('attachments');
+ const fresh=await post({...d,conversationId});expect(fresh.body.status).toBe('completed');expect(fresh.body).not.toHaveProperty('attachments');expect(providerImageParts.at(-1)).toEqual([]);expect(providerInputs.at(-1)?.conversation).toBeUndefined();expect(providerInputs.at(-1)?.previousPlan).toBeUndefined();
+ expect((await post(scope,randomUUID(),undefined,true,'conversation')).body.attachments).toEqual([a.ref,b.ref]);
+});
+
+it.skipIf(!contextPath)('rejects foreign, forged, inline and altered real-file image identities before dispatch',async()=>{
+ const own=await importedImage('assistant-permission.png'),d=data(source+' 图片权限'),sent=posts;
+ expect((await post({...d,attachments:[own.ref]},randomUUID(),f.otherToken)).status).toBe(404);
+ for(const ref of [{...own.ref,materialRevisionId:randomUUID()},{...own.ref,sha256:'1'.repeat(64)},{...own.ref,mimeType:'image/jpeg'},{...own.ref,fileSize:own.ref.fileSize+1},{...own.ref,name:'forged.png'}])expect((await post({...d,attachments:[ref]})).status).toBe(ref.materialRevisionId===own.ref.materialRevisionId?409:404);
+ expect((await post({...d,attachments:[{...own.ref,dataUrl:'data:image/png;base64,AAAA'}]})).status).toBe(400);
+ const accountId=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,foreignEpisode=await f.post('episode-commands','create',{accountId,title:'附件跨生产单隔离'});expect(foreignEpisode.status).toBe(200);const foreign=await importedImage('foreign-assistant.png',foreignEpisode.body.id);expect((await post({...d,attachments:[foreign.ref]})).status).toBe(404);
+ const path=join(f.assetRoot,own.material.storage_path);await writeFile(path,Buffer.concat([own.bytes,Buffer.from('tampered')]));try{const response=await post({...d,attachments:[own.ref]});expect(response.status,JSON.stringify(response.body)).toBe(409);}finally{await writeFile(path,own.bytes);}
+ expect(posts).toBe(sent);
+});
+
+it.skipIf(!contextPath)('blocks unsupported image models and enforces per-message counts before provider transport',async()=>{
+ const image=await importedImage('assistant-unsupported.png'),d=data(source+' 图片能力'),created=await f.post('connections','create',{name:'Text-only DeepSeek fixture',provider:'deepseek',adapter:'deepseek_responses',secret:'synthetic-deepseek-images'});expect(created.status,JSON.stringify(created.body)).toBe(200);const connection=created.body.connection;
+ expect((await f.post('connections','verify',{connectionId:connection.id})).status).toBe(200);expect((await f.post('connection-models','save',{connectionId:connection.id,versionId:connection.current_version_id,revision:'default',enabledModels:['deepseek-flash','deepseek-v4-pro']})).status).toBe(200);
+ const textOnly={capability:'language_model',provider:'deepseek',adapter:'deepseek_responses',connectionVersionId:connection.current_version_id,model:'deepseek-v4-pro'},sent=posts;
+ const unsupported=await post({...d,selection:textOnly,attachments:[image.ref]});expect(unsupported.status,JSON.stringify(unsupported.body)).toBe(400);expect(unsupported.body.error).toContain('不支持');expect(posts).toBe(sent);
+ const refs=Array.from({length:5},()=>({...image.ref,materialRevisionId:randomUUID()}));expect((await post({...d,attachments:refs})).status).toBe(400);expect(posts).toBe(sent);
+ const supported=await post({...d,selection:{...textOnly,model:'deepseek-flash'},attachments:[image.ref]});expect(supported.body.status,JSON.stringify(supported.body)).toBe('completed');expect(providerImageParts.at(-1)).toHaveLength(1);expect(posts).toBe(sent+1);
+ const later=await post({...d,selection:textOnly,instruction:'继续讨论',previousRequestId:supported.body.requestId});expect(later.status,JSON.stringify(later.body)).toBe(400);expect(later.body.error).toContain('不支持');expect(posts).toBe(sent+1);
+});
+
+it.skipIf(!contextPath)('keeps unknown image request identity and prevents switching conversations from bypassing uncertainty',async()=>{
+ const image=await importedImage('assistant-unknown.png'),d=data(source+' 图片未知结果'),scope=conversationScope(d),created=await post(scope,randomUUID(),undefined,true,'newConversation');expect(created.status).toBe(200);const id=randomUUID(),input={...d,attachments:[image.ref]},sent=posts;let unknown;
+ mode='drop';try{unknown=await post(input,id);}finally{mode='ok';}expect(unknown.body.status).toBe('unknown');expect(posts).toBe(sent+1);expect(providerImageParts.at(-1)).toHaveLength(1);
+ expect((await post(input,id)).body).toEqual(unknown.body);expect((await post(input)).body).toEqual(unknown.body);expect((await post({...input,attachments:[{...image.ref,sha256:'2'.repeat(64)}]},id)).status).toBe(409);
+ expect((await post({...d,instruction:'尝试另一条消息',conversationId:created.body.id})).status).toBe(409);expect((await post(scope,randomUUID(),undefined,true,'newConversation')).status).toBe(409);
+ const read=await post(scope,randomUUID(),undefined,true,'conversation');expect(read.body.latest.status).toBe('unknown');expect(read.body).not.toHaveProperty('attachments');expect(read.body.turns[0].attachments).toEqual([image.ref]);expect(posts).toBe(sent+1);
+});
+
+it.skipIf(!contextPath)('requires the trusted latest parent in an existing explicit conversation and rejects cross-conversation parents',async()=>{
+ const d=data(source+' 显式会话可信父链'),scope=conversationScope(d),legacy=await post(d),created=await post(scope,randomUUID(),undefined,true,'newConversation');expect(created.status).toBe(200);const conversationId=created.body.id;
+ expect((await post({...d,conversationId,previousRequestId:legacy.body.requestId})).status).toBe(409);
+ const first=await post({...d,conversationId,instruction:'新会话首次'});expect(first.body.status,JSON.stringify(first.body)).toBe('completed');const sent=posts;
+ expect((await post({...d,conversationId,instruction:'不能漏掉父链'})).status).toBe(409);expect(posts).toBe(sent);
+ const second=await post({...d,conversationId,previousRequestId:first.body.requestId,instruction:'保留单镜头'});expect(second.body.status,JSON.stringify(second.body)).toBe('completed');
+ expect((await post({...d,conversationId,previousRequestId:first.body.requestId,instruction:'过期父链不能分叉'})).status).toBe(409);expect(posts).toBe(sent+1);
+});
+
+// These documents enter through the same authenticated material registration used by the UI.
+it.skipIf(!contextPath)('dispatches registered common documents as bounded text or native PDF without persisting their content',async()=>{
+ const docx=Buffer.from('UEsDBBQAAAAIALmAcl2sbhJangAAANwAAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbF2PsQ7CMBBDf6XKitqrGBhQ24UdGPiBU3JtI5pLlBwF/p4EpA6Mlu1nubu9A6Xq5RZOvZpFwhEg6ZkcpsYH4uyMPjqULOMEAfUdJ4J92x5AexZiqaUw1NBdVorRGqquGOWMjnoFTx8NGK8fLiebTFPV6Vcry73CEBarUaxnWNn8bdZ+HK2mrV9oIXpNKVme3NJsjkPLu4KHoYPvqeEDUEsDBBQAAAAIALmAcl0FhLhFhAAAALAAAAARAAAAd29yZC9kb2N1bWVudC54bWxFzsEOgjAMBuBXIdyxaKIxy+RBuOEosMjapSuZvr0MD16+P02bP7XZjOy2gKTVO6yUTH7Ui2o0AMktGIZ04oi07yaWMOg+ygyZZYzCDlPyNIcVLm17gzB4qjubzZPHT8lYkIJ2ghMKksNG+YXU9Nf7ucqLV6zcFi2Um6IcxsNfD/x/7L5QSwECFAMUAAAACAC5gHJdrG4SWp4AAADcAAAAEwAAAAAAAAAAAAAAgAEAAAAAW0NvbnRlbnRfVHlwZXNdLnhtbFBLAQIUAxQAAAAIALmAcl0FhLhFhAAAALAAAAARAAAAAAAAAAAAAACAAc8AAAB3b3JkL2RvY3VtZW50LnhtbFBLBQYAAAAAAgACAIAAAACCAQAAAAA=','base64');
+ const pdfObjects=['<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R] /Count 1 >>','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 300 200] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'];
+ const stream='BT /F1 12 Tf 20 100 Td (reference-token-Z581 white cup) Tj ET';pdfObjects.push('<< /Length '+Buffer.byteLength(stream)+' >>\nstream\n'+stream+'\nendstream');
+ let pdf='%PDF-1.7\n',offsets=[0];for(const [index,object]of pdfObjects.entries()){offsets.push(Buffer.byteLength(pdf));pdf+=(index+1)+' 0 obj\n'+object+'\nendobj\n';}const xref=Buffer.byteLength(pdf);pdf+='xref\n0 6\n0000000000 65535 f \n'+offsets.slice(1).map(offset=>String(offset).padStart(10,'0')+' 00000 n \n').join('')+'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n';
+ const kinds=[['txt','text/plain'],['md','text/markdown'],['csv','text/csv'],['json','application/json'],['docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document'],['pdf','application/pdf']];
+ for(const [extension,mimeType]of kinds){
+  const bytes=extension==='docx'?docx:extension==='pdf'?Buffer.from(pdf):Buffer.from(extension==='json'?'{"reference":"reference-token-Z581 white cup"}':'reference-token-Z581 white cup');
+  const registered=await f.request('importMaterial',{episodeId:f.episode,materialType:'reference',sourceKind:'file',sourcePath:'assistant-document.'+extension,mimeType,contentBase64:bytes.toString('base64'),isMainScript:false,materialPurpose:'general_reference',scriptStudioAttachment:true});
+  expect(registered.status,JSON.stringify(registered.body)).toBe(200);const ref=scriptStudioAttachmentRef(registered.body),id=randomUUID(),d={...data(source+' 文档'+extension),mode:'discuss',instruction:'参考附件讨论拍法',attachments:[ref]},result=await post(d,id);
+  expect(result.body.status,JSON.stringify(result.body)).toBe('completed');expect(result.body.attachments).toEqual([ref]);
+  if(extension==='pdf')expect(providerFileParts.at(-1)).toEqual(['data:application/pdf;base64,'+bytes.toString('base64')]);else expect(providerInputs.at(-1)?.documents?.[0].text).toContain('reference-token-Z581');
+  const snapshot=(await f.c.query('SELECT request_snapshot FROM local_identity.script_format_requests WHERE id=$1',[id])).rows[0].request_snapshot,serialized=JSON.stringify(snapshot);
+  expect(snapshot.attachments).toEqual([ref]);expect(serialized).not.toContain('reference-token-Z581');expect(serialized).not.toContain(bytes.toString('base64'));expect(serialized).not.toContain('file_data');
+  const later=await post({...d,instruction:'继续参考附件',attachments:undefined,previousRequestId:id});expect(later.body.status).toBe('completed');if(extension==='pdf')expect(providerFileParts.at(-1)).toHaveLength(1);else expect(providerInputs.at(-1)?.documents?.[0].text).toContain('reference-token-Z581');
+ }
+});
+
+it.skipIf(!contextPath)('validates assistant documents before material publication without restricting legacy reference imports',async()=>{
+ const upload=(name:string,mimeType:string,bytes:Buffer,flag:unknown)=>f.request('importMaterial',{episodeId:f.episode,materialType:'reference',sourceKind:'file',sourcePath:name,mimeType,contentBase64:bytes.toString('base64'),isMainScript:false,materialPurpose:'general_reference',...(flag===undefined?{}:{scriptStudioAttachment:flag})});
+ const count=Number((await f.c.query('SELECT count(*) FROM public.production_material_revisions WHERE episode_id=$1',[f.episode])).rows[0].count),sent=posts;
+ for(const [name,mime,bytes,flag]of [
+  ['false-marker.txt','text/plain',Buffer.from('valid text'),false],
+  ['broken.docx','application/vnd.openxmlformats-officedocument.wordprocessingml.document',Buffer.from('PK\x03\x04invalid'),true],
+  ['forged.pdf','application/pdf',Buffer.from('plain text'),true],
+  ['nonutf8.txt','text/plain',Buffer.from([0xff,0xfe,0,1]),true],
+  ['too-long.txt','text/plain',Buffer.from('字'.repeat(20001)),true],
+ ] as const){const result=await upload(name,mime,bytes,flag);expect(result.status,JSON.stringify(result.body)).toBe(400);}
+ expect(Number((await f.c.query('SELECT count(*) FROM public.production_material_revisions WHERE episode_id=$1',[f.episode])).rows[0].count)).toBe(count);expect(posts).toBe(sent);
+ const legacy=await upload('legacy-large-reference.txt','text/plain',Buffer.from('字'.repeat(20001)),undefined);expect(legacy.status,JSON.stringify(legacy.body)).toBe(200);
 });

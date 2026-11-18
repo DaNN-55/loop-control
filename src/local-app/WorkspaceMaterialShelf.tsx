@@ -13,7 +13,7 @@ const audio = '.mp3';
 const supportedMedia=[images,videos,audio].join(',');
 
 type ShelfMaterial = {id:string;material_type:string;source_path:string;storage_path:string;material_purpose?:string|null};
-const media = {image:{get label(){return uiText("图片");},icon:ImageIcon},video:{get label(){return uiText("视频");},icon:Film},audio:{get label(){return uiText("音频");},icon:AudioLines},script:{get label(){return uiText("脚本");},icon:FileText}};
+const media = {image:{get label(){return uiText("图片");},icon:ImageIcon},video:{get label(){return uiText("视频");},icon:Film},audio:{get label(){return uiText("音频");},icon:AudioLines},script:{get label(){return uiText("脚本");},icon:FileText},reference:{get label(){return uiText("文档");},icon:FileText}};
 const audioLabels:Record<string,string> = {get narration(){return uiText("口播");},get background_music(){return uiText("配乐");},get sound_effect(){return uiText("音效");}};
 const minHeight = 160;
 const defaultHeight = 360;
@@ -104,7 +104,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
      setHeight(value=>event.key==='Home'?minHeight:event.key==='End'?maxHeight:clampHeight(value+(event.key==='ArrowUp'?16:-16)));
     }}><span aria-hidden="true"/></div>
    <header className="workspace-material-heading">
-    <div className="workspace-material-filters" role="group" aria-label={uiText("素材类型")}>{[['all','全部'],['image','图片'],['video','视频'],['audio','音频'],['script','脚本']].map(([value,label])=><button type="button" key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{label}</button>)}</div>
+    <div className="workspace-material-filters" role="group" aria-label={uiText("素材类型")}>{[['all','全部'],['image','图片'],['video','视频'],['audio','音频'],['script','脚本'],['reference','文档']].map(([value,label])=><button type="button" key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{uiText(label)}</button>)}</div>
     <div className="workspace-material-heading-actions">
     {!readOnly&&<Button size="xs" color="tertiary" className="workspace-material-import" noTextPadding iconLeading={Upload}
      isDisabled={uploadDisabled} onPress={()=>input.current?.click()}>{uiText("导入本期素材")}</Button>}</div>
@@ -122,12 +122,12 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
    <div className="workspace-material-content">
     {filtered.length?<ul className="workspace-material-list" aria-label={uiText("素材清单")}>
      {filtered.map(material=>{
-      const kind=media[material.material_type as keyof typeof media],Icon=kind.icon,name=fileName(material),label=material.material_purpose&&audioLabels[material.material_purpose]||kind.label;
+      const assignable=['image','video','audio'].includes(material.material_type),kind=media[material.material_type as keyof typeof media],Icon=kind.icon,name=fileName(material),label=material.material_purpose&&audioLabels[material.material_purpose]||kind.label;
       const src='/_local-artifact?'+new URLSearchParams({episode:episodeId,path:material.storage_path});
-      return <li key={material.id}><button className="workspace-material-select" type="button" aria-label={uiText("预览 {value0}",{value0:String(name)})} aria-pressed={shelf&&!readOnly?shelf.selectedId===material.id:previewId===material.id}
-       draggable={!!shelf&&!readOnly&&material.material_type!=='script'} data-picked={shelf?.selectedId===material.id||undefined} title={`${name} · ${label}`}
-       onDragStart={event=>{if(!shelf||readOnly||material.material_type==='script'){event.preventDefault();return;}event.dataTransfer.setData(workspaceMaterialDragType,material.id);event.dataTransfer.effectAllowed='copy';shelf.select('');shelf.drag(material.id);}} onDragEnd={()=>shelf?.drag('')}
-       onClick={()=>{setPreviewId(material.id);if(!readOnly)shelf?.select(shelf.selectedId===material.id?'':material.id);}}
+      return <li key={material.id}><button className="workspace-material-select" type="button" aria-label={uiText("预览 {value0}",{value0:String(name)})} aria-pressed={assignable&&shelf&&!readOnly?shelf.selectedId===material.id:previewId===material.id}
+       draggable={!!shelf&&!readOnly&&assignable} data-picked={shelf?.selectedId===material.id||undefined} title={`${name} · ${label}`}
+       onDragStart={event=>{if(!shelf||readOnly||!assignable){event.preventDefault();return;}event.dataTransfer.setData(workspaceMaterialDragType,material.id);event.dataTransfer.effectAllowed='copy';shelf.select('');shelf.drag(material.id);}} onDragEnd={()=>shelf?.drag('')}
+       onClick={()=>{setPreviewId(material.id);if(!readOnly&&material.material_type!=='reference')shelf?.select(shelf.selectedId===material.id?'':material.id);}}
        onDoubleClick={()=>{setPreviewId(material.id);setShowPreview(true);}}>
        <span className="workspace-material-thumb">{material.material_type==='image'?<img src={src} alt="" loading="lazy"/>:material.material_type==='video'?<><video src={`${src}#t=0.001`} muted playsInline preload="metadata"/><Film size={15} className="workspace-material-video-mark" aria-hidden="true"/></>:<Icon size={material.material_type==='audio'?34:28} aria-hidden="true"/>}</span>
        <span className="workspace-material-name">{name}</span>
@@ -154,7 +154,7 @@ function MaterialPreview({episodeId,material}:{episodeId:string;material:ShelfMa
   if(Number.isFinite(event.currentTarget.duration))setDuration(event.currentTarget.duration);
  };
  return <>
-  {failed||!material.storage_path?<p>{uiText("无法预览此素材")}</p>:material.material_type==='script'?<pre>{script||uiText("正在读取脚本…")}</pre>:material.material_type==='image'
+  {failed||!material.storage_path?<p>{uiText("无法预览此素材")}</p>:material.material_type==='reference'?<a href={src+'&download=1'} download={name}>{uiText("下载文档")}</a>:material.material_type==='script'?<pre>{script||uiText("正在读取脚本…")}</pre>:material.material_type==='image'
    ?<img src={src} alt={name} onError={onError}/>
    :material.material_type==='video'
     ?<video src={src} controls playsInline preload="metadata" aria-label={name} onError={onError} onLoadedMetadata={onLoadedMetadata}/>

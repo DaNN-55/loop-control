@@ -2,7 +2,7 @@ import {cleanup,render,screen,fireEvent,waitFor,act} from '@testing-library/reac
 import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 const {request,modelCommand}=vi.hoisted(()=>({request:vi.fn(),modelCommand:vi.fn()}));
-vi.mock('./client',()=>({localRequest:(path:string,...args:unknown[])=>path==='script-studio'?Promise.resolve({turns:[],result:null,mode:'optimize'}):request(path,...args),localCommand:modelCommand}));
+vi.mock('./client',()=>({localRequest:(path:string,init?:RequestInit)=>path==='script-studio'?Promise.resolve(JSON.parse(String(init?.body)).command==='conversations'?{conversations:[]}:{turns:[],result:null,mode:'optimize'}):request(path,init),localCommand:modelCommand}));
 import {WorkspaceScriptPanel} from './WorkspaceScriptPanel';
 import {WorkspaceDraftProvider} from './WorkspaceDraft';
 const source='一个人推门走进咖啡馆，坐下等朋友。';

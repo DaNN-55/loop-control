@@ -42,3 +42,15 @@ it('restores current manual revision receipts and their parent conversation',asy
  const value=await readStudioConversation(client([manual,row('plan',null,'optimize','固定机位')]),'owner',scope,'manual');
  expect(value.mode).toBe('revision');expect(value.turns[1].mode).toBe('edit');expect(value.conversation).toContainEqual({role:'user',content:'固定机位'});expect(value.turns[1].answer).toBe('镜头已删除，仍需采用。');
 });
+
+it('keeps an explicit empty conversation empty instead of finding the latest implicit receipt',async()=>{
+ const explicit={...scope,conversationId:'11111111-1111-4111-8111-111111111111'};
+ const c={query:vi.fn(async(sql:string)=>({rows:sql.includes('script_studio_conversations')?[{id:explicit.conversationId}]:[]}))} as unknown as PoolClient;
+ const result=await readStudioConversation(c,'owner',explicit);expect(result.turns).toEqual([]);expect(result.result).toBeNull();
+ expect(c.query).toHaveBeenCalledWith(expect.stringContaining('conversationId'),expect.arrayContaining([explicit.conversationId]));
+});
+it('refuses a parent from another conversation even when the script scope matches',async()=>{
+ const explicit={...scope,conversationId:'11111111-1111-4111-8111-111111111111'};
+ const c={query:vi.fn(async(sql:string)=>({rows:sql.includes('script_studio_conversations')?[{id:explicit.conversationId}]:[row('old',null)]}))} as unknown as PoolClient;
+ await expect(readStudioConversation(c,'owner',explicit,'old')).rejects.toThrow(/对话/);
+});
