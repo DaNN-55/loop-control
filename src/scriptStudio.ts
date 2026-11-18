@@ -3,7 +3,7 @@ import {recognizedScriptText,type RecognitionSetting} from './scriptFormat.js';
 export const scriptStudioContractVersion='script-studio/v1';
 export const scriptStudioMaxCharacters=20000;
 export const scriptStudioSettingFields={global:productionSettingFields('global').filter(name=>name!=='镜头时长（秒）'),shot:productionSettingFields('shot').filter(name=>name!=='镜头时长（秒）')};
-export type ScriptStudioMode='optimize'|'adapt';
+export type ScriptStudioMode='optimize'|'revision';
 export interface ScriptStudioShot {title:string;durationSeconds:number;narration:string;subtitle:string|null;visual:string;videoPrompt:string;camera:string;visualSource:'image'|'video'|'material'|'unassigned';settings:RecognitionSetting[]}
 export interface ScriptStudioPlan {title:string;durationSeconds:number;summary:string;sourceUse:string;narrationEnabled:boolean;captionsEnabled:boolean;settings:RecognitionSetting[];shots:ScriptStudioShot[];changes:string[];warnings:string[];canProceed:boolean}
 export interface ScriptStudioDiagnostic {responseId:string;usage:{inputTokens:number|null;outputTokens:number|null};modelOutput:unknown}
@@ -49,6 +49,7 @@ export function scriptStudioText(plan:ScriptStudioPlan){
 }
 /** The model proposes filming; locally enforced content and duration boundaries still apply. */
 export function validateScriptStudioPlan(value:unknown,source:string,options:ScriptStudioOptions):ScriptStudioPlan{
+ if(!['optimize','revision'].includes(options.mode))throw Error('拍法校验模式无效。');
  validateStudioDuration(options.targetDuration);
  const object=(v:unknown,keys:string[])=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.keys(v).length===keys.length&&Object.keys(v).every(k=>keys.includes(k));
  const text=(v:unknown,max=4000)=>typeof v==='string'&&v.length<=max;
@@ -95,7 +96,7 @@ export function validateScriptStudioPlan(value:unknown,source:string,options:Scr
   if(originalSubtitles&&subtitles!==originalSubtitles||!originalSubtitles&&p.shots.some(s=>s.subtitle!==null&&s.subtitle.trim()&&!normal(source).includes(normal(s.subtitle))))throw Error('拍法改写或遗漏了原有字幕。');
   if(source.match(/^#\s+(.+)$/m)?.[1]&&p.title!==local.title)throw Error('拍法改变了原文标题。');
  }
- if(options.mode==='adapt'&&!p.changes.length)throw Error('改编方案需要明确列出内容变化。');
+ if(options.mode==='revision'&&!p.changes.length)throw Error('修订方案需要明确列出内容变化。');
  if(p.narrationEnabled!==p.shots.some(s=>studioShotNarrationEnabled(p,s)))throw Error('口播摘要与逐镜开关不一致。');
  if(p.captionsEnabled!==p.shots.some(s=>studioShotCaptionsEnabled(p,s)))throw Error('字幕摘要与逐镜开关不一致。');
  if(p.shots.some(s=>studioShotNarrationEnabled(p,s)&&!s.narration.trim()))throw Error('每个启用口播的镜头都需要明确口播正文。');

@@ -1,3 +1,4 @@
+import {scriptStudioReceiptOptions} from '../scriptStudioLegacy.js';
 import {parseProductionScript} from '../reviews/productionScript.js';
 import {createHash,randomUUID} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
@@ -32,7 +33,7 @@ export async function confirmScriptStudio(c:PoolClient,root:string,ownerId:strin
  if(data.requestId){
   const request=(await c.query('SELECT * FROM local_identity.script_format_requests WHERE owner_id=$1 AND id=$2 AND episode_id=$3',[ownerId,data.requestId,e.id])).rows[0];
   if(!request||request.status!=='completed'||request.script_revision_id!==e.main_script_revision_id||request.source_text!==data.text||request.request_snapshot?.version!==scriptStudioContractVersion||request.request_snapshot?.data?.targetDuration!==targetDuration||!request.result?.plan)throw new ConfigurationError(409,'方案与当前原文、时长或基准不一致，请重新优化并审批。');
-  try{plan=validateScriptStudioPlan(request.result.plan,data.text,request.request_snapshot.data);}catch(error){throw new ConfigurationError(400,(error as Error).message);}
+  try{plan=validateScriptStudioPlan(request.result.plan,data.text,scriptStudioReceiptOptions(request.request_snapshot.data));}catch(error){throw new ConfigurationError(400,(error as Error).message);}
  }else{try{plan=validateScriptStudioPlan(localScriptStudioPlan(data.text,targetDuration),data.text,{targetDuration,mode:'optimize'});}catch(error){throw new ConfigurationError(400,(error as Error).message);}}
  if(!plan.canProceed)throw new ConfigurationError(409,'当前方案尚有待确认问题，请先补充原文或调整要求。');
  if((await c.query("SELECT 1 FROM public.tasks WHERE episode_id=$1 AND status='running' LIMIT 1",[e.id])).rowCount)throw new ConfigurationError(409,'制作任务正在运行，请完成或停止后确认脚本。');

@@ -86,8 +86,8 @@ it('sends explicitly selected effort for generation and discussion, preserving n
  await createScriptStudioDiscussionReader(send)({...input,instruction:'讨论节奏',reasoningEffort:'max'});const body=JSON.parse(String((send.mock.calls[0] as unknown as [string,RequestInit])[1].body));expect(body.reasoning.effort).toBe('max');expect(body.max_output_tokens).toBe(16000);
  expect(()=>scriptStudioRequest({...input,provider:'deepseek',model:'deepseek-flash',reasoningEffort:'medium'})).toThrow(/推理强度/);
 });
-it('retires new model adaptation requests without removing historical plan validation',async()=>{
- const send=vi.fn(async()=>response(direction));await expect(createScriptStudioReader(send)({...input,mode:'adapt'})).rejects.toThrow(/退役/);expect(send).not.toHaveBeenCalled();
+it.each(['adapt','revision'])('rejects non-model plan modes before dispatch (%s)',async mode=>{
+ const send=vi.fn(async()=>response(direction));await expect(createScriptStudioReader(send)({...input,mode} as typeof input)).rejects.toThrow();expect(send).not.toHaveBeenCalled();
 });
 
 it('uses the exact public GPT model and a supported default effort across both script APIs',()=>{

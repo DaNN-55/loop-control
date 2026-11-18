@@ -31,3 +31,14 @@ it('attributes each reply to its recorded model and keeps manual operations sepa
  const first={...row('first',null),model:'gpt-6.1-sol',request_snapshot:{...row('first',null).request_snapshot,selection:{provider:'openai'}}},talk={...row('talk','first','discuss','换种思路？'),model:'deepseek-v4-pro',request_snapshot:{...row('talk','first','discuss').request_snapshot,selection:{provider:'deepseek'}}},manual={...row('manual','talk'),result:{requestId:'manual',status:'completed',plan,message:'手动修改已保存，仍需采用。'},request_snapshot:{version:'script-studio/v1',data:{targetDuration:15,mode:'adapt',previousRequestId:'talk'},manualEdit:{index:0}}};
  const value=await readStudioConversation(client([manual,talk,first]),'owner',scope,'manual');expect(value.turns[0]).toMatchObject({model:'gpt-6.1-sol',provider:'openai'});expect(value.turns[1]).toMatchObject({model:'deepseek-v4-pro',provider:'deepseek'});expect(value.turns[2]).not.toHaveProperty('model');expect(value.turns[2].answer).toBe('手动修改已保存，仍需采用。');
 });
+
+it('normalizes historical content revisions without exposing the retired mode or changing stored receipts',async()=>{
+ const legacy={...row('old',null,'adapt','保留历史内容'),result:{requestId:'old',status:'completed',plan:{...plan,changes:['历史内容变化']}}},before=structuredClone(legacy);
+ const value=await readStudioConversation(client([legacy]),'owner',scope,'old');
+ expect(value.mode).toBe('revision');expect(value.turns[0].mode).toBe('revision');expect(value.turns[0].instruction).toBe('保留历史内容');expect(value.result?.plan?.changes).toEqual(['历史内容变化']);expect(legacy).toEqual(before);
+});
+it('restores current manual revision receipts and their parent conversation',async()=>{
+ const manual={...row('manual','plan','revision'),request_snapshot:{version:'script-studio/v1',data:{targetDuration:15,mode:'revision',previousRequestId:'plan'},manualDelete:{index:0}},result:{requestId:'manual',status:'completed',plan:{...plan,changes:['手动删除']},message:'镜头已删除，仍需采用。'}};
+ const value=await readStudioConversation(client([manual,row('plan',null,'optimize','固定机位')]),'owner',scope,'manual');
+ expect(value.mode).toBe('revision');expect(value.turns[1].mode).toBe('edit');expect(value.conversation).toContainEqual({role:'user',content:'固定机位'});expect(value.turns[1].answer).toBe('镜头已删除，仍需采用。');
+});

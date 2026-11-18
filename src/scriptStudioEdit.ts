@@ -11,7 +11,7 @@ export function editScriptStudioShot(base:ScriptStudioPlan,source:string,targetD
  Object.assign(shot,patch);
  const note='包含手动修订，原文保留；镜头时长与制作设置未变。';
  if(!plan.changes.includes(note))plan.changes.push(note);
- const validated=validateScriptStudioPlan(plan,source,{targetDuration,mode:'adapt'});
+ const validated=validateScriptStudioPlan(plan,source,{targetDuration,mode:'revision'});
  if(!base.changes.length&&!entries.some(([key])=>['narration','subtitle'].includes(key)&&shot[key as keyof ScriptStudioShot]!==base.shots[index][key as keyof ScriptStudioShot]))validated.changes=[];
  return validated;
 }
@@ -27,5 +27,5 @@ export function deleteScriptStudioShot(base:ScriptStudioPlan,source:string,targe
  plan.narrationEnabled=plan.shots.some(shot=>studioShotNarrationEnabled(base,shot));plan.captionsEnabled=plan.shots.some(shot=>studioShotCaptionsEnabled(base,shot));
  const note='包含手动删除，原文保留；其余镜头按比例分配总时长。';if(!plan.changes.includes(note))plan.changes.push(note);
  plan.summary='已手动删除「'+removed.title+'」；总时长保持，其余镜头按比例分配时长。';
- return validateScriptStudioPlan(plan,source,{targetDuration,mode:'adapt'});
+ return validateScriptStudioPlan(plan,source,{targetDuration,mode:'revision'});
 }

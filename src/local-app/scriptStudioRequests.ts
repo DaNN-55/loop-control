@@ -1,3 +1,4 @@
+import {isRetiredScriptStudioMode} from '../scriptStudioLegacy.js';
 import type {Pool,PoolClient} from 'pg';
 import {scriptStudioDefaultReasoning,validateScriptStudioReasoning,type ScriptStudioReasoningEffort} from '../scriptStudioReasoning.js';
 import {scriptStudioContractVersion,scriptStudioMaxCharacters,validateStudioDuration,type ScriptStudioResult,type ScriptStudioChatMode,type ScriptStudioPlan} from '../scriptStudio.js';
@@ -39,7 +40,7 @@ export class LocalScriptStudioRequests {
    let plan:ScriptStudioPlan;try{plan=deleting?deleteScriptStudioShot(parent.result.plan,d.text as string,d.targetDuration as number|null,d.index):editScriptStudioShot(parent.result.plan,d.text as string,d.targetDuration as number|null,d.index,d.fields);}catch(error){throw new ConfigurationError(400,(error as Error).message);}
    const oldModified=new Set(context.result.modifiedShotIndexes??[]),index=d.index as number;
    const modifiedShotIndexes=deleting?plan.shots.flatMap((shot,i)=>{const before=i>=index?i+1:i;return oldModified.has(before)||JSON.stringify(shot)!==JSON.stringify(parent.result.plan.shots[before])?[i]:[];}):[...new Set([...oldModified,index])].sort((a,b)=>a-b);
-   const result:ScriptStudioResult={requestId:id,status:'completed',plan,modifiedShotIndexes,message:deleting?'镜头已删除，仍需采用。':'手动修改已保存，仍需采用。'},snapshot={version:scriptStudioContractVersion,data:{targetDuration:d.targetDuration,mode:plan.changes.length?'adapt':'optimize',instruction:plan.changes.length?(deleting?'手动删除镜头，保持总时长':'手动修改镜头文字'):parent.request_snapshot.data.instruction,previousRequestId:d.previousRequestId},selection:parent.request_snapshot.selection,...(deleting?{manualDelete:{index:d.index}}:{manualEdit:{index:d.index,fields:d.fields}})};
+   const result:ScriptStudioResult={requestId:id,status:'completed',plan,modifiedShotIndexes,message:deleting?'镜头已删除，仍需采用。':'手动修改已保存，仍需采用。'},snapshot={version:scriptStudioContractVersion,data:{targetDuration:d.targetDuration,mode:plan.changes.length?'revision':'optimize',instruction:plan.changes.length?(deleting?'手动删除镜头，保持总时长':'手动修改镜头文字'):parent.request_snapshot.data.instruction,previousRequestId:d.previousRequestId},selection:parent.request_snapshot.selection,...(deleting?{manualDelete:{index:d.index}}:{manualEdit:{index:d.index,fields:d.fields}})};
    if(Buffer.byteLength(JSON.stringify(snapshot))>128*1024)throw new ConfigurationError(400,'镜头修改内容超过上限，请缩短后保存。');
    await c.query("INSERT INTO local_identity.script_format_requests(owner_id,id,episode_id,script_revision_id,connection_version_id,model,payload_hash,source_text,diagnostic,request_snapshot,status,result) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'completed',$11)",[session.id,id,d.episodeId,d.expectedScriptRevisionId,parent.connection_version_id,parent.model,hash,d.text,'手动修订拍法',snapshot,result]);
    return result;
@@ -54,7 +55,7 @@ export class LocalScriptStudioRequests {
  async command(session:OwnerSession,body:Record<string,unknown>):Promise<ScriptStudioResult>{
   if(body.command==='editShot'||body.command==='deleteShot')return this.editShot(session,body);
   if(body.command!=='optimize'||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k))||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'拍法请求无效。');
-  if((body.data as {mode?:unknown}).mode==='adapt')throw new ConfigurationError(410,'独立改编功能已退役，请通过对话调整拍法。');
+  if(isRetiredScriptStudioMode((body.data as {mode?:unknown}).mode))throw new ConfigurationError(410,'独立改编功能已退役，请通过对话调整拍法。');
   const d={...body.data} as unknown as Input;
   if(Object.keys(d).some(k=>!['episodeId','expectedScriptRevisionId','text','targetDuration','mode','instruction','previousRequestId','selection','reasoningEffort'].includes(k))||typeof d.episodeId!=='string'||!uuid.test(d.episodeId)||d.expectedScriptRevisionId!==null&&(typeof d.expectedScriptRevisionId!=='string'||!uuid.test(d.expectedScriptRevisionId))||typeof d.text!=='string'||!d.text.trim()||Array.from(d.text).length>scriptStudioMaxCharacters||!['optimize','discuss'].includes(d.mode)||typeof d.instruction!=='string'||d.instruction.length>4000||d.previousRequestId!==undefined&&(typeof d.previousRequestId!=='string'||!uuid.test(d.previousRequestId)))throw new ConfigurationError(400,'原文、当前基准或修改要求无效；最多支持 20000 字符。');
   try{validateStudioDuration(d.targetDuration);}catch(error){throw new ConfigurationError(400,(error as Error).message);}

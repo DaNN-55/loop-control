@@ -39,7 +39,7 @@ export function useScriptStudioAssistant({episodeId,scriptRevisionId,source,targ
  }
  useEffect(()=>{if(!owner||disabled||!source.trim()||Array.from(source).length>scriptStudioMaxCharacters){setConversationLoading(false);return;}setConversationLoading(true);const timer=setTimeout(()=>void restoreConversation(),250);return()=>{clearTimeout(timer);visit.current.sequence++;};},[scope,owner,disabled]);
  function receive(value:ScriptStudioResult,mode:ScriptStudioChatMode|'edit',instruction:string,identity?:{provider:string;model:string}){
-  setLatest(value);if(value.plan){setResult(value);setRestoredMode(value.plan.changes.length?'adapt':'optimize');}if(value.status==='completed')setLatestRequestId(value.requestId);
+  setLatest(value);if(value.plan){setResult(value);setRestoredMode(value.plan.changes.length?'revision':'optimize');}if(value.status==='completed')setLatestRequestId(value.requestId);
   setTurns(previous=>previous.some(t=>t.requestId===value.requestId)?previous.map(t=>t.requestId===value.requestId?{...t,...identity,status:value.status,answer:mode==='edit'?value.message??'镜头修改已保存，仍需采用。':value.plan?.summary??value.message??''}:t):[...previous,{requestId:value.requestId,mode,...identity,instruction:instruction||'优化拍法',answer:mode==='edit'?value.message??'镜头修改已保存，仍需采用。':value.plan?.summary??value.message??'本次请求尚未返回。',status:value.status}]);
  }
  async function load(){if(!catalogRead.current)catalogRead.current=localRequest('connections').then(value=>value.serviceCatalog as ProductionServiceCatalog).finally(()=>{catalogRead.current=null;});return catalogRead.current;}

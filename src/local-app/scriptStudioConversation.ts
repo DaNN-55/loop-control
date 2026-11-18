@@ -1,8 +1,9 @@
+import {scriptStudioReceiptMode,scriptStudioReceiptOptions} from '../scriptStudioLegacy.js';
 import type {PoolClient} from 'pg';
-import {scriptStudioContractVersion,type ScriptStudioConversation,type ScriptStudioMessage,type ScriptStudioResult,type ScriptStudioMode} from '../scriptStudio.js';
+import {scriptStudioContractVersion,type ScriptStudioConversation,type ScriptStudioMessage,type ScriptStudioResult} from '../scriptStudio.js';
 import {ConfigurationError} from './configurationCommands.js';
 export interface StudioConversationScope {episodeId:string;expectedScriptRevisionId:string|null;text:string;targetDuration:number|null}
-interface ConversationRow {id:string;model?:string;owner_id:string;episode_id:string;script_revision_id:string|null;source_text:string;status:string;result:ScriptStudioResult|null;request_snapshot:{version:string;selection?:{provider?:string};data:{targetDuration:number|null;mode:ScriptStudioMode|'discuss';instruction?:string;turnInstruction?:string;previousRequestId?:string|null};manualEdit?:{index:number};manualDelete?:{index:number}}}
+interface ConversationRow {id:string;model?:string;owner_id:string;episode_id:string;script_revision_id:string|null;source_text:string;status:string;result:ScriptStudioResult|null;request_snapshot:{version:string;selection?:{provider?:string};data:{targetDuration:number|null;mode:string;instruction?:string;turnInstruction?:string;previousRequestId?:string|null};manualEdit?:{index:number};manualDelete?:{index:number}}}
 const outcome=(row:ConversationRow):ScriptStudioResult=>row.result??{requestId:row.id,status:row.status==='unknown'?'unknown':'pending',message:'本次请求已提交，核对不会重复调用模型。'};
 /** Recover only the server-owned receipt chain for this exact source, never client chat JSON. */
 export async function readStudioConversation(c:PoolClient,owner:string,scope:StudioConversationScope,requestId?:string):Promise<ScriptStudioConversation&{conversation:ScriptStudioMessage[]}>{
@@ -20,7 +21,7 @@ export async function readStudioConversation(c:PoolClient,owner:string,scope:Stu
   derived.set(row.id,indexes.length?{...row.result,modifiedShotIndexes:indexes}:row.result);
  }
  const plan=rows.find(r=>r.status==='completed'&&r.result?.plan),latest=derived.get(rows[0].id)??outcome(rows[0]);
- const turns=[...rows].reverse().map(r=>{const manual=!!(r.request_snapshot.manualEdit||r.request_snapshot.manualDelete);return{requestId:r.id,mode:manual?'edit' as const:r.request_snapshot.data.mode,...(!manual&&r.model?{model:r.model,provider:r.request_snapshot.selection?.provider??(r.model.startsWith('deepseek')?'deepseek':'openai')}:{}),instruction:r.request_snapshot.manualDelete?'手动删除第 '+(r.request_snapshot.manualDelete.index+1)+' 个镜头':r.request_snapshot.manualEdit?'手动修改第 '+(r.request_snapshot.manualEdit.index+1)+' 个镜头':(r.request_snapshot.data.turnInstruction??r.request_snapshot.data.instruction)||'优化拍法',answer:manual?r.result?.message??'镜头修改已保存，仍需采用。':r.result?.plan?.summary??r.result?.message??'本次请求尚未返回。',status:outcome(r).status};});
+ const turns=[...rows].reverse().map(r=>{const manual=!!(r.request_snapshot.manualEdit||r.request_snapshot.manualDelete);return{requestId:r.id,mode:manual?'edit' as const:scriptStudioReceiptMode(r.request_snapshot.data.mode),...(!manual&&r.model?{model:r.model,provider:r.request_snapshot.selection?.provider??(r.model.startsWith('deepseek')?'deepseek':'openai')}:{}),instruction:r.request_snapshot.manualDelete?'手动删除第 '+(r.request_snapshot.manualDelete.index+1)+' 个镜头':r.request_snapshot.manualEdit?'手动修改第 '+(r.request_snapshot.manualEdit.index+1)+' 个镜头':(r.request_snapshot.data.turnInstruction??r.request_snapshot.data.instruction)||'优化拍法',answer:manual?r.result?.message??'镜头修改已保存，仍需采用。':r.result?.plan?.summary??r.result?.message??'本次请求尚未返回。',status:outcome(r).status};});
  const conversation=turns.filter(t=>t.status==='completed').flatMap(t=>[{role:'user' as const,content:t.instruction},{role:'assistant' as const,content:t.answer}]);
- return{turns,result:plan?derived.get(plan.id)??plan.result:null,latest,latestRequestId:rows[0].id,mode:plan?.request_snapshot.data.mode==='adapt'?'adapt':'optimize',conversation};
+ return{turns,result:plan?derived.get(plan.id)??plan.result:null,latest,latestRequestId:rows[0].id,mode:plan?scriptStudioReceiptOptions(plan.request_snapshot.data).mode:'optimize',conversation};
 }

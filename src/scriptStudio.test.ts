@@ -36,10 +36,10 @@ describe('script studio production contract',()=>{
   const value={...plan,shots:[{...plan.shots[0],visual:'低机位拍摄街灯倒影',camera:'缓慢推近',videoPrompt:'摄影机沿倒影推进。'}]};
   expect(validateScriptStudioPlan(value,source,{targetDuration:15,mode:'optimize'}).shots[0].camera).toBe('缓慢推近');
  });
- it('requires explicit adaptation and lists its content changes',()=>{
+ it('requires an explicit content revision and lists its changes',()=>{
   const source='一个人进门。',plan=localScriptStudioPlan(source,15);
   expect(()=>validateScriptStudioPlan({...plan,changes:['新增朋友出现'],narrationEnabled:true,shots:[{...plan.shots[0],narration:'朋友已在窗边等他。'}]},source,{targetDuration:15,mode:'optimize'})).toThrow();
-  expect(validateScriptStudioPlan({...plan,changes:['新增朋友出现'],narrationEnabled:true,shots:[{...plan.shots[0],narration:'朋友已在窗边等他。'}]},source,{targetDuration:15,mode:'adapt'}).changes).toHaveLength(1);
+  expect(validateScriptStudioPlan({...plan,changes:['新增朋友出现'],narrationEnabled:true,shots:[{...plan.shots[0],narration:'朋友已在窗边等他。'}]},source,{targetDuration:15,mode:'revision'}).changes).toHaveLength(1);
  });
  it('keeps explicit source timing even when the target field is empty',()=>{
   const plan=localScriptStudioPlan(workspaceScriptExample,null);expect(plan.durationSeconds).toBe(14);

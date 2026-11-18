@@ -1,3 +1,4 @@
+import {legacyScriptStudioChatInitial} from '../scriptStudioLegacy';
 import {useEffect,useId,useRef,type CSSProperties} from 'react';
 import {PanelRightClose,PanelRightOpen,Brain,ArrowUp,Clapperboard,MessagesSquare,Bot,Pencil} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -10,7 +11,7 @@ import {useWorkspaceDraft} from './WorkspaceDraft';
 import {ScriptStudioIcon,ScriptStudioModel,ScriptStudioModelLogo,ScriptStudioPopup} from './ScriptStudioTools';
 
 export function ScriptStudioChat({assistant,episodeId,revisionId,disabled,collapsed,onCollapse,modelOpen,onModelOpen,onSend}:{assistant:ReturnType<typeof useScriptStudioAssistant>;episodeId:string;revisionId:string|null;disabled:boolean;collapsed:boolean;onCollapse:()=>void;modelOpen:boolean;onModelOpen:(value:boolean)=>void;onSend:(mode:ScriptStudioChatMode,instruction:string,previousRequestId?:string)=>Promise<ScriptStudioResult|undefined>}){
- const draft=useWorkspaceDraft({episodeId,kind:'script',version:'chat:'+(revisionId??'new'),initial:{instruction:'',mode:'adjust'},legacyInitial:{instruction:'',mode:'adjust',adapt:''},enabled:!disabled}),{instruction,mode}=draft.value;
+ const draft=useWorkspaceDraft({episodeId,kind:'script',version:'chat:'+(revisionId??'new'),initial:{instruction:'',mode:'adjust'},legacyInitial:legacyScriptStudioChatInitial,enabled:!disabled}),{instruction,mode}=draft.value;
  const id=useId(),log=useRef<HTMLOListElement>(null),atBottom=useRef(true);
  const waiting=disabled||assistant.busy||assistant.conversationLoading||!!assistant.conversationError,discuss=mode==='discuss';
  const label=assistant.unresolved?'核对本次请求':assistant.busy?(assistant.activity==='discuss'?'正在回复…':'正在设计拍法…'):discuss?'发送':assistant.result?'生成新版':'优化拍法';
