@@ -1,6 +1,7 @@
 import {execFileSync} from 'node:child_process';
 import {lstat,readdir,realpath,rm} from 'node:fs/promises';
-import {join,resolve} from 'node:path';
+import {join,resolve,dirname,basename} from 'node:path';
+import {tmpdir} from 'node:os';
 
 // Keep reusable compiler packs, never project/media/preview files. This is an
 // idle-time retention target, not a hard limit while several editors are open.
@@ -58,6 +59,39 @@ function pids(args) {
     output=String(error.stdout??'');
   }
   return output.split('\n').filter(line=>/^p\d+$/.test(line)).map(line=>Number(line.slice(1)));
+}
+
+/** Soft limit for inactive Node-generated files; current writes and unknown files are retained. */
+export async function pruneNodeCompileCache({directory=join(tmpdir(),'node-compile-cache'),maxBytes=2*1024**3,minAgeMs=60*60*1000,maxAgeMs=7*24*60*60*1000}={}) {
+  if(![maxBytes,minAgeMs,maxAgeMs].every(value=>Number.isSafeInteger(value)&&value>=0))throw Error('Invalid Node cache retention limits');
+  try {
+    directory=join(await realpath(dirname(directory)),basename(directory));
+    const root=await lstat(directory);
+    if(!root.isDirectory()||root.isSymbolicLink()||root.uid!==process.getuid())return{status:'skipped',reason:'unsafe-path'};
+    const entries=[];
+    for(const version of await readdir(directory)) {
+      if(!/^v\d+\.\d+\.\d+-[a-z0-9]+-[a-f0-9]+-\d+$/.test(version))continue;
+      const folder=join(directory,version),stat=await lstat(folder);
+      if(!stat.isDirectory()||stat.isSymbolicLink()||stat.uid!==root.uid||stat.dev!==root.dev)continue;
+      for(const name of await readdir(folder)) {
+        if(!/^[a-f0-9]+$/.test(name))continue;
+        const path=join(folder,name),s=await lstat(path);
+        if(!s.isFile()||s.isSymbolicLink()||s.nlink!==1||s.uid!==root.uid)continue;
+        entries.push({path,device:s.dev,inode:s.ino,modified:s.mtimeMs,size:s.size,bytes:s.blocks*512});
+      }
+    }
+    let keptBytes=entries.reduce((sum,entry)=>sum+entry.bytes,0),removedBytes=0;
+    const removed=[],now=Date.now();
+    if(!entries.some(entry=>now-entry.modified>=minAgeMs&&(keptBytes>maxBytes||now-entry.modified>=maxAgeMs)))return{status:'unchanged',keptBytes,removedBytes,removed};
+    if(pids(['-Fp','+D',directory]).length)return{status:'skipped',reason:'in-use'};
+    for(const entry of entries.sort((a,b)=>a.modified-b.modified||a.path.localeCompare(b.path))) {
+      if(now-entry.modified<minAgeMs||keptBytes<=maxBytes&&now-entry.modified<maxAgeMs)continue;
+      const stat=await lstat(entry.path);
+      if(!stat.isFile()||stat.isSymbolicLink()||stat.dev!==entry.device||stat.ino!==entry.inode||stat.size!==entry.size||stat.mtimeMs!==entry.modified)continue;
+      await rm(entry.path);removed.push(entry.path);removedBytes+=entry.bytes;keptBytes-=entry.bytes;
+    }
+    return{status:removed.length?'pruned':'unchanged',removed,removedBytes,keptBytes};
+  }catch(error){return{status:error.code==='ENOENT'?'absent':'skipped',reason:error.message};}
 }
 
 async function safeStat(path,directory) {

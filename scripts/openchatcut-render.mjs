@@ -1,15 +1,15 @@
 import { existsSync, readFileSync, statSync } from "node:fs";
-import { copyFile, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { copyFile, readFile, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
-import { tmpdir } from "node:os";
 import {extname,isAbsolute,join,relative,resolve} from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
-import { pruneOpenChatCutCache } from './openchatcut-cache.mjs';
+import { pruneOpenChatCutCache,pruneNodeCompileCache } from './openchatcut-cache.mjs';
 import {buildTransitionRenderBundle} from './openchatcut-transition-bundle.mjs';
 import {needsTemplateAudioAlignment,alignTemplateAudioExport} from './openchatcut-audio-timing.mjs';
+import {createRenderTemp} from './openchatcut-render-temp.mjs';
 
 async function main() {
 if (process.argv[2] === "--version") {
@@ -34,14 +34,16 @@ if (!isAbsolute(root) || !isAbsolute(assetRoot) || !isAbsolute(outputPath)) thro
 if (!state || typeof state !== "object" || !Array.isArray(state.items)) throw new Error("OpenChatCut render state is invalid.");
 assertOpenChatCutRuntime({ root, nodeVersion: process.version });
 await pruneOpenChatCutCache(root);
+await pruneNodeCompileCache();
 
-const dataDir = await mkdtemp(join(tmpdir(), "tk-openchatcut-"));
+const renderTemp = await createRenderTemp();
+const dataDir = renderTemp.directory;
 const uploadDir = join(dataDir, "media", "uploads");
-await import("node:fs/promises").then(({ mkdir }) => mkdir(uploadDir, { recursive: true }));
 
 const copied = new Map();
 const logs = [];
 try {
+  await import("node:fs/promises").then(({ mkdir }) => mkdir(uploadDir, { recursive: true }));
   for (const source of sources) {
     const relativePath = requiredString(source.relativePath, "source.relativePath");
     const sourcePath = source.sourcePath ? resolve(requiredString(source.sourcePath,"source.sourcePath")) : resolve(assetRoot, relativePath);
@@ -62,9 +64,12 @@ try {
     env: {...openChatCutRenderEnvironment(process.env, dataDir, randomUUID()),...(transitionBundle?{CC_REMOTION_BUNDLE:transitionBundle}:{})},
     stdio: ["ignore", "pipe", "pipe"],
   });
+  const stopChild=()=>{if(child.exitCode===null&&child.signalCode===null)child.kill('SIGTERM');};
+  for(const signal of ['SIGINT','SIGTERM'])process.once(signal,stopChild);
   child.stdout?.on("data", (chunk) => logs.push(String(chunk)));
   child.stderr?.on("data", (chunk) => logs.push(String(chunk)));
   try {
+    await renderTemp.track(child.pid);
     await waitForServer(`http://127.0.0.1:${port}`, child, logs);
     const exportOrigin=`http://127.0.0.1:${port}`,exportHeaders={ "Content-Type": "application/json", Origin:exportOrigin, "Sec-Fetch-Site": "same-origin" },exportBody={ state, ...openChatCutExportRange(state), ...(project ? { project, timelineId: spec.timelineId || project.activeTimelineId } : {}), format: "video", codec: "h264", name: "loop-control" };
     const response = await fetch(exportOrigin+'/export', {
@@ -78,7 +83,8 @@ try {
     await writeFile(outputPath, bytes);
     if(needsTemplateAudioAlignment(state))await alignTemplateAudioExport({origin:exportOrigin,headers:exportHeaders,body:exportBody,outputPath,dataDir});
   } finally {
-    if (child.exitCode === null) {
+    for(const signal of ['SIGINT','SIGTERM'])process.off(signal,stopChild);
+    if (child.exitCode === null && child.signalCode === null) {
       child.kill("SIGTERM");
       await once(child, "close");
     }
@@ -87,7 +93,7 @@ try {
   const details = logs?.join("").trim();
   throw new Error(`${error instanceof Error ? error.message : String(error)}${details ? `\n${details.slice(-2000)}` : ""}`);
 } finally {
-  await rm(dataDir, { recursive: true, force: true });
+  await renderTemp.cleanup();
   await pruneOpenChatCutCache(root);
 }
 }
@@ -114,6 +120,10 @@ export function openChatCutRenderEnvironment(environment, dataDir, profileId) {
   return {
     ...environment,
     BROWSER: "none",
+    TMPDIR: dataDir,
+    TMP: dataDir,
+    TEMP: dataDir,
+    NODE_DISABLE_COMPILE_CACHE: "1",
     OPENCHATCUT_DATA_DIR: dataDir,
     OPENCHATCUT_DEV_PROFILE_ID: profileId,
     OPENCHATCUT_DISABLE_HARDWARE_ENCODING: environment.OPENCHATCUT_DISABLE_HARDWARE_ENCODING || "1",
@@ -228,7 +238,7 @@ async function availablePort() {
 async function waitForServer(base, child, logs) {
   const deadline = Date.now() + 90_000;
   while (Date.now() < deadline) {
-    if (child.exitCode !== null) throw new Error(`OpenChatCut server exited with ${child.exitCode}.`);
+    if (child.exitCode !== null || child.signalCode !== null) throw new Error(`OpenChatCut server exited with ${child.signalCode??child.exitCode}.`);
     try {
       const response = await fetch(`${base}/`, { signal: AbortSignal.timeout(1_000) });
       if (response.ok) return;

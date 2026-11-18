@@ -53,6 +53,10 @@ describe("OpenChatCut 渲染运行时", () => {
       BROWSER: "none",
       OPENCHATCUT_DATA_DIR: "/tmp/openchatcut-data",
       OPENCHATCUT_DEV_PROFILE_ID: "profile-1",
+      TMPDIR: "/tmp/openchatcut-data",
+      TMP: "/tmp/openchatcut-data",
+      TEMP: "/tmp/openchatcut-data",
+      NODE_DISABLE_COMPILE_CACHE: "1",
     });
   });
 

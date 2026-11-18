@@ -1,0 +1,58 @@
+{
+  "protectedFilesChecked": 6642,
+  "productionEvidenceChecked": 8538,
+  "modelFilesChecked": 10,
+  "verifiedArchives": 102,
+  "removedAllocatedBytes": 5957095424,
+  "diskAvailableBefore": 17204137984,
+  "diskAvailableAfter": 23011127296,
+  "diskAvailableIncrease": 5806989312,
+  "retainedReleases": [
+    "23fa71161b3f09803f87a9407160852ea4232b8766e5e0b1e620d243c052016d",
+    "fcd37f2248e71b3fec074f2e6661d201c4589d17ea13bf7097207d9fe7ccd015"
+  ],
+  "modelImageStillMounted": true,
+  "preview8766Closed": true,
+  "archive": "/Volumes/Ebuget 1T/loop-control-artifact-cleanup-20261116-223938",
+  "checkedAt": "2026-11-16T22:48:25",
+  "groups": {
+    "A1": {
+      "removedPaths": 41,
+      "removedAllocated": 3446853632,
+      "archivesVerified": 41
+    },
+    "A2": {
+      "removedPaths": 1,
+      "removedAllocated": 505733120,
+      "archivesVerified": 1
+    },
+    "A3": {
+      "removedPaths": 3,
+      "removedAllocated": 936517632,
+      "archivesVerified": 3
+    },
+    "A4": {
+      "removedPaths": 45,
+      "removedAllocated": 154951680,
+      "archivesVerified": 45
+    },
+    "B1": {
+      "removedPaths": 1,
+      "removedAllocated": 751411200,
+      "archivesVerified": 1
+    },
+    "B2": {
+      "removedPaths": 2,
+      "removedAllocated": 39649280,
+      "archivesVerified": 2
+    },
+    "B3": {
+      "removedPaths": 9,
+      "removedAllocated": 121978880,
+      "archivesVerified": 9
+    }
+  },
+  "differences": 0,
+  "sourceCodeChanged": false,
+  "paidProviderCalls": 0
+}
