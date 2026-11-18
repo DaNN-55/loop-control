@@ -55,7 +55,7 @@ import './workspace-visual-preparation.css';
 import './workspace-visual-candidates.css';
 
 type Kind='image'|'video';
-type VisualReviewPlan=(WorkspaceCandidatePreparation&{kind:'adoption';candidate:WorkspaceVisualCandidate})|{kind:'image-backup';candidateId:string;projectSha256:string;candidate:WorkspaceVisualCandidate;impact?:undefined};
+type VisualReviewPlan=WorkspaceCandidatePreparation&{kind:'adoption';candidate:WorkspaceVisualCandidate};
 type Material=VideoInputMaterial;
 interface UploadEntry extends WorkspaceUploadEntry {kind:Kind;asReference:boolean;tab:Kind;usage:Draft['usage']}
 const uploadSession=workspaceUploadSessions<UploadEntry>();
@@ -77,10 +77,10 @@ function initialDraft(props:VisualPreparationProps,targetItemId:string):Draft {
  const sizeTarget=props.workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),ratio=(sizeTarget?.width??9)/(sizeTarget?.height??16),size:ImageGenerationSettings['size']=[...imageSizePresets].sort((a,b)=>Math.abs(Number(a.ratio.split(':')[0])/Number(a.ratio.split(':')[1])-ratio)-Math.abs(Number(b.ratio.split(':')[0])/Number(b.ratio.split(':')[1])-ratio))[0].standard;
  const selected=props.workspace.selectedImages?.find(s=>s.targetItemId===targetItemId)?.materialRevisionId;
  let pexelsSelection:ProductionSelection|null|undefined;try{pexelsSelection=JSON.parse(sessionStorage.getItem(`loop-pexels-draft:${props.workspace.id}:${targetItemId}`)??'null')?.selection;}catch{/* Keep an empty search selection. */}
- let defaults:Partial<Draft>={};try{defaults={...JSON.parse(sessionStorage.getItem(`loop-image-default:${props.workspace.id}`)??'{}'),...JSON.parse(sessionStorage.getItem(`loop-video-default:${props.workspace.id}`)??'{}')};}catch{/* Empty default. */}
+ let defaults:Partial<Draft>={};try{defaults={...JSON.parse(localStorage.getItem(`loop-image-default:${props.workspace.id}`)??sessionStorage.getItem(`loop-image-default:${props.workspace.id}`)??'{}'),...JSON.parse(localStorage.getItem(`loop-video-default:${props.workspace.id}`)??sessionStorage.getItem(`loop-video-default:${props.workspace.id}`)??'{}')};}catch{/* Empty default. */}
  const window=props.project?readWorkspaceShotWindow(props.project,targetItemId):undefined;
  const seconds=sizeTarget?.durationSeconds??(window?window.durationInFrames/window.timeline.fps:Math.max(3,sizeTarget?.minimumSeconds??2));
- return {...defaults,pexelsSelection,imageBrief:{...emptyImageBrief,references:[]},videoSelection:defaults.videoSelection??sizeTarget?.defaultSelection,imageSelection:defaults.imageSelection??props.workspace.visualConfiguration?.imageSelection,videoSettings:defaults.videoSettings??((defaults.videoSelection??sizeTarget?.defaultSelection)?.provider==='bailian'?defaultWanModelSettings((defaults.videoSelection??sizeTarget?.defaultSelection)?.model??''):{...defaultWanSettings}),firstFrameFit:'contain',tab:props.currentVisualKind==='video'?'video':'image',origin:{image:'material',video:'material'},imagePrompt:template?.imagePrompt??'',videoPrompt:template?.videoPrompt??'',references:[],firstFrame:selected??(props.currentVisualKind==='image'?props.currentMaterialRevisionId??'':''),settings:defaults.settings??{size,quality:'auto',count:1},duration:String(seconds),usage:'still',selected:{image:'',video:''}};
+ return {...defaults,pexelsSelection,imageBrief:{...emptyImageBrief,...defaults.imageBrief,references:[]},videoSelection:defaults.videoSelection??sizeTarget?.defaultSelection,imageSelection:defaults.imageSelection??props.workspace.visualConfiguration?.imageSelection,videoSettings:defaults.videoSettings??((defaults.videoSelection??sizeTarget?.defaultSelection)?.provider==='bailian'?defaultWanModelSettings((defaults.videoSelection??sizeTarget?.defaultSelection)?.model??''):{...defaultWanSettings}),firstFrameFit:'contain',tab:props.currentVisualKind==='video'?'video':'image',origin:{image:'material',video:'material'},imagePrompt:template?.imagePrompt??'',videoPrompt:template?.videoPrompt??'',references:[],firstFrame:selected??(props.currentVisualKind==='image'?props.currentMaterialRevisionId??'':''),settings:defaults.settings??{size,quality:'auto',count:1},duration:String(seconds),usage:'still',selected:{image:'',video:''}};
 }
 export function WorkspaceVisualPreparation(props:VisualPreparationProps){
  const options=props.selectedShotId?props.workspace.clips.filter(c=>c.shotId===props.selectedShotId):props.workspace.clips;
@@ -161,19 +161,20 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const candidateReview=useCandidateReviewLifecycle({workspace,scope:JSON.stringify([targetItemId,candidate?.id,policy,acceptImpact,draft.usage,rangeStart,rangeEnd,props.currentVisualKind]),reader,
   prepare:async(w,choice:{candidate:WorkspaceVisualCandidate;replaceCurrentVisual:boolean}):Promise<VisualReviewPlan>=>{
    const c=choice.candidate;
-   if(c.kind==='image'&&props.currentVisualKind==='video'&&!choice.replaceCurrentVisual)return {kind:'image-backup',candidateId:c.id,projectSha256:w.project.sha256,candidate:c};
    const prepared=await command('prepareWorkspaceVisualCandidate',{
     ...base(w),candidateId:c.id,
     ...(c.kind==='image'
-     ?{durationPolicy:'keep-target',acceptTimelineImpact:false,motionPolicy:'preserve-target',...(choice.replaceCurrentVisual?{replaceCurrentVisual:true}:{})}
+     ?{durationPolicy:'keep-target',acceptTimelineImpact:false,motionPolicy:'preserve-target',...(props.currentVisualKind==='video'?{replaceCurrentVisual:true}:{})}
      :{durationPolicy:policy,acceptTimelineImpact:acceptImpact,motionPolicy:draft.usage==='pan-zoom'?'replace-motion':'preserve-target',
        sourceInSeconds:rangeStartSeconds,sourceOutSeconds:rangeEndSeconds})
    }) as WorkspaceCandidatePreparation;
    if(!prepared.impact)throw Error('无法读取采用影响，请刷新后重新核对。');
    return {...prepared,kind:'adoption',candidate:c};
   },
-  adopt:async(w,plan)=>command(plan.kind==='image-backup'?'retainWorkspaceImageCandidate':'adoptWorkspaceVisualCandidate',{
-   ...base(w),candidateId:plan.candidateId,...(plan.kind==='adoption'?{adoptionId:plan.adoptionId}:{})
+  autoAdopt:plan=>!needsCandidateImpactDialog(plan.impact),
+  onAdopted:(_changed,plan)=>adoptionFeedbackFor(plan),
+  adopt:async(w,plan)=>command('adoptWorkspaceVisualCandidate',{
+   ...base(w),candidateId:plan.candidateId,adoptionId:plan.adoptionId
   }) as Promise<ProductionWorkspace>,
  });
  const disabled=busy||candidateReview.pending||uploading||props.readOnly||workspace.stale;
@@ -183,7 +184,6 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const inlineReview=review&&!needsImpactDialog;
  const reviewSummary=impact?(impact.deltaSeconds===0?`镜头时长保持 ${impact.appliedSeconds.toFixed(2)} 秒`:`${impact.currentSeconds.toFixed(2)} → ${impact.appliedSeconds.toFixed(2)} 秒`):'保留为备用图片';
  useEffect(()=>{const rail=thumbnailRail.current,selected=rail?.querySelector<HTMLElement>('[aria-pressed=true]');if(!rail||!selected)return;const r=rail.getBoundingClientRect(),s=selected.getBoundingClientRect();if(s.top<r.top)rail.scrollTop-=r.top-s.top;else if(s.bottom>r.bottom)rail.scrollTop+=s.bottom-r.bottom;},[tab,active?.id]);
- const selectedImage=workspace.selectedImages?.find(s=>s.targetItemId===targetItemId);
  const firstFrameLimit=videoService?.constraints.firstFrame;
  // Older catalogs advertise first-frame limits without a per-model mode list.
  const registeredVideoModes=videoModel?videoService?.videoGenerationModes?.[videoModel]:undefined;
@@ -213,8 +213,8 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    return {...previous,videoInputIds:next};
   });
  }
- const current=!!candidate&&candidate===currentCandidate||active?.id==='current',imageChosen=!!candidate&&selectedImage?.candidateId===candidate.id;
- const candidateMeta=[current?'当前镜头画面':imageChosen?'备用图片':candidate?.generation?.selection?.model,candidate?.status==='stale'?'输入已变化':null].filter(Boolean).join(' · ');
+ const current=!!candidate&&candidate===currentCandidate||active?.id==='current';
+ const candidateMeta=[current?'当前镜头画面':candidate?.materialRevisionId&&videoDraftIds(draft).includes(candidate.materialRevisionId)?'已选视频参考图':candidate?.generation?.selection?.model,candidate?.status==='stale'?'输入已变化':null].filter(Boolean).join(' · ');
  const target=workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),voiceDriven=!!target&&target.voiceMode!=='none';
  const minimumSeconds=wanProfile?.durations[0]??videoService?.constraints.durationSeconds?.min??2,maximumSeconds=wanProfile?.durations.at(-1)??videoService?.constraints.durationSeconds?.max??15,actualDuration=voiceDriven?target.durationSeconds:Number(draft.duration),providerDuration=actualDuration===null?null:wanProfile?wanProviderDuration(videoModel!,actualDuration,voiceDriven):voiceDriven?Math.max(minimumSeconds,Math.ceil(actualDuration)):actualDuration,invalidDuration=!actualDuration||actualDuration<(voiceDriven?0.1:minimumSeconds)||actualDuration>maximumSeconds||!voiceDriven&&!Number.isInteger(actualDuration)||!!wanProfile&&providerDuration===undefined;
  function change<K extends keyof Draft>(key:K,value:Draft[K]){setDraft(d=>({...d,[key]:value}));}
@@ -226,6 +226,10 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   setComposerPanel(value&&!search?'dimensions':'');
  }
 
+ function saveVisualDefaults(){
+  const settings=tab==='image'?{imageSelection:draft.imageSelection,settings:draft.settings,imageBrief:{framing:draft.imageBrief.framing,crop:draft.imageBrief.crop,captionSpace:draft.imageBrief.captionSpace}}:{videoSelection:draft.videoSelection,videoSettings:draft.videoSettings,videoResolution:draft.videoResolution,firstFrameFit:draft.firstFrameFit,duration:draft.duration,videoModeId:draft.videoModeId};
+  try{localStorage.setItem(`loop-${tab}-default:${workspace.id}`,JSON.stringify(settings));setNotice('已设为本期后续镜头的默认设置。');}catch{setError('默认设置未能保存，请检查浏览器存储空间。');}
+ }
  function select(id:string){setDraft(d=>({...d,selected:{...d.selected,[d.tab]:id}}));setRangeStart('');setRangeEnd('');setPolicy('keep-target');setAcceptImpact(false);setError('');}
  function url(path:string,sha256=''){return '/_local-artifact?'+new URLSearchParams({episode:workspace.episodeId,path,...(sha256?{sha256}:{})});}
  useEffect(()=>{
@@ -280,20 +284,20 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
  }
  function returnAdoptionFocus(){
-  if(inlineReview)requestAnimationFrame(()=>adoptTrigger.current?.focus());
+  requestAnimationFrame(()=>adoptTrigger.current?.focus());
  }
  function closeAdoption(){candidateReview.cancel();returnAdoptionFocus();}
+ function adoptionFeedbackFor(plan:VisualReviewPlan){
+  const c=plan.candidate;setAdoptionFeedback(c.id);
+  if(c.kind==='image'&&c.materialRevisionId)setDraft(d=>(videoDraftIds(d).some(id=>allMaterials.some(material=>material.id===id&&material.material_type==='image'))?d:{...d,videoInputIds:prioritizeVideoInput(d,c.materialRevisionId!)}));
+  setNotice(`已采用${c.kind==='image'?'图片':'视频'}。`);
+ }
  async function confirmAdoption(){
   setError('');returnAdoptionFocus();
-  try{await candidateReview.confirm((_changed,plan)=>{
-   const c=plan.candidate;
-   setAdoptionFeedback(c.id);
-   if(c.kind==='image'&&c.materialRevisionId)setDraft(d=>(videoDraftIds(d).some(id=>allMaterials.some(material=>material.id===id&&material.material_type==='image'))?d:{...d,videoInputIds:prioritizeVideoInput(d,c.materialRevisionId!)}));
-   setNotice(plan.kind==='image-backup'?'图片已保留为备用。':`已采用${c.kind==='image'?'图片':'视频'}。`);
-  });}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
+  try{await candidateReview.confirm();}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
  }
  function removeSelected(){
-  if(current||imageChosen){
+  if(current){
    setClearError('');
    setClearVisual({revision:workspace.revision,candidateId:candidate?.id,...(current?{sourcePath:props.currentVisualPath,sourceSha256:props.currentVisualSha256??candidate?.sha256}:{})});
    return;
@@ -325,7 +329,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   });}
  function referenceBrief(id:string,patch:Partial<ImageBrief['references'][number]>) {setDraft(d=>({...d,imageBrief:{...d.imageBrief,references:[...d.imageBrief.references.filter(r=>r.materialRevisionId!==id),{materialRevisionId:id,purpose:'subject',preserve:'',change:'',...d.imageBrief.references.find(r=>r.materialRevisionId===id),...patch}]}}));}
  const sizePreset=imageSizePresets.find(p=>p.standard===draft.settings.size||p.high===draft.settings.size)??imageSizePresets[0];
- function linkFirstFrame(){if(!candidate?.materialRevisionId)return;setDraft(d=>({...d,videoInputIds:prioritizeVideoInput(d,candidate.materialRevisionId!),videoModeId:'first-frame',tab:'video',origin:{...d.origin,video:'generate'}}));setNotice('已选定视频首帧，尚未提交生成。');}
+ function linkFirstFrame(){const imageId=candidate?.materialRevisionId??props.currentMaterialRevisionId;if(!imageId)return;setDraft(d=>({...d,videoInputIds:prioritizeVideoInput(d,imageId),videoModeId:'first-frame',tab:'video',origin:{...d.origin,video:'generate'}}));setNotice('已选定视频首帧，尚未提交生成。');}
  const existingVideoIn=visual?.kind==='video'&&timeline?Number(visual.srcInFrame??0)/timeline.fps:0;
  const currentVideo=current&&visual?.kind==='video'&&timeline?visual:undefined,previewRate=currentVideo?Number(currentVideo.playbackRate??1):1;
  const initialVideoIn=currentVideo?existingVideoIn:candidate?.initialRange?.sourceInSeconds??existingVideoIn,initialVideoOut=currentVideo?existingVideoIn+Number(currentVideo.durationInFrames)*previewRate/timeline!.fps:candidate?.initialRange?.sourceOutSeconds??candidate?.durationSeconds??0;
@@ -336,8 +340,8 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   ?{start:rangeStartSeconds,end:rangeEndSeconds}:undefined;
  const canAdopt=rangeValid&&!!candidate&&candidate.status==='available'&&(candidate.kind==='image'||(policy==='keep-target'?candidate.currentDurationSeconds===null||(selectedVideoDuration??candidate.durationSeconds)+0.05>=candidate.currentDurationSeconds:acceptImpact));
  const shortCandidate=candidate?.kind==='video'&&!current&&policy==='keep-target'&&candidate.currentDurationSeconds!==null&&rangeValid&&(selectedVideoDuration??0)+.05<candidate.currentDurationSeconds;
- const adoptionLabel=current?'已采用':imageChosen?'图片已选用':tab==='image'&&props.currentVisualKind==='video'?'保留备用图片':`采用${kindName}到当前镜头`;
- const adoptionAction=<Button ref={adoptTrigger} size="sm" color="primary" aria-label={adoptionLabel} aria-describedby={tab==='image'?adoptionDescriptionId:undefined} isDisabled={disabled||current||imageChosen||!canAdopt} onPress={()=>{if(candidate)void adopt(candidate);}}>{tab==='image'&&props.currentVisualKind==='video'?uiText("保留备用"):uiText("采用{value0}",{value0:uiText(kindName)})}</Button>;
+ const adoptionLabel=tab==='image'?'作为镜头画面':props.currentVisualPath?'替换当前画面':'用到这个镜头';
+ const adoptionAction=<Button ref={adoptTrigger} size="sm" color="primary" aria-label={adoptionLabel} aria-describedby={tab==='image'?adoptionDescriptionId:undefined} isDisabled={disabled||current||!canAdopt} onPress={()=>{if(candidate)void adopt(candidate);}}>{uiText(adoptionLabel)}</Button>;
  const selectedService=tab==='image'?imageService:videoService,selectedSelection=tab==='image'?draft.imageSelection:draft.videoSelection;
  const qualityLabels=imageQualityLabels;
  const selectionProblems=selectedSelection?[
@@ -402,7 +406,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
       }}>
        {entries.map((entry,i)=>{
         const c=entry.candidate,number=String(i+1).padStart(2,'0');
-        const adopted=!c||c===currentCandidate||selectedImage?.candidateId===c.id;
+        const adopted=!c||c===currentCandidate;
         return <button className="workspace-thumbnail-select" key={entry.id} type="button"
          data-arriving={arrivingCandidates.includes(entry.id)||undefined} data-adoption-feedback={adoptionFeedback===entry.id||undefined}
          aria-label={uiText("预览{value0}候选 {value1}{value2}",{value0:uiText(kindName),value1:String(number),value2:String(adopted?'，已采用':'')})} aria-pressed={active?.id===entry.id} onClick={()=>select(entry.id)}>
@@ -415,7 +419,6 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    <div className="workspace-unified-preview" onKeyDown={e=>{if(e.target!==e.currentTarget||entries.length<2)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(entries[(index+(e.key==='ArrowRight'?1:-1)+entries.length)%entries.length].id);}}} tabIndex={entries.length>1?0:undefined} aria-label={uiText("{value0}预览",{value0:uiText(kindName)})}>
     {active?.id==='current'?props.preview:candidate?(tab==='image'?imagePreviewFailed?<div className="workspace-visual-empty"><p role="alert">{uiText("图片未能加载。")}</p><Button size="sm" color="secondary" onPress={()=>{setImagePreviewError('');retryImagePreview(value=>value+1);}}>{uiText("重试预览")}</Button></div>:<img key={`${candidate.id}:${imagePreviewAttempt}`} src={url(candidate.relativePath,candidate.sha256)} alt={uiText("{value0}候选 {value1}",{value0:uiText(kindName),value1:String(index+1)})} onError={()=>setImagePreviewError(candidate.id)}/>:<VideoPreview key={candidate.id} title={uiText("视频候选预览")} aria-label={uiText("视频候选预览")} src={url(candidate.relativePath,candidate.sha256)} segment={previewSegment} playbackRate={previewRate}/>):pendingUpload?<div className="workspace-upload-preview" role="status" aria-label={uiText("{value0}候选上传中",{value0:uiText(kindName)})}><div className="workspace-upload-preview-placeholder" style={{aspectRatio:`${target?.width??9}/${target?.height??16}`}} aria-hidden="true"/><p>{uiText("正在准备")}{kindName}{uiText("候选…")}</p><small>{pendingUpload.name}</small></div>:!showEmptyCandidateDrop&&<div className="workspace-visual-empty">{tab==='image'?<ImageIcon size={28} aria-hidden="true"/>:<Video size={28} aria-hidden="true"/>}<p>{entries.length?uiText("选择左侧缩略图预览"):uiText("尚未添加{value0}",{value0:uiText(kindName)})}</p>{!entries.length&&<span>{shelf?uiText("从左侧本期素材拖入，或使用 AI 生成"):uiText("上传素材，或使用 AI 生成")}</span>}</div>}
     {active&&<div className="workspace-preview-actions workspace-candidate-tools" role="group" aria-label={uiText("候选工具")}>
-     {tab==='image'&&candidate?.materialRevisionId&&<Tooltip title={uiText("用作视频首帧")}><Button className="workspace-candidate-tool-first-frame" size="xs" color="secondary" aria-label={uiText("用作视频首帧")} iconLeading={ImageIcon} isDisabled={disabled||!!review||candidate.status==='stale'} onPress={linkFirstFrame}>{uiText("首帧")}</Button></Tooltip>}
      {tab==='video'&&candidate&&!current&&<DialogTrigger isOpen={trimOpen} onOpenChange={setTrimOpen}>
       <Tooltip title={uiText("裁剪与时长")}><Button ref={trimTrigger} size="xs" color="secondary" aria-label={uiText("裁剪与时长")} iconLeading={Scissors} isDisabled={disabled||!!review}/></Tooltip>
       <Popover className="dan-ui product-ui workspace-composer-popover workspace-candidate-trim-popover" placement="top end" offset={8} containerPadding={12} shouldFlip>
@@ -431,24 +434,24 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
      {tab==='video'&&current&&canSplitVideo&&<Tooltip title={uiText("拆分视频原声")}><Button size="xs" color="secondary" aria-label={uiText("拆分视频原声")} iconLeading={AudioLines} isDisabled={disabled||!!review} onPress={()=>void run(async()=>{const w=await fresh();onChange(await command('splitWorkspaceVideoSound',{...base(w),targetItemId}) as ProductionWorkspace);setNotice('视频原声已拆分，可在剪辑工作台单独编辑。');})}/></Tooltip>}
      {candidate&&tab==='video'&&<a className="workspace-preview-zoom" href={url(candidate.relativePath,candidate.sha256)+'&download=1'} download aria-label={uiText("下载视频")} title={uiText("下载视频")}><Download size={16} aria-hidden="true"/></a>}
      {candidate&&tab==='image'&&!imagePreviewFailed&&<><a className="workspace-preview-zoom" href={url(candidate.relativePath,candidate.sha256)+'&download=1'} download aria-label={uiText("下载图片")} title={uiText("下载原图")}><Download size={16} aria-hidden="true"/></a><button ref={zoomTrigger} className="workspace-preview-zoom" type="button" aria-label={uiText("放大图片")} title={uiText("放大图片")} onClick={()=>setZoom(true)}><Maximize2 size={16} aria-hidden="true"/></button></>}
-     {candidate&&!current&&!imageChosen&&<Tooltip title={uiText("移除候选")}><Button className="workspace-candidate-tool-remove" size="xs" color="secondary" aria-label={uiText("移除候选")} iconLeading={Trash2} isDisabled={disabled||!!review||!!candidate.pendingConfirmation} onPress={removeSelected}/></Tooltip>}
+     {candidate&&!current&&<Tooltip title={uiText("移除候选")}><Button className="workspace-candidate-tool-remove" size="xs" color="secondary" aria-label={uiText("移除候选")} iconLeading={Trash2} isDisabled={disabled||!!review||!!candidate.pendingConfirmation} onPress={removeSelected}/></Tooltip>}
     </div>}
     {dropCandidate}
    </div>
 
       {active&&<div className="workspace-result-footer">
-       <p title={inlineReview?reviewSummary:candidateMeta||candidate?.relativePath}><strong>{candidate?uiText("候选 {value0} / {value1}",{value0:String(String(index+1).padStart(2,'0')),value1:String(String(entries.length).padStart(2,'0'))}):uiText("当前画面")}</strong>{inlineReview?<span role="status">{uiText(reviewSummary)}</span>:candidateMeta&&<span className={current||imageChosen?'workspace-candidate-used-status':undefined}>{current?uiText("已采用"):candidateMeta}</span>}</p>
+       <p title={inlineReview?reviewSummary:candidateMeta||candidate?.relativePath}><strong>{candidate?uiText("候选 {value0} / {value1}",{value0:String(String(index+1).padStart(2,'0')),value1:String(String(entries.length).padStart(2,'0'))}):uiText("当前画面")}</strong>{inlineReview?<span role="status">{uiText(reviewSummary)}</span>:candidateMeta&&<span className={current?'workspace-candidate-used-status':undefined}>{current?uiText("已采用"):candidateMeta}</span>}</p>
        {inlineReview?<div className="workspace-result-actions workspace-result-confirmation" role="group" aria-label={uiText("采用前核对")} onKeyDown={event=>{if(event.key==='Escape'&&!candidateReview.pending&&!busy){event.stopPropagation();closeAdoption();}}}>
         <Button autoFocus size="sm" color="secondary" isDisabled={disabled} onPress={closeAdoption}>{uiText("取消")}</Button>
         <Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void confirmAdoption()}>{uiText("确认采用")}</Button>
        </div>:<div className="workspace-result-actions">
-        {tab==='image'&&candidate?.status==='available'&&props.currentVisualKind==='video'&&<Button className="workspace-candidate-replace" size="xs" color="tertiary" aria-label={uiText("替换视频为当前图片")} isDisabled={disabled} onPress={()=>void adopt(candidate,true)}>{uiText("替换视频")}</Button>}
-        {current||imageChosen?<Button ref={adoptTrigger} className="workspace-candidate-withdraw" size="sm" color="tertiary" aria-label={current?uiText("撤回{value0}采用",{value0:uiText(kindName)}):uiText("撤回备用图片")} isDisabled={disabled} onPress={removeSelected}>{uiText("撤回")}</Button>:adoptionAction}
+        {current?<Button ref={adoptTrigger} className="workspace-candidate-withdraw" size="sm" color="tertiary" aria-label={current?uiText("撤回{value0}采用",{value0:uiText(kindName)}):uiText("撤回备用图片")} isDisabled={disabled} onPress={removeSelected}>{uiText("撤回")}</Button>:adoptionAction}
+        {tab==='image'&&(candidate?.materialRevisionId||current&&props.currentMaterialRevisionId)&&<Button className="workspace-candidate-tool-first-frame" size="sm" color="secondary" aria-label={uiText("用这张图生成视频")} isDisabled={disabled||!!review||candidate?.status==='stale'} onPress={linkFirstFrame}>{uiText("用这张图生成视频")}</Button>}
        </div>}
-       {shortCandidate&&<div className="workspace-adoption-duration-warning" role="status"><p>{uiText("素材可用 ")}{selectedVideoDuration!.toFixed(2)}{uiText(" 秒，短于当前镜头 ")}{candidate.currentDurationSeconds!.toFixed(2)}{uiText(" 秒。")}</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>setTrimOpen(true)}>{uiText("调整采用时长")}</Button></div>}
+       {shortCandidate&&<div className="workspace-adoption-duration-warning" role="status"><p>{uiText("素材可用 ")}{selectedVideoDuration!.toFixed(2)}{uiText(" 秒，短于当前镜头 ")}{candidate.currentDurationSeconds!.toFixed(2)}{uiText(" 秒，还差 ")}{(candidate.currentDurationSeconds! - selectedVideoDuration!).toFixed(2)}{uiText(" 秒。可换素材，或进入剪辑工作台调整。")}</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>setTrimOpen(true)}>{uiText("选用其他区间")}</Button></div>}
       </div>}
       {candidate?.source&&<p className="workspace-candidate-source"><a href={candidate.source.sourceUrl} target="_blank" rel="noreferrer">Pexels #{candidate.source.id}</a> · <a href={candidate.source.creatorUrl} target="_blank" rel="noreferrer">{candidate.source.creator}</a> · {candidate.source.connectionName} · {candidate.source.query}</p>}
-      {tab==='image'&&<span hidden id={adoptionDescriptionId}>{current?uiText("当前镜头正在使用此图"):imageChosen?uiText("此图已保留为备用图片"):props.currentVisualKind==='video'?uiText("仅保留备用，当前视频不变"):uiText("用作镜头画面，保持时长不变")}</span>}
+      {tab==='image'&&<span hidden id={adoptionDescriptionId}>{current?uiText("当前镜头正在使用此图"):uiText("用作镜头画面，保持时长不变")}</span>}
       <ConfirmationModalPresence>{needsImpactDialog&&review&&review.kind==='adoption'&&createPortal(<div className="workspace-visual-adoption-overlay">
        <ConfirmationModal title={uiText("采用前核对")} confirmLabel={uiText("确认采用")} isPending={busy||candidateReview.pending} confirmDisabled={!!disabled} onConfirm={confirmAdoption} onCancel={closeAdoption}>
         <div className="workspace-candidate-impact-details"><WorkspaceCandidateImpactDetails plan={review}/></div>
@@ -513,6 +516,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
       <small>{uiText("分辨率、时长和声音会影响费用；种子相同也不保证结果完全一致。")}</small>
     </div></div>}</WorkspaceComposerSetting>}</>}
 </>} submit={<Button size="sm" color="primary" isDisabled={disabled||!canGenerate} onPress={()=>void generate(unknownImageTask?.taskId)}>{pending.some(t=>(t.kind??'video')===tab)?uiText("正在生成…"):(retryImage||unknownImageTask)?uiText("重新生成图片"):uiText("生成{value0}",{value0:uiText(kindName)})}</Button>}>
+     <Button size="xs" color="tertiary" isDisabled={disabled||!(tab==='image'?imageCompatible:videoCompatible)} onPress={saveVisualDefaults}>{uiText("设为本期默认")}</Button>
      {generationBlocker&&(generationBlocker!=='正在生成，请等待结果。'||!activeGenerationTasks.length)&&generationBlocker!=='请填写提示词。'&&<p className="workspace-visual-generation-note" role="status">{uiText(generationBlocker)}</p>}
     </WorkspaceGenerationComposer>
    </div>}

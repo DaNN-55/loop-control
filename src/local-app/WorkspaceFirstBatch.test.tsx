@@ -14,7 +14,7 @@ it('prefills generation from the actual five-second shot instead of an unrelated
 it('explains a short candidate next to adoption and exposes a direct duration action',()=>{
  const command=vi.fn();render(<WorkspaceVisualPreparation workspace={workspace} project={project} materials={[]} command={command} onChange={()=>{}}/>);
  fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));
- expect(screen.getByText('素材可用 3.00 秒，短于当前镜头 5.00 秒。')).toBeTruthy();
- fireEvent.click(screen.getByRole('button',{name:'调整采用时长'}));
+ expect(screen.getByText('素材可用 3.00 秒，短于当前镜头 5.00 秒，还差 2.00 秒。可换素材，或进入剪辑工作台调整。')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'选用其他区间'}));
  expect(screen.getByLabelText('视觉候选时长处理').closest('[role=dialog]')).toBeTruthy();expect(command).not.toHaveBeenCalled();
 });

@@ -4,7 +4,7 @@ import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner persists incomplete matches, gates native entry until visuals are ready and reopens safely',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner persists incomplete matches, allows native entry with placeholders and reopens safely',async()=>{
  const f=await productionWorkspaceFixture();
  try{
   const {script,material}=f;
@@ -19,8 +19,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner persists incomplet
   expect((await f.request('matchWorkspaceMaterial',{...payload,expectedRevision:0})).status).toBe(409);
   expect((await f.request('matchWorkspaceMaterial',{...payload,materialRevisionId:randomUUID()})).status).toBe(404);
   const match=await f.request('matchWorkspaceMaterial',{workspaceId:made.body.id,expectedRevision:made.body.revision,clipId:made.body.clips[0].id,materialRevisionId:material});expect(match.status,JSON.stringify(match.body)).toBe(200);expect(match.body.readiness.placeholders).toHaveLength(1);
-  expect((await f.request('openWorkspaceStudio',{workspaceId:match.body.id,expectedRevision:match.body.revision})).status).toBe(409);
-  const allMatched=await f.fillVisuals(match.body);
+  const incomplete=await f.request('openWorkspaceStudio',{workspaceId:match.body.id,expectedRevision:match.body.revision});expect(incomplete.status,JSON.stringify(incomplete.body)).toBe(200);expect(incomplete.body.productionWorkspace.readiness.placeholders).toHaveLength(1);
+  const returned=await f.request('closeWorkspaceStudio',{workspaceId:match.body.id,expectedRevision:incomplete.body.productionWorkspace.revision});expect(returned.status,JSON.stringify(returned.body)).toBe(200);
+  const allMatched=await f.fillVisuals(returned.body);
   const opened=await f.request('openWorkspaceStudio',{workspaceId:allMatched.id,expectedRevision:allMatched.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);expect(opened.body.studioUrl).toContain('lcBridge=1');
   const native=JSON.parse(await readFile(join(f.assetRoot,opened.body.workspace.relativePath),'utf8'));expect(native.timelines[0].items.map((i:{kind:string})=>i.kind)).toEqual(['video','video']);
   const w=opened.body.productionWorkspace;

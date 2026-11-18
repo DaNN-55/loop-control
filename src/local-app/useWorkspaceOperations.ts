@@ -73,7 +73,7 @@ export function useWorkspaceOperations(options:Options){
   const previous=owner.state;
   if(!available()||previous.phase!=='ready'&&(previous.phase!=='editing'||!latest.current.reopen))return;
   const source=latest.current.current();if(!source)return;
-  if(source.readiness.placeholders.length||source.readiness.missingSources.length){latest.current.missingSources();return;}
+  if(source.readiness.missingSources.length){latest.current.missingSources();return;}
   const state:State={phase:'opening',session:'session' in previous?previous.session:null,destination:'editor'};transition(state);
   try{
    const result=await latest.current.command('openWorkspaceStudio',{episodeId:options.episodeId,workspaceId:source.id,expectedRevision:source.revision},()=>owns(state)&&state.destination==='editor') as {studioUrl:string;workspace:OpenChatCutStudioWorkspace;productionWorkspace:ProductionWorkspace};

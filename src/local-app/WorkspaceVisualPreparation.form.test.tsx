@@ -15,7 +15,16 @@ function setup(draft:Record<string,unknown>={}){
  return {command,materials,view:render(<WorkspaceVisualPreparation workspace={workspace} materials={materials} command={command} onChange={()=>{}}/>)};
 }
 async function modelReady(){await waitFor(()=>expect(screen.getByRole('button',{name:'图片连接与模型'}).textContent).toContain('gpt-image-2'));}
-afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
+afterEach(()=>{cleanup();sessionStorage.clear();localStorage.clear();vi.unstubAllGlobals();});
+it('explicitly shares only technical defaults while keeping prompts and references per shot',async()=>{
+ const f=setup({imagePrompt:'本镜头独有构图',references:['ref-0']});await modelReady();
+ expect(localStorage.getItem('loop-image-default:form-workspace')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'设为本期默认'}));
+ const saved=JSON.parse(localStorage.getItem('loop-image-default:form-workspace')!);
+ expect(saved.imageSelection).toEqual(selection);expect(saved.settings).toEqual({size:'1024x1536',quality:'auto',count:1});expect(saved.imagePrompt).toBeUndefined();expect(saved.references).toBeUndefined();expect(f.command).not.toHaveBeenCalled();
+ f.view.unmount();sessionStorage.clear();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[{...workspace.clips[0],itemId:'next'}],visualConfiguration:undefined}} materials={[]} command={f.command} onChange={()=>{}}/>);fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));await modelReady();
+ expect(screen.getByRole('textbox',{name:'图片提示词'})).toHaveProperty('value','');
+});
 it('提示词接近实际输入上限时提示计数，完整保留超限输入并阻止提交',async()=>{
  const {command}=setup();await modelReady();
  const prompt=screen.getByRole('textbox',{name:'图片提示词'});

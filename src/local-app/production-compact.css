@@ -33,7 +33,7 @@
 .workspace-shot-table-scroll{overflow:auto;min-height:0;flex:1}
 .workspace-shot-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px}
 .workspace-shot-table th{position:sticky;top:0;z-index:1;background:var(--lc-surface-2,#f7f9fc);color:var(--lc-muted,#596b83);font-size:11px;font-weight:500;text-align:left;padding:8px 10px}
-.workspace-shot-table th:first-child{width:70px}.workspace-shot-table th:nth-child(3){width:65px}.workspace-shot-table th:nth-child(4){width:76px}.workspace-shot-table th:nth-child(5){width:76px}
+.workspace-shot-table th:first-child{width:70px}.workspace-shot-table th:nth-child(3){width:65px}.workspace-shot-table th:nth-child(4){width:95px}.workspace-shot-table th:nth-child(5){width:44px}
 .workspace-shot-table td{padding:9px 10px;border-bottom:1px solid var(--lc-line,#d8e1ee);vertical-align:middle;font-variant-numeric:tabular-nums}
 .workspace-shot-table tr[aria-selected=true]{background:var(--lc-accent-soft,#eaf0ff)}
 .workspace-shot-table button{display:block;text-align:left;background:transparent;border:0;color:inherit;cursor:pointer;padding:3px 0;min-height:28px;width:100%;font:inherit}
@@ -450,3 +450,6 @@ html[data-interface="impeccable"] .product-ui .workspace-call-reservation input 
  .workspace-shot-table-scroll{container-type:inline-size}
  .workspace-shot-table .workspace-shot-add,.workspace-shot-insert-form{position:sticky!important;left:0;box-sizing:border-box;width:100cqw;max-width:100%}
 }
+
+.workspace-preparation-next{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;border-bottom:1px solid var(--lc-line);font-size:12px;color:var(--lc-muted)}
+.workspace-shot-table .is-working{color:var(--lc-accent)}.workspace-shot-table .is-error{color:var(--color-text-error-primary,#9a3939)}

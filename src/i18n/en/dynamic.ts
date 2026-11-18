@@ -1,4 +1,6 @@
 export const dynamicMessages:Record<string,string>={
+  "还缺 {value0} 项": "{value0} items remaining",
+  "{value0} / {value1} 可剪辑": "{value0} / {value1} ready for editing",
   "{value0} 项审核，等待你的决定": "{value0} reviews awaiting your decision",
   "{value0} 项阻塞": "{value0} blocked",
   "{value0} 项失败": "{value0} failed",

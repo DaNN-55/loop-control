@@ -1,3 +1,5 @@
+import type {ProductionWorkspace} from '../productionWorkspace';
+import {defaultShotCaptionContract} from '../shotCaptions';
 import {render,screen,fireEvent,waitFor,cleanup,act,within} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import userEvent from '@testing-library/user-event';
@@ -157,24 +159,34 @@ it('shows both large image drop zones and removes an unused candidate without ad
  expect(screen.queryByRole('button',{name:'拖入视频加入候选'})).toBeNull();
  expect(command).toHaveBeenCalledTimes(4);
 });
+it('keeps an automatic subtitle failure local and leaves manual preparation usable',async()=>{
+ const w={...workspace,captions:[{clipId:'clip',shotId:'S01',itemId:'shot-S01-clip',contract:defaultShotCaptionContract('人工可修。','independent'),timing:'stale',inputFingerprint:'fp',audioTrackId:'audio',alignmentReady:true,taskId:null}]} as unknown as ProductionWorkspace;
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
+ const command=vi.fn(async()=>{throw Object.assign(Error('校时环境不可用'),{code:'local_service_unavailable'});});
+ render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" command={command} onLegacy={()=>{}} materials={[]}/>);
+ await screen.findByText('字幕自动处理未完成，可直接调整字幕或重新尝试。');
+ expect(screen.queryByText('字幕校时结果暂未确认')).toBeNull();expect(screen.queryByRole('button',{name:'重新读取已保存工程'})).toBeNull();
+ expect(screen.getByRole('button',{name:'进入剪辑工作台'})).toHaveProperty('disabled',false);
+});
 it('accepts one unassigned MP3 for voice and queues local audio candidates without adopting them',async()=>{
  const withNarration={...workspace,narration:[{shotId:'S01',clipId:'clip',enabled:true,mode:'none',status:'draft',text:'第一镜口播'}]};
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:withNarration})));
- const command=vi.fn().mockResolvedValue(withNarration);
+ let current:ProductionWorkspace=withNarration as unknown as ProductionWorkspace;
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:current})));
+ const command=vi.fn(async(name:string,data:unknown)=>{if(name==='setWorkspaceNarrationEnabled'){const choice=data as {voiceMode:'manual';enabled:boolean};current={...current,revision:current.revision+1,narration:current.narration!.map(n=>({...n,requestedMode:choice.voiceMode,enabled:choice.enabled}))};}return current;});
  render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" command={command} onLegacy={()=>{}}
   materials={[shelfMaterial('audio','unassigned.mp3','audio','general_reference'),shelfMaterial('music','music.mp3','audio','background_music')]}/>);
  await screen.findByText('第一镜');
  fireEvent.click(screen.getByRole('button',{name:'本期素材 · 2'}));
  const audio=screen.getByRole('button',{name:'预览 unassigned.mp3'}),music=screen.getByRole('button',{name:'预览 music.mp3'});
  fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
- fireEvent.click(screen.getByRole('button',{name:'口播来源'}));
- fireEvent.click(screen.getByRole('menuitemradio',{name:'人工口播'}));
- expect(screen.getByRole('button',{name:'口播来源'}).textContent).toContain('人工口播');
+ fireEvent.change(screen.getByRole('combobox',{name:'这个镜头听什么'}),{target:{value:'manual'}});
+ await screen.findByRole('button',{name:'拖入口播文件'});
+ expect(command).toHaveBeenCalledWith('setWorkspaceNarrationEnabled',expect.objectContaining({voiceMode:'manual',enabled:true}));
  const musicDrag=startMaterialDrag(music);
  expect(screen.getByRole('button',{name:'拖入口播文件'}).getAttribute('data-drag-over')).toBeNull();
  fireEvent.dragEnd(music,{dataTransfer:musicDrag});
  expect(screen.queryByRole('button',{name:'加入候选'})).toBeNull();
- expect(command).not.toHaveBeenCalled();
+ expect(command.mock.calls.some(([name])=>name==='generateWorkspaceNarration')).toBe(false);
  const voiceDrag=startMaterialDrag(audio);
  const voiceTarget=screen.getByRole('button',{name:'拖入口播文件'});
  fireEvent.dragOver(voiceTarget,{dataTransfer:voiceDrag});
@@ -191,7 +203,7 @@ it('accepts one unassigned MP3 for voice and queues local audio candidates witho
   fireEvent.dragOver(target,{dataTransfer:transfer});fireEvent.drop(target,{dataTransfer:transfer});fireEvent.dragEnd(audio,{dataTransfer:transfer});
   await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind,materialRevisionId:'audio'})));
  }
- expect(command.mock.calls.map(call=>call[0])).toEqual(['saveWorkspaceNarration','confirmWorkspaceNarration','prepareWorkspaceAudio','prepareWorkspaceAudio']);
+ expect(command.mock.calls.map(call=>call[0])).toEqual(['setWorkspaceNarrationEnabled','saveWorkspaceNarration','confirmWorkspaceNarration','prepareWorkspaceAudio','prepareWorkspaceAudio']);
 });
 it('four-step navigation reads durable state and does not submit approvals or generation',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace}),{status:200,headers:{'Content-Type':'application/json'}})));
@@ -263,7 +275,7 @@ it('keeps another shot’s video generation draft when adopting an image advance
  const candidate={id:'candidate-picture',kind:'image',usage:'still',clipId:second.id,shotId:second.shotId,targetItemId:second.itemId,taskId:null,inputFingerprint:'i'.repeat(64),relativePath:'picture.png',sha256:'p'.repeat(64),fileSize:10,durationSeconds:3,currentDurationSeconds:3,status:'available',width:100,height:100,materialRevisionId:'picture'};
  const initial={...workspace,clips:[...workspace.clips,second],visualCandidates:[candidate]},next={...initial,revision:2,project:{...workspace.project,sha256:'b'.repeat(64)}};
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:initial})));const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{adoptionId:'adoption',candidateId:'candidate-picture',projectSha256:workspace.project.sha256,edit:{targetItemId:second.itemId},impact:{currentSeconds:3,sourceSeconds:3,appliedSeconds:3,deltaSeconds:0,startSeconds:0,endSeconds:3,fps:30,affectedFragments:[]}}:next);
- render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByText('第一镜');fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.change(screen.getByLabelText('画面动作'),{target:{value:'第一镜未提交的动作'}});fireEvent.click(screen.getByRole('button',{name:'选择镜头 02'}));fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));fireEvent.click(screen.getByRole('button',{name:'采用图片到当前镜头'}));await screen.findByRole('group',{name:'采用前核对'});expect(command).not.toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.anything());fireEvent.click(screen.getByRole('button',{name:'确认采用'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate-picture',adoptionId:'adoption'})));fireEvent.click(screen.getByRole('button',{name:'选择镜头 01'}));expect((screen.getByLabelText('画面动作') as HTMLTextAreaElement).value).toBe('第一镜未提交的动作');
+ render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByText('第一镜');fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.change(screen.getByLabelText('画面动作'),{target:{value:'第一镜未提交的动作'}});fireEvent.click(screen.getByRole('button',{name:'选择镜头 02'}));fireEvent.click(screen.getByRole('button',{name:'预览图片候选 01'}));fireEvent.click(screen.getByRole('button',{name:'作为镜头画面'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate-picture',adoptionId:'adoption'})));fireEvent.click(screen.getByRole('button',{name:'选择镜头 01'}));expect((screen.getByLabelText('画面动作') as HTMLTextAreaElement).value).toBe('第一镜未提交的动作');
 });
 it('keeps one delivery form and its metadata, cover and issue drafts across workflow navigation',async()=>{
  vi.stubGlobal('URL',class extends URL {static createObjectURL=vi.fn(()=>'blob:cover');static revokeObjectURL=vi.fn();});
@@ -305,7 +317,8 @@ it('reuses the saved script revision when continuing an existing workspace witho
  await waitFor(()=>expect(command).toHaveBeenCalledWith('replanWorkspace',{episodeId:'e',workspaceId:'w',expectedRevision:1,expectedScriptRevisionId:'script-new',reason:'调整叙事顺序'}));expect(screen.queryByRole('textbox',{name:'重规划原因'})).toBeNull();expect(command).toHaveBeenCalledWith('confirmScriptStudio',expect.objectContaining({expectedScriptRevisionId:'s',text:'调整后的脚本',reason:'调整叙事顺序'}));expect(screen.queryByRole('dialog')).toBeNull();
 });
 
-it('blocks entering the editor until every shot has an adopted readable visual',async()=>{vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByText('第一镜');fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));expect(await screen.findByText('请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。')).toBeTruthy();expect(command).not.toHaveBeenCalled();expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();});
+it('allows opening the editor while visual placeholders still need preparation',async()=>{vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn(async()=>{throw Error('测试剪辑入口');});render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByText('第一镜');fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));await waitFor(()=>expect(command).toHaveBeenCalledWith('openWorkspaceStudio',expect.objectContaining({episodeId:'e',workspaceId:'w'})));expect(screen.queryByText('请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。')).toBeNull();});
+it('still blocks opening an adopted file that is missing on disk',async()=>{const missing={...workspace,readiness:{...workspace.readiness,missingSources:['missing.png']}};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:missing})));const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByText('第一镜');fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));await screen.findByRole('alert');expect(command).not.toHaveBeenCalled();});
 
 it('deletes only the selected material shot after confirmation and selects the remaining neighbor',async()=>{
  const second={id:'clip2',itemId:'shot-S02-clip',shotId:'S02',text:'第二镜',source:null},two={...workspace,clips:[...workspace.clips,second]},next={...workspace,revision:2};
@@ -319,7 +332,7 @@ it('keeps the selected shot and deletion dialog when the saved revision is stale
 it('appends a shot after the final shot and selects it only after the saved result returns',async()=>{
  const second={id:'clip2',itemId:'shot-S02-clip',shotId:'S02',text:'第二镜',source:null},added={id:'clip3',itemId:'shot-added-clip',shotId:'added-clip3',text:'追加镜头',source:null},two={...workspace,clips:[...workspace.clips,second]};
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:two})));let resolve!:(value:unknown)=>void;const command=vi.fn(()=>new Promise(done=>{resolve=done;}));render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByText('第一镜');const add=screen.getByRole('button',{name:'新增镜头'});expect(add.closest('td')?.colSpan).toBe(6);fireEvent.click(add);fireEvent.change(screen.getByRole('textbox',{name:'新镜头文案'}),{target:{value:'追加镜头'}});fireEvent.submit(screen.getByRole('textbox',{name:'新镜头文案'}).closest('form')!);fireEvent.submit(screen.getByRole('textbox',{name:'新镜头文案'}).closest('form')!);
+ await screen.findByText('第一镜');const add=screen.getByRole('button',{name:'新增镜头'});expect(add.closest('td')?.colSpan).toBe(5);fireEvent.click(add);fireEvent.change(screen.getByRole('textbox',{name:'新镜头文案'}),{target:{value:'追加镜头'}});fireEvent.submit(screen.getByRole('textbox',{name:'新镜头文案'}).closest('form')!);fireEvent.submit(screen.getByRole('textbox',{name:'新镜头文案'}).closest('form')!);
  expect(command).toHaveBeenCalledExactlyOnceWith('editWorkspaceStructure',{episodeId:'e',workspaceId:'w',expectedRevision:1,operation:{kind:'insert',afterShotId:'S02',text:'追加镜头'}});expect(screen.getByRole('button',{name:'选择镜头 01'}).getAttribute('aria-pressed')).toBe('true');await act(async()=>resolve({...two,revision:2,clips:[...two.clips,added]}));expect(screen.getByRole('button',{name:'选择镜头 03'}).getAttribute('aria-pressed')).toBe('true');expect(screen.queryByRole('textbox',{name:'新镜头文案'})).toBeNull();
 });
 it('retains an insert draft and the saved shot order when a structure update fails',async()=>{
