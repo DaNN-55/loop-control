@@ -435,3 +435,8 @@
 | 已删除旧连接的具体身份，防止重投影重新启用 | `old-test-connections-cleanup-20261027/result.json` |
 
 依据：`docs/local-daily-runtime.md`明确禁止已删账号／生产单因手动历史投影重新出现；`cleanup-second-20261027/execute.mjs`读取proposal/preflight/current-structure确定精确删留身份，`media.mjs`读取media-plan和执行回执限定媒体范围；`project-file-cleanup-20261028/REPORT.md`要求保留删除／恢复范围JSON并按manifest限定恢复。普通窗口manifest、测量及回归输出仍清理。
+
+
+## 后续恢复边界更新（2026-11-18）
+
+分批发布时已将主要功能整理入main；原52提交的临时本地恢复分支随后按用户要求删除。本文早期所写“可由清理前提交恢复”是当时状态，不再承诺长期保留无用截图、日志的恢复入口。上节列明的14份必要恢复JSON、现行SQL/补丁及明确恢复归档仍保留，并已核对当前Git内容和文件摘要。没有删除正式生产数据、媒体或备份，没有强制清理Git历史对象。
