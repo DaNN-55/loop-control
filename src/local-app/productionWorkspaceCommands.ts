@@ -13,6 +13,7 @@ import {recordProjectSoundChanges} from './productionSoundUse.js';
 import {adoptProductionPreparation,verifyProductionPreparationSource} from './productionPreparationStore.js';
 import {legacyVideoDefault} from './legacyVideoCompatibility.js';
 import {createProductionWorkspaceProject,type WorkspaceInitialInputs} from './workspaceInitialProject.js';
+import {studioShotNarrationEnabled,type ScriptStudioPlan} from '../scriptStudio.js';
 import type {StoryboardShotManifest} from '../worker/contracts.js';
 import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
 import {applyWorkspaceVideoSound} from '../workspaceVideoSound.js';
@@ -244,9 +245,11 @@ export class ProductionWorkspaceCommands{
    const recovery=!row?await preserveLegacyWorkspace(c,root,e.id,data.legacyDecision):null;
    const id=row?.id??randomUUID();
    let {project,clips}=createProductionWorkspaceProject(e.id,id,storyboard.shots as StoryboardShotManifest[],undefined,initialInputs);
+   const studioConfirmation=(await c.query('SELECT plan FROM local_identity.script_studio_confirmations WHERE episode_id=$1 AND script_revision_id=$2 ORDER BY created_at DESC,id DESC LIMIT 1',[e.id,e.main_script_revision_id])).rows[0];
+   if(studioConfirmation)for(const item of project.timelines.flatMap(t=>t.items)){const clip=clips.find(c=>c.itemId===item.id),plan=studioConfirmation.plan as ScriptStudioPlan,shot=clip&&plan.shots[Number(clip.shotId.slice(5))-1];if(shot)item.loopControlNarrationEnabled=studioShotNarrationEnabled(plan,shot);}
    if(recovery?.decision==='preserve'){project=recovery.project;clips=await recoverLegacyBindings(c,root,e.id,id,project,clips);}
    project=withWorkspaceShotMetadata(project,clips);
-   if(!row&&!recovery)project=await assembleWorkspaceCaptions(c,root,{id,episode_id:e.id,script_revision_id:e.main_script_revision_id,storyboard_package_id:p.legacy_package_id,preparation_revision_id:p.id,bindings:clips},project);
+   if(!recovery&&(!row||studioConfirmation))project=await assembleWorkspaceCaptions(c,root,{id,episode_id:e.id,script_revision_id:e.main_script_revision_id,storyboard_package_id:p.legacy_package_id,preparation_revision_id:p.id,bindings:clips},project,{freshProject:true});
    const file=await persistWorkspaceProject(c,root,e.id,project);
    if(row){
     await c.query('UPDATE local_identity.production_workspaces SET script_revision_id=$2,storyboard_package_id=$3,preparation_revision_id=$4 WHERE id=$1',[row.id,e.main_script_revision_id,p.legacy_package_id,p.id]);

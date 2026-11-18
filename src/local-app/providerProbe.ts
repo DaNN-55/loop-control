@@ -4,11 +4,11 @@ import{bailianCredential}from'../worker/wanVideoProvider.js';
 import type{ConnectionProbe,ProbeResult}from'./connectionPorts.js';
 import{createManualVerificationFetcher,createProviderFetcher,isWorkspaceGenerationProvider,openAiImageAuthorizationIssue,providerNetworkAvailable,providerNetworkStatus,type ProviderNetworkConfiguration,type OnlineProvider}from'./providerNetwork.js';
 import{synthesizeVolcengineTts,parseVolcengineTtsAudio,type MediaFetcher}from'../worker/mediaProviders.js';
-const adapters:Partial<Record<OnlineProvider,[string,string]>>={volcengine:['seedance_video',videoProviders.volcengine.endpoint],minimax:['minimax_video',videoProviders.minimax.endpoint],kling:['kling_video',videoProviders.kling.endpoint],bailian:['wan_video','https://dashscope.aliyuncs.com'],openai:['openai_images','https://api.openai.com/v1'],pexels:['pexels_video','https://api.pexels.com'],freesound:['freesound_preview','https://freesound.org/apiv2'],volcengine_tts:['volcengine_tts','https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse']};
+const adapters:Partial<Record<OnlineProvider,[string,string]>>={deepseek:['deepseek_responses','https://api.deepseek.com'],volcengine:['seedance_video',videoProviders.volcengine.endpoint],minimax:['minimax_video',videoProviders.minimax.endpoint],kling:['kling_video',videoProviders.kling.endpoint],bailian:['wan_video','https://dashscope.aliyuncs.com'],openai:['openai_images','https://api.openai.com/v1'],pexels:['pexels_video','https://api.pexels.com'],freesound:['freesound_preview','https://freesound.org/apiv2'],volcengine_tts:['volcengine_tts','https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse']};
 // Endpoint/credential qualification only. A successful model task remains a separate gate.
 export function createProviderProbe(config:ProviderNetworkConfiguration,transport?:MediaFetcher,readOnly?:Partial<Record<OnlineProvider,ProviderNetworkConfiguration>>,options:{manualVerification?:boolean;workspaceGenerationFromConnections?:boolean;workspaceSpeechFromConnections?:boolean}={}):ConnectionProbe{
  const policyFor=(provider:string)=>readOnly?.[provider as OnlineProvider]??config;
- const manualVerification=(provider:string)=>options.manualVerification||(options.workspaceGenerationFromConnections&&isWorkspaceGenerationProvider(provider));
+ const manualVerification=(provider:string)=>options.manualVerification||(options.workspaceGenerationFromConnections&&(isWorkspaceGenerationProvider(provider)||provider==='deepseek'));
  const statusFor=(provider:string)=>!Object.hasOwn(adapters,provider)?{available:false,code:'provider_not_registered',detail:'未登记的连接服务。'}:manualVerification(provider)?{available:true,code:'available',detail:'可手动测试连接。'}:providerNetworkStatus(policyFor(provider),provider);
  async function test(input:Parameters<ConnectionProbe['verify']>[0]):Promise<ProbeResult>{
   const status=statusFor(input.provider);if(!status.available)return{outcome:'retryable',attempted:false,code:status.code,detail:status.detail};
@@ -20,9 +20,9 @@ export function createProviderProbe(config:ProviderNetworkConfiguration,transpor
  async function verify(input:Parameters<ConnectionProbe['verify']>[0],sender=transport):Promise<ProbeResult['outcome']>{
 
   const provider=input.provider as OnlineProvider,expected=adapters[provider];
-  if(!expected||input.adapter!==expected[0]||input.endpoint!==expected[1]||!input.secret.trim()||!statusFor(input.provider).available)return'retryable';
+  if(!expected||!(input.adapter===expected[0]||provider==='openai'&&input.adapter==='openai_responses')||input.endpoint!==expected[1]||!input.secret.trim()||!statusFor(input.provider).available)return'retryable';
   let outcome:'verified'|'invalid'|'retryable'='retryable';
-  const classifyResponse=async(r:Response)=>{outcome=await classify(provider,r);return outcome==='verified';};
+  const classifyResponse=async(r:Response)=>{outcome=await classify(provider,r,input.adapter==='openai_responses'?'gpt-5.6-luna':'gpt-image-2');return outcome==='verified';};
   const manual=manualVerification(provider)?createManualVerificationFetcher(provider,sender):undefined;
   const fetcher:MediaFetcher=manual?async(url,init)=>{const response=await manual(url,init);await classifyResponse(response.clone());return response;}:createProviderFetcher(policyFor(provider),provider,'verify',sender,classifyResponse);
   try{
@@ -30,7 +30,8 @@ export function createProviderProbe(config:ProviderNetworkConfiguration,transpor
    let url:string,headers:Record<string,string>={};
    if(isVideoProvider(provider)){url=videoEndpoint(provider,input.secret)+(provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/query/video_generation':'/v1/videos/image2video')+(provider==='kling'?'?pageNum=1&pageSize=1':'?page_num=1&page_size=1');headers.Authorization=videoAuthorization(provider,input.secret);}
    else if(provider==='bailian'){const credential=bailianCredential(input.secret);url=credential.origin+'/api/v1/models?model=wan2.6-i2v-flash&page_no=1&page_size=20';headers.Authorization='Bearer '+credential.apiKey;}
-   else if(provider==='openai'){url='https://api.openai.com/v1/models/gpt-image-2';headers.Authorization='Bearer '+input.secret;}
+   else if(provider==='deepseek'){url='https://api.deepseek.com/models';headers.Authorization='Bearer '+input.secret;}
+   else if(provider==='openai'){url='https://api.openai.com/v1/models/'+(input.adapter==='openai_responses'?'gpt-5.6-luna':'gpt-image-2');headers.Authorization='Bearer '+input.secret;}
    else if(provider==='pexels'){url='https://api.pexels.com/v1/videos/search?query=nature&per_page=1';headers.Authorization=input.secret;}
    else{const u=new URL('https://freesound.org/apiv2/search/');u.searchParams.set('token',input.secret);u.searchParams.set('query','rain');u.searchParams.set('fields','id');u.searchParams.set('page_size','1');url=u.toString();}
    await fetcher(url,{headers});return outcome;
@@ -38,7 +39,7 @@ export function createProviderProbe(config:ProviderNetworkConfiguration,transpor
  }
  return{mode:'live',workspaceGenerationFromConnections:options.workspaceGenerationFromConnections,workspaceSpeechFromConnections:options.workspaceSpeechFromConnections,get networkAvailable(){return providerNetworkAvailable(config);},executionAvailable:provider=>providerNetworkAvailable(config,provider),executionIssue:provider=>provider==='openai'?openAiImageAuthorizationIssue(config):null,verificationStatus:statusFor,test,verify:input=>verify(input)};
 }
-async function classify(provider:OnlineProvider,r:Response):Promise<'verified'|'invalid'|'retryable'>{
+async function classify(provider:OnlineProvider,r:Response,openaiModel:string):Promise<'verified'|'invalid'|'retryable'>{
  if(r.status===401||r.status===403)return'invalid';if(!r.ok)return'retryable';
  try{
   if(provider==='volcengine_tts'){const bytes=parseVolcengineTtsAudio(await r.text());return bytes.length>=3&&(Buffer.from(bytes.subarray(0,3)).toString()==='ID3'||bytes[0]===0xff&&(bytes[1]&0xe0)===0xe0)?'verified':'retryable';}
@@ -46,7 +47,8 @@ async function classify(provider:OnlineProvider,r:Response):Promise<'verified'|'
   if(provider==='volcengine'||provider==='minimax')return Array.isArray(body.items)?'verified':'retryable';
   if(provider==='kling')return body.code===0&&Array.isArray(body.data)?'verified':body.code===1002||body.code===1003?'invalid':'retryable';
   if(provider==='bailian')return Array.isArray(body.output?.models)&&body.output.models.some((m:{model?:string})=>m.model==='wan2.6-i2v-flash')?'verified':'retryable';
-  if(provider==='openai')return body.id==='gpt-image-2'?'verified':'retryable';
+  if(provider==='deepseek')return Array.isArray(body.data)&&body.data.some((m:{id?:string})=>m.id==='deepseek-flash')?'verified':'retryable';
+  if(provider==='openai')return body.id===openaiModel?'verified':'retryable';
   if(provider==='pexels')return body.page===1&&body.per_page===1&&Array.isArray(body.videos)&&body.videos.length===1&&Number.isSafeInteger(body.videos[0]?.id)&&Array.isArray(body.videos[0]?.video_files)&&body.videos[0].video_files.some((v:{file_type?:string})=>v.file_type==='video/mp4')?'verified':'retryable';
   return Array.isArray(body.results)&&body.results.some((v:{id?:number})=>Number.isSafeInteger(v.id)&&Number(v.id)>0)?'verified':'retryable';
  }catch{return'retryable';}

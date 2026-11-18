@@ -1,3 +1,4 @@
+import {deepSeekFormatModels} from '../scriptFormat.js';
 import {wanReferenceModel,wanReferenceMode,wanVideoModel,wanVideoModels} from '../wanVideoModels.js';
 import {imageSizes,openAiImageModels,openAiEnhancedImageModels,openAiImageQualities} from '../imageGeneration.js';
 import type {VideoGenerationMode} from '../videoVisualInputs.js';
@@ -21,7 +22,7 @@ export interface AcousticAlignmentCapabilities {
   };
 }
 
-export const productionCapabilityLabels = {image: '图片', video: '视频', speech: '语音', music_sound: '音乐与音效'} as const;
+export const productionCapabilityLabels = {image: '图片', video: '视频', speech: '语音', music_sound: '音乐与音效', language_model: '大语言模型'} as const;
 export type ProductionCapability = keyof typeof productionCapabilityLabels;
 export type ProductionInputMode = 'text' | 'reference_images' | 'first_frame' | 'query' | 'storyboard';
 export type {VideoGenerationMode,VideoVisualInputLimit,VideoVisualInputRole} from '../videoVisualInputs.js';
@@ -86,7 +87,7 @@ export interface RegisteredAdapterCapability {
 export interface RegisteredAdapterChoice extends RegisteredAdapterCapability {
   adapter: string;
   connection: { kind: "none" } | { kind: "owner_managed"; type: string; endpoint?: string };
-  execution: { kind: "controlled_media" | "ffmpeg" | "openchatcut" | "whisperx"; safetyLimit: number };
+  execution: { kind: "controlled_media" | "language_model" | "ffmpeg" | "openchatcut" | "whisperx"; safetyLimit: number };
   executionPath: RegisteredExecutionPath;
   identityKey: string;
   provider: string;
@@ -164,6 +165,12 @@ const legacyManifest: readonly RegisteredAdapterDefinition[] = [
   { production: [{capability: 'image', label: 'OpenAI Images', mode: 'generation', modelConstraints: Object.fromEntries(openAiEnhancedImageModels.map(model=>[model,{qualities:openAiImageQualities(model)}])), inputModes: ['text', 'reference_images'], constraints: {sizes: imageSizes, qualities: ['auto','low','medium','high'], counts: [1,2,4], referenceImages: {max: 16, maxBytes: 20*1024*1024, mimeTypes: ['image/png','image/jpeg','image/webp']}}}], provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api", endpoint: "https://api.openai.com/v1" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: openAiImageModels, presetCatalog: ["static-visual-v1"] },
   ] },
+  { production: [{capability:'language_model',label:'OpenAI 大语言模型',mode:'generation',inputModes:['text'],constraints:{prompt:{maxLength:20000}}}],provider:'openai',adapter:'openai_responses',executionPath:'external',connection:{kind:'owner_managed',type:'openai_api',endpoint:'https://api.openai.com/v1'},execution:{kind:'language_model',safetyLimit:1},capabilities:[
+    {capability:'language_model',configurationFields:['model','credential_ref'],modelCatalog:['gpt-5.6-luna'],presetCatalog:[]},
+  ]},
+  { production: [{capability:'language_model',label:'DeepSeek 大语言模型',mode:'generation',inputModes:['text'],constraints:{prompt:{maxLength:20000}}}],provider:'deepseek',adapter:'deepseek_responses',executionPath:'external',connection:{kind:'owner_managed',type:'deepseek_api',endpoint:'https://api.deepseek.com'},execution:{kind:'language_model',safetyLimit:1},capabilities:[
+    {capability:'language_model',configurationFields:['model','credential_ref'],modelCatalog:deepSeekFormatModels,presetCatalog:[]},
+  ]},
   { production: [{capability: 'video', label: 'Pexels 素材检索', mode: 'search', inputModes: ['query'], constraints: {query: {maxLength: 100}, orientation: 'portrait'}}], provider: "pexels", adapter: "pexels_video", executionPath: "external", connection: { kind: "owner_managed", type: "pexels_api", endpoint: "https://api.pexels.com" }, execution: { kind: "controlled_media", safetyLimit: 3 }, capabilities: [
     { capability: "b_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["pexels-video-v1"], presetCatalog: ["b-roll-v1"] },
   ] },

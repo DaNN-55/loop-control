@@ -53,8 +53,8 @@ async function recordEvidence(c:PoolClient,row:ProductionWorkspaceRecord,clipId:
  confirmed_at=CASE WHEN workspace_caption_evidence.input_fingerprint=excluded.input_fingerprint AND workspace_caption_evidence.lane_fingerprint=excluded.lane_fingerprint THEN workspace_caption_evidence.confirmed_at END`,[row.id,clipId,input,lane,method,taskId,alignment,row.bindings.find(b=>b.id===clipId)!.shotId]);
 }
 /** First assembly seeds frozen subtitles as editable native lanes; later opens preserve native edits. */
-export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'preparation_revision_id'|'bindings'>&{script_revision_id?:string},project:OpenChatCutProject){
- if((await c.query('SELECT 1 FROM local_identity.production_workspaces WHERE id=$1 AND native_edit_revision>0',[row.id])).rowCount)return project;
+export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'|'storyboard_package_id'|'preparation_revision_id'|'bindings'>&{script_revision_id?:string},project:OpenChatCutProject,options:{freshProject?:boolean}={}){
+ if(!options.freshProject&&(await c.query('SELECT 1 FROM local_identity.production_workspaces WHERE id=$1 AND native_edit_revision>0',[row.id])).rowCount)return project;
  if(row.bindings.every(clip=>readWorkspaceCaption(project,clip.itemId)))return project;
  const source=row.script_revision_id?(await c.query("SELECT storage_path,sha256,file_size FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='script'",[row.script_revision_id,row.episode_id])).rows[0]:null;
  const script=source?parseStoryboardScript((await verifyEpisodeFile(c,root,row.episode_id,source.storage_path,source.sha256,Number(source.file_size))).toString('utf8')):null;

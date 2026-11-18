@@ -90,7 +90,7 @@ describe("外部连接工作区", () => {
     render(<ConnectionWorkspace connections={[]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);
     fireEvent.click(screen.getByRole("button", {name:"新建连接"}));
     const select=screen.getByRole('combobox',{name:'连接类型'}) as HTMLSelectElement;
-    expect([...select.options].map(option=>option.value)).toEqual(['seedance_video','minimax_video','kling_video','wan_video','openai_images','pexels_video','volcengine_tts','freesound_preview']);
+    expect([...select.options].map(option=>option.value)).toEqual(['seedance_video','minimax_video','kling_video','wan_video','openai_images','openai_responses','deepseek_responses','pexels_video','volcengine_tts','freesound_preview']);
   });
 
   it("可预先登记火山语音 Adapter 凭据", async () => {

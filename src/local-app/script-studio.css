@@ -1,0 +1,56 @@
+.script-studio.production-workspace-section{overflow:visible}
+.script-studio .script-studio-content{padding:20px;min-inline-size:0;container:script-studio / inline-size}
+.script-studio .script-studio-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}
+.script-studio :is(.script-studio-editor,.script-studio-proposal){min-inline-size:0;margin:0;padding:0;border:0;background:transparent}
+.script-studio .script-studio-input-heading,.script-studio .script-studio-actions,.script-studio .script-studio-duration{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.script-studio .script-studio-input-heading{justify-content:space-between;margin-block-end:12px}
+.script-studio .script-studio-input-heading>label{display:block;font-size:13px;font-weight:600;color:var(--lc-ink)}
+.script-studio .script-studio-input-heading>label>span{font-size:12px;font-weight:400;color:var(--lc-muted)}
+.script-studio .script-studio-drop>textarea{display:block;inline-size:100%;min-block-size:330px;block-size:auto;resize:vertical;box-sizing:border-box;padding:14px;border:1px solid var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink);font:inherit;font-size:16px;line-height:1.9}
+.script-studio .script-studio-duration{margin-block:16px;font-size:12px;color:var(--lc-muted)}
+.workspace-script-compact.script-studio .script-studio-duration>label{display:block;flex:0 0 auto;inline-size:auto;width:auto;margin:0;font-size:13px;color:var(--lc-ink)}
+.workspace-script-compact.script-studio .script-studio-duration>input{box-sizing:border-box;flex:0 1 86px;inline-size:86px;width:86px;min-inline-size:0;min-block-size:36px;padding:6px 10px;border:1px solid var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink);font:inherit;font-size:16px;font-variant-numeric:tabular-nums}
+.script-studio .script-studio-examples{margin-block-end:12px}
+.script-studio .form-error{margin-block:10px;font-size:13px}
+.script-studio :is(.script-studio-model,.script-studio-filename,.script-studio-source-use,.script-studio-editor>[role=status]){margin-block:10px 0;font-size:12px;color:var(--lc-muted)}
+.script-studio .script-studio-model>p{margin-block:8px}
+.script-studio .script-studio-model>.dan-select-field{margin-block-start:8px}
+.script-studio .script-studio-proposal{padding-block-start:20px;border-block-start:1px solid var(--lc-line);font-size:13px;line-height:1.7;overflow-wrap:anywhere}
+.script-studio .script-studio-proposal>header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-block-end:8px}
+.script-studio .script-studio-proposal h4{margin:0;font-size:14px;font-weight:650}
+.script-studio .script-studio-proposal>header>span{font-size:12px;color:var(--lc-accent)}
+.script-studio .script-studio-summary{margin:0 0 10px;font-size:12px;color:var(--lc-muted)}
+.script-studio .script-studio-proposal>p{margin-block:8px}
+.script-studio .script-studio-shots{list-style:none;padding:0;margin:16px 0}
+.script-studio .script-studio-shots>li{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;padding-block:14px;border-block-start:1px solid var(--lc-line)}
+.script-studio .script-studio-shots>li>span{font-size:12px;color:var(--lc-muted);font-variant-numeric:tabular-nums}
+.script-studio .script-studio-shots h5{margin:0;font-size:13px;font-weight:600}
+.script-studio .script-studio-shots p{margin-block:4px}
+.script-studio .script-studio-shot-detail{font-size:12px;color:var(--lc-muted)}
+.script-studio :is(.script-studio-changes,.script-studio-warnings){margin-block:12px;color:var(--lc-muted)}
+.script-studio .script-studio-changes{padding-inline-start:12px;border-inline-start:2px solid var(--lc-warning,#8c610f)}
+.script-studio .script-studio-changes>ul{margin:4px 0;padding-inline-start:18px}
+.script-studio .script-studio-modification{margin-block-start:14px;padding:12px;background:var(--lc-surface-2);border-radius:6px}
+.script-studio .script-studio-modification>label{display:block;font-size:13px}
+.script-studio .script-studio-modification>textarea{box-sizing:border-box;inline-size:100%;min-block-size:80px;margin-block:8px;padding:10px;border:1px solid var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink);font:inherit;font-size:16px;resize:vertical}
+.script-studio .script-studio-adapt{margin-block-start:16px;padding-block-start:12px;border-block-start:1px solid var(--lc-line)}
+.script-studio .script-studio-adapt>p{margin-block:8px;font-size:12px;color:var(--lc-muted)}
+.script-studio .script-studio-footer{display:flex;align-items:start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-block-start:20px;padding-block-start:14px;border-block-start:1px solid var(--lc-line);font-size:12px;color:var(--lc-muted)}
+.script-studio .script-studio-footer>details{max-inline-size:100%;min-inline-size:0}
+.script-studio :is(.script-studio-footer,.script-studio-model,.script-studio-adapt) summary{min-block-size:32px;align-content:center;cursor:pointer}
+.script-studio .script-studio-note{display:flex;flex-direction:column;align-items:start;gap:6px;margin-block:12px}
+.script-studio .script-studio-saved-plan{max-inline-size:760px;overflow-wrap:anywhere}
+.script-studio .script-studio-saved-plan :is(ol,ul){padding-inline-start:20px}
+.script-studio .script-studio-saved-plan p{margin-block:6px}
+.script-studio .script-studio-note>input{box-sizing:border-box;max-inline-size:100%;inline-size:360px;min-block-size:36px;padding:6px 10px;border:1px solid var(--lc-line-strong);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink);font:inherit}
+.script-studio :is(.script-studio-loading,.script-studio-read-error){margin:12px 20px;font-size:13px;color:var(--lc-muted)}
+.script-studio :is(input,textarea)[aria-invalid=true]{border-color:var(--lc-danger)!important}
+@container script-studio (inline-size >= 850px){
+ .script-studio .script-studio-grid.has-proposal{grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+ .script-studio .script-studio-grid.has-proposal>.script-studio-proposal{padding-block-start:0;padding-inline-start:24px;border-block-start:0;border-inline-start:1px solid var(--lc-line)}
+}
+@container script-studio (inline-size < 480px){
+ .script-studio .script-studio-shots>li{grid-template-columns:minmax(0,1fr);gap:4px}
+}
+@media(max-width:640px){.script-studio .script-studio-content{padding:14px}.script-studio .script-studio-drop>textarea{min-block-size:240px}}
+@media(pointer:coarse){.script-studio :is(button,summary,.script-studio-duration>input){min-block-size:48px}}

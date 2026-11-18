@@ -37,13 +37,25 @@ export function WorkspaceDraftProvider({children,ownerId=''}:{children:ReactNode
 
 type Fields=Record<string,string>;
 const prefix='loop-control.workspace-draft.v1:';
-function readDraft<T extends Fields>(key:string,baseline:string,initial:T):T|null{try{const raw=localStorage.getItem(key);if(!raw)return null;const parsed=JSON.parse(raw);if(parsed?.baseline!==baseline||!parsed.value||typeof parsed.value!=='object')return null;const result={...initial};for(const name of Object.keys(initial)){if(typeof parsed.value[name]!=='string')return null;result[name as keyof T]=parsed.value[name] as T[keyof T];}return result;}catch{return null;}}
+function readDraft<T extends Fields>(key:string,baseline:string,initial:T,legacyInitial?:Partial<T>):T|null{
+ try{
+  const raw=localStorage.getItem(key);if(!raw)return null;
+  const parsed=JSON.parse(raw),legacy=parsed?.baseline!==baseline&&legacyInitial&&parsed?.baseline===JSON.stringify(legacyInitial);
+  if(parsed?.baseline!==baseline&&!legacy||!parsed.value||typeof parsed.value!=='object')return null;
+  const result={...initial};
+  for(const name of Object.keys(legacy?legacyInitial:initial)){
+   if(!Object.hasOwn(initial,name)||typeof parsed.value[name]!=='string')return null;
+   result[name as keyof T]=parsed.value[name] as T[keyof T];
+  }
+  return result;
+ }catch{return null;}
+}
 /** Only explicit non-secret text fields reach this local browser store. Files are never serialized. */
-export function useWorkspaceDraft<T extends Fields>({episodeId,kind,version,initial,enabled=true}:{episodeId:string;kind:'script'|'delivery';version:string;initial:T;enabled?:boolean}){
+export function useWorkspaceDraft<T extends Fields>({episodeId,kind,version,initial,legacyInitial,enabled=true}:{episodeId:string;kind:'script'|'delivery';version:string;initial:T;legacyInitial?:Partial<T>;enabled?:boolean}){
  const ownerId=useContext(OwnerContext),guard=useContext(GuardContext),baseline=JSON.stringify(initial);
  const storageKey=ownerId?prefix+JSON.stringify([ownerId,episodeId,kind,version]):'';
  const identity=JSON.stringify([storageKey,baseline,enabled]);
- function load(){const restored=enabled&&storageKey?readDraft(storageKey,baseline,initial):null;return {identity,value:restored??initial,accepted:initial,restored:!!restored};}
+ function load(){const restored=enabled&&storageKey?readDraft(storageKey,baseline,initial,legacyInitial):null;return {identity,value:restored??initial,accepted:initial,restored:!!restored};}
  const [stored,setStored]=useState(load),state=stored.identity===identity?stored:load();
  if(stored.identity!==identity)setStored(state);
  const current=useRef({state,storageKey,baseline});current.current={state,storageKey,baseline};

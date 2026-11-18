@@ -9,7 +9,7 @@ import{request as httpsRequest}from'node:https';
 import{Readable}from'node:stream';
 import type{MediaFetcher}from'../worker/mediaProviders.js';
 import{ProviderRequestNotSentError,isDefiniteProviderRejection,ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
-export type OnlineProvider='openai'|'pexels'|'freesound'|'volcengine_tts'|'bailian'|'volcengine'|'minimax'|'kling';
+export type OnlineProvider='deepseek'|'openai'|'pexels'|'freesound'|'volcengine_tts'|'bailian'|'volcengine'|'minimax'|'kling';
 type WorkspaceGenerationProvider='openai'|'bailian'|VideoProvider;
 export function isWorkspaceGenerationProvider(provider:string):provider is WorkspaceGenerationProvider{
  return provider==='openai'||provider==='bailian'||isVideoProvider(provider);
@@ -20,7 +20,7 @@ interface Limit{maxRequests:number;maxBytes:number;timeoutMs:number;costMicrouni
 interface Policy{purpose?:'connection-verification';issuedAt?:string;version:number;runId:string;enabled:boolean;expiresAt:string;maxRequests:number;currency:string;maxCostMicrounits:number;priceEvidenceSha256?:string;approvalSha256?:string;providers:OnlineProvider[];operations:Record<string,Limit>}
 interface Event{operation:string;outcome:'reserved'|'completed'|'failed'|'unknown';status?:number;bytes?:number;timeoutMs?:number}
 interface State{version:number;policySha256:string;used:number;costMicrounits:number;byOperation:Record<string,number>;halted:boolean;events:Event[]}
-const providers=['openai','pexels','freesound','volcengine_tts','bailian','volcengine','minimax','kling'];
+const providers=['deepseek','openai','pexels','freesound','volcengine_tts','bailian','volcengine','minimax','kling'];
 const denied=()=>new Error('Provider request denied by private authorization or budget');
 function integer(n:unknown,max:number){return Number.isSafeInteger(n)&&Number(n)>=0&&Number(n)<=max;}
 function stringChoices(value:unknown):value is string[]{return Array.isArray(value)&&value.length>0&&value.length<=64&&value.every(v=>typeof v==='string'&&v.trim().length>0&&v.length<=200);}
@@ -32,7 +32,7 @@ function read(c:ProviderNetworkConfiguration){
  const requestCeiling=Array.isArray(p.providers)&&p.providers.some(v=>v==='bailian'||isVideoProvider(v))?1000:20;
  if(p.version!==1||typeof p.runId!=='string'||!p.runId||typeof p.enabled!=='boolean'||!Number.isFinite(Date.parse(p.expiresAt))||!integer(p.maxRequests,requestCeiling)||!integer(p.maxCostMicrounits,1e12)||!Array.isArray(p.providers)||p.providers.some(x=>!providers.includes(x))||!p.operations||typeof p.operations!=='object')throw denied();
  for(const[k,v]of Object.entries(p.operations)){
-  if(!(/^(openai|pexels|freesound|volcengine_tts)\.(verify|generate|search|download)$/.test(k)||/^(bailian|volcengine|minimax|kling)\.(verify|generate|poll|download)$/.test(k))||!integer(v.maxRequests,requestCeiling)||!integer(v.maxBytes,(['bailian','volcengine','minimax','kling'].includes(k.split('.')[0])?100:20)*1024*1024)||!v.maxBytes||!integer(v.timeoutMs,60000)||(v.timeoutMs===0&&k!=='openai.generate')||!integer(v.costMicrounits,1e12))throw denied();
+  if(!(/^(openai|pexels|freesound|volcengine_tts)\.(verify|generate|search|download)$/.test(k)||/^deepseek\.verify$/.test(k)||/^(bailian|volcengine|minimax|kling)\.(verify|generate|poll|download)$/.test(k))||!integer(v.maxRequests,requestCeiling)||!integer(v.maxBytes,(['bailian','volcengine','minimax','kling'].includes(k.split('.')[0])?100:20)*1024*1024)||!v.maxBytes||!integer(v.timeoutMs,60000)||(v.timeoutMs===0&&k!=='openai.generate')||!integer(v.costMicrounits,1e12))throw denied();
   if(v.tts!==undefined){
    const t=v.tts;
    if(!t||typeof t!=='object'||Array.isArray(t)||Object.keys(t).some(key=>!['maxCharacters','voices','resourceIds'].includes(key))||!integer(t.maxCharacters,5000)||!t.maxCharacters||!stringChoices(t.voices))throw denied();
@@ -42,7 +42,7 @@ function read(c:ProviderNetworkConfiguration){
  }
  if(p.purpose==='connection-verification'){
   const issued=Date.parse(p.issuedAt??''),expires=Date.parse(p.expiresAt);
-  if(!Number.isFinite(issued)||issued>Date.now()+5000||expires-issued>30*60*1000||expires<=issued||p.maxRequests>4||p.maxCostMicrounits!==0||p.currency!=='CNY'||p.providers.some(v=>!['bailian','freesound','volcengine','minimax','kling','pexels','openai'].includes(v))||Object.entries(p.operations).some(([k,v])=>!['bailian.verify','freesound.verify','volcengine.verify','minimax.verify','kling.verify','pexels.verify','openai.verify'].includes(k)||v.costMicrounits!==0||v.maxRequests>2)||!p.approvalSha256?.match(/^[a-f0-9]{64}$/))throw denied();
+  if(!Number.isFinite(issued)||issued>Date.now()+5000||expires-issued>30*60*1000||expires<=issued||p.maxRequests>4||p.maxCostMicrounits!==0||p.currency!=='CNY'||p.providers.some(v=>!['bailian','freesound','volcengine','minimax','kling','pexels','openai','deepseek'].includes(v))||Object.entries(p.operations).some(([k,v])=>!['bailian.verify','freesound.verify','volcengine.verify','minimax.verify','kling.verify','pexels.verify','openai.verify','deepseek.verify'].includes(k)||v.costMicrounits!==0||v.maxRequests>2)||!p.approvalSha256?.match(/^[a-f0-9]{64}$/))throw denied();
  }else if(p.purpose!==undefined)throw denied();
  if(p.purpose!=='connection-verification'&&p.enabled&&(!['USD','CNY'].includes(p.currency)||!p.maxCostMicrounits||!p.priceEvidenceSha256?.match(/^[a-f0-9]{64}$/)||!p.approvalSha256?.match(/^[a-f0-9]{64}$/)||Object.entries(p.operations).some(([k,v])=>(k.endsWith('.generate')||k==='volcengine_tts.verify')&&!v.costMicrounits)))throw denied();
  const statePath=join(c.directory,'state.json');privateFile(statePath);const s=JSON.parse(readFileSync(statePath,'utf8')) as State;
@@ -109,8 +109,10 @@ function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input
  }else if(provider==='freesound'&&method==='GET'){
   if(api('freesound.org','/apiv2/search/'))op=phase==='verify'?'verify':'search';
   if(phase==='execute'&&u.hostname==='cdn.freesound.org'&&u.pathname.startsWith('/previews/')&&!u.search)op='download';
+ }else if(provider==='deepseek'){
+  if(phase==='verify'&&method==='GET'&&api('api.deepseek.com','/models'))op='verify';
  }else if(provider==='openai'){
-  if(phase==='verify'&&method==='GET'&&api('api.openai.com','/v1/models/gpt-image-2'))op='verify';
+  if(phase==='verify'&&method==='GET'&&(api('api.openai.com','/v1/models/gpt-image-2')||api('api.openai.com','/v1/models/gpt-5.6-luna')))op='verify';
   if(phase==='execute'&&method==='POST'&&(api('api.openai.com','/v1/images/generations')||api('api.openai.com','/v1/images/edits')))op='generate';
  }else if(provider==='bailian'){
   const apiHost=u.hostname==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(u.hostname);

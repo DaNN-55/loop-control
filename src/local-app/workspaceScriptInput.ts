@@ -1,5 +1,5 @@
-import {mainScriptDiagnostic,plainScriptParagraphs} from '../reviews/mainScript';
-import {parseProductionScript,segmentSettings} from '../reviews/productionScript';
+import {mainScriptDiagnostic,plainScriptParagraphs} from '../reviews/mainScript.js';
+import {parseProductionScript,segmentSettings} from '../reviews/productionScript.js';
 
 /** Ordinary prose gains the required envelope; structured source remains byte-for-byte intact. */
 export function workspaceScriptInput(source:string){

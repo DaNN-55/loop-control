@@ -1,5 +1,9 @@
 # 架构决策
 
+- [ADR-0071：确认识别结果作为制作依据](0071-confirmed-script-recognition.md)
+
+- [ADR-0070：主脚本格式识别兜底](0070-main-script-format-fallback.md)
+
 - [ADR-0068：独立制作基准版本与稳定镜头](0068-independent-production-preparation.md)
 
 - [ADR-0001：Episode 归档与永久删除](0001-episode-archive-and-permanent-delete.md)

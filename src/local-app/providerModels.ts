@@ -7,6 +7,7 @@ export function createProviderModelsReader(transport:MediaFetcher=fetch):Provide
  return async({provider,secret})=>{
   let origin='',apiKey=secret.trim();
   if(provider==='openai')origin='https://api.openai.com';
+  else if(provider==='deepseek')origin='https://api.deepseek.com';
   else if(provider==='minimax')({origin,apiKey}=minimaxCredential(secret));
   else if(provider==='bailian'){
    ({origin,apiKey}=bailianCredential(secret));
@@ -17,7 +18,7 @@ export function createProviderModelsReader(transport:MediaFetcher=fetch):Provide
   const categories:Record<string,string>={TG:'文本',IG:'图片',VG:'视频',TTS:'语音'};
   let total:number|undefined;
   for(let page=1;page<=20;page++){
-   const url=new URL(provider==='bailian'?'/api/v1/models':'/v1/models',origin);
+   const url=new URL(provider==='bailian'?'/api/v1/models':provider==='deepseek'?'/models':'/v1/models',origin);
    if(provider==='bailian'){url.searchParams.set('page_no',String(page));url.searchParams.set('page_size','100');}
    const response=await transport(url,{method:'GET',headers:{Authorization:'Bearer '+apiKey},redirect:'manual',signal});
    if(!response.ok){await response.body?.cancel();throw Error(`目录读取失败（HTTP ${response.status}），请检查凭据、地域和目录权限。`);}

@@ -1,151 +1,137 @@
 import {uiText} from '../i18n/ui';
 import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {FileText} from 'lucide-react';
+import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import {MarkdownPreview} from '../ui/MarkdownPreview';
-import {mainScriptStatistics} from '../reviews/mainScript';
-import {workspaceScriptInput,workspaceScriptExample} from './workspaceScriptInput';
+import {estimateScriptDuration,validateStudioDuration} from '../scriptStudio';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
-import {useWorkspaceDraft} from './WorkspaceDraft';
+import {useWorkspaceDraft,useWorkspaceOwnerId} from './WorkspaceDraft';
+import {workspaceScriptExample} from './workspaceScriptInput';
 import {localRequest} from './client';
 import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
+import {useScriptStudioSource,type ScriptStudioSource} from './useScriptStudioSource';
+import {useScriptStudioAssistant} from './useScriptStudioAssistant';
+import {ScriptStudioProposal} from './ScriptStudioProposal';
+import {ScriptStudioSavedPlan} from './ScriptStudioSavedPlan';
 import './workspace-compact-panels.css';
+import './script-studio.css';
 
 interface Props {
  episodeId:string;scriptRevisionId:string|null;script:string;stage:string;readOnly:boolean;pending:boolean;
  command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;
 }
-type ScriptIntent={baseline:{id:string|null;text:string};source:{id:string|null;text:string};text:string;finish:(id:string)=>void};
+type Basis={id:string|null;text:string;duration:string};
+type ScriptIntent={baseline:Basis;source:Basis;text:string;duration:string;reason:string;finish:(id:string)=>void};
 type ScriptConfirmationState=
  |{phase:'idle'}
  |{phase:'saving'|'save_failed';intent:ScriptIntent}
  |{phase:'starting'|'checking'|'started';intent:ScriptIntent;savedId:string}
  |{phase:'start_failed';intent:ScriptIntent;savedId:string;readError:boolean};
-const confirmationStatus:Record<ScriptConfirmationState['phase'],string>={idle:'',get saving(){return uiText("正在保存脚本…");},get save_failed(){return uiText("保存结果未确认，尚未启动制作。");},get starting(){return uiText("脚本已保存，正在启动制作…");},get checking(){return uiText("脚本已保存，正在核对启动状态…");},get start_failed(){return uiText("脚本已保存，制作尚未确认启动。");},get started(){return uiText("制作已启动");}};
-export function WorkspaceScriptPanel(props:Props){return <WorkspaceScriptEditor key={props.episodeId} {...props}/>;}
-function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false}:Props){
+const confirmationStatus:Record<ScriptConfirmationState['phase'],string>={idle:'',saving:'正在保存脚本…',save_failed:'保存结果未确认，尚未启动制作。',starting:'脚本已保存，正在启动制作…',checking:'脚本已保存，正在核对启动状态…',start_failed:'脚本已保存，制作尚未确认启动。',started:'制作已启动'};
+export function WorkspaceScriptPanel(props:Props){const owner=useWorkspaceOwnerId();return <WorkspaceScriptSource key={owner+':'+props.episodeId} {...props}/>;}
+function WorkspaceScriptSource(props:Props){
+ const source=useScriptStudioSource(props.episodeId,props.scriptRevisionId,props.script);
+ const loaded=useRef<{revisionId:string|null;value:ScriptStudioSource}|null>(null);
+ if(!source.loading)loaded.current={revisionId:props.scriptRevisionId,value:source.value};
+ // Keep an initialized draft's baseline stable while refreshing the same immutable revision.
+ const retained=loaded.current?.revisionId===props.scriptRevisionId?loaded.current.value:null;
+ return <WorkspaceScriptEditor {...props} retained={retained??source.value} sourceReady={!!retained} sourceLoading={source.loading} sourceError={source.error} retrySource={source.retry}/>;
+}
+function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
  const [flow,setFlow]=useState<ScriptConfirmationState>({phase:'idle'});
- // A successful save refreshes the parent's version before start settles. Keep its draft scope until completion.
- const baseline='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:script};
- const savedId='savedId' in flow?flow.savedId:null;
- const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??'new',initial:{text:baseline.text,reason:'',filename:'script.md'},enabled:!readOnly});
- const {text,reason,filename}=draft.value,setText=(text:string)=>draft.setValue(value=>({...value,text})),setReason=(reason:string)=>draft.setValue(value=>({...value,reason})),setFilename=(filename:string)=>draft.setValue(value=>({...value,filename}));
- const [preview,setPreview]=useState(script),[error,setError]=useState('');
- const [editing,setEditing]=useState(!readOnly&&(!scriptRevisionId||stage==='waiting_input')),[confirmation,setConfirmation]=useState<'save'|'discard'|null>(null),[locallyConfirmed,setLocallyConfirmed]=useState(false);
- const [invalid,setInvalid]=useState<'script'|'reason'|null>(null),errorId=useId(),reasonInput=useRef<HTMLInputElement>(null),textInput=useRef<HTMLTextAreaElement>(null);
- const input=useRef<HTMLInputElement>(null),lock=useRef(false),active=useRef(true),writable=useRef(!readOnly);writable.current=!readOnly;
- useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
- useEffect(()=>{if(flow.phase==='idle')setPreview(script);},[script,scriptRevisionId,flow.phase]);
- useEffect(()=>{if(flow.phase==='started'&&scriptRevisionId===flow.savedId&&script===flow.intent.text)setFlow({phase:'idle'});},[flow,scriptRevisionId,script]);
- const scriptInput=workspaceScriptInput(text),source='intent' in flow?flow.intent.source:baseline,basisId=savedId??source.id;
- const busy=['saving','starting','checking'].includes(flow.phase);
- const changed='savedId' in flow?scriptInput.text!==flow.intent.text:source.id!==baseline.id?scriptInput.text!==source.text:text!==preview,revision=!!basisId&&(stage!=='waiting_input'||!!savedId||basisId!==baseline.id),disabled=readOnly||pending||busy,isEditing=(editing||draft.dirty)&&!readOnly;
+ const baseline:Basis='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:retained.sourceText,duration:retained.targetDuration===null?'':String(retained.targetDuration)};
+ const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??'new',initial:{text:baseline.text,duration:baseline.duration,reason:'',filename:'script.md'},legacyInitial:baseline.id===scriptRevisionId?{text:script,reason:'',filename:'script.md'}:undefined,enabled:!readOnly&&(sourceReady||flow.phase!=='idle')});
+ const {text,duration,reason,filename}=draft.value;
+ const [error,setError]=useState(''),[invalid,setInvalid]=useState<'script'|'duration'|null>(null),[discardOpen,setDiscardOpen]=useState(false),[examplesOpen,setExamplesOpen]=useState(false);
+ const errorId=useId(),textId=useId(),durationId=useId(),textInput=useRef<HTMLTextAreaElement>(null),durationInput=useRef<HTMLInputElement>(null),input=useRef<HTMLInputElement>(null);
+ const lock=useRef(false),active=useRef(true),writable=useRef(!readOnly),editSequence=useRef(0);writable.current=!readOnly;
+ const busy=['saving','starting','checking'].includes(flow.phase),disabled=readOnly||pending||busy||sourceLoading&&flow.phase==='idle';
+ const savedSource:Basis='savedId' in flow?{id:flow.savedId,text:flow.intent.text,duration:flow.intent.duration}:'intent' in flow?flow.intent.source:baseline;
+ const basisId=savedSource.id;
+ const changed=text!==savedSource.text||duration!==savedSource.duration;
  const canResume=flow.phase==='start_failed'&&!changed;
- const showError=!errorPresented||flow.phase==='start_failed'&&flow.readError;
- const baselineStatus=confirmationStatus[flow.phase]||(revision||locallyConfirmed?'已确认基准':'待确认');
- const statistics=mainScriptStatistics(isEditing?text:preview),confirmedCharacters=Array.from(preview).length;
- function requestSave(){
+ const targetDuration=duration.trim()?Number(duration):null;
+ const assistant=useScriptStudioAssistant({episodeId,scriptRevisionId:basisId,source:text,targetDuration,disabled});
+ const proposal=assistant.result?.plan?assistant.result:null,showError=!errorPresented||flow.phase==='start_failed'&&flow.readError;
+ useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
+ useEffect(()=>{if(flow.phase==='started'&&scriptRevisionId===flow.savedId&&retained.sourceText===flow.intent.text)setFlow({phase:'idle'});},[flow,scriptRevisionId,retained.sourceText]);
+ function setField(name:'text'|'duration'|'reason'|'filename',value:string){editSequence.current++;draft.setValue(previous=>({...previous,[name]:value}));if(name==='text'||name==='duration'){setInvalid(null);setError('');}}
+ function validate(){
   setError('');setInvalid(null);
-  if(!text.trim()){setInvalid('script');textInput.current?.focus();return;}
-  if(scriptInput.error){setInvalid('script');setError(scriptInput.error);textInput.current?.focus();return;}
-  if(basisId&&changed&&!reason.trim()){setInvalid('reason');reasonInput.current?.focus();return;}
-  if(revision||basisId&&changed)setConfirmation('save');else void confirm();
+  if(!text.trim()){setInvalid('script');setError('请填写主脚本。');textInput.current?.focus();return false;}
+  try{if(duration.trim()&&!/^\d+(?:\.\d{1,2})?$/.test(duration.trim()))throw Error('总时长须为 0.1–3600 秒，最多两位小数。');validateStudioDuration(targetDuration);}catch(cause){setInvalid('duration');setError(cause instanceof Error?cause.message:'总时长无效。');durationInput.current?.focus();return false;}
+  return true;
  }
- function discard(){setFlow({phase:'idle'});setInvalid(null);draft.reset();setError('');setEditing(false);setConfirmation(null);}
  async function startSaved(intent:ScriptIntent,id:string,check=false){
   let commandStarted=false;
   try{
    if(check){
     setFlow({phase:'checking',intent,savedId:id});
-    const value=await localRequest(`episodes/${encodeURIComponent(episodeId)}`) as {sections:Partial<EpisodeProductionSnapshot>&{historicalReadOnly?:boolean}};
+    const value=await localRequest('episodes/'+encodeURIComponent(episodeId)) as {sections:Partial<EpisodeProductionSnapshot>&{historicalReadOnly?:boolean}};
     if(!active.current)return;
     if(!writable.current)throw Error('当前生产单已只读，本次草稿已保留。');
     const episode=value.sections?.episode;
     if(!episode||typeof episode.stage!=='string'||episode.id!==episodeId||episode.main_script_revision_id!==id||episode.archived_at||episode.stage==='production_completed'||value.sections.historicalReadOnly)throw Error('当前脚本版本或生产单状态已变化，请重新打开核对；本次草稿已保留。');
-    if(episode.stage!=='waiting_input'){
-     setFlow({phase:'started',intent,savedId:id});intent.finish(id);return;
-    }
+    if(episode.stage!=='waiting_input'){setFlow({phase:'started',intent,savedId:id});intent.finish(id);return;}
    }
    if(!writable.current)throw Error('当前生产单已只读，本次草稿已保留。');
-   setFlow({phase:'starting',intent,savedId:id});
-   commandStarted=true;
+   setFlow({phase:'starting',intent,savedId:id});commandStarted=true;
    const result=await command('start',{episodeId}) as Partial<EpisodeProductionSnapshot['episode']>;
-   // A previous start may have committed with a lost response; its receipt belongs to that script only.
    if(result.main_script_revision_id!==undefined&&result.main_script_revision_id!==id||result.stage==='waiting_input')throw Error('启动回执对应的脚本或阶段已变化，请核对后继续启动。');
    if(!active.current||!writable.current)return;
    setFlow({phase:'started',intent,savedId:id});intent.finish(id);
   }catch(cause){if(active.current){setFlow({phase:'start_failed',intent,savedId:id,readError:!commandStarted});setError(cause instanceof Error?cause.message:'制作启动未完成。');}}
  }
- async function confirm(){
-  if(disabled||lock.current)return;
-  lock.current=true;setError('');setConfirmation(null);
-  const submitted={...draft.value};
-  const intent:ScriptIntent={baseline,source:{id:basisId,text:'savedId' in flow?flow.intent.text:source.text},text:scriptInput.text,finish:id=>{
-   if(draft.acknowledge(submitted,{...submitted,text:scriptInput.text,reason:''})){setPreview(scriptInput.text);setEditing(false);}
-   setLocallyConfirmed(true);onConfirmed(id,submitted.reason.trim()||undefined);
-  }};
+ async function confirm(adopt=false){
+  if(disabled||lock.current||assistant.busy||!validate())return;
+  if(adopt&&(!proposal?.plan?.canProceed||!proposal.requestId))return;
+  if(basisId&&!changed&&!adopt&&flow.phase==='idle'&&stage!=='waiting_input'){onConfirmed(basisId);return;}
+  lock.current=true;const submitted={...draft.value};
+  const intent:ScriptIntent={baseline,source:savedSource,text:submitted.text,duration:submitted.duration,reason:submitted.reason.trim(),finish:id=>{draft.acknowledge(submitted,{...submitted,reason:''});onConfirmed(id,submitted.reason.trim()||undefined);}};
   setFlow({phase:'saving',intent});
   try{
    let id=basisId;
-   if(!id){
-    const bytes=new TextEncoder().encode(intent.text);let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);
-    const registered=await command('importMaterial',{episodeId,materialType:'script',materialPurpose:'main_script',sourceKind:'file',sourcePath:submitted.filename,mimeType:'text/markdown',contentBase64:btoa(binary),isMainScript:true}) as {id:string};id=registered.id;
-   }else if(changed){
-    const revised=await command('reconfirmScript',{episodeId,expectedScriptRevisionId:id,text:intent.text,reason:submitted.reason.trim()}) as {id:string};id=revised.id;
+   if(!id||changed||adopt){
+    const saved=await command('confirmScriptStudio',{episodeId,expectedScriptRevisionId:id,text:submitted.text,targetDuration,reason:submitted.reason.trim(),...(adopt?{requestId:proposal!.requestId}:{})}) as {id:string;alreadyStarted?:boolean};id=saved.id;
+    if(!active.current||!writable.current)return;
+    if(saved.alreadyStarted){setFlow({phase:'started',intent,savedId:id});intent.finish(id);return;}
    }
    if(!active.current)return;
-   setPreview(intent.text);await startSaved(intent,id!);
+   await startSaved(intent,id!);
   }catch(cause){if(active.current){setFlow({phase:'save_failed',intent});setError(cause instanceof Error?cause.message:'脚本保存未完成。');}}
   finally{lock.current=false;}
  }
- async function resume(){
-  if(disabled||lock.current||flow.phase!=='start_failed'||!canResume)return;
-  lock.current=true;setError('');
-  try{await startSaved(flow.intent,flow.savedId,true);}finally{lock.current=false;}
- }
+ async function resume(){if(disabled||lock.current||flow.phase!=='start_failed'||!canResume)return;lock.current=true;setError('');try{await startSaved(flow.intent,flow.savedId,true);}finally{lock.current=false;}}
  async function readScriptFile(file:File){
-  if(disabled||!isEditing)return;
-  try{if(!/\.(md|txt)$/i.test(file.name))throw Error('请选择 Markdown 或 TXT 脚本。');if(!file.size||file.size>2*1024*1024)throw Error('脚本不能为空或超过2MB。');setText(await file.text());setInvalid(null);setFilename(file.name);setError('');}catch(cause){setError(cause instanceof Error?cause.message:'脚本读取失败。');}
+  if(disabled)return;
+  const sequence=editSequence.current;
+  try{if(!/\.(md|txt)$/i.test(file.name))throw Error('请选择 Markdown 或 TXT 脚本。');if(!file.size||file.size>2*1024*1024)throw Error('脚本不能为空或超过 2 MB。');const value=await file.text();if(!active.current||!writable.current)return;if(sequence!==editSequence.current)throw Error('读取文件期间草稿已变化，本次导入未覆盖新内容，请重新导入。');setField('text',value);setField('filename',file.name);}catch(cause){if(active.current)setError(cause instanceof Error?cause.message:'脚本读取失败。');}
  }
- return <section className="production-workspace-section workspace-script workspace-script-compact" aria-label={uiText("脚本确认")}>
-  <header><div className="workspace-compact-heading"><h3>{uiText("主脚本")}</h3><span role="status" className={revision||locallyConfirmed?'is-confirmed':''}>{baselineStatus}{readOnly?uiText(" · 只读"):''}</span></div></header>
-
-  {draft.storageError&&<p role="alert" className="form-error">{uiText("本机草稿暂无法保存，请保持此页面打开。")}</p>}
-  <div className="workspace-script-layout">
-   <div className="workspace-script-main">
-    {draft.restored&&<p role="status" className="workspace-script-restored">{uiText("已恢复草稿，尚未确认。")}</p>}
-    {isEditing?<div className="workspace-script-comparison">
-     <div className="workspace-script-editor">
-      <div className="workspace-script-editor-heading"><span>{uiText("脚本正文")}</span>{!text.trim()&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setText(workspaceScriptExample);setError('');setInvalid(null);requestAnimationFrame(()=>textInput.current?.focus());}}>{uiText("使用示例")}</Button>}</div>
-      <div className="workspace-script-text"><textarea ref={textInput} aria-label={uiText("主脚本")} aria-required="true" aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} value={text} disabled={pending||busy} onChange={event=>{setText(event.target.value);if(invalid==='script'){setInvalid(null);setError('');}}} placeholder={uiText("直接粘贴正文，空行分隔镜头；也可上传 Markdown / TXT 结构化脚本。")}/>{invalid==='script'&&<span id={errorId} className="form-error" role="alert">{error||uiText("请填写主脚本。")}</span>}</div>
-     </div>
-     <section className="workspace-script-shot-preview" aria-label={uiText("镜头与字幕预览")}>
-      <header><h4>{uiText("镜头与字幕预览")}</h4><span>{scriptInput.shots.length}{uiText(" 个镜头")}</span></header>
-      {scriptInput.error?<p className="workspace-script-preview-message">{text.trim()?scriptInput.error:uiText("填写正文后显示镜头预览。")}</p>:scriptInput.shots.map((shot,index)=><article key={shot.id}><strong>{uiText("镜头 ")}{String(index+1).padStart(2,'0')}</strong><dl><div><dt>{uiText("字幕")}</dt><dd>{shot.subtitle}</dd></div>{shot.visual&&<div><dt>{uiText("画面说明")}</dt><dd>{shot.visual}</dd></div>}</dl></article>)}
-     </section>
-    </div>:<div className="workspace-script-preview" role="document" aria-label={uiText("主脚本预览")} tabIndex={0}>{preview?<MarkdownPreview content={preview}/>: uiText("正在读取主脚本…")}</div>}
-    <div className="workspace-script-statistics" role="group" aria-label={uiText("脚本字数")}><span title={uiText("完整脚本的 Unicode 字符数，包含空白、标点与格式。")}>{uiText("脚本字符 ")}{statistics.characters.toLocaleString()}</span><span title={statistics.textKind==='narration'?uiText("仅统计口播字段中的文字和数字，不计空白与标点。"):uiText("仅统计正文中的文字和数字，未区分口播与说明。")}>{statistics.textKind==='narration'?uiText("口播字数"):uiText("正文文字数")} {statistics.textCharacters===null?uiText("暂无法统计"):statistics.textCharacters.toLocaleString()}</span>{isEditing&&changed&&<span>{uiText("有未确认修改")}</span>}</div>
-
-   </div>
-   <aside className="workspace-script-basis" aria-label={uiText("脚本基准")}>
-    <div className="workspace-script-file" onDragOver={event=>{if(isEditing&&!disabled)event.preventDefault();}} onDrop={event=>{event.preventDefault();const file=event.dataTransfer.files[0];if(file)void readScriptFile(file);}}>
-     <input ref={input} hidden type="file" accept=".md,.txt,text/plain,text/markdown" aria-label={uiText("上传主脚本")} disabled={disabled||!isEditing} onChange={event=>{const file=event.target.files?.[0];event.target.value='';if(file)void readScriptFile(file);}}/>
-     {isEditing?<button type="button" className="workspace-script-file-slot" aria-label={uiText("上传脚本")} disabled={disabled} onClick={()=>input.current?.click()}><FileText size={20} aria-hidden="true"/><span><strong>{filename==='script.md'?uiText("拖入或选择脚本"):filename}</strong><small>{uiText("Markdown / TXT · 最大 2 MB")}</small></span></button>:<div className="workspace-script-file-slot is-locked"><FileText size={20} aria-hidden="true"/><span><strong>{filename==='script.md'?uiText("主脚本"):filename}</strong><small>{uiText("已确认脚本")}</small></span></div>}
+ const unresolved=assistant.result?.status==='unknown'||assistant.result?.status==='pending';
+ return <section className="production-workspace-section workspace-script workspace-script-compact script-studio" aria-label={uiText('脚本确认')}>
+  <header><div className="workspace-compact-heading"><h3>{uiText('主脚本')}</h3><span role="status">{uiText(confirmationStatus[flow.phase]||(draft.dirty?'有未确认修改':basisId?'已确认基准':'待确认'))}{readOnly?uiText(' · 只读'):''}</span></div></header>
+  {draft.storageError&&<p role="alert" className="form-error">{uiText('本机草稿暂无法保存，请保持此页面打开。')}</p>}
+  {sourceError?<div className="script-studio-read-error"><p role="alert" className="form-error">{uiText(sourceError)}</p><Button type="button" size="sm" color="secondary" onPress={retrySource}>{uiText('重新读取原文')}</Button></div>:sourceLoading&&<p role="status" className="script-studio-loading">{uiText('正在读取主脚本原文…')}</p>}
+  <div className="script-studio-content">
+   {readOnly?<div className="workspace-script-preview" role="document" aria-label={uiText('主脚本预览')} tabIndex={0}><MarkdownPreview content={retained.sourceText}/></div>:<>
+    {draft.restored&&<p role="status" className="workspace-script-restored">{uiText('已恢复草稿，尚未确认。')}</p>}
+    <div className={'script-studio-grid'+(proposal?' has-proposal':'')}>
+     <form className="script-studio-editor" aria-label={uiText('脚本正文')} noValidate onSubmit={event=>{event.preventDefault();if(canResume)void resume();else void confirm();}}>
+      <div className="script-studio-input-heading"><label htmlFor={textId}>{uiText('脚本正文')} <span aria-hidden="true">{uiText('必填')}</span></label><div className="script-studio-actions"><Button type="button" size="sm" color="tertiary" isDisabled={disabled} aria-expanded={examplesOpen} onPress={()=>setExamplesOpen(value=>!value)}>{uiText('示例')}</Button><Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>input.current?.click()}>{uiText('导入文件')}</Button><input ref={input} hidden type="file" name="scriptFile" accept=".md,.txt,text/plain,text/markdown" aria-label={uiText('导入主脚本文件')} disabled={disabled} onChange={event=>{const file=event.target.files?.[0];event.target.value='';if(file)void readScriptFile(file);}}/></div></div>
+      {examplesOpen&&<div className="script-studio-actions script-studio-examples"><Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setField('text','一个人推门走进咖啡馆，门铃轻响。他走到窗边坐下，望向对面的空座位，等待朋友。');setField('duration','15');setExamplesOpen(false);}}>{uiText('普通文本')}</Button><Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setField('text',workspaceScriptExample);setExamplesOpen(false);}}>{uiText('完整分镜')}</Button></div>}
+      <div className="script-studio-drop" onDragOver={event=>{if(!disabled)event.preventDefault();}} onDrop={event=>{event.preventDefault();const file=event.dataTransfer.files[0];if(file)void readScriptFile(file);}}><textarea ref={textInput} id={textId} name="script" required value={text} disabled={disabled} aria-invalid={invalid==='script'||undefined} aria-describedby={invalid==='script'?errorId:undefined} onChange={event=>setField('text',event.target.value)} placeholder={uiText('粘贴故事、文案或已写好的分镜，也可拖入 TXT / Markdown。')}/></div>
+      <div className="script-studio-duration"><label htmlFor={durationId}>{uiText('目标时长')}</label><input ref={durationInput} id={durationId} name="duration" inputMode="decimal" value={duration} disabled={disabled} placeholder={uiText('自动')} aria-invalid={invalid==='duration'||undefined} aria-describedby={invalid==='duration'?errorId:undefined} onChange={event=>setField('duration',event.target.value)}/><span>{uiText('秒')}</span><span>{duration.trim()?uiText('留空则估算'):uiText('预计 {value0} 秒 · 可修改',{value0:String(estimateScriptDuration(text))})}</span></div>
+      {error&&showError&&<p id={errorId} role="alert" className="form-error">{uiText(error)}</p>}
+      <div className="script-studio-actions"><Button type="submit" size="sm" color={proposal?'secondary':'primary'} isDisabled={disabled||assistant.busy}>{uiText(flow.phase==='saving'?'正在保存…':flow.phase==='starting'?'正在启动…':flow.phase==='checking'?'正在核对…':canResume?'继续启动':'继续制作')}</Button><Button type="button" size="sm" color="secondary" isDisabled={disabled||assistant.busy} onPress={()=>{if(validate())void assistant.send();}}>{uiText(assistant.busy?'正在设计拍法…':unresolved?'核对本次请求':assistant.needsChoice?'生成拍法':'优化拍法')}</Button></div>
+      {filename!=='script.md'&&<p className="script-studio-filename">{filename}</p>}
+      {assistant.error&&<p role="alert" className="form-error">{uiText(assistant.error)}</p>}{assistant.result?.message&&<p role="status">{assistant.result.message}</p>}{assistant.busy&&<p role="status">{uiText('正在生成拍法，原文和总时长保持不变…')}</p>}
+      {assistant.opened&&<details className="script-studio-model" open={assistant.needsChoice||!assistant.options.length}><summary>{uiText('大语言模型')}{assistant.choice?' · '+assistant.choice.label:''}</summary>{assistant.needsChoice&&<p role="status">{uiText('请选择模型，再生成拍法。')}</p>}{assistant.options.length?<NativeSelect label={uiText('大语言模型')} size="sm" value={assistant.choice?.id??''} disabled={disabled||assistant.busy} onChange={event=>assistant.choose(event.target.value)}>{assistant.options.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}</NativeSelect>:<div className="script-studio-actions"><Button type="button" size="sm" color="tertiary" onPress={()=>window.dispatchEvent(new Event('open-external-connections'))}>{uiText('前往连接配置')}</Button><Button type="button" size="sm" color="tertiary" isDisabled={assistant.busy} onPress={()=>void assistant.refresh()}>{uiText('刷新连接')}</Button></div>}<p>{uiText('优化会将原文发送到此服务，产生模型调用费用；不会生成素材。')}</p></details>}
+     </form>
+     {proposal&&<ScriptStudioProposal result={proposal} mode={assistant.mode} busy={assistant.busy} disabled={disabled} onAdopt={()=>void confirm(true)} onOriginal={()=>void confirm()} onSend={(mode,instruction,previous)=>{if(validate())void assistant.send(mode,instruction,previous);}}/>}
     </div>
-    {(!readOnly||invalid||error&&showError)&&<div className="workspace-script-controls" role="group" aria-label={uiText("脚本操作")}>
-     {!isEditing&&!readOnly&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setText(preview);setError('');setEditing(true);}}>{uiText("修改脚本")}</Button>}
-    {isEditing&&basisId&&(changed||!!reason)&&<label className="workspace-script-reason">{uiText("修订原因")}<input ref={reasonInput} aria-label={uiText("脚本修订原因")} aria-required="true" aria-invalid={invalid==='reason'||undefined} aria-describedby={invalid==='reason'?errorId:undefined} placeholder={uiText("简述本次修改原因")} value={reason} disabled={disabled} onChange={event=>{setReason(event.target.value);if(invalid==='reason')setInvalid(null);}}/>{invalid==='reason'&&<span id={errorId} className="form-error" role="alert">{uiText("请填写修订原因。")}</span>}</label>}
-    {isEditing&&<div className="workspace-script-actions"><Button size="sm" color="primary" isDisabled={disabled||!canResume&&!!basisId&&!changed&&stage!=='waiting_input'} onPress={canResume?()=>void resume():requestSave}>{flow.phase==='saving'?uiText("正在保存…"):flow.phase==='starting'?uiText("正在启动…"):flow.phase==='checking'?uiText("正在核对…"):canResume?uiText("继续启动"):revision?uiText("确认脚本修订"):uiText("确认脚本")}</Button>{(revision||locallyConfirmed)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{if(changed||reason.trim())setConfirmation('discard');else discard();}}>{uiText("取消编辑")}</Button>}</div>}
-    {error&&invalid!=='script'&&showError&&<p role="alert" className="form-error">{uiText(error||'')}</p>}
-    </div>}
-    <h4>{uiText("脚本基准")}</h4>
-    <dl><div><dt>{uiText("基准版本")}</dt><dd>{scriptRevisionId?.slice(0,8)??uiText("尚无版本")}</dd></div><div><dt>{uiText("基准字数")}</dt><dd>{scriptRevisionId||locallyConfirmed?uiText("{value0} 字符",{value0:String(confirmedCharacters.toLocaleString())}):uiText("尚未确认")}</dd></div></dl>
-    {scriptRevisionId&&<p className="workspace-script-revision-id" aria-label={uiText("脚本基准 ID")}>{scriptRevisionId}</p>}
-    {isEditing&&revision&&<p>{uiText("修订后需重新核对素材匹配，已有工程与媒体保留。")}</p>}
-    {history}
-   </aside>
+   </>}
+   <div className="script-studio-footer"><details><summary>{uiText('历史')}</summary>{scriptRevisionId&&<p>{uiText('当前已确认脚本：')}{scriptRevisionId.slice(0,8)}</p>}{retained.plan&&<ScriptStudioSavedPlan plan={retained.plan}/>}{history??<p>{uiText('确认后保留原文与拍法，已有工程和媒体继续保留。')}</p>}{!readOnly&&basisId&&<><label className="script-studio-note">{uiText('修订备注（选填）')}<input name="reason" aria-label={uiText('修订备注（选填）')} value={reason} maxLength={4000} disabled={disabled} onChange={event=>setField('reason',event.target.value)}/></label>{draft.dirty&&<Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>setDiscardOpen(true)}>{uiText('还原已确认脚本')}</Button>}</>}</details><details><summary>{uiText('使用帮助')}</summary><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长，大胆改编需单独选择。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></details></div>
   </div>
-  <ConfirmationModalPresence>{confirmation==='save'&&<ConfirmationModal title={uiText("确认脚本修订")} confirmLabel={uiText("确认保存修订")} isPending={busy} pendingLabel={uiText("正在保存…")} onCancel={()=>setConfirmation(null)} onConfirm={confirm}><p>{uiText("保存后将更新素材规划；已有剪辑工程保留为历史版本，原媒体不会删除。")}</p><p>{uiText("修订原因：")}{reason.trim()}</p></ConfirmationModal>}</ConfirmationModalPresence>
-  <ConfirmationModalPresence>{confirmation==='discard'&&<ConfirmationModal title={uiText("放弃脚本修改")} confirmLabel={uiText("放弃修改")} tone="danger" onCancel={()=>setConfirmation(null)} onConfirm={discard}><p>{uiText("本次未保存的正文与修订原因将被放弃，已确认脚本保持不变。")}</p></ConfirmationModal>}</ConfirmationModalPresence>
+  <ConfirmationModalPresence>{discardOpen&&<ConfirmationModal title={uiText('还原已确认脚本')} confirmLabel={uiText('还原脚本')} tone="danger" onCancel={()=>setDiscardOpen(false)} onConfirm={()=>{draft.reset();setError('');setInvalid(null);setFlow({phase:'idle'});setDiscardOpen(false);}}><p>{uiText('本次未确认的原文、时长与备注会被放弃，已确认脚本和媒体保留。')}</p></ConfirmationModal>}</ConfirmationModalPresence>
  </section>;
 }

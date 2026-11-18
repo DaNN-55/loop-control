@@ -16,6 +16,7 @@ export function createProductionWorkspaceProject(episodeId:string,id:string,shot
    const fps=canvas?.fps??30;
    const tracks:OpenChatCutProject['timelines'][number]['tracks']={V1:{kind:'video',name:'画面'}};
    let frame=0;
+   let frameRemainder=0;
    const clips:WorkspaceClip[]=[];
    const items=shots.flatMap(shot=>{
     if(typeof shot.id!=='string'||typeof shot.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');
@@ -25,7 +26,10 @@ export function createProductionWorkspaceProject(episodeId:string,id:string,shot
     const visualDraft=initialInputs?.visuals?.get(shot.id);
     const layout=visualDraft?.composition.layout??(shot.layout&&shotCompositionLayouts.includes(shot.layout)?shot.layout:'full');
     const composition=defaultShotComposition(layout);
-    const instances=visualDraft?workspaceVisualDraftInstances(visualDraft,fps):composition.slots.map((slot,index)=>({slot,index,startFrame:0,durationInFrames:Math.max(1,Math.round(Number(shot.durationSeconds||3)*fps))}));
+    const expectedFrames=Number(shot.durationSeconds||3)*fps+frameRemainder,shotFrames=Math.max(1,Math.round(expectedFrames));
+    // Carry fractional frames so individually rounded shots retain the approved total.
+    frameRemainder=visualDraft?0:expectedFrames-shotFrames;
+    const instances=visualDraft?workspaceVisualDraftInstances(visualDraft,fps):composition.slots.map((slot,index)=>({slot,index,startFrame:0,durationInFrames:shotFrames}));
     const duration=Math.max(...instances.map(i=>i.startFrame+i.durationInFrames));
     const shotItems=instances.map(({slot,index,startFrame,durationInFrames})=>{
      const clipId=randomUUID(),itemId=`shot-${shot.id}-${clipId}`,track=`V${index+1}`;

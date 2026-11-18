@@ -4,7 +4,7 @@ export type ProductionVisualSource=typeof productionVisualSources[number];
 export type ProductionTransition='cut'|'fade'|'studio'|'cross-dissolve'|'dip-to-black'|'soft-wipe'|'anticipation-zoom';
 export interface ProductionSettings {
   aspectRatio?: '9:16' | '16:9' | '1:1';
-  voice?: string; speakingRate?: number; language?: string;
+  voice?: string; speakingRate?: number; language?: string; narrationEnabled?:boolean;
   captionsEnabled?: boolean; captionMode?: 'follow_tts' | 'independent';
   captionAnchor?: string; captionSafeArea?: 'title-safe' | 'action-safe';
   captionMaxLines?: number; captionMaxCharacters?: number;
@@ -47,9 +47,12 @@ const reference = (value: string) => {
   return value;
 };
 const aliases=(map:Record<string,string>,values:readonly string[])=>(value:string)=>choices(values)(map[value]??value);
+const globalOnlySettingKeys:readonly (keyof ProductionSettings)[]=['bgm','aspectRatio','captionStyle','cover','language'];
 const fields: Record<string, { key: keyof ProductionSettings; parse: (s: string) => unknown }> = {
   '画幅': { key: 'aspectRatio', parse: choices(['9:16', '16:9', '1:1']) },
   '旁白音色': { key: 'voice', parse: s => s },
+  '口播启用': { key: 'narrationEnabled', parse: s => choices(['开启','关闭'])(s)==='开启' },
+  '旁白启用': { key: 'narrationEnabled', parse: s => choices(['开启','关闭'])(s)==='开启' },
   '旁白语速': { key: 'speakingRate', parse: number(0.5, 2) },
   '旁白语言': { key: 'language', parse: s => s },
   '字幕': { key: 'captionsEnabled', parse: s => choices(['开启', '关闭'])(s) === '开启' },
@@ -76,11 +79,15 @@ const fields: Record<string, { key: keyof ProductionSettings; parse: (s: string)
   '素材名称': { key: 'materialReference', parse: reference },
   '封面素材': { key: 'cover', parse: reference },
   '生成时长（秒）': { key: 'duration', parse: number(2, 15, true) },
-  '镜头时长（秒）': { key: 'duration', parse: number(0.1, 120) },
+  '镜头时长（秒）': { key: 'duration', parse: number(0.1, 3600) },
   '视频费用预留（分/镜头）': { key: 'videoReservationCents', parse: number(1, 100000, true) },
   '音效起点（秒）': { key: 'sfxStart', parse: number(0, 3600) },
   '音效时长（秒）': { key: 'sfxDuration', parse: number(0.01, 3600) },
 };
+/** Current v3 setting names, shared by the parser and structured model contracts. */
+export function productionSettingFields(scope:'global'|'shot'):string[]{
+ return Object.entries(fields).filter(([name,field])=>!['首帧素材','生成时长（秒）'].includes(name)&&(scope==='global'||!globalOnlySettingKeys.includes(field.key))).map(([name])=>name);
+}
 export function validateProductionDefaults(value:unknown):ProductionSettings {
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('系列 production_defaults 必须是对象。');
  const result:Record<string,unknown>={};
@@ -149,7 +156,7 @@ export function parseProductionScript(text: string): ProductionScript | null {
       if(segment&&name==='镜头类型') { segment.shotType=choices(['a_roll','b_roll'])(value) as ProductionSegment['shotType'];continue; }
       if(segment&&name==='字幕正文') { segment.subtitle=value;continue; }
       const definition=fields[name];if(!definition)throw Error('未知字段：'+name);
-      if(segment&&['bgm','aspectRatio','captionStyle','cover','language'].includes(definition.key))throw Error(name+'只能在制作设置中填写');
+      if(segment&&globalOnlySettingKeys.includes(definition.key))throw Error(name+'只能在制作设置中填写');
       if(value==='默认') continue;
       const target=segment?.settings??result.settings;
       (target as Record<string,unknown>)[definition.key]=definition.parse(value);

@@ -1,3 +1,7 @@
+import {LocalScriptStudioRequests} from './scriptStudioRequests.js';
+import {createScriptStudioReader,type ScriptStudioReader} from './scriptStudioProvider.js';
+import {LocalScriptFormatRequests} from './scriptFormatRequests.js';
+import {createScriptFormatReader,type ScriptFormatReader} from './scriptFormatProvider.js';
 import {buildProductionServiceCatalog} from '../connections/serviceCatalog.js';
 import {minimaxCredential} from '../worker/officialVideoProvider.js';
 import {minimaxEndpoints,type MiniMaxRegion} from '../worker/videoProviderCatalog.js';
@@ -57,9 +61,13 @@ export class LocalConnections {
  private usageCache=new Map<string,{expires:number;request:Promise<ConnectionUsageRead>}>();
  private minimaxRegionCache=new Map<string,MiniMaxRegion>();
  readonly models:LocalConnectionModels;
+ readonly scriptFormat:LocalScriptFormatRequests;
+ readonly scriptStudio:LocalScriptStudioRequests;
  readonly billing:LocalConnectionBilling;
- constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader){
+ constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader,scriptFormatReader:ScriptFormatReader=createScriptFormatReader(),scriptStudioReader:ScriptStudioReader=createScriptStudioReader()){
   this.billing=new LocalConnectionBilling(pool,store,billingReader);
+  this.scriptFormat=new LocalScriptFormatRequests(pool,store,()=>this.configurationReady,scriptFormatReader);
+  this.scriptStudio=new LocalScriptStudioRequests(pool,store,()=>this.configurationReady,scriptStudioReader);
   this.models=new LocalConnectionModels(pool,store,modelsReader,provider=>this.probe.verificationStatus?.(provider).available??this.networkAvailable);
  }
  get configurationReady(){return this.store.mode==='keychain'&&this.probe.mode==='live';}
@@ -67,7 +75,7 @@ export class LocalConnections {
  get networkAvailable(){return this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
  private usesWorkspaceConnection(provider:string){
   return provider==='volcengine_tts'?this.probe.workspaceSpeechFromConnections:
-   this.probe.workspaceGenerationFromConnections&&(isWorkspaceGenerationProvider(provider)||provider==='pexels'||provider==='freesound');
+   this.probe.workspaceGenerationFromConnections&&(isWorkspaceGenerationProvider(provider)||provider==='deepseek'||provider==='pexels'||provider==='freesound');
  }
  async speechSample(ownerId:string,directory:string,data:Record<string,unknown>){
   const {selection,voice,generate}=data;
@@ -166,6 +174,7 @@ export class LocalConnections {
     UNION ALL SELECT 'speech:'||task_id::text,episode_id,request_snapshot FROM local_identity.workspace_narration_requests
     UNION ALL SELECT 'audio:'||id::text,episode_id,request_snapshot FROM local_identity.workspace_audio_preparations
     UNION ALL SELECT 'pexels:'||id::text,episode_id,request_snapshot FROM local_identity.workspace_pexels_requests
+    UNION ALL SELECT 'script-format:'||id::text,episode_id,jsonb_build_object('selection',jsonb_build_object('connectionVersionId',connection_version_id)) FROM local_identity.script_format_requests
    ), request_refs AS MATERIALIZED(
     SELECT v.id version_id,r.id,r.episode_id FROM visible_versions v JOIN requests r ON r.request_snapshot#>>'{selection,connectionVersionId}'=v.id::text OR r.request_snapshot#>>'{execution,credential_ref}'=v.id::text JOIN owned_episodes e ON e.id=r.episode_id
    ), saved_selections AS(
@@ -212,6 +221,7 @@ export class LocalConnections {
    const externalReady=this.externalReady;
    const executionByProvider=Object.fromEntries(connections.map(({provider})=>[provider,
     this.usesWorkspaceConnection(provider)?this.configurationReady:externalReady&&(this.probe.executionAvailable?.(provider)??true)]));
+   const executionByAdapter=Object.fromEntries(registeredAdapters.productionChoices().filter(c=>c.capability==='language_model').map(c=>[c.identityKey,this.configurationReady]));
    const executionIssues=Object.fromEntries(connections.filter(({provider})=>!executionByProvider[provider]).map(({provider})=>[provider,this.probe.executionIssue?.(provider)??null]));
    const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,usage:versionUsage.find(entry=>entry.id===v.id)?.usage,historicalStatus:v.status,status:v.revoked_at?'revoked':this.store.mode!=='keychain'||this.probe.mode!=='live'||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
    // Historical provider text is never used as a diagnostic response channel;
@@ -221,9 +231,9 @@ export class LocalConnections {
     c.lastVerificationAt=last?.created_at??null;
     c.inFlightTasks=activityByConnection.get(c.id)??{queued:0,running:0};
     c.last_verification_detail=current?.secretState==='unbound'?'本机密钥未绑定，请显式重新录入。':this.store.mode!=='keychain'?'测试未开始：本机 Keychain 未启用。':this.probe.mode!=='live'?'测试未开始：当前仅配置模拟验证。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查密钥可用性。':'需要在本机重新验证。';}
-   const verificationByProvider=Object.fromEntries(['volcengine','minimax','kling','bailian','pexels','freesound','openai','volcengine_tts'].map(provider=>[provider,this.probe.verificationStatus?.(provider)??{available:this.networkAvailable,detail:this.networkAvailable?'可测试连接。':'在线验证未启用。'}]));
+   const verificationByProvider=Object.fromEntries(['volcengine','minimax','kling','bailian','pexels','freesound','openai','deepseek','volcengine_tts'].map(provider=>[provider,this.probe.verificationStatus?.(provider)??{available:this.networkAvailable,detail:this.networkAvailable?'可测试连接。':'在线验证未启用。'}]));
    const enabledModels=Object.fromEntries((await client.query('SELECT connection_id,enabled_models FROM local_identity.connection_model_settings')).rows.map(r=>[r.connection_id,r.enabled_models]));
-   return {serviceCatalog:buildProductionServiceCatalog({connections,versions:localVersions,externalReady,executionByProvider,executionIssues,enabledModels}),connections,versions:localVersions,pending,capabilities:{billing:this.store.mode==='keychain',secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
+   return {serviceCatalog:buildProductionServiceCatalog({connections,versions:localVersions,externalReady,executionByProvider,executionByAdapter,executionIssues,enabledModels}),connections,versions:localVersions,pending,capabilities:{billing:this.store.mode==='keychain',secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
   });
  }
  async command(session:OwnerSession,body:Record<string,unknown>){

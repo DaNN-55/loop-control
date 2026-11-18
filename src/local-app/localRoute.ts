@@ -1,3 +1,4 @@
+import {readScriptStudio} from './scriptStudioConfirmation.js';
 import {LocalRecycleBin} from './recycleBin.js';
 import {ProductionScriptError} from '../reviews/productionScript.js';
 import {readCommandReceipt} from './commandReceipt.js';
@@ -212,6 +213,21 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
      send(200,await connections.models.command(session,body));return;
     }
     send(405,{error:'模型设置请求方法无效。'});return;
+   }
+   if(url.pathname==='/api/local/script-format'){send(410,{error:'格式修改建议入口已退役，请使用分镜识别。'});return;}
+   if(url.pathname==='/api/local/script-studio'){
+    if(request.method==='GET'){
+     if([...url.searchParams.keys()].some(k=>!['episodeId','scriptRevisionId'].includes(k))||url.searchParams.getAll('episodeId').length!==1||url.searchParams.getAll('scriptRevisionId').length!==1)throw new ConfigurationError(400,'脚本查询无效。');
+     send(200,await readScriptStudio(options.pool,options.mediaRoot,session.id,url.searchParams.get('episodeId')??'',url.searchParams.get('scriptRevisionId')??''));return;
+    }
+    if(request.method!=='POST'||url.search)throw new ConfigurationError(405,'拍法设计需要 POST。');
+    let body;try{body=await readBody(request,128*1024);}catch{throw new ConfigurationError(400,'拍法请求格式无效或超过上限。');}
+    send(200,await connections.scriptStudio.command(session,body));return;
+   }
+   if(url.pathname==='/api/local/script-recognition'){
+    if(request.method!=='POST'||url.search){send(405,{error:'脚本分镜识别需要 POST。'});return;}
+    let body;try{body=await readBody(request,128*1024);}catch{send(400,{error:'脚本分镜识别请求无效或超过上限。'});return;}
+    send(200,await connections.scriptFormat.command(session,body));return;
    }
    if(url.pathname==='/api/local/speech-sample'){
     if(request.method!=='POST'||url.search){send(405,{error:'样音请求需要 POST。'});return;}

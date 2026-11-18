@@ -1,4 +1,4 @@
-import {render,screen,fireEvent,cleanup,waitFor,within} from '@testing-library/react';
+import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,it,expect,vi} from 'vitest';
 import {WorkspaceScriptPanel} from './WorkspaceScriptPanel';
@@ -10,18 +10,13 @@ import {taskTypeLabel} from '../observability/TaskProgressPanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
 const workspace={id:'second-batch',episodeId:'e',revision:1,project:{sha256:'h'},clips:[{id:'clip',itemId:'visual',shotId:'shot-1',text:'镜头'}],visualCandidates:[],audio:{mix:{voices:[],sounds:[]},preparations:[]}} as unknown as ProductionWorkspace;
 afterEach(()=>{cleanup();localStorage.clear();sessionStorage.clear();vi.unstubAllGlobals();});
-it('accepts plain prose and previews its exact paragraph subtitles before registering a valid script',async()=>{
- const command=vi.fn(async(_name:string,_data:unknown)=>({id:'script'}));render(<WorkspaceScriptPanel episodeId="plain" scriptRevisionId={null} script="" stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);
- fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'雨停了。\n\n街角亮着灯。'}});
- fireEvent.click(screen.getByText(/镜头与字幕预览/));expect(screen.getByRole('region',{name:'镜头与字幕预览'}).textContent).toContain('雨停了。');expect(command).not.toHaveBeenCalled();
- fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('start',{episodeId:'plain'}));
- const input=command.mock.calls.find(([name])=>name==='importMaterial')![1] as any;
- expect(new TextDecoder().decode(Uint8Array.from(atob(input.contentBase64),(c)=>c.charCodeAt(0)))).toBe('# 主脚本\n\n## 正文\n\n雨停了。\n\n街角亮着灯。\n');
+it('accepts plain prose directly while preserving the exact original and leaving AI proposals absent',async()=>{
+ const source='雨停了。\n\n街角亮着灯。',command=vi.fn(async(_name:string,_data:unknown)=>({id:'script'})),network=vi.fn();vi.stubGlobal('fetch',network);render(<WorkspaceScriptPanel episodeId="plain" scriptRevisionId={null} script="" stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);
+ fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:source}});expect(screen.queryByRole('region',{name:'推荐拍法'})).toBeNull();expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'继续制作'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('start',{episodeId:'plain'}));expect(command).toHaveBeenCalledWith('confirmScriptStudio',{episodeId:'plain',expectedScriptRevisionId:null,text:source,targetDuration:null,reason:''});expect(network).not.toHaveBeenCalled();
 });
-it('structured script preview separates narration and visual instructions before submitting',()=>{
- const script='# 夜景\n## 制作设置\n- 模板版本：3\n## 正文\n### 段落 01\n- 口播：街角亮着灯。\n- 画面来源：视频\n- 视频提示词：镜头缓慢推进。';
- render(<WorkspaceScriptPanel episodeId="v3" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={vi.fn()} onConfirmed={()=>{}}/>);
- fireEvent.click(screen.getByText(/镜头与字幕预览/));const preview=within(screen.getByRole('region',{name:'镜头与字幕预览'}));expect(preview.getByText('街角亮着灯。')).toBeTruthy();expect(preview.getByText('镜头缓慢推进。')).toBeTruthy();
+it('preserves explicit narration and visual instructions in a complete script when continuing directly',async()=>{
+ const script='# 夜景\n## 制作设置\n- 模板版本：3\n## 正文\n### 段落 01\n- 口播：街角亮着灯。\n- 画面来源：视频\n- 视频提示词：镜头缓慢推进。',command=vi.fn(async()=>({id:'script'})),network=vi.fn();vi.stubGlobal('fetch',network);
+ render(<WorkspaceScriptPanel episodeId="v3" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value',script);expect(screen.queryByRole('region',{name:'推荐拍法'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'继续制作'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('confirmScriptStudio',expect.objectContaining({text:script})));expect(network).not.toHaveBeenCalled();
 });
 it('first model selection uses the chosen model defaults including its required audio',async()=>{
  const choice=registeredAdapters.productionChoices().find(c=>c.capability==='video'&&c.provider==='bailian')!;
@@ -62,10 +57,9 @@ it('keeps custom settings when changing an existing video choice until explicit 
  await userEvent.click(screen.getByRole('button',{name:'关闭视频规格'}));await userEvent.click(screen.getByRole('button',{name:'按此模型恢复默认参数'}));
  await waitFor(()=>expect(JSON.parse(sessionStorage.getItem('loop-visual-draft:second-batch:visual')!).videoSettings).toEqual(defaultWanModelSettings('wan2.6-i2v')));
 });
-it('blocks malformed structured input before material registration and leaves the original text intact',()=>{
- const script='# 夜景\n## 制作设置\n- 模板版本：2\n## 正文\n### 段落 01\n- 画面提示：这段不是字幕。',command=vi.fn();
- render(<WorkspaceScriptPanel episodeId="bad-v2" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);
- fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));expect(screen.getByRole('alert').textContent).toContain('缺少口播');expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe(script);expect(command).not.toHaveBeenCalled();
+it('continues an incomplete structured original without a format barrier or automatic model call',async()=>{
+ const script='# 夜景\n## 制作设置\n- 模板版本：2\n## 正文\n### 段落 01\n- 画面提示：这段不是字幕。',command=vi.fn(async()=>({id:'script'})),network=vi.fn();vi.stubGlobal('fetch',network);
+ render(<WorkspaceScriptPanel episodeId="bad-v2" scriptRevisionId={null} script={script} stage="waiting_input" readOnly={false} pending={false} command={command} onConfirmed={()=>{}}/>);fireEvent.click(screen.getByRole('button',{name:'继续制作'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('start',{episodeId:'bad-v2'}));expect(command).toHaveBeenCalledWith('confirmScriptStudio',expect.objectContaining({text:script,reason:''}));expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value',script);expect(screen.queryByRole('alert')).toBeNull();expect(network).not.toHaveBeenCalled();
 });
 it('keeps a prepared local candidate available for audition without offering duplicate preparation',()=>{
  sessionStorage.setItem('loop-audio-draft-v2:second-batch:episode-music',JSON.stringify({kind:'bgm',inputMode:'upload',manual:'music',duration:1,description:'本地音乐',query:'',offset:0,anchor:'absolute',shot:''}));

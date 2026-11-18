@@ -1,0 +1,28 @@
+import {cleanup,render,screen,fireEvent,within,waitFor,act} from '@testing-library/react';
+import {afterEach,expect,it,vi} from 'vitest';
+import type {ScriptStudioPlan} from '../scriptStudio';
+const {request,modelCommand}=vi.hoisted(()=>({request:vi.fn(),modelCommand:vi.fn()}));
+vi.mock('./client',()=>({localRequest:request,localCommand:modelCommand}));
+import {WorkspaceScriptPanel} from './WorkspaceScriptPanel';
+const source='# 雨后\n\n## 旁白脚本\n\n雨停了，慢一点回家。\n\n路灯还亮着。';
+const plan:ScriptStudioPlan={title:'雨后',durationSeconds:15,summary:'连续场景保持一镜到底，用缓慢前移交代街角。',sourceUse:'原文按口播描述处理。',settings:[],narrationEnabled:true,captionsEnabled:true,shots:[{title:'雨后街角',durationSeconds:15,narration:'雨停了，慢一点回家。路灯还亮着。',subtitle:null,visual:'雨后的街角，路灯仍亮着。',videoPrompt:'镜头缓慢前移。',camera:'一镜到底，缓慢前移',visualSource:'unassigned',settings:[]}],changes:[],warnings:[],canProceed:true};
+const catalog={serviceCatalog:{version:1,groups:[{capability:'language_model',services:[{id:'s',connectionVersionId:'c',connectionName:'GPT',provider:'openai',adapter:'openai_responses',models:['gpt-5.6-luna'],executable:true}]}]}};
+afterEach(()=>{cleanup();localStorage.clear();vi.clearAllMocks();});
+function panel(extra:Partial<Parameters<typeof WorkspaceScriptPanel>[0]>={}){const command=vi.fn(async(name:string)=>name==='confirmScriptStudio'?{id:'saved'}:{main_script_revision_id:'saved',stage:'script_approved'}),done=vi.fn(),props={episodeId:'episode',scriptRevisionId:null,script:source,stage:'waiting_input',readOnly:false,pending:false,command,onConfirmed:done,...extra};return{...render(<WorkspaceScriptPanel {...props}/>),command,done,props};}
+async function optimize(){request.mockResolvedValue(catalog);modelCommand.mockResolvedValue({requestId:'plan-request',status:'completed',plan});fireEvent.click(screen.getByRole('button',{name:'优化拍法'}));await screen.findByRole('button',{name:'采用并继续'});}
+it('presents one filming proposal without rewriting the original and adopts it with one approval',async()=>{
+ const{command,done}=panel();await optimize();const preview=within(screen.getByRole('region',{name:'推荐拍法'}));expect(preview.getByText(/15 秒 · 1 个镜头/)).toBeTruthy();expect(preview.getByText('口播：'+plan.shots[0].narration)).toBeTruthy();expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value',source);expect(command).not.toHaveBeenCalled();expect(screen.queryByRole('button',{name:'确认识别结果'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'采用并继续'}));await waitFor(()=>expect(done).toHaveBeenCalledWith('saved',undefined));expect(command.mock.calls.map(c=>c[0])).toEqual(['confirmScriptStudio','start']);expect(command).toHaveBeenCalledWith('confirmScriptStudio',{episodeId:'episode',expectedScriptRevisionId:null,text:source,targetDuration:null,reason:'',requestId:'plan-request'});expect(screen.queryByRole('dialog')).toBeNull();
+});
+it('invalidates the old proposal on original edits while permitting direct production of the new original',async()=>{
+ const{command,done}=panel();await optimize();const updated=source+'\n新原文';fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:updated}});expect(screen.queryByRole('region',{name:'推荐拍法'})).toBeNull();expect(screen.queryByRole('button',{name:'采用并继续'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'继续制作'}));await waitFor(()=>expect(done).toHaveBeenCalledOnce());expect(command).toHaveBeenCalledWith('confirmScriptStudio',{episodeId:'episode',expectedScriptRevisionId:null,text:updated,targetDuration:null,reason:''});
+});
+it('offers optional optimization for locally valid plain text without a format-error prerequisite',async()=>{
+ const text='人物走进咖啡馆，坐下等待朋友。';const{command}=panel({script:text});await optimize();expect(modelCommand).toHaveBeenCalledExactlyOnceWith('optimize',expect.objectContaining({episodeId:'episode',text,mode:'optimize'}),undefined,'script-studio');expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value',text);expect(command).not.toHaveBeenCalled();expect(screen.queryByText(/缺少.*标题|缺少.*正文/)).toBeNull();
+});
+it('ignores a proposal returned after switching episodes',async()=>{
+ request.mockResolvedValue(catalog);let finish!:(value:unknown)=>void;modelCommand.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));const{rerender,props}=panel();fireEvent.click(screen.getByRole('button',{name:'优化拍法'}));await waitFor(()=>expect(modelCommand).toHaveBeenCalledOnce());rerender(<WorkspaceScriptPanel {...props} episodeId="other" script="另一生产单原文"/>);await act(async()=>finish({requestId:'old-episode-plan',status:'completed',plan}));expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','另一生产单原文');expect(screen.queryByRole('button',{name:'采用并继续'})).toBeNull();
+});
+it('keeps current source blocked on metadata failure and restores its retained original only after a successful retry',async()=>{
+ request.mockRejectedValueOnce(Error('原文读取中断')).mockResolvedValueOnce({sourceText:'保留的真实原文\n第二行',targetDuration:15});const{command}=panel({scriptRevisionId:'saved',script:'内部制作模板',stage:'storyboard_approved'});await screen.findByText('原文读取中断');expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('disabled',true);fireEvent.click(screen.getByRole('button',{name:'继续制作'}));expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'重新读取原文'}));await waitFor(()=>expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','保留的真实原文\n第二行'));expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('disabled',false);expect(screen.getByRole('textbox',{name:'目标时长'})).toHaveProperty('value','15');
+});

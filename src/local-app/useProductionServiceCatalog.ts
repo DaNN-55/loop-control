@@ -1,3 +1,4 @@
+import {productionCapabilityLabels} from '../worker/registeredAdapters';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {ProductionServiceCatalog} from '../connections/serviceCatalog';
 import {videoVisualInputRoles} from '../videoVisualInputs';
@@ -35,7 +36,7 @@ function isVideoModes(value:unknown):boolean{
 function isCatalog(value:unknown):value is ProductionServiceCatalog{
  if(!value||typeof value!=='object'||!('groups' in value)||!Array.isArray(value.groups))return false;
  return value.groups.every(group=>{
-  if(!group||!['image','video','speech','music_sound'].includes(group.capability)||!Array.isArray(group.services))return false;
+  if(!group||!Object.hasOwn(productionCapabilityLabels,group.capability)||!Array.isArray(group.services))return false;
   return group.services.every((service:Record<string,unknown>|null)=>{
    if(!service||typeof service!=='object'||typeof service.id!=='string'||typeof service.provider!=='string'||typeof service.adapter!=='string'||typeof service.executable!=='boolean')return false;
    if(service.mode!==undefined&&!['generation','search','local'].includes(String(service.mode)))return false;

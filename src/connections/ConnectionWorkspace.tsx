@@ -37,8 +37,8 @@ export type ExternalConnection = Omit<Database["public"]["Tables"]["external_con
 
 export type ExternalConnectionInput = {
   name: string;
-  provider: "pexels" | "freesound" | "openai" | "volcengine_tts" | "bailian" | "volcengine" | "minimax" | "kling";
-  adapter: "pexels_video" | "freesound_preview" | "openai_images" | "volcengine_tts" | "wan_video" | "seedance_video" | "minimax_video" | "kling_video";
+  provider: "deepseek" | "pexels" | "freesound" | "openai" | "volcengine_tts" | "bailian" | "volcengine" | "minimax" | "kling";
+  adapter: "deepseek_responses" | "pexels_video" | "freesound_preview" | "openai_images" | "openai_responses" | "volcengine_tts" | "wan_video" | "seedance_video" | "minimax_video" | "kling_video";
   secret: string;
 };
 

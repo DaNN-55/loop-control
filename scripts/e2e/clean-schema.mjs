@@ -42,6 +42,9 @@ const addedMetricTables=createdMetricTables.filter(t=>!retiredMetricTables.inclu
 const addedPreparationTables=['local_identity.production_preparation_revisions','local_identity.production_shots','local_identity.production_shot_versions'];
 const declaredPreparationTables=[...catalog.current.find(f=>f.version==='187-independent-production-preparation.sql').body.matchAll(/^CREATE TABLE (local_identity\.production_[a-z_]+) \(/gm)].map(m=>m[1]);
 if(!isDeepStrictEqual([...declaredPreparationTables].sort(),[...addedPreparationTables].sort()))throw Error('Unexpected independent preparation table inventory');
+const addedScriptFormatTables=['local_identity.script_format_requests','local_identity.script_recognition_confirmations'];
+const declaredScriptFormatTables=[...catalog.current.filter(f=>/^20[78]-/.test(f.version)).map(f=>f.body).join('\n').matchAll(/^CREATE TABLE (local_identity\.[a-z_]+) \(/gm)].map(m=>m[1]);
+if(!isDeepStrictEqual(declaredScriptFormatTables,addedScriptFormatTables))throw Error('Unexpected script format request table inventory');
 const addedExportResourceTables=['local_identity.production_metric_export_resources'];
 const declaredExportResourceTables=[...catalog.current.find(f=>f.version.startsWith('195-')).body.matchAll(/^CREATE TABLE (local_identity\.[a-z_]+) \(/gm)].map(m=>m[1]);
 if(!isDeepStrictEqual(declaredExportResourceTables,addedExportResourceTables))throw Error('Unexpected local export observation table inventory');
@@ -54,7 +57,7 @@ if(!isDeepStrictEqual(declaredNarrationTables,addedNarrationTables))throw Error(
 const rowsPreserved=(before,after)=>{
  const original=normalizeRows(before),next=normalizeRows(after),extra=Object.keys(next).filter(k=>!Object.hasOwn(original,k)).sort();
  return Object.entries(original).every(([k,v])=>isDeepStrictEqual(v,next[k]))
-  &&isDeepStrictEqual(extra,[...addedMetricTables,...addedPreparationTables,...addedCaptionTables,...addedNarrationTables,...addedExportResourceTables].filter(k=>!Object.hasOwn(original,k)).sort())
+  &&isDeepStrictEqual(extra,[...addedMetricTables,...addedPreparationTables,...addedCaptionTables,...addedNarrationTables,...addedExportResourceTables,...addedScriptFormatTables].filter(k=>!Object.hasOwn(original,k)).sort())
   &&extra.every(k=>next[k].rows===0);
 };
 const sequencesPreserved=(before,after)=>{

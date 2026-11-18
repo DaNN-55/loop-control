@@ -8,22 +8,22 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 
 it('keeps an existing source choice after confirming the script instead of implicitly preparing a new workspace',async()=>{
  const command=vi.fn(async(name:string)=>{if(name==='start')return{stage:'script_approved',main_script_revision_id:script};throw Error('未选择来源，不应建立新工程');});
- vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).includes('/workspace')?Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:[{id:'saved-plan',label:'原保存计划',summary:'原镜头输入与候选',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}):new Response('# 主脚本\n\n## 正文\n保留原计划正文。')));
+ vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).startsWith('/api/local/script-studio?')?Response.json({sourceText:'# 主脚本\n\n## 正文\n保留原计划正文。',targetDuration:null}):String(input).includes('/workspace')?Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:[{id:'saved-plan',label:'原保存计划',summary:'原镜头输入与候选',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}):new Response('# 主脚本\n\n## 正文\n保留原计划正文。')));
  render(<ProductionWorkspacePanel episodeId={episode} title="等待选择原来源" stage="waiting_input" scriptRevisionId={script} materials={[{id:script,material_type:'script',source_path:'main.md',storage_path:'main.md',is_main_script:true}]} command={command} onLegacy={()=>{}}/>);
- await waitFor(()=>expect((screen.getByRole('button',{name:'确认脚本'}) as HTMLButtonElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));
+ await waitFor(()=>expect((screen.getByRole('button',{name:'继续制作'}) as HTMLButtonElement).disabled).toBe(false));fireEvent.click(screen.getByRole('button',{name:'继续制作'}));
  await screen.findByRole('combobox',{name:'接入来源'});expect(command.mock.calls.map(call=>call[0])).toEqual(['start']);
 });
 
 it('waits for an explicit saved-plan source choice instead of automatically preparing over it',async()=>{
  const command=vi.fn().mockRejectedValue(new Error('原计划保留，等待核对'));
- vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).includes('/workspace')?Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:[{id:'saved-plan',label:'原保存计划',summary:'导入原镜头输入与素材候选，仍需明确采用。',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}):new Response('# 主脚本\n\n## 正文\n保留原计划正文。')));
+ vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).startsWith('/api/local/script-studio?')?Response.json({sourceText:'# 主脚本\n\n## 正文\n保留原计划正文。',targetDuration:null}):String(input).includes('/workspace')?Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:[{id:'saved-plan',label:'原保存计划',summary:'导入原镜头输入与素材候选，仍需明确采用。',source:{kind:'saved-plan',expectedPlanSha256:'f'.repeat(64)}}]}}):new Response('# 主脚本\n\n## 正文\n保留原计划正文。')));
  render(<ProductionWorkspacePanel episodeId={episode} title="只有保存计划的旧作品" stage="script_approved" scriptRevisionId={script} materials={[{id:script,material_type:'script',source_path:'main.md',storage_path:'main.md',is_main_script:true}]} command={command} onLegacy={()=>{}}/>);
  const choice=await screen.findByRole('combobox',{name:'接入来源'});expect(screen.queryByRole('heading',{name:'分镜台'})).toBeNull();expect(command).not.toHaveBeenCalled();fireEvent.change(choice,{target:{value:'saved-plan'}});expect(command).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'接入当前制作'}));await waitFor(()=>expect(command).toHaveBeenCalledExactlyOnceWith('adoptLegacyPlan',{episodeId:episode,expectedScriptRevisionId:script,expectedPlanSha256:'f'.repeat(64)}));expect(await screen.findByText('原计划保留，等待核对')).toBeTruthy();
 });
 function mount(snapshot:EpisodeProductionSnapshot|undefined,stage='qc_review'){
  const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>{
- const path=String(input);if(path.includes('/legacy-project'))return Response.json({project:null});
+ const path=String(input);if(path.startsWith('/api/local/script-studio?'))return Response.json({sourceText:'# 已有主脚本\n\n## 正文\n保留的脚本正文',targetDuration:null});if(path.includes('/legacy-project'))return Response.json({project:null});
  if(path.includes('workspace')){const project=snapshot?.artifacts.find(a=>['review_render_project','final_render_project'].includes(a.artifact_type));return Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:script,options:project?[{id:project.id,label:'原剪辑工程',summary:'接入时核验原工程',source:{kind:'rendered-project',reviewPackageId:'board',artifactId:project.id,expectedSourceSha256:project.sha256}}]:[]}});}
  if(path.includes('main.md'))return new Response('# 已有主脚本\n\n## 正文\n保留的脚本正文');
  if(path.includes('/local-artifact-preview'))return Response.json({url:'/_local-artifact?ticket=test'});
@@ -35,7 +35,7 @@ function mount(snapshot:EpisodeProductionSnapshot|undefined,stage='qc_review'){
 }
 it('shows distinct existing content at all four steps without preparing or recreating an order',async()=>{
  const command=mount(legacySnapshot);fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));await screen.findAllByText('已有分镜正文');expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));await waitFor(()=>expect(screen.getByRole('document',{name:'主脚本预览'}).textContent).toContain('保留的脚本正文'));
+ fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));await waitFor(()=>expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','# 已有主脚本\n\n## 正文\n保留的脚本正文'));
  fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));await screen.findByRole('heading',{name:'已有剪辑工程'});expect(screen.getByRole('link',{name:'下载工程 project.json'})).toBeTruthy();expect(screen.queryByText('已有分镜正文')).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'已有审核成片'});expect(screen.getByText('原片分辨率通过')).toBeTruthy();expect(screen.getByRole('link',{name:'下载审核成片'})).toBeTruthy();
  expect(command).not.toHaveBeenCalled();

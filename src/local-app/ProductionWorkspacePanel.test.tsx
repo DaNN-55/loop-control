@@ -206,13 +206,13 @@ it('automatically prepares the persisted storyboard draft',async()=>{
 it('shows the four-step shell on a new episode without mounting old workflow actions',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByRole('navigation',{name:'四步制作步骤'});expect(screen.getByRole('textbox',{name:'主脚本'})).toBeTruthy();expect(screen.queryByRole('button',{name:'旧分镜批准'})).toBeNull();
+ await screen.findByRole('navigation',{name:'四步制作步骤'});expect(screen.getByRole('textbox',{name:'脚本正文'})).toBeTruthy();expect(screen.queryByRole('button',{name:'旧分镜批准'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));expect(command).not.toHaveBeenCalled();expect(screen.getByText('请先确认脚本。')).toBeTruthy();
 });
 it('keeps an unsaved script draft while navigating read-only steps',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
  render(<ProductionWorkspacePanel episodeId="fresh" title="新单" stage="waiting_input" scriptRevisionId={null} materials={[]} command={vi.fn()} onLegacy={()=>{}}/>);
- await screen.findByRole('textbox',{name:'主脚本'});fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'未提交的脚本草稿'}});fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('textbox',{name:'主脚本'}) as HTMLTextAreaElement).value).toBe('未提交的脚本草稿');
+ await screen.findByRole('textbox',{name:'脚本正文'});fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:'未提交的脚本草稿'}});fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('textbox',{name:'脚本正文'}) as HTMLTextAreaElement).value).toBe('未提交的脚本草稿');
 });
 it('requires an explicit recovery choice before replacing a legacy working edit',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'s',options:[]}}),{status:200,headers:{'Content-Type':'application/json'}})));
@@ -294,15 +294,15 @@ it('keeps project history out of the four-step interface without changing record
 
 it('keeps a revised pending script on step one while preserving the stale saved project',async()=>{
  const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:{...workspace,nativeEditRevision:2,stale:true}})));render(<ProductionWorkspacePanel episodeId="e" title="待确认修订" scriptRevisionId="new" stage="waiting_input" materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByText('脚本修改待确认，原工程已暂停编辑。请先确认脚本，原工程与素材均已保留。');expect(screen.getByRole('button',{name:/^脚本确认/}).getAttribute('aria-current')).toBe('page');expect(screen.getByRole('textbox',{name:'主脚本'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
+ await screen.findByText('脚本修改待确认，原工程已暂停编辑。请先确认脚本，原工程与素材均已保留。');expect(screen.getByRole('button',{name:/^脚本确认/}).getAttribute('aria-current')).toBe('page');expect(screen.getByRole('textbox',{name:'脚本正文'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
 });
 
-it('reuses the saved script revision when continuing an existing workspace without a second reason',async()=>{
- const changed={...workspace,scriptRevisionId:'script-new',revision:2};const command=vi.fn(async(name:string)=>name==='reconfirmScript'?{id:'script-new'}:name==='replanWorkspace'?changed:{});
- vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).includes('_local-artifact')?new Response('原脚本'):Response.json({workspace})));
+it('reuses the saved script revision when continuing an existing workspace without requiring a second note',async()=>{
+ const changed={...workspace,scriptRevisionId:'script-new',revision:2};const command=vi.fn(async(name:string)=>name==='confirmScriptStudio'?{id:'script-new'}:name==='replanWorkspace'?changed:{});
+ vi.stubGlobal('fetch',vi.fn(async(input:unknown)=>String(input).startsWith('/api/local/script-studio?')?Response.json({sourceText:'原脚本',targetDuration:null}):String(input).includes('_local-artifact')?new Response('原脚本'):Response.json({workspace})));
  render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[{id:'s',material_type:'script',source_path:'script.md',storage_path:'script.md',is_main_script:true}]} command={command} onLegacy={()=>{}}/>);
- await screen.findByText('第一镜');fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));await screen.findByRole('document',{name:'主脚本预览'});fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));fireEvent.change(screen.getByRole('textbox',{name:'主脚本'}),{target:{value:'调整后的脚本'}});fireEvent.change(screen.getByRole('textbox',{name:'脚本修订原因'}),{target:{value:'调整叙事顺序'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本修订'}));fireEvent.click(screen.getByRole('button',{name:'确认保存修订'}));
- await waitFor(()=>expect(command).toHaveBeenCalledWith('replanWorkspace',{episodeId:'e',workspaceId:'w',expectedRevision:1,expectedScriptRevisionId:'script-new',reason:'调整叙事顺序'}));expect(screen.queryByRole('textbox',{name:'重规划原因'})).toBeNull();expect(command).toHaveBeenCalledWith('reconfirmScript',expect.objectContaining({reason:'调整叙事顺序'}));
+ await screen.findByText('第一镜');fireEvent.click(screen.getByRole('button',{name:/^脚本确认/}));const input=await screen.findByRole('textbox',{name:'脚本正文'});await waitFor(()=>expect(input).toHaveProperty('disabled',false));fireEvent.change(input,{target:{value:'调整后的脚本'}});fireEvent.click(screen.getByText('历史',{selector:'summary'}));fireEvent.change(screen.getByRole('textbox',{name:'修订备注（选填）'}),{target:{value:'调整叙事顺序'}});fireEvent.click(screen.getByRole('button',{name:'继续制作'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('replanWorkspace',{episodeId:'e',workspaceId:'w',expectedRevision:1,expectedScriptRevisionId:'script-new',reason:'调整叙事顺序'}));expect(screen.queryByRole('textbox',{name:'重规划原因'})).toBeNull();expect(command).toHaveBeenCalledWith('confirmScriptStudio',expect.objectContaining({expectedScriptRevisionId:'s',text:'调整后的脚本',reason:'调整叙事顺序'}));expect(screen.queryByRole('dialog')).toBeNull();
 });
 
 it('blocks entering the editor until every shot has an adopted readable visual',async()=>{vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);await screen.findByText('第一镜');fireEvent.click(screen.getByRole('button',{name:/^剪辑工作台/}));expect(await screen.findByText('请先为每个镜头采用可用的图片或视频，再进入剪辑工作台。')).toBeTruthy();expect(command).not.toHaveBeenCalled();expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();});
@@ -370,9 +370,9 @@ it('saves optional sound intent only on request and restores the right text when
  fireEvent.click(await screen.findByRole('tab',{name:'配乐与声音'}));fireEvent.click(screen.getByRole('button',{name:'音效'}));expect(await screen.findByRole('textbox',{name:'音效意图或检索词'})).toHaveProperty('value','开门时一声轻响');expect(command).toHaveBeenCalledTimes(1);
 });
 
-it('keeps revision editing unavailable until the actual script baseline has loaded',async()=>{
- let resolveScript!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')?new Promise<Response>(resolve=>{resolveScript=resolve;}):Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'baseline-script',options:[]}})));
- render(<ProductionWorkspacePanel episodeId="baseline-e" title="脚本读取" scriptRevisionId="baseline-script" stage="script_approved" materials={[{id:'baseline-script',material_type:'script',source_path:'script.md',storage_path:'script.md',is_main_script:true}]} command={vi.fn()} onLegacy={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^脚本确认/}));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(true);await act(async()=>resolveScript(new Response('实际服务器正文')));expect((screen.getByRole('button',{name:'修改脚本'}) as HTMLButtonElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'修改脚本'}));expect((screen.getByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('实际服务器正文');
+it('keeps revision editing unavailable until the actual script baseline and retained original have loaded',async()=>{
+ let resolveScript!:(response:Response)=>void,resolveOriginal!:(response:Response)=>void;vi.stubGlobal('fetch',vi.fn(async(path:string)=>path.startsWith('/_local-artifact')?new Promise<Response>(resolve=>{resolveScript=resolve;}):path.startsWith('/api/local/script-studio?')?new Promise<Response>(resolve=>{resolveOriginal=resolve;}):Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'baseline-script',options:[]}})));
+ render(<ProductionWorkspacePanel episodeId="baseline-e" title="脚本读取" scriptRevisionId="baseline-script" stage="script_approved" materials={[{id:'baseline-script',material_type:'script',source_path:'script.md',storage_path:'script.md',is_main_script:true}]} command={vi.fn()} onLegacy={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^脚本确认/}));const input=screen.getByRole('textbox',{name:'脚本正文'});expect(input).toHaveProperty('disabled',true);await act(async()=>resolveScript(new Response('内部制作正文')));expect(input).toHaveProperty('disabled',true);await act(async()=>resolveOriginal(Response.json({sourceText:'实际服务器原文',targetDuration:15})));await waitFor(()=>expect(input).toHaveProperty('disabled',false));expect(input).toHaveProperty('value','实际服务器原文');
 });
 
 it('prepares the workspace automatically for a confirmed v3 script without showing the general importer',async()=>{
@@ -418,12 +418,13 @@ it('keeps a visual upload failure in transient feedback and recovery instead of 
 
 it('keeps script confirmation mounted while its saved version refreshes the real workspace parent',async()=>{
  const {useState}=await import('react');let reads=0,resolveRefresh!:(response:Response)=>void;
- vi.stubGlobal('fetch',vi.fn(async()=>{if(++reads===1)return Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
- function Host(){const[id,setId]=useState<string|null>(null);return <ProductionWorkspacePanel episodeId="phase-e" title="脚本分步" scriptRevisionId={id} stage="waiting_input" materials={[]} onLegacy={()=>{}} command={async name=>{if(name==='importMaterial'){setId('saved');return{id:'saved'};}throw Error('启动中断');}}/>;}
- render(<Host/>);await screen.findByRole('button',{name:'确认脚本'});fireEvent.change(screen.getByLabelText('主脚本'),{target:{value:'保留本次正文'}});fireEvent.click(screen.getByRole('button',{name:'确认脚本'}));await waitFor(()=>expect(reads).toBe(2));
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.startsWith('/api/local/script-studio?'))return Response.json({sourceText:'保留本次正文',targetDuration:null});if(!path.endsWith('/workspace'))throw Error('Unexpected read: '+path);if(++reads===1)return Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:null,options:[]}});return new Promise<Response>(resolve=>{resolveRefresh=resolve;});}));
+ function Host(){const[id,setId]=useState<string|null>(null);return <ProductionWorkspacePanel episodeId="phase-e" title="脚本分步" scriptRevisionId={id} stage="waiting_input" materials={[]} onLegacy={()=>{}} command={async name=>{if(name==='confirmScriptStudio'){setId('saved');return{id:'saved'};}throw Error('启动中断');}}/>;}
+ render(<Host/>);await screen.findByRole('button',{name:'继续制作'});fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:'保留本次正文'}});fireEvent.click(screen.getByRole('button',{name:'继续制作'}));await waitFor(()=>expect(reads).toBe(2));
  await act(async()=>resolveRefresh(Response.json({workspace:null,sourceOptions:{version:'workspace-source-options/v1',scriptRevisionId:'saved',options:[]}})));
- expect((await screen.findByLabelText('主脚本') as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
+ expect((await screen.findByRole('textbox',{name:'脚本正文'}) as HTMLTextAreaElement).value).toBe('保留本次正文');expect(await screen.findByRole('button',{name:'继续启动'})).toBeTruthy();
 });
+
 it('retries only unfinished shelf files and preserves successful import receipts',async()=>{
  const current={...workspace,id:'shelf-retry-workspace',episodeId:'shelf-retry'};let failure=true;
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:current})));

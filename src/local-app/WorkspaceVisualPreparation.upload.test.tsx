@@ -99,6 +99,7 @@ it('候选已登记但响应丢失时，重试核对现有候选，不重复导�
  const fixture=setup();fixture.loseRegistrationResponse=true;render(<fixture.View/>);
  choose([image('response-lost.png')]);
  await waitFor(()=>expect(uploadResults().textContent).toContain('连接中断，候选结果尚未确认'));
+ await waitFor(()=>expect(screen.getByRole('button',{name:'重试未完成项'}).hasAttribute('disabled')).toBe(false));
  fireEvent.click(screen.getByRole('button',{name:'重试未完成项'}));
  await waitFor(()=>expect(screen.getAllByRole('button',{name:/预览图片候选/})).toHaveLength(1));
  expect(fixture.imports).toEqual(['response-lost.png']);expect(fixture.registrations).toEqual(['response-lost.png']);

@@ -6,7 +6,7 @@ it.skipIf(!process.env.LOOP_TEST_CONTEXT_MODULE)('exposes registered service gro
  try{
   expect((await f.request(undefined,'')).status).toBe(401);
   const empty=await f.request();expect(empty.status).toBe(200);
-  expect(empty.body.serviceCatalog.groups.map((g:{capability:string})=>g.capability)).toEqual(['image','video','speech','music_sound']);
+  expect(empty.body.serviceCatalog.groups.map((g:{capability:string})=>g.capability)).toEqual(['image','video','speech','music_sound','language_model']);
   const image=()=>f.request().then(r=>r.body.serviceCatalog.groups.find((g:{capability:string})=>g.capability==='image').services);
   expect((await image())[0]).toMatchObject({provider:'openai',adapter:'openai_images',models:expect.arrayContaining(['gpt-image-2']),inputModes:['text','reference_images'],executable:false,unavailableReason:'尚未添加连接。'});
   const created=await f.command('create',{name:'Studio images',provider:'openai',adapter:'openai_images',secret:'synthetic-openai-key'});expect(created.status).toBe(200);
