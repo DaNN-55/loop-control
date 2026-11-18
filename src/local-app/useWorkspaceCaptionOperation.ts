@@ -85,7 +85,7 @@ export function useWorkspaceCaptionOperation(options:Options){
    }
    if(!attempt.data){
     attempt.data={episodeId:attempt.base.episodeId,workspaceId:attempt.base.id,expectedRevision:attempt.base.revision,clipId:options.clipId,
-     ...(attempt.name==='saveWorkspaceCaptions'?{captionContract:attempt.native??attempt.requested}:attempt.name==='requestWorkspaceCaptionAlignment'?{}:{expectedInputFingerprint:attempt.inputFingerprint}),
+     ...(attempt.name==='saveWorkspaceCaptions'?{captionContract:attempt.native??attempt.requested,...(attempt.inputFingerprint?{expectedInputFingerprint:attempt.inputFingerprint}:{})}:attempt.name==='requestWorkspaceCaptionAlignment'?{}:{expectedInputFingerprint:attempt.inputFingerprint}),
      ...(current.bridge&&['saveWorkspaceCaptions','applyWorkspaceCaptionAlignment'].includes(attempt.name)?{nativeApplied:true}:{}),...attempt.extra};
    }
    const result=await current.command(attempt.name,attempt.data) as ProductionWorkspace|{workspace:ProductionWorkspace};check();

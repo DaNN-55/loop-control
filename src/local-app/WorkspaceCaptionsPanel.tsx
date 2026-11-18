@@ -1,3 +1,4 @@
+import {WorkspaceCaptionPreparation} from './WorkspaceCaptionQuickEditor';
 import {uiText} from '../i18n/ui';
 import {useEffect,useRef,useState} from 'react';
 import {Trash2} from 'lucide-react';
@@ -10,7 +11,9 @@ import type {EmbeddedStudioBridge} from './EmbeddedStudioHost';
 import './workspace-captions.css';
 import {useWorkspaceCaptionOperation} from './useWorkspaceCaptionOperation';
 const timingLabels={get missing(){return uiText("待校时");},get current(){return uiText("时序有效");},get stale(){return uiText("时序已过期");},get waiting(){return uiText("对齐处理中");},get failed(){return uiText("对齐失败");}};
-export function WorkspaceCaptionsPanel({workspace,command,onChange,bridge,readOnly=false,alignmentOnly=false,selectedShotId,isDisabled=false}:{workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(workspace:ProductionWorkspace)=>void;bridge?:EmbeddedStudioBridge;readOnly?:boolean;alignmentOnly?:boolean;selectedShotId?:string;isDisabled?:boolean}){
+interface Props {workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(workspace:ProductionWorkspace)=>void;bridge?:EmbeddedStudioBridge;readOnly?:boolean;alignmentOnly?:boolean;selectedShotId?:string;isDisabled?:boolean}
+export function WorkspaceCaptionsPanel(props:Props){return props.alignmentOnly&&!props.readOnly?<WorkspaceCaptionPreparation key={props.workspace.id+':'+(props.selectedShotId??props.workspace.clips[0]?.shotId)} {...props}/>:<WorkspaceCaptionEditor {...props}/>;}
+function WorkspaceCaptionEditor({workspace,command,onChange,bridge,readOnly=false,alignmentOnly=false,selectedShotId,isDisabled=false}:Props){
  const [selection,setClipId]=useState(workspace.clips[0]?.id??''),[contract,setContract]=useState<ShotCaptionContract>(()=>workspace.captions?.[0]?.contract??defaultShotCaptionContract('','independent')),[error,setError]=useState(''),[dirty,setDirty]=useState(false);
  const clipId=selectedShotId===undefined?selection:workspace.clips.find(clip=>clip.shotId===selectedShotId)?.id??'';
  useEffect(()=>{if(!bridge?.selectedShotId)return;const selected=workspace.clips.find(c=>c.shotId===bridge.selectedShotId);if(selected)setClipId(selected.id);},[bridge?.selectedShotId]);
