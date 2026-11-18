@@ -91,3 +91,11 @@ it('confirms shot deletion without calling a model, retains the source and adopt
 it('keeps the deletion confirmation and old plan after a failed request',async()=>{
  request.mockResolvedValue(catalog);modelCommand.mockResolvedValueOnce({requestId:'base',status:'completed',plan}).mockRejectedValueOnce(Error('删除未完成'));const{command}=panel();fireEvent.click(screen.getByRole('button',{name:'优化拍法'}));await screen.findByRole('button',{name:'采用并继续'});fireEvent.click(screen.getByRole('button',{name:'第 1 个镜头操作'}));fireEvent.click(screen.getByRole('menuitem',{name:'删除镜头'}));fireEvent.click(screen.getByRole('button',{name:'删除镜头'}));await screen.findByText('删除未完成');expect(screen.getByRole('dialog',{name:'删除镜头'})).toBeTruthy();expect(screen.getByRole('button',{name:'采用并继续'})).toHaveProperty('disabled',true);expect(command).not.toHaveBeenCalled();
 });
+
+it('places the accessible upload icon in the source header and keeps the native script import path',async()=>{
+ request.mockResolvedValue(catalog);const{container,command}=panel(),upload=screen.getByRole('button',{name:'上传脚本'}),input=screen.getByLabelText('导入主脚本文件');
+ expect(container.querySelector('.script-studio-input-heading')?.contains(upload)).toBe(true);expect(screen.getByRole('toolbar',{name:'脚本工具'}).contains(upload)).toBe(false);expect(upload.textContent).toBe('');
+ const click=vi.spyOn(input,'click');fireEvent.click(upload);expect(click).toHaveBeenCalledOnce();
+ const file=new File(['# 导入正文'],'scene.md',{type:'text/markdown'});Object.defineProperty(file,'text',{value:async()=>'# 导入正文'});fireEvent.change(input,{target:{files:[file]}});
+ await waitFor(()=>expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','# 导入正文'));expect(command).not.toHaveBeenCalled();expect(modelCommand).not.toHaveBeenCalled();
+});

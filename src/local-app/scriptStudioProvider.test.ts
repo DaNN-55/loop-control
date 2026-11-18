@@ -133,3 +133,28 @@ it('sends PDF as actual native input_file and text documents as bounded untruste
  expect(()=>scriptStudioRequest({...input,provider:'deepseek',model:'deepseek-flash',attachments:[pdf]})).toThrow(/PDF/);
  expect(()=>scriptStudioRequest({...input,provider:'deepseek',model:'deepseek-v4-pro',attachments:[text]})).not.toThrow();
 });
+
+it('answers unrestricted questions in free conversation while leaving plan generation constrained',async()=>{
+ const {createScriptStudioDiscussionReader}=await import('./scriptStudioProvider');
+ const instruction='解释0.1+0.2为什么不等于0.3，不需要联系视频拍摄。';
+ const request=scriptStudioDiscussionRequest({...input,instruction});
+ expect(request.body.instructions).toContain('自由交流');expect(request.body.instructions).toContain('不局限于视频拍法');
+ expect(request.body.instructions).not.toContain('你是视频拍法讨论助手');
+ const content=request.body.input[0].content;expect(typeof content).toBe('string');if(typeof content!=='string')throw Error('Expected text content');
+ expect(JSON.parse(content)).toMatchObject({mode:'discuss',instruction,source,targetDuration:15});
+ const reply=await createScriptStudioDiscussionReader(async()=>response({reply:'这是二进制浮点表示误差，可以使用容差比较。'}))({...input,instruction});
+ expect(reply.message).toContain('浮点');expect(reply).not.toHaveProperty('plan');
+ const generation=scriptStudioRequest(input);expect(generation.body.instructions).toContain('保留原文事件');expect(generation.body.instructions).toContain('targetDuration是锁定的总时长');expect(generation.body.text.format.schema.properties).toHaveProperty('shots');
+});
+
+it('keeps a user-requested code format inside the reply protocol for DeepSeek free chat',async()=>{
+ const {createScriptStudioDiscussionReader}=await import('./scriptStudioProvider');
+ const requestInput={...input,provider:'deepseek',model:'deepseek-flash',instruction:'只输出Python代码。'};
+ const request=scriptStudioDiscussionRequest(requestInput);
+ expect(request.body.instructions).toContain('外层JSON');expect(request.body.instructions).toContain('reply');
+ const code='def even_squares(nums):\n    return [x * x for x in nums if x % 2 == 0]';
+ const output=(text:string)=>Response.json({id:'11111111-1111-4111-8111-111111111111',status:'completed',output:[{type:'message',content:[{type:'output_text',text}]}],usage:{input_tokens:10,output_tokens:10}});
+ const value=await createScriptStudioDiscussionReader(async()=>output(JSON.stringify({reply:code})))(requestInput);
+ expect(value.message).toBe(code);expect(value).not.toHaveProperty('plan');
+ await expect(createScriptStudioDiscussionReader(async()=>output(code))(requestInput)).rejects.toMatchObject({outcome:'failed'});
+});

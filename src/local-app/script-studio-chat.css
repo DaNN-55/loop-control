@@ -63,7 +63,7 @@ html[data-interface="impeccable"] .product-ui .script-studio-chat .script-studio
  .script-studio-chat-layout .script-studio-editor{min-block-size:280px}
  .script-studio-chat-layout .script-studio-middle{border-inline-start:0;border-block-start:1px solid var(--lc-line)}
  .script-studio-chat-layout .script-studio-proposal-scroll{max-block-size:500px;overflow:auto}
- .script-studio-chat-layout .script-studio-toolbar{display:grid;grid-template-columns:32px minmax(0,1fr) 28px 28px;gap:6px}
+ .script-studio-chat-layout .script-studio-toolbar{display:grid;grid-template-columns:minmax(0,1fr) 28px 28px;gap:6px}
  .script-studio-chat-layout .script-studio-toolbar>strong{grid-column:1/-1}
  .script-studio-chat-layout .script-studio-toolbar>strong{inline-size:100%}
  .script-studio-chat-layout .script-studio-toolbar-duration .script-studio-duration-control{inline-size:100%}
@@ -74,7 +74,7 @@ html[data-interface="impeccable"] .product-ui .script-studio-chat .script-studio
 @media(pointer:coarse){.script-studio-chat-layout .script-studio-grid.is-middle-collapsed{--script-shot-column:54px}.script-studio-chat-layout .script-studio-grid.is-chat-collapsed{--script-chat-column:54px}html[data-interface="impeccable"] .product-ui .script-studio-chat :is(.script-studio-model-trigger,.script-studio-chat-submit){min-block-size:48px}.script-studio-chat .script-studio-chat-submit{min-inline-size:48px}.script-studio-chat-layout .script-studio-toolbar-duration .script-studio-duration-control>input{min-block-size:46px;font-size:16px}}
 
 @media(pointer:coarse){.script-studio-chat .script-studio-chat-submit{--lc-icon-control-size:48px}.script-studio-chat-layout .script-studio-toolbar-duration .script-studio-duration-control{min-block-size:48px}}
-@container script-studio (inline-size < 680px){@media(pointer:coarse){.script-studio-chat-layout .script-studio-toolbar{grid-template-columns:48px minmax(0,1fr) 48px 48px}html[data-interface="impeccable"] .product-ui .script-studio-chat-layout .script-studio-upload{inline-size:48px;min-block-size:48px}.script-studio-chat-layout .script-studio-toolbar-duration svg{display:none}}}
+@container script-studio (inline-size < 680px){@media(pointer:coarse){.script-studio-chat-layout .script-studio-toolbar{grid-template-columns:minmax(0,1fr) 48px 48px}html[data-interface="impeccable"] .product-ui .script-studio-chat-layout .script-studio-upload{inline-size:48px;min-block-size:48px}.script-studio-chat-layout .script-studio-toolbar-duration svg{display:none}}}
 
 .script-studio-popover .script-studio-effort-slider{display:grid;gap:0;padding-block:0 4px}
 html[data-interface="impeccable"] .product-ui.script-studio-popover .script-studio-effort-slider input[type=range]{appearance:none;--slider-track-size:4px;--slider-thumb-size:14px;inline-size:100%;block-size:36px;min-block-size:36px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;cursor:pointer}
@@ -114,3 +114,6 @@ html[data-interface="impeccable"] .product-ui.script-studio-popover .script-stud
 .script-studio-popover.script-studio-effort-popover{inline-size:232px}
 .script-studio-model-popover :is(.script-studio-model-label,header h4){font-size:12px}
 .script-studio-model-popover .script-studio-model-footer [data-text]{font-size:11px}
+
+.script-studio-input-heading .script-studio-upload-slot{display:flex;align-items:center}
+.script-studio-effort-popover [role=dialog]>header{margin-block-end:0}

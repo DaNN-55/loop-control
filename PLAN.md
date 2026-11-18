@@ -1,3 +1,18 @@
+# 自由交流与脚本入口收敛（2026-11-18）
+
+起点e3ee31c16，工作区干净。用户授权自由交流不局限视频拍法；生成、采用保留原文/时长/审批硬约束。上传脚本移正文标题右侧仅图标；附件恢复可见标题和关闭按钮、两行同宽右对齐；新开+强色虚线1px。历史不改写，模式值discuss及草稿兼容。
+
+- [x] 主agent：自由交流prompt/实际输入标记、独立wire身份；旧同key回执与unknown只读核对，新key不复用旧窄prompt完成结果；生成/采用合同不放宽。先RED后GREEN。
+- [x] 子agent：上述UI/文案、原生上传/键盘/触屏、完整header与slot对齐、1px边框；不碰Provider/后端/本PLAN。
+- [x] 类型/构建/必要回归、私有PG/HTTP、真实浏览器和必要真实模型；正式8表只读指纹核对，运行包受控更新。
+- [x] 保留精简报告，清理本轮scratch和私有环境，中文原子提交不push。
+
+主agent拥有Provider/Requests及其单测/集成、PLAN/ADR/主报告；子agent拥有ScriptStudioChat/WorkspaceScriptPanel/AttachmentControls/Tools/CSS/i18n和UI测试。双方不回退对方改动。
+
+完成：最终345文件2525测试、36项私有PG/HTTP、89项UI定向均通过；类型、构建、运行包完整性通过。独立Chrome验证实际MD导入、自由交流发送与刷新、原文/15秒/三镜保持、附件标题与槽右对齐、1px加号及推理标题底间距0；390px粗指针无横向溢出。真实Luna及Flash均能在旧窄角色历史下回答Python问题；Flash首次裸代码协议失败已最小修复并重测通过。日常仅app更新至0a610272…，8表指纹不变；私有PG及自有浏览器关闭，本轮临时文件清理。详见[自由交流验收](docs/verification/script-free-chat-20261118/REPORT.md)。
+
+---
+
 # 脚本确认界面9条批注收尾（2026-11-18）
 
 用户已明确由子agent实施1–7及9，主agent只读核查／讨论。第8上传脚本位置只建议，不改位置或显示；不改Provider／prompt／会话或附件业务逻辑，不调用收费模型、不写正式业务。

@@ -1,8 +1,8 @@
 .script-studio-attachment-input{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .script-studio-popover.script-studio-attachments-popover{inline-size:240px;padding:10px}
-.script-studio-attachments-popover [role=dialog]{position:relative}
-.script-studio-attachments-popover [role=dialog]>header{position:absolute;inset-block-start:0;inset-inline-end:0;z-index:1;margin:0}
-.script-studio-attachments-popover header h4{display:none}
+.script-studio-attachments-popover [role=dialog]{display:flex;flex-direction:column;align-items:stretch;gap:8px}
+.script-studio-attachments-popover [role=dialog]>header{inline-size:100%;margin:0;flex:none}
+.script-studio-attachments-popover header h4{display:block}
 .script-studio-attachments-popover header .script-studio-icon{--lc-icon-control-size:24px}
 .script-studio-attachment-picker{inline-size:100%}
 .script-studio-attachment-upload{display:grid;justify-items:center;gap:5px;inline-size:100%;min-block-size:96px;padding:12px 8px;border:1px dashed var(--lc-line);border-radius:8px;background:transparent;color:var(--lc-muted);cursor:pointer;text-align:center;font:inherit}

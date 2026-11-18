@@ -17,12 +17,12 @@ async function ready(){await waitFor(()=>expect(request.mock.calls.some(([path])
 afterEach(()=>{cleanup();localStorage.clear();vi.resetAllMocks();});
 it('places production controls above and below the three panes and model selection inside a collapsible chat',async()=>{
  setup();const toolbar=screen.getByRole('toolbar',{name:'脚本工具'}),chat=screen.getByRole('complementary',{name:'拍法助手'});
- expect(within(toolbar).getByLabelText('目标时长')).toBeTruthy();expect(within(toolbar).getByRole('button',{name:/上传脚本/})).toBeTruthy();expect(within(chat).getByRole('button',{name:'选择大语言模型'})).toBeTruthy();expect(screen.getByRole('group',{name:'制作操作'}).contains(screen.getByRole('button',{name:'继续制作'}))).toBe(true);
+ expect(within(toolbar).getByLabelText('目标时长')).toBeTruthy();expect(within(toolbar).queryByRole('button',{name:/上传脚本/})).toBeNull();expect(screen.getByRole('form',{name:'脚本正文'}).contains(screen.getByRole('button',{name:'上传脚本'}))).toBe(true);expect(within(chat).getByRole('button',{name:'选择大语言模型'})).toBeTruthy();expect(screen.getByRole('group',{name:'制作操作'}).contains(screen.getByRole('button',{name:'继续制作'}))).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'收起拍法助手'}));expect(screen.queryByRole('textbox',{name:'修改要求'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'展开拍法助手'}));expect(screen.getByRole('textbox',{name:'修改要求'})).toBeTruthy();expect(modelCommand).not.toHaveBeenCalled();
 });
 it('discusses inline without replacing the adoptable plan and chains subsequent adjustments',async()=>{
  setup();await ready();await waitFor(()=>expect(screen.getByRole('button',{name:'优化拍法'})).toHaveProperty('disabled',false));fireEvent.click(screen.getByRole('button',{name:'优化拍法'}));await screen.findByRole('button',{name:'采用并继续'});
- modelCommand.mockResolvedValueOnce({requestId:'talk',status:'completed',message:'保留连续镜头更舒缓。'});await setMode('仅讨论');fireEvent.change(screen.getByRole('textbox',{name:'修改要求'}),{target:{value:'再舒缓一点可以吗？'}});fireEvent.submit(screen.getByRole('form',{name:'拍法对话'}));await screen.findByText('保留连续镜头更舒缓。');await waitFor(()=>expect(screen.getByRole('button',{name:'采用并继续'})).toHaveProperty('disabled',false));expect(screen.queryByRole('dialog')).toBeNull();
+ modelCommand.mockResolvedValueOnce({requestId:'talk',status:'completed',message:'保留连续镜头更舒缓。'});await setMode('自由交流');fireEvent.change(screen.getByRole('textbox',{name:'修改要求'}),{target:{value:'再舒缓一点可以吗？'}});fireEvent.submit(screen.getByRole('form',{name:'拍法对话'}));await screen.findByText('保留连续镜头更舒缓。');await waitFor(()=>expect(screen.getByRole('button',{name:'采用并继续'})).toHaveProperty('disabled',false));expect(screen.queryByRole('dialog')).toBeNull();
  await setMode('调整拍法');fireEvent.change(screen.getByRole('textbox',{name:'修改要求'}),{target:{value:'按这个修改'}});fireEvent.submit(screen.getByRole('form',{name:'拍法对话'}));await waitFor(()=>expect(modelCommand).toHaveBeenLastCalledWith('optimize',expect.objectContaining({instruction:'按这个修改',previousRequestId:'talk'}),undefined,'script-studio'));
 });
 it('preserves an unsent chat draft and never sends while confirming Chinese input',async()=>{
@@ -68,4 +68,11 @@ it('keeps the in-memory unsent chat draft through upload pending even when local
   view.rerender(<WorkspaceDraftProvider ownerId="chat-owner"><WorkspaceScriptPanel {...view.props}/></WorkspaceDraftProvider>);
   await waitFor(()=>expect(input).toHaveProperty('disabled',false));expect(input).toHaveProperty('value','只在内存中的要求');expect(modelCommand).not.toHaveBeenCalled();
  }finally{storage.mockRestore();}
+});
+
+it('offers general conversation without dispatching until an explicit text send',async()=>{
+ setup();await ready();modelCommand.mockResolvedValueOnce({requestId:'general-chat',status:'completed',message:'可以先读二十分钟，再做练习。'});
+ await setMode('自由交流');const input=screen.getByRole('textbox',{name:'修改要求'});expect(input).toHaveProperty('placeholder','想聊什么都可以…');expect(modelCommand).not.toHaveBeenCalled();
+ fireEvent.change(input,{target:{value:'明天的学习计划怎么安排？'}});fireEvent.submit(screen.getByRole('form',{name:'拍法对话'}));await screen.findByText('可以先读二十分钟，再做练习。');
+ expect(modelCommand).toHaveBeenCalledWith('optimize',expect.objectContaining({mode:'discuss',instruction:'明天的学习计划怎么安排？'}),undefined,'script-studio');expect(screen.queryByRole('button',{name:'采用并继续'})).toBeNull();
 });
