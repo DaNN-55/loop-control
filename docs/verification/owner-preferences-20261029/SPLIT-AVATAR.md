@@ -1,5 +1,8 @@
 # 独立偏好弹窗与头像
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-29。在原偏好功能上完成本轮调整：个人偏好、通知分别从账户菜单打开，没有 Tab 或重复标题；两页保留各自保存、恢复默认及错误处理。
 
 ## 布局与上传
@@ -20,4 +23,4 @@
 - 浅色、深色、390px 布局已查看。验收页补齐了正式入口的公共滚动样式，避免误以基础样式作为正式弹窗行为。
 - 本地服务已更新，正式页面两个入口可用。代码未提交、未推送。
 
-[个人偏好](preferences-separated.png) · [通知](notifications-separated.png) · [深色](preferences-separated-dark.png) · [390px](preferences-separated-narrow.png)
+个人偏好（历史附件已清理：`preferences-separated.png`） · 通知（历史附件已清理：`notifications-separated.png`） · 深色（历史附件已清理：`preferences-separated-dark.png`） · 390px（历史附件已清理：`preferences-separated-narrow.png`）

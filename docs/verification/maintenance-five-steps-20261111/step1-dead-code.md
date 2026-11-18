@@ -1,5 +1,8 @@
 # 第 1 项：死代码审查与清理
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-11。基线 `aa404667e949225c8fad1dae2e2aed56887cb357`，隔离分支 `codex/maintenance-five-steps-20261111`。未提交、暂存、推送或合并；没有修改主工作区、日常服务、数据库、媒体或秘密。
 
 ## 结论
@@ -12,7 +15,7 @@
 
 ## 范围与方法
 
-按 Git 跟踪清单检查 `src / scripts / public / db` 共 1284 个文件的入口和职责分类。对其中 1012 个 TS／TSX／JS／MJS 文件进行 TypeScript AST 导入图、导出与标识符扫描；再用 TypeScript 符号解析区分同名变量，复核无引用导出。检查 npm scripts、tsconfig、HTML、运行时字符串加载、原生模块登记表、测试与保留原型。扫描器、清单与结果见 [step1-evidence](step1-evidence/coverage-inventory.json)。
+按 Git 跟踪清单检查 `src / scripts / public / db` 共 1284 个文件的入口和职责分类。对其中 1012 个 TS／TSX／JS／MJS 文件进行 TypeScript AST 导入图、导出与标识符扫描；再用 TypeScript 符号解析区分同名变量，复核无引用导出。检查 npm scripts、tsconfig、HTML、运行时字符串加载、原生模块登记表、测试与保留原型。扫描器、清单与结果见 step1-evidence（历史附件已清理：`step1-evidence/coverage-inventory.json`）。
 
 自动扫描覆盖全体上述代码；人工核查覆盖下表入口和全部筛选候选，未逐行人工阅读 1012 个文件，也不声称证明不存在其他死代码。第三方 SDK 内部、任意运行配置和所有故障组合不属于本次形式化证明范围。样式和资源按入口核查，未逐条裁剪全部 CSS 选择器。
 
@@ -29,11 +32,11 @@
 
 ### 自动候选的逐类复核
 
-- 静态文件图产生 25 个无导入边文件，全部复核为 npm／CLI、HTML、tsconfig、运行时动态加载、框架声明或显式夹具入口，未删除文件。完整列表见 [scan-summary.json](step1-evidence/scan-summary.json)。
-- TypeScript 符号扫描产生 13 个无静态消费者的导出，确认删除 2 个，保留其余 11 个。见 [修改前](step1-evidence/symbol-scan-before.json) 与 [修改后](step1-evidence/symbol-scan-after.json)。
-- 11 个保留项：`isWorkspaceCandidateEdit / addWorkspaceRegisteredSource` 由 `virtual:loop-control-candidates` 使用；`captionSlotLayoutPatch / redirectLoopControlImport / LoopControlCaptionAlignment / useLoopControlHost` 由宿主注入使用；`restoreNativeBackup / resumeNativeRestorePublication / verifyRestoredFolderOpen` 有动态集成消费者；`nativeBackup` 由运行包装配；`workerResultJsonSchema` 由 Worker schema 输出链使用。见 [动态引用证据](step1-evidence/dynamic-preserved.log)。
-- 基于正常运行根、手动脚本、原型根、后端字符串加载和原生注册补边后的文件可达性筛选，剩余 15 个非测试文件：4 个仅被测试消费的业务模块（下述待决定项）、4 个原型／夹具 config、2 个 fixture support、3 个 Dan UI 上游组件、test setup 和 `vite-env.d.ts`。不能整体删除，见 [reachability.json](step1-evidence/reachability.json)。
-- 没有发现字面量常量条件的 `if / ternary` 分支或可确认整块注释掉的实现。唯一命名为开关且初值为 false 的候选 `mediaRootRuntime.fixture.ts:loseCommitEnabled` 会在 launch 时改写，是提交回执丢失的故障注入开关，保留。见 [additional-scan.json](step1-evidence/additional-scan.json)。这不等于证明所有复杂条件都可达。
+- 静态文件图产生 25 个无导入边文件，全部复核为 npm／CLI、HTML、tsconfig、运行时动态加载、框架声明或显式夹具入口，未删除文件。完整列表见 scan-summary.json（历史附件已清理：`step1-evidence/scan-summary.json`）。
+- TypeScript 符号扫描产生 13 个无静态消费者的导出，确认删除 2 个，保留其余 11 个。见 修改前（历史附件已清理：`step1-evidence/symbol-scan-before.json`） 与 修改后（历史附件已清理：`step1-evidence/symbol-scan-after.json`）。
+- 11 个保留项：`isWorkspaceCandidateEdit / addWorkspaceRegisteredSource` 由 `virtual:loop-control-candidates` 使用；`captionSlotLayoutPatch / redirectLoopControlImport / LoopControlCaptionAlignment / useLoopControlHost` 由宿主注入使用；`restoreNativeBackup / resumeNativeRestorePublication / verifyRestoredFolderOpen` 有动态集成消费者；`nativeBackup` 由运行包装配；`workerResultJsonSchema` 由 Worker schema 输出链使用。见 动态引用证据（历史附件已清理：`step1-evidence/dynamic-preserved.log`）。
+- 基于正常运行根、手动脚本、原型根、后端字符串加载和原生注册补边后的文件可达性筛选，剩余 15 个非测试文件：4 个仅被测试消费的业务模块（下述待决定项）、4 个原型／夹具 config、2 个 fixture support、3 个 Dan UI 上游组件、test setup 和 `vite-env.d.ts`。不能整体删除，见 reachability.json（历史附件已清理：`step1-evidence/reachability.json`）。
+- 没有发现字面量常量条件的 `if / ternary` 分支或可确认整块注释掉的实现。唯一命名为开关且初值为 false 的候选 `mediaRootRuntime.fixture.ts:loseCommitEnabled` 会在 launch 时改写，是提交回执丢失的故障注入开关，保留。见 additional-scan.json（历史附件已清理：`step1-evidence/additional-scan.json`）。这不等于证明所有复杂条件都可达。
 
 ## 执行候选与证据
 
@@ -42,7 +45,7 @@
 | S1-D01 | `src/local-app/LocalDeletionRecovery.tsx:DeletionCleanupDialog` | 源码／脚本搜索仅定义；既无命名／namespace 导入，也非动态 registry。历史 `9da21493` 已把正式调用替换为 `RecycleBinDialog`；`RecycleBinPanel` 直接使用 `LocalDeletionRecovery`。该组件 6 条现有行为测试、正式菜单恢复路径均保护实际入口。ADR-0042 要保留的是恢复面板，不要求旧包装 | 删除包装及其 `RefObject / X / useDialogFocus` 导入；`LocalDeletionRecovery` 函数体未改，旧清理任务仍可访问 |
 | S1-D02 | `src/workspace/WorkspaceViews.tsx:navigation` | 全仓词法搜索有大量同名属性，TypeScript 符号解析确认该导出只有声明。正式 `LocalCatalogApp` 导入视图与 `NavigationItem` 类型，但导航使用自己的 `nativeNavigation`；没有动态属性查找或重新导出该数组。私有包无 package exports；默认组件测试覆盖当前导航 | 删除旧数组；`NavigationItem` 与正式导航保持；不会改菜单标签、顺序或路由 |
 
-删除前的搜索和历史证据见 [deletion-symbol.log](step1-evidence/deletion-symbol.log)、[deletion-consumers.log](step1-evidence/deletion-consumers.log)、[navigation-consumers.log](step1-evidence/navigation-consumers.log)、[history-deletion.log](step1-evidence/history-deletion.log)。准确差异见 [batch1.diff](step1-evidence/batch1.diff)。
+删除前的搜索和历史证据见 deletion-symbol.log（历史附件已清理：`step1-evidence/deletion-symbol.log`）、deletion-consumers.log（历史附件已清理：`step1-evidence/deletion-consumers.log`）、navigation-consumers.log（历史附件已清理：`step1-evidence/navigation-consumers.log`）、history-deletion.log（历史附件已清理：`step1-evidence/history-deletion.log`）。准确差异见 [batch1.diff](step1-evidence/batch1.diff)。
 
 恢复边界：两份原文件已保存在仓库外 `/tmp/loop-maint-step1-20261111/batch1-before/`；它们的起始内容也可从 Git 基线恢复。未使用整树 reset、stash 或提交。一次批次，无源码导致的失败，未撤回任何已验证改动。
 
@@ -54,7 +57,7 @@
 | 修改前类型／构建／准备 | `npm run check`、`npm run build`、`npm run runtime:prepare` 依次通过；见 `baseline-{check,build,prepare}.log` |
 | 修改前默认全量 | `npm test`：290 文件、2104 项通过，0 失败、0 跳过；见 `baseline-test.log` |
 | 修改后类型与构建 | `npm run check`、`npm run build` 通过；见 `batch1-{check,build}.log` |
-| 产物一致性 | 前后 71 文件相对路径、大小及 SHA-256 完全一致；见 [build-comparison.json](step1-evidence/build-comparison.json) |
+| 产物一致性 | 前后 71 文件相对路径、大小及 SHA-256 完全一致；见 build-comparison.json（历史附件已清理：`step1-evidence/build-comparison.json`） |
 | 修改后默认全量首次 | `npm test`：289 文件通过、1 文件失败；2097 项通过、7 项失败。`scripts/runtime/application.test.mjs` 加载不到 `dist/local-app/local-app/mediaRootSettings.js`；见 `batch1-test.log` |
 | 准备环境补齐与复验 | `npm run runtime:prepare` 成功，再运行 `npm test -- scripts/runtime/application.test.mjs`：1 文件、7 项通过，0 失败／跳过；见 `batch1-prepare.log`、`batch1-application-recheck.log` |
 | 扫描复查与限定 diff | 无静态消费者导出从 13 项减为 11 项，消失的正是两处删除对象；`git diff --check` 通过。没有为了清理修改断言或移除测试 |

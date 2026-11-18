@@ -1,5 +1,8 @@
 # B 阶段复查
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 在优化工作树、`codex/local-first-stage-a`分支执行。不要在生产目录运行。
 
 1. 打开[最终恢复控制台55176](http://127.0.0.1:55176)，独立Chrome已登录恢复Owner；打开 `Stage A fixed 3-shot`（13029a1c）检查真实任务和产物索引。`Stage B restore checkpoint`仅为DB审核历史fixture，UI会提示其文本产物路径无效，不用它验证完整审核包。新密码仅在 `.loop-control/stage-b/verified/state/owner-<Owner ID>.json`，不要发送或记录。

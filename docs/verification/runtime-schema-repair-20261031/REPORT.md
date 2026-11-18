@@ -1,5 +1,8 @@
 # 本机服务错误修复
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-10-31。目标页面：生产单 `3bf59fde-cf0b-47e1-990e-d7034cfbcfb3`，操作电脑-v2。
 
 ## 原因
@@ -28,7 +31,7 @@
 | 原页面 | “操作电脑-v2”标题、四步工作区和已有分镜信息可读，服务错误消失 |
 | Worker | 实际系统状态显示“在线 · 空闲” |
 
-证据：[迁移前探针](before-probe.json)、[迁移后探针](after-probe.json)、[迁移结果](migration-result.json)、[保留性比较](comparison.json)、[页面复核](browser-verification.json)。完整私有文件指纹与表投影保留在 `.loop-control/local/state/runtime-schema-repair-20261031/`；一次性诊断脚本已移除。
+证据：迁移前探针（历史附件已清理：`before-probe.json`）、迁移后探针（历史附件已清理：`after-probe.json`）、迁移结果（历史附件已清理：`migration-result.json`）、保留性比较（历史附件已清理：`comparison.json`）、页面复核（历史附件已清理：`browser-verification.json`）。完整私有文件指纹与表投影保留在 `.loop-control/local/state/runtime-schema-repair-20261031/`；一次性诊断脚本已移除。
 
 “系统状态：需处理”仍包含已有的“操作电脑-v4”最终渲染阻塞和日常维护提示，本轮没有改写这些历史状态。旧账号显示的专属目录待配置属于新版本写入要求，需要 Owner 在账号页确认；未自动选择路径或迁移文件。
 

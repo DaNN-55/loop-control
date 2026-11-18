@@ -1,5 +1,8 @@
 # Narration candidate integration acceptance
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 T08 merged without conflicts at9c331429; final independently verified correction is e1f227b5. Source/none can explicitly adopt a new audible TTS main voice, with actual short-audio duration, stable visual windows and preserved independent mixing. Candidate preparation stays inert; source identity/current input/token/expected project and native ownership CAS remain enforced.
 
 The merger found missing writable state implicitly enabled editing. Only explicit true now enables writes; absent or non-boolean readiness keeps the iframe and content actions gated while read-only state/inspect remains available. The correction has RED/GREEN coverage, and preserves actual SDK ownership rather than inventing a token or extending a timeout.

@@ -1,5 +1,8 @@
 # 脚本操作右置与素材页删除镜头
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-30，PC端。
 
 ## 变更
@@ -33,10 +36,10 @@
 
 ## 截图
 
-![真实脚本页确认按钮右置](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/01-脚本确认按钮在右栏.jpg)
+真实脚本页确认按钮右置（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/01-脚本确认按钮在右栏.jpg`）
 
-![修订原因、确认和取消在右栏](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/02-修订原因与操作集中右栏.jpg)
+修订原因、确认和取消在右栏（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/02-修订原因与操作集中右栏.jpg`）
 
-![删除镜头二次确认](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/03-删除所选镜头二次确认.jpg)
+删除镜头二次确认（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/03-删除所选镜头二次确认.jpg`）
 
-![删除后刷新仍保留结果](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/04-删除后刷新保留一镜头.jpg)
+删除后刷新仍保留结果（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round8-20261030/screenshots/04-删除后刷新保留一镜头.jpg`）

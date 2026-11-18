@@ -1,5 +1,8 @@
 # 五项顺序维护交付
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 最新状态（2026-11-12）：用户随后批准决定1–4退役及14分批本地提交，已按顺序完成检查；其余继续暂缓。最新验证、提交与边界见 [批准退役与本地交付](retirement-20261112/REPORT.md)。下文保留首次五项审计的时点统计，原“未提交”描述指首次审计完成时；本次没有合并、推送或部署。
 
 状态：五项已严格按顺序交由子 Agent 执行，并逐项由主 Agent 验收；全部已授权交付完成。冲突和缺少证据的部分保留并列出建议，没有自动执行待用户决定的操作。
@@ -51,4 +54,4 @@ Codex 日志/会话仅做整体元数据统计：逻辑3127718530字节、分配
 
 阶段4观察到主工作区新出现3个并行CSS修改：`src/local-app/SystemStatusDrawer.css`、`src/styles.css`、`src/ui/impeccable/maintenance.css`。它们不属于本轮隔离成果，未覆盖、恢复或纳入。当前任务不把后续并行工作同步进已固定的清理基线。
 
-主 Agent 分阶段验收记录见 [parent-acceptance.json](parent-acceptance.json)，计划见 [PLAN.md](../../../PLAN.md) 顶部本任务段。最终仓库范围与文档核对结果见 [final-audit.json](final-audit.json)。
+主 Agent 分阶段验收记录见 parent-acceptance.json（历史附件已清理：`parent-acceptance.json`），计划见 [PLAN.md](../../../PLAN.md) 顶部本任务段。最终仓库范围与文档核对结果见 final-audit.json（历史附件已清理：`final-audit.json`）。

@@ -1,5 +1,8 @@
 # C 阶段顺延、隔离联验与代码回迁
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-13。状态：隔离验证通过，代码已回迁主工作区；日常未迁移、未启用，未提交、未推送。
 
 ## 本轮结果
@@ -24,7 +27,7 @@
 | 类型和编译 | 隔离工作树 `npm run check` 与 `runtime:prepare` 通过；后者完成Worker及backend编译。回迁主工作区后，使用独立编译器分别检查app、local-app和worker，均通过；使用 `--noEmit`，增量缓存只写本轮私有临时目录。 |
 | 回迁核对 | 先核对所有目标原始哈希，新增模块先回迁；每份现有文件在替换前再次核对。保留并行175／176、全部其他源码和文档，以及三份CSS。回迁后的代码与已验证候选逐字节核对。 |
 
-证据：[默认回归](default-regression.log)、[C及升级集成](metrics-integrations.log)、[连接HTTP](parallel-connection.log)、[非空升级](upgrade-2.log)、[隔离类型](check-candidate-2.log)、[隔离编译](runtime-prepare.log)、[回迁app](main-app-typecheck.log)、[回迁backend](main-local-app-typecheck.log)、[回迁Worker](main-worker-typecheck.log)。
+证据：默认回归（历史附件已清理：`default-regression.log`）、C及升级集成（历史附件已清理：`metrics-integrations.log`）、连接HTTP（历史附件已清理：`parallel-connection.log`）、非空升级（历史附件已清理：`upgrade-2.log`）、隔离类型（历史附件已清理：`check-candidate-2.log`）、隔离编译（历史附件已清理：`runtime-prepare.log`）、回迁app（历史附件已清理：`main-app-typecheck.log`）、回迁backend（历史附件已清理：`main-local-app-typecheck.log`）、回迁Worker（历史附件已清理：`main-worker-typecheck.log`）。
 
 集成套件中的1项浏览器保持夹具按设计跳过。C界面实现未改动，原阶段已实际验证新建、保存、重开及桌面／窄屏；原截图及报告保留于 [上一阶段验收](../production-metrics-c-20261113/REPORT.md)。本轮重新运行组件回归，不将上一阶段的旧迁移编号／哈希当作本轮177的证明；本轮以 `verification.json` 为准。
 

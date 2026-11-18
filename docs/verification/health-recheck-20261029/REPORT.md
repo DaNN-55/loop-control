@@ -1,5 +1,8 @@
 # 09:02 健康检查调查与复查
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-29，时间均为 Asia/Shanghai。当前原健康检查已通过，系统状态和每日健康检查均显示正常。
 
 ## 原始失败
@@ -22,8 +25,8 @@
 
 ## 证据
 
-- [原始三次失败](original-attempts.json)
-- [相邻运行日志](runtime-log-evidence.txt)
-- [复查提交与逐项检查](recheck-receipt.json)
-- [真实执行结果及旧记录、计划一致性](recheck-result.json)
-- [界面确认](recheck-success.png)
+- 原始三次失败（历史附件已清理：`original-attempts.json`）
+- 相邻运行日志（历史附件已清理：`runtime-log-evidence.txt`）
+- 复查提交与逐项检查（历史附件已清理：`recheck-receipt.json`）
+- 真实执行结果及旧记录、计划一致性（历史附件已清理：`recheck-result.json`）
+- 界面确认（历史附件已清理：`recheck-success.png`）

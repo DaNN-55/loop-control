@@ -1,7 +1,0 @@
-{
-  "passed": true,
-  "modelCallsComplete": true,
-  "osLoopbackForApplicationWorkerRenderer": true,
-  "childNodeFourPortTestGuardReplacedByOsLoopbackPolicy": true,
-  "reason": "Production renderer uses ephemeral loopback ports; no model Python launched in this phase"
-}

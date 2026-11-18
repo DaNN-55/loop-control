@@ -1,5 +1,8 @@
 # T12 精确导出交付契约
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 ## Owner 命令
 
 所有命令沿 `/api/local/episode-commands`，继承 Owner/session、Origin/CSRF、字段白名单、幂等回执及 `lockProductionWorkspace` revision CAS。

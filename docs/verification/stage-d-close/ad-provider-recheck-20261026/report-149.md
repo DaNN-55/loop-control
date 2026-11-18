@@ -1,5 +1,8 @@
 # #149 收尾验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 本轮在 #146/#147 只读复查通过、四家 Provider 完成同配置复测或前置检查，并全部按 Owner 豁免关闭之后，开始 #149。审计对象为本批 #132–#149，未查询或改动其他旧 Issue。
 
 结论是 **A–D 本批收口审计按 Owner 接受的范围完成**。四家 Provider 的真实媒体闭环仍未通过，也不表示这些服务已恢复。旧报告中「未验收、保持开放」是当时的真实快照；本轮以明确授权和新关票说明接续，不改写旧结果。E/F 没有开始，也没有取得本轮范围之外的执行授权。
@@ -50,4 +53,4 @@
 
 四张 Provider 票的关闭原因是 Owner 接受豁免；#149 的完成只表示本批范围、证据与例外已审计完毕。不能把 18 张票关闭写成 18 项功能全部通过，也不能据此自动启用四家 Provider 或进入 E/F。最终状态以本目录 GitHub 读回与完整性回执为准。
 
-[只读复查](readonly-review.md) · [Provider 复测](provider-recheck.md) · [四票关闭读回](github-provider-closures.json) · [源码连续性](149-source-continuity.json) · [证据索引](../evidence-index.json)
+[只读复查](readonly-review.md) · [Provider 复测](provider-recheck.md) · 四票关闭读回（历史附件已清理：`github-provider-closures.json`） · 源码连续性（历史附件已清理：`149-source-continuity.json`） · 证据索引（历史附件已清理：`../evidence-index.json`）

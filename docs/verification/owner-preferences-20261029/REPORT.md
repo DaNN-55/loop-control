@@ -1,5 +1,8 @@
 # 个人偏好、通知与侧栏底部验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-29。本地正式页面已更新，代码未提交、未推送。
 
 ## 实现
@@ -24,8 +27,8 @@
 
 ## 截图与隔离入口
 
-- [个人偏好](preferences-light.png)
-- [深色偏好](preferences-dark.png)
-- [通知偏好](notifications-light.png)
-- [390px 通知卡片](notifications-narrow.png)
+- 个人偏好（历史附件已清理：`preferences-light.png`）
+- 深色偏好（历史附件已清理：`preferences-dark.png`）
+- 通知偏好（历史附件已清理：`notifications-light.png`）
+- 390px 通知卡片（历史附件已清理：`notifications-narrow.png`）
 - 隔离页：`http://localhost:5174/docs/verification/owner-preferences-20261029/fixture.html`，`?save-error` 检查失败提示。仅用于验收，不作为产品入口。

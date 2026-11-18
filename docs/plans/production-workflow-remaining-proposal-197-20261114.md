@@ -45,7 +45,7 @@
 
 第 2 类实际挂载的是 `seed_shot_preparation_drafts_after_storyboard_approval`、`reuse_shot_preparation_history_after_storyboard_approval`、`copy_shot_audio_mix_to_revised_draft`、`copy_shot_composition_to_revised_draft`；相邻 `copy_clip_segments_to_revised_shot` 应随旧草稿链一并审计。第 3 类为 `create_visual_review_package`、`create_storyboard_review_package`。冻结、输入变化失效、音轨同步、引用锁等相邻触发器要单列保护承接，不能随这几项批量删除。
 
-七个拒绝签名及调用证据见[本轮调用表](../verification/production-replacement-assessment-197-20261114/evidence/legacy-call-map.json)。精确搜索未发现调用只是一项证据；动态 SQL、实际旧服务和外部消费者尚未完全排除，本轮不宣称已证明都能删除。
+七个拒绝签名及调用证据见本轮调用表（历史附件已清理：`../verification/production-replacement-assessment-197-20261114/evidence/legacy-call-map.json`）。精确搜索未发现调用只是一项证据；动态 SQL、实际旧服务和外部消费者尚未完全排除，本轮不宣称已证明都能删除。
 
 ## 名字能换到什么程度
 

@@ -1,5 +1,8 @@
 # 统一参考图与集中账号预算
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-01。当前 main 工作区，未提交／推送。保留原有未提交改动。
 
 ## 实现
@@ -25,4 +28,4 @@
 
 本轮不测试OpenAI或其他真实Provider生成。完整付费流程未重跑；已有“系统状态：需处理”和执行网络锁定不在本次修改范围。
 
-证据：[组件测试](tests.log)、[真实HTTP／DB](integration.log)、[浏览器检查](browser-checks.json)、[迁移](migration.log)、[原数据保留比较](preservation-comparison.json)。截图：[参考图桌面](reference-desktop.png)、[参考图窄窗](reference-narrow.png)、[深色](reference-dark.png)、[预算桌面](budget-desktop.png)、[预算窄窗](budget-narrow.png)。截图来自隔离数据；正式页可见结果记录在browser-checks.json及会话截图。
+证据：组件测试（历史附件已清理：`tests.log`）、真实HTTP／DB（历史附件已清理：`integration.log`）、浏览器检查（历史附件已清理：`browser-checks.json`）、迁移（历史附件已清理：`migration.log`）、原数据保留比较（历史附件已清理：`preservation-comparison.json`）。截图：参考图桌面（历史附件已清理：`reference-desktop.png`）、参考图窄窗（历史附件已清理：`reference-narrow.png`）、深色（历史附件已清理：`reference-dark.png`）、预算桌面（历史附件已清理：`budget-desktop.png`）、预算窄窗（历史附件已清理：`budget-narrow.png`）。截图来自隔离数据；正式页可见结果记录在browser-checks.json及会话截图。

@@ -1,4 +1,0 @@
-{
-  "installed": true,
-  "sameDocumentMarker": true
-}

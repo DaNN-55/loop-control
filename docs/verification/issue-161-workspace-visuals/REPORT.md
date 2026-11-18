@@ -1,5 +1,8 @@
 # T09 / #161 验证记录
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 基准 integration `2fa83c1a`，工作树 `t09-workspace-visuals/loop-control`、分支 `codex/t09-workspace-visuals-152`。新增 091 及视觉候选域，中央文件仅作接线；Provider、任务、预算、授权、Owner 文件归属和 T08 严格 writable 门控继续沿用。
 
 ## 已验证结果
@@ -7,16 +10,16 @@
 - 26 个受影响组件/Host/主声测试通过，含本票 10 个视觉 UI 与声音登记用例。
 - 真实 HTTP/PG/Worker 回归 28 通过：T09 12、T08 7、T06 8、独立 embeddedStudio 1。首次组内该独立测试因专用开关跳过，随后显式启用 `LOOP_EMBEDDED_STUDIO_ACCEPTANCE=1` 单独复验通过。
 - check、frontend build、runtime:prepare 通过，顺序为源码冻结→build→prepare→真实 Worker CLI；仅有原有 Vite 大 chunk 提示。最终保留 `dist/worker/local-app/localWorkerCli.js`。
-- [worker-cli.json](evidence/worker-cli.json)：真正 prepared Worker 子进程，独立数据库/私有 APFS 媒体卷/TCP 隔离转发，受控 Provider 1 POST、任务 completed、生成仅入候选、工程 SHA 不变；没有 Keychain 或付费调用。
-- [ui-observations.json](evidence/ui-observations.json)：Chrome `156.0.8078.48`、独立 profile、单 CDP driver。真实 SDK register200 后 toolbar 同名导入在 native asset/item 产生前进入 Owner；Owner importMaterial200→live copy→pool native action→flush→Owner save200；iframe URL 不变。采用仅改第一实例，保留 x17、第二实例、轨道和声音；1280/800 parent/child 均 visible，有真实 hit-test 与双 RAF。
+- worker-cli.json（历史附件已清理：`evidence/worker-cli.json`）：真正 prepared Worker 子进程，独立数据库/私有 APFS 媒体卷/TCP 隔离转发，受控 Provider 1 POST、任务 completed、生成仅入候选、工程 SHA 不变；没有 Keychain 或付费调用。
+- ui-observations.json（历史附件已清理：`evidence/ui-observations.json`）：Chrome `156.0.8078.48`、独立 profile、单 CDP driver。真实 SDK register200 后 toolbar 同名导入在 native asset/item 产生前进入 Owner；Owner importMaterial200→live copy→pool native action→flush→Owner save200；iframe URL 不变。采用仅改第一实例，保留 x17、第二实例、轨道和声音；1280/800 parent/child 均 visible，有真实 hit-test 与双 RAF。
 
-[folder-import-observations.json](evidence/folder-import-observations.json) 记录目录 before-picker、真实图片 drop、键盘启动同一上传入口和刷新恢复；最后补跑 [audio-import-observations.json](evidence/audio-import-observations.json)，使用唯一文件名、原始 MP3 字节与本次 importMaterial200，避免把已有选项误当作本次注册成功。刷新时对 native transient selectedId/selectedIds 单独处理，其余 asset/timeline 深比较及 projectSHA/contentSHA均相同。
+folder-import-observations.json（历史附件已清理：`evidence/folder-import-observations.json`） 记录目录 before-picker、真实图片 drop、键盘启动同一上传入口和刷新恢复；最后补跑 audio-import-observations.json（历史附件已清理：`evidence/audio-import-observations.json`），使用唯一文件名、原始 MP3 字节与本次 importMaterial200，避免把已有选项误当作本次注册成功。刷新时对 native transient selectedId/selectedIds 单独处理，其余 asset/timeline 深比较及 projectSHA/contentSHA均相同。
 
 ## HTTP 行为证据
 
 12 个 T09 真实场景包含：本地 video 单实例、still/pan-zoom 补占位、live pool 保存恢复、编辑阶段受控 Provider、actual source 主声、unknown submit、已知 ID 恢复、短视频策略、gain/BGM 保留、缺失未用候选、新增镜头边界。
 
-[source-main-voice-provider.json](evidence/source-main-voice-provider.json) 保留真实 POST 与任务输入：actual source 用例先留下 muted 旧 TTS（2.4 秒），再采用原片实际 source window（srcIn 0.5 秒、使用 5 秒）。请求输入故意填 12，task snapshot 冻结 source 身份和 5 秒窗口，真实 POST duration=5；prepare 后改 main=none，旧采用409且工程不变。UI 主声时长派生只读，显示 Provider 有效时长；none 才允许明确填写画面时长。
+source-main-voice-provider.json（历史附件已清理：`evidence/source-main-voice-provider.json`） 保留真实 POST 与任务输入：actual source 用例先留下 muted 旧 TTS（2.4 秒），再采用原片实际 source window（srcIn 0.5 秒、使用 5 秒）。请求输入故意填 12，task snapshot 冻结 source 身份和 5 秒窗口，真实 POST duration=5；prepare 后改 main=none，旧采用409且工程不变。UI 主声时长派生只读，显示 Provider 有效时长；none 才允许明确填写画面时长。
 
 请求 A 后编辑无关 B，首次结果仍完成；已取得 Provider ID 后编辑 B 再恢复，只轮询原任务且 POST 总数1。主声仅 gain -6→-3、添加/调整 BGM -12/duck8 后，视觉候选仍可准备采用并保留新混音。真正 A 输入变化则 Worker 在 reserve 前阻断，paid reservation=0、POST=0。unknown POST 后 retry 与换 prompt 均409，付费族仍只有一任务。
 
@@ -28,7 +31,7 @@
 
 原视频 SHA `a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da`，图片 SHA `89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116`。静帧两时刻平均差 0.004386574；本地推拉差 10.13140625；未替换第二片段帧差0。三份 native project 保存于 evidence；每次保存/打开验证以当时最终当前工程执行，不将其夸大为三份工程分别在浏览器逐一打开。
 
-亲自查看 [render-contact.png](evidence/render-contact.png)：上排静帧位置相同，下排推拉确有位置/尺度变化。另看 800 screenshot：沿现有断点上下排列，可滚动，无需改旧布局。详见 [render-observations.json](evidence/render-observations.json)。
+亲自查看 render-contact.png（历史附件已清理：`evidence/render-contact.png`）：上排静帧位置相同，下排推拉确有位置/尺度变化。另看 800 screenshot：沿现有断点上下排列，可滚动，无需改旧布局。详见 render-observations.json（历史附件已清理：`evidence/render-observations.json`）。
 
 ## RED→GREEN 与调整
 
@@ -42,7 +45,7 @@
 
 ## 边界与清理
 
-Provider 只用受控传输，未验证真实付费供应商生成质量。没有修改日常 DB、Keychain、服务或已安装 Studio，没有 push、关闭 Issue、删除工作树或修改 PLAN。所有测试私有 DB/媒体/volume 由夹具释放；本票 UI 监听60073、独立 Chrome 调试端口均已关闭，Chrome退出且自建 profile 已删除；见 [cleanup.json](evidence/cleanup.json)。工作树、dist、原生工程/MP4、脚本和证据保留供独立复验。新单默认入口、新增镜头生成 lineage 和完整全链验收交 T13，不能以本票局部合成夹具宣称已完成。
+Provider 只用受控传输，未验证真实付费供应商生成质量。没有修改日常 DB、Keychain、服务或已安装 Studio，没有 push、关闭 Issue、删除工作树或修改 PLAN。所有测试私有 DB/媒体/volume 由夹具释放；本票 UI 监听60073、独立 Chrome 调试端口均已关闭，Chrome退出且自建 profile 已删除；见 cleanup.json（历史附件已清理：`evidence/cleanup.json`）。工作树、dist、原生工程/MP4、脚本和证据保留供独立复验。新单默认入口、新增镜头生成 lineage 和完整全链验收交 T13，不能以本票局部合成夹具宣称已完成。
 
 重放方式与命令见 [README.md](README.md)，接口和归属约束见 [CONTRACT.md](CONTRACT.md)。媒体 Worker/引用/受控执行器的 3 文件补充回归通过（`/private/tmp/t09-media-unit.log`）。最终 merge 最新 integration 返回 Already up to date（`2fa83c1a`）。
 

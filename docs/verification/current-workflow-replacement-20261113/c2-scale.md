@@ -1,5 +1,8 @@
 # C2 多来源声音保存与导出规模验证
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 后续核心疑点已由 [C2 声音与输出对账](c2-rendering.md) 修复并在当前源码复验；下文保留本切片交付时的事实和限制。
 
 结论：补强后的正式单次两档全部通过；只计最终 1 文件 2 项，0 失败／跳过。先前夹具／断言不足的一轮单独保留，不计验收通过。另有一处「非渲染图仍计声音变化」的核心边界待主对话核查，本切片不改核心或 SDK。
@@ -33,7 +36,7 @@
 
 ## 最终实际结果
 
-正式执行前记录时间为 UTC `2026-11-14T13:47:35.012277`，测试从北京时间 21:47:45 开始，整体 59.59 秒、用例 58.52 秒；清理后于 UTC `2026-11-14T13:49:06.118019` 留存终态快照。精确时间及主机进程摘要见 [window-start.json](evidence-c2-scale/window-start.json) 与 [window-end.json](evidence-c2-scale/window-end.json)。D 与 B1 的重型执行均经主对话暂停；系统后台仍在运行。
+正式执行前记录时间为 UTC `2026-11-14T13:47:35.012277`，测试从北京时间 21:47:45 开始，整体 59.59 秒、用例 58.52 秒；清理后于 UTC `2026-11-14T13:49:06.118019` 留存终态快照。精确时间及主机进程摘要见 window-start.json（历史附件已清理：`evidence-c2-scale/window-start.json`） 与 window-end.json（历史附件已清理：`evidence-c2-scale/window-end.json`）。D 与 B1 的重型执行均经主对话暂停；系统后台仍在运行。
 
 | 实际命令耗时 | 4 来源／16 实例 | 8 来源／64 实例 |
 | --- | ---: | ---: |
@@ -55,14 +58,14 @@
 
 正式容器 `loop-story-e2e-f58d652942eb` 按精确标签停止并自动移除，容器查询为空，私有源码路径进程查询为空；两档夹具正常关闭 SDK、数据库和临时媒体卷。256 MiB 卷本次没有出现容量错误，没有缩减规模或放宽保护。原始输入和私有源码作为复核证据保留，不复制到日常目录。无真实 Provider／视频 API、无日常部署／重启／采集启用、无提交／推送。
 
-私有副本最终类型检查退出 0，`runtime:prepare` 退出 0。1770 个基线文件除 11 个独立 build-info 输出位置调整外保持原指纹；新增两测试文件与主工作区逐 SHA 一致。见 [源码与检查](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-c2-scale/source-final.json>)、[正式结果](evidence-c2-scale/vitest.json)、[汇总](evidence-c2-scale/summary.json)、[清理](evidence-c2-scale/run.json)。正确工程、成片、探测参数和事件分别保存在 [小档证据](evidence-c2-scale/four-source-short/observation.json) 与 [大档证据](evidence-c2-scale/eight-source-large/observation.json) 同目录。
+私有副本最终类型检查退出 0，`runtime:prepare` 退出 0。1770 个基线文件除 11 个独立 build-info 输出位置调整外保持原指纹；新增两测试文件与主工作区逐 SHA 一致。见 [源码与检查](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-c2-scale/source-final.json>)、[正式结果](evidence-c2-scale/vitest.json)、汇总（历史附件已清理：`evidence-c2-scale/summary.json`）、清理（历史附件已清理：`evidence-c2-scale/run.json`）。正确工程、成片、探测参数和事件分别保存在 小档证据（历史附件已清理：`evidence-c2-scale/four-source-short/observation.json`） 与 大档证据（历史附件已清理：`evidence-c2-scale/eight-source-large/observation.json`） 同目录。
 
 ## 首次诊断与核心待核查
 
 首轮在明确重型窗口内显示单次 2 项通过，整理发现两档输出大小和 SHA 完全相同。只读检查定位为本切片夹具把根 `sequence` 放到音频轨。SDK `TimelineComposition.tsx:147–153` 只将视频轨上的可视节点送往嵌套渲染分支，音频分支只处理 `kind=audio`；原断言只检查 `ready` 与文件完整性，没有验证实际声音。修正夹具到已有画面轨并补解码／频率／不同混音不同 SHA 断言后，才得到上方最终通过。
 
-第一轮的工程与成片原字节没有在夹具关闭前保存，不能事后补称拥有原片或已实测其能量；原轮的成片音量为 unknown。原事件、工程与输出 SHA、源码指纹、窗口和清理收据仍保留于 [首次诊断](evidence-c2-scale/first-run-insufficient-audio/status.json)，不与最终数字相加。首轮容器 `loop-story-e2e-290bc5f08573` 同样已精确清理。
+第一轮的工程与成片原字节没有在夹具关闭前保存，不能事后补称拥有原片或已实测其能量；原轮的成片音量为 unknown。原事件、工程与输出 SHA、源码指纹、窗口和清理收据仍保留于 首次诊断（历史附件已清理：`evidence-c2-scale/first-run-insufficient-audio/status.json`），不与最终数字相加。首轮容器 `loop-story-e2e-290bc5f08573` 同样已精确清理。
 
 **核心待核查**：原音频轨上的 `sequence` 虽不进入 SDK 嵌套渲染，声音观察器仍遍历子图，并分别写了 16／64 条变化事件。`productionSoundUse.ts` 对轨道只检查 mute／hidden，没有核对 sequence 所在轨种类；`usedWorkspaceContent` 同样递归该图。这是已保存原事件与 SDK 静态路径之间的差异，不应被本轮正确夹具掩盖。最小建议是后续核对声音观察与 SDK 实际可渲染图的边界，再决定拒绝或忽略；本切片没有改规则或核心。
 
-提供 [来源代码片段](evidence-c2-scale/nonrendering-audio-track-sequence/source-evidence.txt)、[诊断说明](evidence-c2-scale/nonrendering-audio-track-sequence/diagnostic.json) 及 [派生最小工程](evidence-c2-scale/nonrendering-audio-track-sequence/derived-minimal-project.json)。该最小工程从最终正确小档只改根 sequence 轨得到，明确不是首轮原字节，未再执行，不以派生图补造历史证据。
+提供 来源代码片段（历史附件已清理：`evidence-c2-scale/nonrendering-audio-track-sequence/source-evidence.txt`）、诊断说明（历史附件已清理：`evidence-c2-scale/nonrendering-audio-track-sequence/diagnostic.json`） 及 派生最小工程（历史附件已清理：`evidence-c2-scale/nonrendering-audio-track-sequence/derived-minimal-project.json`）。该最小工程从最终正确小档只改根 sequence 轨得到，明确不是首轮原字节，未再执行，不以派生图补造历史证据。

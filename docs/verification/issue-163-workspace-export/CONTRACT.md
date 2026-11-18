@@ -1,5 +1,8 @@
 # T11 最终导出与精确确认契约
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 ## Owner 边界
 
 新命令沿 `/api/local/episode-commands`，继承 Owner/session、Origin/CSRF、幂等回执、Episode 可见性、资产根与 `lockProductionWorkspace` 的 revision CAS。必须保存并退出 Studio 后执行检查。新工作空间不进入旧 `confirmedShots`、先 QC 批准再生成 final render 的历史路径。

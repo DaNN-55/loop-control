@@ -1,6 +1,0 @@
-{
-  "cause": "Changing a source clip invokes the existing invalidate_shot_source_audio_after_clip_change trigger, clearing old audio result pointers. The initial fixture tried to save input and completed output together.",
-  "fix": "Assert original invalidation, then register the completed source-audio pointer in a separate update before confirmation and freeze.",
-  "productOrProtectionChanged": false,
-  "originalFixture": "retiredResidualHelpers.initial.ts"
-}

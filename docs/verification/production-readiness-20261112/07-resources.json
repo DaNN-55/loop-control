@@ -1,8 +1,0 @@
-{
-  "sampling": "Real isolated application/child process RSS and CPU every 2 seconds; includes actual Worker execution and native Studio; not a synthetic load benchmark",
-  "startedAt": "2026-11-12T09:25:50.825Z",
-  "samples": 837,
-  "maximumWorkerProcesses": 1,
-  "peakTotalRssMiB": 2901.203125,
-  "peakWorkerRssMiB": 138.5625
-}

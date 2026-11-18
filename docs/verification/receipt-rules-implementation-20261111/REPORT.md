@@ -1,5 +1,8 @@
 # 紧凑设置迁移与四类回执交付
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-11。主Agent实施流程4/5/17/24；子Agent迁移紧凑设置并独立复核48项。发送阶段、原操作恢复与紧凑连接/密钥聚合界面均已正式启用，48类逐项代表性验收完成。
 
 ## 流程结果
@@ -15,17 +18,17 @@
 
 |证据|结果|
 |---|---|
-|[发送边界红测](narration-boundary-red.log) → [修复后](narration-boundary-green.log)|4个真实executor受控边界：2种未发送、断线、无效音频；修复前3失败，修复后4通过。|
-|[原回执/原产物最终复验](receipt-post-review.log)|10项真实隔离HTTP/PG/files/Worker通过。跨attempt预算2次、旧reserved复用只发1次、旧未知保留、received登记失败、COMMIT回滚/成功但回执丢失均只恢复原产物、明确新口播风险确认、SSE明确拒绝、Owner/hash/CSRF/删除投影。|
-|[图片/视频/口播原状态集成](receipt-integration-final.log)|该日志中5项workspaceGenerationState均通过，含图片unknown显式新生成、明确拒绝、视频原ID继续、原产物恢复、口播改输入不重发。该次另一文件的公开投影测试旧预期1失败已在上行最终复验通过，不将原日志标为全绿。|
-|[客户端回读单测](receipt-unit.log)、[旧字幕/脚本协议适配](receipt-client-retest.log)、[上传/人工口播/Studio/创建复验](final-failed-client-retest.log)|只读readback，不重复原POST；缺回执跨模块重载仍不自动重发；旧回执不能确认新脚本。各组有重叠，不相加。|
-|[SSE分类](speech-rejection-unit.log)|21项通过。已知首音频前拒绝、部分音频/坏SSE/未知代码分类。|
-|[实际全应用浏览器](browser.log)、[结果](browser/result.json)|1/1通过。真实Owner/HTTP/PG/UI，受控连接与Worker；先核对原任务、展示两次计费风险、仅确认后新task、旧started保留、不自动采用，Provider POST仍1。首次加载等待及fixture未提供可执行目录的失败见[browser诊断](browser/diagnosis.md)，不作为产品成功。|
+|发送边界红测（历史附件已清理：`narration-boundary-red.log`） → 修复后（历史附件已清理：`narration-boundary-green.log`）|4个真实executor受控边界：2种未发送、断线、无效音频；修复前3失败，修复后4通过。|
+|原回执/原产物最终复验（历史附件已清理：`receipt-post-review.log`）|10项真实隔离HTTP/PG/files/Worker通过。跨attempt预算2次、旧reserved复用只发1次、旧未知保留、received登记失败、COMMIT回滚/成功但回执丢失均只恢复原产物、明确新口播风险确认、SSE明确拒绝、Owner/hash/CSRF/删除投影。|
+|图片/视频/口播原状态集成（历史附件已清理：`receipt-integration-final.log`）|该日志中5项workspaceGenerationState均通过，含图片unknown显式新生成、明确拒绝、视频原ID继续、原产物恢复、口播改输入不重发。该次另一文件的公开投影测试旧预期1失败已在上行最终复验通过，不将原日志标为全绿。|
+|客户端回读单测（历史附件已清理：`receipt-unit.log`）、旧字幕/脚本协议适配（历史附件已清理：`receipt-client-retest.log`）、上传/人工口播/Studio/创建复验（历史附件已清理：`final-failed-client-retest.log`）|只读readback，不重复原POST；缺回执跨模块重载仍不自动重发；旧回执不能确认新脚本。各组有重叠，不相加。|
+|SSE分类（历史附件已清理：`speech-rejection-unit.log`）|21项通过。已知首音频前拒绝、部分音频/坏SSE/未知代码分类。|
+|实际全应用浏览器（历史附件已清理：`browser.log`）、结果（历史附件已清理：`browser/result.json`）|1/1通过。真实Owner/HTTP/PG/UI，受控连接与Worker；先核对原任务、展示两次计费风险、仅确认后新task、旧started保留、不自动采用，Provider POST仍1。首次加载等待及fixture未提供可执行目录的失败见[browser诊断](browser/diagnosis.md)，不作为产品成功。|
 |[独立48类复核](acceptance/REPORT.md)|45项保留集成通过，媒体状态/试听65单测通过。逐项证据映射覆盖48类；额外字幕浏览器门控1项未执行，相关HTTP/PG字幕5项已执行，不把门控跳过计通过。|
-|[先行完整默认套件](default-tests-final.log)|289文件、2098通过、1既有条件跳过、0失败；初验9个旧交互/协议预期失败已保留在default-tests.log，均修正并复验。|
-|[最后触及UI复验](final-touched-unit.log)、[最终兼容与聚合UI复验](final-compatibility-unit.log)|先行49通过；最后7文件91通过，覆盖密钥聚合/共享详情/根设置、口播、图片状态、重试投影。与默认套件有重叠，不相加。|
-|[163最终兼容集成](legacy-received-integration.log)、[最终浏览器](browser-final.log)|4文件17集成全部通过，含图片/口播旧received无事实可明确新生成、任一新事实/hold拒绝、原记录保持、重复替代拒绝；真实全应用浏览器再验1/1。|
-|[最终构建](build-final.log)、[后台准备](runtime-prepare-final.log)|全项目TypeScript、前端production build、Worker/backend build与产物完整性检查通过；存在既有大chunk提示。|
+|先行完整默认套件（历史附件已清理：`default-tests-final.log`）|289文件、2098通过、1既有条件跳过、0失败；初验9个旧交互/协议预期失败已保留在default-tests.log，均修正并复验。|
+|最后触及UI复验（历史附件已清理：`final-touched-unit.log`）、最终兼容与聚合UI复验（历史附件已清理：`final-compatibility-unit.log`）|先行49通过；最后7文件91通过，覆盖密钥聚合/共享详情/根设置、口播、图片状态、重试投影。与默认套件有重叠，不相加。|
+|163最终兼容集成（历史附件已清理：`legacy-received-integration.log`）、最终浏览器（历史附件已清理：`browser-final.log`）|4文件17集成全部通过，含图片/口播旧received无事实可明确新生成、任一新事实/hold拒绝、原记录保持、重复替代拒绝；真实全应用浏览器再验1/1。|
+|最终构建（历史附件已清理：`build-final.log`）、后台准备（历史附件已清理：`runtime-prepare-final.log`）|全项目TypeScript、前端production build、Worker/backend build与产物完整性检查通过；存在既有大chunk提示。|
 |[独立实现审查](independent-review.md)|发现并修复跨attempt旧submission不更新、marker误包装、缺回执恢复入口、非回执命令误锁及旧unknown遮蔽新结果。最终无阻塞级发现。|
 
 **48类状态：22项修复并验证，26项验证保留，0项待实施。** 这是已描述规则的逐类代表性验收，不是所有媒体格式、状态笛卡尔积、真实供应商质量或扣费测试。完整矩阵见[48类](../workflow-rules-implementation-20261111/acceptance-48.md)。
@@ -35,14 +38,14 @@
 迁移前Git完整检查点：`32514cb623eabc783e2b37e7bfa45fbcd9cec64e`，分支`codex/before-connection-receipts-20261111`；当前分支和正常暂存区未切换。
 
 - 停止前只读确认0个ready/running任务、6张生产单均无活动原生Studio。
-- [首批正常迁移](runtime-migrate.log)应用161、162；历史兼容使用[新增前向163](runtime-migrate-final.log)，未改已应用迁移，旧迁移哈希全部一致。Owner已关闭自动备份，正常迁移尊重此设置，未使用`--no-backup`。
-- 5174最终正常重载成功，PID74264、运行/准备release `2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2` 一致，见[daily-after](daily-after.json)。匿名session查询401为预期授权拒绝。
-- [重载前](daily-before.json)/[重载后](daily-after.json)：均6张生产单、19任务、4回收项；0在途任务，新事实表0行。未重放真实旧未知任务，未创建真实生成或变更真实内容/密钥。
+- 首批正常迁移（历史附件已清理：`runtime-migrate.log`）应用161、162；历史兼容使用新增前向163（历史附件已清理：`runtime-migrate-final.log`），未改已应用迁移，旧迁移哈希全部一致。Owner已关闭自动备份，正常迁移尊重此设置，未使用`--no-backup`。
+- 5174最终正常重载成功，PID74264、运行/准备release `2557fbeb5f3e846ff4b521f91d365ceb532c50d491fbcb36eb2b9f76c24698a2` 一致，见daily-after（历史附件已清理：`daily-after.json`）。匿名session查询401为预期授权拒绝。
+- 重载前（历史附件已清理：`daily-before.json`）/重载后（历史附件已清理：`daily-after.json`）：均6张生产单、19任务、4回收项；0在途任务，新事实表0行。未重放真实旧未知任务，未创建真实生成或变更真实内容/密钥。
 - 两个阶段隔离PostgreSQL均为network-none/tmpfs无业务数据环境，全部fixture关闭后已核对身份并停止本轮容器；日常服务与5210预览保留。
 
 ## 设置界面
 
-连接、模型、用量与计费、记录使用同一个固定区域，保存/取消统一在右下。保留实际API、权限、不可变版本、模型/计费分开保存、草稿守卫及错误恢复。敏感读取使用共享固定面板和一次密码验证/30秒清除，不产生嵌套弹窗。细节见[迁移报告](../compact-connection-migration-20261111/REPORT.md)。全局密钥按真实connectionId聚合制作/账务/历史，系统及无连接按用途分组；分页只描述当前返回页，footer总条目不冒充总分组。分组→组内条目→固定详情逐级替换并保留筛选/页码，39定向通过、宽窄中英深浅与axe通过，见[补齐报告](../compact-connection-migration-20261111/secrets/GROUPED-REPORT.md)。主Agent已在正式已登录页面实看连接详情、模型读取、35个真实元数据条目的聚合、制作/账务明细、固定详情与返回，截图[正式密钥分组](../compact-connection-migration-20261111/secrets/production-group.png)。未点击测试连接/读取供应商模型/显示或复制真实密钥。
+连接、模型、用量与计费、记录使用同一个固定区域，保存/取消统一在右下。保留实际API、权限、不可变版本、模型/计费分开保存、草稿守卫及错误恢复。敏感读取使用共享固定面板和一次密码验证/30秒清除，不产生嵌套弹窗。细节见[迁移报告](../compact-connection-migration-20261111/REPORT.md)。全局密钥按真实connectionId聚合制作/账务/历史，系统及无连接按用途分组；分页只描述当前返回页，footer总条目不冒充总分组。分组→组内条目→固定详情逐级替换并保留筛选/页码，39定向通过、宽窄中英深浅与axe通过，见[补齐报告](../compact-connection-migration-20261111/secrets/GROUPED-REPORT.md)。主Agent已在正式已登录页面实看连接详情、模型读取、35个真实元数据条目的聚合、制作/账务明细、固定详情与返回，截图正式密钥分组（历史附件已清理：`../compact-connection-migration-20261111/secrets/production-group.png`）。未点击测试连接/读取供应商模型/显示或复制真实密钥。
 
 未知网络/进程故障未来仍可能发生；本次保证有证据时安全恢复、无证据时不冒充未执行，不承诺还原最早那次503的唯一历史原因。
 

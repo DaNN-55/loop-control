@@ -1,12 +1,15 @@
 # 全界面优化：T01–T08 实测报告
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-02，八类测试均已执行。已复现 7 个新增优化项；原清单中的 U38、U41、U66 等也得到补充证据。部分细节未覆盖，不能将本报告理解为「每个控件和所有状态均验收通过」。产品代码尚未修改。
 
 U01–U76 的已确认范围、U21 的同行状态、U41 的占位加载要求均已写入[规格](../../specs/ui-full-audit-20261102.md)和 [Issue #196](https://github.com/DaNN-55/loop-control/issues/196)。新增 N 项与 U44 最终入口方案列为待确认范围，不覆盖原编号。
 
 ## 环境与隔离结果
 
-- 基于当前工作树复制源码和 OpenChatCut 0.2.17。主仓库基点为 `055914a9`；测试包含复制时已有未提交改动，不能仅凭该提交复建现场。关键文件哈希见 [snapshot-manifest.json](snapshot-manifest.json)。
+- 基于当前工作树复制源码和 OpenChatCut 0.2.17。主仓库基点为 `055914a9`；测试包含复制时已有未提交改动，不能仅凭该提交复建现场。关键文件哈希见 snapshot-manifest.json（历史附件已清理：`snapshot-manifest.json`）。
 - 独立 PostgreSQL 容器使用 `network=none` 和内存数据盘；独立 APFS 测试卷承载媒体。真实 Owner HTTP、页面、Worker、SDK、SQLite 工程与实际文件边界参与执行。
 - 供应商传输与凭据存储采用受控合成替代。共 4 次受控 POST：图片成功、视频回执丢失、图片明确拒绝、视频已接受后轮询中断。恢复原视频只继续轮询，没有第二次 POST。真实付费调用 0 次。
 - 八类记录收齐，交互式 Vitest 协调器通过，耗时 2026.466 秒。它证明本次协调与清理完成，不证明产品全部通过。测试日志另有既有 pg 并发调用弃用提示，未把它列为 UI 缺陷。
@@ -39,7 +42,7 @@ U01–U76 的已确认范围、U21 的同行状态、U41 的占位加载要求�
 | N06 | P2 | 900×768 非专注嵌入布局中，属性值、标签和预览工具挤压，时间线落到首屏下方。 | 定义剪辑工作台最小可用宽度与低高度方案；在受限宽度调整面板展开方式并明确提供专注剪辑，确保精确值输入、保存和时间线可达。 |
 | N07 | P2 | SDK 皮肤菜单项获得焦点，按 Escape 后仍为展开状态；背景点击会先被覆盖层接收。 | 统一菜单的 Escape 关闭、方向键选择与焦点返回；先在正常嵌入场景确认，再覆盖皮肤等同类浮层。该项为已有复现、嵌入形态待复核。 |
 
-证据：N01 见 [T05.json](T05.json)；N02 见[保存失败截图](screenshots/audit-t02-sound-save.png)与[撤销后保存](screenshots/audit-t02-clean-save.png)；N03 见 [T08.json](T08.json)和[部分上传](screenshots/audit-t08-partial-upload.png)；N04／N05 见 [T04.json](T04.json)；N06 见[900 宽剪辑器](screenshots/audit-t03-editor-900-retest.png)；N07 见[皮肤浮层](screenshots/audit-t02-after-escape-overlay.png)与 [T05.json](T05.json)。
+证据：N01 见 T05.json（历史附件已清理：`T05.json`）；N02 见保存失败截图（历史附件已清理：`screenshots/audit-t02-sound-save.png`）与撤销后保存（历史附件已清理：`screenshots/audit-t02-clean-save.png`）；N03 见 T08.json（历史附件已清理：`T08.json`）和部分上传（历史附件已清理：`screenshots/audit-t08-partial-upload.png`）；N04／N05 见 T04.json（历史附件已清理：`T04.json`）；N06 见900 宽剪辑器（历史附件已清理：`screenshots/audit-t03-editor-900-retest.png`）；N07 见皮肤浮层（历史附件已清理：`screenshots/audit-t02-after-escape-overlay.png`）与 T05.json（历史附件已清理：`T05.json`）。
 
 原 U38 的状态／恢复、U41 的逐文件反馈与占位、U66 的密码规则／字段错误继续沿原编号处理，不因本次复现再增加新编号。N02 与 U44、N03 与 U31／U41 协同实施，避免重复改动。
 

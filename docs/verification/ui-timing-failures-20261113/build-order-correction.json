@@ -1,6 +1,0 @@
-{
-  "cause": "The successful Vite frontend build clears dist, including the earlier prepared backend and Worker outputs.",
-  "effect": "8 application assembly assertions cannot import mediaRootSettings.js and 1 backup suite cannot collect without episodeStorageLocation.js; the UI tests pass.",
-  "fix": "Run runtime:prepare after the frontend build, then execute the full default suite with frontend and backend outputs present.",
-  "sourceOrTestsChanged": false
-}

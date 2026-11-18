@@ -1,5 +1,8 @@
 # 正式分镜台双栏恢复
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 历史验收记录：批量准备、集中核对与批量采用已按用户后续决定撤回；现状见 [撤回记录](../batch-retirement-20261116/REPORT.md)。原测试证据保留。
 
 2026-11-16。按用户确认的改版前布局，恢复左侧镜头表＋右侧常驻详情。已加载日常5174并实际查看；未提交或推送。
@@ -29,11 +32,11 @@
 
 ## 证据
 
-- [双栏页面](browser/batch-flow-complete.png)、[窄屏](browser/batch-flow-mobile.png)、[尺寸](browser/viewports.json)
-- [批量链路原始结果](browser/acceptance.json)、[实际导出](browser/batch-final.mp4)、[交付包](browser/batch-delivery.zip)
-- [三单数据与素材保留核验](production-preservation.json)
-- [运行包切换](daily-service.json)：`4d9e450fde679eefbe2cb934296afdc432181f51e5ea1a5f99f82d473017ed21`，5174；切换前无活动任务或剪辑会话，仅重启应用、未重启数据库。
-- [隔离资源清理](cleanup.json)：本轮隔离数据库与浏览器已关闭；有效证据保留。
+- 双栏页面（历史附件已清理：`browser/batch-flow-complete.png`）、窄屏（历史附件已清理：`browser/batch-flow-mobile.png`）、尺寸（历史附件已清理：`browser/viewports.json`）
+- 批量链路原始结果（历史附件已清理：`browser/acceptance.json`）、实际导出（历史附件已清理：`browser/batch-final.mp4`）、交付包（历史附件已清理：`browser/batch-delivery.zip`）
+- 三单数据与素材保留核验（历史附件已清理：`production-preservation.json`）
+- 运行包切换（历史附件已清理：`daily-service.json`）：`4d9e450fde679eefbe2cb934296afdc432181f51e5ea1a5f99f82d473017ed21`，5174；切换前无活动任务或剪辑会话，仅重启应用、未重启数据库。
+- 隔离资源清理（历史附件已清理：`cleanup.json`）：本轮隔离数据库与浏览器已关闭；有效证据保留。
 
 原始测试、构建、运行包及改动前文件位于项目私有 `.scratch/storyboard-layout-restore-20261116/`。既有工作区改动未覆盖。
 

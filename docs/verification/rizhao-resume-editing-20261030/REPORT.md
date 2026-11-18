@@ -1,5 +1,8 @@
 # 日照金山原单恢复编辑验证
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-30，目标生产单 `bbea3b57-061b-4341-9ba1-3bf65d28899f`。
 
 ## 根因与修复
@@ -23,6 +26,6 @@
 
 恢复前后记录见 `evidence/before.json`、`evidence/after.json`；素材页面及已连接剪辑器截图见下。
 
-![素材页按钮可用](evidence/materials-enabled.jpg)
+素材页按钮可用（历史附件已清理：`evidence/materials-enabled.jpg`）
 
-![真实剪辑器已连接](evidence/editor-ready.jpg)
+真实剪辑器已连接（历史附件已清理：`evidence/editor-ready.jpg`）

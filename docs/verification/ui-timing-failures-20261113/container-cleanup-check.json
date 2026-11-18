@@ -1,9 +1,0 @@
-{
-  "passed": true,
-  "containers": [
-    "loop-story-e2e-7d7ffee4dcfd",
-    "loop-story-e2e-67b0e417aa1c",
-    "loop-story-e2e-2e9cfdb1e3fa"
-  ],
-  "directDockerQueryAbsent": true
-}

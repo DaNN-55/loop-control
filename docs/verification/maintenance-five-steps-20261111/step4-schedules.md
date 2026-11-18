@@ -1,5 +1,8 @@
 # 第 4 项：Loop-Control 定时任务只读审计
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 采集时间：2026-11-12，Asia/Shanghai。任务目录沿用 2026-11-11。只新增本报告与 `step4-evidence/`，没有修改调度设置、启停服务、运行备份／生成、读取会话正文、访问 Keychain 或写入业务数据库。
 
 ## 结论
@@ -17,7 +20,7 @@
 - 当前运行版本为 `2557fbeb…`。直接检查其已编译 `nativeAutomation.js / workerScheduler.js`，确认 4 秒扫描、每天上海 9 点与执行时 5 秒租约续期，未仅凭隔离分支源码推断线上节奏。日常服务记录格式没有 nonce，使用 PID／命令／cwd／监听端口归属核对。
 - 只在确认归属的 `loop_control` 库执行 `BEGIN ... REPEATABLE READ READ ONLY`、相关 `SELECT` 和 `ROLLBACK`；连接为 `postgres`，`superuser=true`，`transaction_read_only=on`。0 条记录不是 Owner RLS 隐藏。没有调用 initialize、claim、finish、run 或任何业务 RPC。
 
-月度窗口采用滚动一个日历月、左闭右开：**2026-10-12 00:07:36 至 2026-11-12 00:07:36（上海时间）**。排期按 `jobs.due_at`，执行按 `attempts.started_at`，通知按 `reserved_at`，Worker 按 `task_runs.started_at` 分开统计，不能互换。证据：[monthly-audit.sql](step4-evidence/monthly-audit.sql)、[monthly-audit.json](step4-evidence/monthly-audit.json)。
+月度窗口采用滚动一个日历月、左闭右开：**2026-10-12 00:07:36 至 2026-11-12 00:07:36（上海时间）**。排期按 `jobs.due_at`，执行按 `attempts.started_at`，通知按 `reserved_at`，Worker 按 `task_runs.started_at` 分开统计，不能互换。证据：[monthly-audit.sql](step4-evidence/monthly-audit.sql)、monthly-audit.json（历史附件已清理：`step4-evidence/monthly-audit.json`）。
 
 当前保留的 `automation_jobs / automation_attempts / notification_delivery_events / task_runs` 在窗口内均为 0 条；automation jobs／attempts 全表也为 0，只有一个 health 计划，下次为 **2026-11-12 09:00 上海时间**。Worker 当前任务、自动继续 enabled scope 和未决通知也为 0。**这些数字只证明当前保留账本中的记录数量，无法证明过去整个月从未执行。** 未取得历史保留连续性证据，不能把空账本或当前 PID 的一次状态当成完整月度失败率。
 
@@ -34,7 +37,7 @@
 | 日常应用内部 | 核对固定运行版本、相关源码、持久 plans／jobs／attempts、Worker／通知账本、操作元数据和产出索引 | 不调用实际作业；只读月聚合不能证明历史记录从未被清理或迁入／迁出 |
 | 项目脚本与生命周期 | 对第一方生产 `src / scripts` 搜索计时器，排除测试、夹具、保留 Demo 和上游组件；核对启动、停止、备份、迁移、宿主、Worker 与前端消费者 | 区分真正常驻调度、按任务存在的租约／超时、按页面挂载的轮询；源码存在不等于每个页面当前都挂载 |
 
-原始结果见 [coverage.json](step4-evidence/coverage.json)、`cron.json / launchd.json / github-workflows.json / codex-automation-index.json`，完整计时器位置见 [timer-locations.txt](step4-evidence/timer-locations.txt)。
+原始结果见 coverage.json（历史附件已清理：`step4-evidence/coverage.json`）、`cron.json / launchd.json / github-workflows.json / codex-automation-index.json`，完整计时器位置见 timer-locations.txt（历史附件已清理：`step4-evidence/timer-locations.txt`）。
 
 ## 应用内职责逐项盘点
 
@@ -49,7 +52,7 @@
 | S4-T05 `automation_plans.kind=backup`／原生自动化 | **已关闭**：日常 `automaticBackups=false`，实际执行 kind 集合只有 health，无 backup plan。若启用，原实现按每天上海 09:00排期 | 当前保留排期／尝试／失败 0；已核实备份根下无 UUID 归档目录；不能据此推断其他时间／其他保留位置从未有备份 | 完整归档原本由 storage restore／校验读取，属于灾难恢复能力，不能以没有日常打开量判断无用。迁移前按配置触发的备份是事件驱动，不是额外 cron | 保持已关闭现状；是否开启由 Owner 另行决定，本次不改变策略或承诺已有可恢复备份 |
 | S4-T06 通知消费者／原生自动化与 Owner 偏好 | 随 pump 每 4 秒检查；有新事件且相应类别和 macOS 偏好启用才投递。当前部署使用 desktop | 窗口内保留投递预留 0、失败／uncertain 0，未决 0；扫描次数未知。accepted 也仅代表系统接口接受，不代表用户已读 | 审批／失败／交付事件供桌面提醒和应用内通知使用，持久预留防重；应用内列表与桌面渠道用途不同 | 保留；按 Owner 渠道／类别偏好控制，不创建第二套定时提醒 |
 
-消费者与源码索引见 [source-review-index.json](step4-evidence/source-review-index.json)。所有者为本机项目服务／登录的 Owner，不输出 Owner ID、会话令牌或作品正文。
+消费者与源码索引见 source-review-index.json（历史附件已清理：`step4-evidence/source-review-index.json`）。所有者为本机项目服务／登录的 Owner，不输出 Owner ID、会话令牌或作品正文。
 
 ## 按任务或页面存在的计时器
 
@@ -87,7 +90,7 @@
 
 ## 只读保护与验证边界
 
-[protection-check.json](step4-evidence/protection-check.json) 确认隔离工作树初始 11144 个跟踪文件（排除主 Agent 所有的 PLAN）内容未变。数据库查询脚本只含只读事务、相关 SELECT 和 ROLLBACK；未执行任何自动化、备份或生成函数，未发送服务信号。没有代码／配置变更，因此不重复测试或构建。
+protection-check.json（历史附件已清理：`step4-evidence/protection-check.json`） 确认隔离工作树初始 11144 个跟踪文件（排除主 Agent 所有的 PLAN）内容未变。数据库查询脚本只含只读事务、相关 SELECT 和 ROLLBACK；未执行任何自动化、备份或生成函数，未发送服务信号。没有代码／配置变更，因此不重复测试或构建。
 
 最终观察原工作区有 `SystemStatusDrawer.css / styles.css / ui/impeccable/maintenance.css` 三处并行改动；本子 Agent 没有写原工作区或任何 CSS，也没有恢复它们。该观察与本任务隔离源码保持分开，交主 Agent 保留。
 

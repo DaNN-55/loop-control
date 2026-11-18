@@ -1,5 +1,8 @@
 # Native SDK findings — caption lane key collision
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 Date: 2026-11-01. Scope: the isolated main E2E native Studio only. No shared
 OpenChatCut source, production source, provider credential, browser session, or
 daily runtime was changed.

@@ -1,6 +1,0 @@
-{
-  "scripts/runtime/project-history.mjs": "5310240f28a960cc7e31eb71676a44524b8f1352ff68dfaa86002d9d0e82b25e",
-  "scripts/runtime/production-history.mjs": "fa3c1b7db0cc08115c71cc2ded5baf1381fd063a15efd49b6d84a9befdcbf903",
-  "scripts/runtime/legacy-production-history.mjs": "bccc3fd3c4443454b06d8762e8cb0fd68e4f59f2a9550403a90f61a8e7901bed",
-  "src/local-app/legacyProductionHistory.integration.test.ts": "729327ac0548b598290afe19b3fbb3196a518d0dba936dcf14467352ce883537"
-}

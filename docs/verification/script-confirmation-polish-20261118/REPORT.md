@@ -1,5 +1,8 @@
 # 脚本确认样式收敛 · 2026-11-18
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 本轮只调整正式脚本确认页的三个 UI 文件；请求、采用、历史、数据保存和模型调用逻辑未改。聊天改版仅给建议，没有实现。收尾发现 `WorkspaceScriptPanel.tsx` 和同页 CSS 的历史／帮助移位并行改动；已保留在工作区，不纳入本次提交。
 
 ## 已处理
@@ -30,7 +33,7 @@
 
 ## 证据
 
-- [模型列表](models.png)、[移动模型列表与 Tooltip](mobile-models.png)
-- [正文焦点](source-focus.png)、[上传 hover](upload-hover.png)
-- [紧凑镜头编辑](shot-editor.png)、[移动布局](mobile.png)
-- [脚本回归](script-tests.log)、[全量测试](all-tests.log)、[类型检查](typecheck.log)、[前端构建](build.log)、[后端构建](backend-build.log)
+- 模型列表（历史附件已清理：`models.png`）、移动模型列表与 Tooltip（历史附件已清理：`mobile-models.png`）
+- 正文焦点（历史附件已清理：`source-focus.png`）、上传 hover（历史附件已清理：`upload-hover.png`）
+- 紧凑镜头编辑（历史附件已清理：`shot-editor.png`）、移动布局（历史附件已清理：`mobile.png`）
+- 脚本回归（历史附件已清理：`script-tests.log`）、全量测试（历史附件已清理：`all-tests.log`）、类型检查（历史附件已清理：`typecheck.log`）、前端构建（历史附件已清理：`build.log`）、后端构建（历史附件已清理：`backend-build.log`）

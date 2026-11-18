@@ -1,5 +1,8 @@
 # 字幕拖动、连接频闪和打开速度
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-30，PC端。浏览器验证均在右侧内置浏览器进行。OpenChatCut升级另行准备，以下为0.2.14加本项目兼容修复的已完成验证。
 
 ## 已完成改动
@@ -49,12 +52,12 @@ SDK遇409会清除编辑权，再每秒重新注册，形成互相抢回循环�
 
 修复后的原生右栏同步：
 
-![右侧测试页字幕与属性同步](/Users/dan/Programs/loop-control/docs/verification/editor-connection-caption-fix-20261030/screenshots/04-slot-synced.jpg)
+右侧测试页字幕与属性同步（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/editor-connection-caption-fix-20261030/screenshots/04-slot-synced.jpg`）
 
 保存重开保留位置：
 
-![重开后字幕位置](/Users/dan/Programs/loop-control/docs/verification/editor-connection-caption-fix-20261030/screenshots/05-slot-reopened.jpg)
+重开后字幕位置（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/editor-connection-caption-fix-20261030/screenshots/05-slot-reopened.jpg`）
 
 真实日照原单拖动测试：
 
-![真实原单字幕拖动](/Users/dan/Programs/loop-control/docs/verification/editor-connection-caption-fix-20261030/screenshots/07-real-dragged.jpg)
+真实原单字幕拖动（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/editor-connection-caption-fix-20261030/screenshots/07-real-dragged.jpg`）

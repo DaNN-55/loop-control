@@ -1,5 +1,0 @@
-{
-  "productionChanges": false,
-  "focus": "Observe the first real DOM insertion before React passive effects; retain the original immediate focus assertion.",
-  "receipt": "Hold the reopened workspace GET before a second receipt request, retain the original adopt-button completion sentinel and immediate receipt assertion."
-}

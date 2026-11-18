@@ -1,5 +1,8 @@
 # D：统一旧来源选择与接入入口
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-14。状态：本来源入口子批完成，完整 D 和 A–G 仍未完成。依据已批准实施规范 D、共通保护及 ADR-0066。本批不删除旧 SQL 或历史数据，不改共享 SDK，不提交、不推送。
 
 ## 实现与实际影响
@@ -30,7 +33,7 @@
 - 13080 个开始时已有文件中，仅本批代码／测试／计划在授权范围内变更；1416 个原源与最终 `source` 所在固定副本逐字节一致。HEAD／物理索引及 SDK 2,782 个参考文件保持。
 - 12 次自有数据库运行全部终态、容器已移除，并逐一按名称再次查询确认无残留。未操作日常数据库、运行包、服务或采集开关，不以未读取的日常状态冒充整库哈希比较。
 
-证据：[测试汇总](evidence-d-source-ui/test-summary.json)、[最终结果](evidence-d-source-ui/final-browser.json)、[组件](evidence-d-source-ui/panel-final.json)、[两轴审查](evidence-d-source-ui/reviews.md)、[保持与清理](evidence-d-source-ui/preservation.json)、[窄屏](evidence-d-source-ui/saved-plan-source-narrow-choice.png)。完整私有证据保留于 `/private/tmp/loop-workflow-implementation-20261113-20zy8mfk/d-source-completion`。
+证据：测试汇总（历史附件已清理：`evidence-d-source-ui/test-summary.json`）、最终结果（历史附件已清理：`evidence-d-source-ui/final-browser.json`）、组件（历史附件已清理：`evidence-d-source-ui/panel-final.json`）、[两轴审查](evidence-d-source-ui/reviews.md)、保持与清理（历史附件已清理：`evidence-d-source-ui/preservation.json`）、窄屏（历史附件已清理：`evidence-d-source-ui/saved-plan-source-narrow-choice.png`）。完整私有证据保留于 `/private/tmp/loop-workflow-implementation-20261113-20zy8mfk/d-source-completion`。
 
 不同副本与筛选结果分别保留，不把名称筛选未运行的用例计为通过。没有重跑全项目默认套件；按原规范，完整默认套件保留在最终 G。上一轮评估的 31 项埋点等结果不计作本轮新执行。
 

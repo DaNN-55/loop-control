@@ -1,5 +1,8 @@
 # 当前隔离生产单、埋点与旧流程替换评估
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-14。结论：**当前新单能够使用独立制作模型完成实际生产和交付，相关埋点可以同单联测；旧执行链尚未全部退出，建议继续局部重构与迁移，不整体重写。**本轮实看正式视频仍有棋盘格，并通过私有组件测试复现候选初始区间显示不一致，不能宣称产品结果全部正确。
 
 完整处置和改名方案见[剩余替换建议](../../plans/production-workflow-remaining-proposal-visual-draft-20261114.md)。本轮没有修产品代码、执行清理或应用日常迁移；已有实施任务与根 `PLAN.md` 保持。
@@ -28,7 +31,7 @@
 | 新单对旧表的依赖 | `review_packages`、`shot_preparation_drafts`、`approvals` 各 0 行；有独立 `preparationRevisionId`，旧 `storyboardPackageId` 为 null |
 | 费用与任务 | 无费用预留或供应商请求；2 条人工登记音轨任务 attempt=0，1 条真实交付任务 attempt=1。不能把 3 条任务都算生成请求或 Worker 执行 |
 
-产物：[测试成片](artifacts/test-production.mp4)、[第一镜实际帧](artifacts/frame1.png)、[第二镜实际帧](artifacts/frame2.png)、[交付 metadata](artifacts/metadata.json)、[逐项回执](artifacts/receipt.json)、[媒体探测](artifacts/ffprobe.json)。本轮下载的是 Worker 返回的 4 个交付产物，另复制已验证导出供查看，没有声称测试了页面 ZIP 下载。
+产物：测试成片（历史附件已清理：`artifacts/test-production.mp4`）、第一镜实际帧（历史附件已清理：`artifacts/frame1.png`）、第二镜实际帧（历史附件已清理：`artifacts/frame2.png`）、交付 metadata（历史附件已清理：`artifacts/metadata.json`）、逐项回执（历史附件已清理：`artifacts/receipt.json`）、媒体探测（历史附件已清理：`artifacts/ffprobe.json`）。本轮下载的是 Worker 返回的 4 个交付产物，另复制已验证导出供查看，没有声称测试了页面 ZIP 下载。
 
 ## 仍存在的实际问题
 
@@ -42,7 +45,7 @@
 
 当前后台可返回 `initialRange = 1–2 秒`，实际候选文件总长为 3 秒。私有 React 组件诊断打开该候选的「裁剪与时长」，读取到起点 0、终点 3；预期应表示原可用选择 1、2。
 
-诊断真实渲染当前 `WorkspaceVisualPreparation` 组件，只提供候选数据和受控读取，不复制组件实现。结果：[实际值](evidence/ui-range-observation.json)、[失败测试](evidence/ui-range.json)、[日志](evidence/ui-range.log)。**这 1 项是保留的失败，不是通过项，未修复。**本轮没有把 jsdom 组件诊断冒充实际浏览器验收。
+诊断真实渲染当前 `WorkspaceVisualPreparation` 组件，只提供候选数据和受控读取，不复制组件实现。结果：实际值（历史附件已清理：`evidence/ui-range-observation.json`）、失败测试（历史附件已清理：`evidence/ui-range.json`）、日志（历史附件已清理：`evidence/ui-range.log`）。**这 1 项是保留的失败，不是通过项，未修复。**本轮没有把 jsdom 组件诊断冒充实际浏览器验收。
 
 源码的初值来自当前原生视频起点或 0、终点来自整片时长，尚未读取新候选的 `initialRange`。空覆盖时后台可以正确采用原区间，所以本轮证明的是显示／预览语义不一致，没有声称所有默认采用都会错误。后续应统一候选初始显示、预览、明确编辑和采用摘要，同时保留后台的源长、帧边界及当前工程保护。
 
@@ -60,7 +63,7 @@
 | 读取与重开 | 原生保存后服务重开，事件集合保持 | 没有因读取重复计数 |
 | 费用 | 冻结生成估算 0、费用预留 0、供应商实付 null | 没有外部请求，不能给缺失账单补 0 作为已知实付 |
 
-单据事件见 [receipt.json](artifacts/receipt.json)，Owner 只读汇总见 [workflow-summary.json](artifacts/workflow-summary.json)。夹具账号中另有不在本窗口发生的新建前置对象；本单计数按 `episode_id` 过滤，不能与不同范围的保留对象总数混比。
+单据事件见 receipt.json（历史附件已清理：`artifacts/receipt.json`），Owner 只读汇总见 workflow-summary.json（历史附件已清理：`artifacts/workflow-summary.json`）。夹具账号中另有不在本窗口发生的新建前置对象；本单计数按 `episode_id` 过滤，不能与不同范围的保留对象总数混比。
 
 相关边界另行实际隔离验证：默认关闭、覆盖周期、不补造、Owner／Worker／lease 限制、同事务回滚、幂等冲突、显式重试、质量冻结、响应写失败不重复 transport；配乐／音效／原声按实际可听窗口统计；同步导出的独立资源观测和同 Owner 并发。资源测试是补充场景，本单没有伪造资源样本来填满所有维度。
 
@@ -76,7 +79,7 @@
 - 后端六个 v2 手动命令和旧计划读取仍保留；计划／草稿新接入命令已存在，但页面尚未提供完整来源选择与后续操作链。
 - 原包专项实际检查 23 个完整 v4 包：当前受支持启动门槛均明确拒绝执行，原包字节保持。该检查不终止已经运行的进程，也不限制任意外部程序；删除 SQL 合同前仍应核查实际消费者。
 
-精确签名、触发引用及保守函数体引用见 [remaining-call-map.json](evidence/remaining-call-map.json)。其中原包引用数量来自既有精确合同清单，不能将清单中没有列某名称解释为所有原包都没有相关间接依赖。
+精确签名、触发引用及保守函数体引用见 remaining-call-map.json（历史附件已清理：`evidence/remaining-call-map.json`）。其中原包引用数量来自既有精确合同清单，不能将清单中没有列某名称解释为所有原包都没有相关间接依赖。
 
 旧来源专项共 53 项通过：保存计划接入 8、原呈现设置 10、旧工作版本／草稿接入 35。包含当前明确采用、真实 SDK 重开／导出、混合确认状态、准确原音轨、分屏／画中画／四宫格／顺序区间、错 Owner／指纹／文件、未知请求和既有编辑保护。内部图像窗口按实际帧接入，公共登记时长限制保留；121 秒图像仅验证登记／采用，没有渲染 121 秒或证明大工程性能。
 
@@ -86,14 +89,14 @@
 
 | 验证 | 本轮实际结果 |
 | --- | --- |
-| 新生产单及埋点相关集成 | 7 文件、31 项通过，0 跳过；[结果](evidence/production-vitest.json) |
-| 旧来源接入及设置集成 | 3 文件、53 项通过，0 跳过；[结果](evidence/legacy-vitest.json) |
-| 定向单元 | 5 文件、36 项通过；[结果](evidence/units.json) |
-| 原包执行门槛 | 1 项通过，逐一核查 23 包且字节保持；[结果](evidence/archives.json) |
-| 候选初始区间显示诊断 | 1 项失败，作为未修复发现保留；[结果](evidence/ui-range.json) |
-| Worker／backend 构建与完整类型检查 | 两份固定副本均通过；[构建](evidence/production-build.log) · [类型](evidence/production-types.log) |
+| 新生产单及埋点相关集成 | 7 文件、31 项通过，0 跳过；结果（历史附件已清理：`evidence/production-vitest.json`） |
+| 旧来源接入及设置集成 | 3 文件、53 项通过，0 跳过；结果（历史附件已清理：`evidence/legacy-vitest.json`） |
+| 定向单元 | 5 文件、36 项通过；结果（历史附件已清理：`evidence/units.json`） |
+| 原包执行门槛 | 1 项通过，逐一核查 23 包且字节保持；结果（历史附件已清理：`evidence/archives.json`） |
+| 候选初始区间显示诊断 | 1 项失败，作为未修复发现保留；结果（历史附件已清理：`evidence/ui-range.json`） |
+| Worker／backend 构建与完整类型检查 | 两份固定副本均通过；构建（历史附件已清理：`evidence/production-build.log`） · 类型（历史附件已清理：`evidence/production-types.log`） |
 | 全项目默认套件、完整 UI 与全部恢复 | 本轮未运行，不算通过 |
 
 本轮通过项合计 121，另有 1 项明确失败；不将其写成「全部测试通过」。两个自有数据库容器已移除，必要的源码快照、测试及产物证据保留。
 
-起点 12,940 个已有工作区文件均未变化；两份副本的 1,409 个原业务源文件与当前一致；HEAD、物理暂存索引保持。SDK 基线的 2,782 个文件指纹保持。见[保持核对](evidence/unchanged-check.json)。本轮仅新增本报告、方案和精简产物；没有修改业务代码、SQL 或既有文档，没有删除用户历史数据／草稿／音轨／冻结证据，没有放宽现有保护，没有暂存、提交、推送，也没有日常迁移、部署、重启或采集启用。
+起点 12,940 个已有工作区文件均未变化；两份副本的 1,409 个原业务源文件与当前一致；HEAD、物理暂存索引保持。SDK 基线的 2,782 个文件指纹保持。见保持核对（历史附件已清理：`evidence/unchanged-check.json`）。本轮仅新增本报告、方案和精简产物；没有修改业务代码、SQL 或既有文档，没有删除用户历史数据／草稿／音轨／冻结证据，没有放宽现有保护，没有暂存、提交、推送，也没有日常迁移、部署、重启或采集启用。

@@ -23,4 +23,4 @@
 - `src/local-app/productionMetricWrites.ts:9-12,26-37`：未启用跳过采集；供应商请求观测与失败分类。
 - `src/local-app/productionQuality.ts:7-10`、`db/current/177-production-metrics-collection.sql`：指标启用事实与默认关闭。
 - `src/local-app/localWorkerCli.ts:46-48`、`src/worker/mediaTaskRunner.ts:567-570`、`src/local-app/workspaceImageGenerationWorker.ts:24-32`：静态成本来源。
-- [实际观测汇总](../../verification/repo-cleanup-production-20261115/production/OBSERVABILITY.json)、[本轮耗时分析](timing.md)。
+- 实际观测汇总（历史附件已清理：`../../verification/repo-cleanup-production-20261115/production/OBSERVABILITY.json`）、[本轮耗时分析](timing.md)。

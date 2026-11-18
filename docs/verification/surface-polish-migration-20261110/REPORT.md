@@ -1,5 +1,8 @@
 # 轻阴影、表面层次与控件质感迁移
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-10。用户只批准迁移这三类视觉变化，其他界面与功能保持。
 
 ## 产品差异
@@ -11,18 +14,18 @@
 
 没有迁移 Demo 的页面、数据、导航、表单处理、评审条、固定滚动区域或响应式布局。没有修改字号、间距、宽高、定位、布局、组件结构或业务处理函数。没有提交、推送、准备或重启后端运行包。
 
-可直接查看 [产品差异](migration.patch)。入口备份位于 `.scratch/surface-polish-migration-20261110/backups/main.tsx`，初始 SHA 见 [基线](baseline.json)。
+可直接查看 [产品差异](migration.patch)。入口备份位于 `.scratch/surface-polish-migration-20261110/backups/main.tsx`，初始 SHA 见 基线（历史附件已清理：`baseline.json`）。
 
 ## 验证
 
-- `npm run build` 通过，包含 TypeScript 和 Vite 生产构建。存在构建工具的大分块提醒，未修改分包策略或依赖。见 [构建日志](build.log)。
-- CSS 通过 PostCSS 属性范围检查：50 条声明，非自定义属性只包含 `background-color`、`border-color`、`border-radius`、`box-shadow`，没有布局或交互属性。见 [属性范围](property-scope.json)。
+- `npm run build` 通过，包含 TypeScript 和 Vite 生产构建。存在构建工具的大分块提醒，未修改分包策略或依赖。见 构建日志（历史附件已清理：`build.log`）。
+- CSS 通过 PostCSS 属性范围检查：50 条声明，非自定义属性只包含 `background-color`、`border-color`、`border-radius`、`box-shadow`，没有布局或交互属性。见 属性范围（历史附件已清理：`property-scope.json`）。
 - 正式 Button、InputBase、NativeSelect、WorkspacePromptField、WorkspaceGenerationModel、ConfirmationModal 与实际样式组成只读核对页，不连接后端。
-- 1440、1024、640、390 像素，分别检查浅色与深色，共 8 组。每组比较 28 个可见控件、标签及容器；样式开关前后的坐标、宽高、文字、值与禁用属性完全一致，没有页面横向溢出。见 [几何对照](geometry-comparison.json)。
+- 1440、1024、640、390 像素，分别检查浅色与深色，共 8 组。每组比较 28 个可见控件、标签及容器；样式开关前后的坐标、宽高、文字、值与禁用属性完全一致，没有页面横向溢出。见 几何对照（历史附件已清理：`geometry-comparison.json`）。
 - 实际打开两个正式下拉框、选择模型二并观察选值更新；打开与确认正式弹窗，确认回调执行并关闭；提示词超限时原红色边界与禁用状态保留，清空正文后生成按钮禁用。操作只影响核对页内存。
 - 浅色和深色控件截图已人工查看。正式控件与弹窗的 axe-core 检查无自动违规；只读输入外层在部分扫描中需要人工判断对比度，未将此当作自动完全通过。正文、提示和焦点继续沿用项目语义颜色。
 - 浏览器运行错误列表为空。核对页请求中 `/api/` 数量为 0，没有触发生成、真实连接测试或业务写入。
-- 日常 5174 的入口与新增 CSS 均返回 HTTP 200，入口包含新增导入；实际打开日常登录页，确认 Vite 已加载 `surface-polish.css`，浅色背景计算值为 `#f1f3f7`。见 [加载结果](live-loading.json) 与 `daily-login-loaded.png`。
+- 日常 5174 的入口与新增 CSS 均返回 HTTP 200，入口包含新增导入；实际打开日常登录页，确认 Vite 已加载 `surface-polish.css`，浅色背景计算值为 `#f1f3f7`。见 加载结果（历史附件已清理：`live-loading.json`） 与 `daily-login-loaded.png`。
 
 登录后的业务页面没有使用真实 Owner 会话操作；本次验证限于正式控件、实际样式和日常入口加载，不宣称执行过完整生产流程。
 

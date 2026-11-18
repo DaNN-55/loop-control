@@ -1,5 +1,8 @@
 # 隔离生产单、埋点及旧流程替换评估
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-13。结论：当前制作链能完成实际导出和技术交付，但本轮发现一处交付说明错选音轨的实际缺陷，不能宣称生产结果全部正确。建议先修该缺陷和既有历史关联恢复问题，再分批替换旧模型与命名。方案见 [全面替换建议](../../plans/production-workflow-replacement-20261113.md)。本轮没有修改产品代码或执行清理迁移。
 
 ## 范围与隔离
@@ -24,7 +27,7 @@
 | 实际浏览器 | 首单实看分镜、原生编辑、交付，成片播放至结束；390 px 页面无横向溢出；最终居中样例检查了导出画面 |
 | 业务内容对账 | **失败：共享人工音频路径时，第 2、3 镜头交付 metadata 的音轨 ID 和采用文案错取第 1 镜头**；两份独立新单均复现 |
 
-可查看 [最终居中测试成片](artifacts/coffee-final.mp4)、[三镜头画面](artifacts/contact-sheet.png) 和 [交付文件清单](artifacts/downloads.json)。最终单 ID 为 `23be133d-7552-432c-b3b1-d319563ff179`。第一份有效交付单为 `5817bd04-9a00-414d-81cd-b163c5185935`；两份均是隔离测试数据。
+可查看 最终居中测试成片（历史附件已清理：`artifacts/coffee-final.mp4`）、三镜头画面（历史附件已清理：`artifacts/contact-sheet.png`） 和 交付文件清单（历史附件已清理：`artifacts/downloads.json`）。最终单 ID 为 `23be133d-7552-432c-b3b1-d319563ff179`。第一份有效交付单为 `5817bd04-9a00-414d-81cd-b163c5185935`；两份均是隔离测试数据。
 
 最初两次夹具在配乐长度保护处被拒绝：先请求 9 秒但素材只有 8 秒，再准备 6.4 秒却无法覆盖整片 9 秒。检查原因后生成足够长的本地配乐，不修改产品检查。随后人工查看发现夹具把偏移 50 误作中心，按当前接口中心 0 重新创建最终样例。参见 [夹具修正记录](fixture-corrections.md)。
 
@@ -32,7 +35,7 @@
 
 复现步骤：同一生产单导入一份人工 MP3，分别为 3 个镜头保存不同文案，逐项确认并采用，再导出并生成交付包。3 条音轨的文件路径及 SHA 相同，音轨 ID 与文案不同。
 
-已确认的工程和 `workspace.usedNarration` 保留了各镜头正确的音轨 ID、采用正文；交付 metadata 中第 2、3 镜头却都记录第 1 镜头的音轨和正文。对照 [最终单逐镜头结果](artifacts/delivery-text-check.json) 与 [两份独立新单复现](artifacts/delivery-metadata-reproduction.json)。这不是因为字幕使用独立模式，也不是新口播草稿覆盖了原音轨；被拒绝的新口播没有进入交付说明。
+已确认的工程和 `workspace.usedNarration` 保留了各镜头正确的音轨 ID、采用正文；交付 metadata 中第 2、3 镜头却都记录第 1 镜头的音轨和正文。对照 最终单逐镜头结果（历史附件已清理：`artifacts/delivery-text-check.json`） 与 两份独立新单复现（历史附件已清理：`artifacts/delivery-metadata-reproduction.json`）。这不是因为字幕使用独立模式，也不是新口播草稿覆盖了原音轨；被拒绝的新口播没有进入交付说明。
 
 定位：`src/local-app/workspaceDeliveryCommands.ts` 组包时以 `episode_id + relative_path` 读取 `audio_tracks`，直接使用 `rows[0]`；没有同时按工程的 `sourceAssetId` 选中明确音轨。相对地，`readUsedWorkspaceNarrationVersions()` 已按明确音轨 ID 和内容哈希区分来源。对共享文件使用不同文案是可保存、可采用的受支持操作，技术交付检查没有覆盖此项跨文件语义一致性。
 
@@ -48,7 +51,7 @@ node /private/tmp/loop-production-audit-20261113-neuhw76_/check-delivery-source.
 
 ## 同单埋点对账
 
-隔离 Owner 开启采集，日常保持关闭。最终单事件可见 [事件流水](artifacts/events.json) 和 [计数](artifacts/event-counts.json)。
+隔离 Owner 开启采集，日常保持关闭。最终单事件可见 事件流水（历史附件已清理：`artifacts/events.json`） 和 计数（历史附件已清理：`artifacts/event-counts.json`）。
 
 | 维度 | 预期与记录 | 结论与边界 |
 | --- | --- | --- |
@@ -94,10 +97,10 @@ node /private/tmp/loop-production-audit-20261113-neuhw76_/check-delivery-source.
 - 最早一次前端构建因私有测试脚本未使用 import 失败，删除私有多余 import 后构建通过；两次配乐夹具拒绝及一次偏移设置修正全部保留记录，不放宽保护，不靠重跑掩盖原因。
 - 本轮没有重跑整个项目默认套件，也没有重做完整历史恢复演练；方案所述历史恢复缺陷依据已有隔离复现和当前算法核查，不把前轮测试当成本轮新验证。
 
-原始测试报告汇总见 [verification-summary.json](verification-summary.json)。第一轮整体结果包含夹具失败，但其中 9 个埋点用例通过；后续制作和其他边界验证分别列出，未将不同轮次伪装成一次全绿。
+原始测试报告汇总见 verification-summary.json（历史附件已清理：`verification-summary.json`）。第一轮整体结果包含夹具失败，但其中 9 个埋点用例通过；后续制作和其他边界验证分别列出，未将不同轮次伪装成一次全绿。
 
 ## 工作区与日常保持
 
-HEAD 和正常暂存区保持；固定清单中的原源码、SQL、脚本和已有文档 SHA 均未变化，见 [unchanged-check.json](unchanged-check.json)。本轮仅新增该方案／报告／测试产物并更新根 `PLAN.md`，没有迁移产品代码。
+HEAD 和正常暂存区保持；固定清单中的原源码、SQL、脚本和已有文档 SHA 均未变化，见 unchanged-check.json（历史附件已清理：`unchanged-check.json`）。本轮仅新增该方案／报告／测试产物并更新根 `PLAN.md`，没有迁移产品代码。
 
 日常整库快照、冻结旧库元数据、app／deployment 文件哈希前后一致；采集关闭，事件 0 行。没有删除用户历史数据、草稿、音轨或冻结证据，没有放宽 Owner、租约、费用、文件及恢复保护，没有重启、提交或推送。

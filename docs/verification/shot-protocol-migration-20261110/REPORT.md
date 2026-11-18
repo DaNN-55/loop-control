@@ -1,5 +1,8 @@
 # 清理与 Worker 镜头协议：已迁移
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-10。用户条件授权：复测通过后迁移已核对部分，然后仅隔离实施3.5。本轮未提交、推送或产生付费请求。
 
 ## 当前结果
@@ -25,6 +28,6 @@
 
 ## 恢复边界
 
-精确文件清单及前后SHA见[migration-manifest.json](migration-manifest.json)，运行及数据证据见[runtime-and-data-after.json](runtime-and-data-after.json)。原始代码备份、schema-only备份、9个有效函数、原迁移账本、旧运行包及受保护的156回滚SQL位于 `.loop-control/maintenance/shot-protocol-migration-20261110` 与原runtime-releases。所有源文件恢复字节已逐项校验。未执行回滚；产生新镜头任务后回滚SQL会拒绝退回不兼容schema。
+精确文件清单及前后SHA见migration-manifest.json（历史附件已清理：`migration-manifest.json`），运行及数据证据见runtime-and-data-after.json（历史附件已清理：`runtime-and-data-after.json`）。原始代码备份、schema-only备份、9个有效函数、原迁移账本、旧运行包及受保护的156回滚SQL位于 `.loop-control/maintenance/shot-protocol-migration-20261110` 与原runtime-releases。所有源文件恢复字节已逐项校验。未执行回滚；产生新镜头任务后回滚SQL会拒绝退回不兼容schema。
 
 3.5为独立快照，仅有1个产品CSS文件变更，尚未迁移，见[3.5核对说明](../narrow-window-review-20261110/REPORT.md)。

@@ -1,5 +1,8 @@
 # T09：事件提醒、独立运维结果
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-23，基线 `52e4d3b`，仅 `codex/local-first-stage-a` 优化工作树和 verified 隔离目标。按 Owner 最新授权直接实现和测试；未通过原 Codex 对话发送提示词，没有操作被工具拒绝的 Codex 应用。
 
 ## 实现与契约
@@ -15,14 +18,14 @@
 
 目标 `loop-control-stage-b-verified`，API55461/DB55462；未启动常驻消费者或修改原任务，演练前后 tasks 全行摘要一致。前向迁移 `20261023152247` 只应用一次，现有迁移历史保留。
 
-[真实运行摘要](real-result.json)与[HTTP 摘要](http-summary.json)：
+真实运行摘要（历史附件已清理：`real-result.json`）与HTTP 摘要（历史附件已清理：`http-summary.json`）：
 
 - 两个消费者并发处理 1005 条同时间戳事件，连同其他样本共1009条受控接口接受记录，ID全部唯一。一次事务持有早至2001年的事件，另一事件先完成后再提交旧事务，晚提交事件仍被消费。
 - 子进程真实 SIGKILL：受控通知接口已记录接受而来不及完成事务，数据库保持 reserved；重启不重发。另一次接口接受后故意抛错，保留 uncertain；重启不重发。本轮1007 accepted / 1 reserved / 1 uncertain，故障注入历史保留。真实 CLI 对未知结果退出1，独立结果为失败，没有将它当作成功。
 - 健康 CLI 真正检查本机目录、Codex CLI版本和verified API；REST snapshot实际生成且 restorableBackup=false。完整备份先做明确无效目标的失败注入，再实际生成v2归档，最近成功和失败分别保留。
 - 现有 `/_system-status` handler在独立loopback HTTP harness中使用真实verified Owner会话，200返回独立结果；无会话401。PATH刻意不提供Codex/Provider探测程序，避免在线调用，依赖状态不冒称健康。组件测试验证实际详情文案、独立失败与无记录状态。没有新增浏览器UI实测或桌面显示/Owner已读证明。
 
-[空库恢复摘要](restore-result.json)：在同一verified容器新建空业务数据库，不清空任何旧库。管理schema仅复制真实schema结构，无Auth密码、会话、Vault行；恢复身份引用不是恢复登录。v2归档恢复后37表/5083行、264项对象/Owner/ACL/defaultACL指纹一致，242项备份媒体指纹已检查；内部触发器有效，历史accepted/reserved/uncertain不重放，authenticated没有claim权限。新增晚时间戳事件仍可领取，测试事务回滚。测试数据库保留，未验证恢复后的Owner密码登录。
+空库恢复摘要（历史附件已清理：`restore-result.json`）：在同一verified容器新建空业务数据库，不清空任何旧库。管理schema仅复制真实schema结构，无Auth密码、会话、Vault行；恢复身份引用不是恢复登录。v2归档恢复后37表/5083行、264项对象/Owner/ACL/defaultACL指纹一致，242项备份媒体指纹已检查；内部触发器有效，历史accepted/reserved/uncertain不重放，authenticated没有claim权限。新增晚时间戳事件仍可领取，测试事务回滚。测试数据库保留，未验证恢复后的Owner密码登录。
 
 ## 回归与历史限制
 

@@ -1,5 +1,0 @@
-{
-  "source": "src/local-app/legacyPlanning.fixture.ts",
-  "sha256": "c29588aef6a7a39a6f82608fdbf0831fae29c2cf67f386aed1cebbdfe4540aaa",
-  "reason": "No current consumers after historical recovery fixture directly imports the old frozen row; queue_workspace_planning is no longer a current fixture entry."
-}

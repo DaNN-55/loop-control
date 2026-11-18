@@ -1,5 +1,8 @@
 # 逐镜头查看、生成设置与交付展示验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-02。延续用户对第 2–7 项的确认。仅实现 P1–P3；P4、P5 保留原状。没有调用真实生成供应商，没有重开或修改已完成工程，没有提交或推送 Git。
 
 ## 素材复用与图片动作
@@ -63,10 +66,10 @@
 
 ## 截图
 
-- [逐镜头桌面](shot-desktop.png)
-- [声音与字幕展开](shot-caption-desktop.png)
-- [逐镜头窄屏](shot-narrow.png)
-- [交付桌面](delivery-desktop.png)
-- [交付窄屏](delivery-narrow.png)
-- [P1–P3 桌面隔离验证](image-options-desktop.png)
-- [P1–P3 窄屏隔离验证](image-options-narrow.png)
+- 逐镜头桌面（历史附件已清理：`shot-desktop.png`）
+- 声音与字幕展开（历史附件已清理：`shot-caption-desktop.png`）
+- 逐镜头窄屏（历史附件已清理：`shot-narrow.png`）
+- 交付桌面（历史附件已清理：`delivery-desktop.png`）
+- 交付窄屏（历史附件已清理：`delivery-narrow.png`）
+- P1–P3 桌面隔离验证（历史附件已清理：`image-options-desktop.png`）
+- P1–P3 窄屏隔离验证（历史附件已清理：`image-options-narrow.png`）

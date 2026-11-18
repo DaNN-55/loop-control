@@ -1,5 +1,8 @@
 # 逐镜头 B 版正式接入与审核简化验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-10-29。范围：本机正式生产单；原型归档见 [INTEGRATION.md](../production-interactions-20261029/INTEGRATION.md)，决策见 [ADR-0014](../../adr/0014-production-reconfirmation-and-six-step-workflow.md)。
 
 ## 结果
@@ -12,10 +15,10 @@
 
 ## 验证
 
-- [组件与选择器回归](ui-tests.log)：6 个文件、40 项通过，含 B 版入口、保存围栏、脚本取消/失败草稿、当前脚本版本选择及旧纯文本修订。
-- [隔离 PostgreSQL 与 HTTP](postgresql-http.log)：脚本 API 验证会话/CSRF、跨 Owner、预期主脚本、幂等、运行中任务、不可变新旧文件、下游失效及授权暂停；数据库事务验证从 QC 请求删除分镜、旧分镜不变、末镜拒绝，以及结构修订排队时不可领取旧媒体/抢跑合成。测试数据库与文件均已清理。
-- [列表集成](catalog.log)：4 项通过，人工待审数量与状态过滤保持一致。
-- [构建](build.log)、[Worker/后端准备](runtime-prepare.log)通过。保留既有大 chunk 提示。迁移 `082-production-revisions.sql`、`083-pending-structure-revision-fence.sql` 已应用，旧迁移摘要未变。本机服务已重启加载后端命令。迁移沿用 Owner 当前关闭自动备份的配置，未使用 `--no-backup`。
+- 组件与选择器回归（历史附件已清理：`ui-tests.log`）：6 个文件、40 项通过，含 B 版入口、保存围栏、脚本取消/失败草稿、当前脚本版本选择及旧纯文本修订。
+- 隔离 PostgreSQL 与 HTTP（历史附件已清理：`postgresql-http.log`）：脚本 API 验证会话/CSRF、跨 Owner、预期主脚本、幂等、运行中任务、不可变新旧文件、下游失效及授权暂停；数据库事务验证从 QC 请求删除分镜、旧分镜不变、末镜拒绝，以及结构修订排队时不可领取旧媒体/抢跑合成。测试数据库与文件均已清理。
+- 列表集成（历史附件已清理：`catalog.log`）：4 项通过，人工待审数量与状态过滤保持一致。
+- 构建（历史附件已清理：`build.log`）、Worker/后端准备（历史附件已清理：`runtime-prepare.log`）通过。保留既有大 chunk 提示。迁移 `082-production-revisions.sql`、`083-pending-structure-revision-fence.sql` 已应用，旧迁移摘要未变。本机服务已重启加载后端命令。迁移沿用 Owner 当前关闭自动备份的配置，未使用 `--no-backup`。
 - 浏览器实际检查原生产单：B 版、声音入口、删除确认入口、脚本修订确认、视觉资料弹窗、QC 下拉和标题间距。没有确认修改真实脚本、删除真实分镜、批准 QC 或启动付费生成。
 
 ## 响应式取舍
@@ -24,8 +27,8 @@
 
 ## 截图
 
-- [B 版桌面](shot-controls-B-formal-1543.png)
-- [1280×720](shot-controls-B-formal-1280.png)、[1024×768](shot-controls-B-formal-1024.png)、[800×700](shot-controls-B-formal-800.png)
-- [QC 下拉](shot-controls-QC-formal-1543.png)
-- [视觉资料弹窗](shot-controls-visual-modal-1543.png)、[窄屏弹窗](shot-controls-visual-modal-800.png)
-- [脚本确认弹窗](shot-controls-script-reconfirm-1543.png)
+- B 版桌面（历史附件已清理：`shot-controls-B-formal-1543.png`）
+- 1280×720（历史附件已清理：`shot-controls-B-formal-1280.png`）、1024×768（历史附件已清理：`shot-controls-B-formal-1024.png`）、800×700（历史附件已清理：`shot-controls-B-formal-800.png`）
+- QC 下拉（历史附件已清理：`shot-controls-QC-formal-1543.png`）
+- 视觉资料弹窗（历史附件已清理：`shot-controls-visual-modal-1543.png`）、窄屏弹窗（历史附件已清理：`shot-controls-visual-modal-800.png`）
+- 脚本确认弹窗（历史附件已清理：`shot-controls-script-reconfirm-1543.png`）

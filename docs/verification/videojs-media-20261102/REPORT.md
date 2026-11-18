@@ -1,5 +1,8 @@
 # Video.js 10 媒体播放验证
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-02。依赖固定为 `@videojs/react 10.2.0`；用户确认采用 Video.js 10 后实施，并按后续要求统一音频入口。
 
 ## 已完成
@@ -26,6 +29,6 @@
 
 未调用付费 Provider、未生成音色样本、未修改真实业务数据、未重启服务、未提交或推送。没有逐一播放每条历史音频，也没有测试真实触摸设备；通过所有源入口接入扫描、组件回归和代表性真实文件验证。
 
-- [浅色组件预览](components-light.png)
-- [深色窄屏组件预览](components-narrow-dark.png)
+- 浅色组件预览（历史附件已清理：`components-light.png`）
+- 深色窄屏组件预览（历史附件已清理：`components-narrow-dark.png`）
 - [官方 AudioSkin](https://videojs.org/docs/framework/react/reference/components/audio-skin)

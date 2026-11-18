@@ -1,5 +1,8 @@
 # Loop Control：PC 全量视觉与极端数据审查
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-28 · 以下保留修复前审查证据。
 
 更新：用户已授权并完成16项修复，见[PC修复与复验报告](../visual-fixes-20261028/REPORT.md)。原有问题表与评分不代表修复后状态。
@@ -8,7 +11,7 @@
 
 **本轮不通过。** 现有 Dan UI 已形成统一的导航、表单、弹窗和状态体系，但组件接入存在重复失配：强制挂载页签没有隐藏非活动面板，按钮内部包装改变了旧 CSS 的作用范围，InputBase 的禁用外观没有传递给原生输入。这些问题会直接影响实际操作，不能按一般视觉润色处理。
 
-Impeccable 源码检测器本轮运行一次，返回 **0 项**，见 [detector.json](detector.json)。这个结果只表示检测规则未命中；页面截图、原生键盘操作和 DOM 尺寸测量仍复现了下列问题，不构成视觉通过证据。
+Impeccable 源码检测器本轮运行一次，返回 **0 项**，见 detector.json（历史附件已清理：`detector.json`）。这个结果只表示检测规则未命中；页面截图、原生键盘操作和 DOM 尺寸测量仍复现了下列问题，不构成视觉通过证据。
 
 ## 结论与优先级
 
@@ -54,19 +57,19 @@ Impeccable 源码检测器本轮运行一次，返回 **0 项**，见 [detector.
 
 | 问题 | 证据 | 复现步骤 |
 | --- | --- | --- |
-| #1 | [维护页截图](screenshots/maintenance-history-selected-1440-light.png)、[DOM](maintenance-panels.json)；[镜头截图](screenshots/shot-visual-selected-1440-light.png)、[DOM](shot-panels.json) | maintenance → 历史资料；drawer，stage=storyboard_approved → 第一个镜头 → 画面与构图 |
-| #2 | [覆盖截图](screenshots/series-worst-overlap-1440-light.png)、[精确尺寸](series-overlap.json) | accounts + worst → 系列；1440px |
-| #3 | [键盘截图](screenshots/chrome-pending-editable.png)、[Chrome AX](chrome-pending-keyboard.txt) | new-account + mode=pending；Tab 到变灰的账号名称后输入。仅使用合成名称，未提交 |
-| #4–5 | [深色蓝图](screenshots/app-worst-1280-dark.png)、[密钥选中态](screenshots/secret-selected-1440-dark.png)、[浅色阶段](screenshots/episodes-worst-1280-light.png)、[对比度候选](contrast-candidates.json) | app/accounts、secrets选中首项、episodes；对应主题 |
-| #6 | [收起侧栏](screenshots/collapsed-sidebar-1440-dark.png)、[DOM](collapsed-sidebar.json) | app → 收起侧栏；下方剪辑入口变为空白 |
-| #7 | [产物预览](screenshots/artifact-preview-1440-dark.png)、[DOM](artifact-dark.json) | historical + dark，选择视频产物 |
-| #8 | [运营截图](screenshots/operations-settled-1440-light.png)、[DOM](operations-settled.json) | operations + worst，1440px，查看阻塞列表 |
-| #9 | [生产单列表](screenshots/episodes-worst-1440-light.png)、[头像尺寸](avatars.json) | episodes + worst，比较长名称与 Jo 的图标 |
-| #10 | [1280px账号](screenshots/accounts-worst-1280-light.png) | accounts + worst，查看当前账号和分镜规划摘要 |
-| #11 | [底部菜单](screenshots/shot-2-collapsed-menu-1440-light.png) | drawer 第2镜头收起状态 → 另4项，1000px高窗口 |
-| #12 | [2560px账号](screenshots/app-worst-2560-light.png) | app + worst，2560px |
-| #13–14 | [密钥列表](screenshots/secrets-worst-settled-1440-light.png)、[系列规模](series-huge.json) | secrets + worst；accounts + huge → 系列 |
-| #15–16 | 源码边界、[字段索引](rendered-values.json) | 新建生产单标题、Prompt新建版本、密钥详情验证输入；不调用真实写入 |
+| #1 | 维护页截图（历史附件已清理：`screenshots/maintenance-history-selected-1440-light.png`）、DOM（历史附件已清理：`maintenance-panels.json`）；镜头截图（历史附件已清理：`screenshots/shot-visual-selected-1440-light.png`）、DOM（历史附件已清理：`shot-panels.json`） | maintenance → 历史资料；drawer，stage=storyboard_approved → 第一个镜头 → 画面与构图 |
+| #2 | 覆盖截图（历史附件已清理：`screenshots/series-worst-overlap-1440-light.png`）、精确尺寸（历史附件已清理：`series-overlap.json`） | accounts + worst → 系列；1440px |
+| #3 | 键盘截图（历史附件已清理：`screenshots/chrome-pending-editable.png`）、Chrome AX（历史附件已清理：`chrome-pending-keyboard.txt`） | new-account + mode=pending；Tab 到变灰的账号名称后输入。仅使用合成名称，未提交 |
+| #4–5 | 深色蓝图（历史附件已清理：`screenshots/app-worst-1280-dark.png`）、密钥选中态（历史附件已清理：`screenshots/secret-selected-1440-dark.png`）、浅色阶段（历史附件已清理：`screenshots/episodes-worst-1280-light.png`）、对比度候选（历史附件已清理：`contrast-candidates.json`） | app/accounts、secrets选中首项、episodes；对应主题 |
+| #6 | 收起侧栏（历史附件已清理：`screenshots/collapsed-sidebar-1440-dark.png`）、DOM（历史附件已清理：`collapsed-sidebar.json`） | app → 收起侧栏；下方剪辑入口变为空白 |
+| #7 | 产物预览（历史附件已清理：`screenshots/artifact-preview-1440-dark.png`）、DOM（历史附件已清理：`artifact-dark.json`） | historical + dark，选择视频产物 |
+| #8 | 运营截图（历史附件已清理：`screenshots/operations-settled-1440-light.png`）、DOM（历史附件已清理：`operations-settled.json`） | operations + worst，1440px，查看阻塞列表 |
+| #9 | 生产单列表（历史附件已清理：`screenshots/episodes-worst-1440-light.png`）、头像尺寸（历史附件已清理：`avatars.json`） | episodes + worst，比较长名称与 Jo 的图标 |
+| #10 | 1280px账号（历史附件已清理：`screenshots/accounts-worst-1280-light.png`） | accounts + worst，查看当前账号和分镜规划摘要 |
+| #11 | 底部菜单（历史附件已清理：`screenshots/shot-2-collapsed-menu-1440-light.png`） | drawer 第2镜头收起状态 → 另4项，1000px高窗口 |
+| #12 | 2560px账号（历史附件已清理：`screenshots/app-worst-2560-light.png`） | app + worst，2560px |
+| #13–14 | 密钥列表（历史附件已清理：`screenshots/secrets-worst-settled-1440-light.png`）、系列规模（历史附件已清理：`series-huge.json`） | secrets + worst；accounts + huge → 系列 |
+| #15–16 | 源码边界、字段索引（历史附件已清理：`rendered-values.json`） | 新建生产单标题、Prompt新建版本、密钥详情验证输入；不调用真实写入 |
 
 对比度由页面 computed CSS 计算，OKLCH 转为线性 sRGB，透明色先在 sRGB 合成，再计算相对亮度；忽略图片／渐变背景的候选。数字取两位小数，属于正常静止状态，未把禁用文字按普通文字报错。#4、#5、#7适用 WCAG 1.4.3 普通文字4.5:1；其余项不直接宣称违反某条 WCAG。原生鼠标／键盘和截图观察与源码推断已在表中区分。
 
@@ -99,9 +102,9 @@ Impeccable 源码检测器本轮运行一次，返回 **0 项**，见 [detector.
 
 - **PC整体框架多数稳定。** 已记录PC宽度案例未发现 document 整体横向越界；这不覆盖#2、#8的局部缺陷。
 - 长中文、带重音人名、Vietnamese、emoji组合、J/Jo、缺失标题均能显示；空标题有「未命名生产单」回退。用户输入字面标记按文本显示，没有执行为 HTML。
-- **分页20／21边界正确。** 20条不显示翻页栏；21条首屏20条、下一页1条，页码为1/2→2/2，见 [分页结果](pagination-boundaries.json)。没有为了压力测试把本来有分页的生产单表一次塞入1284行。
-- **原生Chrome 200%缩放的新建账号表单可读可操作。** 见 [AX](chrome-zoom200.txt) 和 [200%截图](screenshots/chrome-new-account-zoom200.png)。root字号32px另做了混合px/rem压力检查，两者没有混为同一测试。
-- 合成提交失败时，错误提示位于弹窗之上且草稿保留，见 [失败截图](screenshots/create-account-rejected-1440-light.png)。没有复现“toast被弹窗遮住”，不列为问题。
+- **分页20／21边界正确。** 20条不显示翻页栏；21条首屏20条、下一页1条，页码为1/2→2/2，见 分页结果（历史附件已清理：`pagination-boundaries.json`）。没有为了压力测试把本来有分页的生产单表一次塞入1284行。
+- **原生Chrome 200%缩放的新建账号表单可读可操作。** 见 AX（历史附件已清理：`chrome-zoom200.txt`） 和 200%截图（历史附件已清理：`screenshots/chrome-new-account-zoom200.png`）。root字号32px另做了混合px/rem压力检查，两者没有混为同一测试。
+- 合成提交失败时，错误提示位于弹窗之上且草稿保留，见 失败截图（历史附件已清理：`screenshots/create-account-rejected-1440-light.png`）。没有复现“toast被弹窗遮住”，不列为问题。
 - 编辑配置后的未保存离开保护有效；取消编辑后可正常导航。镜头卡片打开菜单时通过 :has(open) 允许溢出，未出现“被卡片自身裁切”；#11只记录视口边界问题。
 - 密钥核查具备列表、详情、禁止查看与空态；本次没有读取任何真实明文、输入登录密码或改密码。
 
@@ -113,9 +116,9 @@ Impeccable 源码检测器本轮运行一次，返回 **0 项**，见 [detector.
 - **证据质量**：初版探针误用了接口未提供的 childElementCount，早期clipped/colorSamples为空，不作为通过证据；已改为children.length，后续PC尺寸和逐项复现重新取证。密钥初次采集早于加载完成，已补 settled 测量。少量试图改成1280×720的记录仍实际1440×1000，已改名为actual1440并标记，不宣称检查过低高度PC。
 - **机械／编译验证**：detector一次，0命中；夹具TypeScript检查通过；产品Vite构建通过，输出在独立临时目录，不覆盖日常运行产物。主JS955.17kB/gzip287.24kB、CSS471.89kB/gzip69.63kB，仍有>500kB chunk提示；这是资源观察，未据此断言页面卡顿。
 - **未执行**：第三方OpenChatCut内部、真实Provider网络生成、真实保存／删除／归档、真实密钥取回、物理设备、触摸、全应用读屏流程、所有键盘路径、长时性能分析。产品是中文LTR，没有新增RTL产品要求。
-- **变更边界**：仅新增本目录的夹具、测量与报告，更新根PLAN。未修产品源码；起点哈希复核见 [results.json](results.json)。日常5174服务保留。
+- **变更边界**：仅新增本目录的夹具、测量与报告，更新根PLAN。未修产品源码；起点哈希复核见 results.json（历史附件已清理：`results.json`）。日常5174服务保留。
 
-完整证据目录见 [SCREENSHOTS.md](SCREENSHOTS.md)，字段边界见 [FIELD-MAP.md](FIELD-MAP.md)，原始尺寸见 [measurements.json.gz](measurements.json.gz)。截图数量和自动测量次数不等于逐状态人工通过数量。
+完整证据目录见 [SCREENSHOTS.md](SCREENSHOTS.md)，字段边界见 [FIELD-MAP.md](FIELD-MAP.md)，原始尺寸见 measurements.json.gz（历史附件已清理：`measurements.json.gz`）。截图数量和自动测量次数不等于逐状态人工通过数量。
 
 ## 可切换的 Break UI 演示
 

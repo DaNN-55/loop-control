@@ -88,8 +88,8 @@ SQL 归档路径记录原协议，当前有效定义以 `db/current` 及其迁�
 
 ## 覆盖证据与限制
 
-[候选扫描脚本](../verification/state-machines-20261110/census.mjs) 从 Git 跟踪清单读取 TypeScript/TSX、运行脚本与 SQL。它枚举 React state/ref、字面量联合、控制字段写入及 SQL 状态约束，初轮 [逐文件候选证据](../verification/state-machines-20261110/census.json) 与本轮 [扫描摘要](../verification/state-machines-20261111/census-summary.json) 分别保留基线。初轮信号按 44 个族归类。本轮同一脚本扫描 546 个文件，244 个文件含 1517 个候选信号；沿既有权威补核 M45—M48，并检查扫描器排除的原生工具、Python 对齐、UI primitives 与 `db/contracts`；DOM ref、静态选项和纯配置不自动视为状态机，叶子交互归入 M29/M30。SQL 原始迁移含历史定义，当前含义必须沿迁移顺序核对。
+[候选扫描脚本](../verification/state-machines-20261110/census.mjs) 从 Git 跟踪清单读取 TypeScript/TSX、运行脚本与 SQL。它枚举 React state/ref、字面量联合、控制字段写入及 SQL 状态约束，初轮 逐文件候选证据（历史附件已清理：`../verification/state-machines-20261110/census.json`） 与本轮 扫描摘要（历史附件已清理：`../verification/state-machines-20261111/census-summary.json`） 分别保留基线。初轮信号按 44 个族归类。本轮同一脚本扫描 546 个文件，244 个文件含 1517 个候选信号；沿既有权威补核 M45—M48，并检查扫描器排除的原生工具、Python 对齐、UI primitives 与 `db/contracts`；DOM ref、静态选项和纯配置不自动视为状态机，叶子交互归入 M29/M30。SQL 原始迁移含历史定义，当前含义必须沿迁移顺序核对。
 
-0—4 项实施后使用同一脚本扫描 548 个文件，246 个文件含 1525 个候选信号，见 [实施后扫描摘要](../verification/state-machines-0-4-20261111/census-summary.json)。保留初轮摘要用于比较，不因候选数量变化自动增加状态机族。
+0—4 项实施后使用同一脚本扫描 548 个文件，246 个文件含 1525 个候选信号，见 实施后扫描摘要（历史附件已清理：`../verification/state-machines-0-4-20261111/census-summary.json`）。保留初轮摘要用于比较，不因候选数量变化自动增加状态机族。
 
 这份清单是源码审查结果，不是形式化完整性证明。闭包里的布尔值、跨进程故障与外部供应商行为不能仅靠静态扫描穷尽；生产库没有作为本次探测对象。已复现缺陷、结构性改进机会和未运行检查分别记录，不能把“能构造状态组合”直接当成线上缺陷。

@@ -1,5 +1,8 @@
 # 脚本预览与视觉资料归位验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-29；真实生产单 `92b3067d-ced9-4e85-bc44-1968fa83695a`。
 
 ## 修改
@@ -20,8 +23,8 @@
 
 ## 证据
 
-- [桌面脚本](script-desktop.png)
-- [窄屏脚本](script-narrow.png)
-- [视觉参考](visual-references.png)
-- [制作依据](visual-basis.png)
-- [节点回归](nodes-tests.json)、[审核台现状](review-tests.json)、[媒体显示还原对照](review-baseline.json)
+- 桌面脚本（历史附件已清理：`script-desktop.png`）
+- 窄屏脚本（历史附件已清理：`script-narrow.png`）
+- 视觉参考（历史附件已清理：`visual-references.png`）
+- 制作依据（历史附件已清理：`visual-basis.png`）
+- 节点回归（历史附件已清理：`nodes-tests.json`）、审核台现状（历史附件已清理：`review-tests.json`）、媒体显示还原对照（历史附件已清理：`review-baseline.json`）

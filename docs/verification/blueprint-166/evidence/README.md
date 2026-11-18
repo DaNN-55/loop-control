@@ -1,5 +1,8 @@
 # 逐票验收证据
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 保留实施者与独立合并者的原始交接记录及代表性浏览器截图。记录中的临时绝对路径反映当时运行位置，后续清理已移除这些临时目录与工作树；对应实现、测试与迁移已合入 main。所有服务返回均为受控测试响应，不代表真实供应商质量或日常环境已经切换。
 
 - [T01-handoff.md](T01-handoff.md)
@@ -22,17 +25,17 @@
 - [T09-merge.md](T09-merge.md)
 - [T10-handoff.md](T10-handoff.md)
 - [T10-merge.md](T10-merge.md)
-- [T01-browser-groups.png](T01-browser-groups.png)
-- [T02-browser-adopted.png](T02-browser-adopted.png)
-- [T03-browser-added-adopted.png](T03-browser-added-adopted.png)
-- [T04-browser-preview.png](T04-browser-preview.png)
-- [T05-window-desktop.png](T05-window-desktop.png)
-- [T06-browser-upload-adopted.png](T06-browser-upload-adopted.png)
-- [T07-final-desktop.png](T07-final-desktop.png)
-- [T08-complete.png](T08-complete.png)
-- [T09-merge-blueprint-narrow.png](T09-merge-blueprint-narrow.png)
-- [T10-browser-planner-narrow.png](T10-browser-planner-narrow.png)
-- [T10-browser-blueprint-desktop.png](T10-browser-blueprint-desktop.png)
+- T01-browser-groups.png（历史附件已清理：`T01-browser-groups.png`）
+- T02-browser-adopted.png（历史附件已清理：`T02-browser-adopted.png`）
+- T03-browser-added-adopted.png（历史附件已清理：`T03-browser-added-adopted.png`）
+- T04-browser-preview.png（历史附件已清理：`T04-browser-preview.png`）
+- T05-window-desktop.png（历史附件已清理：`T05-window-desktop.png`）
+- T06-browser-upload-adopted.png（历史附件已清理：`T06-browser-upload-adopted.png`）
+- T07-final-desktop.png（历史附件已清理：`T07-final-desktop.png`）
+- T08-complete.png（历史附件已清理：`T08-complete.png`）
+- T09-merge-blueprint-narrow.png（历史附件已清理：`T09-merge-blueprint-narrow.png`）
+- T10-browser-planner-narrow.png（历史附件已清理：`T10-browser-planner-narrow.png`）
+- T10-browser-blueprint-desktop.png（历史附件已清理：`T10-browser-blueprint-desktop.png`）
 
 ## 最终证据
 
@@ -44,28 +47,28 @@
 - [final-merge.md](final-merge.md)
 - [FINAL-STANDARDS.md](FINAL-STANDARDS.md)
 - [FINAL-SPEC.md](FINAL-SPEC.md)
-- [T11-browser-account-desktop.png](T11-browser-account-desktop.png)
-- [T11-browser-preparation-narrow.png](T11-browser-preparation-narrow.png)
-- [reviewfix-image-cleared-desktop.png](reviewfix-image-cleared-desktop.png)
-- [reviewfix-image-cleared-narrow.png](reviewfix-image-cleared-narrow.png)
-- [reviewfix-native-cleared-desktop.png](reviewfix-native-cleared-desktop.png)
-- [reviewfix-native-after-adoption.png](reviewfix-native-after-adoption.png)
-- [reviewfix-planner-desktop-final.png](reviewfix-planner-desktop-final.png)
-- [reviewfix-planner-narrow-final.png](reviewfix-planner-narrow-final.png)
-- [reviewfix-planner-narrow-scrolled.png](reviewfix-planner-narrow-scrolled.png)
-- [reviewfix-native-save-receipts.json](reviewfix-native-save-receipts.json)
-- [reviewfix-choice-no-tasks.json](reviewfix-choice-no-tasks.json)
-- [reviewfix-planner-scroll.json](reviewfix-planner-scroll.json)
-- [final-original-preservation.json](final-original-preservation.json)
-- [final-merge-migration-check.json](final-merge-migration-check.json)
-- [final-merge-source-hashes.json](final-merge-source-hashes.json)
-- [final-merge-pexels-cleanup-check.json](final-merge-pexels-cleanup-check.json)
-- [final-merge-browser-cleanup-check.json](final-merge-browser-cleanup-check.json)
-- [final-merge-db-cleanup-check.json](final-merge-db-cleanup-check.json)
-- [final-results.json](final-results.json)
-- [issue-closeout.json](issue-closeout.json)
-- [worktree-cleanup-final.json](worktree-cleanup-final.json)
-- [main-merge-cleanup.json](main-merge-cleanup.json)
-- [原始日志压缩清单](logs/manifest.json)
+- T11-browser-account-desktop.png（历史附件已清理：`T11-browser-account-desktop.png`）
+- T11-browser-preparation-narrow.png（历史附件已清理：`T11-browser-preparation-narrow.png`）
+- reviewfix-image-cleared-desktop.png（历史附件已清理：`reviewfix-image-cleared-desktop.png`）
+- reviewfix-image-cleared-narrow.png（历史附件已清理：`reviewfix-image-cleared-narrow.png`）
+- reviewfix-native-cleared-desktop.png（历史附件已清理：`reviewfix-native-cleared-desktop.png`）
+- reviewfix-native-after-adoption.png（历史附件已清理：`reviewfix-native-after-adoption.png`）
+- reviewfix-planner-desktop-final.png（历史附件已清理：`reviewfix-planner-desktop-final.png`）
+- reviewfix-planner-narrow-final.png（历史附件已清理：`reviewfix-planner-narrow-final.png`）
+- reviewfix-planner-narrow-scrolled.png（历史附件已清理：`reviewfix-planner-narrow-scrolled.png`）
+- reviewfix-native-save-receipts.json（历史附件已清理：`reviewfix-native-save-receipts.json`）
+- reviewfix-choice-no-tasks.json（历史附件已清理：`reviewfix-choice-no-tasks.json`）
+- reviewfix-planner-scroll.json（历史附件已清理：`reviewfix-planner-scroll.json`）
+- final-original-preservation.json（历史附件已清理：`final-original-preservation.json`）
+- final-merge-migration-check.json（历史附件已清理：`final-merge-migration-check.json`）
+- final-merge-source-hashes.json（历史附件已清理：`final-merge-source-hashes.json`）
+- final-merge-pexels-cleanup-check.json（历史附件已清理：`final-merge-pexels-cleanup-check.json`）
+- final-merge-browser-cleanup-check.json（历史附件已清理：`final-merge-browser-cleanup-check.json`）
+- final-merge-db-cleanup-check.json（历史附件已清理：`final-merge-db-cleanup-check.json`）
+- final-results.json（历史附件已清理：`final-results.json`）
+- issue-closeout.json（历史附件已清理：`issue-closeout.json`）
+- worktree-cleanup-final.json（历史附件已清理：`worktree-cleanup-final.json`）
+- main-merge-cleanup.json（历史附件已清理：`main-merge-cleanup.json`）
+- 原始日志压缩清单（历史附件已清理：`logs/manifest.json`）
 
 日志压缩文件保留原始字节，清单记录未压缩大小和 SHA-256。可用 `gzip -dc <文件.log.gz>` 读取；最终通过结果与关键旧失败日志分别保留。

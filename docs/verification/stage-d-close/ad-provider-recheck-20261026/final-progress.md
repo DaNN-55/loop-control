@@ -1,5 +1,8 @@
 # 本批 A–D 收尾最终进度
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 **#132–#149 共 18 张已关闭：14 项完成，4 项按 Owner 豁免关闭。** #149 已完成审计并关闭。四家 Provider 不计验收通过，不代表服务恢复；E/F 没有开始。
 
 执行顺序为：先只读复查 #146/#147，再按原配置复测四家 Provider，确认四票关闭后执行 #149。没有修改业务源码、提交或推送。
@@ -22,4 +25,4 @@ Standards 初次发现公开汇总多列连接标识，已仅修正本轮公开�
 
 原索引条目及历史门禁元数据保持原样；本轮只追加新的 Provider 复测、Owner 豁免和 #149 结论。关闭的是本批 Issue 和收口审计，不把未验收能力改成技术通过，也不自动进入 E/F。凭据扫描覆盖 14 条私有指纹记录、13 个不同值，不重读原秘密；私有连接引用、指纹、fixture、Keychain 和运行本体未公开。
 
-[最终 GitHub 读回](github-final-readback.json) · [#149 关票回执](github-149-closure.json) · [#149 审计](report-149.md) · [17 项证据矩阵](149-evidence-matrix.json) · [Provider 原因](provider-recheck.md) · [关票前完整性回执](preclose-integrity-receipt.json) · [最终完整性回执](final-integrity-receipt.json) · [证据索引](../evidence-index.json)
+最终 GitHub 读回（历史附件已清理：`github-final-readback.json`） · #149 关票回执（历史附件已清理：`github-149-closure.json`） · [#149 审计](report-149.md) · 17 项证据矩阵（历史附件已清理：`149-evidence-matrix.json`） · [Provider 原因](provider-recheck.md) · 关票前完整性回执（历史附件已清理：`preclose-integrity-receipt.json`） · 最终完整性回执（历史附件已清理：`final-integrity-receipt.json`） · 证据索引（历史附件已清理：`../evidence-index.json`）

@@ -1,5 +1,8 @@
 # C 阶段补验：T10 按页读取与 T09/T10 浏览器验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 结论：本次提出的两项缺口可以在本地验收范围关闭。T10 已从“500 条一批、最终仍下载全部历史”改为按当前页面取数；T09/T10 已补做真实 Chrome 提交、展示、翻页和刷新验证。Owner 已认可本次补验，并授权将本次实现与证据归档到当前分支的本地提交。未推送、合并、部署、操作生产或继续检查 D 阶段；GitHub #115/#116 未改动。
 
 **默认 5 秒门禁历史失败及根因未解决的限制继续保留。** B/T06 对照中默认 5000ms 的历史失败没有被本次通过覆盖；本次没有放宽测试超时，也不宣称解决了历史时序根因。
@@ -15,19 +18,19 @@
 
 ## 真实数据与浏览器
 
-[HTTP/数据库结果](http-result.json)验证1005条进行中记录、2条归档、47条指定系列、空系列、23条审核记录；51页完整唯一、相邻页无重复、尾页5条、重复读取稳定。运营待审和阻塞各23项，每页20/尾页3，且独立翻页。全局 Worker 汇总与原 TypeScript 选择器对同一真实数据的结果一致。跨 Owner 的账号无记录/数量泄露，匿名HTTP401；原有任务全行摘要不变。所有新增夹具为专用测试账号，保留在隔离库。
+HTTP/数据库结果（历史附件已清理：`http-result.json`）验证1005条进行中记录、2条归档、47条指定系列、空系列、23条审核记录；51页完整唯一、相邻页无重复、尾页5条、重复读取稳定。运营待审和阻塞各23项，每页20/尾页3，且独立翻页。全局 Worker 汇总与原 TypeScript 选择器对同一真实数据的结果一致。跨 Owner 的账号无记录/数量泄露，匿名HTTP401；原有任务全行摘要不变。所有新增夹具为专用测试账号，保留在隔离库。
 
 真实 headed Chrome 使用独立 agent-browser 会话；没有替换页面 API 响应或伪造 visibilityState。
 
 | 检查 | 结果与证据 |
 | --- | --- |
-| 列表每页取数、上一页、51页、筛选、空结果 | [浏览器结果](browser-pagination.json)、[第一页](catalog-page1.png)、[尾页](catalog-page51.png)、[归档](catalog-archived.png) |
-| 运营汇总与两个独立摘要页 | [浏览器结果](browser-operations.json)、[第一页](operations-series-page1.png)、[摘要第二页](operations-highlights-page2.png) |
-| 真实提交与刷新 | 在UI重命名专用生产单，经真实RPC写入数据库；整页重载后标题与详情保留。[结果](browser-detail.json)、[提交](title-submitted.png)、[重载](catalog-page1.png) |
-| 仅产物变化 | 写入一件真实文本文件并登记专用 artifact，不改变任务/生产单；详情轮询后列表产物数更新。[截图](detail-artifact-count-updated.png) |
-| 后台暂停、恢复与增量 | 用原生 Chrome 标签栏实际切后台，连续12.439秒无详情请求；切回立即读到受控数据库 ready→completed 和标题变化，列表及所选详情同步。[结果](browser-detail.json)、[恢复后](detail-after-resume.png) |
-| 审核队列服务端第二页 | [截图](reviews-page2.png) |
-| T09五种独立结果、手动刷新和整页重载 | [结果](browser-status.json)、[状态详情](status-operations.png)、[重载后](status-after-reload.png) |
+| 列表每页取数、上一页、51页、筛选、空结果 | 浏览器结果（历史附件已清理：`browser-pagination.json`）、第一页（历史附件已清理：`catalog-page1.png`）、尾页（历史附件已清理：`catalog-page51.png`）、归档（历史附件已清理：`catalog-archived.png`） |
+| 运营汇总与两个独立摘要页 | 浏览器结果（历史附件已清理：`browser-operations.json`）、第一页（历史附件已清理：`operations-series-page1.png`）、摘要第二页（历史附件已清理：`operations-highlights-page2.png`） |
+| 真实提交与刷新 | 在UI重命名专用生产单，经真实RPC写入数据库；整页重载后标题与详情保留。结果（历史附件已清理：`browser-detail.json`）、提交（历史附件已清理：`title-submitted.png`）、重载（历史附件已清理：`catalog-page1.png`） |
+| 仅产物变化 | 写入一件真实文本文件并登记专用 artifact，不改变任务/生产单；详情轮询后列表产物数更新。截图（历史附件已清理：`detail-artifact-count-updated.png`） |
+| 后台暂停、恢复与增量 | 用原生 Chrome 标签栏实际切后台，连续12.439秒无详情请求；切回立即读到受控数据库 ready→completed 和标题变化，列表及所选详情同步。结果（历史附件已清理：`browser-detail.json`）、恢复后（历史附件已清理：`detail-after-resume.png`） |
+| 审核队列服务端第二页 | 截图（历史附件已清理：`reviews-page2.png`） |
+| T09五种独立结果、手动刷新和整页重载 | 结果（历史附件已清理：`browser-status.json`）、状态详情（历史附件已清理：`status-operations.png`）、重载后（历史附件已清理：`status-after-reload.png`） |
 
 T09展示的是此前真实 T09 演练留下的独立记录：调度检查“待确认”，事件提醒“需处理”，每日健康检查/完整备份/部分快照“正常”。手动刷新和整页重载均保持各自证据；没有把备份成功当作提醒成功，部分快照仍明确不是完整可恢复备份。没有在本轮重新发送桌面提醒或声称 Owner 已看到/已读；受控运输接受也不等于可见送达。观察进程刻意限制 PATH，依赖探测中的 Codex/ffmpeg ENOENT 和无 n8n 目录不是生产健康结论。
 
@@ -49,19 +52,19 @@ T09展示的是此前真实 T09 演练留下的独立记录：调度检查“待
 
 ## 回归与复审
 
-- [默认5000ms完整应用回归](application-final.txt)：90文件、726项全部通过；不包含私有旧源码快照，也未修改超时。
-- [SQL回归](sql-final.json)：26文件、292条全部通过，事务回滚。
-- [类型检查](types-final.txt)、[Vite构建](build-final.txt)、[Worker/编排准备构建](runtime-final.txt)均退出0。
-- [Node回归](node-final.txt)：2通过，1个既有本机 n8n 原生校验跳过，未算通过。
-- [Advisors](advisors-final.txt)：仅3条既有RLS initplan性能WARN，无新增安全错误。
+- 默认5000ms完整应用回归（历史附件已清理：`application-final.txt`）：90文件、726项全部通过；不包含私有旧源码快照，也未修改超时。
+- SQL回归（历史附件已清理：`sql-final.json`）：26文件、292条全部通过，事务回滚。
+- 类型检查（历史附件已清理：`types-final.txt`）、Vite构建（历史附件已清理：`build-final.txt`）、Worker/编排准备构建（历史附件已清理：`runtime-final.txt`）均退出0。
+- Node回归（历史附件已清理：`node-final.txt`）：2通过，1个既有本机 n8n 原生校验跳过，未算通过。
+- Advisors（历史附件已清理：`advisors-final.txt`）：仅3条既有RLS initplan性能WARN，无新增安全错误。
 - [两轴复审](review.md)：Standards和Spec均无剩余阻塞；审查不修改代码。
 
 保留了所有原始失败与成功。已修复的业务问题包括：快速筛选返回同key或重复选择同值导致加载卡住、运营修复误用未加载任务、全局最近任务同时间戳排序差异、仅产物/审核变化未刷新目录，以及无变化补丁/心跳引起多余目录刷新。测试选择器、夹具缺归档字段、CLI参数误用、开发HMR中断及标签绑定不等于真实后台等验收脚本问题也保留原始日志，后改用冻结源码及原生标签切换验证。
 
 Supabase `db pull --local` 在创建shadow库时55秒超时；未重试覆盖目标库，改为 CLI 生成单一前向迁移并记录已核验的函数源码。迁移历史记录与文件逐字相符。此前API演练全局登出影响了同一隔离Owner的浏览器会话，401拒绝证据保留；验收工具改用局部登出并重新经UI登录。没有改变生产认证。
 
-[收尾记录](cleanup.json)：本次验收 Chrome 和 verified 只读观察控制台已关闭，console55176已释放；隔离数据库、媒体、夹具和原始证据保留。
+收尾记录（历史附件已清理：`cleanup.json`）：本次验收 Chrome 和 verified 只读观察控制台已关闭，console55176已释放；隔离数据库、媒体、夹具和原始证据保留。
 
 原始 CLI 日志中的行尾空格、末尾空行及终端格式按原始字节保留，不为消除 Git 空白告警而改写。源码、脚本与报告另外通过 Git 空白检查；原始日志单独按 SHA256 核验。
 
-原始 HAR 含测试会话授权头，只保存在私有隔离目录，未纳入公开报告或待提交业务文件。[证据索引](evidence-index.json)记录私有/公开文件 SHA256、字节及性质；[浏览器网络摘要](browser-network.json)不含凭据。
+原始 HAR 含测试会话授权头，只保存在私有隔离目录，未纳入公开报告或待提交业务文件。证据索引（历史附件已清理：`evidence-index.json`）记录私有/公开文件 SHA256、字节及性质；浏览器网络摘要（历史附件已清理：`browser-network.json`）不含凭据。

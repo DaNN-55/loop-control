@@ -1,5 +1,8 @@
 # 批量制作正式落地验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 历史验收记录：批量准备、集中核对与批量采用已按用户后续决定撤回；现状见 [撤回记录](../batch-retirement-20261116/REPORT.md)。原测试证据保留。
 
 2026-11-16。按已批准 C Demo，实现正式分镜台的批量口播，随后接入画面与字幕。未提交或推送。
@@ -26,16 +29,16 @@
 
 ## 可检查产物
 
-- [完整链路任务、指纹与请求记录](browser/acceptance.json)
-- [采用后的正式界面](browser/batch-flow-complete.png)、[320 px 页面](browser/batch-flow-mobile.png)、[四档尺寸测量](browser/viewports.json)
-- [实际导出样片](browser/batch-final.mp4)：1080 × 1920，30 fps，H.264／AAC，4.842667 秒，262501 字节。已查看实际编码帧，字幕可见；视频为受控 Provider 的红色测试图案。
-- [交付 ZIP](browser/batch-delivery.zip)：真实交付 Worker 生成且 Owner 下载成功，`unzip -t` 通过；含视频、封面、原生可编辑工程、元数据及检查清单，共 6 文件。
-- [最终原生工程](browser/native-project.json)、[后端验收说明](BACKEND.md)。构建及测试原始日志位于项目私有 `.scratch/batch-production-20261116/`。
+- 完整链路任务、指纹与请求记录（历史附件已清理：`browser/acceptance.json`）
+- 采用后的正式界面（历史附件已清理：`browser/batch-flow-complete.png`）、320 px 页面（历史附件已清理：`browser/batch-flow-mobile.png`）、四档尺寸测量（历史附件已清理：`browser/viewports.json`）
+- 实际导出样片（历史附件已清理：`browser/batch-final.mp4`）：1080 × 1920，30 fps，H.264／AAC，4.842667 秒，262501 字节。已查看实际编码帧，字幕可见；视频为受控 Provider 的红色测试图案。
+- 交付 ZIP（历史附件已清理：`browser/batch-delivery.zip`）：真实交付 Worker 生成且 Owner 下载成功，`unzip -t` 通过；含视频、封面、原生可编辑工程、元数据及检查清单，共 6 文件。
+- 最终原生工程（历史附件已清理：`browser/native-project.json`）、[后端验收说明](BACKEND.md)。构建及测试原始日志位于项目私有 `.scratch/batch-production-20261116/`。
 
 本轮生成供应商和声学对齐边界使用受控输出，未调用外部付费 API；任务队列、HTTP、Owner 权限、原生工程写入、Remotion 导出、交付子进程和 ZIP 下载均实际执行。未验证真人口播质量、真实供应商延迟或大批量持续负载。构建仍有既有 chunk 大小提示，未扩展优化范围。
 
 ## 日常运行与清理
 
-日常服务 <http://127.0.0.1:5174> 已加载当前固定运行包 `681b60559cb68c2915fea7d9802f80d9c8adde7a36d60ce441c7e4498c109f48`；最终检查 PID 36227，源码／产物完整性一致。应用重启前确认无 running／ready 任务且 5175 无原生编辑器监听，仅停止应用，PostgreSQL 保留。并行会话也曾更新运行包，切换前以实际记录重新核查，没有覆盖已有源码或旧运行包。见 [运行记录](daily-service.json)、[日常 HTTP 冒烟检查](daily-http.json)。日常登录后的交互未重跑；完整交互使用独立 Owner 的隔离环境验证。
+日常服务 <http://127.0.0.1:5174> 已加载当前固定运行包 `681b60559cb68c2915fea7d9802f80d9c8adde7a36d60ce441c7e4498c109f48`；最终检查 PID 36227，源码／产物完整性一致。应用重启前确认无 running／ready 任务且 5175 无原生编辑器监听，仅停止应用，PostgreSQL 保留。并行会话也曾更新运行包，切换前以实际记录重新核查，没有覆盖已有源码或旧运行包。见 运行记录（历史附件已清理：`daily-service.json`）、日常 HTTP 冒烟检查（历史附件已清理：`daily-http.json`）。日常登录后的交互未重跑；完整交互使用独立 Owner 的隔离环境验证。
 
-所有本轮测试数据均在隔离测试库；未向原事业／乔迁两单提交生成或采用请求。隔离浏览器、fixture、PostgreSQL、SDK 副本已关闭并清理，保留有效产物及日志；未停止日常数据库。见 [清理记录](cleanup.json)。
+所有本轮测试数据均在隔离测试库；未向原事业／乔迁两单提交生成或采用请求。隔离浏览器、fixture、PostgreSQL、SDK 副本已关闭并清理，保留有效产物及日志；未停止日常数据库。见 清理记录（历史附件已清理：`cleanup.json`）。

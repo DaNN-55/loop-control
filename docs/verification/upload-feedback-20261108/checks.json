@@ -1,9 +1,0 @@
-{
-  "testFiles": 4,
-  "testsPassed": 88,
-  "typecheckPassed": true,
-  "frontendBuildPassed": true,
-  "fixedRuntimeValid": true,
-  "runningMatchesPrepared": true,
-  "noRealImportOrGeneration": true
-}

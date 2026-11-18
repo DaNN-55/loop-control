@@ -1,11 +1,14 @@
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 ## 1 · required-script-border
 
 2026/10/30 14:29:56
 
 空脚本提交后字段红框、aria-invalid 和焦点提示生效，无底部重复错误条。
 
-![操作截图](screenshots/01-required-script-border.jpg)
+操作截图（历史附件已清理：`screenshots/01-required-script-border.jpg`）
 
 ## 2 · revision-required-border
 
@@ -13,7 +16,7 @@
 
 已确认脚本进入编辑，修订原因未填时仅字段红框、聚焦并通过aria-describedby提供错误说明。
 
-![操作截图](screenshots/02-revision-required-border.jpg)
+操作截图（历史附件已清理：`screenshots/02-revision-required-border.jpg`）
 
 ## 3 · discard-dialog-without-rules
 
@@ -21,7 +24,7 @@
 
 放弃修改二次确认保留，移除标题下和按钮上方分隔线。
 
-![操作截图](screenshots/03-discard-dialog-without-rules.jpg)
+操作截图（历史附件已清理：`screenshots/03-discard-dialog-without-rules.jpg`）
 
 ## 4 · reference-image-and-prompt
 
@@ -29,7 +32,7 @@
 
 图片页显示真实上传首帧；下方为独立多行视频提示词、时长、预算与费用预留。
 
-![操作截图](screenshots/04-reference-image-and-prompt.jpg)
+操作截图（历史附件已清理：`screenshots/04-reference-image-and-prompt.jpg`）
 
 ## 5 · brand-original-blue-large-name
 
@@ -37,7 +40,7 @@
 
 按用户纠正保留原蓝底，新环形标志和Loop Control浅冰蓝字标；品牌字体19px，展开侧栏无截断。
 
-![操作截图](screenshots/05-brand-original-blue-large-name.jpg)
+操作截图（历史附件已清理：`screenshots/05-brand-original-blue-large-name.jpg`）
 
 ## 6 · brand-dark-blue
 
@@ -45,7 +48,7 @@
 
 深色模式仍使用原深蓝侧栏，浅色环形标志与19px字标可读。
 
-![操作截图](screenshots/06-brand-dark-blue.jpg)
+操作截图（历史附件已清理：`screenshots/06-brand-dark-blue.jpg`）
 
 ## 7 · two-generated-versions
 
@@ -53,7 +56,7 @@
 
 通过隔离受控Provider真实Worker生成两版，修改提示词再次生成后两版并存；采用前需明确时长策略，不自动替换当前画面。
 
-![操作截图](screenshots/07-two-generated-versions.jpg)
+操作截图（历史附件已清理：`screenshots/07-two-generated-versions.jpg`）
 
 ## 8 · adopted-video-preview
 
@@ -61,7 +64,7 @@
 
 明确采用第二版后，视频页预览实际采用视频；第一版保留在历史候选中，生成提示词草稿保持。
 
-![操作截图](screenshots/08-adopted-video-preview.jpg)
+操作截图（历史附件已清理：`screenshots/08-adopted-video-preview.jpg`）
 
 ## 9 · uploaded-and-generated-versions
 
@@ -69,7 +72,7 @@
 
 手动上传视频与两版生成视频在同一镜头结果区共存；上传和登记版本不会自动替换当前采用结果。
 
-![操作截图](screenshots/09-uploaded-and-generated-versions.jpg)
+操作截图（历史附件已清理：`screenshots/09-uploaded-and-generated-versions.jpg`）
 
 ## 10 · responsive-1440-脚本确认
 
@@ -77,7 +80,7 @@
 
 实际 1440×900，无页面级横向溢出；检查新图片/视频预览和自然高度版本入口。
 
-![操作截图](screenshots/10-responsive-1440-脚本确认.jpg)
+操作截图（历史附件已清理：`screenshots/10-responsive-1440-脚本确认.jpg`）
 
 ## 11 · responsive-1440-素材准备与匹配
 
@@ -85,7 +88,7 @@
 
 实际 1440×900，无页面级横向溢出；检查新图片/视频预览和自然高度版本入口。
 
-![操作截图](screenshots/11-responsive-1440-素材准备与匹配.jpg)
+操作截图（历史附件已清理：`screenshots/11-responsive-1440-素材准备与匹配.jpg`）
 
 ## 12 · responsive-1280-脚本确认
 
@@ -93,7 +96,7 @@
 
 实际 1280×800，无页面级横向溢出；检查新图片/视频预览和自然高度版本入口。
 
-![操作截图](screenshots/12-responsive-1280-脚本确认.jpg)
+操作截图（历史附件已清理：`screenshots/12-responsive-1280-脚本确认.jpg`）
 
 ## 13 · responsive-1280-素材准备与匹配
 
@@ -101,7 +104,7 @@
 
 实际 1280×800，无页面级横向溢出；检查新图片/视频预览和自然高度版本入口。
 
-![操作截图](screenshots/13-responsive-1280-素材准备与匹配.jpg)
+操作截图（历史附件已清理：`screenshots/13-responsive-1280-素材准备与匹配.jpg`）
 
 ## 14 · responsive-390-脚本确认
 
@@ -109,7 +112,7 @@
 
 实际 390×844，无页面级横向溢出；检查新图片/视频预览和自然高度版本入口。
 
-![操作截图](screenshots/14-responsive-390-脚本确认.jpg)
+操作截图（历史附件已清理：`screenshots/14-responsive-390-脚本确认.jpg`）
 
 ## 15 · responsive-390-素材准备与匹配
 
@@ -117,7 +120,7 @@
 
 实际 390×844，无页面级横向溢出；检查新图片/视频预览和自然高度版本入口。
 
-![操作截图](screenshots/15-responsive-390-素材准备与匹配.jpg)
+操作截图（历史附件已清理：`screenshots/15-responsive-390-素材准备与匹配.jpg`）
 
 ## 16 · brand-collapsed
 
@@ -125,4 +128,4 @@
 
 折叠侧栏仅显示浅色环形标志，保留原蓝底；展开字标19px完整显示。
 
-![操作截图](screenshots/16-brand-collapsed.jpg)
+操作截图（历史附件已清理：`screenshots/16-brand-collapsed.jpg`）

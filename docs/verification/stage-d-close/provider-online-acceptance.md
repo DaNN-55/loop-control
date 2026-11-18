@@ -2,9 +2,12 @@
 
 # Pexels 路径对齐与有限在线验收：第2次请求后停止
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-25，Asia/Shanghai；固定优化 worktree，HEAD `bca697bbc1e12626771d1283ec87a17bf85f02fe`。
 
-**Pexels 官方 v1 路径已离线对齐，真实资格探针通过。随后 Freesound 返回401，按用户「失败即停」要求停止；本轮共2次 Provider 请求，没有重试。** Google与豆包未执行；Cloudflare因本机保存材料不符合单条组合格式而零请求跳过，OpenAI缺Key继续跳过。没有派发媒体/语音任务，没有实际生成、下载或重绑复验通过结论。[验收摘要](evidence/provider-online-acceptance/verification-result.json)
+**Pexels 官方 v1 路径已离线对齐，真实资格探针通过。随后 Freesound 返回401，按用户「失败即停」要求停止；本轮共2次 Provider 请求，没有重试。** Google与豆包未执行；Cloudflare因本机保存材料不符合单条组合格式而零请求跳过，OpenAI缺Key继续跳过。没有派发媒体/语音任务，没有实际生成、下载或重绑复验通过结论。验收摘要（历史附件已清理：`evidence/provider-online-acceptance/verification-result.json`）
 
 ## 授权、上限和停止条件
 
@@ -22,11 +25,11 @@
 
 将正式 `providerProbe`、预算端点白名单、`mediaProviders`实际视频搜索和已有 `runtimeProbes`的Pexels搜索统一为 `/v1/videos/search`，更新相同接口的精确路径断言。没有保留旧路径自动回退、跟随重定向或追加探路请求；原历史探针与证据不改。迁移依据为[Pexels官方说明](https://www.pexels.com/api/documentation/)。
 
-探针路径断言先红后绿；执行器路径断言另先红后绿。最终相关4文件51/51，实际产品全量105文件807/807，默认每测5000ms不变；构建、真实Worker/编排准备、本地服务编译通过，Node2通过1既有跳过。没有调大模型30000ms检查、改变正文阈值、修改SQL或降低断言。[全量日志](evidence/provider-online-acceptance/full-default-01.log)、[范围](evidence/provider-online-acceptance/scope-result.json)
+探针路径断言先红后绿；执行器路径断言另先红后绿。最终相关4文件51/51，实际产品全量105文件807/807，默认每测5000ms不变；构建、真实Worker/编排准备、本地服务编译通过，Node2通过1既有跳过。没有调大模型30000ms检查、改变正文阈值、修改SQL或降低断言。全量日志（历史附件已清理：`evidence/provider-online-acceptance/full-default-01.log`）、范围（历史附件已清理：`evidence/provider-online-acceptance/scope-result.json`）
 
 首次路径红测还被Vitest误匹配到公开证据中的同名 `.test.ts` 源码副本，出现额外suite缺模块；第一次绿测中实际产品断言已通过，但档案副本仍导入失败。两份原始失败都保留。随后验收命令显式排除 `docs/verification/**/source/**`，实际产品105文件和807条断言完整保留，仍排除原有私有历史副本和既有integration范围。本轮没有修改Vitest配置；**裸 `npm test` 对历史证据副本的发现问题未修复，不能据本轮命令宣称该入口完整通过。** 新证据源码均以 `.txt` 归档，避免继续扩大该问题。
 
-首次本机凭据预检未取到Pexels秘密，显式解锁专用Keychain后四家可取用；失败前未采集锁状态，不能独立证明自动上锁原因。该步骤未调用Provider。前端构建按既有行为清理dist后，纯策略预检曾报模块不存在；经正式runtime准备与本地编译恢复，未跳过完整性校验。初始新策略草稿对零配额generation使用零费用元数据，被现有严格校验拒绝；在首次传输前保留草稿原文，只为禁用操作补正费用元数据，配额仍0、Provider仍排除，已用计数仍0，没有放宽校验。[配置预检](evidence/provider-online-acceptance/policy-preflight-result.json)
+首次本机凭据预检未取到Pexels秘密，显式解锁专用Keychain后四家可取用；失败前未采集锁状态，不能独立证明自动上锁原因。该步骤未调用Provider。前端构建按既有行为清理dist后，纯策略预检曾报模块不存在；经正式runtime准备与本地编译恢复，未跳过完整性校验。初始新策略草稿对零配额generation使用零费用元数据，被现有严格校验拒绝；在首次传输前保留草稿原文，只为禁用操作补正费用元数据，配额仍0、Provider仍排除，已用计数仍0，没有放宽校验。配置预检（历史附件已清理：`evidence/provider-online-acceptance/policy-preflight-result.json`）
 
 ## 真实探针结果
 
@@ -41,7 +44,7 @@
 | — | Cloudflare | 本机组合格式不兼容，0请求跳过 | 2 | 未验收，不称服务端鉴权失败 |
 | — | OpenAI | 缺Key，0配额、0请求 | 2 | 未验收 |
 
-[逐步资格回执](evidence/provider-online-acceptance/qualification-result.json)、[停止与网络对账](evidence/provider-online-acceptance/network-stop-result.json)。native HTTP命令本身返回200是命令已处理，不代表Freesound通过；401取自真实Provider响应。脱敏网络记录仅两条，目标为 `api.pexels.com` 和 `freesound.org`，与账本的 `pexels.verify` / `freesound.verify` 两次预留及完成/失败事件一致。
+逐步资格回执（历史附件已清理：`evidence/provider-online-acceptance/qualification-result.json`）、停止与网络对账（历史附件已清理：`evidence/provider-online-acceptance/network-stop-result.json`）。native HTTP命令本身返回200是命令已处理，不代表Freesound通过；401取自真实Provider响应。脱敏网络记录仅两条，目标为 `api.pexels.com` 和 `freesound.org`，与账本的 `pexels.verify` / `freesound.verify` 两次预留及完成/失败事件一致。
 
 前次只读复查发现的P3文案仍未处理：锁网时「轮换认证版本」按钮仍写「创建新版本并测试」，实际会跳过测试。本轮不修改该文案；新增连接仍使用「仅保存凭据」。
 
@@ -49,10 +52,10 @@ Freesound401不足以区分凭据类型/内容、账户状态或适配器鉴权�
 
 ## 收尾、凭据与保留范围
 
-Freesound失败后立即通过正式 `npm stop` 关闭在线配置，账本保留 `used:2`、`halted:true`，费用预留0；然后恢复原 `--offline-test` 闭网录入配置，便于Owner后续在页面维护凭据。当前页面 `networkAvailable:false`、`externalReady:false`，没有Worker或任务派发。原始日志通过私有轮转保留，旧索引所指历史日志路径恢复原字节；当前活动闭网日志另存，不作为不可变证据持续索引。[当前闭网状态](evidence/provider-online-acceptance/closed-final-result.json)
+Freesound失败后立即通过正式 `npm stop` 关闭在线配置，账本保留 `used:2`、`halted:true`，费用预留0；然后恢复原 `--offline-test` 闭网录入配置，便于Owner后续在页面维护凭据。当前页面 `networkAvailable:false`、`externalReady:false`，没有Worker或任务派发。原始日志通过私有轮转保留，旧索引所指历史日志路径恢复原字节；当前活动闭网日志另存，不作为不可变证据持续索引。当前闭网状态（历史附件已清理：`evidence/provider-online-acceptance/closed-final-result.json`）
 
 真实API Key保留在专用Keychain；本轮未额外保存明文Key，没有.env、HAR、输入截图、认证头、请求正文或带token查询串归档。Provider请求只经受控端口发给对应服务；脱敏网络记录只有host/method。Owner/数据库密码、Cookie/CSRF及私有配置不公开。公开材料与源码在收尾用本机秘密及常见编码形式做精确扫描，结果见最终打包核验。
 
 更新前逐项验证旧1013份公开、1525份私有SHA全部一致。活动旧README/review、离线准备报告另存原文，旧followups和门禁对象保留；43个无关文件、根PLAN、HEAD不动，暂存区为空。模型首次30秒冷启动失败、120秒诊断不算验收、错误正文高分`.838`反例、T21当时740/745、历史默认5秒失败、旧Pexels两次已耗尽预算、恢复资格清零等全部保留，不以本次Pexels资格通过追认历史运行。
 
-**本轮没有完成四家或五家的在线完整链路。** Pexels媒体执行/产物/在线重绑、Freesound401、Google/豆包未执行、Cloudflare材料格式、OpenAI缺Key、完整多能力Worker、档案副本的裸测试入口发现问题、新主机/OS冷启动/默认生产部署、任意正文错误检测、真实通知、容量/性能/切换回退等仍开放。当前已完成的5秒资源策略、自然30分钟租约、指定环境WhisperX和当前主机默认入口的既有狭义结论不扩大。未提交、未推送、未进入E/F，SQL一致性建议继续暂缓。[完整索引](evidence-index.json)
+**本轮没有完成四家或五家的在线完整链路。** Pexels媒体执行/产物/在线重绑、Freesound401、Google/豆包未执行、Cloudflare材料格式、OpenAI缺Key、完整多能力Worker、档案副本的裸测试入口发现问题、新主机/OS冷启动/默认生产部署、任意正文错误检测、真实通知、容量/性能/切换回退等仍开放。当前已完成的5秒资源策略、自然30分钟租约、指定环境WhisperX和当前主机默认入口的既有狭义结论不扩大。未提交、未推送、未进入E/F，SQL一致性建议继续暂缓。完整索引（历史附件已清理：`evidence-index.json`）

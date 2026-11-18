@@ -1,5 +1,8 @@
 # T05 验证记录
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 分支 `codex/t05-workspace-narration-152`，基于 `3fb5055d`。只使用随机 `loop_studio_153_<random>` 数据库、临时媒体根/HTTP/Studio 端口及真正 `loop_worker` 连接；日常数据库仅 schema-only 读取，无日常 DML/DDL、Keychain 或真实付费请求。
 
 TDD 首次红灯：Owner HTTP 对 `saveWorkspaceNarration` 返回 400（命令尚不存在）；实现后该场景通过。真实 Worker 链路的 fixture 曾因未启用生产范围、缺少隔离调度容量、受控模块转义错误失败，分别按持久诊断修正后通过；没有放宽业务权限来迁就 fixture。

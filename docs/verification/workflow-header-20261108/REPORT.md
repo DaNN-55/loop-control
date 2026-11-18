@@ -1,5 +1,8 @@
 # 制作步骤栏上移
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 2026-11-08：移除普通制作页面的“四步制作”文字，将四个步骤和原 titleActions 合并到同一 header；更多操作在右侧，保留原导航、焦点和禁用逻辑。已有生产单标题及历史只读/已归档/制作已完成状态保留。
 
 修改 `ProductionWorkspacePanel.tsx`、`production-workspace.css`、`production-compact.css`（均在 `src/local-app/`）；导航选择器随 DOM 层级同步，窄窗横向滚动及摘要隐藏规则保留。基线在当前对话目录 `workflow-header-baseline/`。

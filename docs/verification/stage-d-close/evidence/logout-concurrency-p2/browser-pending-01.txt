@@ -1,3 +1,0 @@
-✗ Evaluation error: Error: Expected two pending logout calls
-    at <anonymous>:1:64
-    at <anonymous>:1:199

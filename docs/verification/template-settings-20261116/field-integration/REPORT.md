@@ -1,5 +1,8 @@
 # 模板剩余字段接入与日常验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-16。接入本次授权的全部预填/引用字段，保留人工修改；v2 当前写入退役，历史读取保留。没有提交或推送。
 
 ## 行为
@@ -22,7 +25,7 @@
 3. 按名称准备并采用图片、配乐和首镜音效；剩余镜头用正常命令采用已有本地素材。没有供应商请求。见 `daily-ui-adopted.json`、`daily-before-export.json`。
 4. 真实视频生成确认弹窗预填 2.50 元，人工改为 3.21 元后取消，**未提交付费调用**。见 `daily-budget-ui.json`、`ui-budget-prefill.png`。最终金额冻结另外通过真实 PostgreSQL/HTTP 受控集成验证，供应商提交文件为空。
 5. v2 修订实际返回 400，工作区工程 SHA 与脚本 revision 不变。见 `daily-v2-retirement.json`。
-6. 原生导出 [template-fields.mp4](template-fields.mp4)：1080×1920、30 fps、12 秒。对编码后的 MP4 独立测量 880 Hz 音效：0.00 / 4.76 / 8.76 秒，长度 0.40 / 0.41 / 0.41 秒；符合 30 fps 量化后 0 / 4.766667 / 8.766667 秒及 10 ms 测量分辨率。见 `encoded-media-checks.json`。
+6. 原生导出 template-fields.mp4（历史附件已清理：`template-fields.mp4`）：1080×1920、30 fps、12 秒。对编码后的 MP4 独立测量 880 Hz 音效：0.00 / 4.76 / 8.76 秒，长度 0.40 / 0.41 / 0.41 秒；符合 30 fps 量化后 0 / 4.766667 / 8.766667 秒及 10 ms 测量分辨率。见 `encoded-media-checks.json`。
 7. 实帧检查首镜 2×14 字、次镜 1×10 字、末镜字幕关闭；原生工程检查镜头起点 0/120/240 帧、次镜慢推、12 帧叠化、末镜动画/转场关闭。见 `frame-*.png`、`native-project.json`、`native-checks.json`。
 8. 封面初始预选“模板封面.png”；人工清空刷新保留，再明确恢复并使用，可见预览。见 `daily-cover-prefill.json`、`daily-cover-preserved.json`、`ui-cover.png`。
 

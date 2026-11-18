@@ -1,5 +1,8 @@
 # T19 Adapter coverage plan (before generation)
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 Scope: local ticket #125; dependency T17 committed as d06b2a5. Published ticket/cache read offline; GitHub current state not refreshed. Native PG in existing stage-d container only.
 
 | Family | Registered path | Planned evidence | Live status |

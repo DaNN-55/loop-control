@@ -1,8 +1,0 @@
-{
-  "root": "/Volumes/Ebuget 1T/loop-workflow-continuation-raru2715/run-OFgucd/source",
-  "manifestVersion": 5,
-  "contract": "production-workspace/v1",
-  "code": "runtime_release_retired",
-  "manifestUnchanged": true,
-  "sha256": "04c41e418f4a305a0302994d5008d280c388281bbab02b04e8843abcce1c62aa"
-}

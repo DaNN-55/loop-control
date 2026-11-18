@@ -1,5 +1,8 @@
 # Browser measurement boundary
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 An independent standard Chrome156 / fresh-profile / single-CDP-client check at800x720 passed three native-property off/on rounds with Host tools closed, three with the real caption tool expanded, and three in the same standalone Studio document. Stable-state parent/child double-rAF responses were2–26ms. Actual inspector states and DOM geometry were checked.
 
 This data uses a portrait4s project with two video ranges, a placeholder and one caption; it does not independently establish the two-image/narration candidate scenario. Expanded captions were mounted, but only the heading and textarea upper edge were initially in view. Full-form same-screen usability remains part of final workflow verification.

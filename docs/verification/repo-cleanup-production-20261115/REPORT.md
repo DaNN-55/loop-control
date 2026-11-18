@@ -1,5 +1,8 @@
 # 清理与真实生产测试简报
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 执行：2026-11-15 至 11-16（跨午夜）。结论：**清理完成；两单真实流程已交付；质量、费用及观测仍有明确问题，不能称为全部验收通过。** 未发布到外部平台，未提交、推送或修改产品代码。
 
 ## 清理结果
@@ -7,7 +10,7 @@
 - 完成全仓入口、依赖、兼容及结构排查；没有新增可证明安全删除的运行代码，不按 legacy 名称盲删。
 - 3060 行历史计划原文归档；更新根说明、日照金山制作入口、素材说明及历史状态，修复归档导航。详细范围见 [清理记录](CLEANUP.md)。
 - `npm run check` 通过；脚本解析测试 21 项通过；本次文档链接与差异检查通过。未运行全套测试或构建。
-- 起始 102 个已有跟踪文件差异均保留，本次范围外差异及 index 未变，见 [保留核验](preservation-check.json)。未调整依赖、SQL、日常版本或共享 SDK。
+- 起始 102 个已有跟踪文件差异均保留，本次范围外差异及 index 未变，见 保留核验（历史附件已清理：`preservation-check.json`）。未调整依赖、SQL、日常版本或共享 SDK。
 
 ## 两份真实生产单
 
@@ -44,8 +47,8 @@ A–G 最终验收原有开放发现为 0；不把旧计划的历史未完成标
 
 ## 全过程保留位置
 
-- [最终核验／输出绝对路径](production/FINAL-CHECKS.json)、[观测汇总](production/OBSERVABILITY.json)。
+- 最终核验／输出绝对路径（历史附件已清理：`production/FINAL-CHECKS.json`）、观测汇总（历史附件已清理：`production/OBSERVABILITY.json`）。
 - 最终数据库／任务／审计／输入确认／候选／历史版本／导出／交付快照：[2026-11-15T16-08-44.679Z](production/2026-11-15T16-08-44.679Z/)；此前每个时间戳快照也保留。共 56 条 task run、387 个原账号文件及 SHA-256 清单。
-- [原产品图记录](production/product-reference.json)、[事业脚本](production/05-shiye-source.json)、[乔迁脚本](production/04-qiaoqian-source.json)、[流水来源许可](production/water-source-receipt.json)、[资源样本](production/export-resource-samples.jsonl)。
+- 原产品图记录（历史附件已清理：`production/product-reference.json`）、事业脚本（历史附件已清理：`production/05-shiye-source.json`）、乔迁脚本（历史附件已清理：`production/04-qiaoqian-source.json`）、流水来源许可（历史附件已清理：`production/water-source-receipt.json`）、资源样本（历史附件已清理：`production/export-resource-samples.jsonl`）。
 - 原素材根目录：`/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb`。工程仍依赖此处源素材。
 - 起始差异、私有原始快照及辅助操作回执：`.scratch/repo-cleanup-production-20261115/`。可分享快照已去除凭据／lease token；不复制 Keychain 密钥到报告。

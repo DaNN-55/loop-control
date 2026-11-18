@@ -1,5 +1,8 @@
 # #144 首次任务输出归属补验
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 本报告承接 [040 与发布恢复阶段结果](report-144-final.md) 和 [重新打开说明](issue-144-first-tts-reopen.md)。#142 同单实证发现了先前未覆盖的首次 TTS 与自动对齐路径，因此 #144 已重新打开。当前补修、隔离 PostgreSQL 及最终源码同单接续验证已完成；最终 Spec、凭据/索引核验和关票读回仍由主 Agent 完成，本文不自行宣布已关闭。
 
 ## 新发现与修复范围
@@ -29,7 +32,7 @@
 
 此次已接纳的 TTS 和旧自动对齐任务在 042 前创建，保持原输入、路径和记录，不能据此宣称它们已迁入新 namespace。最终同单链已在最终源码正常重启后读取这些结果，并完成新的本地 clip、preview、review/final 与本机发布包；新 clip `cb4446b0-19ad-4811-b6bb-e18f8c7d8380`、review `f5ed5d41-059a-4f9a-961a-5d1aa322a37e` 和 final `e92bd34a-ddbd-492b-96af-fe57057fc4a7` 的输出均在各自 task namespace。21 个产物的正常 Owner HTTP 与磁盘字节一致，重启后的生产单投影和两个调用账本保持。
 
-最终 [43 项源码清单](source-final-native-local-followthrough.json) 聚合 SHA-256 为 `207c8547fba52862d4e9bf535605f7b41d23c15d343dd4ee701b98abeb1852a8`。这证明最终源码下的可追溯同单接续，不能称整条成功链从开始便运行于该完整 SHA。前段真实外部调用由未变模块和冻结记录继承，受影响的本地路径形成新记录；详见 [同单最终报告](report-142-final.md)。
+最终 43 项源码清单（历史附件已清理：`source-final-native-local-followthrough.json`） 聚合 SHA-256 为 `207c8547fba52862d4e9bf535605f7b41d23c15d343dd4ee701b98abeb1852a8`。这证明最终源码下的可追溯同单接续，不能称整条成功链从开始便运行于该完整 SHA。前段真实外部调用由未变模块和冻结记录继承，受影响的本地路径形成新记录；详见 [同单最终报告](report-142-final.md)。
 
 在所有产品补修之后，主区裸 `npm test` 为 113 文件、894/894，默认超时不变，构建及 TypeScript 通过。本地裁剪预检只允许既有 `media_enabled=true` 的范围走本地检查，并以 `SELECT ... FOR UPDATE` 锁定该行；首次启用仍走原完整门禁。真实 PG 三项回归还验证了过期策略下未启用媒体的 HTTP 409、实际 planner/claim 为 0、零 secret/transport，以及已启用本地调用不改 dispatch flags；两份前序 hard 报告和最终 Standards 通过结论均保留。
 

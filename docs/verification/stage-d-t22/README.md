@@ -1,5 +1,8 @@
 # T22：本地 QC、发布包与 Episode 生命周期
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-24，分支 `codex/local-first-stage-a`，起点 `ff8eaf50f8f825335b8c3c9e62381814d5e52cd5`（T21）。
 
 **T22 实现和受控离线本地验收完成，本报告随实现按后续授权纳入当前分支的本地提交。** 本轮默认 5000ms 回归为 **97 文件、747/747 通过**；此前 T21 那次 740/745 及历史默认 5 秒失败仍保留，根因未解决，本轮通过不关闭历史门禁。生产完成仅表示本机交付包验证完成，没有对外发布。未操作生产、推送、合并或开始 T23。
@@ -23,25 +26,25 @@
 
 | 路径 | 结果与证据 |
 | --- | --- |
-| QC、返修、重复批准 | API 样本创建阻塞问题，批准返回 409；实际 Studio 改字并生成新 QC，旧包/问题保留，旧问题处理被拒绝。相同及不同 key 的重复批准复用同一最终任务。[结果](evidence/api-03-http-result.json) |
-| 真实复用与重试 | 最终任务首次因路径别名契约阻塞，修复后经 Owner 明确重试同一任务，真实复用成功；旧 blocked 与新 completed 尝试均保留，没有重置历史。[失败](evidence/api-01.txt)、[路径红/绿](evidence/final-contract-red-01.txt)、[最终结果](evidence/api-03-http-result.json) |
-| 真实损坏重渲染 | 第二样本批准后、实际 CLI 执行前，仅破坏其可复用候选视频；实际 OpenChatCut 最终渲染及 QC 完成，`reused=false`，随后恢复原候选字节并核验 SHA，再真实生成验证发布包。[结果](evidence/api-03-http-result.json) |
+| QC、返修、重复批准 | API 样本创建阻塞问题，批准返回 409；实际 Studio 改字并生成新 QC，旧包/问题保留，旧问题处理被拒绝。相同及不同 key 的重复批准复用同一最终任务。结果（历史附件已清理：`evidence/api-03-http-result.json`） |
+| 真实复用与重试 | 最终任务首次因路径别名契约阻塞，修复后经 Owner 明确重试同一任务，真实复用成功；旧 blocked 与新 completed 尝试均保留，没有重置历史。失败（历史附件已清理：`evidence/api-01.txt`）、路径红/绿（历史附件已清理：`evidence/final-contract-red-01.txt`）、最终结果（历史附件已清理：`evidence/api-03-http-result.json`） |
+| 真实损坏重渲染 | 第二样本批准后、实际 CLI 执行前，仅破坏其可复用候选视频；实际 OpenChatCut 最终渲染及 QC 完成，`reused=false`，随后恢复原候选字节并核验 SHA，再真实生成验证发布包。结果（历史附件已清理：`evidence/api-03-http-result.json`） |
 | 发布包约束 | 一个格式、SHA 和文件均有效但错误引用受审视频路径的孤立清单被拒绝，生产未完成；移除本轮注入清单后正常验证通过。重复提交只有一个包/验证任务，改固定输入 409 |
-| Chrome 完整链路 | 实际编辑并保存字幕、服务重启恢复、生成审核视频、记录/处理 QC 问题、批准、上传封面、填写元数据、生成包；刷新后通过原“查看最终材料”入口打开并播放成片。[最终结果](evidence/browser-65-final-result.json)、[真实帧](evidence/browser-36-final-frame.png)、[材料页面](evidence/browser-35-final-materials.png)。不是替 Owner 对真实业务作批准，使用专用合成 Owner/数据 |
-| 归档与确认删除 | 默认列表隐藏、显示归档和恢复均经 Chrome 验证；备份完整样本后显示路径并输入标题二次确认。[确认界面](evidence/browser-52-title-confirmation.png)、[默认隐藏](evidence/browser-42-default-hidden.txt)。删除前保存 public 数据、原生管理标记和 61 个文件，逐一核验备份 SHA |
-| 回滚及重启恢复 | 实际数据库故障后恢复记录与目录；完整样本首次外键失败后 61 文件与备份相同。修复后 DB 关联数据归零，受控暂存父目录替换使清理安全拒绝、61 文件保留；实际重启后记录仍可见，恢复测试目录后经页面重试完成。[回滚](evidence/full-delete-rollback-files-01.json)、[暂存](evidence/browser-58-staged-result.json)、[重启后](evidence/browser-60-pending-restarted.png)、[最终](evidence/browser-65-final-result.json) |
-| 边界 | [13 项](evidence/boundary-01-boundary-result.json)：未登录、CSRF、Origin、跨 Owner、输入上限、无效封面、固定清单及产物 HTTP 篡改、运行任务/资产锁拒绝。运行/锁负例使用明确标注的合成 DB 状态，不是实际长运行 Worker；临时行/锁移除，受控篡改原字节恢复 |
-| 历史与权限 | [审计](evidence/audit-02.json)：T22 前 38 表、25,961 行原记录按逐行多重集全部保留，59 个当前/历史索引文件 SHA/大小匹配。另核验 12 个当前材料及已删除样本 27 个索引产物的私有备份；[8 个 Owner 私有函数和 Worker 来源权限](evidence/audit-boundaries-01.json)符合边界，未开放审批表/回执通用权限。根 PLAN 和原有无关文件哈希不变 |
+| Chrome 完整链路 | 实际编辑并保存字幕、服务重启恢复、生成审核视频、记录/处理 QC 问题、批准、上传封面、填写元数据、生成包；刷新后通过原“查看最终材料”入口打开并播放成片。最终结果（历史附件已清理：`evidence/browser-65-final-result.json`）、真实帧（历史附件已清理：`evidence/browser-36-final-frame.png`）、材料页面（历史附件已清理：`evidence/browser-35-final-materials.png`）。不是替 Owner 对真实业务作批准，使用专用合成 Owner/数据 |
+| 归档与确认删除 | 默认列表隐藏、显示归档和恢复均经 Chrome 验证；备份完整样本后显示路径并输入标题二次确认。确认界面（历史附件已清理：`evidence/browser-52-title-confirmation.png`）、默认隐藏（历史附件已清理：`evidence/browser-42-default-hidden.txt`）。删除前保存 public 数据、原生管理标记和 61 个文件，逐一核验备份 SHA |
+| 回滚及重启恢复 | 实际数据库故障后恢复记录与目录；完整样本首次外键失败后 61 文件与备份相同。修复后 DB 关联数据归零，受控暂存父目录替换使清理安全拒绝、61 文件保留；实际重启后记录仍可见，恢复测试目录后经页面重试完成。回滚（历史附件已清理：`evidence/full-delete-rollback-files-01.json`）、暂存（历史附件已清理：`evidence/browser-58-staged-result.json`）、重启后（历史附件已清理：`evidence/browser-60-pending-restarted.png`）、最终（历史附件已清理：`evidence/browser-65-final-result.json`） |
+| 边界 | 13 项（历史附件已清理：`evidence/boundary-01-boundary-result.json`）：未登录、CSRF、Origin、跨 Owner、输入上限、无效封面、固定清单及产物 HTTP 篡改、运行任务/资产锁拒绝。运行/锁负例使用明确标注的合成 DB 状态，不是实际长运行 Worker；临时行/锁移除，受控篡改原字节恢复 |
+| 历史与权限 | 审计（历史附件已清理：`evidence/audit-02.json`）：T22 前 38 表、25,961 行原记录按逐行多重集全部保留，59 个当前/历史索引文件 SHA/大小匹配。另核验 12 个当前材料及已删除样本 27 个索引产物的私有备份；8 个 Owner 私有函数和 Worker 来源权限（历史附件已清理：`evidence/audit-boundaries-01.json`）符合边界，未开放审批表/回执通用权限。根 PLAN 和原有无关文件哈希不变 |
 
 已删除样本的公开截图/帧/摘要保留；完整快照、文件树、编辑器运行状态和数据库备份保留在私有隔离目录，不纳入仓库。备份 SHA 已验证；本轮没有执行整库恢复演练，也没有开始 T24。
 
 ## 回归与本轮修复
 
-- [默认完整命令](evidence/default-5s-01-result.json)无超时覆盖，[97 文件、747 项通过](evidence/default-5s-01.txt)。**不关闭 [T21 那次失败及基线对照](../stage-d-t21/README.md) 或更早默认 5 秒历史问题，根因仍未解决；本轮没有声称修复超时，也没有新增基线对照。**
-- [初始 34 项定向](evidence/focused-01.txt)通过；新增真实文件测试拒绝暂存父目录链接替换。最终完整回归覆盖后续路径兼容测试及其他所有现有测试。
-- TypeScript、原生编译、[本地前端构建](evidence/frontend-final-01.txt)、runtime 完整性检查通过；[Node 为 2 通过、1 个既有跳过](evidence/node-final-01.txt)。最后仅清理新源码文件末尾空行，再[准备 runtime](evidence/runtime-prepare-09.txt)并复核指纹，没有为格式变化重跑功能回归。
+- 默认完整命令（历史附件已清理：`evidence/default-5s-01-result.json`）无超时覆盖，97 文件、747 项通过（历史附件已清理：`evidence/default-5s-01.txt`）。**不关闭 [T21 那次失败及基线对照](../stage-d-t21/README.md) 或更早默认 5 秒历史问题，根因仍未解决；本轮没有声称修复超时，也没有新增基线对照。**
+- 初始 34 项定向（历史附件已清理：`evidence/focused-01.txt`）通过；新增真实文件测试拒绝暂存父目录链接替换。最终完整回归覆盖后续路径兼容测试及其他所有现有测试。
+- TypeScript、原生编译、本地前端构建（历史附件已清理：`evidence/frontend-final-01.txt`）、runtime 完整性检查通过；Node 为 2 通过、1 个既有跳过（历史附件已清理：`evidence/node-final-01.txt`）。最后仅清理新源码文件末尾空行，再准备 runtime（历史附件已清理：`evidence/runtime-prepare-09.txt`）并复核指纹，没有为格式变化重跑功能回归。
 - 真实演练暴露并修复：重复批准参数类型及审批表只读权限；逻辑入口与实际工程路径比较；受阻最终任务的受控重试；删除函数引用已退役统计表、原生管理标记外键和分镜草稿删除顺序；清理回执缺少窄权限。没有扩大表权限、重建退役业务或跳过校验。
-- 最后只读复核发现“failed + render_ready”重试会错误记录 `previous_status=blocked`；通过真实 PG、仅回滚的[红](evidence/retry-history-red-01.txt)/[绿](evidence/retry-history-green-01.txt)修正为真实前态。不是一次真实失败渲染或模型推理成功。
+- 最后只读复核发现“failed + render_ready”重试会错误记录 `previous_status=blocked`；通过真实 PG、仅回滚的红（历史附件已清理：`evidence/retry-history-red-01.txt`）/绿（历史附件已清理：`evidence/retry-history-green-01.txt`）修正为真实前态。不是一次真实失败渲染或模型推理成功。
 
 ## 保留限制与证据口径
 
@@ -49,7 +52,7 @@
 2. 模拟 `live/verified` 资格和 SecretStore 替身不构成真实在线/秘密存储证明。本轮没有新增资格或秘密解析；确定性本机渲染不等同于在线创作和完整多能力验收。
 3. [T17 中间日志覆盖说明](../stage-d-t17/README.md)继续保留。T22 编号 stdout、失败和截图独立保存；`fixture.json`、HTTP progress、runtime、events 是明确的滚动/追加状态，不声称每个中间响应均有原始档案。
 4. 原始类型错误、API/ACL/路径阻塞、生命周期前几轮失败、完整样本外键失败及浏览器等待超时不作为通过证据。一次只读备份驱动未解包 patches 而失败，发生在文件写入前；该次仅有工具输出，后续正确解包并完成 61 文件备份，不追认成完整原始 stdout。
-5. [证据索引](evidence-index.json)区分公开文件和私有原始材料；[最终范围与敏感值检查](evidence/scope-and-secret-final01.json)、[收尾检查](evidence/cleanup-final02.json)通过；没有原始 HAR，Owner/DB 凭据、任务 lease、编辑器凭据、完整快照及备份不复制到报告目录。
+5. 证据索引（历史附件已清理：`evidence-index.json`）区分公开文件和私有原始材料；最终范围与敏感值检查（历史附件已清理：`evidence/scope-and-secret-final01.json`）、收尾检查（历史附件已清理：`evidence/cleanup-final02.json`）通过；没有原始 HAR，Owner/DB 凭据、任务 lease、编辑器凭据、完整快照及备份不复制到报告目录。
 6. 本轮应用、Worker、Studio 关闭钩子及专用 Chrome 已收尾，合成认证项删除；专用 PG 和媒体卷保留。未操作生产、推送、合并或开始 T23；默认本地部署配置仍未启用。只读[复核](review.md)不代表独立评审、GitHub 关票或整个 D 阶段验收。
 
 ## 本地提交归档

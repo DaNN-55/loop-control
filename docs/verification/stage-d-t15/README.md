@@ -1,5 +1,8 @@
 # T15 / #121：接口及模拟验收完成，真实验收未完成
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 2026-10-24接续：[真实Keychain补验](../stage-d-t15-keychain/README.md)已完成本次授权的存取、锁定拒绝、轮换/撤销、缺失重绑及HTTP→受控Worker模块脱敏；发现并修复异步Node IPC误拒绝。在线Provider、live资格及真实蓝图选择未验，T15整体仍未完成。下文保留2026-10-23原始范围与证据，原“操作数0/待授权”仅指当时状态，不代表补验后状态。默认5秒历史失败及根因未解决继续保留；Owner已认可并授权当前分支本地归档，不推送或合并。
 
 前置T14在`3ce95e7`通过本地验收及双审查。实际GitHub Issue已读取，保持OPEN；本票三项原验收均仍未标完成。父任务要求继续不依赖Keychain授权的实现后，新增下列代码与测试，没有执行真实Keychain、ACL、登录钥匙串状态操作或在线Provider调用。
@@ -28,12 +31,12 @@ ADR0007要求区分本次结果与持久资格。008独立记录qualification：
 
 ## 验证及失败保留
 
-- [真实HTTP/PG + 模拟端口](http-simulated.json)：8并发创建仅1连接/1秘密写入；6并发轮换仅1新版本，旧引用保持；已完成key重放不覆盖；存储成功后模拟中断，原意图恢复无重复；仅本轮新版本删除绑定模拟恢复缺失后显式重绑；撤销拒绝，不自动切换；恶意Provider异常文本脱敏；模拟结果只在私有证据记outcome，公共验证仍retryable、ready=false，蓝图409，生产Worker拒绝。匿名401、CSRF403、跨Owner命令404、无会员创建403，且拒绝前不写秘密。真实PG dump含public及local_identity，HTTP、dump及应用日志均不含本轮合成秘密。此处存储为内存Map，Provider为纯函数，没有真实Keychain/Provider调用或费用。
-- [本机协议](protocol.json)：候选编译但从未执行；只执行`LOOP_KEYCHAIN_PROTOCOL_ONLY`预处理剔除Security代码的版本，nm断言无SecItem/SecKeychain导入。20项真实子进程协议/IPC检查通过。先以未实现协议返回not_implemented失败，再实现通过；后续审查修复Node socketpair误拒绝，共享检查现被协议测试覆盖。构建/模块缓存只在私有运行目录，不提交二进制。
+- 真实HTTP/PG + 模拟端口（历史附件已清理：`http-simulated.json`）：8并发创建仅1连接/1秘密写入；6并发轮换仅1新版本，旧引用保持；已完成key重放不覆盖；存储成功后模拟中断，原意图恢复无重复；仅本轮新版本删除绑定模拟恢复缺失后显式重绑；撤销拒绝，不自动切换；恶意Provider异常文本脱敏；模拟结果只在私有证据记outcome，公共验证仍retryable、ready=false，蓝图409，生产Worker拒绝。匿名401、CSRF403、跨Owner命令404、无会员创建403，且拒绝前不写秘密。真实PG dump含public及local_identity，HTTP、dump及应用日志均不含本轮合成秘密。此处存储为内存Map，Provider为纯函数，没有真实Keychain/Provider调用或费用。
+- 本机协议（历史附件已清理：`protocol.json`）：候选编译但从未执行；只执行`LOOP_KEYCHAIN_PROTOCOL_ONLY`预处理剔除Security代码的版本，nm断言无SecItem/SecKeychain导入。20项真实子进程协议/IPC检查通过。先以未实现协议返回not_implemented失败，再实现通过；后续审查修复Node socketpair误拒绝，共享检查现被协议测试覆盖。构建/模块缓存只在私有运行目录，不提交二进制。
 - 单元测试：原组件网络故障、连接恢复区password草稿及仅UUID存储；native适配器的子进程/文件系统边界均mock，覆盖默认禁用、参数/环境无秘密、不可变引用、stderr丢弃及hash拒绝；蓝图门禁的真实分支仅用边界mock验证，不提交live验证数据库夹具。
-- [SQL资格状态转换](qualification-sql.json)：仅`loop_empty`内一笔最终ROLLBACK的事务、元数据UUID夹具，9断言验证verified→retryable保留、invalid清除、无资格retryable不授予、rebind清除、rotation不传递、revoke拒绝。只走SQL函数的live-mode状态机分支，不存在实际秘密/认证/Provider，不提交任何live验证夹具，D应用从不连接该库。最初夹具缺既有Owner membership，被原create_account前置条件拒绝；补齐回滚夹具，没有放宽业务检查。
-- [完整回归](checks.txt)及[历史保留](original-history.json)记录最终结果。完整回归采用默认5000ms，排除运行目录保存的历史源码副本；Node既有原生n8n校验跳过保留。初次定向测试builtin mock缺default导出而失败，修正mock边界后通过，未改弱运行代码或断言。新增会员校验曾使跨Owner动作提前403，调整先核验资源归属后重测404，未放宽预期。失败留下的本轮合成连接/版本仅作诊断，原C记录未改。
-- [真实浏览器只读检查](browser.json)、[截图](recovery.png)、[页面](browser-recovery.txt)、[请求URL](browser-requests.txt)：从原蓝图同页打开恢复区，看到未绑定/真实Keychain未启用，只有本机业务请求，无Auth/REST/Provider回退，没有输入或提交秘密。起始匿名401和开发服务重启信息如实保留，不将页面检查当真实连接创建/Keychain验收。独立浏览器会话随后关闭。
+- SQL资格状态转换（历史附件已清理：`qualification-sql.json`）：仅`loop_empty`内一笔最终ROLLBACK的事务、元数据UUID夹具，9断言验证verified→retryable保留、invalid清除、无资格retryable不授予、rebind清除、rotation不传递、revoke拒绝。只走SQL函数的live-mode状态机分支，不存在实际秘密/认证/Provider，不提交任何live验证夹具，D应用从不连接该库。最初夹具缺既有Owner membership，被原create_account前置条件拒绝；补齐回滚夹具，没有放宽业务检查。
+- 完整回归（历史附件已清理：`checks.txt`）及历史保留（历史附件已清理：`original-history.json`）记录最终结果。完整回归采用默认5000ms，排除运行目录保存的历史源码副本；Node既有原生n8n校验跳过保留。初次定向测试builtin mock缺default导出而失败，修正mock边界后通过，未改弱运行代码或断言。新增会员校验曾使跨Owner动作提前403，调整先核验资源归属后重测404，未放宽预期。失败留下的本轮合成连接/版本仅作诊断，原C记录未改。
+- 真实浏览器只读检查（历史附件已清理：`browser.json`）、截图（历史附件已清理：`recovery.png`）、页面（历史附件已清理：`browser-recovery.txt`）、请求URL（历史附件已清理：`browser-requests.txt`）：从原蓝图同页打开恢复区，看到未绑定/真实Keychain未启用，只有本机业务请求，无Auth/REST/Provider回退，没有输入或提交秘密。起始匿名401和开发服务重启信息如实保留，不将页面检查当真实连接创建/Keychain验收。独立浏览器会话随后关闭。
 
 API依据：[Apple SecItemAdd](https://developer.apple.com/documentation/security/secitemadd(_:_:))、[SecItemCopyMatching](https://developer.apple.com/documentation/security/secitemcopymatching(_:_:))及本机SDK的显式Keychain/IPC约束。源码、编译、mock、模拟Provider通过均不证明真实Keychain行为或在线服务通过。
 

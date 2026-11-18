@@ -1,5 +1,8 @@
 # A 阶段四项修复与再次复审
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > Owner确认（2026-10-23）：A阶段验收通过，ADR-0008已批准为Accepted，并授权本地提交A相关改动，暂不合并或推送。以下复审记录中的Proposed和未提交为当时状态；B由新对话按T04→T05继续。
 
 2026-10-23，当前分支 `codex/local-first-stage-a`，基线 `cf450d9`。本轮 Owner 授权修复上次四项发现并调整 A-roll 任务卡片，仍不提交、推送或合并，不操作生产服务。运行检查和两个子 Agent 的再次复审已完成；T01/T02验收满足，T03文档交付满足，ADR仍Proposed等待Owner确认。
@@ -47,7 +50,7 @@ Critical issues：无。T01/#107独立配置/端口/DB/媒体/状态/日志及�
 
 两名子Agent只读审查；主Agent亲自执行验证并读取结果。Standards无剩余阻塞发现；Spec三票满足，T03仅表示文档交付，不表示设计获批或后续架构已经实施。
 
-UI 实测截图：[桌面](task-cards-desktop.png)、[窄屏](task-cards-mobile.png)。`browser-style-check.json` 区分实际页面截图与仅DOM的四状态样式探测；后者没有修改数据库，探测后恢复原状态。操作见 [修复后的检查指南](manual-test.md)。
+UI 实测截图：桌面（历史附件已清理：`task-cards-desktop.png`）、窄屏（历史附件已清理：`task-cards-mobile.png`）。`browser-style-check.json` 区分实际页面截图与仅DOM的四状态样式探测；后者没有修改数据库，探测后恢复原状态。操作见 [修复后的检查指南](manual-test.md)。
 
 末次收尾：当前分支与HEAD未变，无新增提交，生产Git与开始时一致（仅原有docs/architecture-map/）；55173控制台、55431/55432 API/DB仅127.0.0.1监听，生产5173/5678原PID不变。服务为Owner保留运行。证据见after.json及network-after.txt。
 

@@ -1,5 +1,8 @@
 # 连接配置：Impeccable 与现有 Skills 只读对比
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-10-27。对象：本机 Loop Control 的「系统维护 → 连接管理」。结论：本轮两套指导的主要发现相近，现有规范更直接约束项目视觉，Impeccable 更便于组织审查维度；其源码 detector 没有给本页面增加已确认缺陷。
 
 ## 安装与边界
@@ -19,7 +22,7 @@
 
 审查包括 `ConnectionWorkspace` 的管理表单和列表、`ConnectionTestButton`、`LocalConnectionsPanel`、`LocalMaintenancePanel` 及相关 CSS。文件内的 `ExternalConnectionPicker` 属于蓝图能力内嵌入口，不算本次页面。共享 CSS 中不命中本页面的规则不计入发现。
 
-开始时正常连接与旧测试连接分组仍存在，随后其他工作删除了该分组逻辑；现场从「4 + 10」变为「14」。本轮没有实施该变化。为避免混用版本，最终报告以 [source-sha256.json](source-sha256.json) 和 [source-snapshot](source-snapshot/) 固定的五个文件为准；初稿 [existing-skill-initial.md](existing-skill-initial.md) 保留，但其中旧行号与分组描述已由此报告更正。
+开始时正常连接与旧测试连接分组仍存在，随后其他工作删除了该分组逻辑；现场从「4 + 10」变为「14」。本轮没有实施该变化。为避免混用版本，最终报告以 source-sha256.json（历史附件已清理：`source-sha256.json`） 和 [source-snapshot](source-snapshot/) 固定的五个文件为准；初稿 [existing-skill-initial.md](existing-skill-initial.md) 保留，但其中旧行号与分组描述已由此报告更正。
 
 ## 发现
 
@@ -27,7 +30,7 @@
 
 位置：[ConnectionWorkspace.tsx:224](source-snapshot/src/connections/ConnectionWorkspace.tsx#L224)、[ConnectionWorkspace.tsx:226](source-snapshot/src/connections/ConnectionWorkspace.tsx#L226)。
 
-实际操作：用户在新标签页登录后，打开系统维护。Agent 没有在连接表单输入任何内容，「连接名称」却出现登录邮箱，Pexels API Key 出现掩码内容，输入框显示 Chrome 自动填充底色，「仅保存凭据」按钮可用。见 [desktop-autofill.png](desktop-autofill.png)。
+实际操作：用户在新标签页登录后，打开系统维护。Agent 没有在连接表单输入任何内容，「连接名称」却出现登录邮箱，Pexels API Key 出现掩码内容，输入框显示 Chrome 自动填充底色，「仅保存凭据」按钮可用。见 desktop-autofill.png（历史附件已清理：`desktop-autofill.png`）。
 
 证据只证明自动填充现象；没有读取掩码原值，不能断言它与登录密码逐字相同，也没有实际提交来验证服务端保存结果。风险是把站点登录自动填充当成 Provider 连接材料，误导后续保存。
 
@@ -83,7 +86,7 @@ playbook 提供 `/20` 评分，但本次缺少性能量测等证据，未补造�
 
 ### Detector 原始输出与误报处理
 
-首轮源码扫描完成、退出码2，产生20条告警。扫描后目标源码发生并发变化，因此在固定的最终快照上重新扫描；最终仍为20条，原始输出见 [detector-source.json](detector-source.json)。
+首轮源码扫描完成、退出码2，产生20条告警。扫描后目标源码发生并发变化，因此在固定的最终快照上重新扫描；最终仍为20条，原始输出见 detector-source.json（历史附件已清理：`detector-source.json`）。
 
 其中19条是 `side-tab`，1条是 `border-accent-on-rounded`，都来自共享 `styles.css` 的审核、分镜、生产单、账号等其他区域。经 selector 与当前页面对应关系复核，20条全部排除出本轮。它们属于范围外命中，不能直接说成检测器全部误报，也没有评审这些页面设计是否有问题。
 
@@ -103,7 +106,7 @@ TSX/CSS 源码模式使用模式匹配；没有连接已登录 Chrome 的 CDP，
 ## 验证、限制与自动审批
 
 - Chrome由用户登录，Agent没有读取密码、绕过认证或新建会话。
-- 查看真实桌面与360px模拟布局；只读表达式仅测量尺寸和属性，不读取任何input.value或掩码原值。尺寸记录见 [observed-metrics.json](observed-metrics.json)。
+- 查看真实桌面与360px模拟布局；只读表达式仅测量尺寸和属性，不读取任何input.value或掩码原值。尺寸记录见 observed-metrics.json（历史附件已清理：`observed-metrics.json`）。
 - 自动审批拒绝了尝试清空自动填充草稿，理由为会改变表单状态，与「先不要改页面」冲突。该动作未执行；随后仅保存截图和继续只读检查，表单原状保留。
 - Chrome期间有人工切换标签，后续工具输入被中止；没有把未完成的二次尺寸读取计作成功。本轮没有运行页面交互回归、Provider验证、构建或测试。
 - 工作区并发变化已记录并固定快照，不把其他任务改动归为本轮修改。没有安装自动hook、没有修改页面代码。

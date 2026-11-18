@@ -1,5 +1,8 @@
 # 48类流程独立复核
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-11。任务：只读审查与独立测试，不修改产品实现；主Agent实施4/5/17/24，另一个子Agent迁移紧凑设置。全部数据库测试使用本任务随机容器与无业务数据隔离库，未调用付费Provider、未访问真实Keychain、未改变真实作品或重载日常服务。
 
 ## 结论
@@ -15,14 +18,14 @@
 
 |编号|证据|结果与范围|
 |---|---|---|
-|WF|[workflow-regression.log](workflow-regression.log)|4文件13/13通过：workflowRules、Retry、QueueStop、Legacy QC；真实HTTP/PG/files/Worker。|
-|U|[retained-unit.log](retained-unit.log)；[主Agent旧mock修正复验](../receipt-client-retest.log)|初验12文件143条，139通过4失败；失败来自两个旧回执mock未支持新只读协议。主Agent修正后这2文件39条与客户端3条共42/42通过。未把初验写成全绿。|
-|MS|[media-state-unit.log](media-state-unit.log)|6文件65/65通过：试听、样音生命周期、音频面板、任务状态与真实持久重试投影。|
-|SI、CI、C、P、DI|[retained-integration.log](retained-integration.log)|6文件25通过，1字幕浏览器门控未执行：脚本修订2、字幕5、候选7、Pexels6、交付4、交付输入1。|
-|LI|[lifecycle-manual.log](lifecycle-manual.log)|4通过：归档1、managed/legacy永久删除2、manual/none口播1；15非目标/门控跳过不算通过。|
-|RC|[recycle-independent-final.log](recycle-independent-final.log)|回收站独立3/3通过。前两轮误用环境开关而全跳过，发现后读源码改用`LOOP_RECYCLE_ACCEPTANCE=1`，仅本最终日志计通过。|
-|MARKER|[provider-marker.log](provider-marker.log)、[provider-marker-green.log](provider-marker-green.log)|独立红→绿1/1；synthetic transport，没有真实出网。主配置排除verification目录，专用config仅加载此证明。|
-|PROJECTION|[speech-projection.log](speech-projection.log)、[speech-projection-green.log](speech-projection-green.log)|独立真实HTTP/PG/Worker红→绿1/1，确认新任务完成后的当前投影与旧unknown历史分离。|
+|WF|workflow-regression.log（历史附件已清理：`workflow-regression.log`）|4文件13/13通过：workflowRules、Retry、QueueStop、Legacy QC；真实HTTP/PG/files/Worker。|
+|U|retained-unit.log（历史附件已清理：`retained-unit.log`）；主Agent旧mock修正复验（历史附件已清理：`../receipt-client-retest.log`）|初验12文件143条，139通过4失败；失败来自两个旧回执mock未支持新只读协议。主Agent修正后这2文件39条与客户端3条共42/42通过。未把初验写成全绿。|
+|MS|media-state-unit.log（历史附件已清理：`media-state-unit.log`）|6文件65/65通过：试听、样音生命周期、音频面板、任务状态与真实持久重试投影。|
+|SI、CI、C、P、DI|retained-integration.log（历史附件已清理：`retained-integration.log`）|6文件25通过，1字幕浏览器门控未执行：脚本修订2、字幕5、候选7、Pexels6、交付4、交付输入1。|
+|LI|lifecycle-manual.log（历史附件已清理：`lifecycle-manual.log`）|4通过：归档1、managed/legacy永久删除2、manual/none口播1；15非目标/门控跳过不算通过。|
+|RC|recycle-independent-final.log（历史附件已清理：`recycle-independent-final.log`）|回收站独立3/3通过。前两轮误用环境开关而全跳过，发现后读源码改用`LOOP_RECYCLE_ACCEPTANCE=1`，仅本最终日志计通过。|
+|MARKER|provider-marker.log（历史附件已清理：`provider-marker.log`）、provider-marker-green.log（历史附件已清理：`provider-marker-green.log`）|独立红→绿1/1；synthetic transport，没有真实出网。主配置排除verification目录，专用config仅加载此证明。|
+|PROJECTION|speech-projection.log（历史附件已清理：`speech-projection.log`）、speech-projection-green.log（历史附件已清理：`speech-projection-green.log`）|独立真实HTTP/PG/Worker红→绿1/1，确认新任务完成后的当前投影与旧unknown历史分离。|
 |RX、RCPT、SSE|主Agent本目录下receiptRules、commandReceipt、clientCommandReceipt与speech rejection日志|新协议的最终批次由主Agent记录，不与本独立回归重复相加。|
 |UI|[紧凑设置迁移报告](../../compact-connection-migration-20261111/REPORT.md)|执行Agent报告72项/8文件通过，主Agent负责最终整合和真实服务验收。|
 |沿用|[前轮48矩阵](../../workflow-rules-implementation-20261111/acceptance-48.md)|只对本轮未改变的完整媒体/规划/legacy规则沿用已有实际证据；下表逐项说明代表范围。|

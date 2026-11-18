@@ -1,5 +1,8 @@
 # 审核台四项失败排查
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-29，范围为 `src/reviews/ReviewWorkspace.test.tsx` 中四个失败场景，不修改真实生产单。
 
 ## 原始复现
@@ -35,4 +38,4 @@
 - `npx vite build --outDir /private/tmp/loop-review-test-build-20261029` 通过，保留已有大 chunk 提示；未覆盖正在运行的后端构建或重启服务。
 - 浏览器打开独立只读标签页时返回登录页，未继续真实业务操作；本次仅修改测试，未改产品界面/业务实现或真实生产单。临时标签页已关闭。
 
-证据：[原始失败](before.json)、[审核台通过](review-after.json)、[节点通过](nodes-after.json)、[契约通过](contracts-after.json)、[类型检查](check.log)、[构建](build.log)。
+证据：原始失败（历史附件已清理：`before.json`）、审核台通过（历史附件已清理：`review-after.json`）、节点通过（历史附件已清理：`nodes-after.json`）、契约通过（历史附件已清理：`contracts-after.json`）、类型检查（历史附件已清理：`check.log`）、构建（历史附件已清理：`build.log`）。

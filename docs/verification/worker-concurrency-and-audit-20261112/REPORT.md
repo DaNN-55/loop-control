@@ -1,5 +1,8 @@
 # Worker 并发与工具链去留核查
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-12。只执行获准的并发调整与无使用方独立仓库清理；其余均为只读核查或待决定建议。未提交、未推送，保留前轮所有未提交成果及三份并行 CSS。没有启用数据库/媒体自动备份、迁移数据库或启动日常服务。
 
 ## 1. Codex CLI：仍有项目联系，保留
@@ -28,13 +31,13 @@
 
 已删除独立目录，大小写两个路径均不存在；清理前分配占用 2,456,236 KiB（约 2.34 GiB），不是整个系统空闲空间增加量的实测。项目内 `.loop-control/local/OpenChatCut` 的 inode 与 HEAD `72ddb33` 保持。恢复包：`/tmp/loop-worker2-audit-20261112/OpenChatCut-cbe20dd.bundle`；原 origin 为 `https://github.com/0xsline/OpenChatCut.git`。可从 bundle clone、恢复 origin，再按锁文件安装依赖。
 
-最初一条清理核查辅助命令有 Python 语法错误，解析前已退出，未发生文件操作；修正后重做完整校验再删除。具体收据见 [independent-cleanup-receipt.json](independent-cleanup-receipt.json)。
+最初一条清理核查辅助命令有 Python 语法错误，解析前已退出，未发生文件操作；修正后重做完整校验再删除。具体收据见 independent-cleanup-receipt.json（历史附件已清理：`independent-cleanup-receipt.json`）。
 
 ## 3. WhisperX：位置预览，未改变功能
 
 实际入口：生产单 → 剪辑工作台 → 字幕 → 字幕对齐。真实宿主在 `EmbeddedStudioHost.tsx:146` 展开字幕面板，由 `ProductionWorkspacePanel.tsx:238` 挂载 `WorkspaceCaptionsPanel` 的 alignmentOnly 模式。按钮显示“声学对齐”；有对齐任务后才出现“采用对齐”。WhisperX 是背后的执行工具，前端不以这个英文工具名作为按钮名称。
 
-右侧打开请求已发送给 Codex 面板；工具回执为 queued。浏览器已实际核验 [只读位置预览](http://127.0.0.1:5298/__whisperx)，复用真实组件和示例镜头，按钮捕获后只显示说明，不调用业务 API 或模型。1280px 和 420px 均可见，无横向溢出、业务请求或页面运行错误。[截图](whisperx-preview.png)。
+右侧打开请求已发送给 Codex 面板；工具回执为 queued。浏览器已实际核验 [只读位置预览](http://127.0.0.1:5298/__whisperx)，复用真实组件和示例镜头，按钮捕获后只显示说明，不调用业务 API 或模型。1280px 和 420px 均可见，无横向溢出、业务请求或页面运行错误。截图（历史附件已清理：`whisperx-preview.png`）。
 
 为用户查看保留 5298 独立预览，未启动 5174/5175 日常程序。自动验收使用的独立浏览器会话收尾关闭；右侧面板打开请求保持。
 
@@ -72,7 +75,7 @@
 
 典型内容分别是 `CREATE SCHEMA supabase_migrations`、旧服务能力枚举，以及 066 的 `IN('cloudflare','google_tts')` 拒绝条件。验收中的旧名称属于合成测试输入，不是对旧 API 发请求。
 
-只读数据盘点：含两项旧服务的蓝图为 0 条，旧服务连接为 1 条。连接记录不属于源码，本轮没有删除或修改。精确行号清单见 [sql-name-inventory.json](sql-name-inventory.json)，当前库数量及迁移清单见 [history-sql-current-counts.json](history-sql-current-counts.json)。
+只读数据盘点：含两项旧服务的蓝图为 0 条，旧服务连接为 1 条。连接记录不属于源码，本轮没有删除或修改。精确行号清单见 sql-name-inventory.json（历史附件已清理：`sql-name-inventory.json`），当前库数量及迁移清单见 history-sql-current-counts.json（历史附件已清理：`history-sql-current-counts.json`）。
 
 若目标是让活跃 SQL 也完全没有旧名称，建议单独做“当前干净基线 + 历史迁移归档 + 前向升级兼容”。代价是重做空库初始化、当前库继续升级和旧备份恢复验收；简单搜索替换达不到这个目标。本轮全部保持。
 
@@ -112,4 +115,4 @@
 - 数据库 scheduler capacity 已为 2，未写数据库。读取当前 `worker_resource_limits(...,2)`，FFmpeg/OpenChatCut/WhisperX 均有 `host:cpu=1`，FFmpeg/OpenChatCut 另有 `host:render=1`；不额外写一份重复限制。
 - 3 文件 5 项相关测试通过，包含真实调度器同时保持两个任务、唤醒合并与停止行为。测试未执行真实视频或付费 API，不能据此承诺日产量。
 - 日常 5174/5175 均未运行；未启停日常服务，配置将在下次启动时加载。5298 仅为上述只读预览，不承载 Worker。
-- 最终三份 CSS 字节与补丁、HEAD、空暂存区及其他配置保持；资源读取与保护摘要见 [verification.json](verification.json)。
+- 最终三份 CSS 字节与补丁、HEAD、空暂存区及其他配置保持；资源读取与保护摘要见 verification.json（历史附件已清理：`verification.json`）。

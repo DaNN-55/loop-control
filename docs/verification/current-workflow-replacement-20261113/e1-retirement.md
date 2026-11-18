@@ -1,5 +1,8 @@
 # E1 旧执行合同退役
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 迁移198精确删除七个已停止使用的拒绝函数、空script_production_scopes扫描器及无消费者record_episode_worker_preflight；默认RESTRICT阻止额外依赖，IF EXISTS支持原SQL幂等。没有删除业务表、原计划、轨、审批、文件或历史迁移。六个旧v2写命令及其当前实现已移除，认证／CSRF仍先运行，未知命令400；原script-production独立路由退出，生产单saved-plan及工作区来源保留Owner只读读取。
 
 测试通过专用historicalSavedPlan.fixture.ts构造前退役记录，只被测试导入，不提供应用写入口。旧计划的实际使用仍经当前Owner HTTP显式接入；跨账号、原来源离线、当前编辑、错误SHA／原生工程优先等原断言保持。

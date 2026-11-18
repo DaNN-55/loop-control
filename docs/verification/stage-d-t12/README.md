@@ -1,5 +1,8 @@
 # T12 / #118：纯 PostgreSQL 导入与目录只读贯通
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 基线 `61ee01d9af38c9ab1f7db7717efab1126c88ba4c`，独立 D 对话，隔离工作树。GitHub #118 保持 OPEN。原有 PLAN.md 和未跟踪票单未纳入实现提交；无生产切换、推送、合并、部署或真实秘密操作。
 
 ## 实现与迁移契约
@@ -12,11 +15,11 @@
 
 ## 验收证据
 
-- [空库](empty.json)：38 表，0 业务行；身份 ID 单独保留。
-- [导入](import.json)：38 表 / 20,379 行，全部表与归档原始 COPY 记录逐行集合 SHA-256 一致，所有外键反连接检查无孤儿；ID、快照、历史和引用保持。5 项 Vault 依赖及身份调用计数附在报告。
+- 空库（历史附件已清理：`empty.json`）：38 表，0 业务行；身份 ID 单独保留。
+- 导入（历史附件已清理：`import.json`）：38 表 / 20,379 行，全部表与归档原始 COPY 记录逐行集合 SHA-256 一致，所有外键反连接检查无孤儿；ID、快照、历史和引用保持。5 项 Vault 依赖及身份调用计数附在报告。
 - 两张表的旧 JSON 排序 MD5 与源不一致。已用 C 精确最终恢复库确认两者逐行集合相同而顺序不同，根因是不同 libc 的 en_US 排序。保留旧 MD5 差异记录；最终采用归档 COPY 字节集合对账，未降低为只看行数。
-- [真实 HTTP](http.json)：Owner 经 verified 测试 Auth 登录，读取 12 账号 / 12 蓝图 / 6,174 Episode，与 C 精确恢复库全部记录逐项相同。该快照系列为空；未省略此事实。
-- [非空系列/不同 Owner](series-isolation.json)：明确标注合成认证，真实 HTTP 与 PG；临时系列、版本及规则完整返回，不同 Owner 无账号可见；夹具随后清理。真实 Auth 路径由上一项单独验证。
+- 真实 HTTP（历史附件已清理：`http.json`）：Owner 经 verified 测试 Auth 登录，读取 12 账号 / 12 蓝图 / 6,174 Episode，与 C 精确恢复库全部记录逐项相同。该快照系列为空；未省略此事实。
+- 非空系列/不同 Owner（历史附件已清理：`series-isolation.json`）：明确标注合成认证，真实 HTTP 与 PG；临时系列、版本及规则完整返回，不同 Owner 无账号可见；夹具随后清理。真实 Auth 路径由上一项单独验证。
 - 无会话 401、跨来源 403、写目录 405、未迁移派发命令 404。真实最小角色不能 UPDATE、不能调用 bootstrap RPC；连接复用后事务身份清除。实例没有 auth/vault schema。
 
 运行入口：`node scripts/local/prepare.mjs`；`node scripts/local/restore.mjs --verified`（仅空目标，拒绝覆盖）；`node scripts/local/start.mjs`；`node scripts/local/catalog-acceptance.mjs`；`node scripts/local/catalog-fixture-acceptance.mjs`；`node scripts/local/check.mjs`。`stop.mjs` 仅停止已记录且身份匹配的 D 应用，不停数据库/其他服务。私有运行记录和原始日志在 `.loop-control/stage-d`。
@@ -31,6 +34,6 @@ C 历史默认五秒不稳定、3 条既有 SQL advisor WARN、n8n 原生校验�
 
 ## 完整回归与审查修复
 
-当前源码默认 5,000ms：81 文件 / 703 项通过，Node 2 过 / 1 既有跳过；应用与本地服务类型检查通过，见 [checks.txt](checks.txt)。Standards 初审发现 pg `connectionString`/`stream` 可覆盖本机校验，已增加拒绝未知字段并只构造白名单 PoolConfig；新增测试先失败再通过。Spec 初审要求补足 ADR 的真实事务竞争证据：两个最小应用角色连接交错持有不同 Owner，独立管理连接提交合成系列修改后，旧 repeatable-read 快照不变，新事务看到提交；两真实写事务竞争同一合成行，后者在锁超时前未覆盖；再验证 12 个并发目录 HTTP 请求身份不串。合成夹具全部清理，原备份数据保持。
+当前源码默认 5,000ms：81 文件 / 703 项通过，Node 2 过 / 1 既有跳过；应用与本地服务类型检查通过，见 checks.txt（历史附件已清理：`checks.txt`）。Standards 初审发现 pg `connectionString`/`stream` 可覆盖本机校验，已增加拒绝未知字段并只构造白名单 PoolConfig；新增测试先失败再通过。Spec 初审要求补足 ADR 的真实事务竞争证据：两个最小应用角色连接交错持有不同 Owner，独立管理连接提交合成系列修改后，旧 repeatable-read 快照不变，新事务看到提交；两真实写事务竞争同一合成行，后者在锁超时前未覆盖；再验证 12 个并发目录 HTTP 请求身份不串。合成夹具全部清理，原备份数据保持。
 
-浏览器读取私有运行配置返回 403，见 [private-files.json](private-files.json)。T12 当前预期全部本地验收通过，最终双审查复核另存；不代表 Owner 事后人工批准、T13 或后续票完成。
+浏览器读取私有运行配置返回 403，见 private-files.json（历史附件已清理：`private-files.json`）。T12 当前预期全部本地验收通过，最终双审查复核另存；不代表 Owner 事后人工批准、T13 或后续票完成。

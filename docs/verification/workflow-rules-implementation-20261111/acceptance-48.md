@@ -1,5 +1,8 @@
 # 48 类流程优化最终验收矩阵
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-11。依据用户已认可的 `docs/reviews/workflow-rules-20261111/rules.json`，由主 Agent 实施，独立审查 Agent 与环境 Agent 分批核对。这里只记录已检查和已执行的证据；不把“有测试文件”或跳过项算作通过。
 
 ## 判定含义与范围
@@ -26,20 +29,20 @@ npx vitest run <下表实际文件参数> --maxWorkers=1 --fileParallelism=false
 
 | 编号 | 实际文件参数/命令 | 已读结果与证据 |
 |---|---|---|
-| U | `LocalCatalogApp.navigation`、`LocalCatalogApp.receipts`、`WorkspaceScriptPanel`、`WorkspacePlanningSelection`、上传恢复/人工上传、`EmbeddedStudioHost`、试听生命周期、`scriptProductionContinuation`、候选草稿/生命周期、交付、字幕、审核修订共16单测文件（完整命令见日志首行） | [171单测通过](environment/retained-unit.log)，无跳过。 |
-| R1 | `src/local-app/workspaceScriptResume.integration.test.ts src/local-app/productionWorkspace.integration.test.ts src/local-app/workspacePexels.integration.test.ts src/local-app/workspaceCandidates.integration.test.ts src/local-app/workspaceCaptions.integration.test.ts` | [初验20通过/1旧断言失败/1浏览器门控跳过](environment/retained-integration-1.log)；候选按154真实follow字幕行为修正断言后[最终定向通过](environment/retained-candidate-final.log)，其余lane/样式仍完整比较。 |
-| R2 | `src/local-app/workspaceDeliveryInputs.integration.test.ts src/local-app/nativeStudioPrimary.integration.test.ts src/local-app/embeddedStudio.integration.test.ts src/local-app/episodeArchive.integration.test.ts src/local-app/episodeDeletion.integration.test.ts src/local-app/episodeDeletionRetainedSources.integration.test.ts`；另启用 `LOOP_EMBEDDED_STUDIO_ACCEPTANCE=1 LOOP_EPISODE_ARCHIVE_ACCEPTANCE=1 LOOP_EPISODE_DELETION_ACCEPTANCE=1` | [8实际集成通过](environment/retained-integration-2.log)。 |
-| P | `src/local-app/blueprintContraction.integration.test.ts` | [3规划/冻结选择与本地准备集成通过](environment/retained-planning.log)。 |
-| CI | `src/local-app/workspaceCandidateImpact.integration.test.ts` | [3实际时长影响与采用通过](environment/retained-candidate-impact.log)。 |
-| M | `src/local-app/workspaceNarration.integration.test.ts -t 'manual narration and disabled modes'` | [1通过，12非目标未执行](environment/retained-manual-narration.log)。 |
-| A、EX | `src/local-app/workspaceNarrationTabs.integration.test.ts src/local-app/workspaceAudioStorage.integration.test.ts src/local-app/workspaceExport.integration.test.ts` | [初验10通过/2同步预览环境失败](batch1-independent-integration.log)；补 `OPENCHATCUT_ROOT` 后[两例复验通过](environment/sync-preview-diagnosis.log)，其余8非目标未执行。实际音频/字幕存储、开关与导出均有通过证据。 |
-| V、S、D | `src/local-app/workspaceVisualCandidates.integration.test.ts src/local-app/workspaceSoundCandidates.integration.test.ts src/local-app/workspaceDelivery.integration.test.ts src/local-app/workflowRules.integration.test.ts` | [初验21通过/9旧协议断言失败](batch2-independent-integration.log)；156已用media.video，测试对齐后[视觉23/23完整通过](batch2-visual-protocol-retest.log)。声音候选1、交付4在初验通过；WF后续单列。 |
-| WF | `src/local-app/workflowRules.integration.test.ts` | [4/4通过](workflow-rules-complete.log)：unknown关闭/重启/改输入重开、停用缺文件长尾导出、替换/删除/声音历史、已发送迟到结果只成候选。 |
-| TU | `npx vitest run src/local-app/workspaceTaskRetry.test.ts src/local-app/WorkspaceVisualTaskStatus.test.tsx src/local-app/WorkspaceGenerationLocale.test.tsx --reporter=dot` | [29/29单测通过](batch3-independent-unit.log)；此外[工作台/重试/语言30单测复验](operations-retest.log)。两组有重叠，不相加。 |
-| RT | `src/local-app/workflowRetryRules.independent.integration.test.ts` | [独立真实边界1/1通过](batch3-independent-integration-retest.log)：持久退避/真实claim、文件恢复实际ffmpeg重试、范围变化和删目标409且不建task。 |
-| QS | `src/local-app/workflowQueueStop.independent.integration.test.ts` | [独立队列与权限4/4通过](batch3-queue-stop-independent-accepted.log)：ready/running/unknown/hold、目标删除、current Owner scope、同输入新明确请求。 |
-| BW | `src/local-app/workflowRules.browser.integration.test.ts`；另启用 `LOOP_WORKFLOW_BROWSER_ACCEPTANCE=1` | [实际全应用浏览器1/1通过](browser/final-run.log)，[结果](browser/result.json)与[桌面提醒截图](browser/catalog-background-reminder.png)/[移动截图](browser/catalog-mobile.png)：真实Owner HTTP/PG、合成供应商，关闭刷新保持，后台提醒不阻塞，无横向溢出。 |
-| QC | `src/local-app/workflowLegacyRules.integration.test.ts` | [新增旧QC三类4/4通过](environment/legacy-rules-registered.log)：迁移158/159修复后真实合成/结构/逐镜输入与安全边界。 |
+| U | `LocalCatalogApp.navigation`、`LocalCatalogApp.receipts`、`WorkspaceScriptPanel`、`WorkspacePlanningSelection`、上传恢复/人工上传、`EmbeddedStudioHost`、试听生命周期、`scriptProductionContinuation`、候选草稿/生命周期、交付、字幕、审核修订共16单测文件（完整命令见日志首行） | 171单测通过（历史附件已清理：`environment/retained-unit.log`），无跳过。 |
+| R1 | `src/local-app/workspaceScriptResume.integration.test.ts src/local-app/productionWorkspace.integration.test.ts src/local-app/workspacePexels.integration.test.ts src/local-app/workspaceCandidates.integration.test.ts src/local-app/workspaceCaptions.integration.test.ts` | 初验20通过/1旧断言失败/1浏览器门控跳过（历史附件已清理：`environment/retained-integration-1.log`）；候选按154真实follow字幕行为修正断言后最终定向通过（历史附件已清理：`environment/retained-candidate-final.log`），其余lane/样式仍完整比较。 |
+| R2 | `src/local-app/workspaceDeliveryInputs.integration.test.ts src/local-app/nativeStudioPrimary.integration.test.ts src/local-app/embeddedStudio.integration.test.ts src/local-app/episodeArchive.integration.test.ts src/local-app/episodeDeletion.integration.test.ts src/local-app/episodeDeletionRetainedSources.integration.test.ts`；另启用 `LOOP_EMBEDDED_STUDIO_ACCEPTANCE=1 LOOP_EPISODE_ARCHIVE_ACCEPTANCE=1 LOOP_EPISODE_DELETION_ACCEPTANCE=1` | 8实际集成通过（历史附件已清理：`environment/retained-integration-2.log`）。 |
+| P | `src/local-app/blueprintContraction.integration.test.ts` | 3规划/冻结选择与本地准备集成通过（历史附件已清理：`environment/retained-planning.log`）。 |
+| CI | `src/local-app/workspaceCandidateImpact.integration.test.ts` | 3实际时长影响与采用通过（历史附件已清理：`environment/retained-candidate-impact.log`）。 |
+| M | `src/local-app/workspaceNarration.integration.test.ts -t 'manual narration and disabled modes'` | 1通过，12非目标未执行（历史附件已清理：`environment/retained-manual-narration.log`）。 |
+| A、EX | `src/local-app/workspaceNarrationTabs.integration.test.ts src/local-app/workspaceAudioStorage.integration.test.ts src/local-app/workspaceExport.integration.test.ts` | 初验10通过/2同步预览环境失败（历史附件已清理：`batch1-independent-integration.log`）；补 `OPENCHATCUT_ROOT` 后两例复验通过（历史附件已清理：`environment/sync-preview-diagnosis.log`），其余8非目标未执行。实际音频/字幕存储、开关与导出均有通过证据。 |
+| V、S、D | `src/local-app/workspaceVisualCandidates.integration.test.ts src/local-app/workspaceSoundCandidates.integration.test.ts src/local-app/workspaceDelivery.integration.test.ts src/local-app/workflowRules.integration.test.ts` | 初验21通过/9旧协议断言失败（历史附件已清理：`batch2-independent-integration.log`）；156已用media.video，测试对齐后视觉23/23完整通过（历史附件已清理：`batch2-visual-protocol-retest.log`）。声音候选1、交付4在初验通过；WF后续单列。 |
+| WF | `src/local-app/workflowRules.integration.test.ts` | 4/4通过（历史附件已清理：`workflow-rules-complete.log`）：unknown关闭/重启/改输入重开、停用缺文件长尾导出、替换/删除/声音历史、已发送迟到结果只成候选。 |
+| TU | `npx vitest run src/local-app/workspaceTaskRetry.test.ts src/local-app/WorkspaceVisualTaskStatus.test.tsx src/local-app/WorkspaceGenerationLocale.test.tsx --reporter=dot` | 29/29单测通过（历史附件已清理：`batch3-independent-unit.log`）；此外工作台/重试/语言30单测复验（历史附件已清理：`operations-retest.log`）。两组有重叠，不相加。 |
+| RT | `src/local-app/workflowRetryRules.independent.integration.test.ts` | 独立真实边界1/1通过（历史附件已清理：`batch3-independent-integration-retest.log`）：持久退避/真实claim、文件恢复实际ffmpeg重试、范围变化和删目标409且不建task。 |
+| QS | `src/local-app/workflowQueueStop.independent.integration.test.ts` | 独立队列与权限4/4通过（历史附件已清理：`batch3-queue-stop-independent-accepted.log`）：ready/running/unknown/hold、目标删除、current Owner scope、同输入新明确请求。 |
+| BW | `src/local-app/workflowRules.browser.integration.test.ts`；另启用 `LOOP_WORKFLOW_BROWSER_ACCEPTANCE=1` | 实际全应用浏览器1/1通过（历史附件已清理：`browser/final-run.log`），结果（历史附件已清理：`browser/result.json`）与桌面提醒截图（历史附件已清理：`browser/catalog-background-reminder.png`）/移动截图（历史附件已清理：`browser/catalog-mobile.png`）：真实Owner HTTP/PG、合成供应商，关闭刷新保持，后台提醒不阻塞，无横向溢出。 |
+| QC | `src/local-app/workflowLegacyRules.integration.test.ts` | 新增旧QC三类4/4通过（历史附件已清理：`environment/legacy-rules-registered.log`）：迁移158/159修复后真实合成/结构/逐镜输入与安全边界。 |
 | RC | `recycleBin.integration.test.ts`、`recycleBin.independent.integration.test.ts`、`episodeArchive.integration.test.ts`、`episodeDeletion.integration.test.ts` | [12真实集成通过](../recycle-bin-migration-20261111/REPORT.md)，新UI4项、16布局组通过，正式160已启用；未删除真实作品。 |
 | DEMO | 隔离设置三页设计演示，不连接真实清理 | [本轮紧凑三方案验收](../settings-layout-v3/REPORT.md)，[原回收站语义说明](../settings-comments-20261111/demo/REPORT.md)。 |
 

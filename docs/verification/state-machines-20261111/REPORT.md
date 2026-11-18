@@ -1,5 +1,8 @@
 # 隐式状态机现状复核
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-11，基线为 `1bedac10`。初始工作区干净。本轮以已合入的清单和 ADR 为起点，复核当前变化与遗漏的权威，实施一处有失败回归的刷新修复。
 
 ## 盘点与决定
@@ -17,7 +20,7 @@
 
 ## 覆盖方法与边界
 
-复用只读 AST／SQL 候选扫描器，运行 `node docs/verification/state-machines-20261110/census.mjs`。当前扫描 546 个文件，244 个文件含 1517 个信号。相对初轮新增六个应用文件、删除两个旧模块，差异与族索引保存在 [扫描摘要](census-summary.json)。修正 M23 指向已删除 `operationDraft.ts` 的旧链接。
+复用只读 AST／SQL 候选扫描器，运行 `node docs/verification/state-machines-20261110/census.mjs`。当前扫描 546 个文件，244 个文件含 1517 个信号。相对初轮新增六个应用文件、删除两个旧模块，差异与族索引保存在 扫描摘要（历史附件已清理：`census-summary.json`）。修正 M23 指向已删除 `operationDraft.ts` 的旧链接。
 
 按族补核扫描器之外的 `native/*.m`、`scripts/whisperx-align.py`、UI primitives 和 `db/contracts`。原生秘密存储归 M46，对齐进程归 M12，控件交互归 M29／M30，查询契约归现有生产与读取族。枚举选择、DOM ref 与每个开关不单独计数。
 
@@ -33,7 +36,7 @@
 4. 较早的刷新返回 revision 1，或 revision 2 的旧投影。
 5. 旧实现无条件发布刷新结果，覆盖刚接收的工程。
 
-修改前两条新增用例失败，原有十条通过，见 [失败记录](reload-red.log)。修复记录请求发出时的工程对象，将返回值与当前已接收工程比较。拒绝同工程低 revision，以及等待期间已有更新时的同 revision／其他工作版本回包。相同工程更高 revision 可接入；无中途更新时，权威读取仍允许切换到新工作版本。
+修改前两条新增用例失败，原有十条通过，见 失败记录（历史附件已清理：`reload-red.log`）。修复记录请求发出时的工程对象，将返回值与当前已接收工程比较。拒绝同工程低 revision，以及等待期间已有更新时的同 revision／其他工作版本回包。相同工程更高 revision 可接入；无中途更新时，权威读取仍允许切换到新工作版本。
 
 新增四条公开父组件回归覆盖旧 revision、同 revision、更高 revision 和合法工作版本替换。使用真实操作 hook 和父组件，控制 HTTP／命令边界，未 mock 新的私有实现。既有导航、失败恢复和真实 EmbeddedStudioHost 消息回归一并通过。
 
@@ -41,13 +44,13 @@
 
 | 检查 | 结果 |
 | --- | --- |
-| 9 个受影响测试文件 | 127 条通过，见 [定向日志](targeted.log) |
-| 类型检查 | `npm run check` 通过，见 [日志](check.log) |
-| 默认全量 | 256 文件通过，1921 条通过，1 条既有跳过，见 [日志](full-tests.log) |
-| 顺序构建 | 前端、后端、Worker 均通过，见 [前端](build.log)、[后端](backend-build.log)、[Worker](worker-build.log) |
+| 9 个受影响测试文件 | 127 条通过，见 定向日志（历史附件已清理：`targeted.log`） |
+| 类型检查 | `npm run check` 通过，见 日志（历史附件已清理：`check.log`） |
+| 默认全量 | 256 文件通过，1921 条通过，1 条既有跳过，见 日志（历史附件已清理：`full-tests.log`） |
+| 顺序构建 | 前端、后端、Worker 均通过，见 前端（历史附件已清理：`build.log`）、后端（历史附件已清理：`backend-build.log`）、Worker（历史附件已清理：`worker-build.log`） |
 | 受控 HTTP 浏览器 | revision 1 与 2 的旧回包保留已接收工程，revision 3 接入，均保留返回后的导航且无 iframe 会话 |
-| 390px 工作区 | 同 revision 迟到路径通过，页面宽度为 390，见 [读数](reload-mobile.json) 与 [截图](reload-mobile.png) |
-| 交互地图 | 8 组交互检查通过，另验鼠标拖动、重置及窄屏，见 [读数](map-browser.json)、[桌面](map-wide.png)、[窄屏](map-mobile.png) |
+| 390px 工作区 | 同 revision 迟到路径通过，页面宽度为 390，见 读数（历史附件已清理：`reload-mobile.json`） 与 截图（历史附件已清理：`reload-mobile.png`） |
+| 交互地图 | 8 组交互检查通过，另验鼠标拖动、重置及窄屏，见 读数（历史附件已清理：`map-browser.json`）、桌面（历史附件已清理：`map-wide.png`）、窄屏（历史附件已清理：`map-mobile.png`） |
 | 数据与差异 | 地图引用／源码路径校验、48 族连续编号、Markdown 本地链接、`git diff --check` 通过 |
 
 浏览器夹具位于本目录 `serve.mjs` 和 `browser-fixture.tsx`，仅监听 `127.0.0.1:5196`。入口 `/__fixture?revision=1`，可将 revision 改为 2 或 3。点击重试打开、返回分镜并刷新、释放打开回执、释放刷新回包，分别核对旧回包与新回包。夹具保留真实组件与 HTTP 刷新，打开命令结果由受控 HTTP 返回。

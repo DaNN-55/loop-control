@@ -1,5 +1,8 @@
 # T07：容量、公平与持续消费
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-23，工作区基线 `eb83b30`；T07/#113 已在优化工作树实现并完成本地验收，Owner 已认可本地验收结论；本次提交归档实现、验收报告、回归日志和证据索引，未推送或合并。T08 未开始。没有操作生产。
 
 ## 结论与限制
@@ -27,27 +30,27 @@
 
 | 标准 | 已执行结果 | 证据 |
 | --- | --- | --- |
-| 全机和重叠资源限制 | 原三组容量 red 为1/1/1；全机2后1/1/0；跨连接 Provider2为1/1/0；独立连接1、CPU、下载上限为1/0。并发 RPC 不能以调用方8提高全机2，同连接quota1与独立连接合计可占Provider2。 | [容量](capacity-final.json)、[受控执行](controlled-consumption.json)、[基线函数回滚复现](baseline-capacity-replay.txt) |
-| 配置/领取并发 | 独立事务持有全机锁时，真实 PostgREST 配置写入在 pg_stat_activity 中被观察到 advisory 等待；释放后写入与清理完成。 | [配置竞争](configuration-race.json) |
-| 连续消费、公平、重启 | A长任务未结束时B/C及新加入D继续；峰值2；两个独立Node进程保留轮转；重启后消费持久队列。 | [8项受控路径](controlled-consumption.json) |
-| 取消、失败、退避 | 实际Owner save_episode_tts_settings RPC作废运行旁白；旧租约拒绝、下条推进。执行器失败后其他Episode继续、原任务退避再成功；受控推进过期租约时钟后重试成功；30秒上限由真实结果事务检查。 | [受控路径](controlled-consumption.json)、[249条SQL](sql-final.json) |
-| 普通HTTP与真实产物 | 5次同任务提交202，普通middleware→领取→stdin包→真实Worker/FFmpeg，连续完成3个Episode，各一个attempt0 run和一个23,297字节MP4，数据库/磁盘SHA一致；完成重复POST200，服务重启后仍可查询。 | [HTTP最终路径](http-real-path.json) |
-| 详情状态与刷新 | 真实Google Chrome显示“执行中”和“等待 Worker”；整页刷新后仍排队；释放受控执行器后页面自动变为已完成。 | [运行](browser-running.txt)、[排队刷新](browser-queued-refresh.txt)、[完成](browser-completed.txt)、[浏览器记录](browser-state-result.json) |
+| 全机和重叠资源限制 | 原三组容量 red 为1/1/1；全机2后1/1/0；跨连接 Provider2为1/1/0；独立连接1、CPU、下载上限为1/0。并发 RPC 不能以调用方8提高全机2，同连接quota1与独立连接合计可占Provider2。 | 容量（历史附件已清理：`capacity-final.json`）、受控执行（历史附件已清理：`controlled-consumption.json`）、基线函数回滚复现（历史附件已清理：`baseline-capacity-replay.txt`） |
+| 配置/领取并发 | 独立事务持有全机锁时，真实 PostgREST 配置写入在 pg_stat_activity 中被观察到 advisory 等待；释放后写入与清理完成。 | 配置竞争（历史附件已清理：`configuration-race.json`） |
+| 连续消费、公平、重启 | A长任务未结束时B/C及新加入D继续；峰值2；两个独立Node进程保留轮转；重启后消费持久队列。 | 8项受控路径（历史附件已清理：`controlled-consumption.json`） |
+| 取消、失败、退避 | 实际Owner save_episode_tts_settings RPC作废运行旁白；旧租约拒绝、下条推进。执行器失败后其他Episode继续、原任务退避再成功；受控推进过期租约时钟后重试成功；30秒上限由真实结果事务检查。 | 受控路径（历史附件已清理：`controlled-consumption.json`）、249条SQL（历史附件已清理：`sql-final.json`） |
+| 普通HTTP与真实产物 | 5次同任务提交202，普通middleware→领取→stdin包→真实Worker/FFmpeg，连续完成3个Episode，各一个attempt0 run和一个23,297字节MP4，数据库/磁盘SHA一致；完成重复POST200，服务重启后仍可查询。 | HTTP最终路径（历史附件已清理：`http-real-path.json`） |
+| 详情状态与刷新 | 真实Google Chrome显示“执行中”和“等待 Worker”；整页刷新后仍排队；释放受控执行器后页面自动变为已完成。 | 运行（历史附件已清理：`browser-running.txt`）、排队刷新（历史附件已清理：`browser-queued-refresh.txt`）、完成（历史附件已清理：`browser-completed.txt`）、浏览器记录（历史附件已清理：`browser-state-result.json`） |
 
-![刷新后仍显示等待Worker](browser-queued-refresh.png)
+刷新后仍显示等待Worker（历史附件已清理：`browser-queued-refresh.png`）
 
 受控执行器测试使用真实数据库、真实结果事务与真实文本产物，但没有调用在线 Provider。HTTP/FFmpeg 路径使用普通 Worker，单独报告，不混称所有受控执行为真实生成。取消证明实际业务命令、数据库槽位和围栏语义，不能撤销已经发出的在线 Provider 请求；不宣称完整 Owner 审批链或 OS 沙箱。峰值2是本次配置样本，不是稳定生产单数量承诺。
 
 ## 回归与原始失败
 
-- [默认5000ms完整应用回归](full-default-5000.txt)：70文件/676项通过；[Node](node-tests.txt)：2通过/1项本机n8n节点检查跳过；[类型与构建](types-builds.txt)通过，末次[类型](types-final.txt)、[编排器构建](orchestrator-build-final.txt)通过。已有 act 提示原样保留。
-- [完整SQL](sql-final.json)：22文件/249条通过。旧资源组测试在回滚fixture中将全机设置为8，继续独立检验Provider上限3；新增测试验证默认整机2及权限/退避。
-- [advisors原始结果](advisors-final.txt)退出1（fail-on=warn），三条 `auth_rls_initplan` 位于 external_connections、external_connection_verifications、storyboard_audio_selections；[与A只读对照](advisors-baseline-comparison.json)证明策略相同，未顺手修改。
-- 真实red覆盖FIFO饥饿、跨连接绕过Provider上限、低连接限额未生效、立即重试，以及CLI未显式传environment时忽略CODEX_WORKER_CAPACITY；后者最后先red再修一行回退，[原始red](red-history/capacity-env-red.txt)。配置缺失拒绝领取，空退避集合不会持续等1ms。
+- 默认5000ms完整应用回归（历史附件已清理：`full-default-5000.txt`）：70文件/676项通过；Node（历史附件已清理：`node-tests.txt`）：2通过/1项本机n8n节点检查跳过；类型与构建（历史附件已清理：`types-builds.txt`）通过，末次类型（历史附件已清理：`types-final.txt`）、编排器构建（历史附件已清理：`orchestrator-build-final.txt`）通过。已有 act 提示原样保留。
+- 完整SQL（历史附件已清理：`sql-final.json`）：22文件/249条通过。旧资源组测试在回滚fixture中将全机设置为8，继续独立检验Provider上限3；新增测试验证默认整机2及权限/退避。
+- advisors原始结果（历史附件已清理：`advisors-final.txt`）退出1（fail-on=warn），三条 `auth_rls_initplan` 位于 external_connections、external_connection_verifications、storyboard_audio_selections；与A只读对照（历史附件已清理：`advisors-baseline-comparison.json`）证明策略相同，未顺手修改。
+- 真实red覆盖FIFO饥饿、跨连接绕过Provider上限、低连接限额未生效、立即重试，以及CLI未显式传environment时忽略CODEX_WORKER_CAPACITY；后者最后先red再修一行回退，原始red（历史附件已清理：`red-history/capacity-env-red.txt`）。配置缺失拒绝领取，空退避集合不会持续等1ms。
 - 首次Vitest误发现`.loop-control`中保留的T06源码快照且普通沙箱不能绑定HTTP；已停止并保留输出。后续仅排除该生成物目录，使用verified干净环境/本机HTTP权限。没有排除业务用例或增加预算。
 - 过程中的fixture字段不完整、PL/pgSQL列歧义、过早观察第五次领取、宿主/DB时钟筛选竞态、空聚合边界及SQL退避时钟干扰均保留原始失败，再按定位原因修正。advisors首次误用SSL连接此无TLS兼容栈，改为仅loopback URL的sslmode=disable后读取实际结果。
 
-私密原始日志、每轮失败/成功和验证helper共列于[原始证据索引](private-evidence-index.json)，含绝对路径、字节和SHA-256；验证目录模式600，未复制凭据。版本化报告仅含可公开的任务/产物/测试证据，T06原始证据未改写。
+私密原始日志、每轮失败/成功和验证helper共列于原始证据索引（历史附件已清理：`private-evidence-index.json`），含绝对路径、字节和SHA-256；验证目录模式600，未复制凭据。版本化报告仅含可公开的任务/产物/测试证据，T06原始证据未改写。
 
 ## 复跑与交接
 

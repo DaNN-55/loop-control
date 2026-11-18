@@ -1,5 +1,8 @@
 # T19 默认 5 秒 UI 超时：基线对照补验
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 归档说明：本次按 Owner 认可，将 T19 实现、验收及基线对照证据仅提交到当前分支。正文和原始 JSON 中的“未提交”、`committed:false`、`noCommit:true` 及 HEAD 均描述验收/补验时快照；原始日志保持不变。默认 5000ms 门禁仍未通过、根因未解决，其他未验收项及模拟资格、SecretStore 替身、T17 日志覆盖说明继续保留。未推送、未合并、未开始 T20。
 
 
@@ -19,7 +22,7 @@
 /opt/homebrew/Cellar/node@24/24.20.0/bin/node node_modules/vitest/vitest.mjs run --exclude n8n/import-workflows.test.mjs --exclude '**/*.integration.test.ts' --exclude '**/.loop-control/**'
 ```
 
-[方法与配置摘要](evidence/method.json)、[全部源文件指纹](evidence/source-manifests.json)、[一致性复核](evidence/verification.json) 可核查上述条件。环境原值含隔离测试凭据，仅在私有目录留存，公开证据只保留环境摘要和键控方法。
+方法与配置摘要（历史附件已清理：`evidence/method.json`）、全部源文件指纹（历史附件已清理：`evidence/source-manifests.json`）、一致性复核（历史附件已清理：`evidence/verification.json`） 可核查上述条件。环境原值含隔离测试凭据，仅在私有目录留存，公开证据只保留环境摘要和键控方法。
 
 ## 八轮结果
 
@@ -27,18 +30,18 @@
 
 | 轮次 | 版本 | 目标测试 | 完整回归 | 原始日志 |
 |---|---|---|---|---|
-| 01 | 基线 A | 超时，报告 5019ms；门限 5000ms | 739/740 | [stdout](evidence/01-baseline-stdout.txt) |
-| 02 | 当前 B | 3458ms，通过 | 740/740 | [stdout](evidence/02-current-stdout.txt) |
-| 03 | 当前 B | 超时，报告 5032ms；门限 5000ms | 739/740 | [stdout](evidence/03-current-stdout.txt) |
-| 04 | 基线 A | 3285ms，通过 | 740/740 | [stdout](evidence/04-baseline-stdout.txt) |
-| 05 | 基线 A | 3317ms，通过 | 740/740 | [stdout](evidence/05-baseline-stdout.txt) |
-| 06 | 当前 B | 3815ms，通过 | 740/740 | [stdout](evidence/06-current-stdout.txt) |
-| 07 | 当前 B | 3126ms，通过 | 740/740 | [stdout](evidence/07-current-stdout.txt) |
-| 08 | 基线 A | 3774ms，通过 | 740/740 | [stdout](evidence/08-baseline-stdout.txt) |
+| 01 | 基线 A | 超时，报告 5019ms；门限 5000ms | 739/740 | stdout（历史附件已清理：`evidence/01-baseline-stdout.txt`） |
+| 02 | 当前 B | 3458ms，通过 | 740/740 | stdout（历史附件已清理：`evidence/02-current-stdout.txt`） |
+| 03 | 当前 B | 超时，报告 5032ms；门限 5000ms | 739/740 | stdout（历史附件已清理：`evidence/03-current-stdout.txt`） |
+| 04 | 基线 A | 3285ms，通过 | 740/740 | stdout（历史附件已清理：`evidence/04-baseline-stdout.txt`） |
+| 05 | 基线 A | 3317ms，通过 | 740/740 | stdout（历史附件已清理：`evidence/05-baseline-stdout.txt`） |
+| 06 | 当前 B | 3815ms，通过 | 740/740 | stdout（历史附件已清理：`evidence/06-current-stdout.txt`） |
+| 07 | 当前 B | 3126ms，通过 | 740/740 | stdout（历史附件已清理：`evidence/07-current-stdout.txt`） |
+| 08 | 基线 A | 3774ms，通过 | 740/740 | stdout（历史附件已清理：`evidence/08-baseline-stdout.txt`） |
 
 两版各 **4 次中 1 次相同超时、3 次全量通过**。失败轮均只有这一条测试失败；原始失败块均为 `Error: Test timed out in 5000ms.`，且都指向同一测试行。
 
-[复算结果及精确失败块](evidence/analysis.json) 为最终统计依据。初版 driver 的摘要正则转义有误，导致原始元数据的 `targetTimedOut` 布尔值错误地为 false，并按预设上限跑满八轮；原始 stdout、元数据和 driver 均保留。补验分析直接匹配 stdout 的精确 FAIL 行及随后超时错误，未覆盖原记录，也没有通过重跑或改变阈值修正结果。
+复算结果及精确失败块（历史附件已清理：`evidence/analysis.json`） 为最终统计依据。初版 driver 的摘要正则转义有误，导致原始元数据的 `targetTimedOut` 布尔值错误地为 false，并按预设上限跑满八轮；原始 stdout、元数据和 driver 均保留。补验分析直接匹配 stdout 的精确 FAIL 行及随后超时错误，未覆盖原记录，也没有通过重跑或改变阈值修正结果。
 
 ## 归因与门禁判定
 
@@ -53,4 +56,4 @@
 
 业务代码、目标测试、根 PLAN、原 T19 报告/索引、HEAD 和 Git index 均核验未变；未操作生产、未新增在线请求、未提交/推送/合并或开始 T20。默认部署、在线生成、其他 Provider、完整多能力 Worker 未验收的限制，以及模拟资格、SecretStore 替身和 T17 中间日志覆盖说明，继续以原 T19 报告保留。
 
-[证据索引](evidence-index.json) 覆盖八轮原始 stdout、原始元数据、配置/源码指纹、执行及复算脚本、网络封套自检与最终复核。私有环境原值、Git archive 和冻结副本保留在 `.loop-control/stage-d/state/t19-timeout-comparison-20261024`，不纳入公开证据或提交范围。无 HAR。所有轮次日志用唯一文件名创建，未覆盖原始日志。
+证据索引（历史附件已清理：`evidence-index.json`） 覆盖八轮原始 stdout、原始元数据、配置/源码指纹、执行及复算脚本、网络封套自检与最终复核。私有环境原值、Git archive 和冻结副本保留在 `.loop-control/stage-d/state/t19-timeout-comparison-20261024`，不纳入公开证据或提交范围。无 HAR。所有轮次日志用唯一文件名创建，未覆盖原始日志。

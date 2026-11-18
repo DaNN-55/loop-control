@@ -1,5 +1,8 @@
 # #152 集成验收记录
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 13 张子票已合入本地分支 `codex/four-step-integration-152`，最终产品合并固定于 `fc645efb3ad54d78d5e0da005ccde5e8d509b132`。完整分支已完成 Standards / Spec 双轨审查，原两项 / 一项问题均已修复并复核，新增确定问题为 0；见 [最终审查](FINAL-REVIEW.md)。既有工作基线为 Owner 批准保存的 `8ec17edfe331b5610b2bdd0eb62bf25710ffee89`，不计作本规格新增实现。
 
 日常 main 仍为 `568d8be9dd69d2a5401fadbba34ed5160036ac45`，原有 956 项状态记录保持不变。本轮未推送、部署、迁移日常数据库或启停日常服务。
@@ -22,23 +25,23 @@ Root 使用独立 localhost 测试 Owner 和全新生产单，经普通页面完
 
 这些是界面真实点击、输入、SDK 刷盘和 Owner 保存，没有用文件写入模拟浏览器编辑。自动整链测试的 store 修改与 GUI 验证分列。测试标签、专用服务和资源已清理；未修改日常登录或关闭用户标签。
 
-最终修复源码中，Root 另验准备页提示无旧直接采用；进入真实 SDK 的口播版本，明确保留目标窗口后采用，原生轨出现 2.40 秒口播，宿主显示已保存。返回原素材准备页后关闭测试标签。见 [候选采用](review-fixes/evidence/gui/candidate-adopted.jpg) 与 [准备页提示](review-fixes/evidence/gui/preparation-hint.jpg)。
+最终修复源码中，Root 另验准备页提示无旧直接采用；进入真实 SDK 的口播版本，明确保留目标窗口后采用，原生轨出现 2.40 秒口播，宿主显示已保存。返回原素材准备页后关闭测试标签。见 候选采用（历史附件已清理：`review-fixes/evidence/gui/candidate-adopted.jpg`） 与 准备页提示（历史附件已清理：`review-fixes/evidence/gui/preparation-hint.jpg`）。
 
-[最终后端保存](root-final-ui/release-native-saved.jpg) · [刷新恢复](root-final-ui/release-native-restored.jpg)
+最终后端保存（历史附件已清理：`root-final-ui/release-native-saved.jpg`） · 刷新恢复（历史附件已清理：`root-final-ui/release-native-restored.jpg`）
 
 ## 屏幕适配
 
 1543、1280、1024、800 宽度下，页面 scrollWidth 均等于 viewport。首次桌面检查发现时间线底部超过 953 高度；局部 flex 调整后，三个桌面宽度的 iframe 底部为 866，宿主底部为 867。900px 边界以下保留上下布局和最小预览高度；800 宽度下实际打开底部选项面板，控件可滚动访问。该边界容纳编辑器和工具，不按某张标注截图硬编码。
 
-[1280 工作台](root-final-ui/fitted-1280.jpg) · [800 下方控件](root-final-ui/fitted-800-controls.jpg) · [测量](root-final-ui/viewport-fitted.json)
+1280 工作台（历史附件已清理：`root-final-ui/fitted-1280.jpg`） · 800 下方控件（历史附件已清理：`root-final-ui/fitted-800-controls.jpg`） · 测量（历史附件已清理：`root-final-ui/viewport-fitted.json`）
 
 ## 原始文件与采用正文
 
-Root 对执行者最终包的五份原文件重新计算 SHA / 大小，逐项匹配 manifest。实际视频为 1080×1920 H264/AAC、222 帧，视频流 7.4 秒、容器 7.445333 秒。元数据采用正文为「这一版局部口播已明确采用。」；两个无已记录正文的新增镜头保留空主脚本基准，未采用文字没有混入。见 [Root 文件核对](root-final-ui/release-artifacts.json)。
+Root 对执行者最终包的五份原文件重新计算 SHA / 大小，逐项匹配 manifest。实际视频为 1080×1920 H264/AAC、222 帧，视频流 7.4 秒、容器 7.445333 秒。元数据采用正文为「这一版局部口播已明确采用。」；两个无已记录正文的新增镜头保留空主脚本基准，未采用文字没有混入。见 Root 文件核对（历史附件已清理：`root-final-ui/release-artifacts.json`）。
 
-最终修复合入后，独立合并者在集成路径重新导出并确认实际文件：SHA `93141d2795b13af2b572fd0980a0ae64cca873adfd5828620c6d2d4778276a2e`，465942 字节，同为 1080×1920 H264/AAC、222 帧、容器 7.445333 秒。该次包只引用该次确认的视频，未沿用旧批准。Root 再次核对五份原件、manifest 身份、采用正文、两个空基准并解码查看字幕帧。见 [最终文件核对](root-final-ui/review-final-artifacts.json)、[五原件与 manifest](final-review/integration-package/) 和 [实际帧](root-final-ui/review-final-frame.jpg)。
+最终修复合入后，独立合并者在集成路径重新导出并确认实际文件：SHA `93141d2795b13af2b572fd0980a0ae64cca873adfd5828620c6d2d4778276a2e`，465942 字节，同为 1080×1920 H264/AAC、222 帧、容器 7.445333 秒。该次包只引用该次确认的视频，未沿用旧批准。Root 再次核对五份原件、manifest 身份、采用正文、两个空基准并解码查看字幕帧。见 最终文件核对（历史附件已清理：`root-final-ui/review-final-artifacts.json`）、[五原件与 manifest](final-review/integration-package/) 和 实际帧（历史附件已清理：`root-final-ui/review-final-frame.jpg`）。
 
-删除故障注入返回 503 后，18 张表快照和 207 个文件指纹完整恢复；身份、标题、过期计划及外部路径均拒绝。解除故障后删除成功，其他 Episode 与媒体保持不变。19 张表是新增迁移的清理范围，18 张表是实际回滚快照范围。见 [Root 删除核对](root-final-ui/review-deletion-verification.json) 与 [原始事实](final-review/integration-package/deletion-rollback-facts.json)。
+删除故障注入返回 503 后，18 张表快照和 207 个文件指纹完整恢复；身份、标题、过期计划及外部路径均拒绝。解除故障后删除成功，其他 Episode 与媒体保持不变。19 张表是新增迁移的清理范围，18 张表是实际回滚快照范围。见 Root 删除核对（历史附件已清理：`root-final-ui/review-deletion-verification.json`） 与 原始事实（历史附件已清理：`final-review/integration-package/deletion-rollback-facts.json`）。
 
 ## 适用边界
 
@@ -46,9 +49,9 @@ Provider 使用受控协议样本，音频为测试音调，画面为受控图�
 
 ## 收尾状态
 
-[#152 及 13 张子票](https://github.com/DaNN-55/loop-control/issues/152) 已关闭，原生完成率 13/13；[完成评论](https://github.com/DaNN-55/loop-control/issues/152#issuecomment-6506782342) 保留验收边界。12 个执行工作树均通过 managed archive 归档，集成工作树仍附加到本任务；没有删除集成分支或日常工作树。见 [Issue 回读](final-review/GITHUB-CLOSURE.json) 与 [归档记录](final-review/WORKTREE-CLEANUP.json)。
+[#152 及 13 张子票](https://github.com/DaNN-55/loop-control/issues/152) 已关闭，原生完成率 13/13；[完成评论](https://github.com/DaNN-55/loop-control/issues/152#issuecomment-6506782342) 保留验收边界。12 个执行工作树均通过 managed archive 归档，集成工作树仍附加到本任务；没有删除集成分支或日常工作树。见 Issue 回读（历史附件已清理：`final-review/GITHUB-CLOSURE.json`） 与 归档记录（历史附件已清理：`final-review/WORKTREE-CLEANUP.json`）。
 
-最终交付为本地 `codex/four-step-integration-152`；未推送、未部署、未合入日常 main。日常 5343 个基线文件内容、956 项状态及原 main 均保持，见 [指纹核对](final-review/DAILY-BASELINE-CHECK.json)。
+最终交付为本地 `codex/four-step-integration-152`；未推送、未部署、未合入日常 main。日常 5343 个基线文件内容、956 项状态及原 main 均保持，见 指纹核对（历史附件已清理：`final-review/DAILY-BASELINE-CHECK.json`）。
 
 ## 后续本地更新（2026-10-30）
 

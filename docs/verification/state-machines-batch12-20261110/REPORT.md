@@ -1,5 +1,8 @@
 # 状态机第 1、2 项实施与验证
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-10。初始 HEAD：`491a123a`。本批开始时已有前轮确认 hook／状态机文档及另一会话部署研究的未提交文件；本批按快照比较，不覆盖或提交它们。
 
 ## 改动
@@ -17,16 +20,16 @@
 - 交付读取 revision 7 延迟返回，期间父组件已提供 revision 8：原实现仍调用 `onChange` 发布旧版本。新增用例先失败，复用真实读取 hook 后通过。
 - Spec 审查发现口播准备状态 pending 与原任务 running 可以合法并存。新增用例先复现摘要「待准备」、详情「口播生成中」不一致，再改为优先真实任务状态；保留音频准备重试的原判断依据，避免扩大资格。
 
-定向最终 5 文件／101 条通过，见 [targeted-final.log](targeted-final.log)。覆盖正常排队／生成、明确拒绝、未发送、提交未知、收到结果待核对、发布 hold、原任务恢复、替代任务隐藏、图片显式未知重试、已加入音效、口播时长，以及原任务与准备状态不同的情况。
+定向最终 5 文件／101 条通过，见 targeted-final.log（历史附件已清理：`targeted-final.log`）。覆盖正常排队／生成、明确拒绝、未发送、提交未知、收到结果待核对、发布 hold、原任务恢复、替代任务隐藏、图片显式未知重试、已加入音效、口播时长，以及原任务与准备状态不同的情况。
 
 交付覆盖旧 revision、同 revision 后收到新状态、旧错误、workspace／delivery 切换、停止轮询、卸载、当前读取失败与下次恢复、回调替换、2500ms 节奏及同一归属不重叠。HTTP 是受控边界，`useWorkspaceReading/useWorkspacePolling` 使用真实实现，没有 mock 内部读取 hook。
 
 ## 类型、构建与全量测试
 
-- `npm run check` 通过；最终 `npm run build` 再次包含完整类型检查及前端构建，见 [build-final.log](build-final.log)。新增测试中的 fetch spy 曾产生类型错误，已修正，未放宽类型约束。
-- 前端构建完成后顺序执行 `npm run backend:build`，通过，见 [backend-build-final.log](backend-build-final.log)。本批没有并行清空 `dist` 与运行依赖构建产物的测试。
-- 仅执行一次默认全量测试：251 文件通过、1 文件失败；1849 条通过、1 条失败、1 条跳过，见 [full-tests.log](full-tests.log)。失败为未修改的 `LocalDeletionRecovery.test.tsx` 中目标焦点断言，页面内容已出现但断言时焦点仍为 body。
-- 随后只重跑该文件，6/6 通过，见 [deletion-focus-recheck.log](deletion-focus-recheck.log)。未修改删除流程或其测试，也未把首轮全量描述为全绿。合计 1850 条已通过，1 条跳过；焦点断言的全量偶发性仍是本轮实际观察到的限制。
+- `npm run check` 通过；最终 `npm run build` 再次包含完整类型检查及前端构建，见 build-final.log（历史附件已清理：`build-final.log`）。新增测试中的 fetch spy 曾产生类型错误，已修正，未放宽类型约束。
+- 前端构建完成后顺序执行 `npm run backend:build`，通过，见 backend-build-final.log（历史附件已清理：`backend-build-final.log`）。本批没有并行清空 `dist` 与运行依赖构建产物的测试。
+- 仅执行一次默认全量测试：251 文件通过、1 文件失败；1849 条通过、1 条失败、1 条跳过，见 full-tests.log（历史附件已清理：`full-tests.log`）。失败为未修改的 `LocalDeletionRecovery.test.tsx` 中目标焦点断言，页面内容已出现但断言时焦点仍为 body。
+- 随后只重跑该文件，6/6 通过，见 deletion-focus-recheck.log（历史附件已清理：`deletion-focus-recheck.log`）。未修改删除流程或其测试，也未把首轮全量描述为全绿。合计 1850 条已通过，1 条跳过；焦点断言的全量偶发性仍是本轮实际观察到的限制。
 
 ## 浏览器
 
@@ -36,7 +39,7 @@
 - 发布恢复真实请求为 `episodeId=audio-fixture, taskId=task-held, attempt=0`；随后读回恢复后的本次状态，没有生成请求。
 - 视频恢复回调保留 `remote-original`；图片未知重试打开真实逐次费用确认，保留可能分别计费提示；取消后未发确认提交。
 - 真实延迟 HTTP 的 revision 7 被忽略，父视图保留 revision 8；下一次 revision 9 正常发布，revision 10 完成后轮询停止。3 次交付读取，无在途重叠。
-- 1280px／390px 核对；390px 文档宽度为 390px，费用确认框在视口内。任务详情 Escape 关闭。结果与 HTTP 记录见 [browser-results.json](browser-results.json)。截图：[桌面任务](tasks-desktop.png)、[窄屏任务](tasks-mobile.png)、[图片再次确认](image-retry-mobile.png)、[交付完成](delivery-completed-desktop.png)。
+- 1280px／390px 核对；390px 文档宽度为 390px，费用确认框在视口内。任务详情 Escape 关闭。结果与 HTTP 记录见 browser-results.json（历史附件已清理：`browser-results.json`）。截图：桌面任务（历史附件已清理：`tasks-desktop.png`）、窄屏任务（历史附件已清理：`tasks-mobile.png`）、图片再次确认（历史附件已清理：`image-retry-mobile.png`）、交付完成（历史附件已清理：`delivery-completed-desktop.png`）。
 
 这些证据验证 UI 与本地 HTTP 边界，不代表真实供应商或真实生产交付验收；未运行 PostgreSQL／Owner HTTP 集成套件。
 
@@ -50,4 +53,4 @@
 
 ## 收尾
 
-本轮 Chrome 会话与 `5191` 预览已关闭，日常 `5174` 原 PID 3988 保留、首页 HTTP 200。未更新运行包、重启日常服务、写业务数据、付费调用、提交、暂存或推送。前轮确认 hook／测试、ADR-0033 与两份并行部署研究文件的 [SHA 核对清单](protected-sha256.json) 保持。仅清理本轮 `.scratch` 临时缓存，保留本目录报告、[准确差异](batch.diff)与失败／通过证据。
+本轮 Chrome 会话与 `5191` 预览已关闭，日常 `5174` 原 PID 3988 保留、首页 HTTP 200。未更新运行包、重启日常服务、写业务数据、付费调用、提交、暂存或推送。前轮确认 hook／测试、ADR-0033 与两份并行部署研究文件的 SHA 核对清单（历史附件已清理：`protected-sha256.json`） 保持。仅清理本轮 `.scratch` 临时缓存，保留本目录报告、[准确差异](batch.diff)与失败／通过证据。

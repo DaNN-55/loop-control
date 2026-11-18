@@ -1,5 +1,8 @@
 # A–D 本批最终进度
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 **11/18 已关闭，7 张保持开放：4 张 Owner 批准跳过在线验收、2 张 SQL 暂缓、1 张总门禁。** #149 不关闭，目前不能认定 A–D 零遗留。仅核对本批 #132–#149，没有查询或修改其他旧 Issue。
 
 | Issue | GitHub 读回 | 验收或保留原因 |
@@ -37,4 +40,4 @@
 
 ## 可复查材料
 
-[GitHub 读回](github-final-readback.json) · [同单验收](report-142-final.md) · [真实规划](report-141-final.md) · [首次任务与恢复隔离](report-144-042-final.md) · [最终 Spec](141142-final/spec-review.md) · [源码清单](source-final-native-local-followthrough.json) · [证据索引](../evidence-index.json)
+GitHub 读回（历史附件已清理：`github-final-readback.json`） · [同单验收](report-142-final.md) · [真实规划](report-141-final.md) · [首次任务与恢复隔离](report-144-042-final.md) · [最终 Spec](141142-final/spec-review.md) · 源码清单（历史附件已清理：`source-final-native-local-followthrough.json`） · 证据索引（历史附件已清理：`../evidence-index.json`）

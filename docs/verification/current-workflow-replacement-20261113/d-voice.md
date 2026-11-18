@@ -1,5 +1,8 @@
 # D 原声输入与明确采用子批
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-14。固定起点为封面子批 C7BO5x/source；最终源为 siuzpI/source。本子批完成，完整 D 与 A–G 尚未完成。未操作日常，不调用真实 Provider 或视频 API，不提交、不推送，不修改共享 SDK。
 
 ## 实际变化
@@ -44,6 +47,6 @@
 
 下一步是各来源整库＋文件／逐项／不同来源 Owner 的完整恢复与最终新旧矩阵，包含本批采用回执、原声和已完成封面接入；随后 B1／C2 剩余、E1／E2、F1／F2 和最终 G。`productionHistoryTables` 已包含 `workspace_audio_preparations`，这只是恢复代码线索，不当作真实完整恢复已验证。棋盘格问题仍是独立 Proposed，共享 SDK 未改。
 
-[逐项最终结果](evidence-d-voice/case-results-final.json) · [完整运行原结果](evidence-d-voice/full-matrix-73-pass-1-fixture-failure.json) · [新增用例前置修正后结果](evidence-d-voice/native-input-corrected.json) · [组件结果](evidence-d-voice/ui-final.json) · [保持与运行核查](evidence-d-voice/verification-final.json) · [全部隔离运行](evidence-d-voice/runs.json)。
+逐项最终结果（历史附件已清理：`evidence-d-voice/case-results-final.json`） · 完整运行原结果（历史附件已清理：`evidence-d-voice/full-matrix-73-pass-1-fixture-failure.json`） · 新增用例前置修正后结果（历史附件已清理：`evidence-d-voice/native-input-corrected.json`） · 组件结果（历史附件已清理：`evidence-d-voice/ui-final.json`） · 保持与运行核查（历史附件已清理：`evidence-d-voice/verification-final.json`） · 全部隔离运行（历史附件已清理：`evidence-d-voice/runs.json`）。
 
 现代网页指南使用 `forms`：我保留了选择与执行分开的操作，登记回执不会自动触发当前提取或采用（“DON'T auto-submit a form when a user changes `<select>`, radio buttons, or checkbox without an explicit submit action.”）。沿用现有带可见标签的 NativeSelect 与 Button，没有另建表单系统。

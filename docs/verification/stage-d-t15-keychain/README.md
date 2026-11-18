@@ -1,5 +1,8 @@
 # T15 真实 Keychain 补验（2026-10-24）
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 **本次授权范围的 Keychain 与 HTTP→受控 Worker 模块缺口可以关闭；T15 整票仍不能关闭。** 在线 Provider 未授权、调用数为0，真实连接资格及真实蓝图版本选择仍待单独验收；完整任务 Worker CLI 属后续范围，未开始 T16。
 
 **默认 5 秒门禁历史失败及根因未解决的限制继续保留。** 本次默认5000ms通过不能覆盖[B/T06四轮失败](../stage-c-t06-followup/README.md)。本次修复的是 native helper 的 IPC 拒绝问题，未诊断或修复历史审核台测试时序根因。
@@ -21,10 +24,10 @@ Owner明确允许按既有方案创建专用测试钥匙串、使用可重建合
 
 | 场景 | 结果与证据 |
 | --- | --- |
-| 真实helper及部署适配器存取 | 真实Security API写入/读取一致；同引用同秘密幂等，不同秘密冲突，原值保持。[native-result](native-result.json) |
+| 真实helper及部署适配器存取 | 真实Security API写入/读取一致；同引用同秘密幂等，不同秘密冲突，原值保持。native-result（历史附件已清理：`native-result.json`） |
 | 锁定与拒绝 | 仅锁定专用库，状态确认locked；helper返回`locked_or_denied`，异步适配器返回`denied`；用测试库密码显式解锁后恢复读取。覆盖锁定导致的拒绝，未制造或更改ACL拒绝条件 |
 | 删除及缺失 | 本轮普通条目删除后真实读取`missing`；HTTP中删除本轮秘密条目后验证不进入Provider，显式重绑恢复同引用 |
-| 真实HTTP/PG并发 | 8个同意图create仅1连接；6个同意图rotate仅1新版本；新旧秘密分别保持。[HTTP结果](http-result.json)、[事件记录](events.jsonl) |
+| 真实HTTP/PG并发 | 8个同意图create仅1连接；6个同意图rotate仅1新版本；新旧秘密分别保持。HTTP结果（历史附件已清理：`http-result.json`）、事件记录（历史附件已清理：`events.jsonl`） |
 | 轮换、撤销与Worker边界 | 轮换后的旧版本解析被拒绝；撤销当前版本后verify为503且不调用Provider；不自动换最新版本 |
 | 两类缺失重绑 | 真实Keychain条目缺失保留DB引用后重绑；删除本轮新版本DB binding模拟导入缺失后重新录入，产生新的明确引用。没有操作历史连接 |
 | HTTP→受控Worker脱敏 | 实际`LocalConnections`→`verifyLocalConnection`→`configuredKeychainStore`→真实helper/Keychain→模拟Provider；模拟回调收到匹配的真实解析字节。恶意异常带入秘密后，HTTP/DB仅保留固定脱敏结果。Worker模块同进程运行；不是完整任务Worker CLI或Provider子进程验收 |
@@ -38,10 +41,10 @@ Owner明确允许按既有方案创建专用测试钥匙串、使用可重建合
 
 原20项协议检查使用同步`spawnSync`；真实部署适配器使用异步`spawn`。异步父进程`stdin.end`后对端可能先关闭，macOS `getpeername`返回EINVAL，但完整请求仍在输入缓冲区；原检查误报`pipe_required`，适配器对外表现为`unavailable`。这不是Keychain权限不足。
 
-- 最小复现使用不含Keychain调用的同一协议版本：[修复前](ipc-red.txt)同步validated、异步pipe_required；[修复后](ipc-green.txt)两者均validated。
-- [只读fd探针](ipc-metadata.txt)及[准确关闭时序探针](ipc-debug-before.json)、[errno/peek探针](ipc-debug-errno.json)保留实际结果；诊断源及二进制只留私有目录，未进入业务helper。
+- 最小复现使用不含Keychain调用的同一协议版本：修复前（历史附件已清理：`ipc-red.txt`）同步validated、异步pipe_required；修复后（历史附件已清理：`ipc-green.txt`）两者均validated。
+- 只读fd探针（历史附件已清理：`ipc-metadata.txt`）及准确关闭时序探针（历史附件已清理：`ipc-debug-before.json`）、errno/peek探针（历史附件已清理：`ipc-debug-errno.json`）保留实际结果；诊断源及二进制只留私有目录，未进入业务helper。
 - 最小修复保留AF_UNIX/SOCK_STREAM约束；仅stdin的已关闭对端允许`recv(MSG_PEEK|MSG_DONTWAIT)`确认有缓冲数据或EOF；stdout仍必须有真实本地域对端。未连接/监听socket不能因此通过，不接受网络socket、datagram或普通文件。
-- [最终协议记录](protocol-result.json)为26项：原20项、3项真实异步管道、未连接AF_UNIX/datagram/真实连通loopback TCP三项拒绝。[首次修复失败](protocol-ipc-red.txt)仅处理ENOTCONN，实际Darwin为EINVAL，保留后调整；[最终通过](protocol-green.txt)。协议步骤自身不执行Security代码，其`candidateExecuted:false`与`realKeychainOperations:0`仅描述该步骤；随后真实native/HTTP步骤已执行候选。
+- 最终协议记录（历史附件已清理：`protocol-result.json`）为26项：原20项、3项真实异步管道、未连接AF_UNIX/datagram/真实连通loopback TCP三项拒绝。首次修复失败（历史附件已清理：`protocol-ipc-red.txt`）仅处理ENOTCONN，实际Darwin为EINVAL，保留后调整；最终通过（历史附件已清理：`protocol-green.txt`）。协议步骤自身不执行Security代码，其`candidateExecuted:false`与`realKeychainOperations:0`仅描述该步骤；随后真实native/HTTP步骤已执行候选。
 
 本轮修改`native/keychain-helper.m`与协议检查脚本，增加测试专用控制器/验收驱动；没有新增依赖、修改业务SQL、默认端口、ACL或原有冻结/资格语义。实际控制器只提供固定专用库的create/status/lock/unlock/delete及只读搜索列表快照；没有设置默认库、重写搜索列表或ACL的API。
 
@@ -51,18 +54,18 @@ Owner明确允许按既有方案创建专用测试钥匙串、使用可重建合
 
 首轮清理脚本误用`parseInt('0o755',8)`得到0，导致D私有目录临时EACCES；已恢复原权限、改用`Number`并保留事件记录。最终清理成功。该工具错误不影响生产、既有Keychain或业务数据。
 
-[清理结果](cleanup.json)及[收尾边界](boundaries.json)：专用库和测试密码文件已删除，原默认库标识及完整搜索列表/顺序与开工完全一致。没有出现系统认证提示，没有创建持久授权或修改已有ACL。D私有目录权限恢复开工值0755，测试产生的零字节Security锁文件保留在私有诊断目录；秘密库已不存在。合成连接/版本/意图保留便于诊断，当前版本已撤销，旧版本非current且不可解析；没有删除历史业务记录。
+清理结果（历史附件已清理：`cleanup.json`）及收尾边界（历史附件已清理：`boundaries.json`）：专用库和测试密码文件已删除，原默认库标识及完整搜索列表/顺序与开工完全一致。没有出现系统认证提示，没有创建持久授权或修改已有ACL。D私有目录权限恢复开工值0755，测试产生的零字节Security锁文件保留在私有诊断目录；秘密库已不存在。合成连接/版本/意图保留便于诊断，当前版本已撤销，旧版本非current且不可解析；没有删除历史业务记录。
 
 根`PLAN.md`原有内容的SHA256、Git index字节及HEAD均未变；无暂存、提交、推送、合并、部署或生产操作。
 
 ## 回归与证据索引
 
-- [应用回归](application-final.txt)：默认5000ms、90文件726项通过；无超时覆盖。日志为stdout后接stderr，各流原字节保留，未伪造时序交织；既有React `act`提示保留。
-- [应用类型](application-types.txt)、[local类型](local-types.txt)：退出0。
-- [Node回归](node-final.txt)：2通过、1既有n8n原生校验跳过，未将跳过计为通过。
-- [原始历史](original-history.json)：C归档38表20,379行逐条仍存在；本轮新增合成连接等另存。未覆盖原T14/T15历史审计指针或旧归档日志。
+- 应用回归（历史附件已清理：`application-final.txt`）：默认5000ms、90文件726项通过；无超时覆盖。日志为stdout后接stderr，各流原字节保留，未伪造时序交织；既有React `act`提示保留。
+- 应用类型（历史附件已清理：`application-types.txt`）、local类型（历史附件已清理：`local-types.txt`）：退出0。
+- Node回归（历史附件已清理：`node-final.txt`）：2通过、1既有n8n原生校验跳过，未将跳过计为通过。
+- 原始历史（历史附件已清理：`original-history.json`）：C归档38表20,379行逐条仍存在；本轮新增合成连接等另存。未覆盖原T14/T15历史审计指针或旧归档日志。
 - 没有SQL变更，未重复SQL全量回归/advisor；原3条advisor WARN保留。在线Provider、真人审批链、完整任务Worker CLI、整机断网及T24完整恢复均未执行。
-- [证据索引](evidence-index.json)记录公开证据、源码与私有原始诊断文件的SHA256/字节/性质。私有dump含身份摘要和会话元数据，不复制为公开文件；测试密码已删除，不保存其原值或指纹。原T15及C补验原始证据未改写。
+- 证据索引（历史附件已清理：`evidence-index.json`）记录公开证据、源码与私有原始诊断文件的SHA256/字节/性质。私有dump含身份摘要和会话元数据，不复制为公开文件；测试密码已删除，不保存其原值或指纹。原T15及C补验原始证据未改写。
 
 复现入口为`scripts/local/keychain-real-acceptance.mjs native|http|cleanup`及`scripts/local/keychain-helper-check.mjs <私有证据路径>`。本轮状态目录已完成，**不要直接重跑native或盲目重编译仍有条目的helper**；新的真实验收必须先建立新的独占私有运行记录、重新确认专用路径不存在及环境身份。控制器源码不等于未来任意Keychain操作授权。
 

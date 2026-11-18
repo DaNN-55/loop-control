@@ -1,6 +1,0 @@
-{
-  passed: true,
-  startupRejected: true,
-  bindingRejected: true,
-  createAndStart503: true
-}

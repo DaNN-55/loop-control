@@ -26,7 +26,7 @@ SQLite 适合本地内容索引和独立编辑文档，但目前不值得替换�
 - [workerDatabase.ts](../../src/local-app/workerDatabase.ts) 校验 `loop_worker` 角色并调用领取、续租和回写函数；[097](../../db/local/097-workspace-image-generation.sql) 在数据库中处理预算预留。这里依赖 PL/pgSQL、RLS、`SECURITY DEFINER`、事务锁和租约围栏，远超 SQL 语法替换。
 - [运行配置](../../scripts/runtime/environment.mjs) 仍绑定 PostgreSQL 容器；[ADR-0013](../adr/0013-native-runtime-file-boundary.md) 要求保留 `db/local/` 原始字节和 SHA，[ADR-0017](../adr/0017-legacy-html-editable-workspace.md) 要求保留旧工程和审核证据。未来迁移必须前向适配。
 
-本轮[只读目录统计](../verification/local-main-batches-20261030/sqlite-inventory.json) 为 96 张表、341 个函数、66 条 RLS policy、86 个非内部触发器，其中 307 个函数为 `SECURITY DEFINER`。这些数量说明耦合规模，不等于全部必须逐个手写，也不能直接换算工期。
+本轮只读目录统计（历史附件已清理：`../verification/local-main-batches-20261030/sqlite-inventory.json`） 为 96 张表、341 个函数、66 条 RLS policy、86 个非内部触发器，其中 307 个函数为 `SECURITY DEFINER`。这些数量说明耦合规模，不等于全部必须逐个手写，也不能直接换算工期。
 
 ## 收益与必须承担的成本
 

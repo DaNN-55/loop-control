@@ -1,5 +1,8 @@
 # 《末班车前的一把伞》main 真实制作验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-02。分支：main。两张写实版生产单均已完成，留在日常主项目。没有提交或推送代码。
 
 ## 生产单与成片
@@ -9,13 +12,13 @@
 | 百炼 | [百炼写实版](http://127.0.0.1:5174/?episode=2abb56f4-79b3-4d4e-8537-8d707e9b060d) | wan2.6-i2v-flash，4.000 秒，720×1280 | 4.053333 秒 |
 | MiniMax | [MiniMax写实版](http://127.0.0.1:5174/?episode=be49fc67-8058-4bde-8a10-3c4ac61d59e0) | MiniMax-H3，4.458333 秒，768×1344 | 4.053333 秒 |
 
-每张生产单都先通过主项目的真实 Owner 命令、数据库队列和正式 Worker 调用 `gpt-image-2`，生成一张 1024×1536 写实首帧。图片分别保存为 [百炼首帧](bailian-gpt-image2.png)、[MiniMax首帧](minimax-gpt-image2.png)。视频请求明确使用对应首帧素材 ID，并采用 cover 构图。
+每张生产单都先通过主项目的真实 Owner 命令、数据库队列和正式 Worker 调用 `gpt-image-2`，生成一张 1024×1536 写实首帧。图片分别保存为 百炼首帧（历史附件已清理：`bailian-gpt-image2.png`）、MiniMax首帧（历史附件已清理：`minimax-gpt-image2.png`）。视频请求明确使用对应首帧素材 ID，并采用 cover 构图。
 
 故事为雨夜公交站留伞：前两秒末班车驶离，后两秒推近黄伞和纸条。每条视频分给两个镜头，分别使用源区间 0–2 秒、2–4 秒；保留独立中文字幕。未额外调用付费配音或配乐服务。
 
-- [百炼最终 MP4](bailian-photo-final.mp4)
-- [MiniMax 最终 MP4](minimax-photo-final.mp4)
-- [百炼运动分帧](bailian-photo-motion-review.jpg)、[MiniMax 运动分帧](minimax-photo-motion-review.jpg)：可核对公交、人物、镜头推进和纸条运动。
+- 百炼最终 MP4（历史附件已清理：`bailian-photo-final.mp4`）
+- MiniMax 最终 MP4（历史附件已清理：`minimax-photo-final.mp4`）
+- 百炼运动分帧（历史附件已清理：`bailian-photo-motion-review.jpg`）、MiniMax 运动分帧（历史附件已清理：`minimax-photo-motion-review.jpg`）：可核对公交、人物、镜头推进和纸条运动。
 
 ## 实际执行与验证
 
@@ -27,7 +30,7 @@
 6. 向真实应用重放十次完全相同的操作标识与输入：两次图片生成、两次视频生成、四次采用确认、两次导出确认。均返回成功，任务记录、工程指纹／版本、收费网络账本保持不变。
 7. 所有原片均不超过 8 秒，包括退回旧版 6 秒；最终成片均约 4.05 秒。队列 ready/running 为零，原生产物待核对登记为空。
 
-证据：[最终断言](final-assertions.json)、[原生百炼核验](bailian-photo-native-verification.json)、[原生 MiniMax 核验](minimax-photo-native-verification.json)、[交付下载核验](delivery-verification.json)、[重复提交核验](idempotency-verification.json)、[百炼最终检查](bailian-final-checks.json)、[MiniMax 最终检查](minimax-final-checks.json)。
+证据：最终断言（历史附件已清理：`final-assertions.json`）、原生百炼核验（历史附件已清理：`bailian-photo-native-verification.json`）、原生 MiniMax 核验（历史附件已清理：`minimax-photo-native-verification.json`）、交付下载核验（历史附件已清理：`delivery-verification.json`）、重复提交核验（历史附件已清理：`idempotency-verification.json`）、百炼最终检查（历史附件已清理：`bailian-final-checks.json`）、MiniMax 最终检查（历史附件已清理：`minimax-final-checks.json`）。
 
 ## 费用与提交次数
 
@@ -41,7 +44,7 @@
 | MiniMax 写实版，请求 4 秒，768P | 2.00 元 | 2.50 元 |
 | 合计 | 约 3.60 元 | 4.40 元 |
 
-**4.40 元是保守的软件预算占额，不是实付账单。** 未取得供应商逐笔账单，不能将估算或余额变化冒充精确扣费。原片编码尾帧余量也在预留内；用户总上限为 5 元。依据见 [原价格证据](price-evidence.md)、[写实版价格证据](photo-price-evidence.md)、[已关闭网络账本](closed-network-ledgers.json)。
+**4.40 元是保守的软件预算占额，不是实付账单。** 未取得供应商逐笔账单，不能将估算或余额变化冒充精确扣费。原片编码尾帧余量也在预留内；用户总上限为 5 元。依据见 [原价格证据](price-evidence.md)、[写实版价格证据](photo-price-evidence.md)、已关闭网络账本（历史附件已清理：`closed-network-ledgers.json`）。
 
 价格来源：[百炼官方](https://help.aliyun.com/zh/model-studio/wan2-6-i2v-flash)、[MiniMax 国内官方](https://platform.minimax.cn/docs/pricing/overview)、[OpenAI 生成指南](https://developers.openai.com/api/docs/guides/image-generation)、[OpenAI 价格](https://developers.openai.com/api/docs/pricing)。图片使用 8 CNY/USD 作预算保守换算上限，不把它称为实时汇率。
 
@@ -59,9 +62,9 @@
 
 原有三张生产单及原账号行与本轮开始时一致。新增内容仅为本轮账号／系列、两张已完成写实版和两张归档草稿。没有删除日常素材。
 
-两份临时网络策略均已关闭，日常网络配置已恢复；部署设置与本轮开始时语义一致。服务已重启恢复，运行清单和健康／空闲调度复查通过。页面实际播放两条成片，时间均推进、播放器无错误。见 [浏览器播放核验](browser-playback.json)、[最终运行状态](final-runtime.json) 和 [主项目两张完成单截图](main-orders-completed.jpg)。临时复制的浏览器会话文件在收尾后移除，保留用户本来的登录。
+两份临时网络策略均已关闭，日常网络配置已恢复；部署设置与本轮开始时语义一致。服务已重启恢复，运行清单和健康／空闲调度复查通过。页面实际播放两条成片，时间均推进、播放器无错误。见 浏览器播放核验（历史附件已清理：`browser-playback.json`）、最终运行状态（历史附件已清理：`final-runtime.json`） 和 主项目两张完成单截图（历史附件已清理：`main-orders-completed.jpg`）。临时复制的浏览器会话文件在收尾后移除，保留用户本来的登录。
 
 百炼版本纸条小字存在生成瑕疵，中文字幕正文正确。交付标签有一处早期遗留“六秒故事”，实测成片为 4.05 秒；已完成生产单只读，没有绕过约束改写其交付文件或数据库。生成模型的画面质量不等同于产品流程验收。本轮完整流程和实际文件校验通过，但没有开展人工声音质量评测或供应商账单核销。
 
 
-![主项目两张写实生产单已完成](main-orders-completed.jpg)
+主项目两张写实生产单已完成（历史附件已清理：`main-orders-completed.jpg`）

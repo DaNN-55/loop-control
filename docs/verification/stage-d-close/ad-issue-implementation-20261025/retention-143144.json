@@ -1,9 +1,0 @@
-{
-  "passed": true,
-  "priorPublic": 1279,
-  "priorPrivate": 3096,
-  "mismatches": [],
-  "oldMetadataFieldsUnchanged": true,
-  "sql146147Deferred": true,
-  "allUnacceptedGatesRetained": true
-}

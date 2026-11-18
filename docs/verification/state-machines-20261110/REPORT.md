@@ -1,10 +1,13 @@
 # 隐式状态机盘点与确认生命周期验证
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-10。初始 HEAD：`491a123a`。初始工作区干净。
 
 ## 结果与决定
 
-从 542 个 Git 跟踪源文件扫描出 240 个含状态候选信号的文件、1474 个信号。扫描范围、排除项与限制见 [census.json](census.json)；React ref、静态选项、配置联合不是状态机证明。结合主 Agent 与两路只读探索，按实际权威归类为 [44 个状态机族](../../architecture/state-machines.md)，记录触发事件、守卫、代码与测试入口。按族归类，不按每个复选框计数。
+从 542 个 Git 跟踪源文件扫描出 240 个含状态候选信号的文件、1474 个信号。扫描范围、排除项与限制见 census.json（历史附件已清理：`census.json`）；React ref、静态选项、配置联合不是状态机证明。结合主 Agent 与两路只读探索，按实际权威归类为 [44 个状态机族](../../architecture/state-machines.md)，记录触发事件、守卫、代码与测试入口。按族归类，不按每个复选框计数。
 
 选择局部显式化客户端逐次调用确认。现有数据库事务、任务租约、供应商提交与文件发布协议已经分别承担权威职责；集中到一个大枚举或引入状态库会增加迁移成本。本次不改变它们。决策见 [ADR-0033](../../adr/0033-workspace-call-confirmation-lifecycle.md)。
 
@@ -24,14 +27,14 @@
 | --- | --- |
 | `npx vitest run src/local-app/useWorkspaceCallConfirmation.test.tsx --reporter=dot` | 15/15 通过。 |
 | `npm run check` | 通过。 |
-| `npm run build` | TypeScript 与 Vite 构建通过；保留现有 bundle 大小提示，未做无关拆包。见 [build.log](build.log)。 |
-| `npm test -- --reporter=dot` | 首轮 251 文件通过、1 文件失败，1816 通过、7 失败、1 跳过。见 [full-tests.log](full-tests.log)。 |
-| 失败原因及重跑 | 主 Agent 将前端构建与全量测试并行，Vite 清空 `dist`，导致依赖 `dist/local-app` 的运行工厂测试缺少模块。读取失败后执行 `npm run backend:build`，再单独运行 `scripts/runtime/application.test.mjs`，7/7 通过。见 [backend-build.log](backend-build.log)、[runtime-recheck.log](runtime-recheck.log)。合计已通过 1823 条，保留 1 条原有跳过；未把首轮描述为全绿。 |
+| `npm run build` | TypeScript 与 Vite 构建通过；保留现有 bundle 大小提示，未做无关拆包。见 build.log（历史附件已清理：`build.log`）。 |
+| `npm test -- --reporter=dot` | 首轮 251 文件通过、1 文件失败，1816 通过、7 失败、1 跳过。见 full-tests.log（历史附件已清理：`full-tests.log`）。 |
+| 失败原因及重跑 | 主 Agent 将前端构建与全量测试并行，Vite 清空 `dist`，导致依赖 `dist/local-app` 的运行工厂测试缺少模块。读取失败后执行 `npm run backend:build`，再单独运行 `scripts/runtime/application.test.mjs`，7/7 通过。见 backend-build.log（历史附件已清理：`backend-build.log`）、runtime-recheck.log（历史附件已清理：`runtime-recheck.log`）。合计已通过 1823 条，保留 1 条原有跳过；未把首轮描述为全绿。 |
 | 独立只读审查 | 核对 owner、phase、StrictMode、晚到回包、重复事件与公共协议，未发现已证实的正确性问题；主 Agent 补充 Activity 恢复验证。 |
 | 浏览器 | 独立 Chrome 会话、loopback Vite、真实 hook／ConfirmationModal／正式样式，受控命令，无 API proxy。10 项断言通过，另测 Escape 关闭及触发按钮焦点恢复。 |
 | 文档与差异 | 44 族编号、相对源码链接及指定测试文件存在性核对；`git diff --check` 通过。 |
 
-浏览器断言包括：正常打开与取消不提交；A → B → A 的旧准备不弹窗；旧准备不能解锁新调用；新准备仍可用；旧确认成功与失败分别不污染新确认；同周期双确认只发一次；完成后可打开下一次调用；390px 弹窗在 viewport 内。事件与几何读数见 [browser-events.json](browser-events.json)，截图见 [桌面](confirmation-desktop.png)、[窄屏](confirmation-mobile.png)。交互验证使用同一真实组件，但受控命令不能证明真实供应商行为。
+浏览器断言包括：正常打开与取消不提交；A → B → A 的旧准备不弹窗；旧准备不能解锁新调用；新准备仍可用；旧确认成功与失败分别不污染新确认；同周期双确认只发一次；完成后可打开下一次调用；390px 弹窗在 viewport 内。事件与几何读数见 browser-events.json（历史附件已清理：`browser-events.json`），截图见 桌面（历史附件已清理：`confirmation-desktop.png`）、窄屏（历史附件已清理：`confirmation-mobile.png`）。交互验证使用同一真实组件，但受控命令不能证明真实供应商行为。
 
 ## 范围与恢复
 

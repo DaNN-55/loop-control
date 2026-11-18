@@ -1,5 +1,8 @@
 # 逐镜头布局与预览精简验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-29，当前工作目录 `/Users/dan/Programs/loop-control`。沿用正式 A 版连续表单，保留业务保存、修订、生成、审核约束。改动未提交或推送。
 
 ## 改动
@@ -26,8 +29,8 @@
 
 ## 画面
 
-- [正式编辑区](shot-refinement.png)
-- [多片段](shot-refinement-multiclip.png)
-- [声音与字幕](shot-refinement-audio.png)
-- [放大轮播](storyboard-carousel.png)
-- [去除重复阻塞列表](workbench-no-duplicate-blockers.png)
+- 正式编辑区（历史附件已清理：`shot-refinement.png`）
+- 多片段（历史附件已清理：`shot-refinement-multiclip.png`）
+- 声音与字幕（历史附件已清理：`shot-refinement-audio.png`）
+- 放大轮播（历史附件已清理：`storyboard-carousel.png`）
+- 去除重复阻塞列表（历史附件已清理：`workbench-no-duplicate-blockers.png`）

@@ -2,6 +2,9 @@
 
 # 最新版旧内容清理与镜头语义整理
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 已在隔离实现，尚未迁移。费用 0。主源码、暂存区与日常运行版本保持。
 
 [打开隔离核对](http://127.0.0.1:5192/__current_cleanup?view=episodes&episode=18605e3d-ae14-433f-ab3f-7692623baec0)。快照：`/Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/pending`。
@@ -18,7 +21,7 @@
 - 卡片视频移除 A/B 文案；新导入用途菜单取消 A/B，旧素材记录与磁盘路径保持。
 - CONTEXT.md 明确当前镜头含义；更新已失效菜单、音频候选流程和旧模板 no-op 替换测试。
 
-共 40 修改、6 新增、19 删除，增加 247 行、删除 7387 行。[完整差异](cleanup.patch)与[前后 SHA 清单](migration-manifest.json)。预览 fixture、runner、缓存及生成物不在迁移清单。
+共 40 修改、6 新增、19 删除，增加 247 行、删除 7387 行。[完整差异](cleanup.patch)与前后 SHA 清单（历史附件已清理：`migration-manifest.json`）。预览 fixture、runner、缓存及生成物不在迁移清单。
 
 ## 保留的兼容边界
 

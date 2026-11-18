@@ -1,5 +1,8 @@
 # 四工作流第二轮交互验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 本轮按 11 条页面批注及新增的自由调宽需求完成调整。日常页面已更新；原生产数据和媒体保留。默认延续蓝灰主题与 1440px 桌面布局。
 
 ## 批注落实
@@ -23,9 +26,9 @@
 
 ## 实际页面
 
-![可调镜头列表与当前预览](screenshots/14-drag-adjusted-split.jpg)
+可调镜头列表与当前预览（历史附件已清理：`screenshots/14-drag-adjusted-split.jpg`）
 
-![封面与交付信息](screenshots/12-delivery-cover-and-metadata.jpg)
+封面与交付信息（历史附件已清理：`screenshots/12-delivery-cover-and-metadata.jpg`）
 
 ## 实际链路与证据
 
@@ -35,8 +38,8 @@
 
 - [逐步操作日志与截图](OPERATIONS.md)
 - [测试与失败修正记录](TESTS.md)
-- [六文件独立验证](readback-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/verification.json)
-- [本轮最终测试视频](readback-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/final_render.mp4)
+- 六文件独立验证（历史附件已清理：`readback-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/verification.json`）
+- 本轮最终测试视频（历史附件已清理：`readback-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/final_render.mp4`）
 - [独立终审：ship](FINAL-REVIEW.md)
 - [前轮从新建脚本开始的全链 E2E 与 7/7 Provider 连接测试](../compact-workflow-migration-20261030/REPORT.md)
 
@@ -44,6 +47,6 @@
 
 更新前捕获七类完整记录指纹，更新后完全相同：6 张生产单、210 项任务、38 个审核包、22 次批准、86 个素材版本、240 个产物、65 条音轨；待执行和运行任务均为 0。原生工程打开仅用于用户已有页面，未在日常单中替换素材、调整字幕、发起生成或交付。
 
-本轮开始时素材表已比前轮历史快照多 1 条，其余六类相同；该差异在本轮更新前已存在，未归因于本次迁移，也未删除。保护比较使用本轮当前基线 [daily-before.json](daily-before.json)，结果见 [daily-after.json](daily-after.json)。
+本轮开始时素材表已比前轮历史快照多 1 条，其余六类相同；该差异在本轮更新前已存在，未归因于本次迁移，也未删除。保护比较使用本轮当前基线 daily-before.json（历史附件已清理：`daily-before.json`），结果见 daily-after.json（历史附件已清理：`daily-after.json`）。
 
 在线 Provider 本轮未重复测试；沿用前轮报告中当次 7/7 连接通过的证据，不将连接通过解释为余额充足或整段生成质量通过。本轮没有充值、在线付费视频生成、发布、提交或推送。

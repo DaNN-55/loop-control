@@ -1,5 +1,8 @@
 # 三项 E2E 问题修复与复验
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-01，正式本机服务 `http://127.0.0.1:5174/`。三项均修复并通过实际流程复验；新生产单已交付，旧生产单保留。本次使用本地测试素材、真实 WhisperX、原生编辑和 FFmpeg 导出，未调用付费生成服务。
 
 ## 修复与实际结果
@@ -17,26 +20,26 @@
 - [新生产单：人工口播字幕直链修复 · E2E复验](http://127.0.0.1:5174/?episode=b232b4fd-b43c-470c-bbdf-d97ae3f62f9d)，状态 `production_completed`，账号「流程验收1101」，系列「双镜头流程验收」v1。
 - [旧生产单](http://127.0.0.1:5174/?episode=2f7553cb-c3e9-4dc5-b900-f1439329a0b0) 保留；账号、蓝图、系列、系列版本、预算以及旧生产单和旧工程字节与本次基线一致。
 - 新生产目录：`/Volumes/Ebuget 1T/Media/流程验收1101--2fb0abe3-a125-429c-97b9-3330929c5c6b/双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/人工口播字幕直链修复 · E2E复验--b232b4fd-b43c-470c-bbdf-d97ae3f62f9d`。
-- [成片](files/final.mp4)：1080×1920，30fps，360帧，视频12秒，媒体容器12.032秒，4,226,395字节，SHA-256 `05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e`。
-- [可编辑工程](files/project.json)：v9，SHA-256 `c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5`。
+- 成片（历史附件已清理：`files/final.mp4`）：1080×1920，30fps，360帧，视频12秒，媒体容器12.032秒，4,226,395字节，SHA-256 `05e3367235dccff57c8c66d29c7675b1be4397054c25d0fc07156273a376c35e`。
+- 可编辑工程（历史附件已清理：`files/project.json`）：v9，SHA-256 `c2fe4d820231873d181eb25f8677d1c166b0b2cf6d71308155ba000401fc9ed5`。
 - 两个人工登记任务、两个本地对齐任务、一个交付任务全部完成；真实Worker运行3次，登记任务无需Worker。活动任务0，实际记录费用0。
 - 导出检查5/5，实际解码代表帧并检查两镜头字幕；显式确认该成片后生成交付，交付包验证通过，重开生产单仍显示完成。
 
-六项交付文件逐文件核对大小及SHA，见 [文件身份](delivery-files.json)。五项非视频文件还读取了浏览器实际HTTP200响应正文并核对SHA，见 [浏览器下载证据](browser-downloads.json)。MP4浏览器HTTP200、播放、跳转及结束均通过；CDP无法读取暂停媒体文档的正文，故未将MP4计入“浏览器正文SHA通过”，其磁盘字节SHA已核对。
+六项交付文件逐文件核对大小及SHA，见 文件身份（历史附件已清理：`delivery-files.json`）。五项非视频文件还读取了浏览器实际HTTP200响应正文并核对SHA，见 浏览器下载证据（历史附件已清理：`browser-downloads.json`）。MP4浏览器HTTP200、播放、跳转及结束均通过；CDP无法读取暂停媒体文档的正文，故未将MP4计入“浏览器正文SHA通过”，其磁盘字节SHA已核对。
 
-![重开后交付完成](delivery-persisted.png)
+重开后交付完成（历史附件已清理：`delivery-persisted.png`）
 
 ## 检查与日志
 
-- [相关组件与HTTP单元回归](focused-final.log)：6个文件52项通过，包含延迟autosave下当前文档保存、失败／过期保存拒绝、音轨选择采用及媒体CSP／Range／篡改边界。
-- [真实隔离HTTP／DB集成](integration-final.log)：5项通过，12项由明确的 `-t` 范围筛选跳过；覆盖两镜头连续人工采用、重复登记、旧修订／跨单拒绝、字幕身份和真实横竖屏像素。未宣称执行全仓测试。
-- [类型检查](check-final.log)：`npm run check` 通过。
-- [迁移](runtime-migrate.log)／[正式服务启动](service-start.log)：迁移130已应用，服务更新后经用户重新登录完成正式验证。
-- [最终数据断言](final-assertions.json)：两镜头人工采用及真实对齐确认、五项任务完成、旧数据未变、六文件身份及交付一致性全部通过。
-- [操作日志](browser-steps.jsonl)：61条页面状态记录；[网络日志](network.jsonl)：2292条脱敏请求／响应元数据。保留失败回归及调试过程日志，未覆盖为成功结果。
-- [运行日志](app-runtime-sanitized.log)、[控制台](browser-console.json)、[清理记录](browser-cleanup.json) 均保留。控制台4条为SDK字体请求数警告，无错误级记录；未扩大为字体优化任务。
-- [新片播放证据](final-video-playback.json)／[响应策略](final-video-http.json)、[旧片播放](old-production-video-playback.json)、[CSP修复前](media-browser-before.json)／[修复后](media-browser-after.json)。新片真实播放至 `ended=true`，时长12.032秒，跳转后记录7.186481秒继续播放。
-- [完整生产文件清单](production-files.json)：44文件，6,349,557字节；六项交付副本在 `files/`，五项真实HTTP响应副本在 `downloads/`。
+- 相关组件与HTTP单元回归（历史附件已清理：`focused-final.log`）：6个文件52项通过，包含延迟autosave下当前文档保存、失败／过期保存拒绝、音轨选择采用及媒体CSP／Range／篡改边界。
+- 真实隔离HTTP／DB集成（历史附件已清理：`integration-final.log`）：5项通过，12项由明确的 `-t` 范围筛选跳过；覆盖两镜头连续人工采用、重复登记、旧修订／跨单拒绝、字幕身份和真实横竖屏像素。未宣称执行全仓测试。
+- 类型检查（历史附件已清理：`check-final.log`）：`npm run check` 通过。
+- 迁移（历史附件已清理：`runtime-migrate.log`）／正式服务启动（历史附件已清理：`service-start.log`）：迁移130已应用，服务更新后经用户重新登录完成正式验证。
+- 最终数据断言（历史附件已清理：`final-assertions.json`）：两镜头人工采用及真实对齐确认、五项任务完成、旧数据未变、六文件身份及交付一致性全部通过。
+- 操作日志（历史附件已清理：`browser-steps.jsonl`）：61条页面状态记录；网络日志（历史附件已清理：`network.jsonl`）：2292条脱敏请求／响应元数据。保留失败回归及调试过程日志，未覆盖为成功结果。
+- 运行日志（历史附件已清理：`app-runtime-sanitized.log`）、控制台（历史附件已清理：`browser-console.json`）、清理记录（历史附件已清理：`browser-cleanup.json`） 均保留。控制台4条为SDK字体请求数警告，无错误级记录；未扩大为字体优化任务。
+- 新片播放证据（历史附件已清理：`final-video-playback.json`）／响应策略（历史附件已清理：`final-video-http.json`）、旧片播放（历史附件已清理：`old-production-video-playback.json`）、CSP修复前（历史附件已清理：`media-browser-before.json`）／修复后（历史附件已清理：`media-browser-after.json`）。新片真实播放至 `ended=true`，时长12.032秒，跳转后记录7.186481秒继续播放。
+- 完整生产文件清单（历史附件已清理：`production-files.json`）：44文件，6,349,557字节；六项交付副本在 `files/`，五项真实HTTP响应副本在 `downloads/`。
 
 未脱敏原始DB快照、输入文件、只读审计脚本和本次日志起点后的原始服务日志保存在 `.loop-control/maintenance/workspace-three-fixes-20261101/`，权限受限；公开证据递归移除令牌字段，不保存凭据原文。浏览器在跨文档切换时的CDP缓冲边界已记录，最终播放及交付保存由实际页面状态另行留证。
 

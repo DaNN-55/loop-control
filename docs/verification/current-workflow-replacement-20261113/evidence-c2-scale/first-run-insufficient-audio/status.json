@@ -1,5 +1,0 @@
-{
-  "result": "not accepted",
-  "reason": "fixture placed sequence items on audio tracks; original assertions did not verify audible source frequencies; identical output hashes discovered during manual evidence review",
-  "supersededBy": "../vitest.json"
-}

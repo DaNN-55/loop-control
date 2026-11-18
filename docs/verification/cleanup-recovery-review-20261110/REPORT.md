@@ -4,6 +4,9 @@
 
 # 4.2 文件清理与恢复入口（仅隔离）
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-10。4.1 已按批准迁入主项目5174，4文件逐一校验、备份，迁移后27项回归与类型检查通过。4.2 已实现和验证，尚未迁移。没有提交、推送或付费调用。
 
 隔离核对：[打开文件清理](http://127.0.0.1:5198/__cleanup_review?view=episodes&visibility=all&cleanupOpen=1)。使用独立合成账号、数据库、媒体和受限写入接口，不读日常服务凭据；现有5197预览保留。
@@ -12,7 +15,7 @@
 
 按用户distill要求，仅隔离修改`LocalDeletionRecovery.tsx`、`deletion-cleanup.css`及相关测试。去掉「待完成删除」副标题；正常任务仅显示名称、简短状态和一个动作。按钮缩短为「恢复文件」「继续清理」，状态为「删除未生效」「记录已删除」，位置入口为「查看位置」。刷新移到列表末尾；读取失败、真实处理错误和完整路径保留。仅去掉prepared任务已知的普通解释，不过滤其他消息，新增恢复冲突错误可见性回归。后端和SQL均未因本次精简修改。
 
-本次28项定向回归与类型检查通过，实际检查1280／390px、真实错误、刷新、键盘展开位置，无横向溢出或页面错误；保留用户当前剩余样例，不重新制造任务。见[本次差异](distill.patch)、[回归](distill-unit.log)、[类型](distill-types.log)、[精简截图](distill-after.png)、[窄窗路径](distill-390-expanded.png)。先前34项回归和5条集成是精简前证据；本次未重复运行后端集成或构建。迁移清单已更新到最新SHA，4.2仍未迁移。
+本次28项定向回归与类型检查通过，实际检查1280／390px、真实错误、刷新、键盘展开位置，无横向溢出或页面错误；保留用户当前剩余样例，不重新制造任务。见[本次差异](distill.patch)、回归（历史附件已清理：`distill-unit.log`）、类型（历史附件已清理：`distill-types.log`）、精简截图（历史附件已清理：`distill-after.png`）、窄窗路径（历史附件已清理：`distill-390-expanded.png`）。先前34项回归和5条集成是精简前证据；本次未重复运行后端集成或构建。迁移清单已更新到最新SHA，4.2仍未迁移。
 
 ## 具体改动
 
@@ -21,7 +24,7 @@
 - 删除记录成功但文件清理未完成时，提示提供「查看清理任务」；打开后定位对应任务。链接与刷新保留任务定位，关闭返回原页面和筛选，支持键盘操作与焦点返回。
 - 显示读取失败、空列表、处理成功和具体错误。后端新增独立的错误诊断记录，刷新或服务重启后仍能看到失败原因；完成后清除待处理显示。权限、原始删除清单、归属校验和删除范围保持原有约束。
 
-产品改动8文件：`LocalCatalogApp.tsx`、`LocalDeletionRecovery.tsx`、`LocalMaintenancePanel.tsx`、`catalogNavigation.tsx`、`deletion-cleanup.css`、`episodeLifecycle.ts`、`WorkspaceViews.tsx`及`157-deletion-cleanup-diagnostics.sql`。另有7个测试／fixture文件。完整路径和SHA见[迁移清单](migration-manifest.json)，只看改动见[差异](cleanup-recovery.patch)。预览fixture、runner、缓存、构建产物与样例数据均排除迁移。
+产品改动8文件：`LocalCatalogApp.tsx`、`LocalDeletionRecovery.tsx`、`LocalMaintenancePanel.tsx`、`catalogNavigation.tsx`、`deletion-cleanup.css`、`episodeLifecycle.ts`、`WorkspaceViews.tsx`及`157-deletion-cleanup-diagnostics.sql`。另有7个测试／fixture文件。完整路径和SHA见迁移清单（历史附件已清理：`migration-manifest.json`），只看改动见[差异](cleanup-recovery.patch)。预览fixture、runner、缓存、构建产物与样例数据均排除迁移。
 
 ## 怎么操作，预期看到什么
 
@@ -38,11 +41,11 @@
 
 ## 验证证据
 
-- 34项定向单元／界面回归、类型检查、前端构建、Worker和后端构建及运行产物完整性检查通过。日志：[回归](acceptance-unit.log)、[类型](acceptance-types.log)、[前端构建](acceptance-build.log)、[运行产物](acceptance-runtime.log)。前端构建保留已有大包体积提示。
-- 5条真实PostgreSQL／文件系统／独立进程集成通过：暂存前后中断、提交后和部分清理中断恢复；错误跨重启保留；Owner隔离、Worker无诊断写权限；恢复冲突不覆盖占位文件、不改变冻结清单；重复重试安全。见[集成日志](integration-verified.log)。
-- 实际浏览器执行了恢复、继续清理、删除后失败提示、目标定位、刷新和重试，检查真实HTTP结果与文件保留。见[最终失败与重试证据](final-ui-notice-proof.json)、[刷新定位证据](notice-and-refresh-proof.json)。这些记录来自重建前已消费的独立样例，不是当前样例ID。
-- 1280／640／390px、位置展开、键盘和焦点、浏览器后退已核对，无页面错误。见[响应式证据](responsive-proof.json)、[当前截图](queue-final.png)。深色截图仅切换CSS标记，未测试主题偏好持久化。
-- 4.1迁移后的1165个主项目基线文件与暂存区保持；4.2仍全部在隔离快照。日常进程99148与固定运行版本保持，完整性校验通过；数据库仍为156，未应用157。5174／5197／5198均HTTP200，见[日常服务核对](daily-after.json)。
+- 34项定向单元／界面回归、类型检查、前端构建、Worker和后端构建及运行产物完整性检查通过。日志：回归（历史附件已清理：`acceptance-unit.log`）、类型（历史附件已清理：`acceptance-types.log`）、前端构建（历史附件已清理：`acceptance-build.log`）、运行产物（历史附件已清理：`acceptance-runtime.log`）。前端构建保留已有大包体积提示。
+- 5条真实PostgreSQL／文件系统／独立进程集成通过：暂存前后中断、提交后和部分清理中断恢复；错误跨重启保留；Owner隔离、Worker无诊断写权限；恢复冲突不覆盖占位文件、不改变冻结清单；重复重试安全。见集成日志（历史附件已清理：`integration-verified.log`）。
+- 实际浏览器执行了恢复、继续清理、删除后失败提示、目标定位、刷新和重试，检查真实HTTP结果与文件保留。见最终失败与重试证据（历史附件已清理：`final-ui-notice-proof.json`）、刷新定位证据（历史附件已清理：`notice-and-refresh-proof.json`）。这些记录来自重建前已消费的独立样例，不是当前样例ID。
+- 1280／640／390px、位置展开、键盘和焦点、浏览器后退已核对，无页面错误。见响应式证据（历史附件已清理：`responsive-proof.json`）、当前截图（历史附件已清理：`queue-final.png`）。深色截图仅切换CSS标记，未测试主题偏好持久化。
+- 4.1迁移后的1165个主项目基线文件与暂存区保持；4.2仍全部在隔离快照。日常进程99148与固定运行版本保持，完整性校验通过；数据库仍为156，未应用157。5174／5197／5198均HTTP200，见日常服务核对（历史附件已清理：`daily-after.json`）。
 
 本轮仅执行上述定向检查，没有将其表述为全项目测试全部通过。隔离预览仅允许核对样例相关的归档、删除计划、删除和恢复重试写入，其他写操作会被限制。费用0。
 

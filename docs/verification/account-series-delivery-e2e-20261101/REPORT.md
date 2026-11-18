@@ -1,5 +1,8 @@
 # 新账号至导出交付 E2E 验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-01，正式本机服务 `http://127.0.0.1:5174/`。主流程完成，最终阶段为 `production_completed`，刷新后仍显示「已交付」。此次覆盖本地素材路径，保留全部生产数据；未调用付费生成。仍有手动口播登记、第二镜头字幕采用提示及应用内浏览器视频预览问题，不能记为全绿。
 
 ## 保留的生产数据
@@ -9,8 +12,8 @@
 - [生产单](http://127.0.0.1:5174/?episode=2f7553cb-c3e9-4dc5-b900-f1439329a0b0)：`账号系列参考图预算返回 · 完整E2E`。
 - 生产目录：`/Volumes/Ebuget 1T/Media/流程验收1101--2fb0abe3-a125-429c-97b9-3330929c5c6b/双镜头流程验收--613ba518-9bf6-498e-904a-b612091c56ee/账号系列参考图预算返回 · 完整E2E--2f7553cb-c3e9-4dc5-b900-f1439329a0b0`。
 - 保留 9 份素材登记、13 个工程版本、5 个已完成 Worker 任务，以及生产目录中 58 个文件，共 8,163,031 字节。
-- 成片：[`downloads/final.mp4`](downloads/final.mp4)，4,227,245 字节，SHA-256 `c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71`。
-- 原生工程：[`downloads/project.json`](downloads/project.json)。交付清单：[`downloads/manifest.json`](downloads/manifest.json)。
+- 成片：`downloads/final.mp4`（历史附件已清理：`downloads/final.mp4`），4,227,245 字节，SHA-256 `c384cee57060e5bac02a7c51b85348c2ebc62f9e780ef82a5ddcac4b8068fb71`。
+- 原生工程：`downloads/project.json`（历史附件已清理：`downloads/project.json`）。交付清单：`downloads/manifest.json`（历史附件已清理：`downloads/manifest.json`）。
 
 ## 重点检查
 

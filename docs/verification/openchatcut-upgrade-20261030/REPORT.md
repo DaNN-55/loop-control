@@ -1,5 +1,8 @@
 # OpenChatCut 0.2.17 升级与工具行迁移
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 2026-11-02 更新：按用户确认，仅删除旧版回滚目录的 `node_modules`；源码、依赖锁文件及升级记录保留。恢复旧版前需根据其锁文件重新安装依赖，当前使用的 OpenChatCut 未删除。
 
 2026-10-30。新版先在独立目录完成验证。用户确认“全部已保存并退出，可以切换”后，已激活0.2.17、完整保留0.2.14备份，并将常驻片段工具移入默认收起的“镜头设置”。
@@ -75,12 +78,12 @@
 
 独有功能移入默认收起的补充工具：
 
-![镜头设置](/Users/dan/Programs/loop-control/docs/verification/openchatcut-upgrade-20261030/screenshots-tools.jpg)
+镜头设置（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/openchatcut-upgrade-20261030/screenshots-tools.jpg`）
 
 升级后真实字幕拖动：
 
-![升级后字幕拖动](/Users/dan/Programs/loop-control/docs/verification/openchatcut-upgrade-20261030/screenshots-upgraded-drag.jpg)
+升级后字幕拖动（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/openchatcut-upgrade-20261030/screenshots-upgraded-drag.jpg`）
 
 最终实际界面（补充工具默认收起）：
 
-![最终编辑器](/Users/dan/Programs/loop-control/docs/verification/openchatcut-upgrade-20261030/screenshots-final.jpg)
+最终编辑器（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/openchatcut-upgrade-20261030/screenshots-final.jpg`）

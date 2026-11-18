@@ -1,5 +1,8 @@
 # 工作台视频区间契约
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 `saveWorkspaceVideoRanges` 只准备指定 `shotId` 的初稿视频引用，接受 `{episodeId,workspaceId,expectedRevision,shotId,ranges}`。`ranges` 为 1–50 项，每项包含 `{clipId?,materialRevisionId,sourceInFrame,durationInFrames,durationLocked}`。所有帧值使用目标原生 timeline 的 fps；区间为 `[sourceInFrame, sourceInFrame + durationInFrames)`，结束帧不包含在内。
 
 已有引用必须携带其 `clipId`，继续使用相同的原生 `itemId=shot-<shotId>-<clipUUID>`；新项获得 UUID。相同材料可在同一镜头或不同镜头重复出现，一个镜头可组合多个注册来源。原生素材池按材料 revision 去重；item 写入原生 `srcInFrame/durationInFrames/sourceAssetId/sourceRevision/sourceContentHash/sourceFilename`。绑定仅记录原始来源，后续真实时间、构图、音频与区间从原生工程读取。

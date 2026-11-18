@@ -1,5 +1,8 @@
 # 所有者设置统一窗口迁移验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 七个设置入口已迁入同一个窗口：个人偏好、通知、登录与安全、日志、文件清理、连接配置、密钥管理。账户菜单保留直接入口；窗口左侧可切换页面。沿用原有 API、权限、连接和密钥存储协议。
 
 ## Git 边界
@@ -35,10 +38,10 @@
 
 ## 截图与复跑
 
-- [连接列表](final-connections.png)
-- [登录与安全](final-security.png)
-- [未保存确认](unsaved-guard.png)
-- [模型子窗](nested-models.png)
+- 连接列表（历史附件已清理：`final-connections.png`）
+- 登录与安全（历史附件已清理：`final-security.png`）
+- 未保存确认（历史附件已清理：`unsaved-guard.png`）
+- 模型子窗（历史附件已清理：`nested-models.png`）
 - 各页宽窄屏截图：`light-*`、`dark-*`。
 - [个人和存储模块验收](preferences/REPORT.md)
 - [连接与密钥模块验收](../owner-credentials-embedded-20261111/REPORT.md)

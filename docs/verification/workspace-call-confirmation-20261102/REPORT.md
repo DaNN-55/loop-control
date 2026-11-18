@@ -1,5 +1,8 @@
 # 在线制作逐次确认验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-02。用户确认取消整期开关，以本次调用确认替代。已更新本地 5174 服务，未提交或推送代码。
 
 ## 行为
@@ -26,7 +29,7 @@
 | 类型、运行产物及差异检查 | `npm run check`、`runtime:prepare`、`git diff --check` 通过 |
 | Impeccable 布局扫描 | 无命中 |
 
-浏览器检查 1280px 和 390px 宽度，确认金额、内容及按钮完整可见、无横向溢出。见 [桌面](desktop.png)、[窄屏](narrow.png)、[受控调用摘要](result.json)。窄屏最初暴露侧栏遮挡，调整 Portal 后实际重新截图验证。
+浏览器检查 1280px 和 390px 宽度，确认金额、内容及按钮完整可见、无横向溢出。见 桌面（历史附件已清理：`desktop.png`）、窄屏（历史附件已清理：`narrow.png`）、受控调用摘要（历史附件已清理：`result.json`）。窄屏最初暴露侧栏遮挡，调整 Portal 后实际重新截图验证。
 
 复现集成使用 `LOOP_WORKSPACE_ACCEPTANCE=1`；音效独立子进程另传 `LOOP_TEST_CONTEXT_MODULE=/Users/dan/Programs/loop-control/scripts/runtime/environment.mjs`，该夹具只转接隔离数据库。浏览器使用 `LOOP_CALL_CONFIRMATION_BROWSER=1`、显式证据目录及外部 agent-browser 操作，完成后释放测试服务器、隔离数据库、临时媒体卷和浏览器会话。
 
@@ -36,6 +39,6 @@
 
 已应用 SQL134（逐次确认协议）和 SQL135（确认记录跟随工作空间／生产单删除及索引）。SQL134 应用后发现需要补齐生产单删除生命周期，追加 SQL135，未改写已登记迁移。
 
-更新前确认无 ready／running 任务，保留业务表指纹及原整期授权记录，重启本地后台与 Worker 后核对：业务表指纹相同、整期授权记录相同、逐次确认表为空、无 ready／running 任务、运行产物完整、HTTP 200。见 [本地核对](daily-verification.json)。遵从已有设置，自动备份保持关闭；未更改该设置。
+更新前确认无 ready／running 任务，保留业务表指纹及原整期授权记录，重启本地后台与 Worker 后核对：业务表指纹相同、整期授权记录相同、逐次确认表为空、无 ready／running 任务、运行产物完整、HTTP 200。见 本地核对（历史附件已清理：`daily-verification.json`）。遵从已有设置，自动备份保持关闭；未更改该设置。
 
 隔离夹具使用合成凭据和受控供应商端口。真实付费供应商调用为 0；未生成或更改日常生产单素材。设计记录：[ADR-0024](../../adr/0024-per-call-workspace-confirmation.md)。

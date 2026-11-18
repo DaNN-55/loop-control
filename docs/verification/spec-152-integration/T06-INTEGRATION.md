@@ -1,5 +1,8 @@
 # Workspace audio integration acceptance
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 T06 merged without conflicts at 13279530; final independent correction is 90bc9b62. Export/delivery/094, stable shot/caption092, last-effective native-save protection and versioned controlled media remain present.
 
 Independent checks passed TypeScript and 73 directed tests. Actual isolated groups passed: one fresh source-window Worker/MP4, six original non-render audio/planner cases, four caption/save compatibility cases and a new actual Owner/Studio projection case. Five committed mix MP4s were independently decoded with Goertzel; their source/TTS separation, parallel voice amplitude, ambience, ducking and positioned effects matched the recorded spectra within 1e-6. They were not mechanically rerendered.

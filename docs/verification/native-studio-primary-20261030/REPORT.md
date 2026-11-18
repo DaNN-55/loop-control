@@ -1,5 +1,8 @@
 # 原生剪辑优先与交付同步验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-30，PC端。日常服务已更新：`http://127.0.0.1:5174`。
 
 ## 完成内容
@@ -51,28 +54,28 @@ Owner明确回复“已保存并返回，可以更新”后，使用正式停止
 
 ### 新脚本导入
 
-![新脚本导入](/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/02-script-imported.jpg)
+新脚本导入（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/02-script-imported.jpg`）
 
 ### 直接在原生控件编辑字幕
 
-![直接在原生控件编辑字幕](/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/03-native-caption-edited.jpg)
+直接在原生控件编辑字幕（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/03-native-caption-edited.jpg`）
 
 ### 对齐补充工具
 
-![对齐补充工具](/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/04-supplemental-alignment-only.jpg)
+对齐补充工具（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/04-supplemental-alignment-only.jpg`）
 
 ### 保存与字幕状态同步
 
-![保存与字幕状态同步](/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/05-native-saved.jpg)
+保存与字幕状态同步（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/05-native-saved.jpg`）
 
 ### 重开保留修改
 
-![重开保留修改](/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/06-reopened-native.jpg)
+重开保留修改（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/06-reopened-native.jpg`）
 
 ### 导出5项检查通过
 
-![导出5项检查通过](/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/07-export-checks.jpg)
+导出5项检查通过（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/07-export-checks.jpg`）
 
 ### 真实交付完成
 
-![真实交付完成](/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/08-delivery-verified.jpg)
+真实交付完成（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/native-studio-primary-20261030/screenshots/08-delivery-verified.jpg`）

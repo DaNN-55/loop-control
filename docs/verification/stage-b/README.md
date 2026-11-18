@@ -1,5 +1,8 @@
 # B 阶段：完整恢复与 Worker 租约
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-23（Asia/Shanghai）。基线 `19f1607`，分支 `codex/local-first-stage-a`。Owner已认可B最终验收，并批准A、Accepted ADR-0008及B本地提交；不推送、合并、切换生产或关闭Issue。已用gh读取 #110 / #111 全文及全部评论（均无评论）。最终验收以 **v2备份与 `loop-control-stage-b-verified`** 为准；早期restore/replay证据保留为历史。
 
 ## T04 / #110
@@ -8,7 +11,7 @@
 - `isolated:backup` 在同一PostgreSQL exported snapshot中获取业务schema/data、迁移历史、逐表数量/内容摘要、Owner稳定身份和规范化安全指纹。数据库产物/音轨/材料引用必须匹配媒体清单的SHA-256与大小，复制后复检源及副本。要求暂停媒体写入；缺失、变化或容量限制会导致无有效manifest的失败。
 - **最终v2真实空库恢复**：32表/90行业务内容逐表一致，244项对象/Owner/ACL/默认ACL指纹一致，75媒体文件逐一SHA-256相同。pg_restore在事务内重建并验证外键；保留原Owner和授权。仅显式映射部署媒体根，历史任务包/审核快照保持原值。见 `t04-verified-restore.txt`、`t04-backup-final.txt`。
 - Auth密码/会话/token、Vault数据及宿主配置不备份。Owner ID保持，恢复时建立新随机登录密码。未解析秘密追加invalid记录；现有RPC显式轮换新连接版本并验证后可解析新秘密，旧版本继续阻塞。真实Provider凭据应由Owner重新录入、执行真实连接测试，再显式修复受影响配置；本演练用随机合成秘密，不调用在线Provider。
-- 实际打开恢复的真实三镜头Episode `13029a1c` 并查看产物索引，见[最终截图](restored-episode-v2.png)、`browser-verified.txt`。非空审核、审批、状态历史另由独立DB checkpoint `d96d613d` 准备，仅用于内容/关联对账；其UI提示文本产物路径无效（fixture使用视频而非完整文本审核包），不作为可用审核包或完整Owner审批链证据，见保留的 `restored-checkpoint-v2.png`。恢复媒体ffprobe可读；归档/媒体篡改、非空库覆盖均拒绝，测试后原字节还原，见 `t04-verified-checks.txt` / `t04-verify.json`。
+- 实际打开恢复的真实三镜头Episode `13029a1c` 并查看产物索引，见最终截图（历史附件已清理：`restored-episode-v2.png`）、`browser-verified.txt`。非空审核、审批、状态历史另由独立DB checkpoint `d96d613d` 准备，仅用于内容/关联对账；其UI提示文本产物路径无效（fixture使用视频而非完整文本审核包），不作为可用审核包或完整Owner审批链证据，见保留的 `restored-checkpoint-v2.png`。恢复媒体ffprobe可读；归档/媒体篡改、非空库覆盖均拒绝，测试后原字节还原，见 `t04-verified-checks.txt` / `t04-verify.json`。
 - **恢复权限问题已关闭**：早期restore/replay继承目标默认授权，数据一致但多出anon函数权限。全SQL对比发现后未将其归为既有失败；修复为在新空目标暂清public的schema-specific默认ACL，归档随后重建源ACL，再强制安全指纹对账。v1备份明确不接受为当前恢复输入。旧目标保留诊断，不代表最终验收。
 
 ## T05 / #111
@@ -48,4 +51,4 @@ B 已本地提交：实现 `60b5af9`，仅五份 SQL 测试修正 `474b0d3`，�
 
 ## B 验收后补记（2026-10-23）
 
-五份旧 SQL 已分析为 3 份断言过时、2 份 fixture 隔离问题；`474b0d3` 仅修正这五份测试，随后在最终 verified 库完整 SQL **21 文件/224 条断言全通过**。最终结果见 [sql-tests-final.json](sql-tests-final.json)。上文 223 条/5 文件失败以及原日志保留为修正前证据；不再代表当前门禁。Owner 已认可上述 B 最终结论。审核 checkpoint 仍仅证明内容/关联，秘密仍需显式重绑；没有在线 Provider 调用或完整 Owner 审批链证明。
+五份旧 SQL 已分析为 3 份断言过时、2 份 fixture 隔离问题；`474b0d3` 仅修正这五份测试，随后在最终 verified 库完整 SQL **21 文件/224 条断言全通过**。最终结果见 sql-tests-final.json（历史附件已清理：`sql-tests-final.json`）。上文 223 条/5 文件失败以及原日志保留为修正前证据；不再代表当前门禁。Owner 已认可上述 B 最终结论。审核 checkpoint 仍仅证明内容/关联，秘密仍需显式重绑；没有在线 Provider 调用或完整 Owner 审批链证明。

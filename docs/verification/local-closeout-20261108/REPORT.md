@@ -1,23 +1,26 @@
 # 本地变更整理与远端同步
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-08。本报告记录统一推送前的本地验收；推送及远端 SHA 以本任务最终回复为准。
 
 ## 范围与提交
 
 用户授权整理本地变更，依次提交、合并、测试，本地完成后统一推送。起点为 main / 2521324a；拉取远端后确认 origin/main 为 9cfeb2b6，本地领先 354 个提交，远端没有独有提交，只有一个工作树。
 
-在 codex/local-closeout-20261108 上按 8 批整理：Codex 构建；规划和媒体后端；共享控件与预览；连接和规划设置；账号与目录；制作界面；原型归档；文档和既有验收资料。媒体冻结类型、Worker、数据库迁移和 HTTP 入口放在同一后端提交，保持接口变更完整。通过 aff29c7e 合并回 main；后续在 main 提交回归修复。提交清单见 [commits.txt](./commits.txt)。
+在 codex/local-closeout-20261108 上按 8 批整理：Codex 构建；规划和媒体后端；共享控件与预览；连接和规划设置；账号与目录；制作界面；原型归档；文档和既有验收资料。媒体冻结类型、Worker、数据库迁移和 HTTP 入口放在同一后端提交，保持接口变更完整。通过 aff29c7e 合并回 main；后续在 main 提交回归修复。提交清单见 commits.txt（历史附件已清理：`./commits.txt`）。
 
 原始未提交状态、完整二进制补丁与 501 个文件路径的恢复快照保存在忽略目录 `.loop-control/maintenance/local-closeout-20261108/`。原型和设计审阅资料单独归档。`.impeccable/live` 是本机工具状态，使用 `.git/info/exclude` 仅在本地排除，未删除或发布。
 
 ## 验证结果
 
-- 默认回归：238 个文件，1,661 项通过、0 失败、1 项既有跳过。跳过项为旧运行 API 不借用准备版本身份的兼容性场景，不计为通过。见 [unit-summary.txt](./unit-summary.txt)。
-- 隔离集成：所选 15 个文件共 74 项。首轮执行全部 74 项，64 项通过、10 项失败；逐步修复并定向复验后，74 项最新执行状态均为通过。未将过滤后跳过的项目计为新通过，也未在最后再次整套运行这 74 项。逐项结果和执行批次见 [validation.json](./validation.json)。
+- 默认回归：238 个文件，1,661 项通过、0 失败、1 项既有跳过。跳过项为旧运行 API 不借用准备版本身份的兼容性场景，不计为通过。见 unit-summary.txt（历史附件已清理：`./unit-summary.txt`）。
+- 隔离集成：所选 15 个文件共 74 项。首轮执行全部 74 项，64 项通过、10 项失败；逐步修复并定向复验后，74 项最新执行状态均为通过。未将过滤后跳过的项目计为新通过，也未在最后再次整套运行这 74 项。逐项结果和执行批次见 validation.json（历史附件已清理：`./validation.json`）。
 - 集成覆盖 PostgreSQL 全量迁移、Owner HTTP、真实 Worker 子进程、脚本拆镜、模型身份与参数冻结、音频和字幕开关、未知提交、防重、轮询恢复、显式采用、原生编辑保存、导出和交付、目录调整及浏览器刷新恢复。供应商网络使用受控响应，真实付费调用为 0。
-- `npm run check`、`npm run build`、后端和 Worker 构建、`npm run runtime:prepare` 及发布物完整性检查通过。见 [check.log](./check.log)、[build.log](./build.log)、[runtime.log](./runtime.log)。
-- 独立 Chrome 使用实际 VideoPreview 组件播放真实测试视频；向裁剪范围外定位后，实际时间分别回到 0.5 秒和 2 秒。390px 窄窗无横向溢出，视频宽 358px。见 [browser-preview.json](./browser-preview.json)、[browser-preview-narrow.json](./browser-preview-narrow.json) 和对应截图。
-- 浏览器生成流程验证丢失确认回执后仍只有一个任务，原生字幕对齐入口、保存并返回分镜台、候选明确采用和保留原画面变换通过。截图见 [generation-adopted.png](./generation-adopted.png)。
+- `npm run check`、`npm run build`、后端和 Worker 构建、`npm run runtime:prepare` 及发布物完整性检查通过。见 check.log（历史附件已清理：`./check.log`）、build.log（历史附件已清理：`./build.log`）、runtime.log（历史附件已清理：`./runtime.log`）。
+- 独立 Chrome 使用实际 VideoPreview 组件播放真实测试视频；向裁剪范围外定位后，实际时间分别回到 0.5 秒和 2 秒。390px 窄窗无横向溢出，视频宽 358px。见 browser-preview.json（历史附件已清理：`./browser-preview.json`）、browser-preview-narrow.json（历史附件已清理：`./browser-preview-narrow.json`） 和对应截图。
+- 浏览器生成流程验证丢失确认回执后仍只有一个任务，原生字幕对齐入口、保存并返回分镜台、候选明确采用和保留原画面变换通过。截图见 generation-adopted.png（历史附件已清理：`./generation-adopted.png`）。
 
 ## 本轮修复与诊断
 

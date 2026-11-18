@@ -1,5 +1,8 @@
 # D 阶段六组本地归档
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-25，Asia/Shanghai。基线 `bca697bbc1e12626771d1283ec87a17bf85f02fe`，分支 `codex/local-first-stage-a`。按 Owner 明确批准完成六组本地归档；账号新功能与无关规划保留，未关闭 Issue、推送或合并。
 
 | 组 | 本地提交 | 内容 |
@@ -21,4 +24,4 @@ Provider 技术结果仍限定 Pexels 视频和豆包短句样本；Google `BILL
 
 原始日志、历史报告快照、旧失败结果与预算账本原字节保留。当前入口文档只同步最新状态及区分历史阶段；既有报告里的“未提交”“根因未解决”等按其时间与范围阅读，不追认旧失败通过。
 
-[本轮命令与退出码](evidence/local-commit-archive/validation-results.json)、[完整回归日志](evidence/local-commit-archive/validation-full.log)、[保留范围核对](evidence/local-commit-archive/preservation-result.json)。原始运行工具及完整快照留在本机临时归档，不把本次记录称为独立评审。
+本轮命令与退出码（历史附件已清理：`evidence/local-commit-archive/validation-results.json`）、完整回归日志（历史附件已清理：`evidence/local-commit-archive/validation-full.log`）、保留范围核对（历史附件已清理：`evidence/local-commit-archive/preservation-result.json`）。原始运行工具及完整快照留在本机临时归档，不把本次记录称为独立评审。

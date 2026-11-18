@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "onlyOwnedSyntheticKeychainDeleted": true,
-  "existingLoginSystemKeychainsAndAclUntouched": true,
-  "searchAndDefaultSnapshotRestored": true,
-  "rootModeRestored": true,
-  "rebindRequiresExplicitSyntheticKeychainRecreation": true
-}

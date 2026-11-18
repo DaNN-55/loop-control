@@ -1,5 +1,8 @@
 # 当前快照隔离生产单与旧流程替换建议
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-14。性质：核查与建议；本轮没有修改业务代码、SQL、测试或共享 SDK，没有执行清理、提交或推送。主工作区已有的 A–G 实施仍由原计划管理，本报告不把专项通过当作整体完成。
 
 ## 结论
@@ -27,7 +30,7 @@
 
 素材为本地测试图形和音调，验证流程及身份，不代表图片模型、真人语音或艺术质量。主生产单通过 HTTP／SDK 执行；额外原声场景使用真实浏览器及本地 FFmpeg Worker，桌面与 390 宽截图已人工查看，不能将两者描述成同一生产单全程浏览器点击。
 
-[测试成片](artifacts/test-production.mp4) · [成片抽帧](artifacts/frame-01.png) · [生产单与事件回执](artifacts/receipt.json) · [交付说明](artifacts/metadata.json) · [测试结果](evidence/vitest.json)。
+测试成片（历史附件已清理：`artifacts/test-production.mp4`） · 成片抽帧（历史附件已清理：`artifacts/frame-01.png`） · 生产单与事件回执（历史附件已清理：`artifacts/receipt.json`） · 交付说明（历史附件已清理：`artifacts/metadata.json`） · [测试结果](evidence/vitest.json)。
 
 ## 当前最值得处理的问题
 
@@ -39,7 +42,7 @@
 | 全来源恢复 | 一种原生备份恢复成功不代表计划、HTML、混合草稿、封面和原声均能恢复 | 逐种来源做整库＋文件、逐项、不同来源 Owner、路径迁移和中断后恢复，实际打开、编辑和导出；按原 ID／SHA／确认状态对账 | 原件还在，但恢复后可能不能完整接续。不能用重新生成替代原恢复 |
 | 规模与资源 | 4.8 秒小单不能证明多来源、大文件、大工程的性能 | 测量重复引用下的读取、SHA、来源枚举、保存及导出耗时和主机资源；再决定按不可变身份复用校验或分阶段读取 | 性能上限仍未知；本轮没有证明旧名字造成性能问题，也不建议为提速跳过文件校验 |
 
-原声失败证据来自本轮开始前已完成的 `ScCUnI` 隔离运行；本次固定副本中相关三个源／测试文件 SHA 完全相同。该用例在真实本地 Worker 成功后，于 `adoptWorkspaceAudio` 返回“原声提取区间缺少可核验证据”，1 失败、50 项被名称过滤；本轮没有修改或重跑掩盖它，失败不混入上述新运行的 18 项通过。[原失败结果](evidence/recorded-source-replacement-red.json) · [同源核对](evidence/voice-red-same-source.json)。
+原声失败证据来自本轮开始前已完成的 `ScCUnI` 隔离运行；本次固定副本中相关三个源／测试文件 SHA 完全相同。该用例在真实本地 Worker 成功后，于 `adoptWorkspaceAudio` 返回“原声提取区间缺少可核验证据”，1 失败、50 项被名称过滤；本轮没有修改或重跑掩盖它，失败不混入上述新运行的 18 项通过。原失败结果（历史附件已清理：`evidence/recorded-source-replacement-red.json`） · 同源核对（历史附件已清理：`evidence/voice-red-same-source.json`）。
 
 此前来源确认绕过选择、原工程未阻止计划重建，以及封面嵌套按钮和封面错误边界已有后续专项实现／验证，不再列为未修问题。原声当前输入和原轨明确采用已有正向实现，但尚在实施中，不能继续笼统描述为完全未承接。实施状态见[主进度表](../current-workflow-replacement-20261113/REPORT.md)、[来源 UI](../current-workflow-replacement-20261113/d-source-ui.md)与[封面专项](../current-workflow-replacement-20261113/d-cover.md)。
 
@@ -57,7 +60,7 @@
 | 7．旧 Studio／媒体编排与共享 Worker | 部分旧渲染编排仍有 SQL 业务调用；当前真实领取仍经过 `claim_input_task → claim_input_task_pre_lease → claim_next_worker_task_legacy` | 纯旧渲染随当前接入替代后退役；共享领取／预留／回执按真实职责收敛实现，再统一命名，保留原子性、公平、容量、权限、租约及未知结果保护 | 旧名确实易误判，但直接删会影响当前任务。需要局部整理共享实现，不能只多套一层新名 |
 | 8．历史、冻结和版本格式 | 原脚本／草稿／轨／审批／任务／文件 SHA、引用锁、迁移及归档包是恢复依据，不能作为垃圾清空。历史主脚本关联问题已有修复专项 | 旧字段与 `storyboard/v1` 等格式集中在版本化解码／接入／恢复边界，当前内部只传严格当前身份；完成全模型恢复，再收紧剩余类型及旧字段回退 | 保留原证据是必要成本；散落在当前代码里的兼容判断才值得收敛。不能改写冻结字节来做到零旧词 |
 
-本次有效目录含 395 个业务函数、106 个非内部触发器，**这不是“仍有 395 个旧函数”**。前述五个继承与两个组包函数均有实际挂载证据；七个拒绝入口、空扫描器及旧预检的精确零调用，只覆盖当前源码和有效函数体，不能排除动态调用、外部消费者或运行中的旧进程。见[有效 SQL 依赖摘要](evidence/legacy-effective-map.json)与[当前调用扫描](evidence/current-call-map.json)，完整定义保留于私有测试证据。
+本次有效目录含 395 个业务函数、106 个非内部触发器，**这不是“仍有 395 个旧函数”**。前述五个继承与两个组包函数均有实际挂载证据；七个拒绝入口、空扫描器及旧预检的精确零调用，只覆盖当前源码和有效函数体，不能排除动态调用、外部消费者或运行中的旧进程。见有效 SQL 依赖摘要（历史附件已清理：`evidence/legacy-effective-map.json`）与当前调用扫描（历史附件已清理：`evidence/current-call-map.json`），完整定义保留于私有测试证据。
 
 ## 旧命名怎样才能完整替换
 
@@ -75,7 +78,7 @@
 
 ## 埋点联验结论与剩余范围
 
-**可以同测，本次已经同测。** 仅开启隔离 Owner 的采集，本单实际得到：创建 1、制作里程碑 8、两条人工声音采用 2、声音实际使用 3、导出开始／结束各 1、交付排队／领取／执行开始／结束／完成各 1。配乐使用不额外冒充口播候选采用；`stage_changed=2` 和 `stage_transition_evidence=2` 不是四次阶段变化。详情见[同单回执](artifacts/receipt.json)与[汇总](artifacts/workflow-summary.json)。
+**可以同测，本次已经同测。** 仅开启隔离 Owner 的采集，本单实际得到：创建 1、制作里程碑 8、两条人工声音采用 2、声音实际使用 3、导出开始／结束各 1、交付排队／领取／执行开始／结束／完成各 1。配乐使用不额外冒充口播候选采用；`stage_changed=2` 和 `stage_transition_evidence=2` 不是四次阶段变化。详情见同单回执（历史附件已清理：`artifacts/receipt.json`）与汇总（历史附件已清理：`artifacts/workflow-summary.json`）。
 
 同版专项还验证了：默认关闭、关闭期间不采集、重启用不补造，Owner／Worker／lease 和事务保护，静音／隐藏／关键帧／实际源终点对声音使用的影响，重复保存／重开不多计，以及已发送后的统计持久化失败不重复请求供应商。原声本地提取通过真实 Worker 与实际浏览器，准备不等于采用、双击只排一个请求；使用 agent-browser 的独立测试会话，收尾关闭。
 
@@ -99,4 +102,4 @@
 
 本轮开始时已有 13,155 个项目文件；报告生成前全部保持，HEAD 与物理索引保持。共享 SDK 2,782 文件与既有参考一致。唯一自有 PostgreSQL 容器已自动移除，并按准确名称复查不存在。只新增本报告及测试证据，未覆盖主 `PLAN.md` 或其他实施成果。
 
-[机器核查清单](verification.json) · [源码副本一致性](evidence/source-snapshot-check.json) · [保持检查](evidence/preservation-before-docs.json) · [SDK 保持](evidence/sdk-preservation.json) · [运行终态](evidence/run.json)。私有运行计划及完整日志位置记录在机器清单中。
+机器核查清单（历史附件已清理：`verification.json`） · 源码副本一致性（历史附件已清理：`evidence/source-snapshot-check.json`） · 保持检查（历史附件已清理：`evidence/preservation-before-docs.json`） · SDK 保持（历史附件已清理：`evidence/sdk-preservation.json`） · 运行终态（历史附件已清理：`evidence/run.json`）。私有运行计划及完整日志位置记录在机器清单中。

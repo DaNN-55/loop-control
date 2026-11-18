@@ -1,5 +1,8 @@
 # 第 7、8 项双轴审查
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 固定比较：`git diff c4e2a885...47730a0b`。两名独立、fresh-context、只读 Agent；未运行测试或修改文件。规格为本目录 SPEC.md；标准核对 AGENTS.md、CONTEXT.md、ADR-0019、ADR-0039，并应用 code-review smell baseline，项目约定优先。
 
 ## Standards

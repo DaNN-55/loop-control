@@ -1,5 +1,8 @@
 # 隔离生产单、埋点与剩余替换评估
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 后续状态更新：当前已新增193制作里程碑、默认v3入口。最新固定源码生产单与剩余判断见 [193核查方案](../../plans/production-workflow-remaining-proposal-193-20261114.md)。本文件保留当时192评估，不当作最新实现状态。
 
 日期：2026-11-14。范围：按当前固定源码，在隔离副本新建生产单，核对实际结果和埋点，更新全面替换方案。本轮只新增文档、私有测试及证据，没有修改业务源码、SQL、类型、原测试或日常配置，没有提交或推送。
@@ -20,17 +23,17 @@
 - 两条人工音轨登记任务 completed、attempt=0；交付任务 completed、attempt=1。没有视频／图片／配乐生成任务，付费预留为 0。人工登记任务不能算两次供应商请求。
 - 真实外部图片、语音、视频 API 和付费请求均为 0。其余请求埋点用既有本地受控响应验证，没有使用用户凭据或日常媒体。
 
-[测试成片](artifacts/test-production.mp4) · [工程](artifacts/project.json) · [交付说明](artifacts/metadata.json) · [实际单据与事件](artifacts/receipt.json) · [媒体探测](evidence/ffprobe.json)。
+测试成片（历史附件已清理：`artifacts/test-production.mp4`） · 工程（历史附件已清理：`artifacts/project.json`） · 交付说明（历史附件已清理：`artifacts/metadata.json`） · 实际单据与事件（历史附件已清理：`artifacts/receipt.json`） · 媒体探测（历史附件已清理：`evidence/ffprobe.json`）。
 
 ### 新发现：预览棋盘格进入实际成片
 
 已提取并查看两镜头的实际 MP4 帧，与原始测试图对比。原图只有彩条，没有棋盘格；导出后的画幅空区有棋盘格。第一镜横向偏移来自本次明确的原生编辑，第二镜未偏移；`contain` 留空也属于本单选择，不能将这些设置当成缺陷或强制改成裁满。
 
-固定测试 SDK `TimelineComposition.tsx` 的 28／298 行使用棋盘格作为非透明背景；`remotion/Root.tsx` 的默认参数为 `transparent:false`。已保存 [源码位置、内容和哈希](evidence/sdk-background-source.json)。这证明本次 SDK 的导出背景行为；本轮未连接日常运行环境，未确认其 SDK 是否同版本。
+固定测试 SDK `TimelineComposition.tsx` 的 28／298 行使用棋盘格作为非透明背景；`remotion/Root.tsx` 的默认参数为 `transparent:false`。已保存 源码位置、内容和哈希（历史附件已清理：`evidence/sdk-background-source.json`）。这证明本次 SDK 的导出背景行为；本轮未连接日常运行环境，未确认其 SDK 是否同版本。
 
 建议把预览装饰和最终合成背景分开：普通 MP4 明确底色，透明输出按实际支持格式另设。新增横／竖／透明素材、位移、空区和多镜头抽帧验收；不通过删除文件、素材校验或精确确认来处理。此问题本轮未修复。
 
-[第一镜实际帧](artifacts/frame-01.png) · [第二镜实际帧](artifacts/frame-02.png)。
+第一镜实际帧（历史附件已清理：`artifacts/frame-01.png`） · 第二镜实际帧（历史附件已清理：`artifacts/frame-02.png`）。
 
 ## 埋点联验
 
@@ -56,7 +59,7 @@
 
 当前投影源码已经明确承接 26 张私有制作业务表，并使用独立旧格式转换模块；不应继续将“只处理 public 表、没有制作图恢复”当当前事实。本轮不包含当前制作图全部非空表、所有原包、旧 HTML、格式继承／局部加镜头、全部缺文件与完整备份恢复矩阵，不能据 13 项宣布恢复已全面完成。
 
-有效 schema 由当前 baseline 和前向迁移建立到 192：387 个函数、103 个非内部触发器。两个旧批准初始化／复用触发器和两个旧任务完成审核触发器仍挂载；七个拒绝 SQL、空扫描器及旧预检仍在。53 个函数定义提及旧草稿表，这是定位线索，不是可删除数量。[有效目录及定义](evidence/effective-catalog.json) 为隔离库实际读取，未用历史 SQL 文本重复计数。
+有效 schema 由当前 baseline 和前向迁移建立到 192：387 个函数、103 个非内部触发器。两个旧批准初始化／复用触发器和两个旧任务完成审核触发器仍挂载；七个拒绝 SQL、空扫描器及旧预检仍在。53 个函数定义提及旧草稿表，这是定位线索，不是可删除数量。有效目录及定义（历史附件已清理：`evidence/effective-catalog.json`） 为隔离库实际读取，未用历史 SQL 文本重复计数。
 
 当前源码已实现独立准备、字幕、口播及 Pexels 合同；默认脚本模板仍为 v2，当前工作区类型仍把独立基准列为可选，核心仍有旧字段回退，旧手动命令／查询仍存在。23 个原包支持清单的 `asOfSchema` 仍为 186，均为 `compatibility-contract-retained`；不能将其当成 192 全部原包兼容的证明。此前八类逐项解释与退出条件见方案，不重复清理已经退役的生成脚本链。
 
@@ -64,9 +67,9 @@
 
 - 制作与埋点主批：6 文件，14 通过，1 条件夹具跳过；历史专项：2 文件，13 通过。合计 27 项通过、0 失败、1 跳过，分两批执行，不宣称单批全绿。跳过项为需额外 UI 挂起夹具的质量用例。
 - 埋点单元：4 文件，25 项通过。两次隔离构建均通过 Worker／backend 准备与源码产物完整性检查。
-- 原始结果：[逐项汇总](evidence/verification-summary.json)、[主批结果](evidence/production-vitest.json)、[历史结果](evidence/history-vitest.json)、[单元结果](evidence/metrics-unit.json)。本轮新增生产单测试仅在私有副本，内容保存为 [证据文本](evidence/private-test.ts.txt)，未加入原测试目录。
+- 原始结果：逐项汇总（历史附件已清理：`evidence/verification-summary.json`）、主批结果（历史附件已清理：`evidence/production-vitest.json`）、历史结果（历史附件已清理：`evidence/history-vitest.json`）、单元结果（历史附件已清理：`evidence/metrics-unit.json`）。本轮新增生产单测试仅在私有副本，内容保存为 证据文本（历史附件已清理：`evidence/private-test.ts.txt`），未加入原测试目录。
 - 未执行全项目默认套件、完整 schema 升级／恢复矩阵、全部旧包执行、真实供应商生成、实际浏览器宽窄 UI 或日常服务切换。原生编辑通过真实 SDK 文档入口完成，不能冒充人工浏览器验收。
-- 1356 个源码／脚本／SQL 文件及额外构建配置／包清单均保持。两个固定副本的原业务文件和基线一致；仅隔离修改两份 tsconfig 的 `tsBuildInfoFile` 输出路径，并新增私有测试。HEAD／暂存保持，见 [保持核对](evidence/unchanged-check.json)。
+- 1356 个源码／脚本／SQL 文件及额外构建配置／包清单均保持。两个固定副本的原业务文件和基线一致；仅隔离修改两份 tsconfig 的 `tsBuildInfoFile` 输出路径，并新增私有测试。HEAD／暂存保持，见 保持核对（历史附件已清理：`evidence/unchanged-check.json`）。
 - PostgreSQL 为两个自有禁网／tmpfs 容器，无持久卷；媒体为自有临时测试卷。两容器均已移除，证据及固定源码保留。既有共享测试 SDK 只供运行，没有修改或删除，也未触碰其他任务容器。
 - 没有连接日常数据库，没有修改或删除用户历史草稿、音轨、原工程和冻结证据，没有迁移、部署、重启日常服务、开启日常采集、提交或推送。Owner／RLS／ACL、文件、lease、费用、未知结果和恢复保护保持。
 

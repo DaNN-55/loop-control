@@ -1,5 +1,8 @@
 # 真实生产单浏览器复测
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-30。目标为真实“操作电脑-v3”，生产单 `92b3067d-ced9-4e85-bc44-1968fa83695a`。本轮实际操作结果：高度通过，字幕拖动失败。没有修改业务代码，不把此前隔离测试的通过结果当作真实单验收。
 
 ## 浏览器与操作边界
@@ -46,8 +49,8 @@
 
 拖动前：
 
-![单窗口拖动前](/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/real-browser/screenshots/05-single-window-before.png)
+单窗口拖动前（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/real-browser/screenshots/05-single-window-before.png`）
 
 真实鼠标拖动后，字幕仍位于原处：
 
-![单窗口拖动后](/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/real-browser/screenshots/06-single-window-after-drag.png)
+单窗口拖动后（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/real-browser/screenshots/06-single-window-after-drag.png`）

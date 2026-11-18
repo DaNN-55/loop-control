@@ -2,6 +2,9 @@
 
 # #142 同一生产单最终接续验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 同一测试 Owner、同一 Episode `5eb48e39-6c99-4c95-b3ab-ed91dea7d3e7`、同一蓝图 `e9fd2ae1-bc44-4929-991b-4b3325220baf`，已通过正常入口完成真实规划、Pexels 素材、豆包短句、本地对齐、预览、Studio、测试 Owner QC、final 和本机发布包。正常重启后状态为 `production_completed`，生产单投影完全一致，21 个产物的 Owner HTTP 字节与磁盘逐项相符。最终 Spec、凭据扫描、索引和 Issue 读回仍由主 Agent 收尾，本文不自行关票或关闭 A–D 总门禁。
 
 ## 同单链与实际调用
@@ -29,7 +32,7 @@ QC 收据的身份为 `checkedBy=agent`、`testOwnerActionAuthorized=true`、`hu
 
 ## 最终源码连续性
 
-[最终 43 项源码清单](source-final-native-local-followthrough.json) 的聚合 SHA-256 为 `207c8547fba52862d4e9bf535605f7b41d23c15d343dd4ee701b98abeb1852a8`，HEAD 仍为 `bbd2987`，未提交。不能声称整条成功链从开始便运行于这个完整 SHA。
+最终 43 项源码清单（历史附件已清理：`source-final-native-local-followthrough.json`） 的聚合 SHA-256 为 `207c8547fba52862d4e9bf535605f7b41d23c15d343dd4ee701b98abeb1852a8`，HEAD 仍为 `bbd2987`，未提交。不能声称整条成功链从开始便运行于这个完整 SHA。
 
 041 在两项真实 CLI 前应用。其后发现本地裁剪分类、首次 TTS 启用时序、自动任务 namespace 和裁剪预检缺口；这些改动按 C18 分类后验证。Provider transport、旁白 Worker 与前段快照逐字节一致；注册 Adapter、受控媒体 executor 和对齐 Worker 与基线一致，已成功的前段事实由这些未变模块、冻结输入和产物身份继承，没有重发。
 

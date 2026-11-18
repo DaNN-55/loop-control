@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "realNormalWorkerCompletedAfterOwnPauseReleased": true,
-  "attemptStillOne": true,
-  "inputHashUnchanged": true,
-  "originalNaturalControlsRestoredByteForByte": true,
-  "providerRequests": 0
-}

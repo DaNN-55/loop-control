@@ -1,5 +1,8 @@
 # P2：注销失败后的恢复与请求围栏
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-25，Asia/Shanghai。仅修复本轮只读复查发现的注销失败问题，沿用优化 worktree、`codex/local-first-stage-a` 和未变的 HEAD `49e2538`；不提交、不新增在线请求、不进入 E/F。SQL 合同一致性建议暂不处理。
 
 ## 修复行为
@@ -16,13 +19,13 @@
 
 | 检查 | 实际结果 |
 | --- | --- |
-| 修复前失败分支 | 新增 network reject、HTTP 503 两项实际组件/客户端测试；原实现 5/7 通过，2 项均因未返回登录表单失败。[红测](evidence/logout-p2/focused-red-01.txt) |
-| 修复后恢复及围栏 | 7/7 通过。每项失败用例同时验证：注销 pending 时不新建目录请求；失败后旧目录消失；重新登录后迟到的旧目录不能回填；实际 `localCommand` 使用新 CSRF 发出写请求。原有成功退出、pending 和筛选迟到响应测试保留。[绿测](evidence/logout-p2/focused-green-01.txt) |
-| 完整默认回归 | 默认 5000ms，102 文件、762/762 通过，未调超时或改旧业务断言。测试进程添加只允许本机 Socket 的 guard，未安装或下载依赖。[完整日志](evidence/logout-p2/full-default-5s-01.txt) |
-| 类型与构建 | `npm run build` 中 `tsc -b` 和原生前端构建通过；保留约 586.62KB chunk 告警。正常启动另实际编译本地应用并准备 Worker runtime。[构建](evidence/logout-p2/build-01.txt)、[启动](evidence/logout-p2/start-01.txt) |
-| 实际 UI 故障恢复 | 正常 npm 启动、既有恢复隔离库和真实 Chrome。只对浏览器 `/api/local/logout` 注入 route abort；其他路由和后端真实运行。失败后立即显示登录及明确提示，解除拦截后无需重载即可真实重新登录。[失败界面](evidence/logout-p2/logout-failed-login.png) |
-| 重新登录后的真实写入 | 经账号重命名表单提交原名称；网络只有一次配置 POST，真实服务端返回 200，Owner 命令回执与原名称一致。证明重新登录后的实际客户端 CSRF 被服务端接受；只新增该测试命令回执，账号名称未变。[结果](evidence/logout-p2/browser-result.json)、[界面](evidence/logout-p2/relogin-write-success.png) |
-| 正常退出及收尾 | 移除故障拦截后正常退出返回登录页；删除本轮浏览器认证项、关闭独立会话，正常 npm 停止本轮服务。未创建或操作 Keychain；没有重跑恢复、Studio 或 Worker 续跑验收。[收尾与范围](evidence/logout-p2/scope-result.json) |
+| 修复前失败分支 | 新增 network reject、HTTP 503 两项实际组件/客户端测试；原实现 5/7 通过，2 项均因未返回登录表单失败。红测（历史附件已清理：`evidence/logout-p2/focused-red-01.txt`） |
+| 修复后恢复及围栏 | 7/7 通过。每项失败用例同时验证：注销 pending 时不新建目录请求；失败后旧目录消失；重新登录后迟到的旧目录不能回填；实际 `localCommand` 使用新 CSRF 发出写请求。原有成功退出、pending 和筛选迟到响应测试保留。绿测（历史附件已清理：`evidence/logout-p2/focused-green-01.txt`） |
+| 完整默认回归 | 默认 5000ms，102 文件、762/762 通过，未调超时或改旧业务断言。测试进程添加只允许本机 Socket 的 guard，未安装或下载依赖。完整日志（历史附件已清理：`evidence/logout-p2/full-default-5s-01.txt`） |
+| 类型与构建 | `npm run build` 中 `tsc -b` 和原生前端构建通过；保留约 586.62KB chunk 告警。正常启动另实际编译本地应用并准备 Worker runtime。构建（历史附件已清理：`evidence/logout-p2/build-01.txt`）、启动（历史附件已清理：`evidence/logout-p2/start-01.txt`） |
+| 实际 UI 故障恢复 | 正常 npm 启动、既有恢复隔离库和真实 Chrome。只对浏览器 `/api/local/logout` 注入 route abort；其他路由和后端真实运行。失败后立即显示登录及明确提示，解除拦截后无需重载即可真实重新登录。失败界面（历史附件已清理：`evidence/logout-p2/logout-failed-login.png`） |
+| 重新登录后的真实写入 | 经账号重命名表单提交原名称；网络只有一次配置 POST，真实服务端返回 200，Owner 命令回执与原名称一致。证明重新登录后的实际客户端 CSRF 被服务端接受；只新增该测试命令回执，账号名称未变。结果（历史附件已清理：`evidence/logout-p2/browser-result.json`）、界面（历史附件已清理：`evidence/logout-p2/relogin-write-success.png`） |
+| 正常退出及收尾 | 移除故障拦截后正常退出返回登录页；删除本轮浏览器认证项、关闭独立会话，正常 npm 停止本轮服务。未创建或操作 Keychain；没有重跑恢复、Studio 或 Worker 续跑验收。收尾与范围（历史附件已清理：`evidence/logout-p2/scope-result.json`） |
 
 HTTP 503 在实际组件/客户端边界用受控响应覆盖；真实 Chrome 覆盖的是浏览器传输中断，不能把它称为真实服务端 503。退出 pending 与迟到响应竞态由可控异步组件测试覆盖，不将快速浏览器故障冒称所有竞态的运行证明。
 
@@ -34,4 +37,4 @@ HTTP 503 在实际组件/客户端边界用受控响应覆盖；真实 Chrome �
 
 **历史默认 5 秒失败及根因未解决继续保留。30 分钟 Worker 租约、立即故障切换、真实 WhisperX 成功推理、默认/新主机完整部署、在线生成、其他 Provider、完整多能力 Worker 和 E/F 均未由本次修复关闭。** 模拟资格、历史 SecretStore 替身、T17 日志覆盖说明及 Pexels 已用尽的 2 次在线预算不变。
 
-[本次摘要](evidence/logout-p2/verification-result.json)与[总证据索引](evidence-index.json)记录本轮结果。原始网络、认证材料和私有部署配置不公开；无 HAR。根 PLAN、43 个无关规划/output 文件及已有非本轮改动保留。
+本次摘要（历史附件已清理：`evidence/logout-p2/verification-result.json`）与总证据索引（历史附件已清理：`evidence-index.json`）记录本轮结果。原始网络、认证材料和私有部署配置不公开；无 HAR。根 PLAN、43 个无关规划/output 文件及已有非本轮改动保留。

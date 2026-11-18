@@ -1,5 +1,8 @@
 # 旧单素材页精简与逐镜头编辑接入
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-30，PC优先。目标生产单：`92b3067d-ced9-4e85-bc44-1968fa83695a`（操作电脑-v3）。Owner明确批准接入逐镜头编辑。
 
 ## 已完成
@@ -49,11 +52,11 @@
 
 ## 截图
 
-![真实旧单已接入逐镜编辑](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/05-真实旧单已接入逐镜编辑-1440.jpg)
+真实旧单已接入逐镜编辑（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/05-真实旧单已接入逐镜编辑-1440.jpg`）
 
-![隔离订单逐镜上传采用](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/03-旧HTML接入后逐镜上传采用.jpg)
+隔离订单逐镜上传采用（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/03-旧HTML接入后逐镜上传采用.jpg`）
 
-![隔离订单真实原生剪辑](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/04-旧HTML接入原生剪辑.jpg)
+隔离订单真实原生剪辑（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/04-旧HTML接入原生剪辑.jpg`）
 
 本轮未提交、推送或发布代码。先前待登录和并行回归问题已在以下补验中完成。
 
@@ -71,10 +74,10 @@
 - 最新`npm run build`通过（含TypeScript检查）；`npm run runtime:prepare`通过。见`logs/build-post-login.log`、`logs/runtime-post-login.log`。运行包已同步并重启5174日常服务，不再保留旧的过期运行指纹。构建仍提示现有大bundle告警，不影响本轮通过状态。
 - 未请求在线生成，没有改写真实旧单素材或旧成片。55359临时验收环境已清理，日常服务保留。
 
-![真实旧单原生剪辑](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/06-真实旧单原生剪辑-登录后.jpg)
+真实旧单原生剪辑（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/06-真实旧单原生剪辑-登录后.jpg`）
 
-![真实时间线播放后暂停](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/07-真实时间线播放暂停.jpg)
+真实时间线播放后暂停（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/07-真实时间线播放暂停.jpg`）
 
-![保存返回素材页](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/08-真实剪辑保存返回回读.jpg)
+保存返回素材页（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/08-真实剪辑保存返回回读.jpg`）
 
-![保存后再次打开](/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/09-真实旧工程保存后再次打开.jpg)
+保存后再次打开（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/compact-workflow-round7-20261030/screenshots/09-真实旧工程保存后再次打开.jpg`）

@@ -1,14 +1,17 @@
 # 六适配器正式探针与私密录入：离线准备
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-25。基线 `bca697bbc1e12626771d1283ec87a17bf85f02fe`，固定优化 worktree。
 
-**本轮只完成正式装配、共用请求预算与离线准备，新增在线 Provider 请求为 0，实际在线资格为 0。** OpenAI 无真实 Key，继续未验收；其他五家的真实凭据也尚未收到。[验收摘要](evidence/provider-offline-preparation/verification-result.json)
+**本轮只完成正式装配、共用请求预算与离线准备，新增在线 Provider 请求为 0，实际在线资格为 0。** OpenAI 无真实 Key，继续未验收；其他五家的真实凭据也尚未收到。验收摘要（历史附件已清理：`evidence/provider-offline-preparation/verification-result.json`）
 
 ## 本机私密录入
 
 选择页面密码表单→专用 Keychain，不创建 `.env`，不让用户在聊天中发送 Key。使用本轮独立恢复库和媒体；录入配置不装配 Worker，避免录入期间自动消费任务。原默认部署指针不变。入口仍是正式 `npm start -- --deployment … --offline-test`，Owner 登录后进入“蓝图连接恢复与版本维护”下的“外部连接”。锁网提示明确显示，按钮为“仅保存凭据”，保存成功清空密码字段，不自动调用 verify；重新测试按钮不可用。其他连接选择器即使尝试验证，也由统一关闭策略拒绝发出请求。
 
-本轮只以合成材料验证了六类真实 HTTP→Postgres→Keychain 往返，并用真实浏览器验证仅保存、清空密码与无 localStorage/sessionStorage 明文。7 条测试连接已撤销、对应秘密已移除，Owner 测试会话及浏览器认证已撤销，正式服务已停止。保留空的专用 Keychain 和已关闭策略的录入配置，未来可通过私有 `open-intake.mjs` 启动。该辅助入口只解锁本轮自建 Keychain 并启动原服务，不读取登录/系统 Keychain。[HTTP](evidence/provider-offline-preparation/http-intake-result.json)、[页面](evidence/provider-offline-preparation/browser-intake-cleared.png)、[清理](evidence/provider-offline-preparation/cleanup-keychain-result.json)
+本轮只以合成材料验证了六类真实 HTTP→Postgres→Keychain 往返，并用真实浏览器验证仅保存、清空密码与无 localStorage/sessionStorage 明文。7 条测试连接已撤销、对应秘密已移除，Owner 测试会话及浏览器认证已撤销，正式服务已停止。保留空的专用 Keychain 和已关闭策略的录入配置，未来可通过私有 `open-intake.mjs` 启动。该辅助入口只解锁本轮自建 Keychain 并启动原服务，不读取登录/系统 Keychain。HTTP（历史附件已清理：`evidence/provider-offline-preparation/http-intake-result.json`）、页面（历史附件已清理：`evidence/provider-offline-preparation/browser-intake-cleared.png`）、清理（历史附件已清理：`evidence/provider-offline-preparation/cleanup-keychain-result.json`）
 
 Keychain 新建时权限为0644，现有严格存储入口正确拒绝并返回503。只将本轮新建文件设为0600后，同一未应用写入意图恢复成功；没有放宽代码校验。stage-d根目录由0755收紧到0700并保留；默认 Keychain、其他搜索项与顺序保持，最终自建 Keychain不在搜索列表中。私有解锁密码、部署、DB/Owner凭据、原始请求与秘密引用都不公开。真实录入时不得开启HAR、截取密码输入过程或记录请求正文。
 
@@ -20,7 +23,7 @@ Keychain 新建时权限为0644，现有严格存储入口正确拒绝并返回5
 
 请求预算是跨进程持久文件锁：发送前先持久预留次数与声明的最坏费用，锁保持到响应判定和账本落盘；崩溃不退款、不抢孤锁。HTTP失败、重定向、超时、越限和资格探针的异常响应停止后续请求；无自动重试、无跟随重定向。计数包含资格、搜索、生成和下载。限制为本轮正式端口范围，不是宿主防火墙，也不是 Provider 实际账单计量；费用预留必须先依据已核实定价设置，不能凭摘要字段保证价格正确。
 
-8个真实子进程竞争容量3时仅3次内存传输调用；真实SIGKILL发生在预留后，第二进程不传输、预留不回退、孤锁保留。另测试关闭、策略SHA变更、越权host/port、响应字节、超时、状态错误、六类正反响应，以及探针/实际Worker端口共享同一预算。[竞争](evidence/provider-offline-preparation/budget-concurrency-final-result.json)、[进程死亡](evidence/provider-offline-preparation/budget-crash-final-result.json)
+8个真实子进程竞争容量3时仅3次内存传输调用；真实SIGKILL发生在预留后，第二进程不传输、预留不回退、孤锁保留。另测试关闭、策略SHA变更、越权host/port、响应字节、超时、状态错误、六类正反响应，以及探针/实际Worker端口共享同一预算。竞争（历史附件已清理：`evidence/provider-offline-preparation/budget-concurrency-final-result.json`）、进程死亡（历史附件已清理：`evidence/provider-offline-preparation/budget-crash-final-result.json`）
 
 ## 待确认的在线清单
 
@@ -53,10 +56,10 @@ Keychain 新建时权限为0644，现有严格存储入口正确拒绝并返回5
 
 ## 离线结果、失败和保留门禁
 
-最终同范围默认5000ms全量105文件807/807；新增路径断言先红（25绿1红）再修复。前一轮806/806也保留。类型/最终构建通过，Node2通过1既有跳过；原生构建图无SDK/旧控制面，既有约587KB chunk告警保留。[原始日志](evidence/provider-offline-preparation/full-default-03.log)
+最终同范围默认5000ms全量105文件807/807；新增路径断言先红（25绿1红）再修复。前一轮806/806也保留。类型/最终构建通过，Node2通过1既有跳过；原生构建图无SDK/旧控制面，既有约587KB chunk告警保留。原始日志（历史附件已清理：`evidence/provider-offline-preparation/full-default-03.log`）
 
 保留全部本轮失败：初建tmp的EEXIST、预算测试规范路径别名、focused误纳入私有历史副本、Keychain0644导致503、Pexels精确路径红测；晚期误用不存在的typecheck命令、误读helper missing退出协议、一次遗漏历史副本排除项的全量（已仅停止该次进程树）、新测试mock参数类型错误也分别记录。更正的是驱动/类型或本轮路径，不调大超时、不删除断言、不以错误范围结果计通过。
 
 报告更新前逐项验证旧928公开/1378私有SHA全部一致，43无关文件及根PLAN保持，活动旧报告另存原文，旧索引私有快照保留。旧随访和门禁对象不改。模型首次30秒冷启动失败、120秒诊断不算验收、错误正文高分`.838`反例、T21当时740/745、历史5秒红测、旧Pexels预算耗尽和恢复资格清零继续保留。
 
-**只关闭本报告的离线装配/准备范围。** 五家实际在线完整链路、OpenAI缺Key、在线重绑资格、完整多能力Worker、新主机/OS冷启动/默认生产部署、任意正文错误检测、真实通知、容量/性能/切换回退等仍未验收。历史5秒稳定性、自然30分钟租约、指定环境真实WhisperX及当前主机默认入口的既有狭义结论不扩大。不提交、不推送、不进入E/F；SQL一致性建议继续暂缓。见[完整索引](evidence-index.json)。
+**只关闭本报告的离线装配/准备范围。** 五家实际在线完整链路、OpenAI缺Key、在线重绑资格、完整多能力Worker、新主机/OS冷启动/默认生产部署、任意正文错误检测、真实通知、容量/性能/切换回退等仍未验收。历史5秒稳定性、自然30分钟租约、指定环境真实WhisperX及当前主机默认入口的既有狭义结论不扩大。不提交、不推送、不进入E/F；SQL一致性建议继续暂缓。见完整索引（历史附件已清理：`evidence-index.json`）。

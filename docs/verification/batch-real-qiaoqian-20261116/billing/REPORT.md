@@ -1,5 +1,8 @@
 # 本次真实批量生产账务
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 生产单 `b53cfbbc-22ec-4bde-8791-c0d11b244748`。**已证实 MiniMax 现金余额下降 ¥8.32；豆包 TTS 尚未入账，完整生产单实际费用合计仍待结。逐任务实扣金额未取得，不用预留或单价估算补齐。**
 
 ## 真实账务值
@@ -27,7 +30,7 @@
 
 TTS 的 6 条本地任务均成功，但没有保存供应商 request ID／usage；当前实现生成 UUID 请求头后只解析音频，不保存计费回执（`src/worker/mediaProviders.ts`）。12 条本地 `actual_cost_cents` 和 Worker `actualCostCents` 均为 0，执行器中存在静态赋值（`src/worker/controlledMediaExecutor.ts:53`），**不作为账单或免费依据**。
 
-本地预留：视频 ¥11.09、TTS ¥1.49，总 ¥12.58。它们仅是提交时预留，不是实际花费。每次本地任务、供应商 ID、用量、预留及实扣未知状态均保留于 [12 次明细 CSV](per-generation-cost-ledger.csv) 和 [机器摘要](summary.json)。
+本地预留：视频 ¥11.09、TTS ¥1.49，总 ¥12.58。它们仅是提交时预留，不是实际花费。每次本地任务、供应商 ID、用量、预留及实扣未知状态均保留于 [12 次明细 CSV](per-generation-cost-ledger.csv) 和 机器摘要（历史附件已清理：`summary.json`）。
 
 ## 火山查询口径与结算
 
@@ -37,9 +40,9 @@ TTS 的 6 条本地任务均成功，但没有保存供应商 request ID／usage
 
 ## 全部证据
 
-- [调用前余额／七日汇总](baseline.json)、[调用后余额／七日汇总](final.json)。
-- [调用前计费项明细](baseline-detail.json)、[调用后明细](final-detail.json)、[整点后补查](final-post-hour-detail.json)。
-- [原 MiniMax 任务响应](minimax-task-receipts.json)：只删除媒体 URL 签名查询参数及认证字段，保留真实数字用量。
-- [本地任务和预留](task-cost-ledger.json)、[生成窗口任务数量](local-window-generation-counts.json)。
+- 调用前余额／七日汇总（历史附件已清理：`baseline.json`）、调用后余额／七日汇总（历史附件已清理：`final.json`）。
+- 调用前计费项明细（历史附件已清理：`baseline-detail.json`）、调用后明细（历史附件已清理：`final-detail.json`）、整点后补查（历史附件已清理：`final-post-hour-detail.json`）。
+- 原 MiniMax 任务响应（历史附件已清理：`minimax-task-receipts.json`）：只删除媒体 URL 签名查询参数及认证字段，保留真实数字用量。
+- 本地任务和预留（历史附件已清理：`task-cost-ledger.json`）、生成窗口任务数量（历史附件已清理：`local-window-generation-counts.json`）。
 
 本次账务工作仅只读 API 和数据库读取；没有测试连接、充值、生成、修改认证／配置或产品代码。首次 Keychain 锁定的失败亦记录于 BASELINE-STATUS.md；正常启动解锁后查询成功。不持续等待供应商结算，也未创建周期性查询。

@@ -1,5 +1,8 @@
 # T11：已审核成片复用及 C 最终验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-23 UTC，基线da20fc7，隔离优化工作树codex/local-first-stage-a。GitHub #117保持OPEN，依赖T04已本地交付并获既有Owner认可；本票本地完成不代表Owner事后审阅。没有操作被拒绝的Codex应用、生产、推送、合并或部署。
 
 ## 实现
@@ -12,7 +15,7 @@
 
 ## 真实验收
 
-[复用组](reuse-real.json)与[损坏重渲染组](corrupt-rerender-real.json)为两个独立合成Episode，分别经过现有serveEpisodeDispatch HTTP Owner校验→定向真实预构建WorkerCLI→实际领取/回写→真实OpenChatCut/FFmpeg视频与QC。测试注入定向CLI用于保护既有队列，未另启全局消费者；不是完整常驻调度器再验收或浏览器操作。
+复用组（历史附件已清理：`reuse-real.json`）与损坏重渲染组（历史附件已清理：`corrupt-rerender-real.json`）为两个独立合成Episode，分别经过现有serveEpisodeDispatch HTTP Owner校验→定向真实预构建WorkerCLI→实际领取/回写→真实OpenChatCut/FFmpeg视频与QC。测试注入定向CLI用于保护既有队列，未另启全局消费者；不是完整常驻调度器再验收或浏览器操作。
 
 - 复用组审核渲染5132ms，最终复用488ms，QC reused=true；最终视频与受审视频字节hash一致。
 - 损坏组审核渲染4456ms；故意损坏该新合成源视频后，最终重渲染3909ms，QC reused=false。原字节保留并恢复，审核包全行摘要不变。
@@ -22,9 +25,9 @@
 
 ## C 最终验证
 
-[默认5000ms完整回归](final-checks.txt)：77文件699项全过；Node2过/1既有本机n8n原生校验跳过；类型和Worker/编排准备检查退出0。[SQL](sql-final.json)25文件280条全过。[advisors](advisors.txt)退出0，仅三条既有RLS性能WARN，无新增安全错误。Standards/Spec终审均无剩余阻塞。
+默认5000ms完整回归（历史附件已清理：`final-checks.txt`）：77文件699项全过；Node2过/1既有本机n8n原生校验跳过；类型和Worker/编排准备检查退出0。SQL（历史附件已清理：`sql-final.json`）25文件280条全过。advisors（历史附件已清理：`advisors.txt`）退出0，仅三条既有RLS性能WARN，无新增安全错误。Standards/Spec终审均无剩余阻塞。
 
-[C最终完整v2备份](stage-c-backup.json)与[最新新空库恢复](stage-c-restore.json)：38表20379行，268项对象/Owner/ACL/defaultACL清单匹配，282媒体全部指纹复核。新库保留，未清空旧库。事务内真实更新验证T10版本触发器有效；明确新事件UUID验证T09入账触发器，领取ID只能来自领取前pending，历史非pending结果不变；浏览器无通知claim和最终复用RPC权限。管理schema只恢复真实结构及身份ID引用，未恢复Auth密码/会话或Vault，未验证恢复后登录。该C兼容恢复不是D纯PostgreSQL迁移证明。
+C最终完整v2备份（历史附件已清理：`stage-c-backup.json`）与最新新空库恢复（历史附件已清理：`stage-c-restore.json`）：38表20379行，268项对象/Owner/ACL/defaultACL清单匹配，282媒体全部指纹复核。新库保留，未清空旧库。事务内真实更新验证T10版本触发器有效；明确新事件UUID验证T09入账触发器，领取ID只能来自领取前pending，历史非pending结果不变；浏览器无通知claim和最终复用RPC权限。管理schema只恢复真实结构及身份ID引用，未恢复Auth密码/会话或Vault，未验证恢复后登录。该C兼容恢复不是D纯PostgreSQL迁移证明。
 
 保留失败：系统更新卸载测试媒体卷导致首轮Worker blocked；保留未挂载目录中新文件后重挂现有verified镜像，未放宽挂载检查。一次围栏字段写成task.attempt而非budget.attempt，准备构建类型失败，随后的旧Worker在领取前因无有效manifest退出；确认无执行后仅将该新测试夹具标blocked保留。SQL夹具失效原因缺失/列名错误已修正。初次试图为同审核包创建第二最终任务被唯一约束拒绝，约束保留，改用两独立Episode测试，恢复故障注入源视频。首次C恢复测试只看领取数量的证据不足，经复审补强并新库重跑。未用这些失败的部分结果冒充最终通过。
 

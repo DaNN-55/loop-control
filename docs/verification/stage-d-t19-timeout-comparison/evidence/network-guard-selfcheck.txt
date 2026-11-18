@@ -1,1 +1,0 @@
-{"httpRejectedBeforeNativeFetch":true,"socketRejectedBeforeNativeConnect":true,"noPacketsOrDnsRequired":true}

@@ -1,5 +1,8 @@
 # 第 5 项：工作树、日志与缓存的只读空间盘点
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 采集于 2026-11-12（Asia/Shanghai），任务目录沿用 2026-11-11。只读取目录索引、lstat、进程／打开句柄与必要 Git 元数据；不读取待盘点文件正文、不计算目标文件内容 hash。仅写本阶段报告、元数据证据与待审脚本。**删除 0、脚本执行 0（含 dry-run）、工作树移除 0、进程停止 0。**
 
 ## 结果
@@ -17,11 +20,11 @@ Codex 日志／会话仅合计统计：**2,101 个普通文件，逻辑大小 3,
 | `/Users/dan/Programs/loop-control`／`main`，upstream=`origin/main` | 暂存 0；未暂存 3；未跟踪 0。3 个 CSS 并行改动保留 | 排除 `.git` 与整个 `.loop-control` 后，普通文件逻辑 680,447,340 字节，分配 801,370,112 字节；日常 PID 81218 与其他项目相关 Node 工具 cwd 在此树 | review-first；日常主树，不能移除 |
 | `/Users/dan/.codex/worktrees/maintenance-20261111/loop-control`／`codex/maintenance-five-steps-20261111`，无 upstream | 暂存 0；未暂存 31；未跟踪 131。包含前项源码、测试、报告和证据，后续本报告会增加未跟踪文件 | 同口径逻辑 643,945,486 字节，分配 769,671,168 字节；本轮交付仍在使用。未发现 cwd 位于此树的 Node/npm/tsc/Vite/Vitest/tsx 进程 | review-first；未提交成果未发布，不能移除 |
 
-上述工作树总量是有限范围快照，不含共享 Git 对象库、运行时、SDK、数据库或媒体；未跟随也未计符号链接对象空间，不等同 `du` 整树口径。两处总量不作为可释放空间相加，APFS 共享 extent 也未做底层去重。没有登记可确认已退役的第三处工作树；不扫描其他项目或按目录名称猜测孤立 worktree。证据见 [worktree-inventory.txt](step5-evidence/worktree-inventory.txt)、[worktrees.json](step5-evidence/worktrees.json)、[remote-refs.json](step5-evidence/remote-refs.json)。
+上述工作树总量是有限范围快照，不含共享 Git 对象库、运行时、SDK、数据库或媒体；未跟随也未计符号链接对象空间，不等同 `du` 整树口径。两处总量不作为可释放空间相加，APFS 共享 extent 也未做底层去重。没有登记可确认已退役的第三处工作树；不扫描其他项目或按目录名称猜测孤立 worktree。证据见 worktree-inventory.txt（历史附件已清理：`step5-evidence/worktree-inventory.txt`）、worktrees.json（历史附件已清理：`step5-evidence/worktrees.json`）、remote-refs.json（历史附件已清理：`step5-evidence/remote-refs.json`）。
 
 ## Codex 日志的整体度量
 
-只对 `~/.codex/sessions`、`archived_sessions`、`log` 和 `history.jsonl` 做合计元数据遍历；没有读取正文、标题或项目归属，没有按月份／项目／会话拆分，也没有扫描凭据、状态数据库、记忆或其他 Codex 私有目录。合计使用跨这些根的同一 `(device,inode)` 集合去重，符号链接不跟随；本次没有重复 inode、符号链接或统计错误。详见 [codex-log-total.json](step5-evidence/codex-log-total.json)。
+只对 `~/.codex/sessions`、`archived_sessions`、`log` 和 `history.jsonl` 做合计元数据遍历；没有读取正文、标题或项目归属，没有按月份／项目／会话拆分，也没有扫描凭据、状态数据库、记忆或其他 Codex 私有目录。合计使用跨这些根的同一 `(device,inode)` 集合去重，符号链接不跟随；本次没有重复 inode、符号链接或统计错误。详见 codex-log-total.json（历史附件已清理：`step5-evidence/codex-log-total.json`）。
 
 这是 2026-11-12T00:19:25.692398+08:00 的活动日志大小快照；本聊天仍会产生新日志。年龄和体积不能证明日志已无接续／审计用途，且无法在不读取内容的前提下证明所有权和保留责任，因此没有生成任何日志删除命令。
 
@@ -40,7 +43,7 @@ Codex 日志／会话仅合计统计：**2,101 个普通文件，逻辑大小 3,
 | 两树 `node_modules` 整体 | 工作树统计已含 | 当前 24 项直接依赖有消费者（第 3 项已验证）；整套安装树不是无用缓存 | review-first；不纳入脚本 |
 | `.vite-temp`、主树 `.scratch` | 本次均空，分配 0 | 空目录没有可报告的实际空间收益 | 保留；不为凑数量加入删除目标 |
 
-工具职责沿用已验收的第 2、3、4 项记录，本阶段没有为确认归属重新打开源码或私有配置。候选大小与 lsof 结果见 [cache-candidates.json](step5-evidence/cache-candidates.json)，相关进程只保留本项目匹配项，见 [process-use.json](step5-evidence/process-use.json)。**单独的 lsof 零结果不是安全证明**；安全两项还需固定的再生职责、独立范围、无相关运行工具，以及执行时的快照复核。
+工具职责沿用已验收的第 2、3、4 项记录，本阶段没有为确认归属重新打开源码或私有配置。候选大小与 lsof 结果见 cache-candidates.json（历史附件已清理：`step5-evidence/cache-candidates.json`），相关进程只保留本项目匹配项，见 process-use.json（历史附件已清理：`step5-evidence/process-use.json`）。**单独的 lsof 零结果不是安全证明**；安全两项还需固定的再生职责、独立范围、无相关运行工具，以及执行时的快照复核。
 
 ## 待审脚本与验证
 
@@ -50,7 +53,7 @@ Codex 日志／会话仅合计统计：**2,101 个普通文件，逻辑大小 3,
 - 运行时核对固定仓库路径、目录身份、HEAD／分支、限定源码变更集合、node_modules 身份、全部缓存条目的 device／inode／mode／size／mtime、符号链接／特殊文件、相关构建工具进程与打开句柄。变化或可见性不足即拒绝，要求重新盘点。
 - Git 检查仅覆盖源码、脚本和构建配置，故主 Agent 更新 PLAN、总报告和本阶段证据不会必然使脚本失效。这里的 Git 状态集合不是对源码内容相等的证明；脚本只删除可再生缓存，不接触源码。
 - 两缓存之外没有可移除工作树。未来若另行批准移除工作树，应重新核对未提交／未推送／活动状态并使用 `git worktree remove`，不得用强制目录删除替代；本脚本没有此动作。
-- `bash -n` 与嵌入 Python 的 `ast.parse` 均通过，只证明语法；实际删除及资源竞态均未端到端验证，也不提供跨进程锁或原子性保证。详见 [script-validation.json](step5-evidence/script-validation.json)。没有运行主体或 dry-run，也没有为制造验证样本执行删除。
+- `bash -n` 与嵌入 Python 的 `ast.parse` 均通过，只证明语法；实际删除及资源竞态均未端到端验证，也不提供跨进程锁或原子性保证。详见 script-validation.json（历史附件已清理：`step5-evidence/script-validation.json`）。没有运行主体或 dry-run，也没有为制造验证样本执行删除。
 
 脚本内置元数据快照，无需读取外部 `/tmp` 文件。81,920 字节只是审计时的分配估计，APFS 共享、文件系统回收和后续变化可能使实际释放不同；日志、工作树、runtime release 和 review-first 项一律不计入安全收益。
 
@@ -65,7 +68,7 @@ Codex 日志／会话仅合计统计：**2,101 个普通文件，逻辑大小 3,
 
 ## 保护和覆盖边界
 
-两工作树共 22,288 个初始跟踪路径的 lstat 元数据（device／inode／mode／size／mtime）前后均未变化；只保存元数据，不读取内容或 hash。完整基线在 `/tmp/loop-maint-step5-20261111/protected-metadata-before.json`，轻量结果在 [protection-check.json](step5-evidence/protection-check.json)。元数据不变不是内容不可被保持时间戳地改写的形式化证明；本阶段命令没有对目标做任何写入。
+两工作树共 22,288 个初始跟踪路径的 lstat 元数据（device／inode／mode／size／mtime）前后均未变化；只保存元数据，不读取内容或 hash。完整基线在 `/tmp/loop-maint-step5-20261111/protected-metadata-before.json`，轻量结果在 protection-check.json（历史附件已清理：`step5-evidence/protection-check.json`）。元数据不变不是内容不可被保持时间戳地改写的形式化证明；本阶段命令没有对目标做任何写入。
 
 主树初始 3 处并行 CSS 修改保持；没有统计或进入 `.loop-control` 内的媒体、SDK、数据库、秘密和发布物载荷，只对已确认的 Vite 缓存做有限元数据计量、对 release 根做即时目录计数。共享 Git 对象库、其他项目／未登记目录和底层 APFS extent 未覆盖；未声称整机无其他可清理内容。
 

@@ -1,5 +1,8 @@
 # 第 11—13 项双轴审查
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 固定基线 `f7cc5190`，首审至 `fd109dc8`，复核至 `4e115024`。两名 fresh-context 只读 Agent，不修改、不运行测试。标准为 AGENTS.md、CONTEXT.md、ADR-0038/0039 与既有局部队列约定；按 code-review smell baseline 判断，项目约定优先。规格 SPEC.md，主 Agent 负责实际验收。
 
 ## Standards

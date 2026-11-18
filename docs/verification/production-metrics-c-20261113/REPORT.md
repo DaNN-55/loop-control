@@ -1,5 +1,8 @@
 # 第 14 项 C：代码与隔离验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-13。结论：D1–D10 的 C 阶段代码与隔离验收完成；日常未迁移、未启用。
 
 ## 交付位置与保护
@@ -25,11 +28,11 @@
 
 ## 验证证据
 
-- 默认回归：**295 个文件、2130 项通过**，见 [default-regression-final.log](default-regression-final.log)。随后新增 SQL 归因与集成夹具、可见质量标签及汇总原因分类，以最终定向及集成再次检查。
-- 最终定向：**6 个文件、33 项通过**，覆盖请求异常分类、默认关闭、采样、组件、读模型及 runtime wiring，见 [final-directed.log](final-directed.log)。
-- 最终真实隔离 PostgreSQL／HTTP／文件／Worker：**5 个文件、12 项通过**，见 [c-final-candidate.log](c-final-candidate.log)。1 项浏览器保持夹具在常规套件中按设计跳过，已单独启动并完成实际浏览器检查。
-- `npm run check`、Worker／backend 编译及 `runtime:prepare` 通过，见 [check-delivery.log](check-delivery.log)、[isolated-runtime-prepare-final.log](isolated-runtime-prepare-final.log)；`git diff --check` 通过。
-- 浏览器从真实隔离登录进入，验证新建选择中档、改为低档、明确保存、刷新重开仍为低档。检查 1440×1000 与 760×960，未发现新增字段溢出或遮挡，浏览器未记录脚本错误。截图：[新建](quality-create.png)、[保存重开](quality-saved-reopened.png)、[窄屏](quality-narrow.png)。
+- 默认回归：**295 个文件、2130 项通过**，见 default-regression-final.log（历史附件已清理：`default-regression-final.log`）。随后新增 SQL 归因与集成夹具、可见质量标签及汇总原因分类，以最终定向及集成再次检查。
+- 最终定向：**6 个文件、33 项通过**，覆盖请求异常分类、默认关闭、采样、组件、读模型及 runtime wiring，见 final-directed.log（历史附件已清理：`final-directed.log`）。
+- 最终真实隔离 PostgreSQL／HTTP／文件／Worker：**5 个文件、12 项通过**，见 c-final-candidate.log（历史附件已清理：`c-final-candidate.log`）。1 项浏览器保持夹具在常规套件中按设计跳过，已单独启动并完成实际浏览器检查。
+- `npm run check`、Worker／backend 编译及 `runtime:prepare` 通过，见 check-delivery.log（历史附件已清理：`check-delivery.log`）、isolated-runtime-prepare-final.log（历史附件已清理：`isolated-runtime-prepare-final.log`）；`git diff --check` 通过。
+- 浏览器从真实隔离登录进入，验证新建选择中档、改为低档、明确保存、刷新重开仍为低档。检查 1440×1000 与 760×960，未发现新增字段溢出或遮挡，浏览器未记录脚本错误。截图：新建（历史附件已清理：`quality-create.png`）、保存重开（历史附件已清理：`quality-saved-reopened.png`）、窄屏（历史附件已清理：`quality-narrow.png`）。
 
 测试数据库仅由版本化 SQL 建立，容器镜像固定、无网络、无宿主端口、数据为 tmpfs，未复制日常数据。Provider 使用受控替身和合成媒体，不代表在线供应商计费验证。真实交付使用实际 FFmpeg、OpenChatCut 和 Worker 子进程。
 

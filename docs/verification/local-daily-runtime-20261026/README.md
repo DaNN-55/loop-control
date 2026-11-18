@@ -1,5 +1,8 @@
 # 原界面与日常本地运行验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-10-26。当前 worktree：`/Users/dan/.codex/worktrees/local-first-optimization/loop-control`；分支 `codex/ad-closeout-implementation`，起点及结束 HEAD `40489c17aedca7a8c177dd40b3b72cae8fc2f782`。本次修改未暂存、提交、推送或合并。
 
 ## 结果
@@ -14,20 +17,20 @@ Supabase/n8n 服务不是日常主程序依赖。前端原生构建依赖图检�
 
 | 检查 | 结果与证据 |
 | --- | --- |
-| 类型与构建 | `npm run check`、本地后端 tsc、`npm run build` 通过；[检查状态](checks-result.json)、[构建日志](build.log) |
-| 完整回归 | 116 文件、937/937，通过默认 5000ms 预算；Node 2 通过、1 项既有可选 n8n 配置检查跳过；[原始日志](test.log) |
-| 实际 Owner HTTP | 4 目录视图及分页、旧成片/发布包、新账号与 Prompt/蓝图预检、新生产单/重命名/归档/恢复/主脚本导入通过；改密撤销其他会话，当前会话保留，密码最后恢复为日常初始化值；[结果](http-acceptance.json) |
-| 补齐原界面操作 | 音轨批注实际保存并验证幂等；跨生产单或无效音轨/审核包/QC issue 被拒绝，连接修复遵守网络策略；[结果](final-http-and-automation.json) |
-| 应用内运维 | 向日常持久队列插入本轮健康/备份检查作业，由正常应用实际领取并各执行一次；健康通过，完整备份核验 51 表/975 文件；未新增媒体或模型任务；[结果](final-http-and-automation.json) |
-| Chrome | 原 4 导航、抽屉和最终材料、独立设置表单、主题/侧栏、刷新及重启会话恢复；视频实际静音播放至 24.386 秒，1080×1920、46.848 秒；390×844 检查未出现页面级横向溢出；[观测](browser-runtime.json) |
-| Studio | 使用同一正式运行函数与日常 OpenChatCut，从已有冻结三镜头输入新建工作副本，实际显示 3 视频、3 音频与字幕时间线；不改数据库、不创建审批、不重新生成；[观测](browser-runtime.json)、[截图](studio.png) |
-| Python/模型 | 日常 Python 3.11 与独立模型缓存通过 OS 禁网探测，中文 wav2vec2 模型 ready；[结果](model-readiness.json) |
-| 正常启停 | `npm stop` 后 app/Studio 端口关闭，数据库与媒体保留；`npm start` 后会话、日常新数据、旧 Episode 和 39 产物、最终 MP4/manifest 指纹再读一致；应用 PID/worktree、端口及依赖图均检查；[结果](restart-readback.json) |
-| 来源保留 | 原来源库 51 表、29,060 行和 974 文件全部指纹匹配迁移前完整备份；历史公开证据无修改；[结果](source-preservation.json) |
+| 类型与构建 | `npm run check`、本地后端 tsc、`npm run build` 通过；检查状态（历史附件已清理：`checks-result.json`）、构建日志（历史附件已清理：`build.log`） |
+| 完整回归 | 116 文件、937/937，通过默认 5000ms 预算；Node 2 通过、1 项既有可选 n8n 配置检查跳过；原始日志（历史附件已清理：`test.log`） |
+| 实际 Owner HTTP | 4 目录视图及分页、旧成片/发布包、新账号与 Prompt/蓝图预检、新生产单/重命名/归档/恢复/主脚本导入通过；改密撤销其他会话，当前会话保留，密码最后恢复为日常初始化值；结果（历史附件已清理：`http-acceptance.json`） |
+| 补齐原界面操作 | 音轨批注实际保存并验证幂等；跨生产单或无效音轨/审核包/QC issue 被拒绝，连接修复遵守网络策略；结果（历史附件已清理：`final-http-and-automation.json`） |
+| 应用内运维 | 向日常持久队列插入本轮健康/备份检查作业，由正常应用实际领取并各执行一次；健康通过，完整备份核验 51 表/975 文件；未新增媒体或模型任务；结果（历史附件已清理：`final-http-and-automation.json`） |
+| Chrome | 原 4 导航、抽屉和最终材料、独立设置表单、主题/侧栏、刷新及重启会话恢复；视频实际静音播放至 24.386 秒，1080×1920、46.848 秒；390×844 检查未出现页面级横向溢出；观测（历史附件已清理：`browser-runtime.json`） |
+| Studio | 使用同一正式运行函数与日常 OpenChatCut，从已有冻结三镜头输入新建工作副本，实际显示 3 视频、3 音频与字幕时间线；不改数据库、不创建审批、不重新生成；观测（历史附件已清理：`browser-runtime.json`）、截图（历史附件已清理：`studio.png`） |
+| Python/模型 | 日常 Python 3.11 与独立模型缓存通过 OS 禁网探测，中文 wav2vec2 模型 ready；结果（历史附件已清理：`model-readiness.json`） |
+| 正常启停 | `npm stop` 后 app/Studio 端口关闭，数据库与媒体保留；`npm start` 后会话、日常新数据、旧 Episode 和 39 产物、最终 MP4/manifest 指纹再读一致；应用 PID/worktree、端口及依赖图均检查；结果（历史附件已清理：`restart-readback.json`） |
+| 来源保留 | 原来源库 51 表、29,060 行和 974 文件全部指纹匹配迁移前完整备份；历史公开证据无修改；结果（历史附件已清理：`source-preservation.json`） |
 
 最终视频为 136,047,301 字节，SHA-256 `6d126321a3939a379037047ef67d0b8f56187613f6541d09b5381f389fd291d4`；发布包 manifest 为 1,225 字节，SHA-256 `696e864471f61e40ac42a739e72987fa837cabac92248ef7a9408a79f914c6a0`。此次检查读取已有完整生产产物，没有重新跑一次在线生成。
 
-![日常主程序](main.png)
+日常主程序（历史附件已清理：`main.png`）
 
 ## 边界及修正记录
 

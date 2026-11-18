@@ -1,5 +1,8 @@
 # 四家 Provider 同配置复测
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 Owner 本轮明确授权：沿用之前配置再测试一次，仍不可用就记录原因、跳过完整测试并关闭对应 Issue，之后执行 #149。本次未修改业务源码、注册连接、凭据、模型或端点。
 
 | Issue / Provider | 本轮结果 | 真实请求数 | 处理结论 |
@@ -23,4 +26,4 @@ Google 和 Freesound 的连接 ID、版本 ID 与 immutable secret reference 均
 
 这些关闭属于 **Owner 接受的范围豁免**，不是服务恢复、真实媒体闭环通过或外部能力就绪。四票原始验收清单、历史失败、旧账本以及旧报告中的开放门禁快照均保留，由新关票说明解释状态变化。
 
-[本轮汇总](v2-provider-retry-results.json) · [Google](google_tts-retry-result.json) · [Freesound](freesound-retry-result.json) · [Cloudflare](cloudflare-retry-result.json) · [OpenAI](openai-retry-result.json) · [Keychain 恢复](keychain-restored-result.json)
+本轮汇总（历史附件已清理：`v2-provider-retry-results.json`） · Google（历史附件已清理：`google_tts-retry-result.json`） · Freesound（历史附件已清理：`freesound-retry-result.json`） · Cloudflare（历史附件已清理：`cloudflare-retry-result.json`） · OpenAI（历史附件已清理：`openai-retry-result.json`） · Keychain 恢复（历史附件已清理：`keychain-restored-result.json`）

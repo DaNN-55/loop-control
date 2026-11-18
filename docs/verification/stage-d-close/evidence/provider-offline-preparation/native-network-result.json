@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "modules": 1860,
-  "sdkPresent": false,
-  "legacyControlPlanePresent": false,
-  "finalFullWorkerInstallations": 110,
-  "blockedRemoteSocketAttempts": 0
-}

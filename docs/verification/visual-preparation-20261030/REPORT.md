@@ -1,5 +1,8 @@
 # 图片与视频统一准备验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-10-30。范围：素材准备页的图片／视频操作、图片生成任务、首帧联动、候选采用和剪辑入口检查。
 
 ## 实现
@@ -39,12 +42,12 @@
 
 ## 截图
 
-![正式页面素材匹配](/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/daily-materials.jpg)
+正式页面素材匹配（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/daily-materials.jpg`）
 
-![隔离页面图片轮播](/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/image-carousel-800.jpg)
+隔离页面图片轮播（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/image-carousel-800.jpg`）
 
-![窄窗素材准备](/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/image-carousel-390.jpg)
+窄窗素材准备（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/image-carousel-390.jpg`）
 
-![素材采用后进入真实剪辑器](/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/editor-after-adoption.jpg)
+素材采用后进入真实剪辑器（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/visual-preparation-20261030/evidence/editor-after-adoption.jpg`）
 
 日志和业务指纹见同目录 `logs/`、`evidence/`。本轮未提交或推送代码。

@@ -1,5 +1,8 @@
 # 当前制作链全面替换：实施进度与证据
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 开始：2026-11-13；更新：2026-11-15。状态：完整 A–G 源码与隔离验收已完成。依据[已批准规范](../../specs/current-workflow-replacement-20261113.md)与 ADR-0066。此记录持续承接全部四批范围，不以专项通过或新表存在作为整体完成。
 
 所有实现只在源码及专属隔离环境验证；未更新日常运行包、应用日常迁移、重启或启用采集，不提交、不推送。不调用视频 API，不发起真实付费生成，原有工作区改动与用户历史保持。
@@ -116,7 +119,7 @@
 
 新 `legacyMixedWorkspace` 使用与原生／HTML 接入共用的真实来源及文件窗口验证，再把确认镜头、主声音、字幕和镜头音效移到完整作品中的位置。插入未处理镜头不推进原文件内区间，原确认配乐 A 不被后来未采用的 B 替换；待确认选择中的全部可用 A／B 均为本地准备项，只有明确选择的结果进入混音。待处理来源离线时，保留原选择及问题，确认镜头继续可用。原请求在途／结果未知时，新外部提案被拒绝，本地候选仍可明确使用；已有当前、原生和 HTML 编辑的优先级保持。
 
-实际完成两种镜头顺序的 Owner 接入、原 TTS 身份／正文、SDK 编辑保存、应用重开和真实导出；原生／HTML 当前接续与当前制作、配乐、独立字幕／口播回归同时验证。最终固定 **J0pciK**：8 文件、**56 项集成通过，0 失败／跳过**；完整 `npm run check`、Worker／backend 编译通过。[最终结果](evidence-d-draft-mixed/d-mixed-reviewed-final-vitest.json) · [类型](evidence-d-draft-mixed/d-mixed-reviewed-final-types.log) · [汇总](evidence-d-draft-mixed/summary.json)
+实际完成两种镜头顺序的 Owner 接入、原 TTS 身份／正文、SDK 编辑保存、应用重开和真实导出；原生／HTML 当前接续与当前制作、配乐、独立字幕／口播回归同时验证。最终固定 **J0pciK**：8 文件、**56 项集成通过，0 失败／跳过**；完整 `npm run check`、Worker／backend 编译通过。最终结果（历史附件已清理：`evidence-d-draft-mixed/d-mixed-reviewed-final-vitest.json`） · 类型（历史附件已清理：`evidence-d-draft-mixed/d-mixed-reviewed-final-types.log`） · 汇总（历史附件已清理：`evidence-d-draft-mixed/summary.json`）
 
 中间失败完整保留：
 
@@ -126,9 +129,9 @@
 - 审查中的「整期 SFX」反例在真实库被原 23514 检查拒绝：旧合同只允许整期 BGM／镜头 SFX。没有放宽约束；删除推测性整期音效分支，所有音效必须映射可核验的确认镜头。Spec 候选关闭，不把非法夹具视为已存在的用户功能缺陷。
 - 初次完整回归 55 过／1 夹具失败，修正后重新完成整轮 56 项；未把先前整轮伪改成通过。最早一次完整类型检查因新增未用类型导入停止，删除该未用导入后通过。
 
-Standards 与 Spec 对 WOMyG1→J0pciK 的 16 源文件差异独立只读复核，最终均 **0 开放发现**。[审查记录](evidence-d-draft-mixed/review.json) · [固定差异](evidence-d-draft-mixed/reviewed.diff)
+Standards 与 Spec 对 WOMyG1→J0pciK 的 16 源文件差异独立只读复核，最终均 **0 开放发现**。审查记录（历史附件已清理：`evidence-d-draft-mixed/review.json`） · [固定差异](evidence-d-draft-mixed/reviewed.diff)
 
-1,408 个原源码／SQL／脚本／公共及入口文件与最终副本逐字节一致；SQL 与 197 上轮版本保持。HEAD、物理暂存索引和无关文件保持。最新日常只读核对仍为 185、采集关闭、事件 0，整库、角色／序列／目录／权限、冻结旧库元数据及应用／部署配置与上次一致，没有日常迁移、部署或重启。12 次隔离运行中 1 次在建库前因类型检查终止，其余自有数据库容器均已移除。[来源核对](evidence-d-draft-mixed/source-check.json) · [日常保持](evidence-d-draft-mixed/daily-unchanged.json) · [运行清单](evidence-d-draft-mixed/run-inventory.json)
+1,408 个原源码／SQL／脚本／公共及入口文件与最终副本逐字节一致；SQL 与 197 上轮版本保持。HEAD、物理暂存索引和无关文件保持。最新日常只读核对仍为 185、采集关闭、事件 0，整库、角色／序列／目录／权限、冻结旧库元数据及应用／部署配置与上次一致，没有日常迁移、部署或重启。12 次隔离运行中 1 次在建库前因类型检查终止，其余自有数据库容器均已移除。来源核对（历史附件已清理：`evidence-d-draft-mixed/source-check.json`） · 日常保持（历史附件已清理：`evidence-d-draft-mixed/daily-unchanged.json`） · 运行清单（历史附件已清理：`evidence-d-draft-mixed/run-inventory.json`）
 
 **仍未完成：**D 的原设置更广字段映射（增益／闪避／构图／字幕样式等）、实际 UI 来源选择，以及保存计划／新工作版本接入的完整备份＋文件／逐项／不同来源 Owner 恢复矩阵；现有复杂原声／跨窗口等无法无损映射的来源继续明确拒绝并保留原版。B1 最终矩阵、E1／E2、F1／F2 和最终 G 全部继续，不把本专项当作整个 D 或 A–G 完成。默认完整套件仍留到最终 G。未调用真实 Provider／视频 API，未修改共享 SDK，不提交、不推送。
 
@@ -160,7 +163,7 @@ Standards 与 Spec 对 WOMyG1→J0pciK 的 16 源文件差异独立只读复核�
 
 1379个src/scripts/db源与最终副本一致，相对NQOmFd只改9源文件。Standards初审/复核0项；Spec初审1项已闭环、最终0开放项。日常185整库/冻结/配置及采集关闭/事件0、HEAD/物理索引保持；196未应用日常，无日常prepare/部署/重启、真实付费API或提交/推送；自有集成及schema容器移除。
 
-[最终18项](evidence-d-plan-adoption/vitest.json) · [类型](evidence-d-plan-adoption/types.log) · [196升级／恢复及schema](evidence-d-plan-adoption/schema-verification.json) · [诊断](evidence-d-plan-adoption/d-plan-adoption-diagnosis.md) · [两轴](evidence-d-plan-adoption/review.md) · [源码保持](evidence-d-plan-adoption/source-unchanged.json) · [日常保持](evidence-d-plan-adoption/daily-unchanged.json)。
+[最终18项](evidence-d-plan-adoption/vitest.json) · 类型（历史附件已清理：`evidence-d-plan-adoption/types.log`） · 196升级／恢复及schema（历史附件已清理：`evidence-d-plan-adoption/schema-verification.json`） · [诊断](evidence-d-plan-adoption/d-plan-adoption-diagnosis.md) · [两轴](evidence-d-plan-adoption/review.md) · 源码保持（历史附件已清理：`evidence-d-plan-adoption/source-unchanged.json`） · 日常保持（历史附件已清理：`evidence-d-plan-adoption/daily-unchanged.json`）。
 
 D仍未整体完成：更广原设置映射（增益/ducking/样式等）、无SDK的旧人工绑定、实际界面入口、新保存计划格式的完整文件/逐项/跨来源Owner恢复矩阵仍待继续。此次整库恢复是非空195升级后的候选库，不冒充新plan-import作品的全部媒体恢复。最终B1矩阵、E1/E2、F/G保持原完整范围；旧手动入口和旧SQL尚未据此删除，默认全套留到最终G。
 
@@ -174,7 +177,7 @@ D仍未整体完成：更广原设置映射（增益/ducking/样式等）、无S
 
 最终NQOmFd：**3文件9集成一次全过，全npm check通过**；覆盖v3后计划/hash不变、跨Owner拒绝、重复只读、原启用不复活、文件篡改实际拒绝，既有旧单显式接入/历史与归档栅栏、受管存储/系列复用/中断恢复保持。1375源与最终副本一致，相对T1smBE仅3源文件变化；两轴无开放发现，日常整库/冻结/配置及采集关闭/事件0、HEAD/物理索引保持。自有容器移除，无日常迁移/部署/启用或提交/推送。
 
-[最终结果](evidence-d-plan-read/vitest.json) · [类型](evidence-d-plan-read/types.log) · [诊断及原基线](evidence-d-plan-read/diagnosis.md) · [两轴](evidence-d-plan-read/review.md) · [源码](evidence-d-plan-read/source-unchanged.json) · [日常](evidence-d-plan-read/daily-unchanged.json)。
+[最终结果](evidence-d-plan-read/vitest.json) · 类型（历史附件已清理：`evidence-d-plan-read/types.log`） · [诊断及原基线](evidence-d-plan-read/diagnosis.md) · [两轴](evidence-d-plan-read/review.md) · 源码（历史附件已清理：`evidence-d-plan-read/source-unchanged.json`） · 日常（历史附件已清理：`evidence-d-plan-read/daily-unchanged.json`）。
 
 这只是D只读切片：仍需将保存计划的原设置/绑定/实际文件明确接入当前工作区，保留当前编辑、未采用候选和未知请求；旧命令及旧查询路由在满足D条件后的E1成组退役。未宣称整个D、最终B1或E–G完成，未运行最终默认全套。
 
@@ -188,7 +191,7 @@ D仍未整体完成：更广原设置映射（增益/ducking/样式等）、无S
 
 最终固定T1smBE：**全npm check、5文件21项单元／原包、3文件5项实际集成通过，均无skip**；包括实际backend与idle Worker、正式制作交付、原生SQLite接入、源离线、真实native完整备份→新DB/root→新进程编辑／重开／导出。1374源码与该副本一致，相对D门槛起点仅5源文件变化。两轴复核无开放发现；日常整库／冻结／配置保持，数值迁移185，采集关闭／事件0，HEAD及物理索引保持。无日常prepare／迁移／重启、真实付费API、提交／推送。
 
-[最终集成](evidence-d-runtime/vitest.json) · [单元／原包](evidence-d-runtime/units.json) · [类型](evidence-d-runtime/types.log) · [两次旧假设诊断](evidence-d-runtime/d-runtime-formal-diagnosis.md) · [两轴](evidence-d-runtime/review.md) · [源码保持](evidence-d-runtime/source-unchanged.json) · [日常保持](evidence-d-runtime/daily-unchanged.json)。
+[最终集成](evidence-d-runtime/vitest.json) · 单元／原包（历史附件已清理：`evidence-d-runtime/units.json`） · 类型（历史附件已清理：`evidence-d-runtime/types.log`） · [两次旧假设诊断](evidence-d-runtime/d-runtime-formal-diagnosis.md) · [两轴](evidence-d-runtime/review.md) · 源码保持（历史附件已清理：`evidence-d-runtime/source-unchanged.json`） · 日常保持（历史附件已清理：`evidence-d-runtime/daily-unchanged.json`）。
 
 D尚未完成：旧v2保存计划只读和必要手动能力显式迁入当前工作区，未采用候选与未知／在途请求保留；E1/E2、F/G及B1最终矩阵完整保留。本节不将门槛专项或先前隔离评估当作全目标完成。
 
@@ -202,7 +205,7 @@ D尚未完成：旧v2保存计划只读和必要手动能力显式迁入当前�
 
 最终固定副本Y966Oc/source：**5文件30集成一次全过，3文件21单元通过**；包含真实旧HTML／原生源接入、SQLite版本／离线源、整库及文件native备份、新DB与目录、新进程登录编辑重开导出，以及独立制作图／主脚本关联／冲突／归属／回滚／在途任务不复活的历史投影。1372源码与最终副本一致，相对D起点仅5个源文件变化。两轴审查一项Spec问题已闭环、无开放项，HEAD／物理索引及日常整库／冻结／配置、采集关闭／事件0保持；未运行最终默认全套，没有新SQL迁移、日常应用或提交／推送。
 
-[同批集成](evidence-d-backup/vitest.json) · [格式与历史单元](evidence-d-backup/d-backup-history-final-units.json) · [真实恢复结果](evidence-d-backup/restored-native-result.json) · [诊断](evidence-d-backup/d-backup-parser-diagnosis.md) · [两轴](evidence-d-backup/review.md) · [源码](evidence-d-backup/d-backup-history-unchanged.json) · [日常保持](evidence-d-backup/daily-unchanged.json)。D仍未完成：旧计划必要操作迁移、只读策略和明确最低运行版本门槛尚待实施，不提前删除E1/E2合同。
+[同批集成](evidence-d-backup/vitest.json) · 格式与历史单元（历史附件已清理：`evidence-d-backup/d-backup-history-final-units.json`） · 真实恢复结果（历史附件已清理：`evidence-d-backup/restored-native-result.json`） · [诊断](evidence-d-backup/d-backup-parser-diagnosis.md) · [两轴](evidence-d-backup/review.md) · 源码（历史附件已清理：`evidence-d-backup/d-backup-history-unchanged.json`） · 日常保持（历史附件已清理：`evidence-d-backup/daily-unchanged.json`）。D仍未完成：旧计划必要操作迁移、只读策略和明确最低运行版本门槛尚待实施，不提前删除E1/E2合同。
 
 ## C2 声音补充：环境声、未知状态与保存开销
 
@@ -216,7 +219,7 @@ D尚未完成：旧v2保存计划只读和必要手动能力显式迁入当前�
 
 最终固定副本98Mrr3/source：**2文件14关联集成一次全过，2文件8单元及类型通过**；其中6项为新增环境声／缓存／卡住探测／三类未知矩阵，另8项为原声音关联回归。1371源文件与固定副本一致，相对195导出切片仅2个源文件变化。两轴审查无开放发现；SQL未变化，不重复以旧schema矩阵冒充新测试。日常整库／冻结／配置、采集关闭／事件0及185迁移保持，HEAD／物理索引保持；禁网测试容器已移除，无付费／视频API、日常应用、提交或推送。
 
-[最终集成](evidence-sound-scope/vitest.json) · [频谱与角色](evidence-sound-scope/ambience-observation.json) · [保存测量](evidence-sound-scope/sound-save-observations.json) · [慢探测](evidence-sound-scope/slow-observation.json) · [两轴审查](evidence-sound-scope/review.md) · [源码保持](evidence-sound-scope/c2-sound-scope-unchanged.json)。C2常规功能与补充矩阵收口，B1最终新旧矩阵、D–F和最终G完整目标仍继续，不标整体完成。
+[最终集成](evidence-sound-scope/vitest.json) · 频谱与角色（历史附件已清理：`evidence-sound-scope/ambience-observation.json`） · 保存测量（历史附件已清理：`evidence-sound-scope/sound-save-observations.json`） · 慢探测（历史附件已清理：`evidence-sound-scope/slow-observation.json`） · [两轴审查](evidence-sound-scope/review.md) · 源码保持（历史附件已清理：`evidence-sound-scope/c2-sound-scope-unchanged.json`）。C2常规功能与补充矩阵收口，B1最终新旧矩阵、D–F和最终G完整目标仍继续，不标整体完成。
 
 ## C2 本机导出切片：生命周期、并发与独立资源
 
@@ -230,7 +233,7 @@ D尚未完成：旧v2保存计划只读和必要手动能力显式迁入当前�
 
 最终固定副本 `loop-story-e2e-LOTVI5/source`：**5文件27集成一次全过，5文件36单元通过，类型通过，schema矩阵580个安全对象对账通过**。含真实同Owner两单同时进入执行、满业务池独立采样、失败／拒绝／统计写入失败事务回滚、停用／重开／覆盖切换、资源幂等与Owner／角色、非空194→195、注入失败及整库恢复。1370源码与最终副本完全一致，本切片仅14个源文件变化；日常整库／冻结元数据／app及deployment保持，采集关闭、事件0，HEAD／物理索引保持。仅停止两次旧自有实验遗留的4个包装器／渲染进程，未停止共享SDK或日常服务。
 
-[协议说明](../../analytics/production-local-export-v1.md) · [最终集成](evidence-195/vitest.json) · [单元](evidence-195/c2-export-units-final.json) · [schema](evidence-195/c2-export-schema-final.log) · [两轴审查](evidence-195/review.md) · [源码保持](evidence-195/c2-export-source-unchanged.json) · [日常保持](evidence-195/c2-export-daily-unchanged.json)。
+[协议说明](../../analytics/production-local-export-v1.md) · [最终集成](evidence-195/vitest.json) · 单元（历史附件已清理：`evidence-195/c2-export-units-final.json`） · schema（历史附件已清理：`evidence-195/c2-export-schema-final.log`） · [两轴审查](evidence-195/review.md) · 源码保持（历史附件已清理：`evidence-195/c2-export-source-unchanged.json`） · 日常保持（历史附件已清理：`evidence-195/c2-export-daily-unchanged.json`）。
 
 本切片通过不代表完整C2／B1／D–G已完成。声音复杂矩阵和保存成本、全部历史格式／旧执行门槛、旧入口退役及命名、最终完整默认／UI／恢复／故障矩阵仍按原规范推进。棋盘格仍为另列建议，本轮未擅自修改共享SDK。
 
@@ -335,7 +338,7 @@ Standards／Spec各发现两项：旧排版子包无草稿时漏父输入；已�
 
 相对192固定点只修改4个源码／测试文件：新增production-history模块、新历史集成测试、既有project-history接入，以及Audio测试夹具支持复用既有环境并保留外部关闭责任。1354个源码／SQL／脚本与最终固定副本一致；未新增正式迁移。日常整库／冻结库元数据／app／deployment与192只读快照完全一致，仍185、采集关闭／事件0；HEAD／暂存保持。
 
-证据见 [evidence-history](evidence-history/)，包含最终JSON、最初红灯、两轴复核、源码差异和 [恢复样例](evidence-history/history-production/restored-production.mp4)。最终源码固定为 `/private/tmp/loop-story-e2e-exX4Q9/source`；本轮精简隔离runner复用本轮自有SDK，不反复复制；4份旧SDK经完整文件／链接指纹一致后去重，192规范SDK及全部源码固定点、初始基线／原包／日志保留。
+证据见 [evidence-history](evidence-history/)，包含最终JSON、最初红灯、两轴复核、源码差异和 恢复样例（历史附件已清理：`evidence-history/history-production/restored-production.mp4`）。最终源码固定为 `/private/tmp/loop-story-e2e-exX4Q9/source`；本轮精简隔离runner复用本轮自有SDK，不反复复制；4份旧SDK经完整文件／链接指纹一致后去重，192规范SDK及全部源码固定点、初始基线／原包／日志保留。
 
 本阶段证明当前已知格式的真实制作图恢复，**不代表旧版私有备份、原始Owner与导入Owner不同、全部26表非空、旧工程全部接入已完成**。下一步先补缺canonical基准字段的旧私有备份及原始Owner关系的受控接入／验证，再继续B2默认入口、C～F和最终G。原始历史数据不删，不放宽保护，未应用日常、部署、重启、启用采集、提交或推送。
 
@@ -449,7 +452,7 @@ SQL 回填只确认数据库来源关系，不证明媒体文件仍在。当前�
 
 本阶段原文见 [evidence-188](evidence-188/)。本轮后续只评估的当前源码复核又完成静态新单与 13 项埋点联验，合计 17 项通过、1 浏览器挂起夹具未运行，见[最新隔离评估](../production-replacement-current-assessment-20261113/REPORT.md)；两次范围重叠，不相加。
 
-188 各次执行及最新评估的 22 个自有 E2E 根目录均核对完成回执、容器已移除且无活动测试进程，清理 44 份临时源码／SDK 副本；原测试证据、初始完整基线、过渡起点和兼容原包保留。[清理回执](evidence-188/cleanup.json)。
+188 各次执行及最新评估的 22 个自有 E2E 根目录均核对完成回执、容器已移除且无活动测试进程，清理 44 份临时源码／SDK 副本；原测试证据、初始完整基线、过渡起点和兼容原包保留。清理回执（历史附件已清理：`evidence-188/cleanup.json`）。
 
 B1 仍未完成：默认准备继续创建 `storyboard/v1` 旧审核包；当前口播／字幕仍读取旧草稿，任务回执与逐项恢复尚须完整迁移。新模型存在、旧基准回填和部分控制器通过，不能替代「新单不再写旧模型」的验收。
 

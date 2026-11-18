@@ -1,5 +1,8 @@
 # 第 3 项：依赖审查
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 任务开始于 2026-11-11，本阶段证据采集于 2026-11-12（Asia/Shanghai），目录沿用任务日期。沿用隔离分支 `codex/maintenance-five-steps-20261111`，在前两项已验收的未提交成果上检查。只新增本阶段报告和证据；没有改源码、依赖清单、锁文件、安装树或前两项成果，没有暂存、提交、推送、合并或操作日常服务。
 
 ## 结论与实际收益
@@ -15,9 +18,9 @@
 
 按 Git 跟踪清单与当前 `src / scripts` 新文件检查活跃包清单，只有 `package.json`、`package-lock.json`；历史 `publish_package.json` 是业务交付包，不是 npm 清单。没有把独立安装的 OpenChatCut SDK、Python／WhisperX 环境当成本仓库 workspace，也没有读取或改变它们的依赖树。`scripts/whisperx-align.py` 明确由环境管理员提供 `whisperx / torch`；当前仓库没有活跃的 pip 安装清单，历史验收的 requirements 留作证据。
 
-扫描 1093 个源码、脚本、CSS 和配置文件的包标识符、子路径、显式 `node_modules` 路径及相关框架配置；人工检查真实入口、npm scripts、Vite／Vitest 配置、Dan UI 来源清单、CSS 插件和上游 `cx`。完整引用位置见 [dependency-references.json](step3-evidence/dependency-references.json)，包版本与扫描范围见 [manifest-summary.json](step3-evidence/manifest-summary.json)。引用数包含测试及夹具，只用作定位线索；下表给出保留所依据的实际职责。
+扫描 1093 个源码、脚本、CSS 和配置文件的包标识符、子路径、显式 `node_modules` 路径及相关框架配置；人工检查真实入口、npm scripts、Vite／Vitest 配置、Dan UI 来源清单、CSS 插件和上游 `cx`。完整引用位置见 dependency-references.json（历史附件已清理：`step3-evidence/dependency-references.json`），包版本与扫描范围见 manifest-summary.json（历史附件已清理：`step3-evidence/manifest-summary.json`）。引用数包含测试及夹具，只用作定位线索；下表给出保留所依据的实际职责。
 
-类型依赖另通过现有 TypeScript API 解析四份 tsconfig 并创建只读 Program，记录编译图实际加载的声明文件，没有 emit。`@types/node` 在四份配置均加载；`@types/pg` 在后端／Worker／前端类型图加载；`@types/react / react-dom` 在应用与 Vite 类型图加载。见 [type-resolution.json](step3-evidence/type-resolution.json)。
+类型依赖另通过现有 TypeScript API 解析四份 tsconfig 并创建只读 Program，记录编译图实际加载的声明文件，没有 emit。`@types/node` 在四份配置均加载；`@types/pg` 在后端／Worker／前端类型图加载；`@types/react / react-dom` 在应用与 Vite 类型图加载。见 type-resolution.json（历史附件已清理：`step3-evidence/type-resolution.json`）。
 
 同时读取 ADR-0009、Dan UI `README.md / UPSTREAM.json`：当前本机控制台与共享控件仍是正式入口；不能按目录名称或单次实例数量把控件基础设施视为已退役功能。
 
@@ -81,12 +84,12 @@ Node `v24.20.0`，npm `12.2.1`。本轮没有重新安装或 prune，以同一�
 | 分配字节（唯一 inode 的 stat_blocks × 512） | 279494656 | 279494656 | 0 |
 | `du -sk node_modules` | 272944 KiB | 272944 KiB | 0 |
 
-306 个锁条目包含其他平台的 optional 包，不能描述为本机实际安装了 306 个包。分配字节约 266.55 MiB，普通文件逻辑字节约 174.71 MiB；口径不同，不相减当作可回收空间。此度量含当前安装目录中的编译缓存，不是下载压缩包大小，也不是浏览器产物大小。详见 [install-comparison.json](step3-evidence/install-comparison.json)、[install-before.json](step3-evidence/install-before.json)、[install-after.json](step3-evidence/install-after.json) 和 `du-before / du-after`。
+306 个锁条目包含其他平台的 optional 包，不能描述为本机实际安装了 306 个包。分配字节约 266.55 MiB，普通文件逻辑字节约 174.71 MiB；口径不同，不相减当作可回收空间。此度量含当前安装目录中的编译缓存，不是下载压缩包大小，也不是浏览器产物大小。详见 install-comparison.json（历史附件已清理：`step3-evidence/install-comparison.json`）、install-before.json（历史附件已清理：`step3-evidence/install-before.json`）、install-after.json（历史附件已清理：`step3-evidence/install-after.json`） 和 `du-before / du-after`。
 
 ## 检查结果与边界
 
 - `npm ls --all --json` 前后均成功，安装依赖图完全相同；未报告 missing／invalid 问题，结果分别保存在 `npm-ls-before.json / npm-ls-after.json`。
-- npm manifest、锁文件 SHA-256 前后一致；审查开始时记录的 4498 个受保护源码／配置／证据文件内容未变，既有 Git 差异保留。见 [protection-check.json](step3-evidence/protection-check.json)。
+- npm manifest、锁文件 SHA-256 前后一致；审查开始时记录的 4498 个受保护源码／配置／证据文件内容未变，既有 Git 差异保留。见 protection-check.json（历史附件已清理：`step3-evidence/protection-check.json`）。
 - 只读 TypeScript 解析证实类型包实际进入编译图；它不是本轮重新执行类型检查或声明所有测试通过。
 - 安装比较辅助 Python 命令首轮因 stdin 非 UTF-8 文本未执行成功，改为 ASCII 辅助代码后完成；没有改产品或依赖，也没有把该次失败算作验证通过。初次搜索还包含不存在的 `.github`／猜测的数据库文件路径，已改用真实入口与跟踪清单，没有以这些无匹配结果判依赖无用。
 - 本阶段没有源码／依赖变更，因此未重复前项已通过的测试、构建或真实集成，也未运行 `ui:build` 改写生成 CSS。前项测试结果保持原有时间点与范围，本报告不把它们改称本阶段重新通过。

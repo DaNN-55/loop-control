@@ -1,5 +1,8 @@
 # 批准的旧模块退役与分批本地提交
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-12。用户明确批准决定清单1–4退役和14分批本地提交，其余暂缓；不合并、不推送。所有成果沿用隔离分支 `codex/maintenance-five-steps-20261111`。本记录与维护证据由第7个文档提交保存；其提交号以本文件所属Git提交为准，不预填自身SHA。
 
 ## 退役与逐项主审
@@ -13,7 +16,7 @@
 
 4项由执行子Agent严格按顺序处理，每项完成后停下，由主Agent亲读检查结果、核对完整删除差异与保护快照后，再派发下一项。共删8文件295行，其中实现190行、专属测试105行。没有新增替代实现，没有修改当前生产输入边界、历史任务、冻结快照、SQL、迁移或实际素材。
 
-删除前4份专属测试全部通过，共10项。删除这些测试是用户明确退役旧合同的决定，不是为掩盖失败；当前正式路径的对应回归仍保留。当前src/scripts及入口配置对旧模块路径和特有导出名称搜索无剩余引用，见 [remaining-consumers.json](evidence/remaining-consumers.json)。历史验收文档中的原引用保留为时点证据。
+删除前4份专属测试全部通过，共10项。删除这些测试是用户明确退役旧合同的决定，不是为掩盖失败；当前正式路径的对应回归仍保留。当前src/scripts及入口配置对旧模块路径和特有导出名称搜索无剩余引用，见 remaining-consumers.json（历史附件已清理：`evidence/remaining-consumers.json`）。历史验收文档中的原引用保留为时点证据。
 
 ## 最终验证
 
@@ -21,7 +24,7 @@
 
 测试文件比前轮少4个，测试用例比退役前当前源码应有的2122项少10项，正是本次明确退役的旧合同。四轮定向覆盖有交叉，不相加当全量结果。保留已有构建大chunk提示及测试act/media stderr，没有放宽断言。
 
-原始日志见 [evidence](evidence/final-test.log)：`legacy-baseline.log`、`item1–4-tests/build/protection`、`final-prepare.log` 和 `final-test.log`。每项原件与完整保护基线在 `/tmp/loop-retirement-20261112/`，Git `aa404667` 也可恢复。主Agent独立检查1149受保护源/配置/ADR：仅8批准文件删除，其余1141份不变；主工作区3个并行CSS内容指纹不变。
+原始日志见 evidence（历史附件已清理：`evidence/final-test.log`）：`legacy-baseline.log`、`item1–4-tests/build/protection`、`final-prepare.log` 和 `final-test.log`。每项原件与完整保护基线在 `/tmp/loop-retirement-20261112/`，Git `aa404667` 也可恢复。主Agent独立检查1149受保护源/配置/ADR：仅8批准文件删除，其余1141份不变；主工作区3个并行CSS内容指纹不变。
 
 ## 本地提交
 
@@ -37,7 +40,7 @@
 | 06 | `991ab681790f` | refactor: retire legacy manual checklist contract |
 | 07 | 本记录所属提交 | 维护计划、审计证据、批准退役与本地交付记录 |
 
-完整路径与源码提交回执见 [commit-plan.json](commit-plan.json) 和 [source-commits.json](source-commits.json)。前轮已验收的死声明清理和6组等价归并分别成批，4项本次退役分别成批，文档另批；没有把主工作区并行CSS纳入隔离提交。所有源码提交均保持已验收工作文件字节不变，不因提交元数据变化重复测试。
+完整路径与源码提交回执见 commit-plan.json（历史附件已清理：`commit-plan.json`） 和 source-commits.json（历史附件已清理：`source-commits.json`）。前轮已验收的死声明清理和6组等价归并分别成批，4项本次退役分别成批，文档另批；没有把主工作区并行CSS纳入隔离提交。所有源码提交均保持已验收工作文件字节不变，不因提交元数据变化重复测试。
 
 ## 暂缓与交付边界
 

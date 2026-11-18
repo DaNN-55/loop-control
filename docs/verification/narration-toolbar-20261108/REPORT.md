@@ -1,5 +1,8 @@
 # 口播工具栏与字幕编辑提示
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 2026-11-08。沿用 Dan UI 和画面生成工具栏的轻量视觉，仅修改 WorkspaceNarrationToolbar.tsx、WorkspaceSpeechSample.tsx、WorkspaceNarrationCaptions.tsx、workspace-narration-settings.css 和 PLAN.md。
 
 - 保存设置继续保存本期后续生成的模型、音色与语速，不生成音频或改动历史音频；扩充悬停说明。

@@ -1,20 +1,23 @@
 # 第 2 项：重复实现审查与归并
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-11。工作树与分支沿用第 1 项：`codex/maintenance-five-steps-20261111`；HEAD 为 `aa404667`，在第 1 项已验收的未提交改动上继续。没有暂存、提交、推送、合并，没有改主工作区、日常服务、日常数据库与媒体或 Keychain。
 
 ## 结果
 
 完成 6 组等价归并，涉及 27 个产品源码文件（含 1 个新模块）；产品源码 75 行删除、59 行新增，净减少 16 行。新增共享模块 `src/worker/fileSha256.ts` 为 8 行，其余共享实现放在已有责任模块。4 个测试文件净增加 113 行；测试和证据不计入代码节省数字。没有以减少行数改变业务规则、错误、身份、费用或持久化格式。
 
-各组定向检查通过；追加第 6 组后，顺序类型检查、前端构建、运行包准备再次通过。第 1–5 组结束时默认全量为 **292 文件／2116 项全部通过，0 失败、0 跳过**，并有真实回执 HTTP／隔离 PostgreSQL **2／2 通过**。第 6 组另有 **12 项摘要定向测试通过**，以及 **3 条选定的口播／配乐／字幕 HTTP／隔离 PostgreSQL／文件集成通过，另外 24 条被名称过滤而未执行**。未在第 6 组后重复无关默认全量，以上分次结果不叠加成一个虚构总数。所有改动与准确计量见 [step2.diff](step2-evidence/step2.diff)、[line-metrics.json](step2-evidence/line-metrics.json)。
+各组定向检查通过；追加第 6 组后，顺序类型检查、前端构建、运行包准备再次通过。第 1–5 组结束时默认全量为 **292 文件／2116 项全部通过，0 失败、0 跳过**，并有真实回执 HTTP／隔离 PostgreSQL **2／2 通过**。第 6 组另有 **12 项摘要定向测试通过**，以及 **3 条选定的口播／配乐／字幕 HTTP／隔离 PostgreSQL／文件集成通过，另外 24 条被名称过滤而未执行**。未在第 6 组后重复无关默认全量，以上分次结果不叠加成一个虚构总数。所有改动与准确计量见 [step2.diff](step2-evidence/step2.diff)、line-metrics.json（历史附件已清理：`step2-evidence/line-metrics.json`）。
 
 ## 覆盖与判断方式
 
-从 Git 跟踪清单分类 `src / scripts` 的 1012 个 TS／TSX／JS／MJS 文件。排除测试、夹具、明确保留的原型、Dan UI 上游和生成声明后，对 430 个第一方生产文件中的 4571 个函数／回调做 AST token 初筛。参数名称归一得到 111 组精确候选，其中 6 组实施；其余短回调、闭包、字段假阳性与边界候选逐组给出结论，见 [candidate-index.json](step2-evidence/candidate-index.json)。原始候选位置是修改前行号，不冒充当前行号。
+从 Git 跟踪清单分类 `src / scripts` 的 1012 个 TS／TSX／JS／MJS 文件。排除测试、夹具、明确保留的原型、Dan UI 上游和生成声明后，对 430 个第一方生产文件中的 4571 个函数／回调做 AST token 初筛。参数名称归一得到 111 组精确候选，其中 6 组实施；其余短回调、闭包、字段假阳性与边界候选逐组给出结论，见 candidate-index.json（历史附件已清理：`step2-evidence/candidate-index.json`）。原始候选位置是修改前行号，不冒充当前行号。
 
 精确 token 相同不构成等价证明：参数归一会误把对象 shorthand 的属性名也归一；闭包还依赖各自状态、调用时机、资源和副作用。91 组是短内联片段，保留局部 JSX 映射、筛选谓词、算术、catch 和状态回调，不新增大量微型包装函数。具名候选也逐项核对作用域、参数类型、返回值、错误、调用顺序和消费者。
 
-额外对具名函数做标识符抽象、保留字符串值的结构扫描，实际得到 2 组不少于 40 token 的近似体，见 [near-groups.json](step2-evidence/near-groups.json)。这不是通用相似度搜索对所有可能变体的完备证明。人工检查以下领域与近似实现，不声称逐行证明全仓不存在其他重复。
+额外对具名函数做标识符抽象、保留字符串值的结构扫描，实际得到 2 组不少于 40 token 的近似体，见 near-groups.json（历史附件已清理：`step2-evidence/near-groups.json`）。这不是通用相似度搜索对所有可能变体的完备证明。人工检查以下领域与近似实现，不声称逐行证明全仓不存在其他重复。
 
 | 领域 | 实际检查对象／入口 | 结论 |
 | --- | --- | --- |
@@ -39,11 +42,11 @@
 | S2-M05 | 在已有 `configurationCommands` 中增加 `canonicalFingerprint`，复用未改动的 canonical 排序函数 | 4 个原私有／导出 helper 与 5 处同算法内联迁移，共 9 个模块、21 个调用。productionHash 保留公开 alias；endpoint 是否加入回执输入、全部参数与业务流程未改。没有混用 raw JSON 或 localeCompare 排序摘要 | 3 文件 24 项定向；9 模块 AST 展开完全等价；原算法黄金向量 5 项；真实 HTTP／PG 2 项通过 |
 | S2-M06 | 在四者原本已依赖的 `configurationCommands` 导出独立 `jsonFingerprint`，明确保持 raw JSON 顺序，不新增模块或依赖 | studioCommands.identity、workspaceAudio.hash、workspaceCaptionsCommands.fingerprint、workspaceNarration.fingerprint 改为 import alias；同为 unknown 输入、同一原始 JSON.stringify→SHA-256 hex，7 处调用输入不变。其余字幕文本 SHA 保留原始字符串算法 | 新旧 5 模块展开全部等价；固定原字节 5 向量和 undefined／BigInt 异常通过；configurationCommands 当前 12 项；3 条选定真实 HTTP／PG／files 集成通过，24 条未选中 |
 
-准确消费者列表见 [consumer-migration.log](step2-evidence/consumer-migration.log)。未发现这些函数被 `.name / .length / .toString` 反射消费；不把导出名的复用描述成 HTTP、Worker 或宿主公共协议变更。
+准确消费者列表见 consumer-migration.log（历史附件已清理：`step2-evidence/consumer-migration.log`）。未发现这些函数被 `.name / .length / .toString` 反射消费；不把导出名的复用描述成 HTTP、Worker 或宿主公共协议变更。
 
 ### 持久摘要的额外证明
 
-[verify-canonical-equivalence.mjs](step2-evidence/verify-canonical-equivalence.mjs) 将旧／新模块中对应别名和共享调用展开为原 canonical SHA-256 表达式，去除导入／重导出及被合并叶声明，再比较全部剩余语句的非 trivia token（包括字面量值）。9 个实际修改模块均完全一致；每个新调用的参数和位置保存在 [canonical-equivalence.json](step2-evidence/canonical-equivalence.json)。导入绑定、别名、原函数体另经人工核对；该比较不是对 TypeScript 程序的普遍语义证明。
+[verify-canonical-equivalence.mjs](step2-evidence/verify-canonical-equivalence.mjs) 将旧／新模块中对应别名和共享调用展开为原 canonical SHA-256 表达式，去除导入／重导出及被合并叶声明，再比较全部剩余语句的非 trivia token（包括字面量值）。9 个实际修改模块均完全一致；每个新调用的参数和位置保存在 canonical-equivalence.json（历史附件已清理：`step2-evidence/canonical-equivalence.json`）。导入绑定、别名、原函数体另经人工核对；该比较不是对 TypeScript 程序的普遍语义证明。
 
 黄金向量在改动前从原算法保存，之后以固定期望值验证，覆盖命令对象、嵌套 Unicode／数组、大小写与数字键、null 和空数组。没有在测试中复制新实现作为期望计算。
 
@@ -53,7 +56,7 @@
 
 4 个 raw JSON helper 都接受 unknown，原来就导入同一 ConfigurationError 模块，没有可证实的输入、异常、反射或依赖差异，因此完成第 6 组，而不是因为 raw 与 canonical 不能混用就保留 raw 组本身的重复。`jsonFingerprint` 不排序、不兜底、不转换 Buffer、不改变 JSON.stringify 的错误；`canonicalFingerprint` 保持原默认排序算法，二者没有互相替换。
 
-[verify-raw-json-equivalence.mjs](step2-evidence/verify-raw-json-equivalence.mjs) 与 [raw-json-equivalence.json](step2-evidence/raw-json-equivalence.json) 保存 5 个模块的旧／新展开结果：4 个消费者全部业务语句、7 处原输入与配置模块原有语句均相同。没有发现 identity／hash／fingerprint 的名称、参数个数或源码反射消费者。固定向量刻意保留 b,a 与 a,b 两种不同插入顺序，并验证嵌套数组／Unicode、null、空数组；undefined 和 BigInt 仍抛 TypeError。
+[verify-raw-json-equivalence.mjs](step2-evidence/verify-raw-json-equivalence.mjs) 与 raw-json-equivalence.json（历史附件已清理：`step2-evidence/raw-json-equivalence.json`） 保存 5 个模块的旧／新展开结果：4 个消费者全部业务语句、7 处原输入与配置模块原有语句均相同。没有发现 identity／hash／fingerprint 的名称、参数个数或源码反射消费者。固定向量刻意保留 b,a 与 a,b 两种不同插入顺序，并验证嵌套数组／Unicode、null、空数组；undefined 和 BigInt 仍抛 TypeError。
 
 真实集成只选 3 条已有用例：禁用口播保存且不入队、手工配乐准备／采用／混音／重启保留、字幕字段错误不改原工程。测试实际经过本次 Owner HTTP、隔离 PG、文件及 SDK project reader，不打开 Studio、不启动宿主、不调用 Provider。Studio 的原私有 identity 两处调用由整模块展开证明保持；没有把其他三条业务集成冒称完整 Studio 会话测试。
 
@@ -82,9 +85,9 @@ AST 比较器首次将模板节点的旧 source offset 用到另一份源码，�
 
 只执行两条回执 HTTP／PG 测试，没有调用 Studio 或生成；SDK 路径显式设为本轮不存在的占位目录，未读取或清理日常 SDK。setup 来源和身份见 `environment/setup.mjs`、`environment/run.json`、`integration-setup.log`。没有运行真实 Provider、Keychain、ML 或媒体生产。
 
-完成后检查镜像／标签／网络／tmpfs，确认测试数据库 0、其他客户端 0，再停止本轮容器。`integration-cleanup.log` 与 [integration-stopped.json](step2-evidence/integration-stopped.json) 确认自动移除；没有停止其他容器或服务。
+完成后检查镜像／标签／网络／tmpfs，确认测试数据库 0、其他客户端 0，再停止本轮容器。`integration-cleanup.log` 与 integration-stopped.json（历史附件已清理：`step2-evidence/integration-stopped.json`） 确认自动移除；没有停止其他容器或服务。
 
-第 6 组另创建专属容器 `loop-maint2g6-0dfc63d2c05d`，沿用相同 schema-only、network none、tmpfs、无挂载／端口及随机 fixture 数据库保护。3 条选定测试需真实 SDK project reader，因此仅读取已安装 SDK 源码，并设置 `TSX_DISABLE_CACHE=1`；未调用会 prune cache 的 Studio 宿主入口，也未更改 SDK、共享缓存或日常工程。该容器在确认测试数据库 0、其他客户端 0 后停止并自动移除，见 `group6-integration-cleanup.log`、[group6-integration-stopped.json](step2-evidence/group6-integration-stopped.json) 与 `group6-environment/run.json`。两次集成容器均已退出。
+第 6 组另创建专属容器 `loop-maint2g6-0dfc63d2c05d`，沿用相同 schema-only、network none、tmpfs、无挂载／端口及随机 fixture 数据库保护。3 条选定测试需真实 SDK project reader，因此仅读取已安装 SDK 源码，并设置 `TSX_DISABLE_CACHE=1`；未调用会 prune cache 的 Studio 宿主入口，也未更改 SDK、共享缓存或日常工程。该容器在确认测试数据库 0、其他客户端 0 后停止并自动移除，见 `group6-integration-cleanup.log`、group6-integration-stopped.json（历史附件已清理：`step2-evidence/group6-integration-stopped.json`） 与 `group6-environment/run.json`。两次集成容器均已退出。
 
 ## 跳过项：问题、建议与实际影响
 
@@ -104,6 +107,6 @@ AST 比较器首次将模板节点的旧 source offset 用到另一份源码，�
 
 ## 证据与未验证范围
 
-证据目录 [step2-evidence](step2-evidence/inventory.json) 包含扫描脚本／清单、111 组逐项索引、近似候选、每组日志、失败与修正记录、AST 等价证明、完整差异和集成环境回执。脚本保留实际运行版本，含本机绝对路径和 `/tmp` 快照依赖，供本机复核；不是可移植或完整的重复检测产品。临时扫描和组前恢复快照仍在 `/tmp/loop-maint-step2-20261111/`，便于主 Agent 验收。
+证据目录 step2-evidence（历史附件已清理：`step2-evidence/inventory.json`） 包含扫描脚本／清单、111 组逐项索引、近似候选、每组日志、失败与修正记录、AST 等价证明、完整差异和集成环境回执。脚本保留实际运行版本，含本机绝对路径和 `/tmp` 快照依赖，供本机复核；不是可移植或完整的重复检测产品。临时扫描和组前恢复快照仍在 `/tmp/loop-maint-step2-20261111/`，便于主 Agent 验收。
 
 没有运行完整第三方 SDK、全部数据库／历史协议集成、真实供应商或日常数据操作。第 6 组后只执行受影响路径；2116 项默认全量是前五组完成时的结果。文件 SHA 复用有真实文件／历史清理边界与默认套件验证，但未重新运行 Studio 媒体缓存的完整 SDK 集成；其周围安全检查未改。两条真实回执集成的通过不能泛化为所有持久化路径均完成集成验收。

@@ -1,5 +1,8 @@
 # F2 当前类型与 clean-v3 基线
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 当前 `database.types.ts` 由隔离 PostgreSQL 17 有效目录生成，包含真实列可空性／默认值／generated、外键、枚举及有执行权限的 SQL 函数／重载。触发器与无授权私有函数不冒充调用接口。历史 remote-view/v1 类型独立保留在 `lib/history/databaseV1.types.ts`，仅供旧远端视图、历史 episode 快照及旧工作版本解码；当前 DTO 不从历史合同重导出。SQL text 的业务收窄写在 DTO，不伪造为数据库枚举。
 
 新 `effective-baseline.sql` 固定前向迁移 166–200 的有效结果；`effective-manifest.json` 固定原 clean-v2 与全部覆盖文件 SHA。新库只登记实际执行的 clean-v3，旧 clean-v2／legacy-v1 继续原前向路线；不补造、改写或删除旧 ledger。旧前缀夹具回退原基线＋对应迁移，未来 forward 在覆盖之后继续。混合代际、缺失覆盖、错 SHA 和迁移缺口均拒绝。

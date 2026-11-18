@@ -1,5 +1,8 @@
 # 固定800px与字幕拖动修复
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-30，PC端。
 
 ## 结果
@@ -32,12 +35,12 @@
 
 ### 字幕拖动后的实际位置
 
-![字幕拖动后的实际位置](/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/screenshots/02-caption-dragged.jpg)
+字幕拖动后的实际位置（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/screenshots/02-caption-dragged.jpg`）
 
 ### 保存重开保留位置，属性栏与预览并排
 
-![保存重开保留位置，属性栏与预览并排](/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/screenshots/03-reopened-drag-position.jpg)
+保存重开保留位置，属性栏与预览并排（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/screenshots/03-reopened-drag-position.jpg`）
 
 ### 固定高度的主工作区
 
-![固定高度的主工作区](/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/screenshots/04-fixed-workspace.jpg)
+固定高度的主工作区（历史附件已清理：`/Users/dan/Programs/loop-control/docs/verification/workspace-height-caption-drag-20261030/screenshots/04-fixed-workspace.jpg`）

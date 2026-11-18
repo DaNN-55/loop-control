@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "initialDraftRefusedBeforeTransport": true,
-  "reason": "Enabled policy requires positive cost metadata even for zero-cap generation operations",
-  "zeroCapsAndExcludedProvidersUnchanged": true,
-  "providerRequests": 0,
-  "ledgerCountNotReset": true
-}

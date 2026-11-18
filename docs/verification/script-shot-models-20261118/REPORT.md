@@ -1,5 +1,8 @@
 # 脚本镜头操作与语言模型扩展验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-18。对应镜头“…”菜单／删除、逐镜已修改标记、GPT-5.6／GPT-6.1 全通用系列及 DeepSeek 现售型号适配。
 
 - 登记 `gpt-5.6-luna`、`gpt-5.6-terra`、`gpt-5.6-sol`、官方别名 `gpt-5.6`、`gpt-6.1-sol`、`gpt-6.1-terra`；DeepSeek 当前 `deepseek-flash`、`deepseek-v4-pro` 均适配。严格白名单，不添加无官方合同的前缀通配、已退役 Chat／Reasoner 或受限 Cyber 专用模型。
@@ -27,8 +30,8 @@
 
 检查 `menu` 的键盘与返回焦点规则，保留项目 React Aria Dropdown 跨浏览器实现，不另加原生 focusgroup 或第二套键盘系统。按 `viewport-aware-dropdowns` 的匹配角色与键盘合同、边缘避让要求验证菜单；使用 bottom end／翻转／视口留边，保留项目菜单最小宽度。
 
-![镜头修改标记](desktop.png)
+镜头修改标记（历史附件已清理：`desktop.png`）
 
-![已启用模型列表](models.png)
+已启用模型列表（历史附件已清理：`models.png`）
 
-![小屏镜头菜单](mobile-menu.png)
+小屏镜头菜单（历史附件已清理：`mobile-menu.png`）

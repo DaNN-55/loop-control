@@ -1,5 +1,8 @@
 # 状态机优化 0—4 项交付
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-11。按用户批准完成 0—4 项，当前 `main` 分批本地提交，不推送。审查基线 `1bedac10`，最终产品代码提交 `a310349a`。范围见 [SPEC](SPEC.md)，决定见 [ADR-0039](../../adr/0039-workspace-local-recovery-and-polling.md)，双轴审查见 [REVIEW](REVIEW.md)。
 
 ## 完成结果
@@ -17,11 +20,11 @@
 ## 自动验证
 
 - 逐项失败回归覆盖迟到模型保存、偏好同周期重复提交、Studio 旧关闭意图、字幕部分成功与未知回执、上传关闭重开和未完成重试、隐藏恢复及音频双向互斥。相关 `*-red.log` 保留首次有效失败证据。
-- 实施阶段 21 文件、232 条定向通过：[targeted.log](targeted.log)。审查后补充修复，再由 3 文件、40 条受影响回归通过：[reading-compatibility-green.log](reading-compatibility-green.log)。字幕恢复文件共 8 条，包含真实 localCommand／HTTP 幂等边界。
-- 首轮默认全量为 1940 通过、1 失败、1 跳过。唯一失败为旧音频并发测试前提；经独立审查，改以外部权威更新保持原迟到覆盖保护。随后默认全量 258 文件全部通过，1941 条通过、1 条跳过：[full-tests-final.log](full-tests-final.log)。默认命令排除 `*.integration.test.ts`，不能视为真实数据库集成通过。
-- 全量之后仅调整上传反馈的布局，将错误和重试放入同一反馈容器；3 文件、44 条相关回归及类型检查通过：[upload-layout-green.log](upload-layout-green.log)、[check-final.log](check-final.log)。没有在这次低风险布局后重复全量。
-- 最终前端构建通过：[build.log](build.log)。仍有现有的大于 500 kB chunk 提示。运行包准备顺序构建 Worker／后端并通过源码和产物完整性检查：[runtime-prepare.log](runtime-prepare.log)、[runtime-release.json](runtime-release.json)。测试日志中的 jsdom 媒体 API 与 React act 提示保留，不计作失败。
-- 同一候选脚本最终扫描 548 个文件，246 个文件含 1525 个信号：[census-summary.json](census-summary.json)。这是候选扫描，不是完整性证明；仍归为 48 个已人工核查的状态机族。
+- 实施阶段 21 文件、232 条定向通过：targeted.log（历史附件已清理：`targeted.log`）。审查后补充修复，再由 3 文件、40 条受影响回归通过：reading-compatibility-green.log（历史附件已清理：`reading-compatibility-green.log`）。字幕恢复文件共 8 条，包含真实 localCommand／HTTP 幂等边界。
+- 首轮默认全量为 1940 通过、1 失败、1 跳过。唯一失败为旧音频并发测试前提；经独立审查，改以外部权威更新保持原迟到覆盖保护。随后默认全量 258 文件全部通过，1941 条通过、1 条跳过：full-tests-final.log（历史附件已清理：`full-tests-final.log`）。默认命令排除 `*.integration.test.ts`，不能视为真实数据库集成通过。
+- 全量之后仅调整上传反馈的布局，将错误和重试放入同一反馈容器；3 文件、44 条相关回归及类型检查通过：upload-layout-green.log（历史附件已清理：`upload-layout-green.log`）、check-final.log（历史附件已清理：`check-final.log`）。没有在这次低风险布局后重复全量。
+- 最终前端构建通过：build.log（历史附件已清理：`build.log`）。仍有现有的大于 500 kB chunk 提示。运行包准备顺序构建 Worker／后端并通过源码和产物完整性检查：runtime-prepare.log（历史附件已清理：`runtime-prepare.log`）、runtime-release.json（历史附件已清理：`runtime-release.json`）。测试日志中的 jsdom 媒体 API 与 React act 提示保留，不计作失败。
+- 同一候选脚本最终扫描 548 个文件，246 个文件含 1525 个信号：census-summary.json（历史附件已清理：`census-summary.json`）。这是候选扫描，不是完整性证明；仍归为 48 个已人工核查的状态机族。
 
 ## 浏览器与运行入口
 
@@ -29,17 +32,17 @@
 
 | 场景 | 结果与证据 |
 | --- | --- |
-| 字幕登记失败后继续 | 原生修改／保存／登记各一次，原键接续：[browser-caption.json](browser-caption.json)。 |
-| 登记已提交但回执未知 | 以提交后 HTTP 503 注入故障，重试同键、登记一次：[browser-caption-unknown.json](browser-caption-unknown.json)。不把自动传输重试当作用户接续证据。 |
-| 模型切换与迟到保存 | 新连接可见，旧读和旧保存不能覆盖或关闭新弹窗：[读取](browser-model-read.json)、[保存](browser-model-save.json)。 |
-| 偏好重复与重试 | 同周期提交一次，失败保留草稿，再次提交成功；390 px 无横向溢出：[browser-preferences.json](browser-preferences.json)。 |
-| 上传失败与重试 | first、retry、retry 三次请求，两个素材成功，重试沿用原键：[browser-upload.json](browser-upload.json)。 |
-| 页面隐藏恢复 | 受控 document.hidden 事件，隐藏期间读数不增，恢复后新增一次：[browser-polling.json](browser-polling.json)。 |
-| 音频写入先行 | 用户保存未完成时背景刷新不进入：[browser-audio-write.json](browser-audio-write.json)。 |
-| 音频刷新先行 | refresh 后 save，用户使用 revision 3，各写一次：[browser-audio-refresh.json](browser-audio-refresh.json)。 |
-| 上传反馈布局 | DOM 回放旧 56 px 上限时错误被裁切，修复后可见，390 px 无横向溢出：[之前](upload-feedback-before.json)、[之后](upload-feedback-after.json)、[窄屏](upload-feedback-mobile.json)。 |
+| 字幕登记失败后继续 | 原生修改／保存／登记各一次，原键接续：browser-caption.json（历史附件已清理：`browser-caption.json`）。 |
+| 登记已提交但回执未知 | 以提交后 HTTP 503 注入故障，重试同键、登记一次：browser-caption-unknown.json（历史附件已清理：`browser-caption-unknown.json`）。不把自动传输重试当作用户接续证据。 |
+| 模型切换与迟到保存 | 新连接可见，旧读和旧保存不能覆盖或关闭新弹窗：读取（历史附件已清理：`browser-model-read.json`）、保存（历史附件已清理：`browser-model-save.json`）。 |
+| 偏好重复与重试 | 同周期提交一次，失败保留草稿，再次提交成功；390 px 无横向溢出：browser-preferences.json（历史附件已清理：`browser-preferences.json`）。 |
+| 上传失败与重试 | first、retry、retry 三次请求，两个素材成功，重试沿用原键：browser-upload.json（历史附件已清理：`browser-upload.json`）。 |
+| 页面隐藏恢复 | 受控 document.hidden 事件，隐藏期间读数不增，恢复后新增一次：browser-polling.json（历史附件已清理：`browser-polling.json`）。 |
+| 音频写入先行 | 用户保存未完成时背景刷新不进入：browser-audio-write.json（历史附件已清理：`browser-audio-write.json`）。 |
+| 音频刷新先行 | refresh 后 save，用户使用 revision 3，各写一次：browser-audio-refresh.json（历史附件已清理：`browser-audio-refresh.json`）。 |
+| 上传反馈布局 | DOM 回放旧 56 px 上限时错误被裁切，修复后可见，390 px 无横向溢出：之前（历史附件已清理：`upload-feedback-before.json`）、之后（历史附件已清理：`upload-feedback-after.json`）、窄屏（历史附件已清理：`upload-feedback-mobile.json`）。 |
 
-实际查看宽窄屏截图：[字幕宽屏](caption-recovery-wide.png)、[字幕窄屏](caption-recovery-mobile.png)、[上传宽屏](upload-recovery-wide.png)、[上传窄屏](upload-recovery-mobile.png)、[偏好窄屏](preferences-mobile.png)。
+实际查看宽窄屏截图：字幕宽屏（历史附件已清理：`caption-recovery-wide.png`）、字幕窄屏（历史附件已清理：`caption-recovery-mobile.png`）、上传宽屏（历史附件已清理：`upload-recovery-wide.png`）、上传窄屏（历史附件已清理：`upload-recovery-mobile.png`）、偏好窄屏（历史附件已清理：`preferences-mobile.png`）。
 
 运行包准备后重新打开 `http://127.0.0.1:5174/`，Loop Control 登录页及邮箱、密码、提交按钮正常。日常服务未重启，新运行包尚未激活。本轮浏览器和 5197 预览已关闭，专属临时原生文件、Vite 缓存已清理，日常 5174 保留。
 
@@ -47,6 +50,6 @@
 
 未调用付费供应商，未登录真实业务会话，未在本批运行真实 PostgreSQL 或 OpenChatCut 持久化。字幕与上传接续记录保存在当前浏览器页面内存中，整页重载后按原权威数据重新进入；未完成 File 的页面内保留属于恢复责任。日常 Owner／episode 上传队列支持关闭重开；无 Owner 的独立素材栏维持每次访问的局部会话。
 
-本地产品提交为 `8eaab228`、`8e30037a`、`5b121841`、`a310349a`。远端 main 核对仍为 `1bedac1035a38a6399b931ad8cb4e42781a5216d`。无关 `docs/research/log-api-tools-20261111.md` 的 SHA 与 [protected.json](protected.json) 一致，保留且不暂存。本报告及更新地图另作收尾提交，不推送。
+本地产品提交为 `8eaab228`、`8e30037a`、`5b121841`、`a310349a`。远端 main 核对仍为 `1bedac1035a38a6399b931ad8cb4e42781a5216d`。无关 `docs/research/log-api-tools-20261111.md` 的 SHA 与 protected.json（历史附件已清理：`protected.json`） 一致，保留且不暂存。本报告及更新地图另作收尾提交，不推送。
 
 2026-11-11 后续清理：移除已被最终全量替代的首轮原始日志；其失败数量、原因与处理方式保留在上文。本报告的「不推送」为当时交付状态；上述优化后来已获授权，随 `86bc9e66` 推送。清理前版本可从该提交恢复。

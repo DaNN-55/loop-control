@@ -1,5 +1,8 @@
 # 故事情景 E2E：末班车前的一把伞
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 执行日期：2026-11-02（Asia/Shanghai）。
 
 ## 范围与故事
@@ -57,10 +60,10 @@ npm run test:e2e -- -t 'story 3'
 - 故事情景 E2E：**21 / 21 通过，0 失败、0 跳过**，约 194.86 秒；其中 5 项正式页面浏览器用例全部通过。
 - 默认回归：**188 个文件、1257 / 1257 项通过**，约 93.89 秒。
 - `npm run check`、后台／Worker 的隔离 `runtime:prepare`、`node --check scripts/e2e/run.mjs`、`git diff --check` 全部通过。
-- 浏览器实际播放的完整成片约 **6.06 秒**，检测到时间推进及视频帧解码；实际数值见 [播放记录](browser-playback.json)。
-- 新增和修改的本轮代码与已验证快照 SHA 一致，见 [源码指纹](source-sha256.json)；生产编译闭包见 [运行清单](runtime-manifest.json)。
+- 浏览器实际播放的完整成片约 **6.06 秒**，检测到时间推进及视频帧解码；实际数值见 播放记录（历史附件已清理：`browser-playback.json`）。
+- 新增和修改的本轮代码与已验证快照 SHA 一致，见 源码指纹（历史附件已清理：`source-sha256.json`）；生产编译闭包见 运行清单（历史附件已清理：`runtime-manifest.json`）。
 
-[测试汇总](checks.json) · [E2E 原始结果](vitest.json) · [默认回归原始结果](default-tests.json) · [执行日志](tests.log) · [测试片](umbrella-final.mp4) · [交付核验](umbrella-delivery.json) · [交付页面截图](delivery-story-verified.png)。
+测试汇总（历史附件已清理：`checks.json`） · [E2E 原始结果](vitest.json) · 默认回归原始结果（历史附件已清理：`default-tests.json`） · 执行日志（历史附件已清理：`tests.log`） · 测试片（历史附件已清理：`umbrella-final.mp4`） · 交付核验（历史附件已清理：`umbrella-delivery.json`） · 交付页面截图（历史附件已清理：`delivery-story-verified.png`）。
 
-运行器已确认其数据库容器移除，见 [运行与释放回执](run.json)。本轮所有夹具均正常关闭。过往调试的 36 份重复源码／SDK 目录已按明确归属清理，原始错误日志、截图和小型证据保留；最终源码快照保留供复核。未修改日常数据库、目录或现有生产单，未重启日常服务，未提交或推送。
+运行器已确认其数据库容器移除，见 运行与释放回执（历史附件已清理：`run.json`）。本轮所有夹具均正常关闭。过往调试的 36 份重复源码／SDK 目录已按明确归属清理，原始错误日志、截图和小型证据保留；最终源码快照保留供复核。未修改日常数据库、目录或现有生产单，未重启日常服务，未提交或推送。
 

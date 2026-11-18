@@ -1,5 +1,8 @@
 # 全页面一致性整理验收 · 2026-10-28
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 已完成原生应用13类页面的独立只读审查、主 Agent 汇总实施，以及后续图标、侧栏、阶段分布、下拉菜单与标题移除要求。保持未提交，保留本轮开始前的全部改动。
 
 ## 交付内容
@@ -13,7 +16,7 @@
 - 所有当前原生选择下拉采用内嵌图标、12px浮层圆角、8px选项圆角。保留真实select作为表单值与change事件边界；支持分组、禁用、受控/非受控值、reset、required/name、多选及键盘操作。声音建议使用可自由填写的ComboBox。
 - 最新要求：移除下拉前方/上方可见标题和空标题列；关联label/aria-label继续可访问。必要帮助移入框内右侧，错误和说明保留。普通文本/数字输入标签保留。
 
-逐页发现与取舍见 [AUDIT.md](AUDIT.md)，本轮相对起点的差异见 [implementation.diff](implementation.diff)、[changes.json](changes.json)。采用控件的本地适配另记录在 `src/ui/dan-ui/LOCAL-PATCHES.md`，未增加依赖。
+逐页发现与取舍见 [AUDIT.md](AUDIT.md)，本轮相对起点的差异见 [implementation.diff](implementation.diff)、changes.json（历史附件已清理：`changes.json`）。采用控件的本地适配另记录在 `src/ui/dan-ui/LOCAL-PATCHES.md`，未增加依赖。
 
 ## 验证
 

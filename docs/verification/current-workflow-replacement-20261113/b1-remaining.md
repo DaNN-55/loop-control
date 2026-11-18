@@ -1,5 +1,8 @@
 # B1 剩余组合验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 状态：本分支负责的剩余组合已完成。最终固定 `JIgPY2` 单批 **5 项通过、0 失败、0 跳过**；`npm run runtime:prepare` 与完整 `npm run check` 退出 0。只补独立制作基准尚缺的跨输入、任务与修订组合；D 来源恢复及最终 G 由主对话执行。
 
 ## 固定起点与隔离
@@ -41,12 +44,12 @@
 
 | 证据 | 内容 |
 | --- | --- |
-| [最终测试](evidence-b1-remaining/run-JIgPY2/vitest.json)、[原始日志](evidence-b1-remaining/run-JIgPY2/tests.log) | 同批 5 通过／0 失败／0 筛选或跳过 |
-| [类型](evidence-b1-remaining/run-JIgPY2/types.log)、[runtime 构建](evidence-b1-remaining/run-JIgPY2/build.log) | 完整 `npm run check`、Worker／backend 准备通过 |
-| [运行前指纹](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-b1-remaining/run-JIgPY2/source-manifest.json>)、[运行后保持](evidence-b1-remaining/run-JIgPY2/source-unchanged.json) | 固定源码与测试前后逐文件对账 |
-| [基准对账](evidence-b1-remaining/baseline-verified.json)、[汇总](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-b1-remaining/summary.json>) | 1770 原文件、运行配置差异、调用数与逐轮真实结果 |
-| `run-JIgPY2/b1-input-*.json`、[任务组合回执](evidence-b1-remaining/run-JIgPY2/b1-mixed-task-receipt.json) | 稳定身份／新旧基准、人工轨、三任务、明确采用与确切原声文件 |
+| [最终测试](evidence-b1-remaining/run-JIgPY2/vitest.json)、原始日志（历史附件已清理：`evidence-b1-remaining/run-JIgPY2/tests.log`） | 同批 5 通过／0 失败／0 筛选或跳过 |
+| 类型（历史附件已清理：`evidence-b1-remaining/run-JIgPY2/types.log`）、runtime 构建（历史附件已清理：`evidence-b1-remaining/run-JIgPY2/build.log`） | 完整 `npm run check`、Worker／backend 准备通过 |
+| [运行前指纹](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-b1-remaining/run-JIgPY2/source-manifest.json>)、运行后保持（历史附件已清理：`evidence-b1-remaining/run-JIgPY2/source-unchanged.json`） | 固定源码与测试前后逐文件对账 |
+| 基准对账（历史附件已清理：`evidence-b1-remaining/baseline-verified.json`）、[汇总](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/current-workflow-replacement-20261113/evidence-b1-remaining/summary.json>) | 1770 原文件、运行配置差异、调用数与逐轮真实结果 |
+| `run-JIgPY2/b1-input-*.json`、任务组合回执（历史附件已清理：`evidence-b1-remaining/run-JIgPY2/b1-mixed-task-receipt.json`） | 稳定身份／新旧基准、人工轨、三任务、明确采用与确切原声文件 |
 | [诊断](evidence-b1-remaining/diagnosis.md)、各轮 `coverage-test.txt`／原始日志 | 保留夹具失败、断言修正与原实际测试源码，不覆盖失败证据 |
-| [清理](evidence-b1-remaining/cleanup.json) | 6 次运行均终态，6 个准确自有容器均实际查询确认移除；不动其他容器 |
+| 清理（历史附件已清理：`evidence-b1-remaining/cleanup.json`） | 6 次运行均终态，6 个准确自有容器均实际查询确认移除；不动其他容器 |
 
 私有基准、运行源码和原始证据保留在 `/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/b1-remaining-5ijpg0qj/` 供复核；它们不属于日常部署。测试媒体卷随 fixture 关闭，没有活动 B1 Worker／测试进程。未运行最终 G 的默认完整套件，未操作日常数据库、配置或服务，未提交或推送。

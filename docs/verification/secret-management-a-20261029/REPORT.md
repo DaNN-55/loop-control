@@ -1,5 +1,8 @@
 # 密钥管理 A 版正式落地验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-29。正式页面采用紧凑四列表格、逐行查看/复制与行内详情。引用编号展开后显示，历史与技术信息默认折叠，说明收进帮助。保留搜索、分类、服务端分页、密码验证、权限检查、CSRF、明文最多 30 秒及会话/页面离开清理。正式服务端每页仍为 50 项。
 
 用户追加：加载时以静态骨架占位替代两处重复文字；表格列宽、行高与完成态一致，刷新时按上一页行数占位（最多 10 行），初次 5 行；只保留一个无障碍加载播报。空结果居中显示。工作台标题右侧刷新按钮移除，自动更新与新建操作保留。
@@ -14,9 +17,9 @@
 
 ## 证据
 
-- [正式布局](secret-management-a-final.png)、[深色](secret-management-a-dark.png)、[窄窗](secret-management-a-narrow.png)
-- [加载占位](secret-management-loading.png)、[深色加载](secret-management-loading-dark.png)
-- [移除工作台刷新](workbench-without-refresh.png)
+- 正式布局（历史附件已清理：`secret-management-a-final.png`）、深色（历史附件已清理：`secret-management-a-dark.png`）、窄窗（历史附件已清理：`secret-management-a-narrow.png`）
+- 加载占位（历史附件已清理：`secret-management-loading.png`）、深色加载（历史附件已清理：`secret-management-loading-dark.png`）
+- 移除工作台刷新（历史附件已清理：`workbench-without-refresh.png`）
 - 隔离入口：`fixture.html`；`?loading` 模拟 8 秒延迟，`?theme=dark` 深色；所有接口与剪贴板均为合成操作。
 
 原型已归档至本地分支 `codex/prototype-secret-management-20261029`，提交 `fc26223d63b182f0ed735790cdcf4f08eb8271a6`，包含用户选择 A 的结论。正式源码移除全部密钥原型入口与比较组件。正式实现保持未提交、未推送；无真实密钥/账户设置变更。

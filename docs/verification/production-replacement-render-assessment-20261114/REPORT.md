@@ -1,5 +1,8 @@
 # 当前呈现设置版：隔离生产单、埋点与旧流程替换评估
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-14。结论：本轮当前新单能独立完成原生编辑、保存重开、精确导出确认与交付，相关埋点对账通过；混合旧作品接入和多项非默认呈现设置已有可用实现。**仍不能宣布旧流程全面替换完成：成片留空区域仍有棋盘格，更广设置、来源 UI、全部恢复覆盖及旧消费者退出尚需处理。**建议保留内核，分批迁移和局部重构，不整体重写。
 
 完整处置、原八类现状、名字怎么换及实施门槛见[剩余替换方案](../../plans/production-workflow-remaining-proposal-render-20261114.md)。本轮只新增评估文档、证据与私有测试；没有修改业务代码、SQL、原测试、原实施计划或共享 SDK，没有清理旧内容，不提交、不推送。
@@ -16,7 +19,7 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。工作区包含大量未提�
 - 本轮使用唯一自有、禁网、tmpfs PostgreSQL，加载当前有效 schema 至 197；媒体、身份和账号全部来自测试夹具。不读取日常数据库，不加载日常秘密，不复制日常业务媒体。
 - 私有根：`/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/assessment-current-x1iqrisf/`；固定执行源：同盘 `export-runs/loop-story-e2e-P3PY8R/source`。
 
-[保持核对](evidence/unchanged-check.json) · [执行回执](evidence/run.json)。没有日常迁移、prepare、部署、服务重启或采集启用；未访问日常，因此本报告不推定日常当前迁移号或开关实况。
+保持核对（历史附件已清理：`evidence/unchanged-check.json`） · 执行回执（历史附件已清理：`evidence/run.json`）。没有日常迁移、prepare、部署、服务重启或采集启用；未访问日常，因此本报告不推定日常当前迁移号或开关实况。
 
 ## 本轮新建生产单
 
@@ -33,7 +36,7 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。工作区包含大量未提�
 | 交付 | 真实隔离 Worker 完成；封面、metadata、检查和 manifest 共 4 个新增交付文件，经 Owner HTTP 下载逐个核对 SHA；metadata 两镜音轨 ID、正文和采用来源均准确 |
 | 任务与费用 | 人工口播登记任务 2 条，attempt=0；交付任务 1 条，attempt=1；本单费用预留 0、外部发送事件 0，无视频生成任务 |
 
-[本轮成片](artifacts/test-production.mp4) · [第一镜](artifacts/frame-01.png) · [第二镜](artifacts/frame-02.png) · [准确业务事实与事件](artifacts/receipt.json) · [交付 metadata](artifacts/metadata.json) · [媒体探测](artifacts/ffprobe.json)。本轮没有执行整个交付归档下载路由；实际验证的是 4 个新增文件的授权下载和 SHA。
+本轮成片（历史附件已清理：`artifacts/test-production.mp4`） · 第一镜（历史附件已清理：`artifacts/frame-01.png`） · 第二镜（历史附件已清理：`artifacts/frame-02.png`） · 准确业务事实与事件（历史附件已清理：`artifacts/receipt.json`） · 交付 metadata（历史附件已清理：`artifacts/metadata.json`） · 媒体探测（历史附件已清理：`artifacts/ffprobe.json`）。本轮没有执行整个交付归档下载路由；实际验证的是 4 个新增文件的授权下载和 SHA。
 
 ### 技术链通过，画面仍有缺陷
 
@@ -56,14 +59,14 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。工作区包含大量未提�
 - 主声音 -9 dB、配乐 -24 dB、音效 -18 dB、strong 闪避、fade 等非默认计划设置，在明确采用后实际进入工程；未确认草稿的 -7／-25 dB 等原值也实际承接。
 - 两镜配乐 -18／-30 dB、不同闪避、连续原文件窗口可分别生效。人工修改后明确替换整组来源，保留原增益、路由、时长和时间窗口，不自动循环。
 - 未知呈现版本、越界音量、夹带连接字段和未知闪避值均被拒绝，最后已接受工程保持。
-- minimal 与 cinematic 字幕均实际导出并查看抽帧：前者为透明背景描边字，后者为黑底字。[minimal](artifacts/subtitle-minimal-frame.png) · [cinematic](artifacts/subtitle-cinematic-frame.png)。这证明这两种简单样式，不等于全部原生字体、嵌套、多镜或自定义空间参数均已验证。
+- minimal 与 cinematic 字幕均实际导出并查看抽帧：前者为透明背景描边字，后者为黑底字。minimal（历史附件已清理：`artifacts/subtitle-minimal-frame.png`） · cinematic（历史附件已清理：`artifacts/subtitle-cinematic-frame.png`）。这证明这两种简单样式，不等于全部原生字体、嵌套、多镜或自定义空间参数均已验证。
 - 原生作品实际完成数据库＋文件备份、在新数据库和根目录恢复、源目录离线后由新应用编辑 SQLite、保存重开并导出。此结果不能替代保存计划／未确认／混合来源的全部完整与逐项恢复矩阵。
 
 ### 原测试输入问题没有改成业务放行
 
 原 `legacyRenderSettings.integration.test.ts` 中两条可视用例选择 `independent`，脚本没有填写必需的「字幕正文」。当前解析器明确拒绝；此前同一当前输入的现存日志也是 400「独立字幕需要填写字幕正文」。
 
-本轮仅在私有镜像增加该必填字段，将 FFmpeg 抽帧时间写为 `0.5`；没有删断言、降低预期或修改解析保护。校正后的两条实际输出通过并已人工看图。**原工作区测试没有修改，仍需后续最小修正；不能把本轮私有 8 项通过称为原文件已修好。**[私有测试镜像](evidence/private-render.integration.ts.txt)。
+本轮仅在私有镜像增加该必填字段，将 FFmpeg 抽帧时间写为 `0.5`；没有删断言、降低预期或修改解析保护。校正后的两条实际输出通过并已人工看图。**原工作区测试没有修改，仍需后续最小修正；不能把本轮私有 8 项通过称为原文件已修好。**私有测试镜像（历史附件已清理：`evidence/private-render.integration.ts.txt`）。
 
 更广的未确认裁切／源窗口、自定义 composition、封面操作、未确认原声意图和来源选择 UI 仍有未完成部分。保存原字段不等于已经按它出片，方案逐项区分。
 
@@ -81,19 +84,19 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。工作区包含大量未提�
 | 外部请求／费用 | 发送事件 0、预留 0 | 没有供应商实付证据，不把本地素材当生成 |
 | 重启读取 | 原事件数量不增加 | 未补造历史 |
 
-stage_changed=2 与 stage_transition_evidence=2 表达变化及证据，不能合计成 4 次变化。[事件与数量](artifacts/receipt.json) · [Owner 汇总](artifacts/workflow-summary.json)。Owner 汇总含夹具其他生产单，不用其总数直接对比单据数字。
+stage_changed=2 与 stage_transition_evidence=2 表达变化及证据，不能合计成 4 次变化。事件与数量（历史附件已清理：`artifacts/receipt.json`） · Owner 汇总（历史附件已清理：`artifacts/workflow-summary.json`）。Owner 汇总含夹具其他生产单，不用其总数直接对比单据数字。
 
 同版本额外 30 项埋点／声音／导出边界集成通过：默认关闭、关闭不采、开启不补造、同键幂等、冲突与事务回滚、Owner／Worker／lease 权限；受控口播请求标记／响应／冻结估算、采用／撤回／重用；SQL 响应记录失败仅调用 transport 一次，保留未知结果，不重发；显式重试与质量档冻结；镜头删除只撤回一次、历史和音轨保持；本机导出开始／结束、业务池满仍可采样、同 Owner 双导出可实际并行。
 
-本单没有启动周期采样器；本机导出活动和资源采样使用另一个隔离样例联验，不能把其样本冒充本单。真实导出活动采样 active_exports=1，Worker running=0；主机内存已观测，首个 CPU 样本未知，GPU 未知。[资源证据](evidence/export-resource-observation.json)。资源是整台主机观察，不是独占任务占用。
+本单没有启动周期采样器；本机导出活动和资源采样使用另一个隔离样例联验，不能把其样本冒充本单。真实导出活动采样 active_exports=1，Worker running=0；主机内存已观测，首个 CPU 样本未知，GPU 未知。资源证据（历史附件已清理：`evidence/export-resource-observation.json`）。资源是整台主机观察，不是独占任务占用。
 
-65 个同源音轨保存单次观测：采集关约 269 ms，开约 611 ms，无变化约 245 ms；有变化只探测原文件 1 次，无变化 0 次。故意卡住观察探测时，保存约 5.52 秒后保留修改并记录 sound_unresolved。它证明有界和未知语义，不是大型多来源性能 SLA。[保存开销](evidence/sound-save-observations.json) · [卡住探测](evidence/slow-observation.json)。
+65 个同源音轨保存单次观测：采集关约 269 ms，开约 611 ms，无变化约 245 ms；有变化只探测原文件 1 次，无变化 0 次。故意卡住观察探测时，保存约 5.52 秒后保留修改并记录 sound_unresolved。它证明有界和未知语义，不是大型多来源性能 SLA。保存开销（历史附件已清理：`evidence/sound-save-observations.json`） · 卡住探测（历史附件已清理：`evidence/slow-observation.json`）。
 
 完整性结论：**本轮实际制作路径和上述边界的埋点一致，可以一起测；尚不能宣称所有埋点完整或日常可直接启用。**未覆盖真实 Provider／账单／视频轮询下载、长期及跨进程采样、全部复杂声音、每种历史接入恢复、Dashboard 或统一查询产品。最终版本仍需启用前验收。
 
 ## 当前有效 SQL 与旧依赖
 
-本轮隔离有效 schema 有 395 个 public／local_identity 函数、106 个非内部触发器，数字不代表无用数量。实际读取有效定义、220 条目录依赖，并结合函数体与固定源码精确调用检查。[有效目录](evidence/catalog.json) · [调用链](evidence/legacy-call-map.json)。目录依赖不能完整覆盖动态 SQL、外部消费者或正在运行的旧进程，本轮未核查日常进程退出。
+本轮隔离有效 schema 有 395 个 public／local_identity 函数、106 个非内部触发器，数字不代表无用数量。实际读取有效定义、220 条目录依赖，并结合函数体与固定源码精确调用检查。有效目录（历史附件已清理：`evidence/catalog.json`） · 调用链（历史附件已清理：`evidence/legacy-call-map.json`）。目录依赖不能完整覆盖动态 SQL、外部消费者或正在运行的旧进程，本轮未核查日常进程退出。
 
 - 原批准初始化／历史复用、混音／构图继承四函数及相邻裁切继承仍挂载，不是未挂载空壳。
 - 视觉／分镜任务完成组包两函数仍挂 tasks 触发器，包含冻结输入和产物结果等校验，不能只删组包而漏保护。
@@ -119,7 +122,7 @@ stage_changed=2 与 stage_transition_evidence=2 表达变化及证据，不能�
 | 原工作区与 SDK | 原 12,894 文件、SDK 1,707 文件、HEAD 和物理索引保持；只新增本报告、方案和精简证据 |
 | 自有资源 | 本轮唯一 PostgreSQL 容器已移除，固定源和证据保留；未操作其他任务资源 |
 
-[集成结果](evidence/vitest.json) · [定向检查](evidence/units.json) · [类型](evidence/types.log) · [构建](evidence/build.log)。
+[集成结果](evidence/vitest.json) · 定向检查（历史附件已清理：`evidence/units.json`） · 类型（历史附件已清理：`evidence/types.log`） · 构建（历史附件已清理：`evidence/build.log`）。
 
 没有执行全项目默认套件、完整 Vite 前端打包、实际来源 UI 浏览器宽窄验收、全部恢复矩阵及长期运行测试。没有把此前绿色计为本轮结果，没有将技术交付成功当作画面无缺陷。本轮原测试缺字段问题只在私有镜像修正，业务与保护保持。
 

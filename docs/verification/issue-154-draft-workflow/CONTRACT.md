@@ -1,5 +1,8 @@
 # T02 后续票接入契约
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 ## 入口与所有权
 
 `src/productionWorkspace.ts` 只含可共享 DTO 和命令字段白名单。`productionWorkspaceFields` 加入新命令后，`LocalEpisodeCommands` 继续负责严格字段、Owner/session、Origin/CSRF、幂等回执、Episode 可见性与资产根。新票只需由集中 owner 在 `ProductionWorkspaceCommands.execute` 中接入自己的模块，不复制顶层 dispatcher 或授权逻辑。

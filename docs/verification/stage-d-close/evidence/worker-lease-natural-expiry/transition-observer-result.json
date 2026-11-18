@@ -1,9 +1,0 @@
-{
-  "passed": true,
-  "scope": "Own natural task in dedicated clone only",
-  "onlyObservesTaskUpdates": true,
-  "noTaskFieldsChanged": true,
-  "usesClockTimestamp": true,
-  "sourceMigrationsUnchanged": true,
-  "tablePrivate": true
-}

@@ -1,4 +1,0 @@
-npm notice run loop-control@0.1.0 check
-npm notice run tsc -b --pretty false
-src/local-app/productionDefaultPreparation.integration.test.ts(114,55): error TS2322: Type '"volcengine" | "bailian"' is not assignable to type 'boolean | "volcengine" | "minimax" | "kling" | { provider: "volcengine" | "minimax" | "kling" | "bailian"; model: string; } | undefined'.
-  Type '"bailian"' is not assignable to type 'boolean | "volcengine" | "minimax" | "kling" | { provider: "volcengine" | "minimax" | "kling" | "bailian"; model: string; } | undefined'.

@@ -1,5 +1,8 @@
 # #158 / T06 验证记录
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 状态：本票实现与受控验收已完成，最终提交见 Git 历史。唯一写树 `/Users/dan/.codex/worktrees/t06-workspace-audio/loop-control`，分支 `codex/t06-workspace-audio-152`。最终同步 integration `1a06150f`，保留 T10 last-effective native-save 保护。未改日常数据库、凭据或 Keychain，未触发付费调用或社媒发布。
 
 ## TDD 与接收边界

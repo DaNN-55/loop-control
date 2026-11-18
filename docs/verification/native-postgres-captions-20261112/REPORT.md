@@ -1,5 +1,8 @@
 # 原生 PostgreSQL 与字幕工作区交付记录
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 后续变更：自动校时已按用户新决定移入分镜台，见 [当前交付记录](../caption-preparation-20261112/REPORT.md)。本文保留当时验收结果。
 
 2026-11-12。用户批准执行。已完成隔离验证、日常数据库切换和真实页面检查；保留并行 CSS，不提交、不推送。旧 SQL 基线、埋点与组件迁移继续暂缓。
@@ -46,7 +49,7 @@ Linux `en_US.utf8` 对应 macOS `en_US.UTF-8`，均保持 UTF8 和区域意图�
 
 独立字幕用例实际经过 `request → Worker claim/report → prepare → 原生写入 → apply`，再在原生编辑器手工修改正文与 200–1200ms 时序，保存返回和重开后值一致。使用受控本地音频及对齐器结果，**没有重跑真实 WhisperX 模型，也没有付费调用**。它证明入口、HTTP、队列、桥和保存能力，不作为模型识别质量证明。
 
-截图：[宿主桌面](caption-host-desktop.png)、[字幕工作区](caption-sdk-desktop.png)、[390px 宿主](caption-host-narrow.png)、[保存后重开](caption-saved-reopened.png)、[原生日常工作台](daily-desktop.png)。原生 SDK 内部窄屏仍拥挤；宿主入口完整可见，页面无横向溢出，SDK入口同时通过键盘激活验证。细节优化按用户要求后续再看。
+截图：宿主桌面（历史附件已清理：`caption-host-desktop.png`）、字幕工作区（历史附件已清理：`caption-sdk-desktop.png`）、390px 宿主（历史附件已清理：`caption-host-narrow.png`）、保存后重开（历史附件已清理：`caption-saved-reopened.png`）、原生日常工作台（历史附件已清理：`daily-desktop.png`）。原生 SDK 内部窄屏仍拥挤；宿主入口完整可见，页面无横向溢出，SDK入口同时通过键盘激活验证。细节优化按用户要求后续再看。
 
 ## 回退边界
 
@@ -55,7 +58,7 @@ Linux `en_US.utf8` 对应 macOS `en_US.UTF-8`，均保持 UTF8 和区域意图�
 3. 原生库已有新业务写入后，旧库就是截止于迁移时的快照。必须先停写，将原生最新状态另做完整逻辑导出，在独立目标恢复并对账后再切；不能只覆盖配置，否则会丢失新增生产记录。没有实施自动回退或覆盖旧卷。
 4. 自动备份开关、旧 SQL 重整、埋点、组件迁移及其他暂缓项均未执行。
 
-可复核结果见 [verification.json](verification.json)。诊断日志、隔离运行原始证据及过程说明保留于 `/tmp/loop-native-pg-captions-20261112/` 和其中列出的 `/private/tmp/loop-story-e2e-*/evidence`；私有迁移材料以运行目录中的保留副本为准。
+可复核结果见 verification.json（历史附件已清理：`verification.json`）。诊断日志、隔离运行原始证据及过程说明保留于 `/tmp/loop-native-pg-captions-20261112/` 和其中列出的 `/private/tmp/loop-story-e2e-*/evidence`；私有迁移材料以运行目录中的保留副本为准。
 
 ## Modern Web Guidance
 

@@ -1,5 +1,8 @@
 # Codex CLI 旧规划链路退役验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-12。范围为Loop-Control内旧视觉/分镜规划；不卸载系统Codex，不重置历史记录，不执行原生PG或SQL新基线转换。保留前轮未提交成果及三份并行CSS，不提交、不推送。
 
 ## 已执行
@@ -17,7 +20,7 @@
 
 该迁移的纯字段谓词同时排除旧Provider、任务类型、能力及快照Provider；收紧private领取候选、全局/资源/公平计数、租约恢复与旧public领取。Worker仅获得新谓词EXECUTE，不获得tasks表SELECT。启动检查要求此门槛存在，避免代码先更新、数据库保护缺失时静默运行。
 
-应用前：5174/5175未运行，没有本项目旧Worker/CLI包装器进程；不会把实际仍运行的旧任务排除容量后并发启动新任务。事务仅更新函数/权限和schema_migrations一条记录，未启停日常服务。任务、运行、蓝图、生产单、审计和连接六表内容摘要前后一致。[应用收据](daily-migration-receipt.json)。恢复SQL和原函数定义保存在 `/tmp/loop-codex-chain-retirement-20261112/`，未执行回退。
+应用前：5174/5175未运行，没有本项目旧Worker/CLI包装器进程；不会把实际仍运行的旧任务排除容量后并发启动新任务。事务仅更新函数/权限和schema_migrations一条记录，未启停日常服务。任务、运行、蓝图、生产单、审计和连接六表内容摘要前后一致。应用收据（历史附件已清理：`daily-migration-receipt.json`）。恢复SQL和原函数定义保存在 `/tmp/loop-codex-chain-retirement-20261112/`，未执行回退。
 
 ## 验证
 
@@ -44,6 +47,6 @@ WhisperX只核查代码：入口在可写Studio的OpenChatCut字幕库，默认�
 
 所有旧SQL、冻结记录、历史数据与原有退役保护验收保持；164为新增前向过滤。共享类型/通用协议中的旧字段和历史名称不代表CLI仍可执行。全局Codex安装、Python/模型、备份设置和Worker并发2/重任务1保持。
 
-本轮5299和自动验收浏览器收尾关闭；此前用户查看的WhisperX位置预览5298保留。恢复和完整日志：`/tmp/loop-codex-chain-retirement-20261112/`。截图：[旧规划修复390px](retired-repair-390.png)、[状态面板](status-after-retirement.png)。
+本轮5299和自动验收浏览器收尾关闭；此前用户查看的WhisperX位置预览5298保留。恢复和完整日志：`/tmp/loop-codex-chain-retirement-20261112/`。截图：旧规划修复390px（历史附件已清理：`retired-repair-390.png`）、状态面板（历史附件已清理：`status-after-retirement.png`）。
 
 最终保护与各用例证据见 [verification.json](</Users/dan/.codex/archives/loop-control/20261115-ui-cleanup/business-evidence/docs/verification/codex-planning-retirement-20261112/verification.json>)。本轮一次性PG容器均由runner校验身份后清理，完成的源码/SDK隔离副本已释放，失败和成功日志保留。

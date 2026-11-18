@@ -1,1 +1,0 @@
-✗ Unknown action 'select' for find. Valid actions: click, fill, check, hover, text.

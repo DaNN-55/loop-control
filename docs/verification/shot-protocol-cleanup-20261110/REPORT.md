@@ -2,6 +2,9 @@
 
 # Worker 镜头协议与清理等价核对
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-10。已在隔离空间实现，尚未迁移。主项目程序文件和日常运行版本保持，费用 0。
 
 [本轮新预览](http://127.0.0.1:5194/__current_cleanup?view=episodes&episode=828df426-f047-4714-b71a-a160b702f9cc&step=preparation&tab=sound)。5194 使用当前隔离源码与 156 隔离数据库；5192 保留上一轮核对实例；主程序仍为 5174。产品变更在 `/Users/dan/Programs/loop-control/.scratch/current-flow-cleanup-20261110/pending`。
@@ -22,13 +25,13 @@
 - 修复顶部工具区：上轮删除 production-nodes.css 时误删了现用抽屉共用的 5 条规则，导致工具容器变为 block、超出顶栏，关闭按钮落到下一行。共享规则已迁至现用 workspace-topbar.css，恢复主项目原布局。
 - 新增 ADR-0032 并补入口索引，明确当前新写、旧读和恢复边界。此前 19 个旧文件清理继续保留，完整迁移清单含前后两轮变更，尚未应用到主目录。
 
-本轮增量 28 个文件，见 [protocol-delta.json](protocol-delta.json)。合并清单：{'modify': 59, 'add': 12, 'delete': 19}；见 [完整差异](cleanup.patch)和[逐文件前后 SHA](migration-manifest.json)。预览 fixture、runner、构建物、缓存不在迁移清单。后续迁移前必须重新验证 mainBeforeSha256。
+本轮增量 28 个文件，见 protocol-delta.json（历史附件已清理：`protocol-delta.json`）。合并清单：{'modify': 59, 'add': 12, 'delete': 19}；见 [完整差异](cleanup.patch)和逐文件前后 SHA（历史附件已清理：`migration-manifest.json`）。预览 fixture、runner、构建物、缓存不在迁移清单。后续迁移前必须重新验证 mainBeforeSha256。
 
 ## 实际验证
 
 - 28 文件 264 项相关回归通过，包含原清理后的当前四步、字幕／画面／音频／交付、共享抽屉、Worker 合同、Adapter、任务统计和标签。前端（含类型检查）、后端、Worker 构建退出码均为 0；保留既有大 chunk 提示，不宣称性能提升。
 - 33 条真实隔离集成通过：当前脚本及新任务链 3、新旧混合并发与不可变输出 3、未知提交及新旧 Provider 恢复 3、Pexels 全流程／失败恢复／轮换／预览／采用／导出 6、模型与实际 Worker 参数矩阵 17、155→156 实际升级 1。
-- 155→156：先在旧 schema 经真实 Owner HTTP 创建并提交旧 generate_b_roll，模拟轮询中断；应用 156 后原行和冻结快照完全相同。不能绕过该旧提交新建付费任务；恢复只轮询原 Provider ID，旧任务只有一次 POST。随后新镜头任务为 generate_shot_video，Worker 完成且产物为 shot_video。见 [升级证明](shot-protocol-upgrade-proof.json)。
+- 155→156：先在旧 schema 经真实 Owner HTTP 创建并提交旧 generate_b_roll，模拟轮询中断；应用 156 后原行和冻结快照完全相同。不能绕过该旧提交新建付费任务；恢复只轮询原 Provider ID，旧任务只有一次 POST。随后新镜头任务为 generate_shot_video，Worker 完成且产物为 shot_video。见 升级证明（历史附件已清理：`shot-protocol-upgrade-proof.json`）。
 - 并发：当前／混合／旧协议两任务共用同一连接，Worker capacity=4 时仍仅允许 1 个执行；释放后第二个才可领取。已领取输出改写被原不可变约束拒绝。
 - Pexels 搜索／预览失败仍可按原专用入口重新请求，不进入付费 Provider 恢复，不自动导入或采用；实际编辑、保存重开、导出通过。
 - 所有 Provider 网络为受控响应，实际文件、SQL、HTTP、Worker 和媒体探测真实执行；未发起付费请求，不代表真实供应商画质验收。
@@ -36,10 +39,10 @@
 ## 与主项目的对照
 
 - 基线使用开始时的主项目源码快照和同一隔离样例，不操作日常数据。
-- 1398／640 各检查音频、画面、脚本与旧成片，共 8 组页面。59 个布局实例的边界／排版／颜色／间距等计算样式两侧一致，无横向溢出；顶部桌面与窄屏全部工具均在 56px 顶栏内。旧视频真实加载并可读取。见 [测量](ui-parity-measurements.json)、[差异结果](ui-parity-differences.json)和对应截图。
+- 1398／640 各检查音频、画面、脚本与旧成片，共 8 组页面。59 个布局实例的边界／排版／颜色／间距等计算样式两侧一致，无横向溢出；顶部桌面与窄屏全部工具均在 56px 顶栏内。旧视频真实加载并可读取。见 测量（历史附件已清理：`ui-parity-measurements.json`）、差异结果（历史附件已清理：`ui-parity-differences.json`）和对应截图。
 - ⌘K 可以聚焦工作区搜索，关闭搜索按钮可操作；当前核对页面错误列表为空。
-- 实际 Owner API 的账号规则、系列版本绑定、生产单状态／计数、四步 workspace、镜头文本／来源、准备授权、画面就绪、口播、音频开关、候选及导出数量业务投影一致。仅排除生成的 UUID、时间、哈希、磁盘路径及已明确退役的 preparation.shots.shotType。关系按账号、系列名称和冻结版本比较，见 [API 对照](api-parity.json)。
-- 模型目录的 Provider／Adapter、模型、预设与约束不变；原 5 类 legacy Adapter choice 完全一致。只增加当前协议的兼容声明，见 [目录对照](catalog-parity.json)。
+- 实际 Owner API 的账号规则、系列版本绑定、生产单状态／计数、四步 workspace、镜头文本／来源、准备授权、画面就绪、口播、音频开关、候选及导出数量业务投影一致。仅排除生成的 UUID、时间、哈希、磁盘路径及已明确退役的 preparation.shots.shotType。关系按账号、系列名称和冻结版本比较，见 API 对照（历史附件已清理：`api-parity.json`）。
+- 模型目录的 Provider／Adapter、模型、预设与约束不变；原 5 类 legacy Adapter choice 完全一致。只增加当前协议的兼容声明，见 目录对照（历史附件已清理：`catalog-parity.json`）。
 - 开始时记录的主程序 src／scripts／SQL／ADR 及包文件共 1174 个指纹一致，其中 src 909 个与上轮开始也一致；暂存区未改。日常 PID 78102、端口 5174、固定运行包 2b3b75f8fb71599e7790dc0238a4d6911a3d44ca932c295c6120a3347d0a2335 未变。未重启日常服务、应用日常 SQL、修改日常媒体或提交推送。计划与核对证据属于本轮记录变更，不属于程序迁移。
 
 ## 如何核对

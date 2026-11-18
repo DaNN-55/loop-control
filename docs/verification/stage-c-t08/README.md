@@ -1,5 +1,8 @@
 # T08：预构建、即时唤醒与五秒内兜底
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-23，基线 `e62dce8`。T08/#114 已在当前优化工作树实现并完成本地验收，Owner 已认可结论；本次提交归档实现、验收报告、回归日志和证据索引，未推送或合并，T09 未开始，没有操作生产。
 
 ## 结论与限制
@@ -12,7 +15,7 @@
 
 ## 票单、依赖与实现
 
-只读 gh 核对 #114 OPEN / ready-for-agent、正文/评论和原生 blocked_by：唯一依赖 #113。T07 本地实现、已认可验收和提交 `e62dce8` 满足技术前置；云端两票保持 OPEN，没有代替 Owner 改标签、评论或关票。[票单快照](ticket-114.json)、[依赖快照](ticket-dependencies.json)。
+只读 gh 核对 #114 OPEN / ready-for-agent、正文/评论和原生 blocked_by：唯一依赖 #113。T07 本地实现、已认可验收和提交 `e62dce8` 满足技术前置；云端两票保持 OPEN，没有代替 Owner 改标签、评论或关票。票单快照（历史附件已清理：`ticket-114.json`）、依赖快照（历史附件已清理：`ticket-dependencies.json`）。
 
 - [runtimeBuild](../../../src/orchestration/runtimeBuild.ts) 将源码、package/lock、两份构建配置及全部 Worker/编排输出的 SHA-256 与工作目录、Node 主版本绑定。`runtime:prepare` 是唯一准备入口，先使旧清单失效、串行构建，再原子发布清单；编译失败/准备期间源码变化不会保留有效旧清单。独占准备目录防止并发构建；中断残留明确报错。
 - [准备脚本](../../../scripts/prepare-runtime.mjs)、[CLI 包装](../../../scripts/run-prepared.mjs) 与 Worker/编排 CLI 本体均执行相同准备契约。`worker:run`、`orchestrator:run` 不再热编译；未准备时应先 `npm run runtime:prepare`。启动脚本在服务/兼容定时器前准备；Vite 开发/预览服务在监听前准备并注册调度器，Vitest 模式不启动服务。
@@ -24,24 +27,24 @@
 
 | 标准 | 实际执行与观测 | 原始证据 |
 | --- | --- | --- |
-| 预构建、拒绝旧版 | 删除 Worker 产物、改写内容、添加新的源码文件；Worker/编排包装 CLI 和直接编排 CLI 全部拒绝，HTTP 503 并说明 runtime:prepare。任务保持 ready/attempt0；生产启动接口也返回503，完整Episode行（含预检记录）未改；准备+重启后真实 Worker 完成。 | [准备完整性](preparation-final.json) |
-| 派发不编译 | 普通 HTTP 派发、连续真实产物、暖重启前后清单及所有输出的 SHA/mtime 不变；单元回归也验证热路径不调用 npm/编译器。 | [HTTP](http-final.json)、[针对性检查](targeted-final.txt) |
-| 真实 HTTP 即时领取 | 同一任务5次 POST202，130.337ms 原子领取，单个 attempt0 run 与实际 MP4；身份与持久状态查询均经普通 middleware。 | [HTTP](http-final.json) |
-| 无页面、无显式唤醒 | 不进行 POST，也不保持浏览器连接，兜底3663.163ms领取；实际 Worker/FFmpeg完成。 | [HTTP](http-final.json) |
-| 长执行期间兜底 | 先确认扫描和规划均结束、长任务仍占一个槽，再创建新任务且不唤醒；下一轮兜底3896.427ms领取，峰值2。20次重复唤醒不重复执行。 | [受控长执行](controlled-final.json) |
-| 慢规划不挡领取、防重入 | 规划RPC被门闩持有未返回，新的即时任务仍能领取；短领取请求峰值1。 | [针对性检查](targeted-final.txt) |
-| 重启补漏 | 停服务后写入ready任务，无POST；暖重启296.040ms领取、真实MP4。再次重启GET仍成功。 | [HTTP](http-final.json) |
-| 运行中退出与恢复 | 真正服务/Worker执行中，用明确标注的私密慢FFmpeg包装器暂停执行；71ms内Worker和子进程退出，任务由围栏事务变ready/attempt1、token清除。重启后普通FFmpeg完成，run历史failed0/completed1，实际产物哈希匹配。 | [退出与续接](shutdown-final.json) |
-| 满载及异常另列 | 满载时新任务ready/attempt0，无第三个执行器；释放后补位。真实连接拒绝被明确记录，程序过期503。中断恢复不算健康五秒样本。 | [受控执行](controlled-final.json)、[准备](preparation-final.json)、[退出](shutdown-final.json) |
+| 预构建、拒绝旧版 | 删除 Worker 产物、改写内容、添加新的源码文件；Worker/编排包装 CLI 和直接编排 CLI 全部拒绝，HTTP 503 并说明 runtime:prepare。任务保持 ready/attempt0；生产启动接口也返回503，完整Episode行（含预检记录）未改；准备+重启后真实 Worker 完成。 | 准备完整性（历史附件已清理：`preparation-final.json`） |
+| 派发不编译 | 普通 HTTP 派发、连续真实产物、暖重启前后清单及所有输出的 SHA/mtime 不变；单元回归也验证热路径不调用 npm/编译器。 | HTTP（历史附件已清理：`http-final.json`）、针对性检查（历史附件已清理：`targeted-final.txt`） |
+| 真实 HTTP 即时领取 | 同一任务5次 POST202，130.337ms 原子领取，单个 attempt0 run 与实际 MP4；身份与持久状态查询均经普通 middleware。 | HTTP（历史附件已清理：`http-final.json`） |
+| 无页面、无显式唤醒 | 不进行 POST，也不保持浏览器连接，兜底3663.163ms领取；实际 Worker/FFmpeg完成。 | HTTP（历史附件已清理：`http-final.json`） |
+| 长执行期间兜底 | 先确认扫描和规划均结束、长任务仍占一个槽，再创建新任务且不唤醒；下一轮兜底3896.427ms领取，峰值2。20次重复唤醒不重复执行。 | 受控长执行（历史附件已清理：`controlled-final.json`） |
+| 慢规划不挡领取、防重入 | 规划RPC被门闩持有未返回，新的即时任务仍能领取；短领取请求峰值1。 | 针对性检查（历史附件已清理：`targeted-final.txt`） |
+| 重启补漏 | 停服务后写入ready任务，无POST；暖重启296.040ms领取、真实MP4。再次重启GET仍成功。 | HTTP（历史附件已清理：`http-final.json`） |
+| 运行中退出与恢复 | 真正服务/Worker执行中，用明确标注的私密慢FFmpeg包装器暂停执行；71ms内Worker和子进程退出，任务由围栏事务变ready/attempt1、token清除。重启后普通FFmpeg完成，run历史failed0/completed1，实际产物哈希匹配。 | 退出与续接（历史附件已清理：`shutdown-final.json`） |
+| 满载及异常另列 | 满载时新任务ready/attempt0，无第三个执行器；释放后补位。真实连接拒绝被明确记录，程序过期503。中断恢复不算健康五秒样本。 | 受控执行（历史附件已清理：`controlled-final.json`）、准备（历史附件已清理：`preparation-final.json`）、退出（历史附件已清理：`shutdown-final.json`） |
 
 普通 HTTP 的各条真实 MP4 均为23,297字节，SHA-256 `52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c`，磁盘与数据库一致。受控长任务使用真实数据库/结果事务及真实文本文件，未调用在线TTS；退出样本的首轮慢FFmpeg包装器是故障注入，重启后才用正常FFmpeg。各真实演练在开始前保护已有任务行，结束后完整行字节一致；配置、生产、A基线未改。验收后 verified 控制台已停止，避免常驻消费者继续处理历史测试队列，数据库与媒体仍保留。
 
 ## 回归、失败记录与复跑
 
-- [默认5000ms应用回归](full-default-5000.txt)：72文件/681项通过，已有React act提示原样保留。单worker，只排除既有n8n节点/集成项和`.loop-control`生成的对照快照，无业务用例排除或超时放宽。
-- [完整SQL](sql-final.json)：22文件/249条通过，沿用T07数据库232条迁移，无新迁移。[类型](types-final.txt)通过；准备阶段实际执行Worker和编排构建成功。[Node](node-tests.txt)：2通过/1项本机n8n原生节点校验跳过。
-- 首片准备及调度器模块缺失、旧热路径会调用npm均先留red再实现；复审关闭了多次规划RPC阻挡即时领取、直接编排入口绕过准备检查，以及生产启动后才检查准备状态三项风险。最后一项先复现500，再将检查移至运行探测和任何写入前，[HTTP回归](preflight-order-green.txt)及真实库都验证503、无预检记录或状态迁移。
-- 原始失败保留在[red-history](red-history/)及[私密证据索引](private-evidence-index.json)：首次受控fixture误用容量1的codex，把资源满载误作空槽；改用已注册、默认容量2的google_tts受控资源，未放宽上限或5秒断言。准备fixture漏传直接CLI要求的LOOP_PROJECT_ROOT；慢FFmpeg包装器最初误用CommonJS而未进入执行；均只修fixture后重验。初次类型检查的未使用导入、Vitest配置钩子曾尝试启用服务的绑定拒绝，也保留日志。没有把这些失败删成全绿历史。
+- 默认5000ms应用回归（历史附件已清理：`full-default-5000.txt`）：72文件/681项通过，已有React act提示原样保留。单worker，只排除既有n8n节点/集成项和`.loop-control`生成的对照快照，无业务用例排除或超时放宽。
+- 完整SQL（历史附件已清理：`sql-final.json`）：22文件/249条通过，沿用T07数据库232条迁移，无新迁移。类型（历史附件已清理：`types-final.txt`）通过；准备阶段实际执行Worker和编排构建成功。Node（历史附件已清理：`node-tests.txt`）：2通过/1项本机n8n原生节点校验跳过。
+- 首片准备及调度器模块缺失、旧热路径会调用npm均先留red再实现；复审关闭了多次规划RPC阻挡即时领取、直接编排入口绕过准备检查，以及生产启动后才检查准备状态三项风险。最后一项先复现500，再将检查移至运行探测和任何写入前，HTTP回归（历史附件已清理：`preflight-order-green.txt`）及真实库都验证503、无预检记录或状态迁移。
+- 原始失败保留在[red-history](red-history/)及私密证据索引（历史附件已清理：`private-evidence-index.json`）：首次受控fixture误用容量1的codex，把资源满载误作空槽；改用已注册、默认容量2的google_tts受控资源，未放宽上限或5秒断言。准备fixture漏传直接CLI要求的LOOP_PROJECT_ROOT；慢FFmpeg包装器最初误用CommonJS而未进入执行；均只修fixture后重验。初次类型检查的未使用导入、Vitest配置钩子曾尝试启用服务的绑定拒绝，也保留日志。没有把这些失败删成全绿历史。
 - 私密原始文件含各轮成功/失败、生成物备份、进程包装器及日志快照；索引记录绝对路径、字节、SHA-256，不把私密任务全量快照或认证材料复制到报告。
 
 仅在本工作树现有 verified 目标复跑：

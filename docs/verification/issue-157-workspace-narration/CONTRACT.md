@@ -1,5 +1,8 @@
 # T05 口播接入契约
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 ## 身份与权威
 
 工作空间仍只有原生 OpenChatCut 工程这一份编辑权威。逐镜设置复用 `shot_preparation_drafts`、`save_episode_tts_settings` 和逐镜覆盖；Provider、不可变连接版本、声音、语速、语言、预算与 native 输出命名空间均沿用现有 TTS 路径。`workspace_narrations` 仅保存准备/确认/请求/采用身份，不保存另一份时间线。

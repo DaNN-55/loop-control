@@ -1,3 +1,0 @@
-Standards: 0 actual actionable findings. Fixed190→191 snapshots, read-only; no tests run.
-Spec: 0 actual findings. B1 current canonical registration/tuple, frozen requests and valid late audio maintained. Pexels, partial history projection and C-F/G remain out of this stage.
-Sources: /root/stage191_standards_final and /root/stage191_spec_final.

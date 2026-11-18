@@ -1,8 +1,0 @@
-{
-  "wholeDatabaseFrozenMetadataAppDeploymentUnchanged": true,
-  "metrics": {
-    "events": 0,
-    "enabled": false
-  },
-  "dailyMigration": "185-remove-retired-generated-script-chain.sql"
-}

@@ -1,5 +1,8 @@
 # D 封面来源与交付边界子批
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-14。状态：本子批完成，完整 D／A–G 仍在实施。固定末轮源：`/Volumes/Ebuget 1T/loop-workflow-private-backup-20261114-5bk8z1hx/export-runs/loop-story-e2e-C7BO5x/source`。不操作日常、不调用真实 Provider 或视频 API、不提交、不推送。
 
 ## 行为
@@ -27,6 +30,6 @@
 
 D 原声意图、全部接入来源 DB＋文件／逐项／不同来源 Owner 恢复仍未完成，随后是 B1／C2 剩余覆盖、E1／E2、F1／F2 与最终 G。当前 artifact 文件名可能是原文件哈希名，可读名称归 F1 处理，不改原路径或 SHA。棋盘格仍是独立 Proposed 问题，共享 SDK 未修改。
 
-证据：[末轮结果](evidence-d-cover/vitest.json)、[material 回执](evidence-d-cover/material-cover-receipt.json)、[artifact 回执](evidence-d-cover/artifact-cover-receipt.json)、[组件结果](evidence-d-cover/cover-units-final.json)、[保持及运行清单](evidence-d-cover/verification-final.json)。
+证据：[末轮结果](evidence-d-cover/vitest.json)、material 回执（历史附件已清理：`evidence-d-cover/material-cover-receipt.json`）、artifact 回执（历史附件已清理：`evidence-d-cover/artifact-cover-receipt.json`）、组件结果（历史附件已清理：`evidence-d-cover/cover-units-final.json`）、保持及运行清单（历史附件已清理：`evidence-d-cover/verification-final.json`）。
 
 现代网页指南本批使用 `accessibility`：我将替换与放大保持为不同名称、原生键盘可操作的并列控件，且不因选择来源自动提交（“Don't reuse an accessible name across controls with different effects in the same view”）。沿用既有 React Aria 预览对话框，本次没有另造模态框实现。

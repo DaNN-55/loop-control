@@ -1,5 +1,8 @@
 # 04 乔迁真实批量验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-16。**真实 API 测试已执行，整流程验收不通过。** 口播整批采用成功；视频部分采用成功；口播与画面窗口错配，导致字幕与最终交付受阻。所有产物和失败信息保留，未重复付费重生、未发布、未提交或推送。
 
 [打开新测试单](http://127.0.0.1:5174/?view=episodes&episode=b53cfbbc-22ec-4bde-8791-c0d11b244748&step=delivery)。账号沿用日照金山测试账号，原事业／乔迁两单未修改。
@@ -15,7 +18,7 @@
 | 字幕 | 六项批量请求在第一项遭409保护拦截，0项入队，未能进入字幕候选核对或采用 |
 | 导出／交付 | 实际调用导出返回 HTTP200、业务状态failed；技术检查1/3通过，2处占位与字幕时序检查失败，成片确认禁用。无最终MP4、无交付ZIP |
 
-本次核对是流程与媒体可用性验收，已查看六镜编码帧、实际播放控件、口播正文及元数据；不冒充逐字人工听审或完整逐帧产品质量审核。[六镜实际中间帧](frames/six-video-middle.png)中首镜错误清楚可见。
+本次核对是流程与媒体可用性验收，已查看六镜编码帧、实际播放控件、口播正文及元数据；不冒充逐字人工听审或完整逐帧产品质量审核。六镜实际中间帧（历史附件已清理：`frames/six-video-middle.png`）中首镜错误清楚可见。
 
 ## 实际花费
 
@@ -47,9 +50,9 @@
 
 ## 保留与边界
 
-- [最终界面](17-final-checks-failed.png)、[全部失败记录](failures.json)、[操作时间线](timeline.jsonl)、[媒体核对记录](media-review.jsonl)。
-- [v3脚本副本](04-qiaoqian-v3.md)、[原文比对](script-migration.json)、[复用素材路径／SHA](reused-materials.json)。
+- 最终界面（历史附件已清理：`17-final-checks-failed.png`）、全部失败记录（历史附件已清理：`failures.json`）、操作时间线（历史附件已清理：`timeline.jsonl`）、媒体核对记录（历史附件已清理：`media-review.jsonl`）。
+- [v3脚本副本](04-qiaoqian-v3.md)、原文比对（历史附件已清理：`script-migration.json`）、复用素材路径／SHA（历史附件已清理：`reused-materials.json`）。
 - `evidence/baseline/`、`evidence/after-voice-video-queued/`、`evidence/after-generation/`、`evidence/final/`保存关联表、每次任务／attempt、采用、工程历史、导出失败、指标与审计的脱敏快照，以及逐文件路径／大小／SHA。原素材和新生成媒体仍在账号专属目录。
-- [浏览器命令记录](browser-network.jsonl)、[关联运行日志](runtime-related-log.jsonl)、[浏览器控制台](browser-console.json)。浏览器跨刷新采集未覆盖前2条视频确认请求；全部六视频冻结输入／任务和命令回执另由数据库完整保存。TTS供应商原请求回执未被现实现持久化，不能事后凭空补齐。
-- 日志与指标有实际证据：最终快照含228条制作事件、142条关联请求日志（71个请求，69个HTTP200／2个409），12次生成started／finished、10次candidate_adopted与一次local_export_rejected均可关联；HTTP200的导出业务失败已单独识别。见 [日志摘要](evidence/final/runtime-log-summary.json)。
-- 原两单关键数据库行与387源文件SHA全部保持一致；最后应用刷新前确认无活动任务、无Studio，仅重启应用加载完整运行包，保留PostgreSQL与所有测试单数据。[最终运行状态](runtime-final.json)。
+- 浏览器命令记录（历史附件已清理：`browser-network.jsonl`）、关联运行日志（历史附件已清理：`runtime-related-log.jsonl`）、浏览器控制台（历史附件已清理：`browser-console.json`）。浏览器跨刷新采集未覆盖前2条视频确认请求；全部六视频冻结输入／任务和命令回执另由数据库完整保存。TTS供应商原请求回执未被现实现持久化，不能事后凭空补齐。
+- 日志与指标有实际证据：最终快照含228条制作事件、142条关联请求日志（71个请求，69个HTTP200／2个409），12次生成started／finished、10次candidate_adopted与一次local_export_rejected均可关联；HTTP200的导出业务失败已单独识别。见 日志摘要（历史附件已清理：`evidence/final/runtime-log-summary.json`）。
+- 原两单关键数据库行与387源文件SHA全部保持一致；最后应用刷新前确认无活动任务、无Studio，仅重启应用加载完整运行包，保留PostgreSQL与所有测试单数据。最终运行状态（历史附件已清理：`runtime-final.json`）。

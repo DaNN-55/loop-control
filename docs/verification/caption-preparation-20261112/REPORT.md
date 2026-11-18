@@ -1,5 +1,8 @@
 # 自动校时移入分镜台
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-12。按用户批准的方案实施。自动校时现在位于 **分镜台 → 字幕与口播 → 字幕**，跟随当前镜头；保留原生手工字幕和保存能力，清理剪辑台新增的两处自动校时入口与宿主侧栏。旧 SQL 基线、埋点、组件迁移和其他暂缓项未执行。
 
 ## 行为与边界
@@ -28,7 +31,7 @@
 
 校时验收使用真实 Owner HTTP、PG 队列、Worker 领取/回执、文件和 SQLite；外部对齐器结果与语音素材为受控本地样例。**没有重跑真实 WhisperX 模型，没有付费调用**；本轮验证入口移动及数据/保存链路，不评价识别质量。
 
-最终三项隔离验收位于 `/private/tmp/loop-story-e2e-IKIqrG/evidence/`；过程日志及原件在 `/tmp/loop-caption-preparation-20261112/`。截图：[分镜台桌面](preparation-desktop.png)、[窄屏](preparation-narrow.png)、[采用结果](alignment-adopted.png)、[干净剪辑台](clean-studio.png)、[保存重开](saved-reopened.png)。
+最终三项隔离验收位于 `/private/tmp/loop-story-e2e-IKIqrG/evidence/`；过程日志及原件在 `/tmp/loop-caption-preparation-20261112/`。截图：分镜台桌面（历史附件已清理：`preparation-desktop.png`）、窄屏（历史附件已清理：`preparation-narrow.png`）、采用结果（历史附件已清理：`alignment-adopted.png`）、干净剪辑台（历史附件已清理：`clean-studio.png`）、保存重开（历史附件已清理：`saved-reopened.png`）。
 
 ## 交付与保护
 
@@ -36,7 +39,7 @@
 
 三份并行 CSS：`src/styles.css`、`src/local-app/SystemStatusDrawer.css`、`src/ui/impeccable/maintenance.css` 与本轮起始 SHA-256 一致。暂存区为空，本轮没有执行提交、合并或推送。
 
-工作期间 `main` 被其他操作从 `6719e676` 更新为 `f1bb6057`（包含 `2a14e320` 的并行集成）；这些更新已保留，没有回退或改写。最终隔离验收包含当前源码，运行版本仍匹配。逐项保护与运行摘要见 [verification.json](verification.json)。
+工作期间 `main` 被其他操作从 `6719e676` 更新为 `f1bb6057`（包含 `2a14e320` 的并行集成）；这些更新已保留，没有回退或改写。最终隔离验收包含当前源码，运行版本仍匹配。逐项保护与运行摘要见 verification.json（历史附件已清理：`verification.json`）。
 
 ## Modern Web Guidance
 

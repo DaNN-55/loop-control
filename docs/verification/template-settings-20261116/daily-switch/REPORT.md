@@ -1,5 +1,8 @@
 # 日常运行包切换与模板实导复核
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-16。已将日常服务切换到最新固定运行包，重启后通过真实登录会话与日常 HTTP 接口新建独立工程，完成原生剪辑器打开、保存、重新读取及两次成片导出。原工程与交付保留，没有提交或推送。
 
 ## 运行状态
@@ -19,7 +22,7 @@
 - 字幕全局继承 2 行×14 字，第三镜明确覆盖为 1 行×10 字。未填缩放/动画保持原值，第二镜缩放 1.1 与慢推、第三镜拉远，第四镜明确关闭动画/转场；四个转场为 `anticipation-zoom`、`cross-dissolve`、`dip-to-black`、`soft-wipe`。视觉片段仍在 0/60/120/180/240/300 帧开始。
 - 全局音效 0.75 秒按 30 fps 量化至 23 帧；首镜明确 0 起点未被全局覆盖；0 dB 和 0.4 秒保留。
 - HTTP `prepareWorkspace` 重开未改工程 SHA。原生剪辑器实际打开可编辑工程、保存返回分镜台后，HTTP 重新读取及工程 JSON 比较确认转场、动画、缩放、字幕限制不变；SDK 规范化后的轨道关联也正确。见 `template-checks.json`、`studio-save-checks.json`、`after-studio-project.json`。
-- 第一次导出 `ccc79fbb-a5a2-4a56-bed8-ffc128038a39`；原生保存后再导出 `e41b89b5-3ee6-4259-a3fd-0e083da4b6db`，最终 `current: true`、`ready`。最终样片为 [template-settings-after-save.mp4](template-settings-after-save.mp4)，1080×1920、30 fps、12 秒。浏览器刷新检查页显示“待确认成片与字幕”和“技术检查 6 / 6 通过”；保留未确认状态，未创建新交付包。
+- 第一次导出 `ccc79fbb-a5a2-4a56-bed8-ffc128038a39`；原生保存后再导出 `e41b89b5-3ee6-4259-a3fd-0e083da4b6db`，最终 `current: true`、`ready`。最终样片为 template-settings-after-save.mp4（历史附件已清理：`template-settings-after-save.mp4`），1080×1920、30 fps、12 秒。浏览器刷新检查页显示“待确认成片与字幕”和“技术检查 6 / 6 通过”；保留未确认状态，未创建新交付包。
 - 对两次编码后 MP4 实测均得到六处音效：0、2.77、4.77、6.77、8.77、10.77 秒，每处 0.4 秒，10 ms 测量分辨率；与帧网格预期误差小于 20 ms。检查脚本 `verify-export.mjs`，结果 `encoded-media-checks.json`、`final-encoded-media-checks.json`。已亲自查看保存前后 0.5 秒和 4.5 秒字幕帧，分别为 2 行×14 字与 1 行×10 字；其他关键帧一并保留。
 
 ## 原工程与交付保护

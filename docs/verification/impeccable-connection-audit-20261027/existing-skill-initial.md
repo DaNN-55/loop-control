@@ -1,4 +1,7 @@
 # 现有 skill 首轮审查（detector 运行前固定）
+
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
 依据：web-design-guidelines 最新规则、Dan UI visual contract。
 范围：ConnectionWorkspace 的连接管理部分（133–247 行）、ConnectionTestButton、LocalConnectionsPanel、LocalMaintenancePanel 及其实际命中的样式。ExternalConnectionPicker 不计入本轮。
 

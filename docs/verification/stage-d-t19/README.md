@@ -1,5 +1,8 @@
 # T19：本地媒体接管与受控离线验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 > 归档说明：本次按 Owner 认可，将 T19 实现、验收及基线对照证据仅提交到当前分支。正文和原始 JSON 中的“未提交”、`committed:false`、`noCommit:true` 及 HEAD 均描述验收/补验时快照；原始日志保持不变。默认 5000ms 门禁仍未通过、根因未解决，其他未验收项及模拟资格、SecretStore 替身、T17 日志覆盖说明继续保留。未推送、未合并、未开始 T20。
 
 
@@ -25,22 +28,22 @@
 
 | 项目 | 结果与证据 |
 |---|---|
-| HTTP→原生 PG→实际 Worker CLI | 七类样本通过：[最终日志](evidence/http-final-02.txt)、[结构化结果](evidence/http-result.json)；OpenAI/Cloudflare 图片、Pexels B-roll、Freesound BGM/SFX、人工、本地 A/B-roll 和能力关闭 |
+| HTTP→原生 PG→实际 Worker CLI | 七类样本通过：最终日志（历史附件已清理：`evidence/http-final-02.txt`）、结构化结果（历史附件已清理：`evidence/http-result.json`）；OpenAI/Cloudflare 图片、Pexels B-roll、Freesound BGM/SFX、人工、本地 A/B-roll 和能力关闭 |
 | 人工/已有音轨 | A/B 绑定、重复提交单任务、替换保留旧任务；旁白/BGM/SFX 与既有音轨选择；原视频音频实际提取。原声选择仅制作前可改 |
-| 阻塞/重试/权限 | [边界结果](evidence/boundary-result.json)：旧审核包、文件篡改/越界时长、CSRF、跨 Owner、未知秘密字段、角色越权及旧围栏拒绝；受控失败后显式重试，新路径、冻结版本和旧任务保留 |
-| 就绪/撤销 | [就绪结果](evidence/readiness-result.json)：实际撤销 Worker 函数权限后启动及 HTTP 503、v2 预检、任务/标记不变，finally 恢复授权；缺少 FFmpeg 拒绝。四条合成连接最终均撤销，原引用 409、不回落：[撤销结果](evidence/revocation-result.json) |
-| 真实 Chrome | 实际选择原片、保存原声/画面草稿、点击生成片段、上传并绑定 BGM、查看产物索引、刷新保留状态；1.023 秒实际裁剪视频可播放。七个最终产物在产品预览组件中加载，五个音视频样本播放时间前进：[逐族结果](evidence/browser-product-previews-final-result.json)、[提交/刷新结果](evidence/browser-final-result.json) |
-| 文件/历史/权限 | [137 个索引文件](evidence/artifact-audit.json) 的大小/SHA 与实际文件一致；[38 表、22,187 条验收前行](evidence/history-final-result.json) 逐字多重集保留；[迁移摘要和 definer ACL](evidence/native-security.json) 检查通过。旧卡片空画面文件仍留作失败证据，不计内容验收通过 |
+| 阻塞/重试/权限 | 边界结果（历史附件已清理：`evidence/boundary-result.json`）：旧审核包、文件篡改/越界时长、CSRF、跨 Owner、未知秘密字段、角色越权及旧围栏拒绝；受控失败后显式重试，新路径、冻结版本和旧任务保留 |
+| 就绪/撤销 | 就绪结果（历史附件已清理：`evidence/readiness-result.json`）：实际撤销 Worker 函数权限后启动及 HTTP 503、v2 预检、任务/标记不变，finally 恢复授权；缺少 FFmpeg 拒绝。四条合成连接最终均撤销，原引用 409、不回落：撤销结果（历史附件已清理：`evidence/revocation-result.json`） |
+| 真实 Chrome | 实际选择原片、保存原声/画面草稿、点击生成片段、上传并绑定 BGM、查看产物索引、刷新保留状态；1.023 秒实际裁剪视频可播放。七个最终产物在产品预览组件中加载，五个音视频样本播放时间前进：逐族结果（历史附件已清理：`evidence/browser-product-previews-final-result.json`）、提交/刷新结果（历史附件已清理：`evidence/browser-final-result.json`） |
+| 文件/历史/权限 | 137 个索引文件（历史附件已清理：`evidence/artifact-audit.json`） 的大小/SHA 与实际文件一致；38 表、22,187 条验收前行（历史附件已清理：`evidence/history-final-result.json`） 逐字多重集保留；迁移摘要和 definer ACL（历史附件已清理：`evidence/native-security.json`） 检查通过。旧卡片空画面文件仍留作失败证据，不计内容验收通过 |
 
 最终卡片实际显示冻结文字，人工目视截图如下。PNG/JPEG 的受控响应使用 1×1 合成图片，只证明编解码、文件、索引和预览接线；不证明在线图片质量或 Provider 实际生成效果。
 
-![修复后的本地卡片预览](evidence/browser-local-card-lightbox-final-01.png)
+修复后的本地卡片预览（历史附件已清理：`evidence/browser-local-card-lightbox-final-01.png`）
 
 ## 回归门禁：未通过
 
 Worker/编排预构建、应用和本地类型检查、前端生产构建通过。Node 测试 2 项通过、1 项既有跳过。全量 Vitest 使用同一隔离环境和默认 `5000ms`，未修改超时或断言期望值。
 
-- 最终 [第 04 次](evidence/application-final-04.txt) 和 [第 05 次](evidence/application-final-05.txt) 均为 **93/94 文件、739/740 测试通过**；`ReviewWorkspace.test.tsx` 的“分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择”超时。第 05 次在真实卡片渲染完成后执行，仍失败。
+- 最终 第 04 次（历史附件已清理：`evidence/application-final-04.txt`） 和 第 05 次（历史附件已清理：`evidence/application-final-05.txt`） 均为 **93/94 文件、739/740 测试通过**；`ReviewWorkspace.test.tsx` 的“分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择”超时。第 05 次在真实卡片渲染完成后执行，仍失败。
 - 第 02、03 次曾为 94 文件、740 项通过，不能覆盖最终失败或用于关闭门禁。
 - 首次回归误扫入私有旧比较快照，且两条源码断言仍读取提取前的媒体工具位置；保留失败日志，后续沿用 T18 的私有目录排除参数，并将断言读取位置移至共享模块，断言本身保留。
 - **此前 B/T06 的默认 5 秒门禁历史失败及根因未解决仍有效。** 本轮没有完成同机基线全量对照，不能把本次超时确定归因于 T19 或宣称根因已解决。没有继续重复试跑或放宽超时来掩盖失败。
@@ -55,6 +58,6 @@ Worker/编排预构建、应用和本地类型检查、前端生产构建通过�
 
 ## 证据与复核
 
-[证据索引](evidence-index.json) 列明本次源文件及公开证据的 SHA-256；索引不自包含。原始失败、最终日志、权限/历史审计和代表产物在 `evidence/`。含凭据的数据库配置、Owner 登录材料、全量数据库转储、租约和私有服务日志留在本机 `.loop-control/stage-d/state/t19-20261024`，不纳入公开证据或提交范围；未采集/纳入含凭据 HAR。
+证据索引（历史附件已清理：`evidence-index.json`） 列明本次源文件及公开证据的 SHA-256；索引不自包含。原始失败、最终日志、权限/历史审计和代表产物在 `evidence/`。含凭据的数据库配置、Owner 登录材料、全量数据库转储、租约和私有服务日志留在本机 `.loop-control/stage-d/state/t19-20261024`，不纳入公开证据或提交范围；未采集/纳入含凭据 HAR。
 
 [双轴复核](review.md) 的实现问题已修复；静态复核不替代运行证据，更不覆盖默认 5 秒回归失败。此报告不代表 GitHub 票单已关闭、已提交、已推送或已合并。

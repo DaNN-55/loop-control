@@ -1,5 +1,8 @@
 # 脚本确认常驻聊天验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-18。按已确认的线框落实正文／分镜／聊天三栏，仅调整脚本确认及支持它的拍法接口；其他产品页面不变。
 
 ## 结果
@@ -27,7 +30,7 @@
 - 完整应用浏览器实际完成：生成 → 仅讨论 → 刷新恢复 → 后续调整 → 手改镜头 → 改编确认后取消 → 采用进入分镜台。分镜台显示实际手改画面，未调用真实模型、图片、视频或语音服务。
 - 1481／900／390px 无横向溢出；桌面正文、分镜和聊天均高 653px，底部操作在同一外卡底部。聊天收起后仅保留 42px 栏，模式和发送按钮保持同一行。窄屏上下重排，保留页面滚动；截图仅记录当时滚动位置。
 - 日常应用单独重启，PostgreSQL 保持运行。正式页重新打开后读取正常，DeepSeek 选择及原有本机草稿恢复；没有点击正式生产单的优化、保存、采用或制作。
-- 重启前后及正式页只读回看后，七张相关业务表的数量和内容指纹完全一致，运行中任务均为 0。见 [比较](daily-comparison.json)。不将运行时日志／会话／采样数据算作业务表不变证据。
+- 重启前后及正式页只读回看后，七张相关业务表的数量和内容指纹完全一致，运行中任务均为 0。见 比较（历史附件已清理：`daily-comparison.json`）。不将运行时日志／会话／采样数据算作业务表不变证据。
 - 临时浏览器、HTTP 服务、私有 PostgreSQL 集群及 SDK 副本已关闭和移除；正式 5174 服务保留。Safari／Firefox、真实触屏设备与真实模型尚未验证。
 
 ## 验证中修正
@@ -38,6 +41,6 @@
 
 ## 证据
 
-- [常驻对话](discussion.png)、[窄屏布局](tablet.png)、[手机视图](mobile.png)、[手改后实际采用](adopted.png)
-- [脚本回归](script-regression.log)、[上下文／Provider](context-validation-green.log)、[真实集成](integration.log)、[全量](all-tests.log)、[搜索回归](search-regression.log)
-- [类型检查](final-check.log)、[前端构建](build.log)、[后端构建](backend-build.log)、[运行包准备](runtime-prepare.log)、[应用重启](restart.log)、[隔离清理](isolation-cleanup.log)
+- 常驻对话（历史附件已清理：`discussion.png`）、窄屏布局（历史附件已清理：`tablet.png`）、手机视图（历史附件已清理：`mobile.png`）、手改后实际采用（历史附件已清理：`adopted.png`）
+- 脚本回归（历史附件已清理：`script-regression.log`）、上下文／Provider（历史附件已清理：`context-validation-green.log`）、真实集成（历史附件已清理：`integration.log`）、全量（历史附件已清理：`all-tests.log`）、搜索回归（历史附件已清理：`search-regression.log`）
+- 类型检查（历史附件已清理：`final-check.log`）、前端构建（历史附件已清理：`build.log`）、后端构建（历史附件已清理：`backend-build.log`）、运行包准备（历史附件已清理：`runtime-prepare.log`）、应用重启（历史附件已清理：`restart.log`）、隔离清理（历史附件已清理：`isolation-cleanup.log`）

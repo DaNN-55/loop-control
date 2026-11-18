@@ -1,5 +1,8 @@
 # 图片配置与候选操作精调
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-08，正式 5174 前端。对应用户 6 条浏览器标注及“逐个检查图片配置高宽”的追加要求。
 
 ## 结果
@@ -34,6 +37,6 @@
 
 ## 证据
 
-[整体页面](desktop.jpg) · [规格](dimensions.jpg) · [数量](count.jpg) · [构图](composition.jpg) · [模型](model.jpg) · [采用菜单](actions.jpg) · [预览对齐](preview-aligned.jpg) · [窄窗](narrow.jpg) · [尺寸记录](browser-checks.json)
+整体页面（历史附件已清理：`desktop.jpg`） · 规格（历史附件已清理：`dimensions.jpg`） · 数量（历史附件已清理：`count.jpg`） · 构图（历史附件已清理：`composition.jpg`） · 模型（历史附件已清理：`model.jpg`） · 采用菜单（历史附件已清理：`actions.jpg`） · 预览对齐（历史附件已清理：`preview-aligned.jpg`） · 窄窗（历史附件已清理：`narrow.jpg`） · 尺寸记录（历史附件已清理：`browser-checks.json`）
 
 修改前文件位于当前聊天可视化目录的 `image-controls-refinement-baseline/`。

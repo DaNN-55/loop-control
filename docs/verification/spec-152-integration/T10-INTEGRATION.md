@@ -1,5 +1,8 @@
 # Native editing integration acceptance
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 T10 merged without conflicts at `acb807f1`, preserving delivery/export/094 fences and versioned controlled media. Independent verification passed TypeScript, 42 affected tests and 11 real isolated Owner HTTP/PG/Studio/native render cases. These include multi-range voice/caption retention, source dimensions, native locks/composition, added visuals, portrait/landscape caption pixels and exact export confirmation/invalidation.
 
 The merger reproduced a missing native-save guard: deleting the active final visual and parking it in an unreachable timeline could still register a new workspace SHA. Correction `c045934c` validates actual used visuals before persistence. Existing used video/image cannot be deleted to zero; initial nonempty all-placeholder drafts remain editable. Rejected native documents remain recoverable; old workspace/source bytes are unchanged.

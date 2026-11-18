@@ -1,5 +1,8 @@
 # D 阶段三个入口缺口收尾
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 当前归档状态（2026-10-25）：Owner 已认可账号新功能的 92 文件范围，本期以一个独立本地提交归档 9 个源码文件、78 份公开报告/证据和 5 个活动摘要/索引文件；93 个无关文件保持原样。9 个源码与验收快照一致，既有最终回归为 107 文件、815/815，默认 5000ms；本期只复核证据与归档状态，未重新运行测试、服务、桌面选择器或 Provider。原始报告、失败日志、历史快照、账本及未验收边界保持，不修改 Issue、不推送、不合并。验收报告及下文“未提交”等说明均保留其当时时点含义。详见[账号验收报告](native-account-ui.md)。
 
 六组归档时的记录（2026-10-25）：已按 Owner 认可的六组范围归档实现与证据；本次提交内容排除账号目录/蓝图检查新功能，其代码、报告和新增证据仍保留在工作区。默认 5000ms 的独立源码快照回归为 105 文件、807/807，类型和构建通过；Node 2 通过、1 项既有跳过。本轮没有重跑模型、数据库/浏览器全链或 Provider 请求。历史失败及下文“未提交”等时点记录保持原义；不据此关闭其他门禁。不改 Issue、不推送、不合并。详见[六组归档说明](local-commit-archive.md)。
@@ -40,23 +43,23 @@
 
 | 路径 | 观察结果与证据 |
 | --- | --- |
-| 目录/Owner | Owner 可见 6259 条历史记录时只返回 20 条；第二页与真实 SQL 排序一致且无重叠。账号计数、账号/归档/审核/系列筛选、运营子页上限、跨 Owner 排除和非法参数400通过；增量详情无变化不重传。[HTTP](evidence/catalog-http-result.json)。该次响应108665字节含配置元数据，不宣称所有实体都分页或恒定耗时 |
-| Chrome | 登录、目录第二页20条、账号筛选、归档空结果、详情、配置表单确认保存并由真实数据库核对、分镜审批及整页重载。恢复后新密码登录、已批准详情及第二页再次显示。390px视口内容宽390、20条、分页可操作；只是浏览器尺寸模拟，不是真机。[目录](evidence/browser-page2.png)、[空页](evidence/browser-empty.png)、[配置](evidence/browser-config-saved.png)、[恢复后](evidence/browser-restored-approved.png)、[窄屏](evidence/browser-restored-narrow.png) |
-| Keychain/probe | 正常工厂下 Owner HTTP 创建合成连接、真实 helper 写入专用测试 Keychain；实际离线 probe 返回 retryable/ready false，externalReady false。恢复后重建空测试 Keychain，原引用 missing，经同一 HTTP 显式 rebind；原版本/引用保持，资格仍全false。[创建](evidence/connections-http-result.json)、[恢复重绑](evidence/restored-http-result.json) |
-| Studio | 正常工厂下实际 Node/OpenChatCut 子进程55190打开继承的当前QC工程，工程API读取成功，真实Chrome显示素材、轨道与字幕。最终 local 媒体模式再次实际打开成功。[最终HTTP](evidence/final-studio-http-result.json)、[Chrome](evidence/browser-studio.png)。未重做完整编辑→冻结→渲染全流程，既有T21证据不扩大 |
-| 普通重启续跑 | 新任务仅以30秒 available_at 测试触发器暂缓；停止时 ready/attempt0/claimed_at null/0run，删除触发器。正常启动后无需新派发即由实际 CLI 完成、恰好1run，HTTP产物SHA一致；没有修改 Worker 租约或 claimed_at。[停止](evidence/source-stopped-ready-result.json)、[完成](evidence/source-restart-completed-result.json) |
-| 在线前提 | 修复前真实CLI failed/0产物保留；最终 local 模式的新受控Pexels任务为 blocked、attempt1、0产物、validation false，明确“在线媒体执行尚未配置”。全程0新增Provider请求、0新资格。[原失败](evidence/online-first-failure-result.json)、[最终阻塞](evidence/online-blocked-result.json) |
-| 备份/恢复 | 真实原生v2备份恢复到 `loop_t24_restore_dclose02`；51表/28562行、872媒体文件、COPY/序列/安全对象/外键对账，冻结ready输入SHA不变。正常部署工具生成文件；Owner凭据/会话未导入，初始化原Owner新密码。[恢复](evidence/restore-result.json) |
-| 恢复后的正常启动 | pending及failed状态的实际npm启动都失败，日志明确恢复未完成；ready后同入口启动、原ready任务自动完成一次，HTTP产物SHA一致。旧密码/会话401，新密码200；既有浏览器配置及批准状态保留，再经HTTP批准恢复任务的视觉审核。[续跑](evidence/restore-restart-completed-result.json)、[HTTP](evidence/restored-http-result.json)、[配置围栏](evidence/restore-bindings-result.json) |
-| 构建/网络/原数据 | 新原生构建图1864模块，无SDK/旧App/旧控制面。Node进程树guard及Chrome域限制下所有实际HTTP目标仅批准loopback；原始网络不公开，无HAR。原 `loop_imported`/T24/T25逐表指纹与2560个媒体文件SHA不变。[模块](evidence/native-runtime-graph-result.json)、[网络](evidence/browser-network-result.json)、[原数据](evidence/preservation-after-01.txt) |
+| 目录/Owner | Owner 可见 6259 条历史记录时只返回 20 条；第二页与真实 SQL 排序一致且无重叠。账号计数、账号/归档/审核/系列筛选、运营子页上限、跨 Owner 排除和非法参数400通过；增量详情无变化不重传。HTTP（历史附件已清理：`evidence/catalog-http-result.json`）。该次响应108665字节含配置元数据，不宣称所有实体都分页或恒定耗时 |
+| Chrome | 登录、目录第二页20条、账号筛选、归档空结果、详情、配置表单确认保存并由真实数据库核对、分镜审批及整页重载。恢复后新密码登录、已批准详情及第二页再次显示。390px视口内容宽390、20条、分页可操作；只是浏览器尺寸模拟，不是真机。目录（历史附件已清理：`evidence/browser-page2.png`）、空页（历史附件已清理：`evidence/browser-empty.png`）、配置（历史附件已清理：`evidence/browser-config-saved.png`）、恢复后（历史附件已清理：`evidence/browser-restored-approved.png`）、窄屏（历史附件已清理：`evidence/browser-restored-narrow.png`） |
+| Keychain/probe | 正常工厂下 Owner HTTP 创建合成连接、真实 helper 写入专用测试 Keychain；实际离线 probe 返回 retryable/ready false，externalReady false。恢复后重建空测试 Keychain，原引用 missing，经同一 HTTP 显式 rebind；原版本/引用保持，资格仍全false。创建（历史附件已清理：`evidence/connections-http-result.json`）、恢复重绑（历史附件已清理：`evidence/restored-http-result.json`） |
+| Studio | 正常工厂下实际 Node/OpenChatCut 子进程55190打开继承的当前QC工程，工程API读取成功，真实Chrome显示素材、轨道与字幕。最终 local 媒体模式再次实际打开成功。最终HTTP（历史附件已清理：`evidence/final-studio-http-result.json`）、Chrome（历史附件已清理：`evidence/browser-studio.png`）。未重做完整编辑→冻结→渲染全流程，既有T21证据不扩大 |
+| 普通重启续跑 | 新任务仅以30秒 available_at 测试触发器暂缓；停止时 ready/attempt0/claimed_at null/0run，删除触发器。正常启动后无需新派发即由实际 CLI 完成、恰好1run，HTTP产物SHA一致；没有修改 Worker 租约或 claimed_at。停止（历史附件已清理：`evidence/source-stopped-ready-result.json`）、完成（历史附件已清理：`evidence/source-restart-completed-result.json`） |
+| 在线前提 | 修复前真实CLI failed/0产物保留；最终 local 模式的新受控Pexels任务为 blocked、attempt1、0产物、validation false，明确“在线媒体执行尚未配置”。全程0新增Provider请求、0新资格。原失败（历史附件已清理：`evidence/online-first-failure-result.json`）、最终阻塞（历史附件已清理：`evidence/online-blocked-result.json`） |
+| 备份/恢复 | 真实原生v2备份恢复到 `loop_t24_restore_dclose02`；51表/28562行、872媒体文件、COPY/序列/安全对象/外键对账，冻结ready输入SHA不变。正常部署工具生成文件；Owner凭据/会话未导入，初始化原Owner新密码。恢复（历史附件已清理：`evidence/restore-result.json`） |
+| 恢复后的正常启动 | pending及failed状态的实际npm启动都失败，日志明确恢复未完成；ready后同入口启动、原ready任务自动完成一次，HTTP产物SHA一致。旧密码/会话401，新密码200；既有浏览器配置及批准状态保留，再经HTTP批准恢复任务的视觉审核。续跑（历史附件已清理：`evidence/restore-restart-completed-result.json`）、HTTP（历史附件已清理：`evidence/restored-http-result.json`）、配置围栏（历史附件已清理：`evidence/restore-bindings-result.json`） |
+| 构建/网络/原数据 | 新原生构建图1864模块，无SDK/旧App/旧控制面。Node进程树guard及Chrome域限制下所有实际HTTP目标仅批准loopback；原始网络不公开，无HAR。原 `loop_imported`/T24/T25逐表指纹与2560个媒体文件SHA不变。模块（历史附件已清理：`evidence/native-runtime-graph-result.json`）、网络（历史附件已清理：`evidence/browser-network-result.json`）、原数据（历史附件已清理：`evidence/preservation-after-01.txt`） |
 
 分页请求之间是独立快照，插入/更新可能改变边界。数据库仍计算全局统计，本轮没有执行容量/性能门禁。固定55190只验证单个编辑器；另观察到关闭Studio服务后页面继续本地 external-agent/register 重连，原始请求列表私有保留，未据此宣称资源稳定性通过。
 
 ## 回归与失败
 
-三缺口原收尾的完整默认 **5000ms、102文件、760/760** 通过；此前758/759原始超时及基线对照保留。当时源码同入口启动、runtime指纹、Owner HTTP、真实Chrome目录20条与退出，以及正常停止均已验证。[当时smoke](evidence/final-smoke-result.json)、[当时范围](evidence/final-scope-result.json)。P2 修复后的当前结果见上方补修报告。
+三缺口原收尾的完整默认 **5000ms、102文件、760/760** 通过；此前758/759原始超时及基线对照保留。当时源码同入口启动、runtime指纹、Owner HTTP、真实Chrome目录20条与退出，以及正常停止均已验证。当时smoke（历史附件已清理：`evidence/final-smoke-result.json`）、当时范围（历史附件已清理：`evidence/final-scope-result.json`）。P2 修复后的当前结果见上方补修报告。
 
-完整默认5000ms结果见 [原收尾执行摘要](evidence/verification-summary.json) 与编号原始日志。原始红/绿结果全部保留，后续通过不覆盖历史失败。类型、原生编译、runtime准备/指纹及构建按实际执行索引记录；Node2通过、1个既有n8n检查跳过。构建约586.6KB chunk告警保留。
+完整默认5000ms结果见 原收尾执行摘要（历史附件已清理：`evidence/verification-summary.json`） 与编号原始日志。原始红/绿结果全部保留，后续通过不覆盖历史失败。类型、原生编译、runtime准备/指纹及构建按实际执行索引记录；Node2通过、1个既有n8n检查跳过。构建约586.6KB chunk告警保留。
 
 - 工厂未注入Keychain红测、目录/恢复入口复现均先失败后修复。最早复现脚本相对路径写错，原模块解析错误保留；修正后才记录真实缺口，不把工具错误当产品复现。
 - 首次focused命令误匹配私有历史源码且缺旧测试合成env；后续明确排除 `.loop-control`，未修改产品断言。两次类型检查沿共享类型拉入旧模块，后改为纯类型边界；未改变领域值。
@@ -65,18 +68,18 @@
 - 源码变更及前端build清理dist时，真实runtime完整性检查两次拒绝执行；改为构建后正常stop/start准备再验收。未跳过完整性检查。
 - Chrome配置前两次点击后未验证保存成功；服务重启/HMR使页面回到首账号，驱动又有select/find用法问题。最终逐步确认账号与textarea值、点击确认，并用数据库核对成功。一次关闭Studio后台标签触发agent-browser Target.attachToTarget错误；只读offline doctor后重新打开本轮页面、新密码登录再验收，不接管其他会话。
 - 首轮完整回归755/756的Range409是ambient TMPDIR经macOS `/var` 链接造成规范路径拒绝；原实现未改，恢复既有私有规范TMPDIR后756通过。新增可见性测试后757通过。
-- 媒体前置修复后的一轮完整默认测试为758/759：旧 `ReviewWorkspace` 的BGM/TTS用例5031ms超时。同名T21基线5042ms红、T25基线3164ms绿；App与测试字节不变，reviewSelectors发射JS一致。只能归为既有时序症状重现，不能断言资源争用或根因已解决。[对照](evidence/timeout-attribution-result.json)。没有调超时或为绿色反复重跑。
+- 媒体前置修复后的一轮完整默认测试为758/759：旧 `ReviewWorkspace` 的BGM/TTS用例5031ms超时。同名T21基线5042ms红、T25基线3164ms绿；App与测试字节不变，reviewSelectors发射JS一致。只能归为既有时序症状重现，不能断言资源争用或根因已解决。对照（历史附件已清理：`evidence/timeout-attribution-result.json`）。没有调超时或为绿色反复重跑。
 - 最后复核另捕获“退出POST未完成时仍能按刷新新建目录读”的实际竞态；先红测确认，再在退出开始后的refresh入口加围栏。因这项源码变更才运行最后一轮完整回归；原758/759失败仍单独保留。
 
 ## 收尾和未关闭范围
 
-正常服务和Studio已停止、55189/55190关闭、PG业务连接0；只删除本轮合成测试Keychain与浏览器认证项/会话，默认/搜索列表快照及stage-d目录mode恢复。隔离数据库、APFS媒体、备份和私有证据保留供复核。43无关文件、根PLAN、HEAD不变，索引为空。[收尾](evidence/cleanup-result.json)。
+正常服务和Studio已停止、55189/55190关闭、PG业务连接0；只删除本轮合成测试Keychain与浏览器认证项/会话，默认/搜索列表快照及stage-d目录mode恢复。隔离数据库、APFS媒体、备份和私有证据保留供复核。43无关文件、根PLAN、HEAD不变，索引为空。收尾（历史附件已清理：`evidence/cleanup-result.json`）。
 
 **T21 当次 740/745、所有历史默认 5 秒失败及当时根因未解决的记录继续保留。** 后续稳定性补修通过受控复现、单变量对照及预定重复验证关闭当前版本的测试稳定性门禁，不追认旧运行通过，也不把每次历史失败都归为同一原因。原 D 收尾的 ready 续跑没有证明有效租约接管，该历史判断保留；本轮另以真实自然等待补齐当前原生 Worker 到期接管，见上文报告。立即/秒级故障切换仍未证明。
 
 指定环境的真实 WhisperX 成功推理已由本轮补验，范围见上文；新主机冷启动、任意正文错误检测、默认/新主机完整部署、在线生成、其他 Provider、完整多能力 Worker，以及 E/F 总体全链路、容量、性能、切换回退继续未验收。T15 Pexels历史仅2次批准请求且预算已用尽，未重置或追加；模拟资格、历史SecretStore替身及T17中间日志覆盖说明继续保留。模块/离线装配不等同完整在线任务证明。
 
-[证据索引](evidence-index.json)区分公开脱敏材料与私有原始文件；凭据、Cookie/CSRF、原始网络、SQL/备份与部署文件不进入公开目录。[主Agent复核](review.md)不称独立评审，也不称整个D在线/部署资格或E/F通过。
+证据索引（历史附件已清理：`evidence-index.json`）区分公开脱敏材料与私有原始文件；凭据、Cookie/CSRF、原始网络、SQL/备份与部署文件不进入公开目录。[主Agent复核](review.md)不称独立评审，也不称整个D在线/部署资格或E/F通过。
 
 
 ## 六适配器离线准备随访（2026-10-25）

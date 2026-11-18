@@ -34,7 +34,7 @@
 | 7. Studio／媒体和共享 Worker | 旧渲染编排与当前公共保护混在一起。当前领取真实经过 `claim_input_task → claim_input_task_pre_lease → claim_next_worker_task_legacy`；旁白预留仍调用旧协议拒绝分支 | 旧 Studio／QC／渲染随接入完成退出；当前资格、容量、公平、资源、领取、lease、回执和费用收敛成清晰实现，再换职责名。保留 SQL 原子事务，不在 TypeScript 复制一套核心 | 盲删会影响当前真实领取、租约、预留或未知请求保护。只改名字不会减少包装层；先做行为等价，再移除前代实现 |
 | 8. 历史、冻结和格式回退 | 原历史是恢复依据；当前核心多处仍理解 `storyboard_package_id` 和旧格式，主要是边界和类型问题。最初的脚本关联／交付音轨问题已有后续修复，不重复安排从头重写 | 旧协议集中到按版本解码、接入和恢复模块；当前内部只消费严格模型。完成各来源的恢复矩阵后收紧类型与移除散落回退，原历史和已生效迁移不改 | 不改增加定位与误用成本；直接删原历史会损坏追溯与恢复。全库恢复、逐项投影和接入是不同路径，某一条通过不能代替其他路径 |
 
-SQL 证据见本轮 [调用表](../verification/production-replacement-visual-draft-assessment-20261114/evidence/remaining-call-map.json)。正文中的「未见精确调用」是静态证据，不是动态 SQL、任意外部程序或活动旧进程的完整排除证明。
+SQL 证据见本轮 调用表（历史附件已清理：`../verification/production-replacement-visual-draft-assessment-20261114/evidence/remaining-call-map.json`）。正文中的「未见精确调用」是静态证据，不是动态 SQL、任意外部程序或活动旧进程的完整排除证明。
 
 ## 旧名字具体怎样替换
 

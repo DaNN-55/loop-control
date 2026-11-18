@@ -1,5 +1,8 @@
 # 原生账号页面：目录操作与蓝图前置检查
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-25，Asia/Shanghai。固定优化 worktree，HEAD `bca697bbc1e12626771d1283ec87a17bf85f02fe`。
 
 **账号素材目录选择 / 打开、当前已保存蓝图的本机前置检查已接入正式入口。** 本轮只关闭所列 macOS 目录操作、蓝图检查及选择器退出清理范围；没有调用在线 Provider，没有进入 E/F，也没有完成多能力整单或新主机验收。
@@ -29,9 +32,9 @@ Owner 本轮确认「明白了。那就通过吧。这阶段通过了。继续�
 | 退出边界 | 真实 HTTP 断开和正式 npm stop 均使对应系统选择器进程退出，无人工结束作为 green 条件 |
 | 当前录入配置 | 恢复原 OS loopback 闭网服务，无 Worker。新检查返回 Worker unavailable，HTTP 200 仅表示检查命令完成，不能当能力通过；原 Keychain 和 Provider 账本保持 |
 
-[HTTP](evidence/native-account-ui/http-final-result.json)、[实际选取](evidence/native-account-ui/browser-choice-result.json)、[实际取消](evidence/native-account-ui/browser-cancel-result.json)、[Chrome 保存刷新](evidence/native-account-ui/browser-final-result.json)、[选择器退出](evidence/native-account-ui/picker-lifecycle-result.json)、[历史数据](evidence/native-account-ui/history-preservation-result.json)、[闭网状态](evidence/native-account-ui/closed-final-result.json)。
+HTTP（历史附件已清理：`evidence/native-account-ui/http-final-result.json`）、实际选取（历史附件已清理：`evidence/native-account-ui/browser-choice-result.json`）、实际取消（历史附件已清理：`evidence/native-account-ui/browser-cancel-result.json`）、Chrome 保存刷新（历史附件已清理：`evidence/native-account-ui/browser-final-result.json`）、选择器退出（历史附件已清理：`evidence/native-account-ui/picker-lifecycle-result.json`）、历史数据（历史附件已清理：`evidence/native-account-ui/history-preservation-result.json`）、闭网状态（历史附件已清理：`evidence/native-account-ui/closed-final-result.json`）。
 
-![独立测试账号保存刷新后重新检查](evidence/native-account-ui/browser-final.png)
+独立测试账号保存刷新后重新检查（历史附件已清理：`evidence/native-account-ui/browser-final.png`）
 
 ## 回归与失败保留
 
@@ -39,7 +42,7 @@ Owner 本轮确认「明白了。那就通过吧。这阶段通过了。继续�
 
 保留全部中间记录：组件 red、旧 HTTP 405、严格部署拒绝错配预算目录、OS 封套下浏览器 CDP 失败、错误 Cookie 导入格式、完整构建使运行中的预构建 runtime 失效的 unavailable、旧选择器退出 red、工厂测试未补新模块替身导致 1 文件未加载（106 文件 / 811 项通过）、恢复驱动独占快照重名的 EEXIST。修正各自夹具 / 生命周期后才验证，不靠放宽超时反复跑绿。
 
-最初因工具没识别到系统窗口而推测窗口未出现，随后 Owner 明确确认实际弹出；该推测被纠正，不能据此声称 OS 封套阻止了选择器。曾提出的页面目录列表替代方案未实施，保留系统选择器。桌面步骤最终使用标准 offline-test Node guard、禁用外部端口与浏览器本机域名 allowlist，不混称应用或浏览器始终处于 OS 全断网；收尾已恢复原 OS loopback 录入服务。[桌面驱动记录](evidence/native-account-ui/desktop-harness-failure-note.json)
+最初因工具没识别到系统窗口而推测窗口未出现，随后 Owner 明确确认实际弹出；该推测被纠正，不能据此声称 OS 封套阻止了选择器。曾提出的页面目录列表替代方案未实施，保留系统选择器。桌面步骤最终使用标准 offline-test Node guard、禁用外部端口与浏览器本机域名 allowlist，不混称应用或浏览器始终处于 OS 全断网；收尾已恢复原 OS loopback 录入服务。桌面驱动记录（历史附件已清理：`evidence/native-account-ui/desktop-harness-failure-note.json`）
 
 旧审核台两条 act 警告、构建 chunk 告警及原 n8n 跳过保留。真实 WhisperX 首次 30 秒失败、120 秒诊断不算验收、错误正文 0.838 反例、自然租约与秒级切换边界、各在线失败和跳过、完整多能力代表业务、新主机、真实通知、SQL 建议及其他未验收门禁均不因本轮通过自动关闭。
 
@@ -49,6 +52,6 @@ Owner 本轮确认「明白了。那就通过吧。这阶段通过了。继续�
 
 原 1133 项公开 / 1821 项私有证据保持，活动首页 / 复核报告另存原文。根 PLAN、43 个无关基线文件与 HEAD 不变，暂存区为空。期间另出现 `.scratch/ad-closeout-20261025/` 工作材料，不属于本轮，未读取内容、修改、暂存或纳入本轮证据。测试账号及目录保留，独立测试 Chrome 已关闭，其他浏览器会话未动。
 
-封存审计逐项验证索引字节 / SHA、9 个源码快照、原门禁对象及历史账本。6 个已存 Provider 凭据仅在审计进程内读取，扫描其原文、URL 编码与 Base64 形式；公开材料和当前源码无匹配，新私有材料没有额外 Provider 凭据明文。首次审计因工作区沙盒拒绝隔离 Docker 的只读连接而中断，保留环境记录；获准访问同一本机资源后完成原审计，没有发起远端请求。[封存审计](evidence/native-account-ui/package-verification-result.json)、[沙盒中断记录](evidence/native-account-ui/final-audit-sandbox-note.json)。
+封存审计逐项验证索引字节 / SHA、9 个源码快照、原门禁对象及历史账本。6 个已存 Provider 凭据仅在审计进程内读取，扫描其原文、URL 编码与 Base64 形式；公开材料和当前源码无匹配，新私有材料没有额外 Provider 凭据明文。首次审计因工作区沙盒拒绝隔离 Docker 的只读连接而中断，保留环境记录；获准访问同一本机资源后完成原审计，没有发起远端请求。封存审计（历史附件已清理：`evidence/native-account-ui/package-verification-result.json`）、沙盒中断记录（历史附件已清理：`evidence/native-account-ui/final-audit-sandbox-note.json`）。
 
-未提交、未推送、未进入 E/F。当前仅主 Agent 复核，不称独立评审。[证据索引](evidence-index.json)
+未提交、未推送、未进入 E/F。当前仅主 Agent 复核，不称独立评审。证据索引（历史附件已清理：`evidence-index.json`）

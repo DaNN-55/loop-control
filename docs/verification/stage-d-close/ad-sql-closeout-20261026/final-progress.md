@@ -1,5 +1,8 @@
 # SQL 收尾与 #149 复核
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 **本批 13/18 已关闭，5 张继续开放：#137、#138、#139、#140、#149。** #146、#147 已验收并关闭，#149 复核后继续开放。本轮只处理这两项 SQL 收尾，并复核本批 #132–#149。四家不可用 Provider 继续跳过，不计通过；A–D 零遗留与 E/F 门禁仍未关闭。
 
 ## 本轮结果
@@ -18,13 +21,13 @@
 
 ## 最终源码与历史连续性
 
-主分支 `codex/ad-closeout-implementation` 的 HEAD 保持 `bbd2987cd61d3444dca962e50d91b11ed1da5fca`，未提交、未推送、暂存区为空。本轮新增 043 和两项集成测试，仅在两处迁移注册追加 043。前轮 43 个源码文件中 41 个不变，包括原生业务 TypeScript、请求围栏、输出与预算逻辑；最终 46 文件清单及摘要见 [source-manifest.json](source-manifest.json)。
+主分支 `codex/ad-closeout-implementation` 的 HEAD 保持 `bbd2987cd61d3444dca962e50d91b11ed1da5fca`，未提交、未推送、暂存区为空。本轮新增 043 和两项集成测试，仅在两处迁移注册追加 043。前轮 43 个源码文件中 41 个不变，包括原生业务 TypeScript、请求围栏、输出与预算逻辑；最终 46 文件清单及摘要见 source-manifest.json（历史附件已清理：`source-manifest.json`）。
 
 043 只在 `loop_t24_restore_sql20261026` 应用。源隔离库 `loop_t24_restore_adclose20261025` 的逻辑 dump 摘要前后相同；生产和旧业务库未操作。此前真实规划、冷初始化、媒体与交付记录继续作为其对应版本的证据，不重跑 Provider，也不扩写为全过程从最终源码开始执行。此次联合验证覆盖 SQL 改动影响的目录和 RLS 边界。
 
 1364 项既有公开证据、4214 项既有私有证据、原门禁元数据及 20 个无关文件基线逐项核对。新索引仅追加本轮条目和当前结论，旧 SQL 暂缓字段作为历史快照保留，由本轮结论明确接续。前轮两段调试 raw 被覆盖的[缺失声明](../ad-issue-implementation-20261025/evidence-gaps-current.md)继续有效，不补造原文。本轮 fixture 枚举错误、缺依赖导致未启动、迁移前红、分页突变红和最终首次环境失败均保留。
 
-凭据复核使用此前批准的 9 个私有值的长度及 SHA-256，对公开材料、46 个源码文件和索引作逐字节窗口比较，不重新读取原秘密。完整 fixture、会话、凭据、行级观测和 worker 备份留在私有范围。扫描与历史保留结果见[最终完整性回执](final-integrity-receipt.json)；索引自身及最终回执为避免自引用另行登记。
+凭据复核使用此前批准的 9 个私有值的长度及 SHA-256，对公开材料、46 个源码文件和索引作逐字节窗口比较，不重新读取原秘密。完整 fixture、会话、凭据、行级观测和 worker 备份留在私有范围。扫描与历史保留结果见最终完整性回执（历史附件已清理：`final-integrity-receipt.json`）；索引自身及最终回执为避免自引用另行登记。
 
 两个复用 worker 的 89 个源文件均有私有备份，已清理本轮源文件副本；#144 工作树洁净，#141 仅保留归属不确定的 `node_modules` 链接。未强行删除目录或生成归档提交，其余工作树未动。本轮测试 HTTP 服务均已关闭，未启动正常应用、Worker 或 Provider 服务。
 
@@ -38,6 +41,6 @@
 | #140 OpenAI | 无可用测试 Key，真实测试未完成；Owner 批准跳过 |
 | #149 | 上述四项均不是通过，零遗留门禁继续开放；不进入 E/F |
 
-本轮没有新增 Provider 请求、模型任务、下载授权或外部发布。GitHub 最终状态以 [readback](github-final-readback.json) 为准，关票说明附有本地未提交证据路径与源码摘要，不提供不存在的远端代码链接。
+本轮没有新增 Provider 请求、模型任务、下载授权或外部发布。GitHub 最终状态以 readback（历史附件已清理：`github-final-readback.json`） 为准，关票说明附有本地未提交证据路径与源码摘要，不提供不存在的远端代码链接。
 
-[目录报告](report-146.md) · [RLS 报告](report-147.md) · [联合验证](validation-summary.json) · [Standards](standards-review.md) · [Spec](spec-review.md) · [数据库隔离核验](database-integrity-result.json) · [证据索引](../evidence-index.json)
+[目录报告](report-146.md) · [RLS 报告](report-147.md) · 联合验证（历史附件已清理：`validation-summary.json`） · [Standards](standards-review.md) · [Spec](spec-review.md) · 数据库隔离核验（历史附件已清理：`database-integrity-result.json`） · 证据索引（历史附件已清理：`../evidence-index.json`）

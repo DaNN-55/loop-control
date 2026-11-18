@@ -1,9 +1,0 @@
-{
-  "passed": true,
-  "onlyThisRunDedicatedKeychainDeleted": true,
-  "defaultAndSearchListRestored": true,
-  "loginAndSystemKeychainsUntouched": true,
-  "existingAclUntouched": true,
-  "rootModeRestored": true,
-  "syntheticSecretFilePrivate": true
-}

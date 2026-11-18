@@ -1,2 +1,0 @@
-{"database":"loop_empty","migrated":true}
-{"database":"loop_imported","migrated":true}

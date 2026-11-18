@@ -1,5 +1,8 @@
 # 当前 197 副本：生产单、埋点与全面替换评估
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-14。本轮结论：当前新单可以独立完成制作、原生编辑保存重开、导出和交付，相关埋点对账通过；旧流程尚未全面退出，正式 MP4 留空区域仍复现棋盘格。建议保留现有制作内核，补齐旧作品接入与恢复边界后，分批退出旧执行、合并共享职责、统一当前名称。详见[完整方案](../../plans/production-workflow-remaining-proposal-197-20261114.md)。
 
 仅执行隔离测试、只读核查和方案记录。未修改主项目业务代码、SQL、原测试、原实施计划或共享 SDK，不执行清理，不提交、不推送。
@@ -27,7 +30,7 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。当前存在大量未提交�
 | 交付 | 真实隔离 Worker 完成；4 个交付文件通过 Owner HTTP 下载并逐个核对 SHA；metadata 按镜头对应正确音轨与采用正文 |
 | 任务及费用 | 人工音轨登记任务 2 条，attempt=0；交付任务 1 条，attempt=1；费用预留 0，没有视频生成任务 |
 
-[成片](artifacts/test-production.mp4) · [第二镜抽帧](artifacts/frame-02.png) · [交付说明](artifacts/metadata.json) · [实际事实与事件](artifacts/receipt.json) · [媒体探测](artifacts/ffprobe.json)。人工音调不代表真人口播质量；图形不代表生成模型效果。
+成片（历史附件已清理：`artifacts/test-production.mp4`） · 第二镜抽帧（历史附件已清理：`artifacts/frame-02.png`） · 交付说明（历史附件已清理：`artifacts/metadata.json`） · 实际事实与事件（历史附件已清理：`artifacts/receipt.json`） · 媒体探测（历史附件已清理：`artifacts/ffprobe.json`）。人工音调不代表真人口播质量；图形不代表生成模型效果。
 
 实际查看本轮抽帧后，**棋盘格仍进入正式 MP4**。隔离 SDK 的 `src/editor/TimelineComposition.tsx:28` 定义 `GRID`，第 298 行在 `transparent` 为 false 时将其用作根背景。属于编辑预览与成片背景混用；文件、SHA 和交付 ready 检查无法代替画面验收。建议修输出边界，不能用裁满画面掩盖。未修改 SDK，也未核查日常 SDK 是否一致。
 
@@ -45,7 +48,7 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。当前存在大量未提交�
 | 外部请求及付款 | 本单请求发送事件 0，预留 0；没有供应商实付证据 |
 | 重开与重复读取 | 原事件不增加 |
 
-[Owner 日期汇总](artifacts/workflow-summary.json)包含夹具的其他基准单，不能直接用汇总总量与本单比较。数据库 `stage_changed=2` 与 `stage_transition_evidence=2` 是不同事实，不能算成 4 次阶段变化。本单没有启动周期采样器，不能把样本 0 当作没有资源消耗。
+Owner 日期汇总（历史附件已清理：`artifacts/workflow-summary.json`）包含夹具的其他基准单，不能直接用汇总总量与本单比较。数据库 `stage_changed=2` 与 `stage_transition_evidence=2` 是不同事实，不能算成 4 次阶段变化。本单没有启动周期采样器，不能把样本 0 当作没有资源消耗。
 
 同版本的额外边界验证通过：
 
@@ -53,18 +56,18 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。当前存在大量未提交�
 - 事务原子性、同键幂等、冲突拒绝、Owner／Worker／lease 隔离，不能直接伪造事件或写入正文、路径、秘密。
 - 受控口播 transport 的请求标记、响应、冻结估算、采用／撤回／重新采用；SQL 响应记录失败只调用一次 transport，保留未知结果，不自动重发。
 - 显式重试与冻结质量档；图片授权指纹变化不冒充内容变化；供应商实际付款仍为 null。
-- 真实本机导出在业务池满时，经独立连接采到活动导出；两单可以进入实际渲染器并行运行，统计不持共享行锁串行渲染。[资源证据](evidence/production-export-resource-observation.json)
+- 真实本机导出在业务池满时，经独立连接采到活动导出；两单可以进入实际渲染器并行运行，统计不持共享行锁串行渲染。资源证据（历史附件已清理：`evidence/production-export-resource-observation.json`）
 - 配乐增益／闪避、停用／重开，音效替换及静音／隐藏／关键帧／超源时长；静音视频不虚构原声使用，实际本机原声提取不创建旧草稿。
 
-新增旧草稿路径也做了补充联测：导入未确认选择时，采用／声音使用／外部发送均为 0；Owner 明确采用画面和口播后，采用 2、声音使用 1，重启读取不增加。[导入事件](evidence/draft-initial-draft-input-metrics.json)
+新增旧草稿路径也做了补充联测：导入未确认选择时，采用／声音使用／外部发送均为 0；Owner 明确采用画面和口播后，采用 2、声音使用 1，重启读取不增加。导入事件（历史附件已清理：`evidence/draft-initial-draft-input-metrics.json`）
 
-原口播结果未知时，可接入可核验的本地画面候选，但新外部口播提案被 409 拒绝，没有新确认记录，原请求不变。模拟已核对「未发送」后仍要求当前口播确认，不继承旧授权。[未知请求边界](evidence/draft-recheck-draft-unknown-boundary.json)
+原口播结果未知时，可接入可核验的本地画面候选，但新外部口播提案被 409 拒绝，没有新确认记录，原请求不变。模拟已核对「未发送」后仍要求当前口播确认，不继承旧授权。未知请求边界（历史附件已清理：`evidence/draft-recheck-draft-unknown-boundary.json`）
 
 这证明本轮生产路径和上述边界的埋点匹配实际行为。**不等于全部埋点或日常启用已完整验收**：未测真实 Provider、供应商扣费、视频查询／下载、长期运行／跨进程采样、全部复杂变速／嵌套声音和每种旧恢复来源；GPU 仍未知，Dashboard／统一统计 API 尚无。最终启用须针对最终代码、迁移、运行包另行验收。
 
 ## 旧内容当前状态
 
-实际隔离库有 395 个业务函数、106 个非内部触发器；数量不能当作垃圾数量。[有效定义与目录依赖](evidence/catalog.json)及[当前精确调用线索](evidence/legacy-call-map.json)来自本轮固定源码与实际数据库，同时检查函数体调用和触发器，未仅凭 TypeScript 名称搜索下结论。
+实际隔离库有 395 个业务函数、106 个非内部触发器；数量不能当作垃圾数量。有效定义与目录依赖（历史附件已清理：`evidence/catalog.json`）及当前精确调用线索（历史附件已清理：`evidence/legacy-call-map.json`）来自本轮固定源码与实际数据库，同时检查函数体调用和触发器，未仅凭 TypeScript 名称搜索下结论。
 
 - 原八类第 1 类已经退役，不再次安排删除；独立旧建单 RPC 也已有 186 迁移，不重复列为待做。
 - 保存 v2 计划只读及显式导入、已确认手工绑定接入、未确认选择导入均已有当前实现。本轮旧路径 30 项验证通过，不能继续把它们整体写成「尚未实现」。
@@ -79,12 +82,12 @@ HEAD：`2d1a8ff46318ece0031c0810899a339df71520c9`。当前存在大量未提交�
 
 ## 验证、失败记录与保持
 
-- 主联测 7 文件，27 项通过；另 1 个原可选质量 UI 挂起夹具未启用，明确记为跳过，不能算通过。[结果](evidence/production-vitest.json)
-- 旧计划／已确认绑定／未确认输入／本地原轨等 4 文件、30 项通过，无跳过。[结果](evidence/legacy-vitest.json)
-- 私有补充场景 2 项分别通过；同文件其他场景因 `-t` 过滤未运行，未计为通过。[初次结果](evidence/draft-initial-vitest.json) · [失败场景复验](evidence/draft-recheck-vitest.json)
-- 6 文件、37 项定向单元及原包检查通过，含 23 个原包逐包退役检查；Worker／backend 构建及完整 TypeScript 检查通过。[单元](evidence/production-units.json) · [类型](evidence/legacy-types.log)
+- 主联测 7 文件，27 项通过；另 1 个原可选质量 UI 挂起夹具未启用，明确记为跳过，不能算通过。结果（历史附件已清理：`evidence/production-vitest.json`）
+- 旧计划／已确认绑定／未确认输入／本地原轨等 4 文件、30 项通过，无跳过。结果（历史附件已清理：`evidence/legacy-vitest.json`）
+- 私有补充场景 2 项分别通过；同文件其他场景因 `-t` 过滤未运行，未计为通过。初次结果（历史附件已清理：`evidence/draft-initial-vitest.json`） · 失败场景复验（历史附件已清理：`evidence/draft-recheck-vitest.json`）
+- 6 文件、37 项定向单元及原包检查通过，含 23 个原包逐包退役检查；Worker／backend 构建及完整 TypeScript 检查通过。单元（历史附件已清理：`evidence/production-units.json`） · 类型（历史附件已清理：`evidence/legacy-types.log`）
 - 私有未知请求场景末尾曾错误地把旧音轨任务直接设为完成，却未提供冻结回执和探测时长，被原完成触发器拒绝。这是夹具问题；仅将末尾改成模拟已核对「未发送」的机器原因并保留 blocked 状态，单独复验。没有修改产品代码、绕过触发器或放宽完成保护；初次失败日志保留。
-- 12,804 个已有文件、HEAD 与物理暂存索引均保持；4 副本原源码指纹一致，4 个自有数据库容器均已移除。[保持核对](evidence/unchanged-check.json)
+- 12,804 个已有文件、HEAD 与物理暂存索引均保持；4 副本原源码指纹一致，4 个自有数据库容器均已移除。保持核对（历史附件已清理：`evidence/unchanged-check.json`）
 - 未运行全项目默认套件、完整 UI 宽窄验收、全部历史完整／逐项恢复及长期采样。未把前轮绿色当成本轮执行结果，未将一次小样例当作全部业务正确。
 
 没有访问日常数据库，因此不在本报告断言其当前迁移号或开关实况；没有日常迁移、prepare、部署、重启或启用采集，没有删除历史、草稿、音轨或冻结证据，没有暂存、提交、推送。只新增本轮报告、方案和精简测试产物，原实施 `PLAN.md` 保持。

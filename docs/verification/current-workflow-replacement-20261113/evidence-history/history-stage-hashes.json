@@ -1,6 +1,0 @@
-{
-  "scripts/runtime/project-history.mjs": "54281f457f0fcbf9e0a06500c62bcf1f5bccd8c737ce61f62ae9bbb57e8345ba",
-  "scripts/runtime/production-history.mjs": "a41f8372475f4c751d56aeab5d009665a13747b3d5a787667990167685418ede",
-  "src/local-app/productionHistoryProjection.integration.test.ts": "ff3490b124bd88ae61148ef686e65ca28b808e77fdd963e76f13b1752daf63ba",
-  "src/local-app/workspaceAudio.fixture.ts": "61bc36ce0b85b7e410f5e5f8a3b7e14ebe7303f1a9421c6c3420c7bb6e0cdce9"
-}

@@ -1,5 +1,8 @@
 # T06 / #112：统一持久执行入口
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-10-23，基线 `474b0d3`，分支 `codex/local-first-stage-a`。Owner 已认可 B，授权 T06 实现、验证、审查及本地提交；不推送、不合并、不关闭 Issue，不操作生产。已实际使用 GitHub connector 和 gh JSON 读取 #112 全文及全部评论（0条）。
 
 ## 实现与契约
@@ -15,7 +18,7 @@
 
 HTTP 旧状态在新服务返回 unknown（`http-state-red.txt`）；旧提交只返回 started（`http-submit-red.txt`）；旧 Episode 不扫描已有任务，单任务 CLI 不接受参数（`unified-entry-red.txt`）。逐片修复后针对性 HTTP/CLI 测试通过。跨站 Origin 也先 red 再 green。
 
-真实演练见 [real-path.json](real-path.json)，命令 `node scripts/isolation/queue-entry.mjs --verified`：
+真实演练见 real-path.json（历史附件已清理：`real-path.json`），命令 `node scripts/isolation/queue-entry.mjs --verified`：
 
 - 最终 verified API55461/DB55462/console55176，真实 Owner 登录、普通 middleware、统一模块、真实预构建 Worker CLI、FFmpeg、结果事务与磁盘产物。
 - 同组容量被合成 holder 占用时，末次HTTP约271ms返回可查询排队，独立 Worker 空领取后任务仍ready、attempt0、0条run。holder仅用既有fenced结果API释放，不执行媒体或调用Provider。
@@ -25,11 +28,11 @@ HTTP 旧状态在新服务返回 unknown（`http-state-red.txt`）；旧提交�
 
 ## 验证进度与边界
 
-类型检查、Worker/orchestrator构建、4个受影响隔离脚本语法和两轴审查已通过；完整SQL21文件/224条断言通过（[sql-final.json](sql-final.json)）。只读边界复核见 [boundaries.json](boundaries.json)：A源数据/安全指纹一致，生产PID/Git保持，全部测试listener为loopback。
+类型检查、Worker/orchestrator构建、4个受影响隔离脚本语法和两轴审查已通过；完整SQL21文件/224条断言通过（sql-final.json（历史附件已清理：`sql-final.json`））。只读边界复核见 boundaries.json（历史附件已清理：`boundaries.json`）：A源数据/安全指纹一致，生产PID/Git保持，全部测试listener为loopback。
 
-完整应用首轮默认并发2文件12项失败；两文件maxWorkers=2复核剩2项超时；完整集合单worker剩审核台1项默认5000ms超时（69文件/673项通过）。未修改这些UI测试/组件或原断言。完整原始日志保留/tmp，版本化摘要见 [application-red-history.json](application-red-history.json)。末次在相同完整集合、单worker、显式运行器默认15000ms预算下 **70文件/674项全部通过**；Node **2通过/1项本机n8n节点检查跳过**，进程退出码均0，见 [tests-final.txt](tests-final.txt)。不称原默认5秒预算全绿，也不从测试预算推导产品性能。测试集合将旧Map/源码字符串检查替换为HTTP/CLI行为检查，数量不等同B的675项。
+完整应用首轮默认并发2文件12项失败；两文件maxWorkers=2复核剩2项超时；完整集合单worker剩审核台1项默认5000ms超时（69文件/673项通过）。未修改这些UI测试/组件或原断言。完整原始日志保留/tmp，版本化摘要见 application-red-history.json（历史附件已清理：`application-red-history.json`）。末次在相同完整集合、单worker、显式运行器默认15000ms预算下 **70文件/674项全部通过**；Node **2通过/1项本机n8n节点检查跳过**，进程退出码均0，见 tests-final.txt（历史附件已清理：`tests-final.txt`）。不称原默认5秒预算全绿，也不从测试预算推导产品性能。测试集合将旧Map/源码字符串检查替换为HTTP/CLI行为检查，数量不等同B的675项。
 
-类型/构建完整输出见 [types-builds.txt](types-builds.txt)。最终代码后的真实演练再次通过（先HTTP等待再启动定时器），见real-path.json；本次仅新增fixture，未改生产或覆盖旧证据。
+类型/构建完整输出见 types-builds.txt（历史附件已清理：`types-builds.txt`）。最终代码后的真实演练再次通过（先HTTP等待再启动定时器），见real-path.json；本次仅新增fixture，未改生产或覆盖旧证据。
 
 本轮浏览器复查未完成：现有Chrome未开放CDP9222，CUA inventory报native pipe启动失败；本票没有UI代码变化，真实HTTP/DB/文件链已验证，不冒称本轮浏览器验收。
 

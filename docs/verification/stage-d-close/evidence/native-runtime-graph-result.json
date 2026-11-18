@@ -1,7 +1,0 @@
-{
-  "passed": true,
-  "modules": 1860,
-  "supabaseSdk": false,
-  "legacyApplication": false,
-  "legacyControlPlane": false
-}

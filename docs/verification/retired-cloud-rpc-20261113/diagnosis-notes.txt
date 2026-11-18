@@ -1,2 +1,0 @@
-Initial TypeScript check found one unused import copied into the new acceptance test. Removed only that import; default suite had not started. Schema matrix passed.
-Initial integration: six passed including all 23 real saved connection modules; two new fixture defects: dependency probe tried to expose void return as a view column (42P16), and restored test endpoint omitted required /v1 (real provider probe correctly refused). Probe now projects IS NULL boolean; seed uses official_external_connection_endpoint. No product behavior or protection changed.

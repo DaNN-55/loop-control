@@ -1,5 +1,8 @@
 # 配乐与声音输入结构统一
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 2026-11-08。范围：WorkspaceAudioPanel.tsx、workspace-audio.css、WorkspaceNarrationToolbar.tsx、WorkspaceNarrationPanel.test.tsx、PLAN.md。
 
 - 口播已有有效模型时，删除空值占位选项；实际弹层仅展示真实模型和人工口播。尚无有效模型时保留禁用的“选择语音模型”，不自动改选或保存配置。移除“原模型不可用，请重新选择”文案。

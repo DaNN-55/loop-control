@@ -1,5 +1,8 @@
 # 当前工作区对照规格审阅
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-10-26，Asia/Shanghai。审阅目录为当前优化工作树，分支 `codex/ad-closeout-implementation`，HEAD `bbd2987cd61d3444dca962e50d91b11ed1da5fca`。范围包含已有未提交、未跟踪的实现；HEAD 本身不能代表本次审阅的全部代码。
 
 **结论：A–C 的阶段交付和 D 的主体本地化实现已有验收依据；不能认定原规格全部能力已技术通过，也不能认定普通在线完整视频生产已无阻断。** 本次确认 live TTS 的普通文本与音色选择会被验收样本限制拒绝。另有四家 Provider 按 Owner 豁免关闭，以及最终完整源码从起点重跑的证据限制。E/F 在原规格中明确搁置，不计为 A–D 的遗漏。
@@ -7,12 +10,12 @@
 ## 本轮检查与证据等级
 
 - 两个只读审查分别核对规格覆盖和实现正确性；主 Agent 复核关键结论，剔除了将旧历史状态误当当前问题的判断。
-- 对最新 SQL 收尾的 46 文件清单逐项重算 SHA-256，全部匹配。[源码连续性](source-continuity.json)仅证明该清单连续，不冒称本轮重做了所有历史验收。
-- 本轮实际执行 `npm run check`、本地应用 TypeScript 编译、`npm test` 和 `npm run build`，均通过。[执行结果](checks-result.json)
-- `npm test`：113 文件、894/894，默认 5000ms 未覆盖；Node 检查 2 通过、1 项既有 n8n SDK 环境检查跳过。使用 dummy loopback 兼容配置、规范临时路径、隔离 HOME 和阻断公网的测试封套；不等于任意空环境均可运行。[原始日志](test.log)
-- 构建通过；仍有 590.47 kB / gzip 177.93 kB chunk 提示。测试仍有两条 React `act` 提示。它们属于保留的非阻断问题。[构建日志](build.log)
-- 本轮未重跑历史 SQL 集成；最新 8/8 作为对应未变源码的既有证据引用，不计作本轮通过。[既有联合验证](../stage-d-close/ad-sql-closeout-20261026/validation-summary.json)
-- 只读检查当前默认部署：本地 Worker 已配置，媒体为 `local`，未配置 narration，连接验证 disabled；服务没有运行记录。离线准备的文件及身份校验通过，未启动模型推理。[配置摘要](default-deployment-readonly.json)、[离线准备核验](offline-readiness.json)
+- 对最新 SQL 收尾的 46 文件清单逐项重算 SHA-256，全部匹配。源码连续性（历史附件已清理：`source-continuity.json`）仅证明该清单连续，不冒称本轮重做了所有历史验收。
+- 本轮实际执行 `npm run check`、本地应用 TypeScript 编译、`npm test` 和 `npm run build`，均通过。执行结果（历史附件已清理：`checks-result.json`）
+- `npm test`：113 文件、894/894，默认 5000ms 未覆盖；Node 检查 2 通过、1 项既有 n8n SDK 环境检查跳过。使用 dummy loopback 兼容配置、规范临时路径、隔离 HOME 和阻断公网的测试封套；不等于任意空环境均可运行。原始日志（历史附件已清理：`test.log`）
+- 构建通过；仍有 590.47 kB / gzip 177.93 kB chunk 提示。测试仍有两条 React `act` 提示。它们属于保留的非阻断问题。构建日志（历史附件已清理：`build.log`）
+- 本轮未重跑历史 SQL 集成；最新 8/8 作为对应未变源码的既有证据引用，不计作本轮通过。既有联合验证（历史附件已清理：`../stage-d-close/ad-sql-closeout-20261026/validation-summary.json`）
+- 只读检查当前默认部署：本地 Worker 已配置，媒体为 `local`，未配置 narration，连接验证 disabled；服务没有运行记录。离线准备的文件及身份校验通过，未启动模型推理。配置摘要（历史附件已清理：`default-deployment-readonly.json`）、离线准备核验（历史附件已清理：`offline-readiness.json`）
 
 ## Standards
 
@@ -62,7 +65,7 @@
 
 `src/local-app/providerNetwork.ts:60–61` 对 Google 与豆包都硬编码最多 10 个 Unicode 字符，并分别固定一个音色。`src/local-app/narrationWorker.ts:16–19` 的全部 live 请求都进入这个 fetcher，没有另一条按正常生产配置工作的 live 路径。这些限制原本保护小样本验收预算；当前实现没有表达「验收样本」和「普通生产」两种策略。
 
-本轮对当前编译结果执行六个合成请求：两家均为 10 字及指定音色放行，11 字或换音色在 transport 前拒绝；拒绝场景预算消耗为 0。未用真实 Key、未访问 Provider，也不据合成响应宣称真实语音成功。[复现结果](provider-limits-reproduction.json)
+本轮对当前编译结果执行六个合成请求：两家均为 10 字及指定音色放行，11 字或换音色在 transport 前拒绝；拒绝场景预算消耗为 0。未用真实 Key、未访问 Provider，也不据合成响应宣称真实语音成功。复现结果（历史附件已清理：`provider-limits-reproduction.json`）
 
 复现驱动第一次在 Vite 构建清空 `dist` 后找不到本地应用编译结果，未执行请求；随后改为独立编译输出再运行六项检查。这是本轮验证驱动的准备问题，不计作产品运行故障。
 

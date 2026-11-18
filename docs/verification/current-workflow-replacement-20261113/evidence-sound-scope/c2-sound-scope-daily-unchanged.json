@@ -1,9 +1,0 @@
-{
-  "snapshot": true,
-  "frozen": true,
-  "app": true,
-  "deployment": true,
-  "metrics": true,
-  "metricsNow": "{\"events\": 0, \"enabled\": false}",
-  "latestNumericMigration": "185-remove-retired-generated-script-chain.sql"
-}

@@ -1,2 +1,0 @@
-ERROR:  Retry audit must preserve actual previous failed status
-CONTEXT:  PL/pgSQL function inline_code_block line 1 at RAISE

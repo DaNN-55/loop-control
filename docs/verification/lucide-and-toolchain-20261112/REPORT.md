@@ -1,5 +1,8 @@
 # Lucide 统一、旧服务清理与工具链核查
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 日期：2026-11-12。基线：`6719e676aeb1a5c6eb6e56d385abc9a4a51b373e`。本轮未提交、未推送，未更新日常服务、启用备份或修改并发配置；三份并行 CSS 保持原字节。
 
 ## 交付与保留边界
@@ -125,4 +128,4 @@ Node、React、FFmpeg、PG、SQLite 的职责可以保留。双平台同时用�
 - 实际 Chrome 打开真实 App 与共享控件，合成空账号数据：新建账号弹窗、密码显示/隐藏、未保存离开确认、关闭与焦点恢复、下拉菜单 Escape、原生选择键盘切换、折叠、禁用项、头像添加与标签移除；1440px 浅色与 390px 深色检查通过，无横向溢出或页面运行错误。没有以合成页面替代真实生产单的付费生成验收。
 - 独立只读代码审查未发现阻断问题。长期通用依赖防回流边界和真实旧备份恢复未新增验证；本轮未运行冻结蓝图集成验收或完整实际剪辑导出，不改其历史测试/SQL。
 
-截图： [桌面账号弹窗](account-dialog-desktop.png)、[390px 深色账号弹窗](account-dialog-dark-390.png)、[共享控件](final-controls.png)。结果与保护摘要见 [verification.json](verification.json)。原文件恢复包与完整日志：`/tmp/loop-lucide-unification-20261112/`。
+截图： 桌面账号弹窗（历史附件已清理：`account-dialog-desktop.png`）、390px 深色账号弹窗（历史附件已清理：`account-dialog-dark-390.png`）、共享控件（历史附件已清理：`final-controls.png`）。结果与保护摘要见 verification.json（历史附件已清理：`verification.json`）。原文件恢复包与完整日志：`/tmp/loop-lucide-unification-20261112/`。

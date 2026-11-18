@@ -1,5 +1,8 @@
 # 音频底部配置按钮
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 2026-11-08。范围：WorkspaceAudioPanel.tsx、workspace-audio.css、WorkspaceAudioPanel.test.tsx、ProductionWorkspacePanel.test.tsx、PLAN.md。
 
 复用画面的 WorkspaceComposerSetting、Popover 和 Dialog，来源、定位方式、位置/偏移、时长变为底部摘要按钮，点击后打开设置；来源弹层保留选择、拖入、上传 MP3 和清除。原片声音的画面来源也放入同一来源入口。草稿仍保留在父级现有状态中，弹层关闭不丢值，不额外自动保存或调用业务接口。

@@ -1,5 +1,8 @@
 # #156 图片工作台验收
 
+
+> 产物清理记录（2026-11-18）：本目录的历史测试生成附件已按用户要求清理；本文验收结论保留。源测试输入、恢复资料、生产单和数据库未删除。
+
 隔离环境：随机独立 PostgreSQL database、`/private/tmp/loop-153-*` 媒体、随机本机端口。只读复用日常 runtime 代码和 OpenChatCut 安装；不读取 Keychain、不调用付费 Provider、不写日常业务行。
 
 TDD：静帧命令缺失（400）→最小实现→HTTP/restart重读通过；推拉缺 keyframes→真实原生关键帧→Studio open/save和MP4渲染通过；缺失素材时validator泄漏ENOENT（503）→对应409阻塞通过；图片UI模块缺失→Owner显式提交行为通过。

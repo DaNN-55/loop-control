@@ -1,5 +1,8 @@
 # 生成输入框与声音流程验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-07。按用户批准的完整流程 demo 实施。日常入口为 http://127.0.0.1:5174/，当前运行版本 `763612165899`。
 
 ## 改动
@@ -41,6 +44,6 @@
 
 证据：`daily-before.json`、`daily-after.json`、`runtime-diff.json`、`sound-candidates.json`、`browser-done.json`、`browser-persistence.json`。数据库备份位于 `.loop-control/local/backups/20261107-generation-composer/before-151.dump`，本次修改前的源码保存在当前聊天目录的 `implementation-baseline`。未提交或推送，未清理其他未提交工作。
 
-![窄窗规格与环形等待](narrow-settings.png)
+窄窗规格与环形等待（历史附件已清理：`narrow-settings.png`）
 
-![试听候选与手动采用](sound-candidates.png)
+试听候选与手动采用（历史附件已清理：`sound-candidates.png`）

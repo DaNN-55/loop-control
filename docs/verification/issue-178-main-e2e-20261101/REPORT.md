@@ -1,5 +1,8 @@
 # 本地 main 与真实制作流程验收
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 执行日期：2026-11-01（Asia/Shanghai）。JSONL 的 `at` 使用 UTC。记录包含首次失败、修复后的定向重跑及最终按测试身份去重的结果。
 
 ## 已验证的结果
@@ -25,7 +28,7 @@
 
 所有生成提交串行执行。余额或权限拒绝后，没有充值、改模型、自动重提或把拒绝视为已生成。供应商响应中的秘密、请求头、凭据、完整签名网址和图片 Base64 没有写入证据。
 
-正式万相任务 `ffaf1bc5-7e02-406a-9707-012fad9770e3` 对应供应商任务 `5f34a997-811a-4516-a1d8-e3297c644c3c`。独立样片任务、请求标识、策略与价格依据见 [真实 API 样片报告](provider-samples-report.md)、[价格记录](price-evidence.md)及 [任务结果](real-task-results.json)。
+正式万相任务 `ffaf1bc5-7e02-406a-9707-012fad9770e3` 对应供应商任务 `5f34a997-811a-4516-a1d8-e3297c644c3c`。独立样片任务、请求标识、策略与价格依据见 [真实 API 样片报告](provider-samples-report.md)、[价格记录](price-evidence.md)及 任务结果（历史附件已清理：`real-task-results.json`）。
 
 用户后来明确限定只使用免费额度。上一轮实际调用没有事先核实免费额度，不能保证未产生付费；本次补充验证未提交生成。费用记录是预算预留与公开价格估算，未读取供应商账单。独立样片策略合计占额 9.376 CNY，正式策略增加万相 0.30 CNY、两次语音各 0.10 CNY，总占额 9.876 CNY。失败提交的账本没有重置，也未冒充退款。Worker 的 `actual_cost_cents` 不能代替真实账单。
 
@@ -47,9 +50,9 @@
 
 最终导出 ID：`daff486b-7c01-44ca-9fb0-32d336bb71b9`。交付任务 ID：`674793c4-9f39-4c46-b54c-d5e11102eb8b`。最终视频 SHA-256：`656edddab2b3d1f3d52ad3a9afdc10c9e4ddd72c08fac65d32925ee8e7907714`。
 
-- [最终视频](final.mp4)、[最终检查](final-export-checks.json)、[交付结果](delivery-result.json)、[六项文件字节读回](delivery/byte-readback.json)。
-- [原生编辑页](03-studio.png)、[实际播放](04-playing.png)、[成片复核](06-final-review.png)、[交付完成](07-delivered.png)。
-- [正式 Owner 操作日志](owner-workflow.jsonl)、[HTTP／Worker 运行日志](live-runtime-events.jsonl)。
+- 最终视频（历史附件已清理：`final.mp4`）、最终检查（历史附件已清理：`final-export-checks.json`）、交付结果（历史附件已清理：`delivery-result.json`）、六项文件字节读回（历史附件已清理：`delivery/byte-readback.json`）。
+- 原生编辑页（历史附件已清理：`03-studio.png`）、实际播放（历史附件已清理：`04-playing.png`）、成片复核（历史附件已清理：`06-final-review.png`）、交付完成（历史附件已清理：`07-delivered.png`）。
+- 正式 Owner 操作日志（历史附件已清理：`owner-workflow.jsonl`）、HTTP／Worker 运行日志（历史附件已清理：`live-runtime-events.jsonl`）。
 
 ## 目录、收纳与不可变来源
 
@@ -57,7 +60,7 @@
 
 交付完成后，通过正式页面把生产单从系列移入「未分系列」，再移回系列。创作基线仍为创建时的系列 v1；工作版本仍为 v10，工程和导出 SHA 未变化。暂时移开两个旧目录后，六个历史交付链接全部返回 HTTP 200，大小和 SHA 一致；最后恢复两个旧目录。没有通过直接修改位置表伪造迁移。
 
-隔离数据库已保存私有压缩转储，摘要见 [恢复清单](final-recovery-manifest.json)。转储不等于本次已执行恢复；原生备份恢复的回归结果由扩展测试单独记录。
+隔离数据库已保存私有压缩转储，摘要见 恢复清单（历史附件已清理：`final-recovery-manifest.json`）。转储不等于本次已执行恢复；原生备份恢复的回归结果由扩展测试单独记录。
 
 ## 回归与修复
 
@@ -67,7 +70,7 @@
 | 全量默认回归 | 177 文件、1157 项通过；最终重跑见 `full-default-final.log`。 |
 | OpenChatCut 原生集成 | 四个旧 JSON／旧 URL 契约改为真实 SQLite／HTTP ownership；12 项通过，见 `integration-openchatcut-after.log`。 |
 | 视频区间集成 | 补齐有效画面前置条件，用真实原生 CAS 编辑替代旧 JSON 直写；原安全断言保留，6 项通过，见 `integration-video-after.log`。 |
-| 扩展集成回归 | 129 个文件中选择 97 个可自执行文件。首轮 307 通过、60 失败、1 跳过；修复后仅定向复跑受影响文件，按测试身份去重为 **367 通过、0 失败、1 人工夹具跳过**。另 32 个依赖日常状态、历史私有夹具或外部 driver 驻留的文件明确排除，不计为通过。逐项结果见 [去重证据](integration-consolidated.json)、[主代理独立读回](consolidation-readback.json)及 [129 文件选择清单](integration-selection-129.json)。 |
+| 扩展集成回归 | 129 个文件中选择 97 个可自执行文件。首轮 307 通过、60 失败、1 跳过；修复后仅定向复跑受影响文件，按测试身份去重为 **367 通过、0 失败、1 人工夹具跳过**。另 32 个依赖日常状态、历史私有夹具或外部 driver 驻留的文件明确排除，不计为通过。逐项结果见 去重证据（历史附件已清理：`integration-consolidated.json`）、主代理独立读回（历史附件已清理：`consolidation-readback.json`）及 129 文件选择清单（历史附件已清理：`integration-selection-129.json`）。 |
 
 已修复的夹具漂移包括：新账号不再接受手填专属目录、登记布局必须从创建时生效、原生工程以 SQLite／HTTP 为准。夹具使用当前真实位置与迁移证明，原生编辑通过 SQLite 的 HTTP ownership 边界。实际 API 调用与这些受控 Provider 回归分别记录。回归中的默认迁移清单补齐 120／121，恢复时保持合法顺序；没有修改生产恢复逻辑来容忍不完整的测试台账。唯一产品修改是保留工程读取时已安全分类的 `ConfigurationError`，避免目录身份错误被通用提示覆盖；原失败路径仍拒绝读写。
 
@@ -89,7 +92,7 @@
 
 ## 最终资源收尾
 
-本轮自执行集成的 3 个专属源码／SDK 快照及私有 Git 元数据已在无活动引用后移除，原分配占用约 468.9 MiB；共享 `node_modules` 身份不变。2 个本轮遗留空卷正常卸载并移除，2 个已核验 ID、label、无 volume 的隔离数据库容器正常停止后移除。3 个历史归属未定的卷与日常容器保留，未使用强制卸载或删除。见 [集成清理回执](integration-cleanup.json)、[容器与卷回执](integration-runtime-cleanup.json)。
+本轮自执行集成的 3 个专属源码／SDK 快照及私有 Git 元数据已在无活动引用后移除，原分配占用约 468.9 MiB；共享 `node_modules` 身份不变。2 个本轮遗留空卷正常卸载并移除，2 个已核验 ID、label、无 volume 的隔离数据库容器正常停止后移除。3 个历史归属未定的卷与日常容器保留，未使用强制卸载或删除。见 集成清理回执（历史附件已清理：`integration-cleanup.json`）、容器与卷回执（历史附件已清理：`integration-runtime-cleanup.json`）。
 
 日常服务 PID `71478` 保持运行。自己的真实验收服务、浏览器和 Finder 窗口均已关闭；小型复现源码、私有数据库转储／媒体归档、原始未提交内容备份和误编译恢复材料保留。
 

@@ -1,5 +1,8 @@
 # Compact connection and secret settings migration
 
+> 产物清理记录（2026-11-18）：本报告所链接的部分历史截图、视频、日志或导出附件已按用户要求清理；原验收事实保留，已删除附件改为文字标记。生产单、数据库、业务素材及必要测试输入未删除。
+
+
 2026-11-11. Approved compact prototype migrated to production components; the prototype is not imported by the application.
 
 ## Result
@@ -62,4 +65,4 @@ The approved global grouping is now complete: compact connection/use groups repl
 
 ## 主Agent正式启用回执
 
-2026-11-11：正式5174已启用紧凑连接与全局分组密钥；主Agent实看实际连接/模型、35条真实密钥元数据的按ID/用途分组、制作/账务条目、固定详情与逐级返回。未显示或复制真实秘密，未测试真实连接或请求真实生成。[正式截图](secrets/production-group.png)。回执163最终启用及全部验证见[主交付报告](../receipt-rules-implementation-20261111/REPORT.md)；代码迁移前完整检查点32514cb623ea。
+2026-11-11：正式5174已启用紧凑连接与全局分组密钥；主Agent实看实际连接/模型、35条真实密钥元数据的按ID/用途分组、制作/账务条目、固定详情与逐级返回。未显示或复制真实秘密，未测试真实连接或请求真实生成。正式截图（历史附件已清理：`secrets/production-group.png`）。回执163最终启用及全部验证见[主交付报告](../receipt-rules-implementation-20261111/REPORT.md)；代码迁移前完整检查点32514cb623ea。
