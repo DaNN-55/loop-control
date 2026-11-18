@@ -26,10 +26,10 @@ const protectedRows=async()=>{
 };
 beforeAll(async()=>{
  if(!contextPath)return;
- const {runtimeContext}=await import(contextPath),c=runtimeContext();if(c.dailyRuntime!==false||!c.isolatedFixtureContainer)throw Error('Only explicitly isolated fixtures');
+ const {runtimeContext}=await import(contextPath),c=runtimeContext();if(c.dailyRuntime!==false||!(c.isolatedFixtureContainer||c.isolatedFixtureNative&&c.nativeConnection))throw Error('Only explicitly isolated fixtures');c.assertDatabase();
  provider=createServer(async(req,res)=>{
   let bytes='';for await(const chunk of req)bytes+=chunk;
-  if(req.method==='GET'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(req.url==='/models'?{data:[{id:'deepseek-flash'},{id:'deepseek-v4-pro'}]}:{id:'gpt-5.6-luna'}));return;}
+  if(req.method==='GET'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(req.url==='/models'?{data:[{id:'deepseek-flash'},{id:'deepseek-v4-pro'}]}:{data:[{id:'gpt-5.6-luna'}]}));return;}
   posts++;const input=JSON.parse(bytes),text=JSON.parse(input.input[0].content).source as string;
   if(mode==='drop'){req.socket.destroy();return;}
   if(mode==='hold')await new Promise<void>(resolve=>{release=resolve;});

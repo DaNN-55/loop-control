@@ -1,4 +1,6 @@
-import {scriptFormatModel,deepSeekFormatModels,validateScriptRecognition,type ScriptRecognition} from '../scriptFormat.js';
+import {supportsLanguageModel} from '../languageModels.js';
+import {scriptStudioDefaultReasoning} from '../scriptStudioReasoning.js';
+import {validateScriptRecognition,type ScriptRecognition} from '../scriptFormat.js';
 import type {MediaFetcher} from '../worker/mediaProviders.js';
 export class ScriptFormatProviderError extends Error {
  constructor(message:string,readonly outcome:'failed'|'unknown'){super(message);}
@@ -15,8 +17,8 @@ const tokens=(value:unknown)=>typeof value==='number'&&Number.isSafeInteger(valu
 /** Exact non-secret request snapshot shared by persistence and transport. */
 export function scriptFormatRequest(input:Omit<ScriptFormatReadInput,'secret'>){
  const provider=input.provider??'openai',deepseek=provider==='deepseek';
- if(!(provider==='openai'&&input.model===scriptFormatModel||deepseek&&(deepSeekFormatModels as readonly string[]).includes(input.model)))throw new ScriptFormatProviderError('大语言模型无效。','failed');
- return{url:deepseek?'https://api.deepseek.com/responses':'https://api.openai.com/v1/responses',body:{model:input.model,...(!deepseek?{store:false}:{}),instructions,reasoning:{effort:'none'},max_output_tokens:16000,input:[{role:'user',content:JSON.stringify({diagnostic:input.diagnostic,source:input.source})}],text:{format:{type:'json_schema',name:'script_recognition_v1',...(!deepseek?{strict:true}:{}),schema}}}};
+ if(!supportsLanguageModel(provider,input.model))throw new ScriptFormatProviderError('大语言模型无效。','failed');
+ return{url:deepseek?'https://api.deepseek.com/responses':'https://api.openai.com/v1/responses',body:{model:input.model,...(!deepseek?{store:false}:{}),instructions,reasoning:{effort:scriptStudioDefaultReasoning(provider,input.model)},max_output_tokens:16000,input:[{role:'user',content:JSON.stringify({diagnostic:input.diagnostic,source:input.source})}],text:{format:{type:'json_schema',name:'script_recognition_v1',...(!deepseek?{strict:true}:{}),schema}}}};
 }
 export function createScriptFormatReader(transport:MediaFetcher=fetch):ScriptFormatReader {
  return async input=>{

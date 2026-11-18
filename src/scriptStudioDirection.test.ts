@@ -38,3 +38,23 @@ it('retains a partially explicit source time while compiling the unspecified rem
  const plan=compileScriptStudioDirection({...draft,title:'部分时长',shots:['一。','二。'].map(narration=>({...shot,narration,narrationEnabled:true,captionsEnabled:true}))},source,{targetDuration:null,mode:'optimize'});
  expect(plan.shots.map(s=>s.durationSeconds)).toEqual([10,3]);
 });
+
+it('allows an explicit narration request to read an unchanged excerpt from otherwise visual prose',()=>{
+ const source='她把早餐端到窗边，看着树叶上的雨水，说：“慢一点，也能把早晨过好。”其他文字按画面表达。';
+ const value={...draft,shots:[shot,{...shot,narrationEnabled:true,narration:'慢一点，也能把早晨过好。'}]};
+ const plan=compileScriptStudioDirection(value,source,{targetDuration:30,mode:'optimize',instruction:'只有引号里的那一句作为人物口播并逐字保留，其余文字按画面安排。'});
+ expect(plan.durationSeconds).toBe(30);expect(plan.shots.map(s=>s.narration)).toEqual(['','慢一点，也能把早晨过好。']);expect(plan.changes).toEqual([]);
+});
+it.each([
+ ['','慢一点，也能把早晨过好。'],
+ ['只把台词作为口播','快一点，也能把早晨过好。'],
+ ['只把台词作为口播','把早晨过好，慢一点。'],
+])('rejects unrequested or rewritten narration excerpts (%s)',(instruction,narration)=>{
+ const source='她看着雨水，说：“慢一点，也能把早晨过好。”';
+ expect(()=>compileScriptStudioDirection({...draft,shots:[{...shot,narrationEnabled:true,narration}]},source,{targetDuration:30,mode:'optimize',instruction})).toThrow(/口播/);
+});
+it('does not use an excerpt request to omit existing explicit narration or subtitle text',()=>{
+ for(const source of ['口播：慢一点，也能把早晨过好。','字幕：慢一点，也能把早晨过好。']){
+  expect(()=>compileScriptStudioDirection({...draft,shots:[{...shot,narrationEnabled:true,narration:'慢一点，'}]},source,{targetDuration:30,mode:'optimize',instruction:'只口播前面一句'})).toThrow(/口播/);
+ }
+});

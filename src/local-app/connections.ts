@@ -1,5 +1,5 @@
 import {LocalScriptStudioRequests} from './scriptStudioRequests.js';
-import {createScriptStudioReader,type ScriptStudioReader} from './scriptStudioProvider.js';
+import {createScriptStudioReader,createScriptStudioDiscussionReader,type ScriptStudioDiscussionReader,type ScriptStudioReader} from './scriptStudioProvider.js';
 import {LocalScriptFormatRequests} from './scriptFormatRequests.js';
 import {createScriptFormatReader,type ScriptFormatReader} from './scriptFormatProvider.js';
 import {buildProductionServiceCatalog} from '../connections/serviceCatalog.js';
@@ -64,10 +64,10 @@ export class LocalConnections {
  readonly scriptFormat:LocalScriptFormatRequests;
  readonly scriptStudio:LocalScriptStudioRequests;
  readonly billing:LocalConnectionBilling;
- constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader,scriptFormatReader:ScriptFormatReader=createScriptFormatReader(),scriptStudioReader:ScriptStudioReader=createScriptStudioReader()){
+ constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader,scriptFormatReader:ScriptFormatReader=createScriptFormatReader(),scriptStudioReader:ScriptStudioReader=createScriptStudioReader(),scriptStudioDiscussionReader:ScriptStudioDiscussionReader=createScriptStudioDiscussionReader()){
   this.billing=new LocalConnectionBilling(pool,store,billingReader);
   this.scriptFormat=new LocalScriptFormatRequests(pool,store,()=>this.configurationReady,scriptFormatReader);
-  this.scriptStudio=new LocalScriptStudioRequests(pool,store,()=>this.configurationReady,scriptStudioReader);
+  this.scriptStudio=new LocalScriptStudioRequests(pool,store,()=>this.configurationReady,scriptStudioReader,scriptStudioDiscussionReader);
   this.models=new LocalConnectionModels(pool,store,modelsReader,provider=>this.probe.verificationStatus?.(provider).available??this.networkAvailable);
  }
  get configurationReady(){return this.store.mode==='keychain'&&this.probe.mode==='live';}

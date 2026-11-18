@@ -7,7 +7,11 @@ export type ScriptStudioMode='optimize'|'adapt';
 export interface ScriptStudioShot {title:string;durationSeconds:number;narration:string;subtitle:string|null;visual:string;videoPrompt:string;camera:string;visualSource:'image'|'video'|'material'|'unassigned';settings:RecognitionSetting[]}
 export interface ScriptStudioPlan {title:string;durationSeconds:number;summary:string;sourceUse:string;narrationEnabled:boolean;captionsEnabled:boolean;settings:RecognitionSetting[];shots:ScriptStudioShot[];changes:string[];warnings:string[];canProceed:boolean}
 export interface ScriptStudioDiagnostic {responseId:string;usage:{inputTokens:number|null;outputTokens:number|null};modelOutput:unknown}
-export interface ScriptStudioResult {requestId:string;status:'pending'|'completed'|'failed'|'unknown';plan?:ScriptStudioPlan;message?:string;responseId?:string;usage?:{inputTokens:number|null;outputTokens:number|null};diagnostic?:ScriptStudioDiagnostic}
+export interface ScriptStudioResult {requestId:string;status:'pending'|'completed'|'failed'|'unknown';plan?:ScriptStudioPlan;modifiedShotIndexes?:number[];message?:string;responseId?:string;usage?:{inputTokens:number|null;outputTokens:number|null};diagnostic?:ScriptStudioDiagnostic}
+export type ScriptStudioChatMode='optimize'|'discuss';
+export interface ScriptStudioMessage {role:'user'|'assistant';content:string}
+export interface ScriptStudioTurn {requestId:string;mode:ScriptStudioMode|'discuss'|'edit';model?:string;provider?:string;instruction:string;answer:string;status:ScriptStudioResult['status']}
+export interface ScriptStudioConversation {turns:ScriptStudioTurn[];result:ScriptStudioResult|null;latest?:ScriptStudioResult;latestRequestId?:string;mode:ScriptStudioMode}
 export interface ScriptStudioOptions {targetDuration:number|null;mode:ScriptStudioMode;instruction?:string}
 const normal=(s:string)=>s.replace(/\s+/g,' ').trim().replace(/([\p{Script=Han}，。！？；：、]) +(?=[\p{Script=Han}，。！？；：、])/gu,'$1');
 export function validateStudioDuration(value:unknown):asserts value is number|null{if(value!==null&&(typeof value!=='number'||!Number.isFinite(value)||value<.1||value>3600||Math.abs(value*100-Math.round(value*100))>1e-6))throw Error('总时长须为 0.1–3600 秒，最多两位小数。');}
@@ -64,7 +68,7 @@ export function validateScriptStudioPlan(value:unknown,source:string,options:Scr
  if(Math.abs(p.shots.reduce((n,s)=>n+s.durationSeconds,0)-p.durationSeconds)>.011||fixedDuration!==null&&Math.abs(fixedDuration-p.durationSeconds)>.001)throw Error('拍法改变了指定总时长，或镜头时长之和不一致。');
  const local=localScriptStudioPlan(source,options.targetDuration);
  if(options.mode==='optimize'){
-  if(p.changes.length)throw Error('默认优化不能改编原文内容，请单独选择大胆改编。');
+  if(p.changes.length)throw Error('默认优化不能改编原文内容，请保留原文事件和台词。');
   if(hasExplicitStudioShotTiming(source)&&(p.shots.length!==local.shots.length||p.shots.some((shot,index)=>normal(shot.narration)!==normal(local.shots[index].narration)||Math.abs(shot.durationSeconds-local.shots[index].durationSeconds)>.001)))throw Error('原稿已明确逐镜时长，默认优化须保留镜头边界和时长。');
   const voiceOverride=/口播|旁白/.test(options.instruction??''),captionOverride=/字幕/.test(options.instruction??'');
   if(!voiceOverride&&(local.sourceUse==='结构化脚本'||local.shots.some(s=>s.narration)||/^\s*(?:[-*]\s*)?(?:口播|旁白)[：:]\s*关闭\s*$/m.test(source))&&p.narrationEnabled!==local.narrationEnabled)throw Error('默认优化不能改变原有口播开关。');
@@ -84,7 +88,9 @@ export function validateScriptStudioPlan(value:unknown,source:string,options:Scr
 
   const expected=normal(local.shots.map(s=>s.narration).join(' ')),actual=normal(p.shots.map(s=>s.narration).join(' '));
   if(expected&&actual!==expected)throw Error('拍法遗漏、改写或重排了原有口播。');
-  if(!expected&&actual&&actual!==normal(local.shots.map(s=>s.subtitle??'').join(' ')||source))throw Error('新增口播须逐字使用原文；改写请单独选择大胆改编。');
+  // An explicit voice request may select unchanged prose; existing speech/subtitles stay complete.
+  const proseExcerpt=voiceOverride&&local.sourceUse==='原文用途待后续制作方案确认'&&normal(source).includes(actual);
+  if(!expected&&actual&&actual!==normal(local.shots.map(s=>s.subtitle??'').join(' ')||source)&&!proseExcerpt)throw Error('新增口播须逐字使用原文；只读部分原文时，请在修改要求中明确口播安排。');
   const originalSubtitles=normal(local.shots.map(s=>s.subtitle??'').join(' ')),subtitles=normal(p.shots.map(s=>s.subtitle??'').join(' '));
   if(originalSubtitles&&subtitles!==originalSubtitles||!originalSubtitles&&p.shots.some(s=>s.subtitle!==null&&s.subtitle.trim()&&!normal(source).includes(normal(s.subtitle))))throw Error('拍法改写或遗漏了原有字幕。');
   if(source.match(/^#\s+(.+)$/m)?.[1]&&p.title!==local.title)throw Error('拍法改变了原文标题。');

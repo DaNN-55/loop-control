@@ -15,4 +15,4 @@ export function modelDiscoveryAvailability(provider:string){
 }
 
 /** Expanding a contract does not silently enable more models on existing connections. */
-export function defaultConnectionModels(provider:string,adapter:string){const models=registeredConnectionModels(provider,adapter);return provider==='bailian'&&adapter==='wan_video'?models.filter(m=>m.id==='wan2.6-i2v-flash'):provider==='kling'?models.filter(m=>m.id==='kling-v3'):provider==='deepseek'?models.filter(m=>m.id==='deepseek-flash'):models;}
+export function defaultConnectionModels(provider:string,adapter:string){const models=registeredConnectionModels(provider,adapter);return provider==='openai'&&adapter==='openai_responses'?models.filter(m=>m.id==='gpt-5.6-luna'):provider==='bailian'&&adapter==='wan_video'?models.filter(m=>m.id==='wan2.6-i2v-flash'):provider==='kling'?models.filter(m=>m.id==='kling-v3'):provider==='deepseek'?models.filter(m=>m.id==='deepseek-flash'):models;}

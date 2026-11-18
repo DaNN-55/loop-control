@@ -222,7 +222,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     }
     if(request.method!=='POST'||url.search)throw new ConfigurationError(405,'拍法设计需要 POST。');
     let body;try{body=await readBody(request,128*1024);}catch{throw new ConfigurationError(400,'拍法请求格式无效或超过上限。');}
-    send(200,await connections.scriptStudio.command(session,body));return;
+    send(200,await (body.command==='conversation'?connections.scriptStudio.conversation(session,body):connections.scriptStudio.command(session,body)));return;
    }
    if(url.pathname==='/api/local/script-recognition'){
     if(request.method!=='POST'||url.search){send(405,{error:'脚本分镜识别需要 POST。'});return;}

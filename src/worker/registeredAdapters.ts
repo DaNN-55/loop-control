@@ -1,3 +1,4 @@
+import {openAiLanguageModels} from '../languageModels.js';
 import {deepSeekFormatModels} from '../scriptFormat.js';
 import {wanReferenceModel,wanReferenceMode,wanVideoModel,wanVideoModels} from '../wanVideoModels.js';
 import {imageSizes,openAiImageModels,openAiEnhancedImageModels,openAiImageQualities} from '../imageGeneration.js';
@@ -166,7 +167,7 @@ const legacyManifest: readonly RegisteredAdapterDefinition[] = [
     { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: openAiImageModels, presetCatalog: ["static-visual-v1"] },
   ] },
   { production: [{capability:'language_model',label:'OpenAI 大语言模型',mode:'generation',inputModes:['text'],constraints:{prompt:{maxLength:20000}}}],provider:'openai',adapter:'openai_responses',executionPath:'external',connection:{kind:'owner_managed',type:'openai_api',endpoint:'https://api.openai.com/v1'},execution:{kind:'language_model',safetyLimit:1},capabilities:[
-    {capability:'language_model',configurationFields:['model','credential_ref'],modelCatalog:['gpt-5.6-luna'],presetCatalog:[]},
+    {capability:'language_model',configurationFields:['model','credential_ref'],modelCatalog:openAiLanguageModels,presetCatalog:[]},
   ]},
   { production: [{capability:'language_model',label:'DeepSeek 大语言模型',mode:'generation',inputModes:['text'],constraints:{prompt:{maxLength:20000}}}],provider:'deepseek',adapter:'deepseek_responses',executionPath:'external',connection:{kind:'owner_managed',type:'deepseek_api',endpoint:'https://api.deepseek.com'},execution:{kind:'language_model',safetyLimit:1},capabilities:[
     {capability:'language_model',configurationFields:['model','credential_ref'],modelCatalog:deepSeekFormatModels,presetCatalog:[]},

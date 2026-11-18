@@ -112,7 +112,7 @@ function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input
  }else if(provider==='deepseek'){
   if(phase==='verify'&&method==='GET'&&api('api.deepseek.com','/models'))op='verify';
  }else if(provider==='openai'){
-  if(phase==='verify'&&method==='GET'&&(api('api.openai.com','/v1/models/gpt-image-2')||api('api.openai.com','/v1/models/gpt-5.6-luna')))op='verify';
+  if(phase==='verify'&&method==='GET'&&(api('api.openai.com','/v1/models/gpt-image-2')||api('api.openai.com','/v1/models/gpt-5.6-luna')||api('api.openai.com','/v1/models')))op='verify';
   if(phase==='execute'&&method==='POST'&&(api('api.openai.com','/v1/images/generations')||api('api.openai.com','/v1/images/edits')))op='generate';
  }else if(provider==='bailian'){
   const apiHost=u.hostname==='dashscope.aliyuncs.com'||/^ws-[a-z0-9]{8,64}\.cn-beijing\.maas\.aliyuncs\.com$/.test(u.hostname);

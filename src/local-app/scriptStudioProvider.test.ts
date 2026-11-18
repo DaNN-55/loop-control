@@ -1,6 +1,6 @@
 // @vitest-environment node
 import {it,expect,vi} from 'vitest';
-import {createScriptStudioReader,scriptStudioRequest} from './scriptStudioProvider';
+import {createScriptStudioReader,scriptStudioRequest,scriptStudioDiscussionRequest} from './scriptStudioProvider';
 const source='一个人走进咖啡馆，坐下等待朋友。';
 const input={source,targetDuration:15,mode:'optimize' as const,instruction:'',model:'gpt-5.6-luna',provider:'openai',secret:'synthetic-secret'};
 const response=(plan:unknown)=>Response.json({id:'resp_fixture',status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(plan)}]}],usage:{input_tokens:123,output_tokens:45}});
@@ -56,4 +56,41 @@ it('does not ask the model to invent execution readiness or unprovided productio
  const schema=scriptStudioRequest(input).body.text.format.schema;
  const animation=schema.properties.settings.items.anyOf.find(item=>item.properties.field.enum.includes('动画'))!;
  expect(animation.properties.value.enum).toEqual(['无','慢推','拉远']);
+});
+
+it('sends prior dialogue as data while keeping discussion replies non-adoptable',async()=>{
+ const {createScriptStudioDiscussionReader}=await import('./scriptStudioProvider');
+ const conversation=[{role:'user' as const,content:'不增加人物。'},{role:'assistant' as const,content:'已记下。'}];
+ const send=vi.fn(async()=>response({reply:'可以用连续镜头放缓节奏。'}));
+ const value=await createScriptStudioDiscussionReader(send)({...input,instruction:'节奏还能更慢吗？',conversation});
+ expect(value).toMatchObject({message:'可以用连续镜头放缓节奏。',responseId:'resp_fixture'});expect(value).not.toHaveProperty('plan');
+ const body=JSON.parse(String((send.mock.calls[0] as unknown as [string,RequestInit])[1].body));
+ expect(body.text.format.name).toBe('script_studio_discussion_v1');expect(JSON.parse(body.input[0].content).conversation).toEqual(conversation);expect(body.instructions).toContain('不修改');expect(body).not.toHaveProperty('tools');
+});
+it('includes the full prior dialogue with the current filming plan and rejects a discussion that tries to return a plan',async()=>{
+ const {createScriptStudioDiscussionReader}=await import('./scriptStudioProvider');
+ const conversation=[{role:'user' as const,content:'保留口播。'}];
+ const request=scriptStudioRequest({...input,conversation});expect(JSON.parse(request.body.input[0].content).conversation).toEqual(conversation);
+ await expect(createScriptStudioDiscussionReader(async()=>response({reply:'已改好',plan:direction}))({...input,instruction:'讨论一下',conversation})).rejects.toThrow(/讨论/);
+});
+it('keeps earlier user voice requirements enforceable during later refinements without inheriting adaptation permission',async()=>{
+ const text='口播：关闭\n画面：窗边。',conversation=[{role:'user' as const,content:'加旁白，逐字使用原文。'}];
+ const spoken={...direction,shots:[{...direction.shots[0],narrationEnabled:true,captionsEnabled:true,narration:text}]};
+ const value=await createScriptStudioReader(async()=>response(spoken))({...input,source:text,instruction:'放缓节奏',conversation});expect(value.plan.narrationEnabled).toBe(true);
+ await expect(createScriptStudioReader(async()=>response({...spoken,changes:['新增人物']}))({...input,source:text,instruction:'放缓节奏',conversation:[...conversation,{role:'user',content:'上次允许大胆改编'}]})).rejects.toThrow(/默认优化不能改编/);
+});
+it('sends explicitly selected effort for generation and discussion, preserving none as the default',async()=>{
+ expect(scriptStudioRequest(input).body.reasoning.effort).toBe('none');
+ expect(scriptStudioRequest({...input,reasoningEffort:'high'}).body.reasoning.effort).toBe('high');
+ const {createScriptStudioDiscussionReader}=await import('./scriptStudioProvider'),send=vi.fn(async()=>response({reply:'讨论回复'}));
+ await createScriptStudioDiscussionReader(send)({...input,instruction:'讨论节奏',reasoningEffort:'max'});const body=JSON.parse(String((send.mock.calls[0] as unknown as [string,RequestInit])[1].body));expect(body.reasoning.effort).toBe('max');expect(body.max_output_tokens).toBe(16000);
+ expect(()=>scriptStudioRequest({...input,provider:'deepseek',model:'deepseek-flash',reasoningEffort:'medium'})).toThrow(/推理强度/);
+});
+it('retires new model adaptation requests without removing historical plan validation',async()=>{
+ const send=vi.fn(async()=>response(direction));await expect(createScriptStudioReader(send)({...input,mode:'adapt'})).rejects.toThrow(/退役/);expect(send).not.toHaveBeenCalled();
+});
+
+it('uses the exact public GPT model and a supported default effort across both script APIs',()=>{
+ for(const model of ['gpt-5.6','gpt-5.6-sol','gpt-5.6-terra','gpt-5.6-luna','gpt-6.1-sol','gpt-6.1-terra']){const expected=model==='gpt-6.1-sol'?'low':'none';expect(scriptStudioRequest({...input,model}).body).toMatchObject({model,reasoning:{effort:expected}});expect(scriptStudioDiscussionRequest({...input,model}).body).toMatchObject({model,reasoning:{effort:expected}});}
+ expect(()=>scriptStudioRequest({...input,model:'gpt-6.1-sol',reasoningEffort:'none'})).toThrow();
 });

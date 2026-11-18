@@ -23,7 +23,7 @@ export async function resolveProductionSelection(c:PoolClient,value:unknown,capa
   const verified=(await c.query("SELECT public.connection_version_is_verified($1) AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence WHERE version_id=$1 AND mode='live' AND outcome='verified') allowed",[s.connectionVersionId])).rows[0]?.allowed;
   if(!owned||owned.revoked_at||!owned.is_current||owned.provider!==s.provider||owned.adapter!==s.adapter||owned.store_mode!=='keychain'||!owned.secret_ref||!verified)throw new ConfigurationError(409,'所选连接不可用、无权使用或尚未验证。');
   const preference=(await c.query('SELECT enabled_models FROM local_identity.connection_model_settings WHERE connection_id=$1',[owned.connection_id])).rows[0];
-  if(s.model&&(preference?!preference.enabled_models.includes(s.model):s.provider==='bailian'&&s.model!==defaultWanModel||s.provider==='deepseek'&&s.model!==deepSeekFormatModels[0]))throw new ConfigurationError(409,'该连接尚未启用或已停用此模型，请读取模型并启用后重新选择。');
+  if(s.model&&(preference?!preference.enabled_models.includes(s.model):s.adapter==='openai_responses'&&s.model!=='gpt-5.6-luna'||s.provider==='bailian'&&s.model!==defaultWanModel||s.provider==='deepseek'&&s.model!==deepSeekFormatModels[0]))throw new ConfigurationError(409,'该连接尚未启用或已停用此模型，请读取模型并启用后重新选择。');
   const metadata=(await c.query('SELECT v.version,c.name FROM public.list_external_connection_versions(NULL) v JOIN public.external_connections c ON c.id=v.connection_id WHERE v.id=$1',[owned.id])).rows[0];
   connection={id:owned.id,connection_id:owned.connection_id,name:metadata.name,version:metadata.version};
  }else if(s.connectionVersionId!==undefined)throw new ConfigurationError(400,'本地服务不使用外部连接。');

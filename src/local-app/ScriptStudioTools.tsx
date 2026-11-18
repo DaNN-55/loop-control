@@ -1,0 +1,23 @@
+import type {ReactNode} from 'react';
+import {Dialog,DialogTrigger} from 'react-aria-components';
+import {Check,ChevronDown,RefreshCw,Settings2,X,type LucideIcon} from 'lucide-react';
+import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
+import {uiText} from '../i18n/ui';
+import {providerDisplayNames} from '../connections/serviceCatalog';
+import type {useScriptStudioAssistant} from './useScriptStudioAssistant';
+import {WorkspaceModelLogo} from './WorkspaceModelLogo';
+import {WorkspacePopover} from './WorkspacePopover';
+
+export function ScriptStudioIcon({label,tip,icon,onPress,disabled,active}:{label:string;tip?:string;icon:LucideIcon;onPress?:()=>void;disabled?:boolean;active?:boolean}){
+ return <Tooltip title={uiText(tip??label)}><Button type="button" size="sm" color="tertiary" className={"script-studio-icon"+(active?" is-active":"")} aria-label={uiText(label)} iconLeading={icon} isDisabled={disabled} onPress={onPress}/></Tooltip>;
+}
+export function ScriptStudioPopup({label,trigger,children,open,onOpenChange,headerActions,nonModal=false}:{label:string;trigger:ReactNode;children:ReactNode|((close:()=>void)=>ReactNode);open?:boolean;onOpenChange?:(open:boolean)=>void;headerActions?:ReactNode;nonModal?:boolean}){
+ return <DialogTrigger isOpen={open} onOpenChange={onOpenChange}>{trigger}<WorkspacePopover className="dan-ui product-ui script-studio-popover" placement="bottom end" offset={6} containerPadding={12} shouldFlip isNonModal={nonModal}><Dialog aria-label={uiText(label)}>{({close})=><><header><h4>{uiText(label)}</h4><div className="script-studio-actions">{headerActions}<ScriptStudioIcon label="关闭" icon={X} onPress={close}/></div></header>{typeof children==='function'?children(close):children}</>}</Dialog></WorkspacePopover></DialogTrigger>;
+}
+export function ScriptStudioModelLogo({model,provider}:{model:string;provider:string}){return provider==='deepseek'?<img className="workspace-model-logo" src="/brand/models/deepseek-color.svg" alt="" aria-hidden="true" width={20} height={20}/>:<WorkspaceModelLogo model={model} provider={provider}/>;}
+export function ScriptStudioModel({assistant,disabled,open,onOpenChange}:{assistant:ReturnType<typeof useScriptStudioAssistant>;disabled:boolean;open:boolean;onOpenChange:(open:boolean)=>void}){
+ return <ScriptStudioPopup label="选择大语言模型" open={open} onOpenChange={next=>{onOpenChange(next);if(next&&!assistant.options.length)void assistant.refresh();}} headerActions={<ScriptStudioIcon label="刷新模型连接" icon={RefreshCw} disabled={assistant.modelsLoading||assistant.busy} onPress={()=>void assistant.refresh()}/>} trigger={<Button type="button" size="sm" color="secondary" className="script-studio-model-trigger" aria-label={uiText('选择大语言模型')} isDisabled={disabled||assistant.busy}>{assistant.choice&&<ScriptStudioModelLogo model={assistant.choice.selection.model} provider={assistant.choice.selection.provider}/>}<span>{assistant.choice?.selection.model??uiText(assistant.modelsLoading?'正在读取模型…':'选择模型')}</span><ChevronDown size={14} aria-hidden="true"/></Button>}>
+  {close=><><div className="script-studio-model-options">{assistant.options.map(option=><Tooltip key={option.id} title={option.label}><Button type="button" size="sm" color="tertiary" className="script-studio-model-option" aria-label={(providerDisplayNames[option.selection.provider]??option.selection.provider)+' '+option.selection.model+' · '+option.connection} aria-pressed={assistant.choice?.id===option.id} onPress={()=>{assistant.choose(option.id);close();}}><ScriptStudioModelLogo model={option.selection.model} provider={option.selection.provider}/><span className="script-studio-model-label"><span className="script-studio-model-provider">{providerDisplayNames[option.selection.provider]??option.selection.provider}</span> <span className="script-studio-model-name">{option.selection.model}</span></span>{assistant.choice?.id===option.id&&<Check size={15} className="script-studio-model-check" aria-hidden="true"/>}</Button></Tooltip>)}{!assistant.options.length&&<p role="status">{uiText(assistant.modelsLoading?'正在读取模型…':'暂无可用模型，请先添加并验证连接。')}</p>}</div>{assistant.modelError&&<p role="alert" className="form-error">{uiText(assistant.modelError)}</p>}<footer className="script-studio-model-footer"><Button type="button" size="sm" color="tertiary" iconLeading={Settings2} onPress={()=>{close();window.dispatchEvent(new Event('open-external-connections'));}}>{uiText('管理模型连接')}</Button></footer></>}
+ </ScriptStudioPopup>;
+}

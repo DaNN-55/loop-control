@@ -26,7 +26,7 @@ export function buildProductionServiceCatalog(input:{connections:readonly Catalo
   return {version:1,groups:(Object.entries(productionCapabilityLabels) as [ProductionCapability,string][]).map(([capability,label])=>({capability,label,services:choices.filter(choice=>choice.capability===capability).flatMap(choice=>{
     const connections=input.connections.filter(connection=>connection.provider===choice.provider&&connection.adapter===choice.adapter);
     return (connections.length?connections:[null]).map(connection=>{
-      const enabled=(connection?input.enabledModels?.[connection.id]:undefined)??(choice.provider==='bailian'?[defaultWanModel]:choice.provider==='deepseek'?['deepseek-flash']:undefined);
+      const enabled=(connection?input.enabledModels?.[connection.id]:undefined)??(connection&&choice.adapter==='openai_responses'?['gpt-5.6-luna']:choice.provider==='bailian'?[defaultWanModel]:choice.provider==='deepseek'?['deepseek-flash']:undefined);
       const models=enabled===undefined?choice.models:choice.models.filter(model=>enabled.includes(model));
       const version=connection?input.versions.find(version=>version.id===connection.current_version_id&&version.connection_id===connection.id&&version.provider===choice.provider&&version.adapter===choice.adapter):undefined;
       const unavailableReason=choice.connection.kind==='none'

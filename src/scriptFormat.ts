@@ -1,7 +1,8 @@
+import {deepSeekLanguageModels} from './languageModels.js';
 import {parseProductionScript} from './reviews/productionScript.js';
 export const scriptFormatContractVersion='script-recognition/v1';
 export const scriptFormatModel='gpt-5.6-luna';
-export const deepSeekFormatModels=['deepseek-flash','deepseek-v4-pro'] as const;
+export const deepSeekFormatModels=deepSeekLanguageModels;
 export const scriptFormatMaxCharacters=20000;
 export interface RecognitionSetting {field:string;value:string}
 export interface RecognizedShot {narration:string;subtitle:string|null;visual:string;videoPrompt:string;visualSource:'image'|'video'|'material'|'unassigned';settings:RecognitionSetting[]}
