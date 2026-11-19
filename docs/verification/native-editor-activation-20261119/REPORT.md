@@ -36,4 +36,15 @@ IAB 控制器对跨来源 iframe 内上传按钮的 DOM/AX 引用连续报告失
 - 本轮实际验证现有 OpenAI 和 DeepSeek API 接入；没有声称所有 SDK 供应商、Codex/Claude/Copilot CLI 或外部 MCP 都已连通。接入能力和此前三模型测试见实施验收。
 - 本轮日常激活未重复导出及交付，沿用隔离环境已有真实 MP4/Worker/ZIP 证据；没有将隔离证据冒充为日常导出结果。
 
-私有原始证据及截图在忽略目录 `.scratch/native-editor-activation-20261119/`，包括 `before.json`、`verified.json`、`restart-checks.json`、`owner-save-proof.json`、`reopen-proof.json`、`final-checks.json`、`layout.jpg` 与各命令日志。业务快照、schema 和恢复副本未提交到 Git。
+私有原始证据、截图、业务快照及恢复副本最初保存在忽略目录 `.scratch/native-editor-activation-20261119/`，未提交到 Git；之后已按用户收尾清理授权移除，以下记录清理结果。
+
+## 收尾清理
+
+用户确认更新正常后，授权清理分支、工作树、日志及测试产物。
+
+- 完整工作保留在本地 `main`。清理期间 `main` 新增独立字幕修复 `669ebc2c3`，以 `ddf3bca26` 合并两边历史；源码和测试与清理前 `f1768f2de` 完全一致，仅合并验收说明。保留原生编辑权保护及全部字幕提示修复，无需为清理重复构建或重跑全量测试。
+- 删除 `codex/native-editor-authority-20261119`、`codex/studio-dock-cache-20261119` 及原生剪辑隔离工作树。各提交均可从 `main` 追溯，没有丢弃独立提交。
+- 删除 `.scratch/native-editor-20261119/`、`.scratch/native-editor-activation-20261119/`、`.scratch/studio-activation-20261119/` 与 84 个归属明确的当日临时文件，包括日志、测试脚本、模型/导入/渲染产物、截图、临时快照和工作树构建包。删除前核对这些路径没有打开的文件或进程引用；共享的 `node_modules` 目标没有删除。
+- 日常验收单 `b9668b4b-64d2-4da0-84f9-8adc8ec220b9` 已通过原有生命周期的目录、指纹、权限、依赖和原生进程检查后删除，`cleanupPending=false`。生命周期保留的 52 个运行缓存残留文件（7,963,564 字节）属于这个独立测试目录；另经路径、所有权、无活动引用核验和逐文件复制校验后，移入系统废纸篓 `~/.Trash/loop-control-native-test-b9668b4b-20261119/`，没有扩大删除其他业务文件。
+- 删除验收单后，原有 8 个正式工作区完整记录与清理前一致。最终检查：工作区总数 8、验收单已不存在、无待执行/运行任务；日常 PID 6258、正在使用的编辑器 PID 15876 均保持，日常 HTTP 200。
+- 保留正在推进的 `codex/delivery-simplification-20261119` 分支/工作树及独立 PostgreSQL 测试进程 PID 75377；没有停止日常服务、清理活动日志/程序缓存/运行版本，也没有推送远端。

@@ -45,7 +45,7 @@ SDK 有 21 个 API / 本地预设：Anthropic、OpenAI、Gemini、Kimi、Qwen、
 
 布局在 1600×1050 和 900×768 实际打开。900px 专注模式 iframe 底部 759px、保存按钮底部 49.75px、页面 scrollWidth=900；原生属性栏 260px，时间轴可见。未做手机触摸设备验收。
 
-私有可复查证据在项目忽略目录 `.scratch/native-editor-20261119/evidence/` 与 `evidence-final/`：模型调用状态、原生重开快照、最终保存工程、MP4、布局测量、截图、Worker 结果、下载文件目录、断言结果与测试通过记录。测试生产单/数据库与本轮浏览器均已关闭清理；这些证据不进入业务库。
+私有证据最初保存在项目忽略目录 `.scratch/native-editor-20261119/evidence/` 与 `evidence-final/`，包括模型调用状态、原生重开快照、最终保存工程、MP4、截图、Worker 和下载结果。测试生产单/数据库与本轮浏览器当时已关闭清理；后续用户授权收尾清理，原始临时证据及工作树也已移除，保留本报告中的结果、断言和文件 SHA。详见[收尾清理](../native-editor-activation-20261119/REPORT.md#收尾清理)。
 
 ## 自动验证与修复
 
