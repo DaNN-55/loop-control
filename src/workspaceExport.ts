@@ -5,6 +5,7 @@ export interface WorkspaceExportIssue {id:string;exportId:string|null;reason:str
 export const workspaceExportFields:Record<string,string[]>={
  exportWorkspace:['episodeId','workspaceId','expectedRevision'],
  confirmWorkspaceExport:['episodeId','workspaceId','expectedRevision','exportId','expectedExportSha256','expectedContentSha256'],
+ completeWorkspaceExport:['episodeId','workspaceId','expectedRevision','exportId','expectedExportSha256','expectedContentSha256'],
  recordWorkspaceExportIssue:['episodeId','workspaceId','expectedRevision','exportId','reason'],
  resolveWorkspaceExportIssue:['episodeId','workspaceId','expectedRevision','issueId'],
 };

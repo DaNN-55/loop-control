@@ -37,6 +37,7 @@ import {readWorkspaceCandidates,readUsedWorkspaceNarrationVersions,validateWorks
 import {executeWorkspaceAudio,readWorkspaceAudio,validateWorkspaceAudioAdoptionUses} from './workspaceAudio.js';
 import {workspaceAudioFields,resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
+import {queueWorkspaceCoreDelivery} from './workspaceCoreDelivery.js';
 import {workspaceDeliveryFields} from '../workspaceDelivery.js';
 import {migrateWorkspaceCaptionLanes} from '../workspaceCaptions.js';
 import {applyWorkspaceShotOperation,isWorkspaceShotOperation,synchronizeWorkspaceBindings,withWorkspaceShotMetadata,workspaceShotIdentity} from '../workspaceShots.js';
@@ -290,7 +291,11 @@ export class ProductionWorkspaceCommands{
   if(['prepareWorkspaceCandidate','adoptWorkspaceCandidate','rejectWorkspaceCandidate'].includes(command))return executeWorkspaceCandidateCommand(c,root,row,project,command,data);
   if(Object.hasOwn(workspaceAudioFields,command)){const prepared=await executeWorkspaceAudio(c,root,row,project,runtime,command,data);return command==='prepareWorkspaceAudioAdoption'?prepared:readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceDeliveryFields,command)){await executeWorkspaceDelivery(c,root,row,project,command,data);return readProductionWorkspace(c,e.id,root);}
-  if(Object.hasOwn(workspaceExportFields,command)){await executeWorkspaceExport(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
+  if(Object.hasOwn(workspaceExportFields,command)){
+   await executeWorkspaceExport(c,root,row,project,runtime,command==='completeWorkspaceExport'?'confirmWorkspaceExport':command,data);
+   if(command==='completeWorkspaceExport')await queueWorkspaceCoreDelivery(c,root,row,project);
+   return readProductionWorkspace(c,e.id,root);
+  }
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);
   if(command==='editWorkspaceStructure'){
    if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请在当前编辑器中修改并保存。');

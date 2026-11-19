@@ -34,7 +34,16 @@ const pool=createWorkerDatabase(config.database),port=nativeWorkerPort(pool),arg
 const heartbeat=setInterval(()=>{void port.rpc('refresh_worker_task_lease',args).catch(()=>{});},5*60*1000);heartbeat.unref();
 try{
  await assertNativeWorkerDatabase(pool,config.database.database!,Boolean(config.narration),Boolean(config.media));
- await pool.query('SELECT local_identity.assert_current_worker_execution($1,$2,$3)',[task.task_id,task.attempt,task.lease_token]);
+ let rejectedDelivery=false;
+ try{await pool.query('SELECT local_identity.assert_current_worker_execution($1,$2,$3)',[task.task_id,task.attempt,task.lease_token]);}
+ catch(error){
+  if(task.task_type!=='prepare_publish_package'||(task.input_snapshot as Record<string,unknown>)?.capability!=='workspace_delivery'||!(error instanceof Error)||!('code' in error)||error.code!=='55000'||!error.message.startsWith('Retired execution task'))throw error;
+  // The exact lease was checked before provenance was rejected. Close that
+  // leased delivery as failed; never execute it or weaken the success guard.
+  const result={version:'worker-result/v1',taskId:task.task_id,status:'failed',artifacts:[],validation:{passed:false,checks:[{name:'current_export',passed:false,detail:'Confirmed export changed before delivery completion'}]},actualCostCents:0,blockers:[],retry:{shouldRetry:false,reason:'Confirmed export changed before delivery completion'},nextStep:'请检查当前成片。'};
+  await port.rpc('report_worker_result',{...args,p_result:result});process.stdout.write(JSON.stringify(result)+'\n');rejectedDelivery=true;
+ }
+ if(!rejectedDelivery){
  await port.rpc('refresh_worker_task_lease',args);
  await readMediaDeployment(pool,config.mediaRoot);
  const location=await resolveEpisodeStorageLocation(pool,config.mediaRoot,String(task.episode_id)),physicalRoot=location.assetRoot;
@@ -61,4 +70,5 @@ try{
  });
  process.stdout.write(JSON.stringify(result??{status:'failed',taskId:task.task_id})+'\n');
 }
+ }
 }catch(error){if(!(error instanceof NativePublicationUnknownError))throw error;process.stdout.write(JSON.stringify({code:NativePublicationUnknownError.code,taskId:task.task_id,attempt:task.attempt})+'\n');process.exitCode=2;}finally{clearInterval(heartbeat);await pool.end();}
