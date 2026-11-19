@@ -179,7 +179,7 @@ it('accepts one unassigned MP3 for voice and queues local audio candidates witho
  fireEvent.click(screen.getByRole('button',{name:'本期素材 · 2'}));
  const audio=screen.getByRole('button',{name:'预览 unassigned.mp3'}),music=screen.getByRole('button',{name:'预览 music.mp3'});
  fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
- fireEvent.change(screen.getByRole('combobox',{name:'这个镜头听什么'}),{target:{value:'manual'}});
+ fireEvent.change(screen.getByRole('combobox',{name:'主声音来源'}),{target:{value:'manual'}});
  await screen.findByRole('button',{name:'拖入口播文件'});
  expect(command).toHaveBeenCalledWith('setWorkspaceNarrationEnabled',expect.objectContaining({voiceMode:'manual',enabled:true}));
  const musicDrag=startMaterialDrag(music);

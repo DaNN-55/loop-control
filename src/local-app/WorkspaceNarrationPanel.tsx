@@ -17,7 +17,7 @@ import {WorkspaceAudioAudition} from './WorkspaceAudioAudition';
 import {WorkspaceNarrationToolbar,type WorkspaceNarrationSettings} from './WorkspaceNarrationToolbar';
 import {WorkspaceNarrationCaptions} from './WorkspaceNarrationCaptions';
 import {Toggle} from '../ui/dan-ui/components/base/toggle/toggle';
-import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+import {WorkspaceMainVoicePicker} from './WorkspaceMainVoicePicker';
 import {useEffect,useId,useMemo,useRef,useState,useSyncExternalStore,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Badge} from '../ui/dan-ui/components/base/badges/badges';
@@ -256,6 +256,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    <div className="workspace-visual-preview-tabs" role="tablist" aria-label={uiText("字幕与口播")}>
     {([['voice',managedVoice?'声音':'口播'],['captions','字幕']] as const).map(([value,label])=><button key={value} id={`${tabId}-${value}`} type="button" role="tab" aria-selected={tab===value} aria-controls={`${tabId}-${value}-panel`} tabIndex={tab===value?0:-1} onClick={()=>onTab(value)} onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?'voice':event.key==='End'?'captions':tab==='voice'?'captions':'voice';onTab(next);requestAnimationFrame(()=>document.getElementById(`${tabId}-${next}`)?.focus());}}}>{label}</button>)}
    </div>
+   {managedVoice&&tab==='voice'&&<WorkspaceMainVoicePicker value={managedVoice.mode} disabled={disabled} onChange={managedVoice.onChange}/>}
    {(!managedVoice||tab==='captions')&&<Toggle className="workspace-feature-switch" label={(tab==='voice'?voiceEnabled:captionEnabled)?uiText("已开启"):uiText("已关闭")} size="sm" aria-label={tab==='voice'?uiText("启用口播"):uiText("启用字幕")} isSelected={tab==='voice'?voiceEnabled:captionEnabled} isDisabled={disabled} onChange={enabled=>void toggleEnabled(enabled)}/>}
   </header>
   <div id={`${tabId}-captions-panel`} role="tabpanel" aria-labelledby={`${tabId}-captions`} hidden={tab!=='captions'}>
@@ -263,7 +264,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
     renderTiming={expanded&&captionEnabled?dirty=><WorkspaceCaptionsPanel workspace={workspace} selectedShotId={n.shotId} command={command} onChange={onChanged} alignmentOnly isDisabled={disabled||dirty}/>:undefined}/></div>
   </div>
   <div id={`${tabId}-voice-panel`} role="tabpanel" aria-labelledby={`${tabId}-voice`} hidden={tab!=='voice'}>
-  {managedVoice&&<label>{uiText('这个镜头听什么')}<NativeSelect size="sm" aria-label={uiText('这个镜头听什么')} disabled={disabled} value={managedVoice.mode} onChange={event=>managedVoice.onChange(event.target.value as WorkspaceMainVoiceMode)}><option value="none">{uiText('无主声音')}</option><option value="source">{uiText('使用视频原声')}</option><option value="tts">{uiText('生成口播')}</option><option value="manual">{uiText('上传口播')}</option></NativeSelect></label>}
+
   {managedVoice?.mode==='source'&&managedVoice.source}
   {managedVoice?.mode==='none'&&<p className="workspace-audio-note">{uiText('本镜头不使用主声音，字幕仍可单独设置。')}</p>}
   <div className="workspace-narration-voice-content" hidden={!voiceEnabled}>

@@ -72,7 +72,7 @@ it('十六张参考图默认只显示缩略摘要，逐图展开并在重开后�
 it('窄窗中的长模型名可完整核对，不自动提交',async()=>{
  const {command}=setup();await modelReady();
  fireEvent.click(screen.getByRole('button',{name:'图片连接与模型'}));
- fireEvent.change(screen.getByRole('searchbox',{name:'筛选图片模型'}),{target:{value:'long-image'}});
+ expect(screen.queryByRole('searchbox')).toBeNull();
  await userEvent.click(screen.getByRole('menuitemradio',{name:/^long-image-model-name/}));
  expect(await screen.findByRole('dialog',{name:'图片规格'})).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'关闭图片规格'}));

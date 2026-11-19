@@ -1,4 +1,5 @@
 export const productionExtraMessages:Record<string,string>={
+  "主声音来源": "Main audio source",
   "{value0}准备情况：{value1}": "{value0} preparation: {value1}",
   "仅保存在当前浏览器，不包含提示词或参考素材。": "Saved in this browser only. Prompts and reference media are excluded.",
   "保存为本期图片默认": "Save episode image defaults",

@@ -164,3 +164,12 @@ html[data-interface="impeccable"] .product-ui .workspace-narration-composer-tool
 .workspace-caption-composer>.workspace-narration-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;min-height:32px;padding:0;border:0}
 .workspace-caption-composer>.workspace-narration-controls>button:last-child{margin-inline-start:auto;flex:none}
 html[data-interface="impeccable"] .product-ui :is(.workspace-speech-composer,.workspace-caption-composer) button[data-rac]{min-block-size:32px!important;block-size:32px!important;max-block-size:32px;padding-block:4px!important}
+
+.workspace-narration-subheader{flex-wrap:wrap}
+/* The shared w-full utility is important; these two compact controls need local widths. */
+.workspace-narration-subheader>.workspace-main-voice-picker{margin-left:auto;flex:none;width:154px!important;min-width:138px;max-width:calc(100% - 120px)}
+.workspace-narration-subheader>.workspace-main-voice-picker .dan-select-trigger{min-height:30px;height:30px;font-size:12px!important;padding-inline:28px 24px!important}
+.workspace-narration-subheader>.workspace-main-voice-picker .dan-select-leading{display:block!important;left:8px;width:14px;height:14px}
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-narration-subheader>.workspace-main-voice-picker .dan-select-trigger{padding:5px 24px 5px 28px!important}
+.workspace-narration-composer-toolbar>.dan-select-field{flex:none;min-width:76px;width:96px!important}
+@media(pointer:coarse){.workspace-narration-subheader>.workspace-main-voice-picker .dan-select-trigger{min-height:44px;height:44px}}

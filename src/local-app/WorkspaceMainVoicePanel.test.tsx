@@ -22,10 +22,17 @@ function fixture(){
 function Harness(props:Parameters<typeof WorkspaceMainVoicePanel>[0]){const [workspace,setWorkspace]=useState(props.workspace);useEffect(()=>setWorkspace(props.workspace),[props.workspace]);return <WorkspaceMainVoicePanel {...props} workspace={workspace} onChanged={next=>{props.onChanged(next);setWorkspace(next);}}/>;}
 it('offers one four-way main voice selector and keeps selecting an upload free of production writes',async()=>{
  const f=fixture();render(<Harness {...f} episodeId="e" selectedShotId="S01" pending={false}/>);
- const selector=screen.getByRole('combobox',{name:'这个镜头听什么'});
- expect(Array.from((selector as HTMLSelectElement).options).map(o=>o.text)).toEqual(['无主声音','使用视频原声','生成口播','上传口播']);
+ fireEvent.click(screen.getByRole('button',{name:'语音模型'}));
+ expect(screen.queryByRole('searchbox')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'关闭模型选择'}));
+ const selector=screen.getByRole('combobox',{name:'主声音来源'});
+ expect(selector.closest('.workspace-narration-subheader')).toBeTruthy();
+ expect(screen.queryByText('这个镜头听什么')).toBeNull();
  expect(screen.queryByRole('switch',{name:'启用口播'})).toBeNull();
- fireEvent.change(selector,{target:{value:'manual'}});
+ fireEvent.keyDown(selector,{key:'ArrowDown'});
+ const options=screen.getAllByRole('option');expect(options.map(o=>o.textContent)).toEqual(['无主声音','使用视频原声','生成口播','上传口播']);
+ expect(options.every(o=>o.querySelector('svg[aria-hidden="true"]'))).toBe(true);
+ fireEvent.click(screen.getByRole('option',{name:'上传口播'}));
  await screen.findByRole('button',{name:'拖入口播文件'});expect(f.command).toHaveBeenCalledExactlyOnceWith('setWorkspaceNarrationEnabled',expect.objectContaining({voiceMode:'manual',enabled:true}));
  fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByRole('textbox',{name:'字幕内容'})).toBeTruthy();
 });
@@ -73,9 +80,9 @@ it('prepares source once and automatically connects its completed result without
 });
 it('keeps subtitles independently editable after turning off main voice',async()=>{
  const f=fixture();render(<Harness {...f} episodeId="e" selectedShotId="S01" pending={false}/>);
- fireEvent.change(screen.getByRole('combobox',{name:'这个镜头听什么'}),{target:{value:'none'}});
+ fireEvent.change(screen.getByRole('combobox',{name:'主声音来源'}),{target:{value:'none'}});
  await waitFor(()=>expect(f.command).toHaveBeenCalledWith('setWorkspaceNarrationEnabled',expect.objectContaining({clipId:'c1',enabled:false})));
- await waitFor(()=>expect(screen.getByRole('combobox',{name:'这个镜头听什么'})).toHaveProperty('value','none'));
+ await waitFor(()=>expect(screen.getByRole('combobox',{name:'主声音来源'})).toHaveProperty('value','none'));
  fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByRole('textbox',{name:'字幕内容'})).toHaveProperty('disabled',false);
 });
 it('keeps a failed source connection explicit instead of showing endless progress or automatically retrying',async()=>{

@@ -1,5 +1,5 @@
 import {afterEach,expect,it,vi} from 'vitest';
-import {cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {cleanup,render,screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {WorkspaceGenerationModel} from './WorkspaceGenerationModel';
 import {registeredAdapters} from '../worker/registeredAdapters';
@@ -21,13 +21,12 @@ it('flattens models with local brand marks while preserving the exact selected I
  expect(change).toHaveBeenCalledWith('mini:MiniMax-H3-Lite');
  expect(screen.queryByRole('menu')).toBeNull();
 });
-it('filters flat options with model or connection search and renders a useful empty result',async()=>{
- render(<WorkspaceGenerationModel compact kind="视频" services={services} selection={selection} onChange={vi.fn()}/>);
- await userEvent.click(screen.getByRole('button',{name:'视频连接与模型'}));
- fireEvent.change(screen.getByRole('searchbox',{name:'筛选视频模型'}),{target:{value:'百炼连接'}});
- expect(screen.getByRole('menuitemradio',{name:'wan2.6-i2v'})).toBeTruthy();expect(screen.queryByRole('menuitemradio',{name:'MiniMax-H3'})).toBeNull();
- fireEvent.change(screen.getByRole('searchbox',{name:'筛选视频模型'}),{target:{value:'missing-model'}});
- expect(screen.getByRole('status').textContent).toBe('没有匹配模型。');
+it('lists image and video choices directly without a search field',async()=>{
+ for(const kind of ['图片','视频'] as const){
+  const view=render(<WorkspaceGenerationModel compact kind={kind} services={services} selection={selection} onChange={vi.fn()}/>);
+  await userEvent.click(screen.getByRole('button',{name:kind+'连接与模型'}));
+  expect(screen.queryByRole('searchbox')).toBeNull();expect(screen.getAllByRole('menuitemradio')).toHaveLength(3);view.unmount();
+ }
 });
 it('distinguishes two connections within a provider instead of merging identical model identities',async()=>{
  const duplicate={...minimax,id:'mini-b',connectionVersionId:'mini-v-b',connectionName:'备用连接',connectionVersion:1};const change=vi.fn();
