@@ -395,7 +395,7 @@ export async function lockProductionWorkspace(c:PoolClient,root:string,episodeId
  if(row.script_revision_id!==row.current_script||row.script_revision_id!==row.preparation_script||row.invalidated_at)throw new ConfigurationError(409,'脚本基准已变化，请明确重新规划，原工程已保留。');
  const project=await readWorkspaceProject(c,root,row);await syncProductionWorkspaceShots(c,row,root);return{row:row as ProductionWorkspaceRecord,project};
 }
-async function recordWorkspaceVersion(c:PoolClient,row:ProductionWorkspaceRecord,reason:string|null){
+export async function recordWorkspaceVersion(c:PoolClient,row:ProductionWorkspaceRecord,reason:string|null){
  await c.query('INSERT INTO local_identity.production_workspace_versions(workspace_id,episode_id,revision,script_revision_id,storyboard_package_id,project_path,project_sha256,project_size,content_sha256,reason,preparation_revision_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) ON CONFLICT DO NOTHING',[row.id,row.episode_id,row.revision,row.script_revision_id,row.storyboard_package_id,row.project_path,row.project_sha256,row.project_size,row.content_sha256,reason,row.preparation_revision_id]);
 }
 export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:string,sha:string){

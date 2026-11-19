@@ -14,9 +14,10 @@ export async function resolveWorkspaceSource(c:PoolClient,root:string,episodeId:
  FROM public.audio_tracks a JOIN public.artifacts f ON f.id=a.source_artifact_id AND f.episode_id=a.episode_id AND f.relative_path=a.relative_path AND f.sha256=a.sha256 AND f.file_size=a.file_size
  LEFT JOIN public.tasks t ON t.id=a.source_task_id WHERE a.episode_id=$1 AND a.relative_path=$2 AND (a.source_task_id IS NULL OR t.status='completed')`,[episodeId,path])).rows[0];
  if(audio){await verifyEpisodeFile(c,root,episodeId,path,audio.sha256,Number(audio.file_size));return{...audio,kind:'audio',registration:'audio_track' as const};}
+ const copied=!!(await c.query("SELECT to_regclass('local_identity.production_copy_sources') present")).rows[0].present;
  const artifact=(await c.query(`SELECT a.id,a.relative_path,a.sha256,a.file_size,a.producer_task_id task_id,a.artifact_type
- FROM public.artifacts a JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed'
- WHERE a.episode_id=$1 AND a.relative_path=$2 AND a.artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image','legacy_recovered_media')`,[episodeId,path])).rows[0];
+ FROM public.artifacts a LEFT JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed'
+ WHERE a.episode_id=$1 AND a.relative_path=$2 AND (t.id IS NOT NULL OR ${copied?'EXISTS(SELECT 1 FROM local_identity.production_copy_sources s WHERE s.episode_id=a.episode_id AND s.artifact_id=a.id)':'false'}) AND a.artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image','legacy_recovered_media')`,[episodeId,path])).rows[0];
  if(!artifact)throw new ConfigurationError(409,'工程引用了未注册的本期素材或已完成任务产物。');
  await verifyEpisodeFile(c,root,episodeId,path,artifact.sha256,Number(artifact.file_size));return{...artifact,registration:'task_artifact' as const};
  }catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'已用素材缺失或指纹已变化，请检查原文件。');}

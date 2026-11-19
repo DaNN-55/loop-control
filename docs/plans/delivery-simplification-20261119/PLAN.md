@@ -192,3 +192,5 @@
 - [ ] 实际数据库、完整浏览器/模型/文件链验收尚未执行。
 
 实施起点 `1786aefcb`；独立工作副本 `/Users/dan/Programs/loop-control-delivery-simplification-20261119`，分支 `codex/delivery-simplification-20261119`。原工作区根 `PLAN.md` 的已有修改保留。
+
+S9 路径复验记录：首次编辑保存分别在来源 SELECT 的 `FOR SHARE OF e`（loop_app 无直接 episodes 写权限）及隔离新库 SQL_ASCII 下中文容器路径校验处失败。重查 PG 原始日志后，移除来源查询不必要的写锁（完成单内容由初始化边界再次核对），将本轮隔离 context 的新库固定 UTF8/C；不修改产品路径校验或日常库。继续在同一路径复验。

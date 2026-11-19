@@ -1,3 +1,4 @@
+import {CompletedProductionCopies} from './completedProductionCopies.js';
 import {confirmScriptStudio} from './scriptStudioConfirmation.js';
 import {CompletedStudioCopies,completedProjectSources} from './completedStudioCopies.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
@@ -41,14 +42,16 @@ export class LocalEpisodeCommands {
  private workspace=new ProductionWorkspaceCommands();
  private standaloneStudios=new Set<string>();
  private completedCopies:CompletedStudioCopies;
+ private productionCopies:CompletedProductionCopies;
  private scriptStore:ScriptProductionStore;
  closeStudio(episodeId:string){return this.workspace.closeEpisode(episodeId);}
  async close(){await Promise.all([this.workspace.close(),this.completedCopies.close(),...[...this.standaloneStudios].map(root=>closeStandaloneOpenChatCutStudio(root))]);this.standaloneStudios.clear();}
  constructor(private pool:Pool,private mediaRoot:string,private runtime:InputRuntime){this.runtime={...runtime,localExportActivity:this.exports};this.scriptStore=new ScriptProductionStore();
+  this.productionCopies=new CompletedProductionCopies(pool,mediaRoot,async()=>{if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');return this.runtime.studioRuntime();});
   this.completedCopies=new CompletedStudioCopies(mediaRoot,async()=>{if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');return this.runtime.studioRuntime();},(ownerId,episodeId)=>ownerTransaction(pool,ownerId,true,async c=>{
    const episode=(await c.query("SELECT e.id,e.title,e.stage FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner' AND NOT EXISTS(SELECT 1 FROM local_identity.episode_recycle_bin r WHERE r.episode_id=e.id)",[episodeId,ownerId])).rows[0];
    if(!episode)throw new ConfigurationError(404,'生产单不可见。');if(episode.stage!=='production_completed')throw new ConfigurationError(409,'仅已完成生产单可以打开查看副本。');
-   const root=await resolveEpisodeAssetRoot(c,mediaRoot,episodeId),workspace=await readProductionWorkspace(c,episodeId,root),delivery=workspace?.deliveries?.find(value=>value.verified);
+   const root=await resolveEpisodeAssetRoot(c,mediaRoot,episodeId),workspace=await readProductionWorkspace(c,episodeId,root),delivery=workspace?.deliveries?.find(value=>value.status==='completed');
    const exported=workspace?.exports?.find(value=>value.id===delivery?.exportId&&value.confirmedAt&&value.artifact&&delivery.artifacts.some(artifact=>artifact.artifactType==='final_render'&&artifact.sha256===value.artifact!.sha256));
    if(!exported)throw new ConfigurationError(409,'未找到交付对应的已确认工程，不能用最近工程替代。');
    const project=await readWorkspaceVersion(c,root,episodeId,exported.project.sha256),io=await episodeFileIO(c,root,episodeId);
@@ -57,10 +60,11 @@ export class LocalEpisodeCommands {
    await io.assertValid();return{project,sha256:exported.project.sha256,title:episode.title,sources};
   }));
  }
- async completedStudioCopy(ownerId:string,episodeId:string,body:Record<string,unknown>){
+ async completedStudioCopy(session:OwnerSession,episodeId:string,body:Record<string,unknown>){
   if(Object.keys(body).some(key=>!['action','copyId'].includes(key))||typeof body.copyId!=='string'||!uuid.test(body.copyId)||!['open','heartbeat','keep','discard'].includes(String(body.action)))throw new ConfigurationError(400,'查看副本请求无效。');
+  const ownerId=session.id;
   if(body.action==='open')return this.completedCopies.open(ownerId,episodeId,body.copyId);
-  if(body.action==='keep')return this.completedCopies.keep(ownerId,episodeId,body.copyId);
+  if(body.action==='keep')return this.productionCopies.save(session,episodeId,body.copyId,()=>this.completedCopies.productionDraft(ownerId,episodeId,body.copyId as string));
   if(body.action==='heartbeat')return this.completedCopies.heartbeat(ownerId,episodeId,body.copyId);
   return this.completedCopies.discard(ownerId,episodeId,body.copyId);
  }

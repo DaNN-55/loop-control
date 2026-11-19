@@ -8,10 +8,12 @@ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {openOpenChatCutDraftStudio,closeOpenChatCutStudio,openStandaloneOpenChatCutStudio,closeStandaloneOpenChatCutStudio,inspectOpenChatCutStoredProject,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {fileSha256} from '../worker/fileSha256.js';
+import {completedCopyDocumentKey} from './completedStudioCopy.js';
+import type {ProductionCopyDraft} from './completedProductionCopies.js';
 import type {CompletedStudioCopy} from './completedStudioCopy.js';
 
 export interface CompletedStudioSource {project:OpenChatCutProject;sha256:string;title:string;sources:Array<{reference:string;path:string;sha256:string;fileSize:number}>}
-interface Copy {ownerId:string;episodeId:string;runtimeId:string;root:string;session:CompletedStudioCopy;title:string;runtime:OpenChatCutRuntimeConfig;timer:ReturnType<typeof setTimeout>;busy:boolean;saved?:{projectId:string;studioUrl:string}}
+interface Copy {ownerId:string;episodeId:string;runtimeId:string;root:string;session:CompletedStudioCopy;title:string;runtime:OpenChatCutRuntimeConfig;timer:ReturnType<typeof setTimeout>;busy:boolean;baseline:string;references:Map<string,string>;saved?:{projectId:string;studioUrl:string}}
 /** Only newly allocated copy roots and newly allocated standalone media can be written. */
 export class CompletedStudioCopies {
  private copies=new Map<string,Promise<Copy>>();
@@ -38,7 +40,8 @@ export class CompletedStudioCopies {
    const document=copyDocument(source.project,value=>{const mapped=references.get(value);if(!mapped)throw new ConfigurationError(409,'工程存在未校验的素材来源。');return mapped;});
    const opened=await openOpenChatCutDraftStudio(root,runtimeId,document,[...references.values()],source.sha256,{...runtime,projectName:source.title+'（查看副本）',environment:{...(runtime.environment??process.env),LOOP_OPENCHATCUT_VIEW_COPY:'1'}});
    if(!opened.studioUrl)throw Error('未收到 OpenChatCut 地址。');
-   const copy={ownerId,episodeId,runtimeId,root,runtime,title:source.title,busy:false,session:{...opened,studioUrl:opened.studioUrl,copyId,sourceSha256:source.sha256,sourcePath:opened.workspace.relativePath}} as Copy;
+   const initial=await inspectOpenChatCutStoredProject(root,runtimeId);if(!initial)throw Error('查看副本初始工程未就绪。');
+   const copy={ownerId,episodeId,runtimeId,root,runtime,title:source.title,busy:false,baseline:completedCopyDocumentKey(initial.project),references:new Map([...references].map(([original,privatePath])=>[privatePath,original])),session:{...opened,studioUrl:opened.studioUrl,copyId,sourceSha256:source.sha256,sourcePath:opened.workspace.relativePath}} as Copy;
    this.touch(copy);return copy;
   }catch(error){await closeOpenChatCutStudio(runtimeId);await rm(root,{recursive:true,force:true});throw error;}
  }
@@ -51,6 +54,19 @@ export class CompletedStudioCopies {
   copy.busy=true;clearTimeout(copy.timer);
   try{await closeOpenChatCutStudio(copy.runtimeId);await rm(copy.root,{recursive:true,force:true});this.copies.delete(id);return{closed:true};}
   catch(error){this.touch(copy);throw error;}finally{copy.busy=false;}
+ }
+ async productionDraft(ownerId:string,episodeId:string,id:string):Promise<ProductionCopyDraft>{
+  const copy=await this.require(ownerId,episodeId,id);if(copy.busy)throw new ConfigurationError(409,'请等待当前保存完成。');this.touch(copy);
+  let stored;try{stored=await inspectOpenChatCutStoredProject(copy.root,copy.runtimeId);}catch{await closeOpenChatCutStudio(copy.runtimeId);stored=await inspectOpenChatCutStoredProject(copy.root,copy.runtimeId);}
+  if(!stored)throw new ConfigurationError(409,'副本自动保存记录不可用，请保持当前窗口打开。');
+  const files=[];
+  for(const reference of completedProjectSources(stored.project)){
+   const path=reference.startsWith(`episodes/${copy.runtimeId}/`)?join(copy.root,reference):/^\/media\/uploads\/[a-zA-Z0-9_.-]+$/.test(reference)?join(copy.root,'episodes',copy.runtimeId,'openchatcut-work/current/runtime',reference.slice(1)):null;
+   if(!path)throw new ConfigurationError(409,'副本包含未核验的外部来源，请先将素材导入本机。');
+   const stat=await lstat(path);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1||await realpath(path)!==path)throw new ConfigurationError(409,'副本素材不是独立普通文件。');
+   files.push({reference,originalReference:copy.references.get(reference),path,sha256:await fileSha256(path),fileSize:stat.size});
+  }
+  return{project:stored.project,changed:completedCopyDocumentKey(stored.project)!==copy.baseline,files};
  }
  async keep(ownerId:string,episodeId:string,id:string){
   const copy=await this.require(ownerId,episodeId,id);if(copy.busy)throw new ConfigurationError(409,'请等待副本保存完成。');

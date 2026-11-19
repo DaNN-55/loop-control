@@ -171,7 +171,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(request.method!=='POST')throw new ConfigurationError(405,'查看副本需要 POST。');
     if(!options.episodes)throw new ConfigurationError(503,'本地 Studio 尚未配置。');
     let body;try{body=await readBody(request);}catch{throw new ConfigurationError(400,'查看副本请求格式无效。');}
-    send(200,await options.episodes.completedStudioCopy(session.id,studioCopy[1],body));return;
+    send(200,await options.episodes.completedStudioCopy(session,studioCopy[1],body));return;
    }
    if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
     if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}
