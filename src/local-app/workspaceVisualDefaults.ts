@@ -15,6 +15,14 @@ function fields(value:unknown):DefaultPath[]|null{if(!object(value)||value.versi
 export function visualDefaultsFor(draft:object,kind:'image'|'video'){
  const result:ObjectValue={};for(const path of kind==='image'?imagePaths:videoPaths)if(has(draft,path))put(result,path,get(draft,path));return result;
 }
+/** Remember changed fields only, so an older per-shot override cannot overwrite a newer shared choice. */
+export function updatedVisualDefaults(previous:object,next:object,current:unknown,kind:'image'|'video'){
+ const changed=(kind==='image'?imagePaths:videoPaths).filter(path=>!same(get(previous,path),get(next,path)));
+ if(!changed.length)return null;
+ const result=visualDefaultsFor(object(current)&&Object.keys(current).length?current:previous,kind);
+ for(const path of changed)put(result,path,get(next,path));
+ return result;
+}
 /** Old full snapshots lack edit provenance: infer unchanged values, retain differing values conservatively. */
 export function restoreVisualDraft<T extends object>(base:T,saved:unknown,imageDefaults:unknown,videoDefaults:unknown):T&{defaultOverrides:VisualDefaultOverrides}{
  const prior=object(saved)?saved:{},next:ObjectValue={...base,...prior};

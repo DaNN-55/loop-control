@@ -15,7 +15,7 @@ it('inherits new episode defaults on a previously visited shot while retaining i
  const b=mount('shot-b');await generateForm();fireEvent.change(screen.getByRole('textbox',{name:'图片提示词'}),{target:{value:'乙镜头独有提示词'}});fireEvent.click(screen.getByRole('button',{name:'图片规格'}));fireEvent.change(screen.getByRole('combobox',{name:'图片质量'}),{target:{value:'high'}});fireEvent.click(screen.getByRole('button',{name:'关闭图片规格'}));b.unmount();
  const a=mount('shot-a');await generateForm();fireEvent.click(screen.getByRole('button',{name:'生成数量'}));fireEvent.click(screen.getByRole('button',{name:'生成 2 张图片'}));
  const close=screen.queryByRole('button',{name:'关闭生成数量'});if(close)fireEvent.click(close);
- fireEvent.click(screen.getByRole('button',{name:'本期图片默认'}));fireEvent.click(screen.getByRole('button',{name:'保存为本期图片默认'}));a.unmount();
+ expect(screen.queryByRole('button',{name:'本期图片默认'})).toBeNull();a.unmount();
  mount('shot-b');await generateForm();expect(screen.getByRole('button',{name:'生成数量'}).textContent).toContain('2 张');
  expect(screen.getByRole('textbox',{name:'图片提示词'})).toHaveProperty('value','乙镜头独有提示词');fireEvent.click(screen.getByRole('button',{name:'图片规格'}));expect(screen.getByRole('combobox',{name:'图片质量'})).toHaveProperty('value','high');expect(command).not.toHaveBeenCalled();
 });
@@ -27,7 +27,6 @@ it('updates another mounted visual instance of the same shot without replacing i
  for(const view of [a,b])fireEvent.click(within(view.container).getByRole('button',{name:'AI 生成'}));
  await waitFor(()=>expect(within(b.container).getByRole('button',{name:'图片连接与模型'}).textContent).toContain('gpt-image-2'));
  const count=(view:typeof a,value:number)=>{fireEvent.click(within(view.container).getByRole('button',{name:'生成数量'}));fireEvent.click(screen.getByRole('button',{name:`生成 ${value} 张图片`}));fireEvent.click(screen.getByRole('button',{name:'关闭生成数量'}));};
- const save=()=>{fireEvent.click(within(a.container).getByRole('button',{name:'本期图片默认'}));fireEvent.click(screen.getByRole('button',{name:'保存为本期图片默认'}));};
- count(a,4);save();expect(within(b.container).getByRole('button',{name:'生成数量'}).textContent).toBe('4 张');
- count(b,2);count(a,1);save();expect(within(b.container).getByRole('button',{name:'生成数量'}).textContent).toBe('2 张');expect(command).not.toHaveBeenCalled();
+ count(a,4);expect(within(b.container).getByRole('button',{name:'生成数量'}).textContent).toBe('4 张');
+ count(b,2);count(a,1);expect(within(b.container).getByRole('button',{name:'生成数量'}).textContent).toBe('2 张');expect(command).not.toHaveBeenCalled();
 });

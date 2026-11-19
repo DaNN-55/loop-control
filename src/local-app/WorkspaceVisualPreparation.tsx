@@ -1,4 +1,4 @@
-import {restoreVisualDraft,recordVisualDefaultEdits,visualDefaultsFor,type VisualDefaultOverrides} from './workspaceVisualDefaults';
+import {restoreVisualDraft,recordVisualDefaultEdits,updatedVisualDefaults,type VisualDefaultOverrides} from './workspaceVisualDefaults';
 import type {EmbeddedStudioBridge} from './EmbeddedStudioHost';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {WorkspacePopover as Popover} from './WorkspacePopover';
@@ -108,9 +108,27 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const shelf=useWorkspaceMaterialSelection();
  const adoptionDescriptionId=useId();
  const [draft,setDraftState]=useState<Draft>(()=>{let saved:unknown=null;try{const value=JSON.parse(sessionStorage.getItem(storageKey)??'null');if(value?.settings&&['image','video'].includes(value.tab))saved=value;}catch{/* A missing browser draft is an empty form. */}return restoreDraft(props,targetItemId,saved);});
- function setDraft(action:SetStateAction<Draft>){setDraftState(previous=>recordVisualDefaultEdits(previous,typeof action==='function'?action(previous):action));}
+ const draftRef=useRef(draft);draftRef.current=draft;
+ function setDraft(action:SetStateAction<Draft>){
+  const previous=draftRef.current,next=recordVisualDefaultEdits(previous,typeof action==='function'?action(previous):action);
+  draftRef.current=next;setDraftState(next);
+  let changed=false;
+  try{
+   for(const kind of ['image','video'] as const){
+    const defaults=updatedVisualDefaults(previous,next,episodeVisualDefaults(workspace.id,kind),kind);
+    if(defaults){
+     localStorage.setItem(`loop-${kind}-default:${workspace.id}`,JSON.stringify(defaults));
+     changed=true;
+    }
+   }
+  }catch{setError('默认设置未能保存，请检查浏览器存储空间。');}
+  if(changed)window.dispatchEvent(new CustomEvent('loop-visual-defaults',{detail:workspace.id}));
+ }
  useEffect(()=>{
-  const refresh=()=>setDraftState(previous=>{const next=restoreDraft(props,targetItemId,previous);return JSON.stringify(previous)===JSON.stringify(next)?previous:next;});
+  const refresh=()=>{
+   const previous=draftRef.current,next=restoreDraft(props,targetItemId,previous);
+   if(JSON.stringify(previous)!==JSON.stringify(next)){draftRef.current=next;setDraftState(next);}
+  };
   const local=(event:Event)=>{if((event as CustomEvent<string>).detail===workspace.id)refresh();};
   const stored=(event:StorageEvent)=>{if(event.key===`loop-image-default:${workspace.id}`||event.key===`loop-video-default:${workspace.id}`)refresh();};
   window.addEventListener('loop-visual-defaults',local);window.addEventListener('storage',stored);
@@ -253,11 +271,6 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   setComposerPanel(value&&!search?'dimensions':'');
  }
 
- function saveVisualDefaults(){
-  setError('');setNotice('');
-  const settings=visualDefaultsFor(draft,tab);
-  try{localStorage.setItem(`loop-${tab}-default:${workspace.id}`,JSON.stringify(settings));window.dispatchEvent(new CustomEvent('loop-visual-defaults',{detail:workspace.id}));setComposerPanel('');setNotice('已保存本期默认，未自定义的参数将随之更新。');}catch{setComposerPanel('');setError('默认设置未能保存，请检查浏览器存储空间。');}
- }
  function select(id:string){setDraft(d=>({...d,selected:{...d.selected,[d.tab]:id}}));setRangeStart('');setRangeEnd('');setPolicy('keep-target');setAcceptImpact(false);setError('');}
  function url(path:string,sha256=''){return '/_local-artifact?'+new URLSearchParams({episode:workspace.episodeId,path,...(sha256?{sha256}:{})});}
  useEffect(()=>{
@@ -548,11 +561,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
       <label className="workspace-visual-checkbox"><input type="checkbox" checked={draft.videoSettings.watermark} disabled={disabled} onChange={e=>change('videoSettings',{...draft.videoSettings,watermark:e.target.checked})}/>{uiText("添加模型水印")}</label>
       <small>{uiText("分辨率、时长和声音会影响费用；种子相同也不保证结果完全一致。")}</small>
     </div></div>}</WorkspaceComposerSetting>}</>}
-<WorkspaceComposerSetting label={tab==='image'?uiText("本期图片默认"):uiText("本期视频默认")} summary={tab==='image'?uiText("图片默认"):uiText("视频默认")} open={composerPanel==='defaults'} onOpenChange={open=>setComposerPanel(open?'defaults':'')} disabled={disabled}>
-      <p>{uiText("用于尚未自定义的镜头参数；已自定义的参数保持不变。")}</p><p>{uiText("仅保存在当前浏览器，不包含提示词或参考素材。")}{tab==='video'&&uiText("时长仍跟随各镜头安排。")}</p>
-      {!(tab==='image'?imageCompatible:videoCompatible)&&<p role="status">{tab==='image'?uiText("请选择可用的图片模型和规格。"):uiText("请选择可用的视频模型和规格。")}</p>}
-      <Button type="button" size="sm" color="secondary" isDisabled={disabled||!(tab==='image'?imageCompatible:videoCompatible)} onPress={saveVisualDefaults}>{tab==='image'?uiText("保存为本期图片默认"):uiText("保存为本期视频默认")}</Button>
-     </WorkspaceComposerSetting>
+
 </>} submit={<Button size="sm" color="primary" isDisabled={disabled||!canGenerate} onPress={()=>void generate(unknownImageTask?.taskId)}>{pending.some(t=>(t.kind??'video')===tab)?uiText("正在生成…"):(retryImage||unknownImageTask)?uiText("重新生成图片"):uiText("生成{value0}",{value0:uiText(kindName)})}</Button>}>
      {generationBlocker&&(generationBlocker!=='正在生成，请等待结果。'||!activeGenerationTasks.length)&&generationBlocker!=='请填写提示词。'&&<p className="workspace-visual-generation-note" role="status">{uiText(generationBlocker)}</p>}
     </WorkspaceGenerationComposer>

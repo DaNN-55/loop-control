@@ -1,8 +1,14 @@
 import {expect,it} from 'vitest';
-import {restoreVisualDraft,recordVisualDefaultEdits,visualDefaultsFor} from './workspaceVisualDefaults';
+import {restoreVisualDraft,recordVisualDefaultEdits,visualDefaultsFor,updatedVisualDefaults} from './workspaceVisualDefaults';
 
 const model={capability:'image',provider:'openai',adapter:'openai_images',model:'first'};
 const base=()=>({imageSelection:model as typeof model|null,videoSelection:null,settings:{size:'864x1536',quality:'auto',count:1},imageBrief:{framing:'auto',crop:'allow',captionSpace:'none',references:[]},videoSettings:{resolution:'720P',audio:false,promptExtend:false,shotType:'single',watermark:false,negativePrompt:'',seed:undefined as number|undefined},firstFrameFit:'contain',videoModeId:'first-frame',duration:'5',imagePrompt:'甲的提示词',videoPrompt:'甲的动作',references:['甲参考图'],videoInputIds:['甲首帧'],tab:'image'});
+it('automatically remembers only changed parameters without promoting an older shot override again',()=>{
+ const previous={...base(),settings:{...base().settings,quality:'high'}},next={...previous,settings:{...previous.settings,count:4}};
+ expect(updatedVisualDefaults(previous,next,{settings:{quality:'auto',count:2}},'image')).toMatchObject({settings:{quality:'auto',count:4}});
+ expect(updatedVisualDefaults(previous,{...previous,imagePrompt:'新文字',references:['新图'],duration:'12'},{},'image')).toBeNull();
+ expect(updatedVisualDefaults(previous,next,{},'video')).toBeNull();
+});
 it('new defaults update inherited leaf fields while retaining only the explicitly edited leaf and local text',()=>{
  const b=base(),visited=restoreVisualDraft(b,null,{},{}),edited=recordVisualDefaultEdits(visited,{...visited,settings:{...visited.settings,quality:'high'},imagePrompt:'单镜头修改'});
  const next=restoreVisualDraft(b,JSON.parse(JSON.stringify(edited)),{settings:{size:'1024x1536',quality:'low',count:4},imageBrief:{framing:'close'}},{});

@@ -16,10 +16,10 @@ function setup(draft:Record<string,unknown>={}){
 }
 async function modelReady(){await waitFor(()=>expect(screen.getByRole('button',{name:'图片连接与模型'}).textContent).toContain('gpt-image-2'));}
 afterEach(()=>{cleanup();sessionStorage.clear();localStorage.clear();vi.unstubAllGlobals();});
-it('explicitly shares only technical defaults while keeping prompts and references per shot',async()=>{
+it('automatically shares only technical defaults while keeping prompts and references per shot',async()=>{
  const f=setup({imagePrompt:'本镜头独有构图',references:['ref-0']});await modelReady();
  expect(localStorage.getItem('loop-image-default:form-workspace')).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'本期图片默认'}));fireEvent.click(screen.getByRole('button',{name:'保存为本期图片默认'}));
+ fireEvent.click(screen.getByRole('button',{name:'构图与字幕留白'}));fireEvent.change(screen.getByRole('combobox',{name:'图片主体构图'}),{target:{value:'full'}});
  const saved=JSON.parse(localStorage.getItem('loop-image-default:form-workspace')!);
  expect(saved.imageSelection).toEqual(selection);expect(saved.settings).toEqual({size:'1024x1536',quality:'auto',count:1});expect(saved.imagePrompt).toBeUndefined();expect(saved.references).toBeUndefined();expect(f.command).not.toHaveBeenCalled();
  f.view.unmount();sessionStorage.clear();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[{...workspace.clips[0],itemId:'next'}],visualConfiguration:undefined}} materials={[]} command={f.command} onChange={()=>{}}/>);fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));await modelReady();
