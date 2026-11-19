@@ -56,8 +56,8 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
  padding-inline: 7px;
 }
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table .workspace-shot-menu-trigger:not(:disabled):is(:hover, [data-hovered], :focus-visible) {
- color: #fff !important;
- background-color: var(--color-bg-error-solid, #d92d20) !important;
+ color: var(--lc-danger, #bd4147) !important;
+ background-color: var(--lc-danger-soft, #fff0f0) !important;
 }
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table tfoot td.workspace-shot-insert-cell {
  padding: 0;
@@ -82,7 +82,7 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
  padding-inline: 15px 7px;
 }
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-menu-trigger:not(:disabled):is(:hover, [data-hovered], :focus-visible) svg {
- color: #fff !important;
+ color: var(--lc-danger, #bd4147) !important;
 }
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid :is(.workspace-narration-subheader, .workspace-audio-preparation > .workspace-narration-toolbar) {
  min-block-size: 32px;
