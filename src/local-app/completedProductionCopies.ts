@@ -1,4 +1,4 @@
-import {readFile,unlink} from 'node:fs/promises';
+import {readFile,unlink,rmdir} from 'node:fs/promises';
 import {validateImportedMaterial} from './materialAcceptance.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {withWorkspaceShotMetadata} from '../workspaceShots.js';
@@ -8,12 +8,13 @@ import type {OwnerSession} from './sessions.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {WorkspacePublication} from '../workspacePublication.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
-import {join,extname} from 'node:path';
+import {join,extname,relative} from 'node:path';
 import {ownerTransaction,sessionTransaction} from './ownerTransaction.js';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
 import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
 import {productionCopyId,remapProductionCopy} from './productionCopyMapping.js';
+import {verifyNativeFileIdentity} from './localFiles.js';
 import {copyProductionMedia} from './productionCopyMedia.js';
 import {createEpisodeDirectory} from './episodeCreation.js';
 import {persistWorkspaceProject,workspaceContentSha256,readProductionWorkspace,recordWorkspaceVersion,validateWorkspaceProject} from './productionWorkspaceCommands.js';
@@ -40,7 +41,7 @@ export class CompletedProductionCopies {
    if(intent&&intent.source_episode_id!==episodeId)throw new ConfigurationError(409,'副本标识已属于其他生产单。');return{receipt:receipt?.result,intent:intent?.snapshot as CopySnapshot|undefined};
   });
   if(existing.receipt&&!existing.intent)throw new ConfigurationError(409,'副本操作标识已被其他操作使用。');
-  if(existing.receipt)return{episodeId:String(existing.receipt.id),workspaceId:String(existing.receipt.workspaceId),title:String(existing.receipt.title)};
+  if(existing.receipt){await this.clearStage(session.id,copyId,existing.intent!);return{episodeId:String(existing.receipt.id),workspaceId:String(existing.receipt.workspaceId),title:String(existing.receipt.title)};}
   let snapshot=existing.intent;
   if(!snapshot){const draft=await readDraft();if(!draft.changed)return{unchanged:true};snapshot=await this.freeze(session,episodeId,copyId,draft);}
   const frozen=snapshot,workspaceId=productionCopyId(copyId,frozen.workspace.id),title=frozen.episode.title.slice(0,195)+'（副本）';
@@ -48,7 +49,19 @@ export class CompletedProductionCopies {
   const result=await createEpisodeDirectory(this.pool,session,copyId,hash,{accountId:frozen.episode.account_id,title,seriesVersionId:frozen.episode.series_version_id,isTest:frozen.episode.is_test},this.mediaRoot,async()=>{}, {sourceEpisodeId:episodeId,initialize:async(c,target)=>{
    await this.initialize(c,frozen,String(target.id),workspaceId,copyId);target.workspaceId=workspaceId;
   }});
+  await this.clearStage(session.id,copyId,frozen);
   return{episodeId:String(result.id),workspaceId:String(result.workspaceId),title:String(result.title)};
+ }
+ private async clearStage(ownerId:string,copyId:string,snapshot:CopySnapshot){
+  // Only receipted copies reach here. Failed copies keep their recovery inputs.
+  const directory=join(this.mediaRoot,'production-copy-staging',ownerId,copyId);
+  try{
+   for(const file of snapshot.files){
+    if(file.path!==join(directory,'media',file.sha256+extname(file.path)))throw Error('Unexpected staging coordinate');
+    try{await verifyNativeFileIdentity(this.mediaRoot,relative(this.mediaRoot,file.path),file.sha256,file.fileSize);await unlink(file.path);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+   }
+   for(const path of [join(directory,'media'),directory])try{await rmdir(path);}catch(error){if(!['ENOENT','ENOTEMPTY'].includes((error as NodeJS.ErrnoException).code??''))throw error;}
+  }catch{console.warn('生产单副本已保存，临时文件清理未完成；已保留可核对的副本保存回执。');}
  }
  private async freeze(session:OwnerSession,episodeId:string,copyId:string,draft:ProductionCopyDraft):Promise<CopySnapshot>{
   return sessionTransaction(this.pool,session,async c=>{
@@ -83,7 +96,7 @@ export class CompletedProductionCopies {
   for(const row of [...s.decisions,...s.audioPreparations]){const id=String(row.candidate_id??row.id);mapping[id]=productionCopyId(copyId,id);}
   for(const binding of s.workspace.bindings)mapping[binding.id]=productionCopyId(copyId,binding.id);
   for(const file of s.files){const relativePath=`${io.relativePath}/materials/${file.sha256}-native-${file.sha256}${extname(file.path)}`;await copyProductionMedia(file.path,join(root,relativePath),file.sha256,file.fileSize);for(const ref of file.references)mapping[ref]=relativePath;}
-  let project=remapProductionCopy(s.project,mapping);project.loopControl={version:'four-step-workspace/v1',transitionMode:'studio',...project.loopControl,inputFingerprint:workspaceId,editorAuthority:'native'};
+  let project=remapProductionCopy(s.project,mapping);project.loopControl={version:'four-step-workspace/v1',inputFingerprint:workspaceId,transitionMode:'studio',...project.loopControl,editorAuthority:'native'};project.loopControl.inputFingerprint=workspaceId;
   const bindings=synchronizeWorkspaceBindings(project,remapProductionCopy(s.workspace.bindings,mapping));
   const native=await persistWorkspaceProject(c,root,targetId,project),contentSha=workspaceContentSha256(project);
   const manifest=remapProductionCopy(s.preparation.manifest,mapping),prepFile=await persistPublicationFile(c,root,targetId,`${io.relativePath}/preparation/${prepId}.json`,Buffer.from(JSON.stringify(manifest,null,2)+'\n'));

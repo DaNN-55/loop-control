@@ -1,5 +1,5 @@
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
-import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
+import {verifyEpisodeFile,verifyEpisodeFileIdentity,episodeFileIO} from './episodeFiles.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {readFile,writeFile,mkdir,mkdtemp,rm} from 'node:fs/promises';
 import {dirname,join,resolve} from 'node:path';
@@ -68,7 +68,7 @@ export async function readWorkspaceExports(c:PoolClient,root:string,row:Producti
  const exports:WorkspaceExport[]=[];
  for(const [index,e] of rows.entries()){
   const current=index===0&&e.content_sha256===row.content_sha256&&Number(e.project_content_version)===Number(row.revision);let available=true;
-  if(index===0&&e.artifact)try{await verifyEpisodeFile(c,root,row.episode_id,e.artifact.relativePath,e.artifact.sha256,e.artifact.fileSize);}catch{available=false;}
+  if(index===0&&e.artifact)try{await verifyEpisodeFileIdentity(c,root,row.episode_id,e.artifact.relativePath,e.artifact.sha256,e.artifact.fileSize);}catch{available=false;}
   exports.push({id:e.id,projectContentVersion:Number(e.project_content_version),contentSha256:e.content_sha256,project:e.project,status:e.status,artifact:e.artifact,checks:[...e.checks,...(!available?[{name:'export_file',passed:false,detail:'导出文件缺失或指纹已变化。'}]:[])],createdAt:e.created_at,confirmedAt:e.confirmed_at,confirmed:!!e.confirmed_at&&current&&available,current});
  }
  return{exports};

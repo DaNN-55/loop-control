@@ -7,7 +7,7 @@ import {createHash} from 'node:crypto';
 import {writeFile} from 'node:fs/promises';
 import type {ArtifactManifest} from '../worker/contracts.js';
 import type {PublishPackage} from './publishPackage.js';
-import {verifyNativeFile} from '../local-app/localFiles.js';
+import {verifyNativeFile,verifyNativeFileIdentity} from '../local-app/localFiles.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {coverImageExtension} from './coverImage.js';
 export const workspacePublishPackageVersion='publish-package/v3' as const;
@@ -31,7 +31,7 @@ export async function verifyWorkspaceManifest(root:string,episodeId:string,value
  const id=m.identity;
  if(typeof id.workspaceId!=='string'||typeof id.exportId!=='string'||!Number.isSafeInteger(id.projectContentVersion)||!/^[a-f0-9]{64}$/.test(id.contentSha256)||!same(m.artifacts.find(a=>a.artifactType==='final_render'),id.video)||!same(m.artifacts.find(a=>a.artifactType==='editable_project'),id.project)||expected&&JSON.stringify(id)!==JSON.stringify(expected))throw Error('发布包与已确认导出身份不一致。');
  const files=new Map<string,Buffer>();
- for(const a of m.artifacts){if(!a.relativePath||!a.sha256?.match(/^[a-f0-9]{64}$/)||!Number.isSafeInteger(a.fileSize)||a.fileSize<1)throw Error('发布包产物归属或指纹无效。');const bytes=await verifyNativeFile(root,relative(root,await assetPath(root,episodeId,a.relativePath,storage)),a.sha256,a.fileSize);if(a.artifactType!=='final_render')files.set(a.artifactType,bytes);}
+ for(const a of m.artifacts){if(!a.relativePath||!a.sha256?.match(/^[a-f0-9]{64}$/)||!Number.isSafeInteger(a.fileSize)||a.fileSize<1)throw Error('发布包产物归属或指纹无效。');const physical=relative(root,await assetPath(root,episodeId,a.relativePath,storage));if(a.artifactType==='final_render')await verifyNativeFileIdentity(root,physical,a.sha256,a.fileSize);else files.set(a.artifactType,await verifyNativeFile(root,physical,a.sha256,a.fileSize));}
  if(files.has('cover')){
   if(!coverImageExtension(files.get('cover')!))throw Error('封面文件无效。');
   await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-i',await assetPath(root,episodeId,m.artifacts.find(a=>a.artifactType==='cover')!.relativePath,storage),'-frames:v','1','-f','null','-'],{timeout:30000,maxBuffer:1024*1024});
@@ -41,6 +41,6 @@ export async function verifyWorkspaceManifest(root:string,episodeId:string,value
   const metadata=JSON.parse(files.get('metadata')!.toString());if(typeof metadata.title!=='string'||m.version===workspaceLegacyPackageVersion&&(!metadata.title.trim()||!Array.isArray(metadata.narration))||typeof metadata.description!=='string'||!Array.isArray(metadata.tags)||metadata.exportId!==id.exportId||metadata.contentSha256!==id.contentSha256)throw Error('交付元数据不完整或身份不一致。');
  }
  const report=JSON.parse(files.get('final_qc_report')!.toString());if(report.passed!==true||report.exportId!==id.exportId||report.contentSha256!==id.contentSha256||!Array.isArray(report.checks)||!report.checks.length||report.checks.some((c:{passed:boolean})=>c.passed!==true))throw Error('交付检查证据无效。');
- for(const check of report.checks){for(const source of check.sources??[])await verifyNativeFile(root,relative(root,await assetPath(root,episodeId,source.relativePath,storage)),source.sha256,source.fileSize);if(check.artifact)await verifyNativeFile(root,relative(root,await assetPath(root,episodeId,check.artifact.relativePath,storage)),check.artifact.sha256,check.artifact.fileSize);}
+ for(const check of report.checks){for(const source of check.sources??[])await verifyNativeFileIdentity(root,relative(root,await assetPath(root,episodeId,source.relativePath,storage)),source.sha256,source.fileSize);if(check.artifact)await verifyNativeFileIdentity(root,relative(root,await assetPath(root,episodeId,check.artifact.relativePath,storage)),check.artifact.sha256,check.artifact.fileSize);}
 }
 function same(a:ArtifactManifest|undefined,b:ArtifactManifest){return !!a&&!!b&&a.relativePath===b.relativePath&&a.sha256===b.sha256&&a.fileSize===b.fileSize&&a.artifactType===b.artifactType;}

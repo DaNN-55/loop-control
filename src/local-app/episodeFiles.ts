@@ -1,7 +1,7 @@
 import type {PoolClient} from 'pg';
 import {join,relative} from 'node:path';
 import {episodeStorageLocationAtRoot,requireEpisodeStorageDirectory,requireWritableEpisodeStorage,type EpisodeStorageLocation} from './episodeStorageLocation.js';
-import {safeRelative,verifyNativeFile} from './localFiles.js';
+import {safeRelative,verifyNativeFile,verifyNativeFileIdentity} from './localFiles.js';
 import {ConfigurationError} from './configurationCommands.js';
 
 /** The caller first owns/registers the original reference. Frozen coordinates stay
@@ -36,6 +36,12 @@ export async function verifyEpisodeFile(c:Pick<PoolClient,'query'>,assetRoot:str
  const location=await episodeStorageLocationAtRoot(c,assetRoot,episodeId);await requireEpisodeStorageDirectory(c,location);
  const path=await resolveEpisodeFileReference(c,location,reference);
  return verifyNativeFile(assetRoot,relative(assetRoot,path),sha256,size);
+}
+
+export async function verifyEpisodeFileIdentity(c:Pick<PoolClient,'query'>,assetRoot:string,episodeId:string,reference:string,sha256:string,size:number){
+ const location=await episodeStorageLocationAtRoot(c,assetRoot,episodeId);await requireEpisodeStorageDirectory(c,location);
+ const path=await resolveEpisodeFileReference(c,location,reference);
+ return verifyNativeFileIdentity(assetRoot,relative(assetRoot,path),sha256,size);
 }
 
 /** Adapter over the persisted location/file boundary; original references remain keys. */

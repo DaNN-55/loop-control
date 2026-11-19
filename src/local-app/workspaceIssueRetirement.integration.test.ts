@@ -11,7 +11,13 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('removes issue data and d
   await f.c.query("INSERT INTO local_identity.workspace_export_issues(workspace_id,episode_id,reason,created_by) VALUES($1,$2,'待清理测试问题',$3)",[w.id,f.episode,f.owner]);
   const rows=(await f.c.query('SELECT * FROM local_identity.workspace_export_issues')).rows;
   await writeFile(join(f.root,'issues-before-retirement.json'),JSON.stringify(rows));
-  await f.c.query(await readFile('db/current/216-retire-workspace-issues.sql','utf8'));
+  const migration=await readFile('db/current/216-retire-workspace-issues.sql','utf8');
+  await f.c.query('BEGIN');await f.c.query(migration);await f.c.query('ROLLBACK');
+  expect((await f.c.query('SELECT count(*)::int n FROM local_identity.workspace_export_issues')).rows[0].n).toBe(1);
+  await f.c.query('TRUNCATE local_identity.workspace_export_issues');
+  await f.c.query('INSERT INTO local_identity.workspace_export_issues SELECT (jsonb_populate_record(NULL::local_identity.workspace_export_issues,value)).* FROM jsonb_array_elements($1::jsonb)',[await readFile(join(f.root,'issues-before-retirement.json'),'utf8')]);
+  expect((await f.c.query('SELECT reason FROM local_identity.workspace_export_issues')).rows[0].reason).toBe('待清理测试问题');
+  await f.c.query(migration);
   expect((await f.c.query("SELECT to_regclass('local_identity.workspace_export_issues') value")).rows[0].value).toBeNull();
   const read=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(read.status).toBe(200);expect((await read.json()).workspace).not.toHaveProperty('exportIssues');
   expect((await f.request('recordWorkspaceExportIssue',{workspaceId:w.id,expectedRevision:w.revision,reason:'旧客户端'})).status).toBe(410);

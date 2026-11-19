@@ -1,5 +1,5 @@
 import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
-import {safeRelative,verifyNativeFile} from '../local-app/localFiles.js';
+import {safeRelative,verifyNativeFileIdentity} from '../local-app/localFiles.js';
 import {verifyWorkspaceManifest,workspacePublishPackageVersion,workspaceLegacyPackageVersion,type WorkspaceDeliveryIdentity} from "./workspacePublishPackage.js";
 import { createHash } from "node:crypto";
 import { readFile, realpath, lstat, writeFile } from "node:fs/promises";
@@ -68,7 +68,7 @@ export async function verifyPublishPackage(input: { assetRoot: string; episodeId
 
 async function verifyArtifacts(assetRoot: string, episodeId: string, artifacts: readonly ArtifactManifest[],storage?:EpisodeFileIO): Promise<void> {
   if(!storage){await verifyArtifactIndex({assetRoot,episodeId,artifacts});return;}
-  for(const a of artifacts)await verifyNativeFile(assetRoot,relative(assetRoot,await assetPath(assetRoot,episodeId,a.relativePath,storage)),a.sha256,a.fileSize);
+  for(const a of artifacts)await verifyNativeFileIdentity(assetRoot,relative(assetRoot,await assetPath(assetRoot,episodeId,a.relativePath,storage)),a.sha256,a.fileSize);
 }
 
 async function verifyQcReport(assetRoot: string, episodeId: string, artifact: ArtifactManifest,storage?:EpisodeFileIO): Promise<void> {

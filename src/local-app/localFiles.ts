@@ -1,3 +1,4 @@
+import {constants} from 'node:fs';
 import{mappedAssetPath}from'./mediaPaths.js';
 import {mkdir,realpath,lstat,readFile,open,link,unlink,readdir} from 'node:fs/promises';
 import {resolve,isAbsolute,join,basename,dirname} from 'node:path';
@@ -26,6 +27,20 @@ export async function verifyNativeFile(root:string,path:string,sha256:string,siz
  const full=resolve(root,path),s=await lstat(full);
  if(await realpath(full)!==full||!s.isFile()||s.nlink!==1||s.size!==size)throw new ConfigurationError(409,'文件路径或大小已变化。');
  const bytes=await readFile(full);if(createHash('sha256').update(bytes).digest('hex')!==sha256)throw new ConfigurationError(409,'文件指纹已变化。');return bytes;
+}
+/** Verify large media with a bounded stream; callers needing JSON/image bytes use verifyNativeFile. */
+export async function verifyNativeFileIdentity(root:string,path:string,sha256:string,size:number){
+ if(!safeRelative(path)||!/^[a-f0-9]{64}$/.test(sha256)||!Number.isSafeInteger(size)||size<0)throw new ConfigurationError(400,'文件身份无效。');
+ const full=resolve(root,path),before=await lstat(full);
+ if(await realpath(full)!==full||!before.isFile()||before.nlink!==1||before.size!==size)throw new ConfigurationError(409,'文件路径或大小已变化。');
+ const file=await open(full,constants.O_RDONLY|constants.O_NOFOLLOW);
+ try{
+  const same=(stat:typeof before)=>stat.isFile()&&stat.nlink===1&&stat.dev===before.dev&&stat.ino===before.ino&&stat.size===size&&stat.mtimeMs===before.mtimeMs&&stat.ctimeMs===before.ctimeMs;
+  if(!same(await file.stat()))throw new ConfigurationError(409,'文件身份已变化。');
+  const hash=createHash('sha256');for await(const chunk of file.createReadStream({autoClose:false,start:0}))hash.update(chunk);
+  if(hash.digest('hex')!==sha256||!same(await file.stat())||!same(await lstat(full))||await realpath(full)!==full)throw new ConfigurationError(409,'文件指纹已变化。');
+  return before;
+ }finally{await file.close();}
 }
 export async function snapshotInput(root:string,episodeId:string,input:{sourceKind:string;sourcePath:string;logicalName?:string;contentBase64?:string;isMainScript?:boolean},directoryRelativePath=`episodes/${episodeId}`,validate?:(bytes:Buffer)=>Promise<void>){
  if(!safeRelative(input.sourcePath)||input.logicalName&&!safeRelative(input.logicalName))throw new ConfigurationError(400,'材料路径无效。');

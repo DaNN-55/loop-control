@@ -39,8 +39,10 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('first edited save create
   await f.c.query("CREATE FUNCTION local_identity.fixture_copy_interruption() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'Fixture interrupted before visibility'; END $$; CREATE TRIGGER fixture_copy_interruption BEFORE INSERT ON local_identity.production_workspaces FOR EACH ROW EXECUTE FUNCTION local_identity.fixture_copy_interruption()");
   const failed=await action('keep',id);expect(failed.status).toBe(409);expect((await f.c.query('SELECT count(*)::int n FROM public.episodes')).rows[0].n).toBe(1);
   expect((await f.c.query('SELECT count(*)::int n FROM local_identity.production_copy_intents WHERE copy_id=$1',[id])).rows[0].n).toBe(1);
+  const staged=(await f.c.query('SELECT snapshot FROM local_identity.production_copy_intents WHERE copy_id=$1',[id])).rows[0].snapshot.files as Array<{path:string}>;for(const file of staged)expect((await lstat(file.path)).isFile()).toBe(true);
   await f.restart();await f.c.query('DROP TRIGGER fixture_copy_interruption ON local_identity.production_workspaces');
   const copied=await action('keep',id);expect(copied.status,JSON.stringify(copied.body)).toBe(200);expect(copied.body.episodeId).not.toBe(f.episode);expect(copied.body.workspaceId).not.toBe(w.id);
+  for(const file of staged)await expect(lstat(file.path)).rejects.toMatchObject({code:'ENOENT'});
   const target=copied.body.episodeId,copyW=(await f.c.query('SELECT * FROM local_identity.production_workspaces WHERE episode_id=$1',[target])).rows[0];
   await rename(originalVideo+'.missing',originalVideo);
   expect(copyW.id).toBe(copied.body.workspaceId);expect((await f.c.query('SELECT stage,blueprint_version_id FROM public.episodes WHERE id=$1',[target])).rows[0]).toEqual({stage:'production_ready',blueprint_version_id:originalRow.blueprint_version_id});

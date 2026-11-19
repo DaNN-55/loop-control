@@ -3,7 +3,7 @@ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import {openChatCutBundledSounds,openChatCutBundledSoundVersion,bundledSoundMaterialName} from '../openchatcutBundledSounds.js';
 import {readTrustedBundledSound} from '../worker/openchatcutBundledSounds.js';
-import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
+import {episodeFileIO,verifyEpisodeFileIdentity} from './episodeFiles.js';
 import {snapshotInput} from './localFiles.js';
 import type {PoolClient} from 'pg';
 import {ConfigurationError} from './configurationCommands.js';
@@ -11,17 +11,17 @@ import {ConfigurationError} from './configurationCommands.js';
 export async function resolveWorkspaceSource(c:PoolClient,root:string,episodeId:string,path:string){
  try{
  const material=(await c.query('SELECT id,storage_path relative_path,sha256,file_size,material_type kind FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];
- if(material){await verifyEpisodeFile(c,root,episodeId,path,material.sha256,Number(material.file_size));return{...material,registration:'material' as const};}
+ if(material){await verifyEpisodeFileIdentity(c,root,episodeId,path,material.sha256,Number(material.file_size));return{...material,registration:'material' as const};}
  const audio=(await c.query(`SELECT a.id,a.relative_path,a.sha256,a.file_size,a.duration_seconds,a.source_artifact_id artifact_id,a.source_task_id task_id
  FROM public.audio_tracks a JOIN public.artifacts f ON f.id=a.source_artifact_id AND f.episode_id=a.episode_id AND f.relative_path=a.relative_path AND f.sha256=a.sha256 AND f.file_size=a.file_size
  LEFT JOIN public.tasks t ON t.id=a.source_task_id WHERE a.episode_id=$1 AND a.relative_path=$2 AND (a.source_task_id IS NULL OR t.status='completed')`,[episodeId,path])).rows[0];
- if(audio){await verifyEpisodeFile(c,root,episodeId,path,audio.sha256,Number(audio.file_size));return{...audio,kind:'audio',registration:'audio_track' as const};}
+ if(audio){await verifyEpisodeFileIdentity(c,root,episodeId,path,audio.sha256,Number(audio.file_size));return{...audio,kind:'audio',registration:'audio_track' as const};}
  const copied=!!(await c.query("SELECT to_regclass('local_identity.production_copy_sources') present")).rows[0].present;
  const artifact=(await c.query(`SELECT a.id,a.relative_path,a.sha256,a.file_size,a.producer_task_id task_id,a.artifact_type
  FROM public.artifacts a LEFT JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed'
  WHERE a.episode_id=$1 AND a.relative_path=$2 AND (t.id IS NOT NULL OR ${copied?'EXISTS(SELECT 1 FROM local_identity.production_copy_sources s WHERE s.episode_id=a.episode_id AND s.artifact_id=a.id)':'false'}) AND a.artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image','legacy_recovered_media')`,[episodeId,path])).rows[0];
  if(!artifact)throw new ConfigurationError(409,'工程引用了未注册的本期素材或已完成任务产物。');
- await verifyEpisodeFile(c,root,episodeId,path,artifact.sha256,Number(artifact.file_size));return{...artifact,registration:'task_artifact' as const};
+ await verifyEpisodeFileIdentity(c,root,episodeId,path,artifact.sha256,Number(artifact.file_size));return{...artifact,registration:'task_artifact' as const};
  }catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'已用素材缺失或指纹已变化，请检查原文件。');}
 }
 
@@ -35,7 +35,7 @@ export async function registerWorkspaceBundledSound(c:PoolClient,root:string,epi
  const registered=(await c.query('SELECT id,storage_path,sha256,file_size,source_path FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];
  if(registered){
   if(registered.sha256!==sound.sha256||Number(registered.file_size)!==sound.fileSize)throw new ConfigurationError(409,'内置音效来源证据已变化。');
-  await verifyEpisodeFile(c,root,episodeId,path,sound.sha256,sound.fileSize);return;
+  await verifyEpisodeFileIdentity(c,root,episodeId,path,sound.sha256,sound.fileSize);return;
  }
  const sdkRoot=config.root?.trim()||process.env.OPENCHATCUT_ROOT?.trim();if(!sdkRoot)throw new ConfigurationError(409,'内置音效库不可用，请恢复当前 Studio 安装后重试。');
  let bytes:Buffer;try{bytes=await readTrustedBundledSound(sdkRoot,id);}catch{throw new ConfigurationError(409,'内置音效文件不可用或指纹已变化，请恢复当前 Studio 安装后重试。');}
@@ -54,7 +54,7 @@ export async function registerWorkspaceNativeImports(c:PoolClient,root:string,ep
   const record=imports.find(imported=>imported.relativePath===path);if(!record)continue;
   const extension=path.slice(path.lastIndexOf('.'));
   if(!/^[a-f0-9]{64}$/.test(record.sha256)||!Number.isSafeInteger(record.fileSize)||record.fileSize<1||!['image','video','audio'].includes(record.kind)||path!==`${storage.relativePath}/materials/${record.sha256}-native${extension}`||!/^[.][a-z0-9]+$/.test(extension))throw new ConfigurationError(409,'原生素材归档回执无效。');
-  await verifyEpisodeFile(c,root,episodeId,path,record.sha256,record.fileSize);
+  await verifyEpisodeFileIdentity(c,root,episodeId,path,record.sha256,record.fileSize);
   const existing=(await c.query('SELECT sha256,file_size FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];
   if(existing){if(existing.sha256!==record.sha256||Number(existing.file_size)!==record.fileSize)throw new ConfigurationError(409,'原生素材登记指纹已变化。');continue;}
   await c.query("SELECT public.import_production_material($1,$2,'file',$3,$4,$5,$6,$7,false,$8)",[episodeId,record.kind,`openchatcut-native/${record.displayName.replace(/[\\/\x00-\x1f]/g,'_')}`,path,record.mimeType,record.sha256,record.fileSize,record.kind==='audio'?'general_reference':'visual_reference']);

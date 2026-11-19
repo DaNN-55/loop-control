@@ -6,8 +6,9 @@ vi.mock('./WorkspacePublicationPanel',()=>({WorkspacePublicationPanel:()=>null})
 afterEach(cleanup);
 const base={id:'w',episodeId:'e',revision:4,stale:false,contentSha256:'current-content',readiness:{placeholders:[]},exports:[{id:'current',status:'ready',current:true,confirmed:true,contentSha256:'current-content',artifact:{relativePath:'current.mp4',sha256:'current-video',fileSize:12},checks:[]}],deliveries:[]} as unknown as ProductionWorkspace;
 it('shows the latest failure instead of letting historical success hide its retry',async()=>{
- const w={...base,deliveries:[{id:'latest-failed',taskId:'task-failed',createdAt:'2026-11-19',exportId:'current',status:'failed',verified:false,error:'最近一次交付失败',artifacts:[]},{id:'historical-completed',taskId:'task-history',createdAt:'2026-11-18',error:null,exportId:'older-export',status:'completed',verified:true,artifacts:[]}]} as ProductionWorkspace;
+ const w={...base,deliveries:[{id:'latest-failed',taskId:'task-failed',createdAt:'2026-11-19',exportId:'current',status:'failed',verified:false,error:'最近一次交付失败',artifacts:[]},{id:'historical-completed',taskId:'task-history',createdAt:'2026-11-18',error:null,exportId:'older-export',status:'completed',verified:true,artifacts:[{artifactType:'final_render',relativePath:'history/final.mp4',sha256:'history-sha',fileSize:12}]}]} as ProductionWorkspace;
  const command=vi.fn(async()=>w);render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);
+ const details=screen.getByLabelText('查看详情');fireEvent.click(details.querySelector('summary')!);expect(screen.getByRole('link',{name:'下载历史视频'}).getAttribute('href')).toContain('sha256=history-sha');
  expect(screen.getByText('完成未成功')).toBeTruthy();expect(screen.getByText('最近一次交付失败')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'重试完成'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('retryWorkspaceDelivery',{episodeId:'e',workspaceId:'w',expectedRevision:4,deliveryId:'latest-failed'}));
 });
 it('retains actual historical download identities even when its export is outdated',()=>{
