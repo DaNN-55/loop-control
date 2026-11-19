@@ -1,0 +1,32 @@
+import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {afterEach,it,expect,vi} from 'vitest';
+import {WorkspacePublicationPanel} from './WorkspacePublicationPanel';
+import {localRequest,localCommand} from './client';
+import type {ProductionWorkspace} from '../productionWorkspace';
+import type {WorkspacePublication} from '../workspacePublication';
+vi.mock('./client',()=>({localRequest:vi.fn(),localCommand:vi.fn()}));
+vi.mock('./WorkspaceDraft',()=>({useWorkspaceOwnerId:()=> 'owner'}));
+afterEach(()=>{cleanup();vi.clearAllMocks();localStorage.clear();});
+const state:WorkspacePublication={workspaceId:'workspace',revision:1,content:{title:'手写',description:'原简介',tags:['原'],instruction:''},cover:null,basisContentSha256:'video',previousText:null,updatedAt:null};
+const w={id:'workspace',episodeId:'episode',contentSha256:'video',coverInputs:[]} as unknown as ProductionWorkspace;
+const services=[{id:'selected',connectionName:'我的模型',executable:true,connectionVersionId:'cv',models:['gpt-5.6-luna'],provider:'openai',adapter:'openai_responses'}];
+function reads(){vi.mocked(localRequest).mockImplementation(async path=>path==='connections'?{serviceCatalog:{groups:[{capability:'language_model',services}]}}:path.endsWith('publication-ai')?null:state);}
+it('reuses the explicitly selected model, generates once, replaces one editable set and can undo',async()=>{
+ reads();localStorage.setItem('loop-control.script-studio-model:owner','selected:gpt-5.6-luna');
+ const generated={...state,revision:2,content:{...state.content,title:'新标题'},previousText:state.content};
+ vi.mocked(localCommand).mockImplementation(async command=>command==='generate'?{status:'completed',publication:generated}:({...state,revision:3}));
+ render(<WorkspacePublicationPanel workspace={w}/>);await screen.findByText('我的模型 · gpt-5.6-luna');expect(localCommand).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'重新生成发布文案'}));await waitFor(()=>expect(screen.getByLabelText('标题')).toHaveProperty('value','新标题'));
+ expect(localCommand).toHaveBeenCalledWith('generate',expect.objectContaining({expectedRevision:1,selection:expect.objectContaining({model:'gpt-5.6-luna',connectionVersionId:'cv'})}),undefined,'episodes/episode/publication-ai');
+ fireEvent.click(screen.getByRole('button',{name:'撤回本次替换'}));await waitFor(()=>expect(screen.getByLabelText('标题')).toHaveProperty('value','手写'));expect(screen.queryByRole('button',{name:'采用文案'})).toBeNull();
+});
+it('does not silently choose a replacement provider when the remembered model is unavailable',async()=>{
+ reads();localStorage.setItem('loop-control.script-studio-model:owner','old-provider:unavailable');render(<WorkspacePublicationPanel workspace={w}/>);await screen.findByLabelText('标题');
+ fireEvent.click(screen.getByRole('button',{name:'重新生成发布文案'}));await screen.findByText('请明确选择本次模型。');expect(screen.getByLabelText('大语言模型')).toHaveProperty('value','');expect(localCommand).not.toHaveBeenCalled();expect(screen.getByLabelText('标题')).toHaveProperty('value','手写');
+});
+it('does not overwrite typing with a late AI replacement',async()=>{
+ reads();localStorage.setItem('loop-control.script-studio-model:owner','selected:gpt-5.6-luna');let finish!:(value:unknown)=>void;
+ vi.mocked(localCommand).mockImplementationOnce(()=>new Promise(resolve=>{finish=resolve;}));render(<WorkspacePublicationPanel workspace={w}/>);await screen.findByText('我的模型 · gpt-5.6-luna');
+ fireEvent.click(screen.getByRole('button',{name:'重新生成发布文案'}));await waitFor(()=>expect(localCommand).toHaveBeenCalledTimes(1));fireEvent.change(screen.getByLabelText('标题'),{target:{value:'我正在写'}});
+ finish({status:'completed',publication:{...state,revision:2,content:{...state.content,title:'晚到文案'}}});await waitFor(()=>expect(screen.getByRole('button',{name:'重新生成发布文案'})).toHaveProperty('disabled',false));expect(screen.getByLabelText('标题')).toHaveProperty('value','我正在写');
+});

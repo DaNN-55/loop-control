@@ -80,7 +80,7 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
 
 // Preserve the actual used source window, including parent sequence trims/rate.
 // A partial/retimed/muted source never claims its full source text was spoken.
-function usedNarrationWindows(project:OpenChatCutProject,itemId:string){
+export function usedNarrationWindows(project:OpenChatCutProject,itemId:string){
  type Audibility=ReturnType<typeof nativeSoundWindowAudibility>;
  const windows:Array<{srcInFrame:number;usedDurationSeconds:number;sourceDurationSeconds:number;playbackRate:number;fps:number;audible:boolean;audibility:Audibility;textCoverageVerified:boolean}>=[];
  const hasEdits=(item:Record<string,unknown>)=>[item.transcript,item.edits,item.deletedWordIdx].some(value=>Array.isArray(value)?value.length>0:!!value);

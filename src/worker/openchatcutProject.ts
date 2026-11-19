@@ -53,6 +53,8 @@ interface OpenChatCutCaptionCue {
 }
 
 interface OpenChatCutTrack {
+  hidden?: boolean;
+  muted?: boolean;
   kind: "video" | "audio" | "caption";
   name: string;
   role?: "anchor" | "follower";

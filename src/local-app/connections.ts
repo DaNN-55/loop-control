@@ -1,3 +1,5 @@
+import {LocalPublicationRequests} from './workspacePublicationRequests.js';
+import {createPublicationReader,type PublicationReader} from './workspacePublicationProvider.js';
 import {LocalScriptStudioRequests} from './scriptStudioRequests.js';
 import {createScriptStudioReader,createScriptStudioDiscussionReader,type ScriptStudioDiscussionReader,type ScriptStudioReader} from './scriptStudioProvider.js';
 import {LocalScriptFormatRequests} from './scriptFormatRequests.js';
@@ -63,9 +65,11 @@ export class LocalConnections {
  readonly models:LocalConnectionModels;
  readonly scriptFormat:LocalScriptFormatRequests;
  readonly scriptStudio:LocalScriptStudioRequests;
+ readonly publication:LocalPublicationRequests;
  readonly billing:LocalConnectionBilling;
- constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader,scriptFormatReader:ScriptFormatReader=createScriptFormatReader(),scriptStudioReader:ScriptStudioReader=createScriptStudioReader(),scriptStudioDiscussionReader:ScriptStudioDiscussionReader=createScriptStudioDiscussionReader()){
+ constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe,private usageReader:ProviderUsageReader=createProviderUsageReader(),modelsReader:ProviderModelsReader=createProviderModelsReader(),billingReader?:BillingReader,scriptFormatReader:ScriptFormatReader=createScriptFormatReader(),scriptStudioReader:ScriptStudioReader=createScriptStudioReader(),scriptStudioDiscussionReader:ScriptStudioDiscussionReader=createScriptStudioDiscussionReader(),publicationReader:PublicationReader=createPublicationReader()){
   this.billing=new LocalConnectionBilling(pool,store,billingReader);
+  this.publication=new LocalPublicationRequests(pool,store,()=>this.configurationReady,publicationReader);
   this.scriptFormat=new LocalScriptFormatRequests(pool,store,()=>this.configurationReady,scriptFormatReader);
   this.scriptStudio=new LocalScriptStudioRequests(pool,store,()=>this.configurationReady,scriptStudioReader,scriptStudioDiscussionReader);
   this.models=new LocalConnectionModels(pool,store,modelsReader,provider=>this.probe.verificationStatus?.(provider).available??this.networkAvailable);

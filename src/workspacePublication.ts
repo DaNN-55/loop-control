@@ -14,3 +14,4 @@ export function parsePublicationContent(value:unknown):PublicationContent{
  const tags=[...new Set(normalized)];
  return{title:v.title,description:v.description,tags,instruction:v.instruction};
 }
+export interface PublicationRequestResult {requestId:string;status:'dispatching'|'completed'|'failed'|'unknown'|'stale';message:string;publication?:WorkspacePublication;responseId?:string}

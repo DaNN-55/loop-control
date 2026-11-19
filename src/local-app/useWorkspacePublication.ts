@@ -68,10 +68,10 @@ export function useWorkspacePublication(episodeId:string,workspaceId:string){
   const timer=setTimeout(()=>{void flush().catch(()=>{});},450);
   return()=>clearTimeout(timer);
  },[session,contentKey,revision,session.blocked,!!session.saving]);
- async function mutate(command:string,data:Record<string,unknown>={}){
+ async function mutate(command:string,data:Record<string,unknown>={},endpoint=path){
   const saved=await flush(),sequence=session.sequence;
-  const value=await localCommand<WorkspacePublication>(command,{...data,expectedRevision:saved.revision},undefined,path);
+  const value=await localCommand<WorkspacePublication>(command,{...data,expectedRevision:saved.revision},undefined,endpoint);
   accept(value,session.sequence===sequence);return value;
  }
- return{state:session.state,content:session.content,error:session.error,storageError:session.storageError,saving:!!session.saving,dirty:!!session.state&&!same(session.content,session.state.content),edit,flush,accept,mutate,reload:()=>load(true),retry:()=>{session.blocked=false;session.error='';return flush();}};
+ return{state:session.state,content:session.content,error:session.error,storageError:session.storageError,saving:!!session.saving,dirty:!!session.state&&!same(session.content,session.state.content),edit,flush,accept,acceptGenerated:(value:WorkspacePublication,submitted:PublicationContent)=>accept(value,same(session.content,submitted)),mutate,reload:()=>load(true),retry:()=>{session.blocked=false;session.error='';return flush();}};
 }

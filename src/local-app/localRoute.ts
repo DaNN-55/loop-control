@@ -216,6 +216,13 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     }
     send(405,{error:'模型设置请求方法无效。'});return;
    }
+   const publicationAi=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})\/publication-ai$/);
+   if(publicationAi&&uuid.test(publicationAi[1])){
+    if(url.search)throw new ConfigurationError(400,'发布文案查询无效。');
+    if(request.method==='GET'){send(200,await connections.publication.read(session.id,publicationAi[1]));return;}
+    if(request.method!=='POST')throw new ConfigurationError(405,'请求方式不支持。');
+    send(200,await connections.publication.command(session,publicationAi[1],await readBody(request,32768),options.mediaRoot));return;
+   }
    const publication=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})\/publication$/);
    if(publication&&uuid.test(publication[1])){
     if(url.search)throw new ConfigurationError(400,'发布资料查询无效。');
