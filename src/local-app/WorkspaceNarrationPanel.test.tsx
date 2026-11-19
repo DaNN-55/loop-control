@@ -290,3 +290,16 @@ it('keeps unsaved speech drafts scoped to template shots when switching back and
  view.rerender(<WorkspaceNarrationPanel {...props} selectedShotId="S01"/>);
  expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','1.35');
 });
+
+it('opens the requested preparation subtab and honors later requests without submitting work',()=>{
+ const {workspace,command}=setup();cleanup();
+ const props={episodeId:'e',workspace,selectedShotId:'S01',pending:false,command,onChanged:vi.fn()};
+ const view=render(<WorkspaceNarrationPanel {...props} tabRequest={{id:1,tab:'captions'}}/>);
+ expect(screen.getByRole('tab',{name:'字幕'}).getAttribute('aria-selected')).toBe('true');
+ view.rerender(<WorkspaceNarrationPanel {...props} tabRequest={{id:2,tab:'voice'}}/>);
+ expect(screen.getByRole('tab',{name:'口播'}).getAttribute('aria-selected')).toBe('true');
+ fireEvent.click(screen.getByRole('tab',{name:'字幕'}));
+ view.rerender(<WorkspaceNarrationPanel {...props} tabRequest={{id:3,tab:'voice'}}/>);
+ expect(screen.getByRole('tab',{name:'口播'}).getAttribute('aria-selected')).toBe('true');
+ expect(command).not.toHaveBeenCalled();
+});

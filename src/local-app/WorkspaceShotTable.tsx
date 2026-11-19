@@ -1,21 +1,22 @@
 import {uiText} from '../i18n/ui';
 import {useId,useRef,useState,type DragEvent} from 'react';
-import {MoreHorizontal,Plus,Trash2} from 'lucide-react';
+import {Plus,Trash2} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {Dropdown} from '../ui/dan-ui/components/base/dropdown/dropdown';
 import type {ProductionWorkspace,WorkspaceClip} from '../productionWorkspace';
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
 import {readWorkspaceShotWindow,type WorkspaceShotOperation} from '../workspaceShots';
 import {workspaceShotSource} from './WorkspaceShotPreview';
-import {workspaceShotPreparation} from './workspaceShotPreparation';
+import {workspaceShotPreparation,type WorkspacePreparationTarget} from './workspaceShotPreparation';
+import {WorkspaceShotPreparationStatus} from './WorkspaceShotPreparationStatus';
 
 interface Props {
  workspace:ProductionWorkspace;project:OpenChatCutProject|null;materials:Array<{storage_path:string;source_path:string}>;
  selectedShotId:string|undefined;disabled:boolean;readOnly?:boolean;
+ onPreparationNavigate?:(shotId:string,target:WorkspacePreparationTarget)=>void;
  onSelect:(shotId:string)=>void;onDelete:(clip:WorkspaceClip)=>void;onEdit:(operation:WorkspaceShotOperation)=>Promise<void>;
 }
 
-export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,onSelect,onDelete,onEdit}:Props){
+export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,onSelect,onDelete,onEdit,onPreparationNavigate}:Props){
  const locked=disabled||readOnly;
  const clips=workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index);
  const [adding,setAdding]=useState(false),[text,setText]=useState(''),[drop,setDrop]=useState<{shotId:string;after:boolean}|null>(null),[announcement,setAnnouncement]=useState('');
@@ -60,9 +61,9 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
       <td><button type="button" draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>onSelect(clip.shotId)}>{shotLabel}</button></td>
       <td><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div></td>
       <td>{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</td>
-      <td><span className={`is-${preparation.tone}`} title={preparation.details.map(value=>uiText(value)).join('、')}>{uiText(preparation.label)}</span></td>
+      <td><WorkspaceShotPreparationStatus preparation={preparation} shotLabel={shotLabel} onNavigate={onPreparationNavigate?target=>onPreparationNavigate(clip.shotId,target):undefined}/></td>
       {!readOnly&&<td className="workspace-shot-table-actions-cell" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}>
-       <Dropdown.Root><Button size="sm" color="tertiary" className="workspace-shot-menu-trigger" aria-label={uiText("{value0}操作",{value0:String(shotLabel)})} isDisabled={disabled} iconLeading={MoreHorizontal}/><Dropdown.Popover className="dan-ui product-ui workspace-shot-menu" placement="bottom end" offset={4}><Dropdown.Menu aria-label={uiText("{value0}操作",{value0:String(shotLabel)})}><Dropdown.Item id="delete" icon={Trash2} className="menu-item-danger" isDisabled={clips.length<=1} onAction={()=>onDelete(clip)}>{uiText("删除镜头")}</Dropdown.Item></Dropdown.Menu></Dropdown.Popover></Dropdown.Root>
+       <Button type="button" size="sm" color="tertiary" className="workspace-shot-menu-trigger" aria-label={uiText("删除{value0}",{value0:String(shotLabel)})} title={clips.length<=1?uiText("至少保留一个镜头"):uiText("删除镜头")} isDisabled={disabled||clips.length<=1} iconLeading={Trash2} onPress={()=>onDelete(clip)}/>
       </td>}
      </tr>;
     })}</tbody>
