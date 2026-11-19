@@ -1,0 +1,98 @@
+{
+  "scope": "isolated blank native project; program startup only; no formal database or user project opened",
+  "first": [
+    {
+      "stage": "prebuild-export-program",
+      "ms": 1672.295583
+    },
+    {
+      "mode": "baseline",
+      "stage": "server-ready",
+      "ms": 3779.127209
+    },
+    {
+      "mode": "prebuilt",
+      "stage": "server-ready",
+      "ms": 1134.444833
+    },
+    {
+      "mode": "baseline",
+      "stage": "server-ready",
+      "ms": 2157.405125
+    },
+    {
+      "mode": "prebuilt",
+      "stage": "server-ready",
+      "ms": 1191.031541
+    },
+    {
+      "mode": "baseline",
+      "stage": "server-ready",
+      "ms": 2175.73
+    },
+    {
+      "mode": "prebuilt",
+      "stage": "server-ready",
+      "ms": 1169.78025
+    }
+  ],
+  "repeat": [
+    {
+      "stage": "prebuild-export-program",
+      "ms": 1407.185125
+    },
+    {
+      "mode": "baseline",
+      "stage": "server-ready",
+      "ms": 2992.861125
+    },
+    {
+      "mode": "prebuilt",
+      "stage": "server-ready",
+      "ms": 1179.1363339999998
+    },
+    {
+      "mode": "baseline",
+      "stage": "server-ready",
+      "ms": 1916.1398330000002
+    },
+    {
+      "mode": "prebuilt",
+      "stage": "server-ready",
+      "ms": 1167.2809590000015
+    },
+    {
+      "mode": "baseline",
+      "stage": "server-ready",
+      "ms": 1891.1637920000012
+    },
+    {
+      "mode": "prebuilt",
+      "stage": "server-ready",
+      "ms": 1178.3735420000012
+    }
+  ],
+  "browser": {
+    "conditions": "warm Vite, HTTP cache disabled, isolated project",
+    "toolbarReadyMs": [
+      1231.74,
+      1444.92,
+      1224.47
+    ],
+    "requests": 250,
+    "scripts": 239,
+    "transferMiB": 7.47
+  },
+  "repeatHarnessPassed": true,
+  "railUI": {
+    "initialCollapsedPx": 50,
+    "expandedPx": 188,
+    "collapsedAgain": true
+  },
+  "demos": {
+    "standaloneHtml": 4,
+    "desktopAnd390px": true,
+    "escapeReturnsFocus": true,
+    "floatingDragAndResize": true
+  }
+}

@@ -46,11 +46,17 @@ it('uses the same flush and save boundary for the native home action',async()=>{
  deliver({type:'loop-control:result',requestId:request.requestId,ok:true});await waitFor(()=>expect(close).toHaveBeenCalledOnce());expect(save).toHaveBeenCalledWith(workspace);
 });
 
-it('keeps shot navigation available after collapsing the rail',()=>{
+it('starts with collapsed shot navigation and keeps selection and expansion available',()=>{
  render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜的完整简介'},{id:'S02',text:'第二镜'}]} onSave={async()=>workspace} onClose={()=>{}}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
  fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',writable:true,revision:1,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60},{id:'shot-S02-full',startFrame:60,durationInFrames:60}],selectedIds:[]}}));
+ expect(screen.getByRole('button',{name:'展开镜头导航'})).toBeTruthy();
+ expect(document.querySelector('.embedded-studio-body.rail-collapsed')).toBeTruthy();
+ expect(screen.queryByText('第一镜的完整简介')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'展开镜头导航'}));
+ expect(screen.getByText('第一镜的完整简介')).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'折叠镜头导航'}));
+ expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
  const post=vi.spyOn(frame.contentWindow!,'postMessage');fireEvent.click(screen.getByRole('button',{name:'定位镜头 S02'}));expect(post.mock.calls.at(-1)![0].itemId).toBe('shot-S02-full');
  expect(screen.getByRole('button',{name:'展开镜头导航'})).toBeTruthy();
 });

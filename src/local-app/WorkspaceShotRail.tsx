@@ -3,7 +3,7 @@ import {useEffect,useRef,useState} from 'react';
 import {ChevronLeft,ChevronRight,Plus,Trash2,GripVertical} from 'lucide-react';
 import type {WorkspaceShot,WorkspaceShotOperation} from '../workspaceShots';
 export function WorkspaceShotRail({shots,selectedIds,disabled,select,edit,onCollapse,editable=true,draftKey}:{shots:WorkspaceShot[];selectedIds:string[];disabled:boolean;editable?:boolean;draftKey?:string;select:(id:string)=>void;edit:(operation:WorkspaceShotOperation)=>Promise<unknown>;onCollapse:(collapsed:boolean)=>void}){
- const [collapsed,setCollapsed]=useState(false),[adding,setAdding]=useState(false),[text,setText]=useState(()=>draftKey?sessionStorage.getItem(`workspace-shot-insert:${draftKey}`)??'':''),[dragging,setDragging]=useState<string|null>(null),[error,setError]=useState('');
+ const [collapsed,setCollapsed]=useState(true),[adding,setAdding]=useState(false),[text,setText]=useState(()=>draftKey?sessionStorage.getItem(`workspace-shot-insert:${draftKey}`)??'':''),[dragging,setDragging]=useState<string|null>(null),[error,setError]=useState('');
  const insertId=useRef(crypto.randomUUID());
  useEffect(()=>{if(draftKey){if(text)sessionStorage.setItem(`workspace-shot-insert:${draftKey}`,text);else sessionStorage.removeItem(`workspace-shot-insert:${draftKey}`);}},[draftKey,text]);
  async function apply(op:WorkspaceShotOperation){setError('');try{await edit(op);return true;}catch(cause){setError(cause instanceof Error?cause.message:'镜头修改未完成。');return false;}}
