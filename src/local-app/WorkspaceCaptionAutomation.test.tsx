@@ -75,3 +75,9 @@ it('shows automatic-caption failures in the shared floating notice without occup
  await waitFor(()=>expect(screen.queryByText('字幕自动处理未完成，可直接调整字幕或重新尝试。')).toBeNull());
  expect(command).toHaveBeenCalledTimes(1);
 });
+it('does not automatically rewrite a project that became native while its preparation read was pending',async()=>{
+ const workspace=fixture(),native={...workspace,editorAuthority:'native' as const};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:native})));
+ const command=vi.fn(),onChange=vi.fn();render(<WorkspaceCaptionAutomation workspace={workspace} command={command} onChange={onChange}/>);
+ await waitFor(()=>expect(onChange).toHaveBeenCalled());expect(command).not.toHaveBeenCalled();
+});

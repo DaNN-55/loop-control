@@ -1,5 +1,4 @@
 import {restoreVisualDraft,recordVisualDefaultEdits,updatedVisualDefaults,type VisualDefaultOverrides} from './workspaceVisualDefaults';
-import type {EmbeddedStudioBridge} from './EmbeddedStudioHost';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {WorkspacePopover as Popover} from './WorkspacePopover';
 import {uiText} from '../i18n/ui';
@@ -65,7 +64,7 @@ export interface VisualPreparationProps {
  onBusyChange?:(busy:boolean)=>void;
  workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;
  materials:Material[];selectedShotId?:string;selectedTargetItemId?:string;onTargetChange?:(id:string)=>void;
- bridge?:EmbeddedStudioBridge;project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;
+ project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;
  onImported?:(material:Material&{storage_path:string})=>void;
 }
 interface Draft {defaultOverrides?:VisualDefaultOverrides;promptReferences?:PromptReferenceBinding[];pexelsSelection?:ProductionSelection|null;imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;videoResolution?:string;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;videoModeId?:string;videoInputs?:VideoInputDraft;videoInputIds?:string[];referenceVideoSources?:Record<string,string>;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
@@ -212,17 +211,16 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   autoAdopt:plan=>plan.impact.replacementScope!=='shot'&&plan.impact.videoSound!=='silent'&&!needsCandidateImpactDialog(plan.impact),
   onAdopted:(_changed,plan)=>adoptionFeedbackFor(plan),
   adopt:async(w,plan)=>{
-   if(props.bridge){await props.bridge.applyNativeEdit('apply-candidate',{edit:plan.edit});await props.bridge.save();}
-   const latest=props.bridge?await fresh():w;
+   const latest=w;
    return command('adoptWorkspaceVisualCandidate',{
-    ...base(latest),candidateId:plan.candidateId,adoptionId:plan.adoptionId,...(props.bridge?{nativeApplied:true}:{})
+    ...base(latest),candidateId:plan.candidateId,adoptionId:plan.adoptionId
    }) as Promise<ProductionWorkspace>;
   },
  });
  const busyListener=useRef(props.onBusyChange);busyListener.current=props.onBusyChange;
  useEffect(()=>{busyListener.current?.(busy||candidateReview.pending||uploading);},[busy,candidateReview.pending,uploading]);
  useEffect(()=>()=>{busyListener.current?.(false);},[]);
- const disabled=busy||candidateReview.pending||uploading||props.readOnly||workspace.stale||!!props.bridge&&!props.bridge.connected;
+ const disabled=busy||candidateReview.pending||uploading||props.readOnly||workspace.stale;
  const review=candidateReview.plan;
  const impact=review?.impact;
  const needsImpactDialog=needsCandidateImpactDialog(impact);

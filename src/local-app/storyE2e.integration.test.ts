@@ -144,7 +144,7 @@ it.skipIf(!enabled)('story 2 browser: a lost committed generation response and r
   const edited=await targetItem(beforeOpen),beforeTarget=workspaceCandidateTarget(edited);
   await browser.click('进入剪辑工作台');
   await browser.wait("document.querySelector('.embedded-studio iframe')?.getAttribute('aria-busy')==='false'");
-  expect(await browser.evaluate("Array.from(document.querySelectorAll('.embedded-studio header button')).some(button=>button.textContent==='补充工具'&&button.getAttribute('aria-expanded')==='false')")).toBe(true);
+  expect(await browser.evaluate("Array.from(document.querySelectorAll('.embedded-studio header button')).some(button=>button.textContent==='补充工具')")).toBe(false);
   expect(await browser.evaluate("document.querySelector('.embedded-studio-caption-panel')===null&&!Array.from(document.querySelectorAll('.embedded-studio header button')).some(b=>b.textContent==='自动校准字幕时间')")).toBe(true);
   await browser.click('保存并返回分镜台');
   await browser.wait("document.querySelector('button[aria-label=\"选择镜头 02\"]')?.getAttribute('aria-pressed')==='true'");

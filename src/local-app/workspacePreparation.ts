@@ -37,6 +37,9 @@ export async function prepareAuthoredWorkspace(c:PoolClient,root:string,e:{id:st
 }
 export async function readWorkspacePlanning(c:PoolClient,taskId:string){const task=(await c.query('SELECT status,last_result FROM public.tasks WHERE id=$1',[taskId])).rows[0];return{planning:true as const,taskId,status:task.status,detail:task.last_result?.blockers?.[0]?.detail??task.last_result?.retry?.reason??null};}
 export async function syncProductionWorkspaceShots(c:PoolClient,row:ProductionWorkspaceRecord,root:string){
+ // Native editing never imports old preparation inputs back into the project.
+ if(row.editor_authority==='native'){await c.query('SELECT local_identity.sync_production_workspace_shots($1)',[row.id]);return;}
+
  const preparationId=row.preparation_revision_id??row.storyboard_package_id;
  const known=(await c.query('SELECT 1 FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2 AND script_revision_id=$3',[preparationId,row.episode_id,row.script_revision_id])).rowCount;
  if(!known)await adoptProductionPreparation(c,root,row.episode_id,row.script_revision_id,preparationId!);

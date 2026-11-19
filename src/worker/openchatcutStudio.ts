@@ -1,3 +1,4 @@
+import {archiveNativeStudioImports,type NativeStudioImport} from './nativeStudioImports.js';
 import {cacheBundledStudioSounds} from './openchatcutBundledSounds.js';
 import {openChatCutBundledSounds,bundledSoundRuntimeSource} from '../openchatcutBundledSounds.js';
 import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
@@ -43,10 +44,13 @@ interface WorkspaceMetadata {
   inputFingerprint: string;
   projectId: string;
   reverseSources: Record<string, string>;
+  nativeImports?:NativeStudioImport[];
 }
 
 interface Session {
   episodeId: string;
+  assetRoot:string;
+  episodeRelativePath:string;
   projectId: string;
   baseUrl: string;
   dataDir: string;
@@ -165,7 +169,7 @@ export async function hasActiveNativeStudio(root:string,episodeId:string,episode
 export async function inspectOpenChatCutStoredProject(assetRoot:string,episodeId:string,storage?:EpisodeFileIO){
  const root=await realpath(assetRoot),projectId=`loop-control-${episodeId}`;await storage?.assertValid();await assertStudioWorkspace(root,episodeId,projectId,storage?.relativePath);
  const workRoot=join(root,storage?.relativePath??`episodes/${episodeId}`,'openchatcut-work','current'),metadata=await readWorkspaceMetadata(join(workRoot,'workspace.json'));
- const live=sessions.get(episodeId);if(live&&live.dataDir!==join(workRoot,'runtime'))throw Error('Studio 活动工程位置已变化，请先关闭原工程。');if(live)return{project:await currentSessionProject(live),metadata:metadata??{reverseSources:Object.fromEntries(live.reverseSources)}};
+ const live=sessions.get(episodeId);if(live&&live.dataDir!==join(workRoot,'runtime'))throw Error('Studio 活动工程位置已变化，请先关闭原工程。');if(live)return{project:await currentSessionProject(live,false),metadata:metadata??{reverseSources:Object.fromEntries(live.reverseSources)}};
  const stored=await readStoredProject(join(workRoot,'runtime','project-store-v1.json'),projectId);if(!stored)return null;
  if(!metadata||metadata.projectId!==projectId)throw Error('旧剪辑来源映射不可用，请先恢复旧工程。');
  const project=structuredClone(stored);rewriteSources(project,new Map(Object.entries(metadata.reverseSources)));return{project,metadata};
@@ -270,7 +274,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   const dataDir = join(workRoot, "runtime");
   const workspaceRelativePath = `${options.storage?.relativePath??`episodes/${episodeId}`}/openchatcut-work/current/project.json`;
   const metadataPath = join(workRoot, "workspace.json");
-  const storedMetadata = await readWorkspaceMetadata(metadataPath);
+  let storedMetadata = await readWorkspaceMetadata(metadataPath);
   const storedProject = await readStoredProject(join(dataDir, "project-store-v1.json"), projectId);
   let recoverStored=false;
   if(options.recoverDraft&&storedProject&&storedMetadata?.inputFingerprint===inputFingerprint){
@@ -279,6 +283,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
     const hostBaseline=await readProject(join(workRoot,'project.json'));
     if(!hostBaseline)throw Error('缺少上次工程快照，不能确认恢复基准；原生工程已保留。');
     const nativeProject=structuredClone(storedProject);
+    storedMetadata=await archiveStudioDocument(root,options.storage?.relativePath??`episodes/${episodeId}`,dataDir,nativeProject,storedMetadata);
     rewriteSources(nativeProject,new Map(Object.entries(storedMetadata.reverseSources)));
     const nativeChanged=projectSha256(nativeProject)!==projectSha256(hostBaseline);
     const hostChanged=projectSha256(project)!==projectSha256(hostBaseline);
@@ -324,7 +329,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
     const legacyStore = { version: 1, entries: { projects: [{ id: projectId, name: runtimeConfig.projectName ?? `生产单 ${episodeId}`, updatedAt: Date.now() }], [`project:${projectId}`]: copiedProject } };
     await writeStoredProject(dataDir, projectId, copiedProject, legacyStore);
     await writeFile(join(workRoot, "generated-project.json"), JSON.stringify(project, null, 2) + "\n");
-    const metadata: WorkspaceMetadata = { baseProjectSha256: projectSha256(project), inputFingerprint, projectId, reverseSources: Object.fromEntries(reverseSources) };
+    const metadata: WorkspaceMetadata = { baseProjectSha256: projectSha256(project), inputFingerprint, projectId, reverseSources: Object.fromEntries(reverseSources),nativeImports:storedMetadata?.nativeImports };
     await writeFile(metadataPath, JSON.stringify(metadata, null, 2) + "\n");
   }
   const nodePath = runtimeConfig.nodePath?.trim() || process.env.OPENCHATCUT_NODE || process.execPath;
@@ -361,7 +366,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
     rewriteSources(activeProject, reverseSources);
     try { await options.validateProject?.(activeProject); } catch (error) { validationError = error; throw error; }
     const workspace = await persistProject(root, workspaceRelativePath, activeProject, composition, projectId);
-    const session = { episodeId, projectId, baseUrl: `http://127.0.0.1:${port}`, dataDir, workspace, reverseSources, child, cleanup, render, runtimeConfig, baseProject: project, inputFingerprint } satisfies Session;
+    const session = { episodeId, assetRoot:root, episodeRelativePath:options.storage?.relativePath??`episodes/${episodeId}`, projectId, baseUrl: `http://127.0.0.1:${port}`, dataDir, workspace, reverseSources, child, cleanup, render, runtimeConfig, baseProject: project, inputFingerprint } satisfies Session;
     sessions.set(episodeId, session);
     child.once("close", () => { if (sessions.get(episodeId)?.child === child) sessions.delete(episodeId); });
     return { studioUrl: `${session.baseUrl}/?lcBridge=1#/editor/${projectId}`, workspace, ...(recoverStored?{recoveredNativeEdits:true}:{}) };
@@ -453,14 +458,33 @@ function reviewRenderInputFingerprint(render: ReviewRender, project: OpenChatCut
 
 function projectSha256(project: OpenChatCutProject): string { return createHash("sha256").update(JSON.stringify(project)).digest("hex"); }
 
-async function currentSessionProject(session: Session): Promise<OpenChatCutProject> {
+async function currentSessionProject(session: Session,archive=true): Promise<OpenChatCutProject> {
   const response = await fetch(`${session.baseUrl}/api/project-store/entry?key=${encodeURIComponent(`project:${session.projectId}`)}`, { headers: { "Sec-Fetch-Site": "none" } });
   if (!response.ok) throw new Error(`无法读取 OpenChatCut 项目（HTTP ${response.status}）。`);
   const payload = await response.json() as { found?: boolean; value?: unknown };
   if (!payload.found || !payload.value || typeof payload.value !== "object" || Array.isArray(payload.value)) throw new Error("OpenChatCut 项目内容无效。");
   const project = structuredClone(payload.value) as OpenChatCutProject;
+  if(archive){const metadata=await readWorkspaceMetadata(join(dirname(session.dataDir),'workspace.json'));if(!metadata||metadata.projectId!==session.projectId)throw Error('原生工程归档身份已变化。');const next=await archiveStudioDocument(session.assetRoot,session.episodeRelativePath,session.dataDir,project,metadata);session.reverseSources=new Map(Object.entries(next.reverseSources));}
   rewriteSources(project, session.reverseSources);
   return project;
+}
+
+/** Receipts survive a rolled-back Owner transaction, so a retry can register
+ * the same immutable bytes without requiring another user import. */
+async function archiveStudioDocument(root:string,base:string,dataDir:string,project:OpenChatCutProject,metadata:WorkspaceMetadata){
+ const result=await archiveNativeStudioImports({assetRoot:root,episodeRelativePath:base,dataDir,project,knownSources:new Map(Object.entries(metadata.reverseSources)),imports:metadata.nativeImports});
+ const next={...metadata,reverseSources:Object.fromEntries(result.sources),nativeImports:result.imports};
+ if(JSON.stringify(next)!==JSON.stringify(metadata)){
+  const path=await safeAssetOutputPath(root,`${base}/openchatcut-work/current/workspace.json`),temporary=path+'.'+randomUUID()+'.tmp';
+  await writeFile(temporary,JSON.stringify(next,null,2)+'\n',{flag:'wx',mode:0o600});await rename(temporary,path);
+ }
+ return next;
+}
+export async function readNativeStudioImports(assetRoot:string,episodeId:string,storage:EpisodeFileIO){
+ await storage.assertValid();const root=await realpath(assetRoot);
+ await assertStudioWorkspace(root,episodeId,`loop-control-${episodeId}`,storage.relativePath);
+ const metadata=await readWorkspaceMetadata(join(root,storage.relativePath,'openchatcut-work/current/workspace.json'));
+ return metadata?.projectId===`loop-control-${episodeId}`?metadata.nativeImports??[]:[];
 }
 
 async function persistCurrentWorkspace(root: string, session: Session, validateProject?: StudioProjectValidator): Promise<OpenChatCutStudioSnapshot> {

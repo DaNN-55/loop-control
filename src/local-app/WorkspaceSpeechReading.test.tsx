@@ -5,7 +5,6 @@ import {WorkspaceNarrationPanel} from './WorkspaceNarrationPanel';
 import {registeredAdapters} from '../worker/registeredAdapters';
 import {WorkspaceAudioPreparation} from './WorkspaceAudioPanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
-import type {EmbeddedStudioBridge} from './EmbeddedStudioHost';
 
 const workspace={id:'workspace',episodeId:'episode',revision:3,stale:false,project:{sha256:'saved'},clips:[
  {id:'clip-1',itemId:'visual-1',shotId:'S1',text:'第一镜',source:null},
@@ -13,13 +12,13 @@ const workspace={id:'workspace',episodeId:'episode',revision:3,stale:false,proje
 ],candidates:[],narration:['S1','S2'].map((shotId,i)=>({shotId,clipId:`clip-${i+1}`,text:`已保存${shotId}`,inputFingerprint:shotId,status:'running',taskId:`speech-${shotId}`})),audio:{mix:{voices:[],sounds:[]},preparations:[{id:'effect',kind:'sfx',shotId:'S1',description:'音效任务',taskId:'sound',status:'running',anchor:'shot',offsetSeconds:0,durationSeconds:1}]}} as unknown as ProductionWorkspace;
 function deferred<T>(){let resolve!:(value:T)=>void;const promise=new Promise<T>(done=>{resolve=done;});return{promise,resolve};}
 afterEach(()=>{cleanup();sessionStorage.clear();vi.useRealTimers();vi.unstubAllGlobals();});
-function Host({command,changed=()=>{},target='S1',bridge}:{command:(name:string,data:unknown)=>Promise<unknown>;changed?:(w:ProductionWorkspace)=>void;target?:string;bridge?:EmbeddedStudioBridge}){
+function Host({command,changed=()=>{},target='S1'}:{command:(name:string,data:unknown)=>Promise<unknown>;changed?:(w:ProductionWorkspace)=>void;target?:string}){
  const [w,set]=useState(workspace);
  const onChange=(value:ProductionWorkspace)=>{set(value);changed(value);};
  return <><output data-testid="revision">{w.revision}</output><output data-testid="status">{w.narration?.[0].status}</output>
  <button onClick={()=>set({...w,revision:9})}>external save</button>
  <button onClick={()=>onChange({...w,narration:w.narration!.map(n=>({...n,status:'completed'}))})}>external completion</button>
- <WorkspaceAudioPreparation workspace={w} command={command} onChange={onChange} selectedShotId={target} materials={[{id:'manual',material_type:'audio',source_path:'click.mp3',material_purpose:'background_music'}]} bridge={bridge}/></>;
+ <WorkspaceAudioPreparation workspace={w} command={command} onChange={onChange} selectedShotId={target} materials={[{id:'manual',material_type:'audio',source_path:'click.mp3',material_purpose:'background_music'}]}/></>;
 }
 function setupFetch(read:()=>Promise<Response>){vi.stubGlobal('fetch',vi.fn((url:string)=>url==='/api/local/connections'?Promise.resolve(Response.json({serviceCatalog:{groups:[]}})):read()));}
 function setPurpose(value:string){fireEvent.change(screen.queryByLabelText('音效意图或检索词')??screen.getByLabelText('英文检索词'),{target:{value}});}
@@ -58,14 +57,6 @@ it('keeps sound drafts through refresh, shot switches and reopening',async()=>{
  expect(screen.getByRole('button',{name:'音效'}).getAttribute('aria-pressed')).toBe('true');
  fireEvent.click(screen.getByRole('button',{name:'整期配乐'}));expect(screen.getByLabelText('英文检索词')).toHaveProperty('value','ambient footsteps');
  expect(command.mock.calls.every(call=>call[0]==='refreshWorkspaceAudio')).toBe(true);
-});
-it('does not submit audio after a slow saved-workspace read belongs to a different shot',async()=>{
- const slow=deferred<Response>();setupFetch(()=>slow.promise);const command=vi.fn(async()=>workspace),changed=vi.fn();
- const bridge={connected:true,save:vi.fn(async()=>{}),inspect:vi.fn(async()=>({document:{assets:[],timelines:[]}}))} as unknown as EmbeddedStudioBridge;
- const view=render(<Host command={command} changed={changed} bridge={bridge}/>);prepareSound();await act(async()=>{});
- view.rerender(<Host command={command} changed={changed} bridge={bridge} target="S2"/>);
- await act(async()=>{slow.resolve(Response.json({workspace}));});
- expect(command).not.toHaveBeenCalled();expect(changed).not.toHaveBeenCalled();expect(screen.queryByRole('alert')).toBeNull();
 });
 
 it('shows an audio version conflict without retrying or clearing the form',async()=>{

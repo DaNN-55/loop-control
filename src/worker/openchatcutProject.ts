@@ -19,6 +19,7 @@ export interface OpenChatCutProject {
   loopControl?: {
     version: "shot-sync-preview/v1" | "four-step-workspace/v1";
     inputFingerprint: string;
+    editorAuthority?: "native";
     audioEnabled?: {bgm?:boolean;sfx?:boolean};
     transitionMode: "cut" | "fade" | "studio";
   };

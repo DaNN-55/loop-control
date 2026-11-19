@@ -9,6 +9,7 @@ const media=(item:Item)=>['image','video'].includes(String(item.kind));
 
 /** First placeholder adoption only. Native edits and subsequent replacements remain authoritative. */
 export function applyInitialWorkspaceTemplateSettings(previous:OpenChatCutProject,project:OpenChatCutProject):void{
+ if(project.loopControl?.editorAuthority==='native')return;
  const firstAdoptions=new Set<string>();
  for(const timeline of project.timelines)for(const item of timeline.items){
   const old=previous.timelines.find(t=>t.id===timeline.id)?.items.find(i=>i.id===item.id);

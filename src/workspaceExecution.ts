@@ -9,6 +9,7 @@ export function isWorkspaceVideoTrack(timeline:OpenChatCutProject['timelines'][n
 /** A reversible native switch removes this node from execution, not from history. */
 export function workspaceExecutionProject(project:OpenChatCutProject):OpenChatCutProject {
  const next=structuredClone(project);
+ if(project.loopControl?.editorAuthority==='native')return next;
  for(const timeline of next.timelines)timeline.items=timeline.items.filter(item=>{
   if(item.kind!=='audio')return true;
   if(item.loopControlNarrationMute||item.loopControlSoundMute)return false;

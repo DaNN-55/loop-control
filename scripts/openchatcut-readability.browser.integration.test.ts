@@ -66,11 +66,7 @@ it.skipIf(process.env.LOOP_NATIVE_READABILITY_ACCEPTANCE!=='1')('native embedded
   await writeFile(join(evidence,'precise-input.json'),JSON.stringify(await evaluate(`({label:document.activeElement.getAttribute('aria-label'),value:document.activeElement.value})`),null,2));
   await browser('press','Enter');await evaluate(`new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))`);
   expect(await evaluate(`document.querySelector('.cc-insp-scalar').textContent`)).toBe('125%');
-  await browser('find','role','button','click','--name','生成、版本与对齐','--exact');await browser('wait','--text','收起补充工具');
-  await browser('screenshot',join(evidence,'compact-tools-900.png'));
-  const supplemental=JSON.parse(await browser('eval','({save:document.querySelector(".embedded-studio-save").getBoundingClientRect().toJSON(),tools:document.querySelector(".embedded-studio-caption-panel").getBoundingClientRect().toJSON()})'));
-  await writeFile(join(evidence,'compact-tools-900.json'),JSON.stringify(supplemental,null,2));expect(supplemental.tools.height).toBeGreaterThan(100);expect(supplemental.tools.width).toBeGreaterThan(240);expect(supplemental.save.bottom).toBeLessThanOrEqual(768);
-  await browser('find','role','button','click','--name','收起补充工具','--exact');await browser('wait','--text','生成、版本与对齐');
+  expect(JSON.parse(await browser('eval','!!document.querySelector(".embedded-studio-tools")'))).toBe(false);
   await browser('set','viewport','1440','600');
   const low=JSON.parse(await browser('eval','({frame:document.querySelector("iframe").getBoundingClientRect().toJSON(),height:innerHeight})'));await writeFile(join(evidence,'low-height.json'),JSON.stringify(low,null,2));expect(low.frame.bottom).toBeLessThanOrEqual(low.height);
   await browser('set','viewport','1440','1000');

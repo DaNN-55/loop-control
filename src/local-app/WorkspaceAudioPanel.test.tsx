@@ -49,11 +49,6 @@ it('registers a local MP3 and prepares a candidate without replacing the existin
  const command=vi.fn(async(name:string)=>name==='importMaterial'?{id:'uploaded-music'}:workspace);render(<WorkspaceAudioPreparation workspace={workspace} command={command} onChange={()=>{}} selectedShotId="S1"/>);fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'piano'}});fireEvent.change(screen.getByLabelText('上传配乐'),{target:{files:[new File(['audio'],'music.mp3',{type:'audio/mpeg'})]}});await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({materialRevisionId:'uploaded-music',kind:'bgm'})));expect(screen.getByLabelText('英文检索词')).toHaveProperty('value','piano');expect(command).toHaveBeenCalledTimes(2);expect(command).toHaveBeenCalledWith('importMaterial',expect.objectContaining({episodeId:'e',materialPurpose:'background_music',sourcePath:'music.mp3'}));expect(command.mock.calls.some(([name])=>name==='adoptWorkspaceAudio')).toBe(false);
 });
 
-it('adjusts only adopted sound effects through the native bridge',async()=>{
- const p={...effect('one','S1','已加入声音'),adoptedItemId:'workspace-sfx-one'},pending=effect('two','S1','待加入声音'),doc={activeTimelineId:'t',assets:[],timelines:[{id:'t',fps:30,items:[{id:'visual',kind:'video',startFrame:0,durationInFrames:90},{id:'workspace-sfx-one',kind:'audio',startFrame:6,durationInFrames:30,volume:.5,track:'audio',loopControlAudio:{kind:'sfx',preparationId:'one'}}],tracks:{audio:{kind:'audio',audioRouting:{duckDepthDb:0}}}}]} as unknown as import('../worker/openchatcutProject').OpenChatCutProject;
- const bridge={connected:true,inspect:vi.fn(async()=>({document:doc})),applyNativeEdit:vi.fn(async()=>doc)} as unknown as import('./EmbeddedStudioHost').EmbeddedStudioBridge,command=vi.fn(),w={...workspace,audio:{mix:{voices:[],sounds:[sound('one')]},preparations:[p,pending]}} as ProductionWorkspace;
- render(<WorkspaceAudioPanel effectsOnly workspace={w} command={command} onChange={()=>{}} bridge={bridge}/>);await waitFor(()=>expect(bridge.inspect).toHaveBeenCalled());expect(screen.queryByText('待加入声音')).toBeNull();expect(screen.queryByLabelText('类型')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'应用'}));await waitFor(()=>expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-audio-mix',{edit:expect.objectContaining({kind:'sound',itemId:'workspace-sfx-one',workspaceId:'w'})}));expect(command).not.toHaveBeenCalled();
-});
 it('keeps a cleared music connection blank after switching shots and reopening',async()=>{
  sessionStorage.clear();const service={id:'sound-a',provider:'freesound',adapter:'freesound_audio',connectionVersionId:'sound-v1',connectionName:'Sound A',executable:true};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[{capability:'music_sound',services:[service]}]}})));
  const command=vi.fn(async(_name:string,_data:unknown)=>workspace);
@@ -244,22 +239,6 @@ it('preselects named template music and effects without preparing until the user
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',materialRevisionId:'effect',shotId:'S1',anchor:'shot'})));
 });
 
-it('adopts a prepared sound into the live editor before saving and registering it',async()=>{
- const music={...effect('music','S1','新配乐'),kind:'bgm'};
- const value={...workspace,audio:{enabled:{bgm:false,sfx:false},mix:{voices:[],sounds:[]},preparations:[music]}} as unknown as ProductionWorkspace;
- const native={activeTimelineId:'t',timelines:[{id:'t',fps:30,items:[{id:'visual',kind:'text',durationInFrames:60,startFrame:0}],tracks:{},trackOrder:[]}],assets:[]};
- const plan={adoptionId:'use',edit:{version:'workspace-audio-adoption/v1'}};
- const command=vi.fn(async(name:string)=>name==='prepareWorkspaceAudioAdoption'?plan:value);
- const bridge={connected:true,inspect:vi.fn(async()=>({document:native})),save:vi.fn(async()=>{}),applyNativeEdit:vi.fn(async()=>native)};
- vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,json:async()=>({workspace:value})})));
- render(<WorkspaceAudioPreparation workspace={value} command={command} onChange={()=>{}} bridge={bridge as never} studioTools/>);
- await waitFor(()=>expect(bridge.inspect).toHaveBeenCalled());
- fireEvent.click(screen.getByRole('button',{name:'采用'}));
- await waitFor(()=>expect(command).toHaveBeenCalledWith('commitWorkspaceAudioAdoption',expect.objectContaining({adoptionId:'use',nativeApplied:true,preparationId:'music'})));
- expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-audio-candidate',{edit:plan.edit,expectedDocumentFingerprint:undefined});expect(bridge.save).toHaveBeenCalledTimes(2);
- expect(command.mock.calls.map(([name])=>name)).toEqual(['prepareWorkspaceAudioAdoption','commitWorkspaceAudioAdoption']);
- expect(screen.queryByRole('button',{name:/设置 新配乐/})).toBeNull();expect((screen.getByLabelText('上传配乐') as HTMLInputElement).disabled).toBe(false);
-});
 it('limits storyboard sound preparation to effects even with an older episode music draft',async()=>{
  sessionStorage.setItem('loop-audio-draft-v2:w:S1',JSON.stringify({kind:'bgm',description:'旧配乐',query:'piano'}));
  const value={...workspace,audio:{mix:{voices:[],sounds:[]},preparations:[{...effect('music','S1','旧整期配乐'),kind:'bgm'},effect('effect','S1','脚步声')]}} as unknown as ProductionWorkspace;
@@ -267,27 +246,4 @@ it('limits storyboard sound preparation to effects even with an older episode mu
  render(<WorkspaceAudioPreparation workspace={value} command={command} onChange={()=>{}} selectedShotId="S1" effectsOnly materials={[{id:'m',material_type:'audio',source_path:'step.mp3',material_purpose:'sound_effect'}]}/>);
  expect(screen.queryByRole('button',{name:'整期配乐'})).toBeNull();expect(screen.queryByText('旧整期配乐')).toBeNull();expect(screen.getByLabelText('音效意图或检索词')).toBeTruthy();fireEvent.change(screen.getByLabelText('音效意图或检索词'),{target:{value:'脚步声'}});expect(screen.getByLabelText('音效意图或检索词')).toHaveProperty('value','脚步声');selectAudio('m');
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',shotId:'S1'})));
-});
-
-it('keeps a native-selected audio file until the owner imports it for the selected sound purpose',async()=>{
- const value=structuredClone(workspace);value.clips[0].renderPreferences={version:'workspace-render-preferences/v2',sfxDuration:.4,sfxStart:0};
- const bridge={connected:true,inspect:vi.fn(async()=>({document:{activeTimelineId:'t',assets:[],timelines:[{id:'t',fps:30,tracks:{},items:[]}]}})),save:vi.fn(async()=>{})};
- const command=vi.fn(async(name:string)=>name==='importMaterial'?{id:'native-selected-effect'}:value);
- vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,json:async()=>({workspace:value})})));
- render(<WorkspaceAudioPreparation workspace={value} command={command} onChange={()=>{}} bridge={bridge as never} studioTools selectedShotId="S1" pendingImportFile={new File(['audio'],'native-selection.mp3',{type:'audio/mpeg'})}/>);
- fireEvent.click(screen.getByRole('button',{name:'音效'}));expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'导入所选文件'}));
- await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',materialRevisionId:'native-selected-effect',durationSeconds:.4})));
- expect(command).toHaveBeenCalledWith('importMaterial',expect.objectContaining({sourcePath:'native-selection.mp3',materialPurpose:'sound_effect'}));expect(command.mock.calls.map(([name])=>name)).toEqual(['importMaterial','prepareWorkspaceAudio']);
-});
-it('reports the whole sound adoption as busy and shows adoption progress until registration finishes',async()=>{
- const value={...workspace,audio:{mix:{voices:[],sounds:[]},preparations:[{...effect('music','S1','配乐'),kind:'bgm'}]}} as unknown as ProductionWorkspace;
- const native={activeTimelineId:'t',assets:[],timelines:[{id:'t',fps:30,tracks:{},items:[]}]};
- let finish!:(value:ProductionWorkspace)=>void;
- const command=vi.fn(async(name:string)=>name==='prepareWorkspaceAudioAdoption'?{adoptionId:'use',edit:{}}:new Promise<ProductionWorkspace>(resolve=>{finish=resolve;}));
- const bridge={connected:true,inspect:vi.fn(async()=>({document:native})),save:vi.fn(async()=>{}),applyNativeEdit:vi.fn(async()=>native)},onBusyChange=vi.fn();
- vi.stubGlobal('fetch',vi.fn(async()=>({ok:true,json:async()=>({workspace:value})})));
- render(<WorkspaceAudioPreparation workspace={value} command={command} onChange={()=>{}} bridge={bridge as never} studioTools onBusyChange={onBusyChange}/>);
- fireEvent.click(screen.getByRole('button',{name:'采用'}));expect(await screen.findByText('正在采用声音…')).toBeTruthy();
- await waitFor(()=>expect(command).toHaveBeenCalledWith('commitWorkspaceAudioAdoption',expect.anything()));expect(onBusyChange).toHaveBeenLastCalledWith(true);
- await act(async()=>finish(value));expect(onBusyChange).toHaveBeenLastCalledWith(false);expect(screen.queryByText('正在采用声音…')).toBeNull();
 });

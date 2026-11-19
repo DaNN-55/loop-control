@@ -3,21 +3,13 @@ import {readFile} from 'node:fs/promises';
 // One registration per source file. Dependency edges belong to source imports.
 const modules=[
  ['composition','src/shotComposition.ts'],
- ['display-names','src/workspaceDisplayNames.ts'],
  ['video-sound','src/workspaceVideoSound.ts'],
- ['candidates','src/workspaceCandidates.ts',true],
  ['structure','src/workspaceShots.ts',true],
  ['ranges','src/workspaceVideo.ts'],
- ['audio','src/workspaceAudio.ts',true],
- ['audio-adoption','src/workspaceAudioAdoption.ts',true],
  ['caption-drag','scripts/openchatcut-caption-drag.mjs',true],
  ['caption-layout','scripts/openchatcut-caption-layout.mjs',true],
  ['bridge-retry','scripts/openchatcut-bridge-retry.mjs',true],
  ['embed','scripts/openchatcut-embed-client.mjs',true],
- ['captions','src/workspaceCaptions.ts',true],
- ['render-preferences','src/workspaceRenderPreferences.ts'],
- ['audio-mix','src/shotAudioMix.ts'],
- ['shot-captions','src/shotCaptions.ts'],
 ];
 
 export const nativeWorkspaceModuleFiles=modules.map(([,file])=>file);
