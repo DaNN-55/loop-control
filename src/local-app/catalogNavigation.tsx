@@ -42,7 +42,7 @@ export function catalogNavigationUrl(value:CatalogNavigation,href=location.href)
 }
 export const CatalogPanelNavigationContext=createContext<{openArchivedProductions?:()=>void;value:CatalogPanels;change:<K extends keyof CatalogPanels>(key:K,patch:Partial<CatalogPanels[K]>)=>void}|null>(null);
 export function useCatalogPanelNavigation<K extends keyof CatalogPanels>(key:K):PanelNavigation<K>|undefined{const value=useContext(CatalogPanelNavigationContext);return value?{value:value.value[key],change:patch=>value.change(key,patch)}:undefined;}
-type WorkspaceLocation={episode:string;step:ProductionStep|null;tab:PreparationTab;change:(patch:{step?:ProductionStep;tab?:PreparationTab})=>void};
+type WorkspaceLocation={openEditorOnEntry?:boolean;consumeEditorEntry?:()=>void;openCopy?:(episodeId:string)=>void;episode:string;step:ProductionStep|null;tab:PreparationTab;change:(patch:{step?:ProductionStep;tab?:PreparationTab})=>void};
 export const WorkspaceNavigationContext=createContext<WorkspaceLocation|null>(null);
 export function useWorkspaceNavigation(episode:string){const value=useContext(WorkspaceNavigationContext);return value?.episode===episode?value:null;}
 

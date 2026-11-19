@@ -24,25 +24,33 @@ it('opens an isolated copy through its own API and can return when its temporary
 
 it('keeps edits inside the copy, guards external navigation, and saves before discarding the temporary session',async()=>{
  const actions:string[]=[],navigated=vi.fn();
- request.mockImplementation(async(_path:string,init?:RequestInit)=>{const body=JSON.parse(String(init?.body));actions.push(body.action);return body.action==='open'?{copyId:body.copyId,sourceSha256:'frozen',studioUrl:`http://127.0.0.1:5678/?lcBridge=1#/editor/loop-control-${body.copyId}`,workspace:{projectId:'loop-control-'+body.copyId,relativePath:'copy.json',sha256:'sha',fileSize:1},sourcePath:'copy.json'}:{closed:true};});
+ request.mockImplementation(async(_path:string,init?:RequestInit)=>{const body=JSON.parse(String(init?.body));actions.push(body.action);return body.action==='open'?{copyId:body.copyId,sourceSha256:'frozen',studioUrl:`http://127.0.0.1:5678/?lcBridge=1#/editor/loop-control-${body.copyId}`,workspace:{projectId:'loop-control-'+body.copyId,relativePath:'copy.json',sha256:'sha',fileSize:1},sourcePath:'copy.json'}:body.action==='keep'?{episodeId:'copy-episode',workspaceId:'copy-workspace',title:'副本'}:{closed:true};});
  function Leave(){const leave=useWorkspaceDraftLeave();return <button onClick={()=>leave(navigated)}>离开生产单</button>;}
- render(<WorkspaceDraftProvider><Leave/><CompletedStudioView episodeId="episode" title="已完成" onClose={()=>{}}/></WorkspaceDraftProvider>);
+ render(<WorkspaceDraftProvider><Leave/><CompletedStudioView episodeId="episode" title="已完成" onClose={()=>{}} onSaved={navigated}/></WorkspaceDraftProvider>);
  const iframe=await screen.findByTitle('OpenChatCut 查看副本') as HTMLIFrameElement,url=new URL(iframe.src),win=iframe.contentWindow!,channel=url.searchParams.get('lcChannel'),projectId=url.searchParams.get('lcProject');
  await act(async()=>{});
  const document={timelines:[{width:1080,selectedId:null}]};
  vi.spyOn(win,'postMessage').mockImplementation((message)=>{const data=message as {requestId:string;action:string};queueMicrotask(()=>fireEvent(window,new MessageEvent('message',{source:win,origin:url.origin,data:{type:'loop-control:result',channel,projectId,requestId:data.requestId,ok:true,result:data.action==='inspect'?{document:structuredClone(document)}:undefined}})));});
  fireEvent(window,new MessageEvent('message',{source:win,origin:'http://127.0.0.1:9999',data:{type:'loop-control:state',channel,projectId,writable:true}}));
- expect((screen.getByRole('button',{name:'另存为独立工程'}) as HTMLButtonElement).disabled).toBe(true);
+ expect((screen.getByRole('button',{name:'保存为新生产单'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent(window,new MessageEvent('message',{source:win,origin:url.origin,data:{type:'loop-control:state',channel,projectId,writable:true}}));
- await waitFor(()=>expect((screen.getByRole('button',{name:'另存为独立工程'}) as HTMLButtonElement).disabled).toBe(false));
+ await waitFor(()=>expect((screen.getByRole('button',{name:'保存为新生产单'}) as HTMLButtonElement).disabled).toBe(false));
  fireEvent(window,new MessageEvent('message',{source:win,origin:url.origin,data:{type:'loop-control:closed',channel,projectId}}));
- expect(screen.getByRole('alert').textContent).toContain('可另存已自动保存');
+ expect(screen.getByRole('alert').textContent).toContain('可保存已自动保存');
  fireEvent(window,new MessageEvent('message',{source:win,origin:url.origin,data:{type:'loop-control:state',channel,projectId,writable:true}}));
  await waitFor(()=>expect(screen.queryByRole('alert')).toBeNull());
  document.timelines[0].width=720;fireEvent.click(screen.getByRole('button',{name:'离开生产单'}));
  const dialog=await screen.findByRole('dialog',{name:'保留这次修改？'});expect(navigated).not.toHaveBeenCalled();expect(actions).toEqual(['open']);
  fireEvent.click(within(dialog).getByRole('button',{name:'继续查看'}));expect(navigated).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'离开生产单'}));
- fireEvent.click(within(await screen.findByRole('dialog',{name:'保留这次修改？'})).getByRole('button',{name:'另存为独立工程'}));
+ fireEvent.click(within(await screen.findByRole('dialog',{name:'保留这次修改？'})).getByRole('button',{name:'保存为新生产单'}));
  await waitFor(()=>expect(navigated).toHaveBeenCalledOnce());expect(actions).toEqual(['open','keep','discard']);
+});
+it('recovers an explicit saved-copy intent without needing a surviving temporary editor',async()=>{
+ const {WorkspaceDraftOwner}=await import('./WorkspaceDraft'),copyId='11111111-1111-4111-8111-111111111111',saved=vi.fn();
+ localStorage.setItem('loop-control.production-copy-save:'+JSON.stringify(['owner','episode']),copyId);
+ request.mockImplementation(async(_path:string,init?:RequestInit)=>{const body=JSON.parse(String(init?.body));if(body.action==='open')throw Object.assign(Error('临时会话已关闭'),{status:404});if(body.action==='keep')return{episodeId:'new-copy',workspaceId:'new-workspace',title:'副本'};throw Object.assign(Error('已关闭'),{status:404});});
+ render(<WorkspaceDraftOwner ownerId="owner"><CompletedStudioView episodeId="episode" title="完成作品" onClose={()=>{}} onSaved={saved}/></WorkspaceDraftOwner>);
+ fireEvent.click(await screen.findByRole('button',{name:'继续保存副本'}));await waitFor(()=>expect(saved).toHaveBeenCalledWith({episodeId:'new-copy',workspaceId:'new-workspace',title:'副本'}));
+ expect(localStorage.getItem('loop-control.production-copy-save:'+JSON.stringify(['owner','episode']))).toBeNull();
 });

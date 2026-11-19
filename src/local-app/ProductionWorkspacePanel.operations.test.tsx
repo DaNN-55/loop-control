@@ -174,3 +174,8 @@ it('keeps the native saved file SHA separate from the normalized canonical proje
  await waitFor(()=>expect(screen.getByRole('button',{name:'保存'})).toHaveProperty('disabled',false));expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
  expect(command.mock.calls.map(([name])=>name)).toEqual(['openWorkspaceStudio','saveWorkspaceStudio','saveWorkspaceStudio']);
 });
+it('opens the new production copy only from an explicit saved-copy entry and does not render it',async()=>{
+ readWorkspace();const command=vi.fn(async()=>opened),consume=vi.fn();
+ render(<WorkspaceNavigationContext.Provider value={{episode:'e',step:'editing',tab:'visual',openEditorOnEntry:true,consumeEditorEntry:consume,change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="副本" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>);
+ await screen.findByTitle('OpenChatCut 剪辑工程');expect(command).toHaveBeenCalledExactlyOnceWith('openWorkspaceStudio',expect.objectContaining({episodeId:'e',workspaceId:'w'}));expect(consume).toHaveBeenCalledOnce();
+});

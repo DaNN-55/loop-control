@@ -71,6 +71,6 @@ export function WorkspaceCompletedReview({workspace:w,project,materials,view,onO
     </div>
    </section></div>}
   </CompletedDialog>
-  {view==='project'&&<CompletedStudioView episodeId={w.episodeId} title={uiText('已完成生产单')} initialShotId={selected??undefined} onClose={saved=>{if(saved)setCopyNotice('副本已保存到 OpenChatCut 独立剪辑库。');onReturn();}}/>}
+  {view==='project'&&<CompletedStudioView episodeId={w.episodeId} title={uiText('已完成生产单')} initialShotId={selected??undefined} onClose={saved=>{if(saved)setCopyNotice('生产单副本已保存。');onReturn();}}/>}
  </>;
 }
