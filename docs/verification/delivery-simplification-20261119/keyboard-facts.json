@@ -25,5 +25,19 @@
   },
   "durationSeconds": 6.058667,
   "downloadBytes": 3797486,
-  "downloadSha256": "7efd1da92f2227ab98b377243b6c740d84609137a78bcac2fa1e546bb5856bd5"
+  "downloadSha256": "7efd1da92f2227ab98b377243b6c740d84609137a78bcac2fa1e546bb5856bd5",
+  "clipboard": [
+    {
+      "field": "标题",
+      "value": "键盘演练标题"
+    },
+    {
+      "field": "简介",
+      "value": "只用键盘也能准备发布资料。"
+    },
+    {
+      "field": "标签",
+      "value": "#键盘 #测试"
+    }
+  ]
 }
