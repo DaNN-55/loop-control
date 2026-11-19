@@ -57,7 +57,7 @@ BEGIN
  END LOOP;
  FOR entry IN SELECT jsonb_array_elements(p_data->'artifacts') LOOP
   old_id:=(entry->>'sourceId')::uuid;item_data:=entry->'value';
-  IF NOT EXISTS(SELECT 1 FROM public.artifacts WHERE id=old_id AND episode_id=source.id AND sha256=item_data->>'sha256' AND file_size=(item_data->>'file_size')::bigint AND artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image','legacy_recovered_media')) THEN RAISE EXCEPTION 'Verified copy source required' USING ERRCODE='42501';END IF;
+  IF NOT EXISTS(SELECT 1 FROM public.artifacts WHERE id=old_id AND episode_id=source.id AND sha256=item_data->>'sha256' AND file_size=(item_data->>'file_size')::bigint AND (id IN(SELECT source_artifact_id FROM public.audio_tracks WHERE episode_id=source.id) OR artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image','legacy_recovered_media'))) THEN RAISE EXCEPTION 'Verified copy source required' USING ERRCODE='42501';END IF;
   INSERT INTO public.artifacts SELECT (jsonb_populate_record(NULL::public.artifacts,item_data||jsonb_build_object('episode_id',target.id,'producer_task_id',NULL,'created_at',clock_timestamp()))).*;
   INSERT INTO local_identity.production_copy_sources VALUES(target.id,(item_data->>'id')::uuid,source.id,old_id);
  END LOOP;

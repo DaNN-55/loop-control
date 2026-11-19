@@ -1,3 +1,7 @@
+import {readFile,unlink} from 'node:fs/promises';
+import {validateImportedMaterial} from './materialAcceptance.js';
+import {resolveWorkspaceSource} from './workspaceSources.js';
+import {withWorkspaceShotMetadata} from '../workspaceShots.js';
 import {rebaseCopiedWorkspaceNarrations} from './workspaceNarration.js';
 import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
@@ -8,7 +12,7 @@ import {join,extname} from 'node:path';
 import {ownerTransaction,sessionTransaction} from './ownerTransaction.js';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
 import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
-import {episodeFileIO} from './episodeFiles.js';
+import {episodeFileIO,verifyEpisodeFile} from './episodeFiles.js';
 import {productionCopyId,remapProductionCopy} from './productionCopyMapping.js';
 import {copyProductionMedia} from './productionCopyMedia.js';
 import {createEpisodeDirectory} from './episodeCreation.js';
@@ -54,7 +58,7 @@ export class CompletedProductionCopies {
    const workspace=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE episode_id=$1 FOR SHARE',[episodeId])).rows[0];if(!workspace)throw new ConfigurationError(409,'原单制作工程不可用。');
    const root=await resolveEpisodeAssetRoot(c,this.mediaRoot,episodeId),io=await episodeFileIO(c,root,episodeId),preparation=(await c.query('SELECT * FROM local_identity.production_preparation_revisions WHERE id=$1',[workspace.preparation_revision_id])).rows[0];
    const materials=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 ORDER BY revision_number',[episodeId])).rows as MediaRow[];
-   const artifacts=(await c.query("SELECT * FROM public.artifacts WHERE episode_id=$1 AND artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image','legacy_recovered_media')",[episodeId])).rows as MediaRow[];
+   const artifacts=(await c.query("SELECT * FROM public.artifacts WHERE episode_id=$1 AND (id IN (SELECT source_artifact_id FROM public.audio_tracks WHERE episode_id=$1) OR artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','shot_video','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image','legacy_recovered_media'))",[episodeId])).rows as MediaRow[];
    const audio=(await c.query('SELECT * FROM public.audio_tracks WHERE episode_id=$1',[episodeId])).rows as MediaRow[];
    const files:StagedFile[]=[],stageRoot=join(this.mediaRoot,'production-copy-staging',session.id,copyId);
    const stage=async(reference:string,path:string,sha256:string,fileSize:number,alias?:string)=>{
@@ -78,8 +82,8 @@ export class CompletedProductionCopies {
   const prepId=productionCopyId(copyId,String(s.preparation.id));mapping[String(s.preparation.id)]=prepId;
   for(const row of [...s.decisions,...s.audioPreparations]){const id=String(row.candidate_id??row.id);mapping[id]=productionCopyId(copyId,id);}
   for(const binding of s.workspace.bindings)mapping[binding.id]=productionCopyId(copyId,binding.id);
-  for(const file of s.files){const relativePath=`${io.relativePath}/materials/${file.sha256}${extname(file.path)}`;await copyProductionMedia(file.path,join(root,relativePath),file.sha256,file.fileSize);for(const ref of file.references)mapping[ref]=relativePath;}
-  const project=remapProductionCopy(s.project,mapping);if(project.loopControl)project.loopControl.inputFingerprint=workspaceId;
+  for(const file of s.files){const relativePath=`${io.relativePath}/materials/${file.sha256}-native-${file.sha256}${extname(file.path)}`;await copyProductionMedia(file.path,join(root,relativePath),file.sha256,file.fileSize);for(const ref of file.references)mapping[ref]=relativePath;}
+  let project=remapProductionCopy(s.project,mapping);if(project.loopControl)project.loopControl.inputFingerprint=workspaceId;
   const bindings=synchronizeWorkspaceBindings(project,remapProductionCopy(s.workspace.bindings,mapping));
   const native=await persistWorkspaceProject(c,root,targetId,project),contentSha=workspaceContentSha256(project);
   const manifest=remapProductionCopy(s.preparation.manifest,mapping),prepFile=await persistPublicationFile(c,root,targetId,`${io.relativePath}/preparation/${prepId}.json`,Buffer.from(JSON.stringify(manifest,null,2)+'\n'));
@@ -93,11 +97,24 @@ export class CompletedProductionCopies {
   });
   const data={scriptId:mapping[s.workspace.script_revision_id],sourceWorkspaceId:s.workspace.id,narrations,audioPreparations,materials:s.materials.map(sourceRow),artifacts:s.artifacts.map(sourceRow),audio:s.audio.map(sourceRow),workspace,preparation:{...remapProductionCopy(s.preparation,mapping),id:prepId,script_revision_id:mapping[s.workspace.script_revision_id],revision_number:1,source_format:'production-preparation/v1',source_reference_id:null,file_reference:prepFile,manifest,content_sha256:canonicalFingerprint(manifest)},shots:remapProductionCopy(s.shots,mapping),narrationInputs:remapProductionCopy(s.narrationInputs,mapping),captionInputs:remapProductionCopy(s.captionInputs,mapping),decisions:remapProductionCopy(s.decisions,mapping).map(row=>({...row,project_sha256:native.sha256}))};
   await c.query('SELECT local_identity.initialize_production_copy($1,$2,$3)',[s.episode.id,targetId,data]);
+  const originalPaths=new Set([...s.materials,...s.artifacts,...s.audio].map(row=>String(row.storage_path??row.relative_path)));
+  for(const file of s.files){
+   if(file.references.some(reference=>originalPaths.has(reference))||s.publication.cover&&file.references.includes(s.publication.cover.file.relativePath))continue;
+   const source=file.references.find(reference=>s.project.assets.some(asset=>asset.src===reference)||s.project.timelines.some(t=>t.items.some(item=>item.src===reference))),asset=s.project.assets.find(asset=>asset.src===source),item=s.project.timelines.flatMap(t=>t.items).find(item=>item.src===source),kind=asset?.kind??item?.kind;
+   if(!source||!['video','image','audio'].includes(String(kind))||file.fileSize>100*1024*1024)throw new ConfigurationError(409,'新导入素材无效或超过100 MB，请保留当前修改并调整该素材。');
+   const name='native-'+file.sha256+extname(file.path),mime=await validateImportedMaterial(await readFile(file.path),{sourcePath:name,materialType:String(kind),mimeType:'',materialPurpose:'general_reference',isMainScript:false});
+   await c.query("SELECT public.import_production_material($1,$2,'file',$3,$4,$5,$6,$7,false,'general_reference')",[targetId,kind,name,mapping[source],mime,file.sha256,file.fileSize]);
+  }
+  for(const binding of bindings){
+   const item=project.timelines.flatMap(t=>t.items).find(item=>item.id===binding.itemId);if(!item||!['video','image'].includes(String(item.kind))||typeof item.src!=='string')continue;
+   const source=await resolveWorkspaceSource(c,root,targetId,item.src);binding.source={materialRevisionId:source.id,relativePath:item.src,sha256:source.sha256,fileSize:Number(source.file_size),kind:item.kind as 'video'|'image'};
+  }
+  project=withWorkspaceShotMetadata(project,bindings);
   let row=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[workspaceId])).rows[0] as ProductionWorkspaceRecord;
   const adoptionFingerprints=await rebaseCopiedWorkspaceNarrations(c,row,project);
   const rebased=await persistWorkspaceProject(c,root,targetId,project),rebasedContent=workspaceContentSha256(project);
-  await c.query('UPDATE local_identity.production_workspaces SET project_path=$2,project_sha256=$3,project_size=$4,content_sha256=$5 WHERE id=$1',[workspaceId,rebased.relativePath,rebased.sha256,rebased.fileSize,rebasedContent]);
-  row={...row,project_path:rebased.relativePath,project_sha256:rebased.sha256,project_size:rebased.fileSize,content_sha256:rebasedContent};
+  await c.query('UPDATE local_identity.production_workspaces SET project_path=$2,project_sha256=$3,project_size=$4,content_sha256=$5,bindings=$6 WHERE id=$1',[workspaceId,rebased.relativePath,rebased.sha256,rebased.fileSize,rebasedContent,JSON.stringify(bindings)]);
+  row={...row,bindings,project_path:rebased.relativePath,project_sha256:rebased.sha256,project_size:rebased.fileSize,content_sha256:rebasedContent};
   await c.query('SELECT local_identity.rebase_production_copy_adoptions($1,$2,$3)',[workspaceId,adoptionFingerprints,rebased.sha256]);
   await syncProductionWorkspaceShots(c,row,root);await syncNativeWorkspaceCaptions(c,root,row,project);
   await validateWorkspaceProject(c,root,targetId,project,await this.runtime());await recordWorkspaceVersion(c,row,'从已完成作品保存生产单副本');
@@ -105,5 +122,6 @@ export class CompletedProductionCopies {
   await c.query('INSERT INTO local_identity.workspace_publications(workspace_id,episode_id,content,cover,basis_content_sha256,previous_text) VALUES($1,$2,$3,$4,$5,NULL)',[workspaceId,targetId,publication.content,publication.cover,s.publication.basisContentSha256]);
   if(publication.cover)await c.query('INSERT INTO local_identity.workspace_publication_files(episode_id,relative_path,sha256,file_size) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',[targetId,publication.cover.file.relativePath,publication.cover.file.sha256,publication.cover.file.fileSize]);
   const verified=await readProductionWorkspace(c,targetId,root);if(!verified)throw new ConfigurationError(409,'新生产单尚未核实，请保留修改重试。');await io.assertValid();
+  if(native.sha256!==rebased.sha256){await verifyEpisodeFile(c,root,targetId,native.relativePath,native.sha256,native.fileSize);await unlink(await io.resolveReference(native.relativePath));}
  }
 }
