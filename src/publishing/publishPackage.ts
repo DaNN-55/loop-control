@@ -1,6 +1,6 @@
 import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
 import {safeRelative,verifyNativeFile} from '../local-app/localFiles.js';
-import {verifyWorkspaceManifest,workspacePublishPackageVersion,type WorkspaceDeliveryIdentity} from "./workspacePublishPackage.js";
+import {verifyWorkspaceManifest,workspacePublishPackageVersion,workspaceLegacyPackageVersion,type WorkspaceDeliveryIdentity} from "./workspacePublishPackage.js";
 import { createHash } from "node:crypto";
 import { readFile, realpath, lstat, writeFile } from "node:fs/promises";
 import { relative, resolve } from "node:path";
@@ -59,7 +59,7 @@ export async function verifyPublishPackage(input: { assetRoot: string; episodeId
   if (createHash("sha256").update(contents).digest("hex") !== input.publishPackage.sha256) throw new Error("发布包清单 SHA-256 不匹配。");
 
   const manifest: unknown = JSON.parse(contents.toString("utf8"));
-  if (isRecord(manifest)&&manifest.version===workspacePublishPackageVersion) { await verifyWorkspaceManifest(input.assetRoot,input.episodeId,manifest,input.expectedWorkspaceIdentity,input.storage); return; }
+  if (isRecord(manifest)&&(manifest.version===workspacePublishPackageVersion||manifest.version===workspaceLegacyPackageVersion)) { await verifyWorkspaceManifest(input.assetRoot,input.episodeId,manifest,input.expectedWorkspaceIdentity,input.storage); return; }
   if (!isManifest(manifest, input.episodeId)) throw new Error("发布包清单格式无效。");
   const artifacts = selectRequiredArtifacts(manifest.artifacts, "发布包清单");
   await verifyArtifacts(input.assetRoot, input.episodeId, artifacts,input.storage);

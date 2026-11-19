@@ -14,7 +14,7 @@ export async function executeWorkspaceDeliveryWorker(pool:Pool,root:string,task:
  let result;
  try{
  const input=snapshot.workspace_delivery,storage=await episodeFileIO(pool,root,String(task.episode_id),true);
- const pack=await createWorkspacePublishPackage({assetRoot:root,episodeId:String(task.episode_id),relativePath:snapshot.output.relative_path,identity:input.identity,artifacts:input.artifacts,storage});
+ const pack=await createWorkspacePublishPackage({assetRoot:root,episodeId:String(task.episode_id),relativePath:snapshot.output.relative_path,identity:input.identity,artifacts:input.artifacts,storage,version:'publish-package/v2'});
  await verifyPublishPackage({assetRoot:root,episodeId:String(task.episode_id),publishPackage:pack,expectedWorkspaceIdentity:input.identity,storage});
  result={version:'worker-result/v1',taskId:task.task_id,status:'completed',deliveryIdentity:input.identity,artifacts:[...input.artifacts.filter(a=>['cover','metadata','final_qc_report'].includes(a.artifactType)),{artifactType:'publish_package',...pack}],validation:{passed:true,checks:[{name:'exact_workspace_package',passed:true,detail:'已确认视频、完整工程、封面、元数据、检查证据及清单的归属、大小和 SHA-256 均通过。'}]},actualCostCents:0,blockers:[],retry:{shouldRetry:false,reason:'交付包已验证。'},nextStep:'下载已验证交付文件。'};
  await port.rpc('report_worker_result',{...args,p_result:result});
