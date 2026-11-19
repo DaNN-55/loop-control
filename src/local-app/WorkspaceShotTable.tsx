@@ -42,7 +42,7 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
  return <>
   <div className="workspace-table-caption"><h3>{uiText("镜头 ")}{!readOnly&&!disabled&&<span id={helpId} >{uiText("拖动行调整顺序，或按 Alt + ↑/↓")}</span>}</h3></div>
   <div className="workspace-shot-table-scroll" role="region" aria-label={uiText("镜头清单")} tabIndex={0}>
-   <table className="workspace-shot-table" aria-label={uiText("镜头")}><thead><tr><th scope="col">{uiText("镜头")}</th><th scope="col">{uiText("脚本与素材")}</th><th scope="col">{uiText("时长")}</th><th scope="col">{uiText("准备情况")}</th>{!readOnly&&<th scope="col">{uiText("操作")}</th>}</tr></thead>
+   <table className={"workspace-shot-table"+(readOnly?" is-readonly":"")} aria-label={uiText("镜头")}><colgroup>{[72,300,72,84,...(readOnly?[]:[44])].map((width,index)=><col key={index} style={{width}}/>)}</colgroup><thead><tr><th scope="col">{uiText("镜头")}</th><th scope="col">{uiText("脚本与素材")}</th><th scope="col">{uiText("时长")}</th><th scope="col">{uiText("准备情况")}</th>{!readOnly&&<th scope="col">{uiText("操作")}</th>}</tr></thead>
     <tbody>{clips.map((clip,index)=>{
      const shotLabel=`镜头 ${String(index+1).padStart(2,"0")}`;
      const preparation=workspaceShotPreparation(workspace,clip.shotId,project);

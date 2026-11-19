@@ -18,7 +18,7 @@ it('keeps only the original single-shot split workspace after batch preparation 
  await screen.findByRole('table',{name:'镜头'});
  expect(screen.queryByRole('button',{name:/批量准备|集中核对/})).toBeNull();
  expect(screen.queryByRole('combobox',{name:'批量准备内容'})).toBeNull();
- expect(screen.getByRole('separator',{name:'调整镜头列表宽度'})).toBeTruthy();
+ expect(screen.queryByRole('separator',{name:'调整镜头列表宽度'})).toBeNull();
  expect(screen.getByRole('table',{name:'镜头'})).toBeTruthy();
  expect(screen.getAllByRole('table')).toHaveLength(1);
  expect(screen.getByRole('tab',{name:'画面'})).toBeTruthy();
@@ -31,5 +31,5 @@ it('retains single-shot preparation when the saved native project is unavailable
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path.includes('/workspace/project?')?{project:null}:path.includes('connections')?{serviceCatalog:{version:1,groups:[]}}:{workspace})));
  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="读取恢复" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByText('第一镜');await waitFor(()=>expect(screen.queryByText('正在读取制作流程…')).toBeNull());
- expect(screen.queryByRole('button',{name:/批量准备/})).toBeNull();expect(screen.getByRole('separator',{name:'调整镜头列表宽度'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
+ expect(screen.queryByRole('button',{name:/批量准备/})).toBeNull();expect(screen.queryByRole('separator',{name:'调整镜头列表宽度'})).toBeNull();expect(command).not.toHaveBeenCalled();
 });

@@ -205,9 +205,8 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-work
 @media(max-width:1150px){[data-compact-workflow] .workspace-preparation-grid{grid-template-columns:minmax(300px,.9fr) minmax(440px,1.1fr)}[data-compact-workflow] .workspace-shot-table th:first-child{width:70px}[data-compact-workflow] .workspace-shot-table th:nth-child(3){width:50px}[data-compact-workflow] .workspace-shot-table th:nth-child(4){width:55px}[data-compact-workflow] .workspace-shot-table th:nth-child(5){width:40px}}
 @media(max-width:900px){[data-compact-workflow] .workspace-preparation-grid{grid-template-columns:minmax(0,1fr)}.workspace-online-authorization[open]{max-width:100%}.workspace-version-history[open]{max-height:300px}}
 
-/* User-adjustable list/detail split; keep each pane readable at every desktop width. */
-[data-compact-workflow] .workspace-preparation-grid.is-resizable{grid-template-columns:clamp(280px,var(--workspace-list-size,36%),calc(100% - 369px)) 9px minmax(0,1fr)}
-:is(.workspace-preparation-resizer,.workspace-material-grip) {
+/* The material shelf retains its independent height grip. */
+.workspace-material-grip {
  display:flex;
  align-items:center;
  justify-content:center;
@@ -215,20 +214,13 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-work
  background:var(--lc-surface-2,#f7f9fc);
  outline-offset:-2px;
 }
-:is(.workspace-preparation-resizer,.workspace-material-grip)>span {
+.workspace-material-grip>span {
  border-radius:2px;
  background:var(--lc-line-strong,#bdcadd);
 }
-:is(.workspace-preparation-resizer,.workspace-material-grip):is(:hover,:focus-visible,[data-resizing]),
-.is-resizing>.workspace-preparation-resizer {background:var(--lc-accent-soft,#eaf0ff)}
-:is(.workspace-preparation-resizer,.workspace-material-grip):focus-visible {outline:2px solid var(--lc-accent,#365fe0)}
-:is(.workspace-preparation-resizer,.workspace-material-grip):is(:hover,:focus-visible,[data-resizing])>span,
-.is-resizing>.workspace-preparation-resizer>span {background:var(--lc-accent,#365fe0)}
-.workspace-preparation-resizer {cursor:col-resize;border-inline:1px solid var(--lc-line,#d8e1ee)}
-.workspace-preparation-resizer>span {width:3px;height:30px}
-.workspace-preparation-grid.is-resizing{user-select:none;cursor:col-resize}
-.workspace-preparation-grid.is-resizable>.workspace-preparation-detail{border-left:0}
-@media(max-width:900px){[data-compact-workflow] .workspace-preparation-grid.is-resizable{grid-template-columns:1fr}.workspace-preparation-resizer{display:none}}
+.workspace-material-grip:is(:hover,:focus-visible,[data-resizing]) {background:var(--lc-accent-soft,#eaf0ff)}
+.workspace-material-grip:focus-visible {outline:2px solid var(--lc-accent,#365fe0)}
+.workspace-material-grip:is(:hover,:focus-visible,[data-resizing])>span {background:var(--lc-accent,#365fe0)}
 
 /* Compact records stay visible and grow naturally; the sidebar owns scrolling. */
 .workspace-version-history{display:grid;gap:7px;padding:10px 12px;font-size:11px;line-height:1.5;max-height:none;overflow:visible}
@@ -468,3 +460,13 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table :is(th,td):nth-child(4){padding-inline:5px}
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table td.workspace-shot-table-actions-cell{padding-inline:4px}
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table tfoot td.workspace-shot-insert-cell{padding:0;line-height:0}
+
+/* Approved balanced table: contents and old split preferences never resize columns. */
+[data-compact-workflow] .workspace-preparation{container-type:inline-size}
+[data-compact-workflow] .workspace-preparation-grid.is-fixed{grid-template-columns:572px minmax(0,1fr)}
+[data-compact-workflow] .workspace-preparation-grid.is-fixed .workspace-shot-table{width:572px;min-width:572px}
+[data-compact-workflow] .workspace-preparation-grid.is-fixed .workspace-shot-table.is-readonly{width:528px;min-width:528px}
+[data-compact-workflow] .workspace-preparation-grid.is-fixed .workspace-shot-table th{width:auto}
+[data-compact-workflow] .workspace-preparation-grid.is-fixed .workspace-shot-table tbody tr{height:64px}
+html[data-interface="impeccable"] .workspace-shot-table .workspace-shot-menu-trigger:not(:disabled):is(:hover,[data-hovered],:focus-visible){color:var(--lc-danger,#bd4147)!important;background-color:var(--lc-danger-soft,#fff0f1)!important}
+@container(width < 960px){[data-compact-workflow] .workspace-preparation-grid.is-fixed{grid-template-columns:minmax(0,1fr)}}
