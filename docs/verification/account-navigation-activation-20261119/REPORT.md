@@ -46,3 +46,13 @@
 ## Modern Web Guidance
 
 `responsive-design`：按“Use dynamic viewport units”使用 `dvw` 限制独立回收站宽度；继续沿用原有窄屏行布局，避免长标题竖排及小屏横向溢出。
+
+## 收尾清理
+
+用户随后授权清理本任务已不用的分支、工作树与临时测试文件。实现提交已完整包含于 main；工作树没有未提交改动，也无进程继续使用，正常删除分支 `codex/account-navigation-simplification-20261119` 及 `.scratch/account-navigation-20261119/worktree`。
+
+额外发现早期失败轮次留下 `/private/tmp/loop-account-navigation-7Dav2M`（约 650MB）。核对 ownership 回执属于本次测试、进程工作目录无引用、私有 PostgreSQL 状态为停止、无关联挂载后删除；未操作日常 PostgreSQL 或正式媒体卷。另删除 44 个本任务临时测试报告（约 5.1MB）和 7 个激活辅助文件。与原隔离工作树合计约 780MB，按清理前 du／文件大小估算，不代表实际物理回收量。
+
+必要恢复备份全部保留，57 个原文件 SHA-256 与清理前一致，数据库 dump 与校验文件匹配。最终隔离运行结果、宽度／焦点证据、ffprobe、必要截图与日志归档至恢复目录的 `acceptance/`，保留全量测试摘要；生成的测试视频只保留探测结果、大小与 SHA-256。之前交付的最终界面图保留在 `.scratch/account-navigation-activation-20261119/daily-final.jpg`，避免已给出的图片链接失效。
+
+清理前后 143 张表行数／内容摘要、32 个核心工程文件字节指纹、部署配置及运行版本全部一致。日常进程仍为 PID 42096、HTTP 200，没有停止／重启服务，也没有改动业务数据和剪辑工程。详情见私有恢复目录中的 `cleanup-manifest.json`、`cleanup-before.json`、`cleanup-after.json` 和 `cleanup-verification.json`。临时 runner、旧工作树和 `/tmp` 原报告路径已失效，复验应以仓库中的集成测试及归档事实为起点。

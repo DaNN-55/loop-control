@@ -23,7 +23,7 @@
 
 ## 复验方式与隔离边界
 
-本地临时 runner 按授权保留在 ignored 的 `.scratch/account-navigation-verification/run-isolated.mjs`，不随本次提交。已有 worktree 中可执行：
+原本地临时 runner 及隔离工作树已按用户后续授权清理；最终必要证据已归档至 `.loop-control/local/activation-recovery/account-navigation-20261119/acceptance/isolated/`。以下为当时的复验命令，不表示现在仍可直接执行：
 
 ```sh
 node .scratch/account-navigation-verification/run-isolated.mjs --phase app
@@ -39,3 +39,5 @@ fixture 的 native startup 会绑定有效默认目录；本用例仅在私有�
 ## 最终执行与清理
 
 最终完整运行：`.scratch/account-navigation-verification/runs/2026-11-19T08-46-39-312Z-95ff658e`。2 项通过、0 失败，45.60 秒。run.json 确认两条浏览器 session 已关闭、私有 PG17 已停止且状态复核无残留、私有挂载已核验、runner 临时根已移除、cleanupErrors 为空。另已核对内容与所有权后移除仅本任务遗留的 2 个临时 TSX 入口；记录见 task-entry-cleanup.json。视频、截图与原始日志保留在该 ignored 证据目录。未读取日常 deployment、Keychain 秘密，未调用付费生成。
+
+收尾：旧工作树及临时视频已清理，最终结果、必要截图与 ffprobe 保留在上述归档；完整清单见恢复目录中的 `cleanup-manifest.json`。

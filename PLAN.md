@@ -1,3 +1,16 @@
+# 账号导航任务收尾清理（2026-11-19）
+
+用户授权清理本次已无用途的分支、工作树及临时测试文件，保留必要恢复备份，不动现有数据和剪辑工程。
+
+- [x] 确认实现提交已完整合入 main、工作树 clean，无测试进程继续使用。
+- [x] 删除已合并分支 `codex/account-navigation-simplification-20261119` 及其隔离工作树；保留 main 完整历史。
+- [x] 清理失败测试遗留的私有目录（PostgreSQL 已停止，无进程／挂载使用），44 个临时报告和 7 个激活辅助文件；最终验收证据已归档，只保留先前交付的最终界面截图供原链接使用。
+- [x] 57 个原恢复文件 SHA-256 保持，完整数据库 dump 校验通过；143 张表、32 个工程文件及部署配置前后完全相同。日常仍为 PID 42096，HTTP 200，未重启。
+
+清理目录及文件约 780MB（按清理前 du 和文件大小估算，不等同文件系统实际回收量）；必要恢复及最终证据约 17MB。恢复位置保持 `.loop-control/local/activation-recovery/account-navigation-20261119`，最终证据归 `acceptance/`，完整清单与检查见 `cleanup-manifest.json`、`cleanup-verification.json`。详见[启用记录的收尾清理](docs/verification/account-navigation-activation-20261119/REPORT.md#收尾清理)。
+
+---
+
 # 账号导航新版日常启用（2026-11-19）
 
 用户授权合并主分支、更新并重启日常服务，实际检查并保留现有数据及剪辑工程。

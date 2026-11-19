@@ -51,3 +51,7 @@
 
 - `responsive-table`：遵循“Use standard `<table>` elements”，保留表头关系、`scope`、可键盘滚动的命名区域及内部溢出，不把数据表改成无语义的布局。
 - `accessibility`：遵循“Use the native `<dialog>` element”，窄屏预览用 `showModal()`；保留原生 Esc 和背景隔离，关闭后再恢复焦点，不叠加自制焦点陷阱。
+
+## 收尾归档（2026-11-19）
+
+本任务已合入 main 并启用日常服务，随后按用户授权删除已合并分支、隔离工作树和临时测试产物。本文旧 `.scratch`／`/tmp` 路径只表示当时证据位置，最终必要结果现归档至 `.loop-control/local/activation-recovery/account-navigation-20261119/acceptance/`；全量结果见 `unit-tests-summary.json`，真实浏览器结果见 `isolated/run.json`。源集成测试及主分支提交保留。日常数据及工程保持不变，详见[收尾清理](../account-navigation-activation-20261119/REPORT.md#收尾清理)。

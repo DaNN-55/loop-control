@@ -76,3 +76,7 @@
 ## 后续日常启用
 
 用户随后明确授权合并主分支、更新重启并检查，已完成。main快进承接53b12d75f，补充回收站宽度修复dd8a1d506；日常版本a38a1153fbd2已实际生效，现有数据及工程内容保留，未推送。原实施阶段“不启用”的边界由这次明确授权替代。详见[启用验收](../../verification/account-navigation-activation-20261119/REPORT.md)。
+
+## 收尾清理
+
+用户已授权并完成删除本任务合入的分支、工作树及临时测试文件，main历史保留。必要恢复和最终验收证据归档至 `.loop-control/local/activation-recovery/account-navigation-20261119`；日常进程未重启，143张表及32个工程文件前后指纹一致。详见启用验收的收尾清理，旧worktree及runner路径不再可用。
