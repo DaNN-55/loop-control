@@ -1,11 +1,12 @@
 import {useState} from 'react';
-import {Download,FileArchive,FileJson,RefreshCw} from 'lucide-react';
+import {Download,RefreshCw} from 'lucide-react';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {ArtifactManifest} from '../worker/contracts';
 import {workspaceExportDeliveryState} from '../workspaceExportDelivery';
 import {useWorkspaceReading,useWorkspacePolling} from './useWorkspaceReading';
+import {WorkspaceAdditionalDownloads} from './WorkspaceAdditionalDownloads';
 import {WorkspacePublicationPanel} from './WorkspacePublicationPanel';
 import './workspace-compact-panels.css';
 
@@ -27,11 +28,11 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,com
  return <section className={`workspace-delivery workspace-delivery-compact${completedView?' completed-delivery':''}`} aria-label={uiText('成片下载与发布资料')}>
   {verified&&<div className="workspace-delivery-downloads">
    {verified.artifacts.filter(a=>a.artifactType==='final_render').map(a=><a className={review.delivered?'workspace-download-primary':'workspace-download-secondary'} key={a.relativePath} href={url(a)} download><Download size={16} aria-hidden="true"/>{uiText(review.delivered?'下载视频':'下载已完成视频')}</a>)}
-   <details className="workspace-more-downloads"><summary>{uiText('更多下载')}</summary><a href={`/api/local/episodes/${encodeURIComponent(w.episodeId)}/delivery-download?delivery=${encodeURIComponent(verified.id)}`} download><FileArchive size={16} aria-hidden="true"/>{uiText('下载交付文件（ZIP）')}</a>{verified.artifacts.filter(a=>a.artifactType==='editable_project'||a.artifactType==='cover').map(a=><a key={a.relativePath} href={url(a)} download>{a.artifactType==='editable_project'?<FileJson size={16} aria-hidden="true"/>:<Download size={16} aria-hidden="true"/>}{uiText(a.artifactType==='editable_project'?'下载可编辑工程':'下载封面')}</a>)}<p>{uiText('工程需保留原素材；交付包不含源素材。')}</p></details>
+
   </div>}
   {retryTarget&&<div className="workspace-completion-retry"><p role="alert">{uiText(retryTarget.error||'交付文件校验未完成，请重试。')}</p><Button size="sm" color="primary" iconLeading={RefreshCw} isDisabled={pending||retrying} onPress={()=>void retry()}>{uiText(retrying?'正在完成…':'重试完成')}</Button></div>}
   {unavailable&&<div><p role="alert">{uiText(latest?.error||'交付文件不可用，请恢复原文件后重新检查，或返回剪辑另存生产单副本。')}</p><Button size="sm" color="secondary" onPress={()=>{setError('');void reading.read().catch(cause=>setError(cause.message));}}>{uiText('重新检查文件')}</Button></div>}
   {(error||pollingError)&&<p role="alert">{uiText(error||pollingError?.message||'')}</p>}
-  <WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly}/>
+  <WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly}>{p=>verified?<WorkspaceAdditionalDownloads workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly}/>:null}</WorkspacePublicationPanel>
  </section>;
 }

@@ -1,16 +1,16 @@
-import {useEffect,useId,useState} from 'react';
+import {useEffect,useId,useState,type ReactNode} from 'react';
 import {Copy} from 'lucide-react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import {normalizeDeliveryTags} from '../publishing/deliveryMetadata';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {ImagePreview} from '../ui/media/ImagePreview';
+import {PublicationCoverPicker} from './PublicationCoverPicker';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {usePublicationAssistant} from './usePublicationAssistant';
 import {useWorkspacePublication} from './useWorkspacePublication';
 import './workspace-publication.css';
 
-export function WorkspacePublicationPanel({workspace:w,readOnly=false}:{workspace:ProductionWorkspace;readOnly?:boolean}){
+export function WorkspacePublicationPanel({workspace:w,readOnly=false,children}:{workspace:ProductionWorkspace;readOnly?:boolean;children?:(publication:ReturnType<typeof useWorkspacePublication>)=>ReactNode}){
  const p=useWorkspacePublication(w.episodeId,w.id),id=useId(),ai=usePublicationAssistant(w.episodeId,p,readOnly);
  const [editing,setEditing]=useState(false),[tags,setTags]=useState(''),[copied,setCopied]=useState(''),[copySequence,setCopySequence]=useState(0);
  const hasContent=!!(p.content.title||p.content.description||p.content.tags.length);
@@ -22,8 +22,7 @@ export function WorkspacePublicationPanel({workspace:w,readOnly=false}:{workspac
   try{await navigator.clipboard.writeText(text);setCopied(`已复制${label}`);}
   catch{setCopied('复制失败，请选择文案后手动复制。');}
  }
- const cover=p.state?.cover,coverUrl=cover?'/_local-artifact?'+new URLSearchParams({episode:w.episodeId,path:cover.file.relativePath,sha256:cover.file.sha256}):'';
- return <section className="workspace-publication" aria-label={uiText('发布资料（可选）')}>
+ return <>{children?.(p)}<section className="workspace-publication" aria-label={uiText('发布资料（可选）')}>
   <header className="workspace-review-heading"><h4>{uiText('发布资料（可选）')}</h4>{p.saving&&<span role="status">{uiText('保存中…')}</span>}</header>
   {p.state&&p.state.basisContentSha256!==w.contentSha256&&<p role="status">{uiText('视频已更新，请核对发布资料。')}</p>}
   {!readOnly&&<div className="workspace-publication-ai">
@@ -41,9 +40,9 @@ export function WorkspacePublicationPanel({workspace:w,readOnly=false}:{workspac
    <div className="workspace-publication-field"><div className="workspace-delivery-field-heading"><label htmlFor={`${id}-description`}>{uiText('简介')}</label><Button type="button" size="sm" color="tertiary" iconLeading={Copy} aria-label={uiText('复制简介')} onPress={()=>void copy(p.content.description,'简介')}/></div><textarea id={`${id}-description`} name="description" value={p.content.description} rows={3} maxLength={5000} disabled={readOnly} onChange={event=>p.edit({...p.content,description:event.target.value})}/></div>
    <div className="workspace-publication-field"><div className="workspace-delivery-field-heading"><label htmlFor={`${id}-tags`}>{uiText('标签')}</label><Button type="button" size="sm" color="tertiary" iconLeading={Copy} aria-label={uiText('复制标签')} onPress={()=>void copy(normalizeDeliveryTags(p.content.tags).map(tag=>`#${tag}`).join(' '),'标签')}/></div><input id={`${id}-tags`} name="tags" value={tags} placeholder={uiText('用逗号分隔')} disabled={readOnly} onChange={event=>{setTags(event.target.value);p.edit({...p.content,tags:event.target.value.split(/[,，]/).map(tag=>tag.trim()).filter(Boolean)});}}/></div>
   </form>}
-  {cover&&<div className="workspace-publication-cover"><ImagePreview src={coverUrl} alt={uiText('交付封面')}/></div>}
+  <PublicationCoverPicker workspace={w} publication={p} readOnly={readOnly}/>
   {p.error&&<div role="alert" className="form-error"><p>{uiText(p.error)}</p>{p.state&&<Button size="sm" color="secondary" onPress={()=>void p.retry().catch(()=>{})}>{uiText('重试保存')}</Button>}<Button size="sm" color="tertiary" onPress={()=>void p.reload()}>{uiText('重新读取发布资料')}</Button></div>}
   {p.storageError&&<p role="alert">{uiText('本机草稿暂无法保存，请保持此页面打开。')}</p>}
   {copied.startsWith('复制失败')?<p role="alert">{uiText(copied)}</p>:<FeedbackNotice message={copied} identity={copySequence} onDismiss={()=>setCopied('')}/>}
- </section>;
+ </section></>;
 }

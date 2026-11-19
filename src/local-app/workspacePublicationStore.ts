@@ -1,3 +1,5 @@
+import {savePublicationCover} from './workspacePublicationCover.js';
+import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
 import type {PublicationContent,WorkspacePublication} from '../workspacePublication.js';
@@ -38,16 +40,19 @@ export class LocalWorkspacePublications {
  constructor(private pool:Pool,private mediaRoot:string){}
  async read(ownerId:string,episodeId:string){return ownerTransaction(this.pool,ownerId,true,async c=>{const w=await ownedPublicationWorkspace(c,episodeId);return readWorkspacePublication(c,await resolveEpisodeAssetRoot(c,this.mediaRoot,episodeId),w);});}
  async command(session:OwnerSession,episodeId:string,body:Record<string,unknown>){
-  if(body.command!=='save'||Object.keys(body).some(key=>!['command','data','idempotencyKey'].includes(key))||typeof body.idempotencyKey!=='string'||!(/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/).test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'发布资料请求无效。');
-  const data=body.data as Record<string,unknown>;if(Object.keys(data).some(key=>!['expectedRevision','content'].includes(key)))throw new ConfigurationError(400,'发布资料字段无效。');
-  let content:PublicationContent;try{content=parsePublicationContent(data.content);}catch(error){throw new ConfigurationError(400,(error as Error).message);}
+  if(!['save','cover'].includes(String(body.command))||Object.keys(body).some(key=>!['command','data','idempotencyKey'].includes(key))||typeof body.idempotencyKey!=='string'||!(/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/).test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'发布资料请求无效。');
+  const data=body.data as Record<string,unknown>;if(body.command==='save'&&Object.keys(data).some(key=>!['expectedRevision','content'].includes(key)))throw new ConfigurationError(400,'发布资料字段无效。');
+  let content:PublicationContent|undefined;if(body.command==='save')try{content=parsePublicationContent(data.content);}catch(error){throw new ConfigurationError(400,(error as Error).message);}
   const hash=canonicalFingerprint({episodeId,body});
   return sessionTransaction(this.pool,session,async c=>{
    const w=await ownedPublicationWorkspace(c,episodeId,true);
    const receipt=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey])).rows[0];
    if(receipt){if(receipt.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同资料。');return receipt.result;}
    const current=await readWorkspacePublication(c,await resolveEpisodeAssetRoot(c,this.mediaRoot,episodeId),w);
-   const saved=await writeWorkspacePublication(c,w,current,data.expectedRevision,{content,cover:current.cover,previousText:current.previousText});
+   if(current.revision!==data.expectedRevision)throw new ConfigurationError(409,'发布资料已有更新，请重新读取；原封面仍保留。');
+   const row=body.command==='cover'?(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[w.id])).rows[0] as ProductionWorkspaceRecord:null;
+   const cover=row?await savePublicationCover(c,await resolveEpisodeAssetRoot(c,this.mediaRoot,episodeId),row,data,body.idempotencyKey as string):current.cover;
+   const saved=await writeWorkspacePublication(c,w,current,data.expectedRevision,{content:content??current.content,cover,previousText:current.previousText});
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,body.idempotencyKey,hash,saved]);return saved;
   });
  }

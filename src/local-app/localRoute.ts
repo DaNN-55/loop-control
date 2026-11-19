@@ -1,3 +1,4 @@
+import {LocalPublicationPackages} from './workspacePublicationPackages.js';
 import {readScriptStudio} from './scriptStudioConfirmation.js';
 import {LocalWorkspacePublications} from './workspacePublicationStore.js';
 import {LocalRecycleBin} from './recycleBin.js';
@@ -53,6 +54,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
  const recycleBin=new LocalRecycleBin(options.pool,lifecycle);
  const connections=options.connections??new LocalConnections(options.pool);
  const publications=new LocalWorkspacePublications(options.pool,options.mediaRoot);
+ const publicationPackages=new LocalPublicationPackages(options.pool,options.mediaRoot);
  const accounts=options.accounts??new LocalAccountCommands(options.pool,options.mediaRoot,options.episodes);
  return async(request:IncomingMessage,response:ServerResponse)=>{
   const observation=observeLocalRequest(request,response,options.log);
@@ -216,6 +218,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     }
     send(405,{error:'模型设置请求方法无效。'});return;
    }
+   const publicationPackage=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})\/publication-package$/);
+   if(publicationPackage&&uuid.test(publicationPackage[1])){
+    if(request.method!=='POST'||url.search)throw new ConfigurationError(405,'交付包创建需要 POST。');
+    send(200,await publicationPackages.command(session,publicationPackage[1],await readBody(request,32768)));return;
+   }
    const publicationAi=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})\/publication-ai$/);
    if(publicationAi&&uuid.test(publicationAi[1])){
     if(url.search)throw new ConfigurationError(400,'发布文案查询无效。');
@@ -228,7 +235,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(url.search)throw new ConfigurationError(400,'发布资料查询无效。');
     if(request.method==='GET'){send(200,await publications.read(session.id,publication[1]));return;}
     if(request.method!=='POST')throw new ConfigurationError(405,'发布资料需要 GET 或 POST。');
-    let body;try{body=await readBody(request,32*1024);}catch{throw new ConfigurationError(400,'发布资料请求格式无效或超过上限。');}
+    let body;try{body=await readBody(request,28*1024*1024+32768);}catch{throw new ConfigurationError(400,'发布资料请求格式无效或超过上限。');}
     send(200,await publications.command(session,publication[1],body));return;
    }
    if(url.pathname==='/api/local/script-format'){send(410,{error:'格式修改建议入口已退役，请使用分镜识别。'});return;}
@@ -277,9 +284,9 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    const deliveryArchive=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/delivery-download$/);
    if(deliveryArchive&&uuid.test(deliveryArchive[1])&&request.method==='GET'){
-    const episodeId=deliveryArchive[1],deliveryId=url.searchParams.get('delivery');
-    if(!uuid.test(deliveryId??'')||[...url.searchParams.keys()].some(k=>k!=='delivery')||url.searchParams.getAll('delivery').length!==1)throw new ConfigurationError(400,'交付包引用无效。');
-    const delivery=await ownerTransaction(options.pool,session.id,true,async c=>{
+    const episodeId=deliveryArchive[1],publicationId=url.searchParams.get('publication'),deliveryId=publicationId??url.searchParams.get('delivery');
+    if(!uuid.test(deliveryId??'')||[...url.searchParams.keys()].some(k=>k!==(publicationId?'publication':'delivery'))||url.searchParams.getAll(publicationId?'publication':'delivery').length!==1)throw new ConfigurationError(400,'交付包引用无效。');
+    const delivery=publicationId?await publicationPackages.read(session.id,episodeId,publicationId):await ownerTransaction(options.pool,session.id,true,async c=>{
      const e=(await c.query("SELECT e.id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[episodeId,session.id])).rows[0];
      if(!e)throw new ConfigurationError(404,'生产单不可见。');
      const w=await readProductionWorkspace(c,episodeId,await resolveEpisodeAssetRoot(c,options.mediaRoot,episodeId));

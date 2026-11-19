@@ -18,3 +18,8 @@
 .workspace-publication-ai>small{font-size:.75rem;overflow-wrap:anywhere}
 .workspace-publication-ai>details,.workspace-publication-ai>label{flex-basis:100%;min-width:0}
 .workspace-publication-ai :is(textarea,select){display:block;box-sizing:border-box;width:100%;min-width:0;padding:.5rem;font:inherit;font-size:1rem;color:var(--lc-ink,#17263e);background:var(--lc-surface,#fff);border:1px solid var(--lc-line-strong,#bdcadd);border-radius:5px}
+.workspace-cover-editor{display:grid;gap:.5rem;min-width:0}
+.workspace-cover-editor details[open]{display:grid;gap:.75rem}
+.workspace-cover-editor :is(label,input,select){display:block;max-width:100%;min-width:0}
+.workspace-cover-editor :is(input,select){box-sizing:border-box;font-size:1rem}
+.workspace-cover-editor summary{cursor:pointer;padding:.5rem 0}

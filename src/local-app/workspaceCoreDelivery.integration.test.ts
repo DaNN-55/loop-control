@@ -30,6 +30,22 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('confirms and completes t
   const response=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});w=(await response.json()).workspace;
   expect(w.deliveries[0].verified).toBe(true);
   expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('production_completed');
+  const publicationPath=`episodes/${f.episode}/publication`,packagePath=`episodes/${f.episode}/publication-package`;
+  const beforeBytes=await readFile(join(f.assetRoot,pack.relativePath));
+  const text={title:'第一版发布标题',description:'可独立更新',tags:['测试'],instruction:''};
+  expect((await f.post(publicationPath,'save',{expectedRevision:0,content:text})).status).toBe(200);
+  const firstPackage=await f.post(packagePath,'create',{expectedRevision:1});expect(firstPackage.status,JSON.stringify(firstPackage.body)).toBe(200);
+  const getPackage=async(id:string)=>(await f.c.query('SELECT * FROM local_identity.workspace_publication_packages WHERE id=$1',[id])).rows[0];
+  const firstSnapshot=await getPackage(firstPackage.body.id),firstMetadata=firstSnapshot.artifacts.find((a:{artifactType:string})=>a.artifactType==='metadata');
+  expect(JSON.parse(await readFile(join(f.assetRoot,firstMetadata.relativePath),'utf8')).title).toBe(text.title);
+  expect((await f.post(publicationPath,'save',{expectedRevision:1,content:{...text,title:'完成后新标题'}})).status).toBe(200);
+  const secondPackage=await f.post(packagePath,'create',{expectedRevision:2});expect(secondPackage.status,JSON.stringify(secondPackage.body)).toBe(200);expect(secondPackage.body.id).not.toBe(firstPackage.body.id);
+  const secondSnapshot=await getPackage(secondPackage.body.id),secondMetadata=secondSnapshot.artifacts.find((a:{artifactType:string})=>a.artifactType==='metadata');
+  expect(JSON.parse(await readFile(join(f.assetRoot,secondMetadata.relativePath),'utf8')).title).toBe('完成后新标题');
+  expect(await readFile(join(f.assetRoot,pack.relativePath))).toEqual(beforeBytes);expect(JSON.parse(await readFile(join(f.assetRoot,firstMetadata.relativePath),'utf8')).title).toBe(text.title);
+  expect(secondSnapshot.artifacts.find((a:{artifactType:string})=>a.artifactType==='final_render')).toEqual(firstSnapshot.artifacts.find((a:{artifactType:string})=>a.artifactType==='final_render'));
+  const publishedZip=await fetch(f.origin+secondPackage.body.downloadUrl,{headers:{Cookie:'loop_owner_session='+f.token}});expect(publishedZip.status).toBe(200);expect((await publishedZip.arrayBuffer()).byteLength).toBeGreaterThan(0);
+  expect((await f.post(packagePath,'create',{expectedRevision:1})).status).toBe(409);
   const zip=await fetch(f.origin+`/api/local/episodes/${f.episode}/delivery-download?delivery=${w.deliveries[0].id}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(zip.status).toBe(200);expect((await zip.arrayBuffer()).byteLength).toBeGreaterThan(0);
  }finally{await worker.end();await f.close();}
 },300000);

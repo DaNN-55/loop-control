@@ -83,9 +83,11 @@ export async function deletionFileFingerprint(path:string,expectedLinks=1n){
 
 /** A registered directory never grants ownership of its unknown contents. */
 export async function inventoryEpisodeDeletion(c:PoolClient,target:EpisodeDeletionTarget,episodeId:string){
+ const publicationFiles=!!(await c.query("SELECT to_regclass('local_identity.workspace_publication_files') present")).rows[0].present;
  const rows=(await c.query(`SELECT relative_path path,sha256,file_size bytes,'artifact:'||id authority FROM public.artifacts WHERE episode_id=$1
  UNION ALL SELECT storage_path,sha256,file_size,'material:'||id FROM public.production_material_revisions WHERE episode_id=$1
  UNION ALL SELECT file_reference->>'relativePath',file_reference->>'sha256',(file_reference->>'fileSize')::bigint,'production-preparation:'||id FROM local_identity.production_preparation_revisions WHERE episode_id=$1 AND file_reference IS NOT NULL
+ ${publicationFiles?"UNION ALL SELECT relative_path,sha256,file_size,'publication:'||relative_path FROM local_identity.workspace_publication_files WHERE episode_id=$1":''}
  UNION ALL SELECT project_path,project_sha256,project_size,'workspace:'||id FROM local_identity.production_workspaces WHERE episode_id=$1
  UNION ALL SELECT project_path,project_sha256,project_size,'workspace-version:'||workspace_id FROM local_identity.production_workspace_versions WHERE episode_id=$1
  UNION ALL SELECT r.relative_path,r.sha256,r.file_size,'legacy-recovery:'||r.workspace_id FROM local_identity.workspace_legacy_recoveries r JOIN local_identity.production_workspaces w ON w.id=r.workspace_id WHERE w.episode_id=$1
