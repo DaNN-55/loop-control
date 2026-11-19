@@ -1,3 +1,4 @@
+import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import {useWorkspacePolling,useWorkspaceReading} from './useWorkspaceReading';
@@ -54,5 +55,5 @@ export function WorkspaceCaptionAutomation(props:Props){
    finally{owner.busy=false;if(owner.alive&&!current.current.disabled)setCycle(value=>value+1);}
   })();
  },[owner,reader,props.disabled,props.workspace.id,props.workspace.stale,props.bridge?.connected,signature,cycle]);
- return error||pollingError?<p role="status" className="workspace-caption-auto-note">{uiText(error||'字幕状态暂时无法更新，请重新读取工程。')}</p>:null;
+ return <FeedbackNotice message={error||pollingError?uiText(error||'字幕状态暂时无法更新，请重新读取工程。'):''} tone="warning"/>;
 }
