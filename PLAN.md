@@ -1,3 +1,18 @@
+# 账号导航新版日常启用（2026-11-19）
+
+用户授权合并主分支、更新并重启日常服务，实际检查并保留现有数据及剪辑工程。
+
+- [x] 主分支 clean，快进合入 53b12d75f；日常应用/旧编辑器已退出，无 ready/running 任务。
+- [x] 留存完整数据库 dump、143 张表指纹及 32 个工程文件恢复副本；4 账号、10 生产单、8 工作区。
+- [x] 主目录构建、runtime 完整性与预期版本启动；无需 schema 迁移。
+- [x] 日常页面实际检查、数据及原工程比对、记录并本地提交。
+
+恢复目录：`.loop-control/local/activation-recovery/account-navigation-20261119`，不进入 Git。未编辑正式片段；实际打开一个现有工程并正常保存退出，原生内容保留，正常追加保存及归档记录。已核对 7 个原生工程内容相同（仅忽略选中状态）、原有历史记录完整。追加修正回收站宽度 dd8a1d506，6 项回归及1432/390/320px通过。
+
+最终日常 PID 42096，后台与 Worker 版本 a38a1153fbd2，页面正常，无活动任务、HTTP 5xx 或 ERROR；4账号/10生产单/8工作区/3独立工程保留。[日常启用验收](docs/verification/account-navigation-activation-20261119/REPORT.md)。
+
+---
+
 # 账号、导航与设置精简（2026-11-19）
 
 用户已确认 Q1–Q38，独立剪辑最终保留左下现有位置。实施与续接：[完整计划](docs/plans/account-navigation-simplification-20261119/PLAN.md)。分支 `codex/account-navigation-simplification-20261119`，基线 20e9ada40。
