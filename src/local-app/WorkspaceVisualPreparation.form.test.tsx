@@ -19,7 +19,7 @@ afterEach(()=>{cleanup();sessionStorage.clear();localStorage.clear();vi.unstubAl
 it('explicitly shares only technical defaults while keeping prompts and references per shot',async()=>{
  const f=setup({imagePrompt:'本镜头独有构图',references:['ref-0']});await modelReady();
  expect(localStorage.getItem('loop-image-default:form-workspace')).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'设为本期默认'}));
+ fireEvent.click(screen.getByRole('button',{name:'本期图片默认'}));fireEvent.click(screen.getByRole('button',{name:'保存为本期图片默认'}));
  const saved=JSON.parse(localStorage.getItem('loop-image-default:form-workspace')!);
  expect(saved.imageSelection).toEqual(selection);expect(saved.settings).toEqual({size:'1024x1536',quality:'auto',count:1});expect(saved.imagePrompt).toBeUndefined();expect(saved.references).toBeUndefined();expect(f.command).not.toHaveBeenCalled();
  f.view.unmount();sessionStorage.clear();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[{...workspace.clips[0],itemId:'next'}],visualConfiguration:undefined}} materials={[]} command={f.command} onChange={()=>{}}/>);fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));await modelReady();
