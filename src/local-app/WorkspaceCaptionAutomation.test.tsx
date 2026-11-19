@@ -27,28 +27,28 @@ it('never repeats an unknown automatic request after remounting the same input',
  const workspace=fixture();workspace.captions=workspace.captions!.slice(0,1);
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
  const command=vi.fn(async()=>{throw Error('回执未知');}),props={workspace,command,onChange:vi.fn()};
- const first=render(<WorkspaceCaptionAutomation {...props}/>);await screen.findByText('字幕自动处理未完成，可直接调整字幕或重新尝试。');first.unmount();
+ const first=render(<WorkspaceCaptionAutomation {...props}/>);await screen.findByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。');first.unmount();
  render(<WorkspaceCaptionAutomation {...props}/>);await Promise.resolve();expect(command).toHaveBeenCalledTimes(1);
 });
 it('continues preparing other captions after one same-input attempt fails',async()=>{
  let workspace=fixture();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
  const command=vi.fn(async(_name:string,data:any)=>{if(data.clipId==='c1')throw Error('环境不可用');workspace={...workspace,captions:workspace.captions!.map(c=>c.clipId===data.clipId?{...c,timing:'waiting',taskId:'t',alignmentStatus:'running'}:c)};return {workspace};});
  function View(){const [current,setCurrent]=useState(workspace);return <WorkspaceCaptionAutomation workspace={current} command={command} onChange={setCurrent}/>;}
- render(<View/>);await waitFor(()=>expect(command).toHaveBeenCalledTimes(2));expect(command.mock.calls[1][1].clipId).toBe('c2');expect(screen.getByText('字幕自动处理未完成，可直接调整字幕或重新尝试。')).toBeTruthy();
+ render(<View/>);await waitFor(()=>expect(command).toHaveBeenCalledTimes(2));expect(command.mock.calls[1][1].clipId).toBe('c2');expect(screen.getByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。')).toBeTruthy();
 });
 it('clears an old automatic error after the owner supplies current manual captions',async()=>{
  const workspace=fixture();workspace.captions=workspace.captions!.slice(0,1);
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
  const command=vi.fn(async()=>{throw Error('失败');}),props={workspace,command,onChange:vi.fn()};
- const view=render(<WorkspaceCaptionAutomation {...props}/>);await screen.findByText('字幕自动处理未完成，可直接调整字幕或重新尝试。');
+ const view=render(<WorkspaceCaptionAutomation {...props}/>);await screen.findByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。');
  view.rerender(<WorkspaceCaptionAutomation {...props} workspace={{...workspace,captions:workspace.captions!.map(c=>({...c,timing:'current',alignmentMethod:'manual'}))}}/>);
- await waitFor(()=>expect(screen.queryByText('字幕自动处理未完成，可直接调整字幕或重新尝试。')).toBeNull());expect(command).toHaveBeenCalledTimes(1);
+ await waitFor(()=>expect(screen.queryByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。')).toBeNull());expect(command).toHaveBeenCalledTimes(1);
 });
 it('bounds authoritative read failures instead of retrying in a render loop',async()=>{
  const workspace=fixture();workspace.captions=workspace.captions!.slice(0,1);
  const read=vi.fn(async()=>{throw Error('offline');});vi.stubGlobal('fetch',read);
  const command=vi.fn();render(<WorkspaceCaptionAutomation workspace={workspace} command={command} onChange={vi.fn()}/>);
- await screen.findByText('字幕自动处理未完成，可直接调整字幕或重新尝试。');
+ await screen.findByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。');
  await act(async()=>{await new Promise(resolve=>setTimeout(resolve,30));});expect(read).toHaveBeenCalledTimes(1);expect(command).not.toHaveBeenCalled();
 });
 it('stops after a pending read is disabled and resumes only when enabled again',async()=>{
@@ -66,13 +66,13 @@ it('shows automatic-caption failures in the shared floating notice without occup
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
  const command=vi.fn(async()=>{throw Error('环境不可用');});
  const view=render(<section aria-label="准备区"><WorkspaceCaptionAutomation workspace={workspace} command={command} onChange={vi.fn()}/></section>);
- const message=await screen.findByText('字幕自动处理未完成，可直接调整字幕或重新尝试。');
+ const message=await screen.findByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。');
  const notice=screen.getByRole('region',{name:'通知'});
  expect(notice.contains(message)).toBe(true);
  expect(view.container.contains(message)).toBe(false);
  expect(message.closest('[role="status"]')?.getAttribute('data-tone')).toBe('warning');
  fireEvent.click(screen.getByRole('button',{name:'关闭操作提示'}));
- await waitFor(()=>expect(screen.queryByText('字幕自动处理未完成，可直接调整字幕或重新尝试。')).toBeNull());
+ await waitFor(()=>expect(screen.queryByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。')).toBeNull());
  expect(command).toHaveBeenCalledTimes(1);
 });
 it('does not automatically rewrite a project that became native while its preparation read was pending',async()=>{
@@ -80,4 +80,17 @@ it('does not automatically rewrite a project that became native while its prepar
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:native})));
  const command=vi.fn(),onChange=vi.fn();render(<WorkspaceCaptionAutomation workspace={workspace} command={command} onChange={onChange}/>);
  await waitFor(()=>expect(onChange).toHaveBeenCalled());expect(command).not.toHaveBeenCalled();
+});
+it.each([
+ ['请先采用当前成功口播或原声音轨，再对齐字幕。','请先在声音页采用口播或视频原声，再自动校时；不使用声音时，也可直接手工调整字幕时间。'],
+ ['声音超出当前镜头范围，请在剪辑台调整，或手工调整字幕。','请到剪辑台手动调整镜头或声音时长，使声音落在镜头内；也可直接手工调整字幕时间。系统不会自动修改时长。'],
+ ['请先保存并返回，再采用声学对齐结果。','剪辑器仍打开，字幕结果暂未写回。请先在剪辑台保存并返回分镜台，再采用已有校时结果；无需重新识别。'],
+])('explains the backend reason without retrying: %s',async(reason,message)=>{
+ const workspace=fixture();workspace.captions=workspace.captions!.slice(0,1);
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+ const command=vi.fn(async()=>{throw Error(reason);}),props={workspace,command,onChange:vi.fn()};
+ const view=render(<WorkspaceCaptionAutomation {...props}/>);
+ await screen.findByText(message);expect(command).toHaveBeenCalledTimes(1);
+ view.unmount();render(<WorkspaceCaptionAutomation {...props}/>);
+ await Promise.resolve();expect(command).toHaveBeenCalledTimes(1);
 });

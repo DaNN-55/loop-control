@@ -62,3 +62,15 @@ it('preserves unsaved phrase text and timing through StrictMode refresh effects'
  render(<StrictMode><WorkspaceCaptionsPanel {...props}/></StrictMode>);
  expect((screen.getByLabelText('第 1 句字幕') as HTMLInputElement).value).toBe('你好，');expect((screen.getByLabelText('第 1 句消失时间（秒）') as HTMLInputElement).value).toBe('0.45');expect((screen.getByLabelText('第 2 句出现时间（秒）') as HTMLInputElement).value).toBe('0.82');expect(sessionStorage.getItem('loop-caption-adjustment:w:S1')).toContain('你好，');expect(command).not.toHaveBeenCalled();
 });
+it.each(['missing','outside','pending-write'] as const)('explains %s without changing timing or issuing a task',kind=>{
+ const workspace=fixture(),state=workspace.captions![0];
+ state.timing=kind==='pending-write'?'waiting':'stale';state.detail=null;
+ if(kind==='missing')state.audioTrackId=null;
+ if(kind==='outside'){state.alignmentReady=false;state.detail='声音超出当前镜头范围，请在剪辑台调整，或手工调整字幕。';}
+ if(kind==='pending-write'){state.alignmentReady=true;state.alignmentStatus='completed';state.taskId='existing-task';}
+ const before=structuredClone(workspace),command=vi.fn();
+ render(<WorkspaceCaptionsPanel workspace={workspace} selectedShotId="S1" alignmentOnly command={command} onChange={()=>{}}/>);
+ expect(screen.getByText(kind==='missing'?'缺少声音，尚未自动校时':kind==='outside'?'声音超出镜头，尚未自动校时':'字幕校时已完成，等待写回')).toBeTruthy();
+ expect(screen.getByText(kind==='missing'?/请先在声音页采用/:kind==='outside'?/请到剪辑台手动调整/:/已有校时结果，无需重新识别/)).toBeTruthy();
+ expect(command).not.toHaveBeenCalled();expect(workspace).toEqual(before);
+});
