@@ -1,6 +1,7 @@
 import{readPreparedRuntimeRelease,assertRuntimeRelease}from'../../src/orchestration/runtimeBuild.ts';
 import{pathToFileURL}from'node:url';
 import{createLogStorage}from'./log-storage.mjs';
+import{scheduleStudioWarmup}from'./studio-warmup.mjs';
 import{execFile}from'node:child_process';
 import{promisify}from'node:util';
 
@@ -60,13 +61,13 @@ export async function createNativeApplication(d){
   return current.handler(q,r);
  },close:async()=>{if(closed)return;closed=true;await previousPending?.close();await current.close();}};
 async function createNativeInstance(d,activate,lifecycle){
- const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,metricsSampler,metricsPool,mediaRootSettings,closing;function close(){return closing??=(async()=>{accounts?.close();mediaRootSettings?.close();await metricsSampler?.stop();await metricsPool?.end();await automation?.stop();await episodes?.close();await worker?.stop();await pool.end();})();}
+ const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,metricsSampler,metricsPool,mediaRootSettings,studioWarmup,closing;function close(){return closing??=(async()=>{studioWarmup?.close();accounts?.close();mediaRootSettings?.close();await metricsSampler?.stop();await metricsPool?.end();await automation?.stop();await episodes?.close();await worker?.stop();await pool.end();})();}
  try{
  const authorization=readMediaRootAuthorization(d);if(authorization?.operation==='migration'){const proof=(await pool.query(migrationProofQuery(authorization))).rows[0].media_root_publication_proof;verifyMediaRootMigrationProof(proof,authorization);}
  const binding=d.mediaRootBinding??await inspectMediaRoot(d.mediaRoot);
  await verifyMediaRootBinding(binding,d.worker?.minimumFreeBytes??0);
  await pool.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,coalesce($5::uuid,CASE WHEN local_identity.media_root_binding() IS NULL THEN $6::uuid END))',[binding.path,binding.deviceId,binding.inodeId,binding.mountPath,d.storageOwnerId??null,d.secretAdministration?.adminOwnerId??null]);
- const sourceRoots=await readMediaDeployment(pool,d.mediaRoot);const environment={PATH:process.env.PATH,HOME:d.home,TMPDIR:process.env.TMPDIR,LOOP_STATE_DIR:d.stateDirectory,...(d.openChatCut?{OPENCHATCUT_ROOT:d.openChatCut.root,OPENCHATCUT_NODE:d.openChatCut.node}:{}),...(process.env.LOOP_LOCAL_OFFLINE==='1'?{NODE_OPTIONS:'--import '+join(d.projectRoot,'scripts/runtime/offline-guard.mjs')}:{})};
+ const sourceRoots=await readMediaDeployment(pool,d.mediaRoot);const environment={PATH:process.env.PATH,HOME:d.home,TMPDIR:process.env.TMPDIR,LOOP_STATE_DIR:d.stateDirectory,...(d.openChatCut?{OPENCHATCUT_ROOT:d.openChatCut.root,OPENCHATCUT_NODE:d.openChatCut.node,LOOP_OPENCHATCUT_PROGRAM_CACHE_DIR:join(d.stateDirectory,'openchatcut-program-cache')}:{}),...(process.env.LOOP_LOCAL_OFFLINE==='1'?{NODE_OPTIONS:'--import '+join(d.projectRoot,'scripts/runtime/offline-guard.mjs')}:{})};
  const confirmedGeneration=d.purpose==='local-daily'&&!!d.connections?.keychain&&['manual','providers-budgeted'].includes(d.connections?.verification);
  const workspaceGenerationFromConnections=confirmedGeneration&&d.worker?.media?.mode==='live';
  const workspaceSpeechFromConnections=confirmedGeneration&&d.worker?.narration?.mode==='live';
@@ -93,6 +94,7 @@ async function createNativeInstance(d,activate,lifecycle){
  const runtimeStatus=createRuntimeStatusReader({pool,projectRoot:d.projectRoot,mediaRoot:d.mediaRoot,mountPath:d.worker?.mountPath,minimumFreeBytes:d.worker?.minimumFreeBytes,worker:worker?.status,runtimeRelease:d.runtimeRelease,workerRelease:()=>worker?.runtimeRelease?.id??null});
  const logFile=process.env.LOOP_RUNTIME_LOG_PATH??d.logPath??join(d.runtimeRoot,'app-private.log');
  const storage=createLogStorage(d.runtimeRoot,logFile);
+ if(d.openChatCut)studioWarmup=scheduleStudioWarmup({...d.openChatCut,projectRoot:d.projectRoot,environment});
  const choose=async()=>{try{const {stdout}=await promisify(execFile)('/usr/bin/osascript',['-e','on run argv\nactivate\nreturn POSIX path of (choose folder with prompt "选择日志存储文件夹" default location (POSIX file (item 1 of argv)))\nend run','--',storage.read().activeDirectory],{timeout:120000,maxBuffer:8192});return{path:stdout.trim()};}catch(error){if(/\(-128\)/.test(String(error.stderr)))return{cancelled:true};throw Error('Directory chooser unavailable');}};
  return{handler:createLocalHandler({log:event=>console.log(JSON.stringify({...event,runtimeReleaseId:runtimeRelease.id})),origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,runtimeStatus,recoverOutput:worker?.recoverOutput,logs:{read:()=>readRuntimeLogs([join(d.runtimeRoot,'app-private.log'),logFile]),storage:{...storage,choose}}}),close};
  }catch(error){await close();throw error;}

@@ -20,6 +20,8 @@ const modules=[
  ['shot-captions','src/shotCaptions.ts'],
 ];
 
+export const nativeWorkspaceModuleFiles=modules.map(([,file])=>file);
+
 /** Keep the existing virtual identities and snapshot all source bytes at startup. */
 export async function createNativeWorkspaceModules({transformWithEsbuild,sourceRoot=new URL('../',import.meta.url)}){
  const entries=await Promise.all(modules.map(async([name,file,publicEntry])=>{

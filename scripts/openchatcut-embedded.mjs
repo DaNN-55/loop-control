@@ -10,6 +10,7 @@ import {patchCaptionCueIdentity} from './openchatcut-caption-identity.mjs';
 import {pruneOpenChatCutCache} from './openchatcut-cache.mjs';
 import {nativeTransitionPlacementPlugin} from './openchatcut-transition-placement.mjs';
 import {buildTransitionRenderBundle} from './openchatcut-transition-bundle.mjs';
+import {prepareStudioProgram,acquireStudioViteCache,pruneStudioProgramCache} from './openchatcut-program-cache.mjs';
 // Host-owned runtime adapter: no edits to the installed OpenChatCut checkout.
 import {join} from 'node:path';
 import {readFile} from 'node:fs/promises';
@@ -19,6 +20,17 @@ if(!root||!dataDir||!cacheDir||!Number.isInteger(port)||port<1||port>65535)throw
 await pruneOpenChatCutCache(root);
 // Native toolbar exports use the SDK's server pipeline as well as the Owner export.
 // Reuse one adapted bundle for this session so both paths keep clip appearance.
+let program,viteCache;
+const programCacheRoot=process.env.LOOP_OPENCHATCUT_PROGRAM_CACHE_DIR;
+let cacheRelease;
+const releaseCaches=()=>cacheRelease??=(async()=>{await viteCache?.release();await program?.release();if(programCacheRoot)await pruneStudioProgramCache(programCacheRoot).catch(()=>{});})();
+if(!process.env.CC_REMOTION_BUNDLE&&programCacheRoot){
+ try{
+  program=await prepareStudioProgram({sdkRoot:root,cacheRoot:programCacheRoot});
+  viteCache=await acquireStudioViteCache(program,cacheDir);
+  process.env.CC_REMOTION_BUNDLE=program.bundle;
+ }catch(error){await viteCache?.release();await program?.release();program=undefined;viteCache=undefined;console.warn('Studio 程序缓存不可用，使用本次编译：'+error.message);}
+}
 if(!process.env.CC_REMOTION_BUNDLE)process.env.CC_REMOTION_BUNDLE=await buildTransitionRenderBundle(root,join(dataDir,'loop-render-bundle'));
 const bundledSoundManifest=JSON.parse(await readFile(join(dataDir,'loop-bundled-sounds.json'),'utf8'));
 const bridge={name:'loop-control-embedded-editor',enforce:'pre',config(config){config.server??={};config.server.warmup={...config.server.warmup,clientFiles:['src/main.tsx','src/Editor.tsx']};},transform(code,id){
@@ -34,6 +46,6 @@ const bridge={name:'loop-control-embedded-editor',enforce:'pre',config(config){c
   return {code:"import {useLoopControlHost} from 'virtual:loop-control-embed';\n"+code.replace(anchor,'  const hostHome=useLoopControlHost(props.project.id, base, environment.agent, ui.panels);\n  if(hostHome)ui.persistence.handleHome=hostHome;\n'+anchor),map:null};
 }};
 const {createServer,transformWithEsbuild}=await import(pathToFileURL(join(root,'node_modules/vite/dist/node/index.js')).href);
-const server=await createServer({root,configFile:join(root,'config/vite.config.ts'),envDir:false,cacheDir,plugins:[nativeTransitionPlacementPlugin(),nativeAccessibilityPlugin(root),nativeReadabilityPlugin(root),await createNativeWorkspaceModules({transformWithEsbuild}),bridge],server:{host:'127.0.0.1',port,strictPort:true,open:false}});
-await server.listen();
-for(const signal of ['SIGINT','SIGTERM'])process.once(signal,async()=>{await server.close();await pruneOpenChatCutCache(root);process.exit(0);});
+const server=await createServer({root,configFile:join(root,'config/vite.config.ts'),envDir:false,cacheDir:viteCache?.directory??cacheDir,plugins:[{name:'loop-control-program-cache',closeBundle:releaseCaches},nativeTransitionPlacementPlugin(),nativeAccessibilityPlugin(root),nativeReadabilityPlugin(root),await createNativeWorkspaceModules({transformWithEsbuild}),bridge],server:{host:'127.0.0.1',port,strictPort:true,open:false}});
+try{await server.listen();}catch(error){await server.close();await releaseCaches();throw error;}
+for(const signal of ['SIGINT','SIGTERM'])process.once(signal,async()=>{await server.close();await releaseCaches();await pruneOpenChatCutCache(root);process.exit(0);});

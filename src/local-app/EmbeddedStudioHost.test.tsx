@@ -46,33 +46,25 @@ it('uses the same flush and save boundary for the native home action',async()=>{
  deliver({type:'loop-control:result',requestId:request.requestId,ok:true});await waitFor(()=>expect(close).toHaveBeenCalledOnce());expect(save).toHaveBeenCalledWith(workspace);
 });
 
-it('starts with collapsed shot navigation and keeps selection and expansion available',()=>{
- render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜的完整简介'},{id:'S02',text:'第二镜'}]} onSave={async()=>workspace} onClose={()=>{}}/>);
- const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
- fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',writable:true,revision:1,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60},{id:'shot-S02-full',startFrame:60,durationInFrames:60}],selectedIds:[]}}));
- expect(screen.getByRole('button',{name:'展开镜头导航'})).toBeTruthy();
- expect(document.querySelector('.embedded-studio-body.rail-collapsed')).toBeTruthy();
- expect(screen.queryByText('第一镜的完整简介')).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'展开镜头导航'}));
- expect(screen.getByText('第一镜的完整简介')).toBeTruthy();
- fireEvent.click(screen.getByRole('button',{name:'折叠镜头导航'}));
- expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
- const post=vi.spyOn(frame.contentWindow!,'postMessage');fireEvent.click(screen.getByRole('button',{name:'定位镜头 S02'}));expect(post.mock.calls.at(-1)![0].itemId).toBe('shot-S02-full');
- expect(screen.getByRole('button',{name:'展开镜头导航'})).toBeTruthy();
+it('uses the native timeline without a duplicate shot navigation',()=>{
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜'}]} onSave={async()=>workspace} onClose={()=>{}}/>);
+ expect(screen.queryByRole('complementary',{name:'镜头导航'})).toBeNull();
+ expect(screen.queryByRole('button',{name:'展开镜头导航'})).toBeNull();
+ expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBeTruthy();
 });
 
 it('keeps the native frame and content actions locked until the real SDK write ownership is ready',()=>{
  const save=vi.fn(async()=>workspace);render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜'}]} onSave={save} onClose={()=>{}}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');const deliver=(writable:boolean)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',revision:1,writable,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60}],selectedIds:[]}}));
- deliver(false);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'定位镜头 S01'}) as HTMLButtonElement).disabled).toBe(true);expect(frame.hasAttribute('inert')).toBe(true);fireEvent.click(screen.getByRole('button',{name:'保存'}));expect(post).not.toHaveBeenCalled();expect(save).not.toHaveBeenCalled();
- deliver(true);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(false);expect((screen.getByRole('button',{name:'定位镜头 S01'}) as HTMLButtonElement).disabled).toBe(false);expect(frame.hasAttribute('inert')).toBe(false);deliver(false);expect(screen.getByText('编辑连接已变化，当前修改仍保留。请在最新窗口继续。')).toBeTruthy();expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);
+ deliver(false);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);expect(frame.hasAttribute('inert')).toBe(true);fireEvent.click(screen.getByRole('button',{name:'保存'}));expect(post).not.toHaveBeenCalled();expect(save).not.toHaveBeenCalled();
+ deliver(true);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(false);expect(frame.hasAttribute('inert')).toBe(false);deliver(false);expect(screen.getByText('编辑连接已变化，当前修改仍保留。请在最新窗口继续。')).toBeTruthy();expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);
 });
 
 it('does not treat a connected state without SDK ownership as write readiness',()=>{
  const save=vi.fn(async()=>workspace);render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜'}]} onSave={save} onClose={()=>{}}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
  const deliver=(writable:unknown)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',revision:1,writable,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60}],selectedIds:[]}}));
- for(const value of [undefined,'true',1,null]){deliver(value);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'定位镜头 S01'}) as HTMLButtonElement).disabled).toBe(true);expect(frame.hasAttribute('inert')).toBe(true);}
+ for(const value of [undefined,'true',1,null]){deliver(value);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);expect(frame.hasAttribute('inert')).toBe(true);}
  deliver(true);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(false);expect(frame.hasAttribute('inert')).toBe(false);
  deliver(false);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);expect(save).not.toHaveBeenCalled();
 });
@@ -82,6 +74,10 @@ it('opens only requested supplementary tools without leaving the native editor',
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
  expect(tools).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'补充工具'}));
+ expect(screen.getByRole('region',{name:'补充工具'}).parentElement).toBe(frame.parentElement?.parentElement);
+ fireEvent.keyDown(screen.getByRole('button',{name:'收起补充工具'}),{key:'Escape'});
+ expect(screen.queryByRole('region',{name:'补充工具'})).toBeNull();expect(document.activeElement).toBe(screen.getByRole('button',{name:'补充工具'}));
  deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});deliver({type:'loop-control:import-requested',kind:'audio'});
  expect(screen.getByText('声音候选入口')).toBeTruthy();expect(screen.queryByRole('alert')).toBeNull();expect(close).not.toHaveBeenCalled();expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
 });
@@ -132,13 +128,15 @@ it('ends the leave intent when its host unmounts during Owner saving',async()=>{
 
 
 it('keeps structural edits bound to the inspected native document and latest saved workspace',async()=>{
+ let bridge!:import('./EmbeddedStudioHost').EmbeddedStudioBridge;
  const next={...workspace,sha256:'b'.repeat(64)},save=vi.fn(async(_file:unknown)=>next);
- render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={save} onClose={()=>{}}/>);
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={save} onClose={()=>{}} renderTools={value=>{bridge=value;return null;}}/>);
+ fireEvent.click(screen.getByRole('button',{name:'补充工具'}));
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
  deliver({type:'loop-control:state',writable:true,structureEnabled:true,revision:1,items:[{id:'one',startFrame:0,durationInFrames:30},{id:'two',startFrame:30,durationInFrames:30}],selectedIds:['two'],shots:[{id:'S01',text:'第一镜',timelineId:'t',itemIds:['one'],startFrame:0,durationInFrames:30,effective:true},{id:'S02',text:'第二镜',timelineId:'t',itemIds:['two'],startFrame:30,durationInFrames:30,effective:true}]});
  for(let index=0;index<2;index++){
-  fireEvent.keyDown(screen.getByRole('button',{name:'定位镜头 S02'}),{key:'ArrowUp',altKey:true});
+  void bridge.applyEdit({kind:'move',shotId:'S02',beforeShotId:'S01'});
   let request=post.mock.calls.at(-1)![0];expect(request.action).toBe('inspect');
   deliver({type:'loop-control:result',requestId:request.requestId,ok:true,result:{revision:index+1,documentFingerprint:'c'.repeat(64)}});
   await waitFor(()=>expect(post.mock.calls.at(-1)?.[0].action).toBe('apply-workspace-edit'));
@@ -192,7 +190,7 @@ it('holds navigation and tool selection until the complete tool operation finish
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
  deliver({type:'loop-control:state',writable:true,revision:1,items:[{id:'selected',startFrame:0,durationInFrames:30}],selectedIds:['selected'],shots:[{id:'S1',text:'镜头',itemIds:['selected']}]});fireEvent.click(screen.getByRole('button',{name:'补充工具'}));
  act(()=>reportBusy(true));
- for(const name of ['补充工具','画面与候选','字幕校时','保存','保存并返回分镜台','保存并前往交付','定位镜头 S1'])expect(screen.getByRole('button',{name})).toHaveProperty('disabled',true);
+ for(const name of ['补充工具','画面与候选','字幕校时','保存','保存并返回分镜台','保存并前往交付'])expect(screen.getByRole('button',{name})).toHaveProperty('disabled',true);
  expect(frame.hasAttribute('inert')).toBe(true);expect(bridge.connected).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'画面与候选'}));deliver({type:'loop-control:leave'});deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.getByText('audio候选工具')).toBeTruthy();expect(close).not.toHaveBeenCalled();expect(post).not.toHaveBeenCalled();
  let saved!:Promise<void>;act(()=>{saved=bridge.save();});expect(post.mock.calls.at(-1)![0].action).toBe('flush');

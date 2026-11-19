@@ -1,0 +1,112 @@
+{
+  "performance": {
+    "samples": [
+      {
+        "mode": "baseline",
+        "run": 0,
+        "serverMs": 1889.8314169999999,
+        "entryRequestMs": 554.6365000000001
+      },
+      {
+        "mode": "baseline",
+        "run": 1,
+        "serverMs": 1628.9579159999998,
+        "entryRequestMs": 641.0941669999993
+      },
+      {
+        "mode": "baseline",
+        "run": 2,
+        "serverMs": 1644.23225,
+        "entryRequestMs": 590.8894579999996
+      },
+      {
+        "mode": "preparation",
+        "cacheHit": false,
+        "ms": 1038.2138749999995
+      },
+      {
+        "mode": "cached",
+        "run": 0,
+        "serverMs": 1120.9629999999997,
+        "entryRequestMs": 611.0513329999994
+      },
+      {
+        "mode": "cached",
+        "run": 1,
+        "serverMs": 1139.7902090000007,
+        "entryRequestMs": 596.4703750000008
+      },
+      {
+        "mode": "cached",
+        "run": 2,
+        "serverMs": 1371.1879169999993,
+        "entryRequestMs": 446.473750000001
+      },
+      {
+        "mode": "preparation",
+        "cacheHit": true,
+        "ms": 174.02174999999988
+      },
+      {
+        "mode": "cached",
+        "run": 0,
+        "serverMs": 1139.4386670000004,
+        "entryRequestMs": 657.7904579999995
+      },
+      {
+        "mode": "cached",
+        "run": 1,
+        "serverMs": 1127.0885830000007,
+        "entryRequestMs": 611.0813339999986
+      },
+      {
+        "mode": "cached",
+        "run": 2,
+        "serverMs": 1139.423999999999,
+        "entryRequestMs": 597.1449170000014
+      }
+    ],
+    "baselineMedianMs": 1644.23225,
+    "cachedMedianMs": 1139.423999999999,
+    "improvementPercent": 30.70176065455479,
+    "conditions": "Same installed SDK, Node 24, synthetic 0.2s audio source, sequential runs. Program prewarm excluded from foreground samples. HTTP/browser readiness not included."
+  },
+  "flow": {
+    "passed": true,
+    "narrow": {
+      "content": 210,
+      "page": 320,
+      "panel": 222,
+      "position": "absolute",
+      "scroll": 210,
+      "width": 320
+    },
+    "projectSha256": "53e4ce0cdd5c82ee051cfc87f56211cb4ce25a83a31cdddf37a4299ad5dd080f",
+    "export": {
+      "status": "ready",
+      "confirmed": true,
+      "sha256": "83b94b07ecc0d210991bcf6de61d51ffe3052e583d1e2e59ee783e540b05e196"
+    },
+    "delivery": {
+      "status": "completed",
+      "verified": true,
+      "artifactCount": 6
+    },
+    "media": {
+      "durationSeconds": 6.058667,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "type": "audio",
+          "codec": "aac"
+        }
+      ]
+    },
+    "paidCalls": 0
+  }
+}

@@ -76,7 +76,7 @@ it.skipIf(!enabled)('caption preparation browser: selected-shot alignment, adopt
   expect(await browser.evaluate("Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()==='声学对齐').disabled")).toBe(true);
   await browser.click('选择镜头 01');
   await f.read();expect(f.workspace.captions!.find(c=>c.shotId===clip.shotId)!.contract).toEqual(firstContract);
-  await browser.click('进入剪辑工作台');await browser.click('定位镜头 '+clip.shotId);
+  await browser.click('进入剪辑工作台');await browser.wait("document.querySelector('.embedded-studio iframe')?.getAttribute('aria-busy')==='false'");
   expect(await browser.evaluate("document.querySelector('.embedded-studio-caption-panel')===null&&!Array.from(document.querySelectorAll('.embedded-studio header button')).some(b=>b.textContent==='自动校准字幕时间')")).toBe(true);
   await f.read();const openedProject=f.workspace.project.sha256;
   const conflicting=await f.send('applyWorkspaceCaptionAlignment',{clipId:clip.id,taskId:queued.taskId,expectedInputFingerprint:f.workspace.captions!.find(c=>c.shotId===clip.shotId)!.inputFingerprint});
@@ -114,7 +114,7 @@ it.skipIf(!enabled)('caption preparation browser: selected-shot alignment, adopt
   expect(browser.traffic.filter(t=>t.command==='saveWorkspaceStudio'&&t.status===200).length).toBeGreaterThanOrEqual(1);
   const document=JSON.parse(await readFile(join(f.assetRoot,f.workspace.project.relativePath),'utf8'));
   expect(JSON.stringify(document)).toContain(revised);
-  await browser.click('进入剪辑工作台');await browser.click('定位镜头 '+clip.shotId);
+  await browser.click('进入剪辑工作台');await browser.wait("document.querySelector('.embedded-studio iframe')?.getAttribute('aria-busy')==='false'");
   await native(async()=>{await nativeButton('字幕');expect((await browser!.cli('get','value',await nativeRef('textbox','字幕文字'))).value).toBe(revised);});
   await browser.capture('saved-reopened');
   await browser.click('保存并返回分镜台');await browser.wait("!document.querySelector('.embedded-studio')");

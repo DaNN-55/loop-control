@@ -1,7 +1,6 @@
 import {readWorkspaceCaption} from '../workspaceCaptions';
 import {uiText} from '../i18n/ui';
 import type {WorkspaceNativeItem} from './WorkspaceNativeControls';
-import {WorkspaceShotRail} from './WorkspaceShotRail';
 import type {WorkspaceShot,WorkspaceShotOperation} from '../workspaceShots';
 import {useCallback,useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import type {ShotCaptionContract} from '../shotCaptions';
@@ -18,11 +17,13 @@ export interface EmbeddedStudioBridge {selectedItemId?:string;selectedShotId?:st
 interface EditorState {writable?:boolean;structureEnabled?:boolean;shots?:WorkspaceShot[];revision:number;selectedIds:string[];items:WorkspaceNativeItem[]}
 export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose,initialShotId,initialItemId,renderTools,renderBackground}:{episodeId:string;title:string;session:EmbeddedStudioSession;shots:Array<{id:string;text:string;soundIntent?:string}>;onSave:(workspace:OpenChatCutStudioWorkspace)=>Promise<OpenChatCutStudioWorkspace>;onClose:(destination:'preparation'|'delivery',selection?:{shotId:string;itemId:string})=>void|Promise<void>;initialShotId?:string;initialItemId?:string;renderTools?:(bridge:EmbeddedStudioBridge,target:EmbeddedStudioToolTarget,importFile:File|undefined,onBusyChange:(busy:boolean)=>void)=>ReactNode;renderBackground?:(bridge:EmbeddedStudioBridge)=>ReactNode}){
   const frame=useRef<HTMLIFrameElement>(null),[channel]=useState(()=>crypto.randomUUID());
-  const [workspace,setWorkspace]=useState(session.workspace),[editor,setEditor]=useState<EditorState|null>(null),[pending,setPending]=useState(false),[error,setError]=useState(''),[saved,setSaved]=useState(false),[railCollapsed,setRailCollapsed]=useState(true),[focused,setFocused]=useState(false);
+  const [workspace,setWorkspace]=useState(session.workspace),[editor,setEditor]=useState<EditorState|null>(null),[pending,setPending]=useState(false),[error,setError]=useState(''),[saved,setSaved]=useState(false),[focused,setFocused]=useState(false);
   const writable=editor?.writable===true;
   const [toolsBusy,setToolsBusy]=useState(false),toolsBusyRef=useRef(false);
   const reportToolsBusy=useCallback((busy:boolean)=>{toolsBusyRef.current=busy;setToolsBusy(busy);},[]);
   const [importFile,setImportFile]=useState<File|undefined>();
+  const toolsTrigger=useRef<HTMLButtonElement>(null);
+  function closeTools(){if(!pendingRef.current&&!toolsBusyRef.current){setToolsOpen(false);toolsTrigger.current?.focus();}}
   const [toolsOpen,setToolsOpen]=useState(false),[toolTarget,setToolTarget]=useState<EmbeddedStudioToolTarget>('audio'),toolsId=useId();
   const writableRef=useRef(false);
   const lastShotSelection=useRef<{shotId:string;itemId:string}|undefined>(undefined);
@@ -115,17 +116,16 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
       </section>
       <nav className="embedded-studio-actions" aria-label={uiText("剪辑操作")}>
         <Tooltip title={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} className="dan-ui dan-ui-tooltip"><AriaButton className="embedded-studio-focus" aria-label={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} aria-pressed={focused} onPress={()=>setFocused(v=>!v)}>{focused?<Minimize2 size={16} aria-hidden="true"/>:<Maximize2 size={16} aria-hidden="true"/>}</AriaButton></Tooltip>
-        {renderTools&&<button type="button" aria-expanded={toolsOpen} aria-controls={toolsId} disabled={pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)setToolsOpen(v=>!v);}}>{uiText('补充工具')}</button>}
+        {renderTools&&<button ref={toolsTrigger} type="button" aria-expanded={toolsOpen} aria-controls={toolsId} disabled={pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)setToolsOpen(v=>!v);}}>{uiText('补充工具')}</button>}
         <button type="button" disabled={!writable||pending||toolsBusy} onClick={()=>void saveAndLeave('delivery')}>{uiText('保存并前往交付')}</button>
         <button className="embedded-studio-save" disabled={!writable||pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)void saveCurrent().catch(()=>{});}}>{pending?<LoaderCircle size={15} aria-hidden="true"/>:<Save size={15} aria-hidden="true"/>}{pending?uiText("保存中…"):uiText("保存")}</button>
       </nav>
     </header>
     {writable&&renderBackground?.(bridge)}
-    {renderTools&&<section id={toolsId} className="embedded-studio-tools" hidden={!toolsOpen} aria-label={uiText('补充工具')}>
-      {toolsOpen&&<><nav aria-label={uiText('工具类型')}>{([['audio','配乐与音效'],['visual','画面与候选'],['captions','字幕校时']] as const).map(([target,label])=><button key={target} type="button" aria-pressed={toolTarget===target} disabled={pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)setToolTarget(target);}}>{uiText(label)}</button>)}</nav>{renderTools(bridge,toolTarget,importFile,reportToolsBusy)}</>}
-    </section>}
     {selectedSoundIntent&&<p className="embedded-studio-sound-intent" aria-label={uiText("当前镜头音效意图")}>{uiText("音效意图：")}{selectedSoundIntent}</p>}
     {error&&<p role="alert" className="form-error">{uiText(error||'')}</p>}
-    {!src?<p role="alert">{uiText("Studio 地址或工程身份不匹配，未加载编辑器。")}</p>:<div className={`embedded-studio-body${railCollapsed?' rail-collapsed':''}`}><WorkspaceShotRail shots={editor?.shots??shots.map(shot=>{const items=editor?.items.filter(i=>i.id.startsWith(`shot-${shot.id}-`))??[];return{id:shot.id,text:shot.text,timelineId:'',itemIds:items.map(i=>i.id),startFrame:items[0]?.startFrame??0,durationInFrames:0,effective:true};})} selectedIds={editor?.selectedIds??[]} draftKey={workspace.projectId} editable={editor?.structureEnabled===true} disabled={!writable||pending||toolsBusy} onCollapse={setRailCollapsed} select={itemId=>{if(toolsBusyRef.current)return;void request('select',{itemId}).catch(cause=>setError(cause.message));}} edit={applyEdit}/><div className="embedded-studio-canvas"><iframe key="native-studio" ref={frame} inert={!writable||pending||toolsBusy} tabIndex={writable&&!pending&&!toolsBusy?0:-1} aria-busy={!writable||pending||toolsBusy} title={uiText("OpenChatCut 剪辑工程")} src={src} sandbox="allow-scripts allow-same-origin allow-downloads" allow="fullscreen"/>{!writable&&<div className="embedded-studio-connecting" aria-hidden="true">{uiText("正在连接编辑器…")}</div>}</div></div>}
+    {!src?<p role="alert">{uiText("Studio 地址或工程身份不匹配，未加载编辑器。")}</p>:<div className={`embedded-studio-body${toolsOpen?' tools-open':''}`}><div className="embedded-studio-canvas"><iframe key="native-studio" ref={frame} inert={!writable||pending||toolsBusy} tabIndex={writable&&!pending&&!toolsBusy?0:-1} aria-busy={!writable||pending||toolsBusy} title={uiText("OpenChatCut 剪辑工程")} src={src} sandbox="allow-scripts allow-same-origin allow-downloads" allow="fullscreen"/>{!writable&&<div className="embedded-studio-connecting" aria-hidden="true">{uiText("正在连接编辑器…")}</div>}</div>{renderTools&&<section id={toolsId} className="embedded-studio-tools" hidden={!toolsOpen} aria-label={uiText('补充工具')} onKeyDown={event=>{if(event.key==='Escape'){event.stopPropagation();closeTools();}}}>
+      {toolsOpen&&<><header className="embedded-studio-tools-heading"><h3>{uiText('补充工具')}</h3><button type="button" disabled={pending||toolsBusy} aria-label={uiText('收起补充工具')} onClick={closeTools}><span aria-hidden="true">×</span></button></header><nav aria-label={uiText('工具类型')}>{([['audio','配乐与音效'],['visual','画面与候选'],['captions','字幕校时']] as const).map(([target,label])=><button key={target} type="button" aria-pressed={toolTarget===target} disabled={pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)setToolTarget(target);}}>{uiText(label)}</button>)}</nav>{renderTools(bridge,toolTarget,importFile,reportToolsBusy)}</>}
+    </section>}</div>}
   </section>;
 }
