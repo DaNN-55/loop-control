@@ -22,9 +22,9 @@ import {readWorkspaceTemplateInputs} from './workspaceTemplateInputs.js';
 import {verifyPublishPackage} from '../publishing/publishPackage.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {isWorkspaceVideoTrack} from '../workspaceExecution.js';
-export async function readWorkspaceDeliveries(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<WorkspaceDelivery[]>{
+export async function readWorkspaceDeliveries(c:PoolClient,root:string,row:Pick<ProductionWorkspaceRecord,'id'|'episode_id'>,deliveryId?:string):Promise<WorkspaceDelivery[]>{
  if(!(await c.query("SELECT to_regclass('local_identity.workspace_deliveries') present")).rows[0].present)return[];
- const values=(await c.query('SELECT d.*,t.status,t.last_result FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE workspace_id=$1 ORDER BY d.created_at DESC,d.id DESC',[row.id])).rows;
+ const values=(await c.query('SELECT d.*,t.status,t.last_result FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE workspace_id=$1 AND ($2::uuid IS NULL OR d.id=$2) ORDER BY d.created_at DESC,d.id DESC',[row.id,deliveryId??null])).rows;
  return Promise.all(values.map(async(d,index)=>{let verified=d.status==='completed',error=d.last_result?.retry?.reason??null;const identity=d.last_result?.deliveryIdentity;const artifacts=[...(d.last_result?.artifacts??[]),...(identity?[identity.video,identity.project]:[])];
  const verificationDeferred=verified&&index>0;
  if(verified&&!verificationDeferred)try{const pack=artifacts.find((a:ArtifactManifest)=>a.artifactType==='publish_package');if(!pack)throw Error();await verifyPublishPackage({assetRoot:root,episodeId:row.episode_id,publishPackage:pack,storage:await episodeFileIO(c,root,row.episode_id)});}catch{verified=false;error='交付包文件缺失、损坏或指纹已变化。';}

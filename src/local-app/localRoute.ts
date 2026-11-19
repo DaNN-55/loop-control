@@ -1,3 +1,4 @@
+import {readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
 import {LocalPublicationPackages} from './workspacePublicationPackages.js';
 import {readScriptStudio} from './scriptStudioConfirmation.js';
 import {LocalWorkspacePublications} from './workspacePublicationStore.js';
@@ -289,8 +290,8 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     const delivery=publicationId?await publicationPackages.read(session.id,episodeId,publicationId):await ownerTransaction(options.pool,session.id,true,async c=>{
      const e=(await c.query("SELECT e.id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[episodeId,session.id])).rows[0];
      if(!e)throw new ConfigurationError(404,'生产单不可见。');
-     const w=await readProductionWorkspace(c,episodeId,await resolveEpisodeAssetRoot(c,options.mediaRoot,episodeId));
-     const d=w?.deliveries?.find(d=>d.id===deliveryId);
+     const w=(await c.query('SELECT id,episode_id FROM local_identity.production_workspaces WHERE episode_id=$1',[episodeId])).rows[0];
+     const d=w?(await readWorkspaceDeliveries(c,await resolveEpisodeAssetRoot(c,options.mediaRoot,episodeId),w,deliveryId!))[0]:undefined;
      if(!d?.verified)throw new ConfigurationError(409,'交付包未验证或文件已变化，请刷新检查。');
      return d;
     });

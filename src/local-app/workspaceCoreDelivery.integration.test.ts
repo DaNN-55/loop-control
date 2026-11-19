@@ -1,7 +1,8 @@
 // @vitest-environment node
 import {expect,it} from 'vitest';
-import {readFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
+import {randomUUID} from 'node:crypto';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {defaultShotCaptionContract} from '../shotCaptions';
 import {nativeWorkerPort} from './workerDatabase';
@@ -47,5 +48,13 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('confirms and completes t
   const publishedZip=await fetch(f.origin+secondPackage.body.downloadUrl,{headers:{Cookie:'loop_owner_session='+f.token}});expect(publishedZip.status).toBe(200);expect((await publishedZip.arrayBuffer()).byteLength).toBeGreaterThan(0);
   expect((await f.post(packagePath,'create',{expectedRevision:1})).status).toBe(409);
   const zip=await fetch(f.origin+`/api/local/episodes/${f.episode}/delivery-download?delivery=${w.deliveries[0].id}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(zip.status).toBe(200);expect((await zip.arrayBuffer()).byteLength).toBeGreaterThan(0);
+  const historicalId=w.deliveries[0].id,nextTask=randomUUID(),nextDelivery=randomUUID();
+  await f.c.query("INSERT INTO public.tasks SELECT (jsonb_populate_record(NULL::public.tasks,to_jsonb(t)||jsonb_build_object('id',$2::uuid,'status','failed','last_result',jsonb_build_object('retry',jsonb_build_object('reason','最新收尾失败')),'created_at',clock_timestamp()+interval '1 second'))).* FROM public.tasks t WHERE id=$1",[w.deliveries[0].taskId,nextTask]);
+  await f.c.query("INSERT INTO local_identity.workspace_deliveries(id,workspace_id,episode_id,export_id,task_id,created_at) VALUES($1,$2,$3,$4,$5,clock_timestamp()+interval '1 second')",[nextDelivery,w.id,f.episode,w.exports[0].id,nextTask]);
+  const historyRead=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}}),history=(await historyRead.json()).workspace.deliveries;
+  expect(history[0].status).toBe('failed');expect(history[1]).toMatchObject({id:historicalId,verified:false,verificationDeferred:true});
+  const historyZip=()=>fetch(f.origin+`/api/local/episodes/${f.episode}/delivery-download?delivery=${historicalId}`,{headers:{Cookie:'loop_owner_session='+f.token}});
+  const validHistory=await historyZip();expect(validHistory.status).toBe(200);expect((await validHistory.arrayBuffer()).byteLength).toBeGreaterThan(0);
+  await writeFile(join(f.assetRoot,pack.relativePath),'tampered');expect((await historyZip()).status).toBe(409);await writeFile(join(f.assetRoot,pack.relativePath),beforeBytes);expect((await historyZip()).status).toBe(200);
  }finally{await worker.end();await f.close();}
 },300000);
