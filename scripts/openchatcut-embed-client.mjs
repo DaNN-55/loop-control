@@ -24,11 +24,13 @@ export function useLoopControlHost(projectId,base,agent,panels){
   async function message(event){
    const msg=event.data;
    if(event.source!==parent||event.origin!==parentOrigin||!msg||msg.type!=='loop-control:command'||msg.channel!==channel||msg.projectId!==projectId||typeof msg.requestId!=='string'||!/^[a-f0-9-]{36}$/.test(msg.requestId))return;
-   const result=(ok,error)=>emit('loop-control:result',{requestId:msg.requestId,ok,...(error?{error}:{})});
+   const result=(ok,error,extra={})=>emit('loop-control:result',{requestId:msg.requestId,ok,...(error?{error}:{}),...extra});
    try{
-    if(!['select','flush'].includes(msg.action)){result(false,'当前操作由原生剪辑器处理。');return;}
+    if(!['select','flush','inspect'].includes(msg.action)){result(false,'当前操作由原生剪辑器处理。');return;}
     if(!browserProjectOwnership(projectId)){result(false,'编辑器写连接尚未就绪或已变化，请保留当前编辑并重试。');return;}
-    if(msg.action==='flush'){
+    if(msg.action==='inspect'){
+     result(true,undefined,{result:{document:structuredClone(live.current.base.doc)}});
+    }else if(msg.action==='flush'){
      const ok=await flushLiveDocument();result(ok,ok?undefined:'编辑器仍有未保存修改，请在编辑器中重试保存。');
     }else{
      const item=live.current.base.state.items.find(i=>i.id===msg.itemId);

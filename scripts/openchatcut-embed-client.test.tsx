@@ -20,4 +20,8 @@ it('flushes the actual manually edited native captions without rewriting their c
  await act(async()=>{window.dispatchEvent(new MessageEvent('message',{origin:'http://127.0.0.1:5174',source:host as any,data:{type:'loop-control:command',channel,projectId:'p',requestId:'11111111-1111-1111-1111-111111111111',action:'flush'}}));});
  await waitFor(()=>expect(host.postMessage.mock.calls.map(call=>call[0]).find(value=>value.type==='loop-control:result')).toMatchObject({ok:true}));
  expect(saveProject).toHaveBeenCalledWith('p',document);expect(persisted).toEqual(document);
+ await act(async()=>{window.dispatchEvent(new MessageEvent('message',{origin:'http://127.0.0.1:5174',source:host as any,data:{type:'loop-control:command',channel,projectId:'p',requestId:'22222222-2222-2222-2222-222222222222',action:'inspect'}}));});
+ expect(host.postMessage.mock.calls.map(call=>call[0]).find(value=>value.requestId==='22222222-2222-2222-2222-222222222222')).toMatchObject({ok:true,result:{document}});expect(saveProject).toHaveBeenCalledTimes(1);
+ await act(async()=>{window.dispatchEvent(new MessageEvent('message',{origin:'http://127.0.0.1:5174',source:host as any,data:{type:'loop-control:command',channel,projectId:'p',requestId:'33333333-3333-3333-3333-333333333333',action:'apply-caption'}}));});
+ expect(host.postMessage.mock.calls.map(call=>call[0]).find(value=>value.requestId==='33333333-3333-3333-3333-333333333333')).toMatchObject({ok:false});expect(saveProject).toHaveBeenCalledTimes(1);
 });

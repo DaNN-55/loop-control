@@ -9,7 +9,7 @@ import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {uiText} from '../i18n/ui';
 export function WorkspaceAdditionalDownloads({workspace:w,delivery,publication:p,readOnly=false}:{workspace:ProductionWorkspace;delivery:WorkspaceDelivery;publication:ReturnType<typeof useWorkspacePublication>;readOnly?:boolean}){
  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[pack,setPack]=useState<PublicationPackageReference|null>(null);
- const current=pack?.revision===p.state?.revision&&!p.dirty&&!p.saving;
+ const current=!!pack&&!!p.state&&pack.revision===p.state.revision&&!p.dirty&&!p.saving;
  async function prepare(){if(busy)return;setBusy(true);setError('');try{const saved=await p.flush();const result=await localCommand<PublicationPackageReference>('create',{expectedRevision:saved.revision},undefined,`episodes/${w.episodeId}/publication-package`);setPack(result);window.location.assign(result.downloadUrl);}catch(cause){setError(cause instanceof Error?cause.message:'最新资料包准备失败。');}finally{setBusy(false);}}
  return <details className="workspace-more-downloads"><summary>{uiText('更多下载')}</summary>
   {!readOnly&&<>{current?<a href={pack!.downloadUrl} download>{uiText('下载交付文件（ZIP）')}</a>:<Button size="sm" color="secondary" isDisabled={busy||!p.state} onPress={()=>void prepare()}>{uiText(busy?'正在准备下载…':'下载交付文件（ZIP）')}</Button>}</>}

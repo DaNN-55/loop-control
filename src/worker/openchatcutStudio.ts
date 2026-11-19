@@ -1,3 +1,4 @@
+import {studioDraftChanges} from './studioDraftChanges.js';
 import {archiveNativeStudioImports,type NativeStudioImport} from './nativeStudioImports.js';
 import {cacheBundledStudioSounds} from './openchatcutBundledSounds.js';
 import {openChatCutBundledSounds,bundledSoundRuntimeSource} from '../openchatcutBundledSounds.js';
@@ -285,8 +286,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
     const nativeProject=structuredClone(storedProject);
     storedMetadata=await archiveStudioDocument(root,options.storage?.relativePath??`episodes/${episodeId}`,dataDir,nativeProject,storedMetadata);
     rewriteSources(nativeProject,new Map(Object.entries(storedMetadata.reverseSources)));
-    const nativeChanged=projectSha256(nativeProject)!==projectSha256(hostBaseline);
-    const hostChanged=projectSha256(project)!==projectSha256(hostBaseline);
+    const {nativeChanged,hostChanged}=studioDraftChanges(hostBaseline,nativeProject,project);
     if(nativeChanged&&hostChanged)throw Error('原生工程和制作版本均有新修改，请先恢复原生编辑再采用新版本；两个版本均已保留。');
     recoverStored=nativeChanged&&!hostChanged;
     if(recoverStored)await options.validateProject?.(nativeProject);
