@@ -1,0 +1,55 @@
+{
+  "bars": [
+    {
+      "class": "workspace-table-caption",
+      "height": 48,
+      "padding": "8px 12px",
+      "y": 235
+    },
+    {
+      "class": "workspace-detail-tabs",
+      "height": 48,
+      "padding": "8px 12px",
+      "y": 235
+    }
+  ],
+  "columns": [
+    {
+      "align": "left",
+      "label": "镜头",
+      "padding": "8px 12px",
+      "width": 72
+    },
+    {
+      "align": "left",
+      "label": "脚本与素材",
+      "padding": "8px 12px",
+      "width": 300
+    },
+    {
+      "align": "left",
+      "label": "时长",
+      "padding": "8px 12px",
+      "width": 72
+    },
+    {
+      "align": "left",
+      "label": "准备情况",
+      "padding": "8px 12px",
+      "width": 84
+    },
+    {
+      "align": "left",
+      "label": "操作",
+      "padding": "8px 7px 8px 15px",
+      "width": 44
+    }
+  ],
+  "dividerWidth": 9,
+  "rows": 3,
+  "tableWidth": 572,
+  "viewport": [
+    1458,
+    944
+  ]
+}
