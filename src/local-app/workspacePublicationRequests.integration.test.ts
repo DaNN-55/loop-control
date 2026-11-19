@@ -29,7 +29,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('executes a dedicated pub
   await f.c.query("UPDATE public.episodes SET stage='production_completed' WHERE id=$1",[f.episode]);
   const send=async(input:unknown,key:string)=>{const r=await fetch(f.origin+'/api/local/'+ai,{method:'POST',headers:{Origin:f.origin,Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token),'Content-Type':'application/json'},body:JSON.stringify({command:'generate',data:input,idempotencyKey:key})});return{status:r.status,body:await r.json()};};
   const input={expectedRevision:1,selection},key=randomUUID(),count=posts,first=await send(input,key);expect(first.status,JSON.stringify(first.body)).toBe(200);expect(first.body.status,JSON.stringify(first.body)).toBe('completed');expect(first.body.publication.content.title).toBe('实际保留商品');expect(posts).toBe(count+1);
-  expect(wire.text.format.name).toBe('workspace_publication_v1');expect(JSON.parse(wire.input[0].content)).toMatchObject({current:{title:'手改标题'},instruction:'简短'});
+  expect(wire.text.format.name).toBe('workspace_publication_v1');expect(JSON.parse(wire.input[0].content).context.accountRules).not.toHaveProperty('asset_root');expect(JSON.parse(wire.input[0].content)).toMatchObject({current:{title:'手改标题'},instruction:'简短'});
   expect((await send(input,key)).body).toEqual(first.body);expect(posts).toBe(count+1);
   const undone=await f.post(ai,'undo',{expectedRevision:2});expect(undone.status,JSON.stringify(undone.body)).toBe(200);expect(undone.body.content).toEqual(content);
   mode='hold';const pending=f.post(ai,'generate',{expectedRevision:3,selection});await vi.waitFor(()=>expect(release).toBeTypeOf('function'));

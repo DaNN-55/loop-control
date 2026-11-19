@@ -29,10 +29,10 @@ export async function readWorkspacePublication(c:PoolClient,root:string,w:Public
  if(cover)state.cover={file:{relativePath:cover.relativePath,sha256:cover.sha256,fileSize:cover.fileSize},name:'已有封面',source:{kind:'existing'}};
  return state;
 }
-export async function writeWorkspacePublication(c:PoolClient,w:PublicationWorkspace,current:WorkspacePublication,expectedRevision:unknown,next:Pick<WorkspacePublication,'content'|'cover'|'previousText'>):Promise<WorkspacePublication>{
+export async function writeWorkspacePublication(c:PoolClient,w:PublicationWorkspace,current:WorkspacePublication,expectedRevision:unknown,next:Pick<WorkspacePublication,'content'|'cover'|'previousText'>&{basisContentSha256?:string}):Promise<WorkspacePublication>{
  if(!Number.isSafeInteger(expectedRevision)||expectedRevision!==current.revision)throw new ConfigurationError(409,'发布资料已在其他页面更新，请重新读取；当前输入仍保留。');
  const result=await c.query(`INSERT INTO local_identity.workspace_publications(workspace_id,episode_id,content,cover,basis_content_sha256,previous_text) VALUES($1,$2,$3,$4,$5,$6)
- ON CONFLICT(workspace_id) DO UPDATE SET revision=workspace_publications.revision+1,content=excluded.content,cover=excluded.cover,basis_content_sha256=excluded.basis_content_sha256,previous_text=excluded.previous_text,updated_at=clock_timestamp() WHERE workspace_publications.revision=$7 RETURNING *`,[w.id,w.episode_id,next.content,next.cover,w.content_sha256,next.previousText,expectedRevision]);
+ ON CONFLICT(workspace_id) DO UPDATE SET revision=workspace_publications.revision+1,content=excluded.content,cover=excluded.cover,basis_content_sha256=excluded.basis_content_sha256,previous_text=excluded.previous_text,updated_at=clock_timestamp() WHERE workspace_publications.revision=$7 RETURNING *`,[w.id,w.episode_id,next.content,next.cover,next.basisContentSha256??current.basisContentSha256,next.previousText,expectedRevision]);
  if(!result.rows[0])throw new ConfigurationError(409,'发布资料已有更新，请重新读取。');
  return publication(result.rows[0]);
 }

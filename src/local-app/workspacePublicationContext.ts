@@ -1,3 +1,4 @@
+import {creativeAccountRules,resolveCreativeRules} from '../creativeAccountRules.js';
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {workspaceExecutionProject,isWorkspaceVideoTrack} from '../workspaceExecution.js';
@@ -34,5 +35,6 @@ export async function buildPublicationContext(c:PoolClient,root:string,row:Produ
   narration.push({text:full?source?.text??null:null,coverage:full?'complete_source':'partial_or_muted_or_retimed_unknown',windows});
  }
  const rules=(await c.query('SELECT b.policy account_rules,s.rules series_rules FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN public.series_versions s ON s.id=e.series_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
- return{...timeline,narration,accountRules:rules?.account_rules??{},seriesRules:rules?.series_rules??{}};
+ const creative=resolveCreativeRules(creativeAccountRules(rules?.account_rules??{}),rules?.series_rules);
+ return{...timeline,narration,accountRules:creative.account,seriesRules:creative.series??{}};
 }

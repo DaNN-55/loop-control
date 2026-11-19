@@ -24,7 +24,7 @@ export function WorkspacePublicationPanel({workspace:w,readOnly=false,children}:
  }
  return <>{children?.(p)}<section className="workspace-publication" aria-label={uiText('发布资料（可选）')}>
   <header className="workspace-review-heading"><h4>{uiText('发布资料（可选）')}</h4>{p.saving&&<span role="status">{uiText('保存中…')}</span>}</header>
-  {p.state&&p.state.basisContentSha256!==w.contentSha256&&<p role="status">{uiText('视频已更新，请核对发布资料。')}</p>}
+  {p.state&&(hasContent||p.state.cover||p.content.instruction)&&p.state.basisContentSha256!==w.contentSha256&&<p role="status">{uiText('视频已更新，请核对发布资料。')}</p>}
   {!readOnly&&<div className="workspace-publication-ai">
    <Button size="sm" color="secondary" isDisabled={!p.state||ai.busy||ai.unresolved} onPress={()=>void ai.generate()}>{uiText(ai.busy?'正在生成文案…':hasContent?'重新生成发布文案':'AI 生成发布文案')}</Button>
    <small>{ai.choice?.label??uiText('选择大语言模型')} <button type="button" onClick={()=>ai.setChoosing(!ai.choosing)}>{uiText('更换')}</button></small>

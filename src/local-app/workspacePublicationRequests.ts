@@ -39,7 +39,7 @@ export class LocalPublicationRequests {
    const w=await ownedPublicationWorkspace(c,episodeId,true),old=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,id])).rows[0];
    if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'操作标识已用于其他内容。');return old.result;}
    const current=await readWorkspacePublication(c,await resolveEpisodeAssetRoot(c,mediaRoot,episodeId),w);if(!current.previousText)throw new ConfigurationError(409,'没有可撤回的替换。');
-   const saved=await writeWorkspacePublication(c,w,current,data.expectedRevision,{content:{...current.content,...current.previousText},cover:current.cover,previousText:null});
+   const saved=await writeWorkspacePublication(c,w,current,data.expectedRevision,{basisContentSha256:current.previousText.basisContentSha256??current.basisContentSha256,content:{...current.content,title:current.previousText.title,description:current.previousText.description,tags:current.previousText.tags},cover:current.cover,previousText:null});
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,id,hash,saved]);return saved;
   });
   const prepared=await sessionTransaction(this.pool,session,async c=>{
@@ -75,7 +75,7 @@ export class LocalPublicationRequests {
    if(outcome)result={requestId:id,status:outcome,message};
    else if(w.id!==prepared.workspaceId||w.content_sha256!==prepared.contentSha256||current.revision!==prepared.revision)result={requestId:id,status:'stale',responseId:value!.responseId,message:'视频或发布资料已有修改，未覆盖新内容。请核对后重新生成。'};
    else{
-    const saved=await writeWorkspacePublication(c,w,current,prepared.revision,{content:{...current.content,...value!.text},cover:current.cover,previousText:{title:current.content.title,description:current.content.description,tags:current.content.tags}});
+    const saved=await writeWorkspacePublication(c,w,current,prepared.revision,{basisContentSha256:w.content_sha256,content:{...current.content,...value!.text},cover:current.cover,previousText:{basisContentSha256:current.basisContentSha256,title:current.content.title,description:current.content.description,tags:current.content.tags}});
     result={requestId:id,status:'completed',responseId:value!.responseId,message:'发布文案已生成，可直接修改或分别复制。',publication:saved};
    }
    await c.query('UPDATE local_identity.workspace_publication_requests SET status=$3,result=$4,updated_at=clock_timestamp() WHERE id=$1 AND owner_id=$2',[id,session.id,result.status,result]);return result;

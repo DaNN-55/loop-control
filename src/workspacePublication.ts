@@ -4,7 +4,7 @@ import {normalizeDeliveryTags,deliveryTagsError} from './publishing/deliveryMeta
 export interface PublicationText {title:string;description:string;tags:string[]}
 export interface PublicationContent extends PublicationText {instruction:string}
 export interface PublicationCover {file:WorkspaceExportArtifact;name:string;source:{kind:'upload'|'frame'|'existing';exportId?:string;videoSha256?:string;timeSeconds?:number}}
-export interface WorkspacePublication {workspaceId:string;revision:number;content:PublicationContent;cover:PublicationCover|null;basisContentSha256:string;previousText:PublicationText|null;updatedAt:string|null}
+export interface WorkspacePublication {workspaceId:string;revision:number;content:PublicationContent;cover:PublicationCover|null;basisContentSha256:string;previousText:(PublicationText&{basisContentSha256?:string})|null;updatedAt:string|null}
 export const emptyPublicationContent:PublicationContent={title:'',description:'',tags:[],instruction:''};
 export function parsePublicationContent(value:unknown):PublicationContent{
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('发布资料格式无效。');
