@@ -1,0 +1,42 @@
+npm test -- --maxWorkers=4
+ ✓ src/orchestration/workerOutcome.test.ts (1 test) 1ms
+ ✓ scripts/openchatcut-agent-models.test.mjs (2 tests | 1 skipped) 1ms
+
+ Test Files  373 passed (373)
+      Tests  2648 passed | 1 skipped (2649)
+   Start at  15:24:26
+   Duration  91.98s (transform 4.46s, setup 461ms, collect 90.02s, tests 189.32s, environment 43.06s, prepare 10.97s)
+
+
+PG/HTTP/SDK/Worker acceptance - 11 files
+ ✓ src/local-app/workspacePublicationCover.integration.test.ts (1 test) 9243ms
+   ✓ persists upload and actual decoded-frame covers with safe identity, byte downloads, refresh and replacement failures  9243ms
+
+ Test Files  11 passed (11)
+      Tests  15 passed (15)
+   Start at  15:13:10
+   Duration  110.74s (transform 663ms, setup 18ms, collect 2.63s, tests 214.34s, environment 1ms, prepare 329ms)
+
+
+npm run check
+npm notice run loop-control@0.1.0 check
+npm notice run tsc -b --pretty false
+
+npm run build
+dist/assets/te-BF9P08tJ.js                 5.19 kB │ gzip:   1.43 kB
+dist/assets/index-BqlLPZrd.js          1,846.42 kB │ gzip: 569.44 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.71s
+
+npm run runtime:prepare
+npm notice run loop-control@0.1.0 runtime:prepare
+npm notice run node scripts/prepare-runtime.mjs
+npm notice run loop-control@0.1.0 worker:build
+npm notice run tsc -p tsconfig.worker.json
+npm notice run loop-control@0.1.0 backend:build
+npm notice run tsc -p tsconfig.local-app.json
+Worker/编排程序已准备并通过源码与产物完整性检查。
