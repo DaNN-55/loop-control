@@ -10,8 +10,6 @@ import {CompletedDialog} from './CompletedDialog';
 import {WorkspaceCompletedShots} from './WorkspaceCompletedShots';
 import {WorkspaceMaterialShelf} from './WorkspaceMaterialShelf';
 import {CompletedProductionRecords} from './CompletedProductionRecords';
-import {CompletedQualityEvidence} from './CompletedQualityEvidence';
-import {completedReviewEvidence} from './completedReviewEvidence';
 import {workspaceShotSource} from './WorkspaceShotPreview';
 import {CompletedImagePreview} from './CompletedImagePreview';
 import {CompletedShotThumbnail} from './CompletedShotThumbnail';
@@ -35,7 +33,6 @@ export function WorkspaceCompletedReview({workspace:w,project,materials,view,onO
  const scriptExcerpt=segment?[`${uiText('口播')}：${segment.narration}`,`${uiText('画面提示')}：${segment.visual}`,`${uiText('视频提示词')}：${segment.videoPrompt}`].join('\n\n'):originalScript;
  const final=completedWorkspaceExport(w),linked=!!project&&!!final&&final.project.sha256===w.project.sha256;
  const timeline=project?.timelines.find(t=>t.id===shot?.timelineId),fps=timeline?.fps??30;
- const observations=completedReviewEvidence(w);
  const activeTimeline=project?.timelines.find(t=>t.id===project.activeTimelineId);
  return <>
   <section hidden={view!=='shots'} className="production-workspace-section completed-overview" aria-label={uiText('已完成作品分镜台')}>
@@ -52,14 +49,14 @@ export function WorkspaceCompletedReview({workspace:w,project,materials,view,onO
      const sounds=saved?mix?.sounds.filter(sound=>sound.startSeconds<(s.startFrame+s.durationInFrames)/saved.fps&&sound.startSeconds+sound.durationSeconds>s.startFrame/saved.fps):[];
      const soundNames=[...(mainVoice?.mode==='tts'||voice?['口播']:mainVoice?.mode==='source'?['原声']:[]),...(sounds?.some(sound=>sound.kind==='bgm')?['配乐']:[]),...(sounds?.some(sound=>sound.kind==='sfx')?['音效']:[])];
      return <tr key={s.timelineId+':'+s.id} data-selected={(selected===s.id||!selected&&index===0)||undefined}>
-      <th scope="row" title={s.id}>{String(index+1).padStart(2,'0')}{observations.some(n=>n.shotId===s.id&&n.state!=='已替换')&&<small className="completed-warning">{uiText('复核')}</small>}</th><td><div className="completed-visual-cell">{first&&<CompletedShotThumbnail workspace={w} project={project} itemId={String(first.id)}/>}<span className={first?'sr-only':undefined}>{first?uiText(first.kind==='image'?'图片':'视频'):uiText(project?'无有效画面':'工程未读取')}</span>{visuals.length>1&&<small>{visuals.length}</small>}</div></td>
+      <th scope="row" title={s.id}>{String(index+1).padStart(2,'0')}</th><td><div className="completed-visual-cell">{first&&<CompletedShotThumbnail workspace={w} project={project} itemId={String(first.id)}/>}<span className={first?'sr-only':undefined}>{first?uiText(first.kind==='image'?'图片':'视频'):uiText(project?'无有效画面':'工程未读取')}</span>{visuals.length>1&&<small>{visuals.length}</small>}</div></td>
       <td><p>{s.text}</p>{voice?.text&&voice.text!==s.text&&<small>{uiText('采用口播：')}{voice.text}</small>}{caption&&caption.timing!=='current'&&<small className="completed-warning">{uiText('字幕时序待核对')}</small>}</td>
       <td>{saved?`${(s.startFrame/saved.fps).toFixed(2)}–${((s.startFrame+s.durationInFrames)/saved.fps).toFixed(2)} s`:'—'}</td>
       <td><span className="completed-voice-state">{soundNames.includes('口播')?uiText('口播 ✓'):soundNames.includes('原声')?uiText('原声'):uiText(project?'无口播':'待核对')}</span><small>{soundNames.includes('音效')?uiText('音效'):soundNames.includes('配乐')?uiText('整期配乐'):uiText('无配乐或音效')}</small></td><td><button type="button" onClick={()=>{setSelected(s.id);setItemId(s.itemIds[0]??'');}} aria-label={uiText('查看镜头 {id}',{id:s.id})}>{uiText('查看')} ↗</button></td>
      </tr>;
     })}</tbody>
    </table>{!shots.length&&<p>{uiText('此作品没有可读取的镜头记录。')}</p>}</div>
-   <footer className="completed-overview-footer"><CompletedQualityEvidence workspace={w} compact/><WorkspaceMaterialShelf episodeId={w.episodeId} scriptRevisionId={w.scriptRevisionId} shotCount={shots.length} materials={materials} readOnly busy={false} status="" failures={[]} onImport={async()=>{throw Error('已完成作品只读。');}}/></footer>
+   <footer className="completed-overview-footer"><WorkspaceMaterialShelf episodeId={w.episodeId} scriptRevisionId={w.scriptRevisionId} shotCount={shots.length} materials={materials} readOnly busy={false} status="" failures={[]} onImport={async()=>{throw Error('已完成作品只读。');}}/></footer>
   </section>
   <CompletedDialog open={view==='shots'&&!!shot} title={shot?`${shot.id} · ${shot.text}`:''} drawer onClose={()=>setSelected(null)}>
    {shot&&<div className="completed-drawer-layout"><section className="completed-shot-scene">

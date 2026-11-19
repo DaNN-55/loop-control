@@ -43,8 +43,8 @@ it('uses three completed-work sections and opens only an isolated Studio copy wi
  expect(screen.getAllByRole('table')).toHaveLength(1);
  expect(screen.queryByRole('dialog')).toBeNull();
  const quality=document.querySelector('.workspace-preparation .completed-quality');
- expect(quality?.querySelector('summary')?.textContent).toContain('首镜字幕出现三行');
- expect(quality?.hasAttribute('open')).toBe(false);
+ expect(quality).toBeNull();
+ expect(screen.queryByText('问题与复核记录')).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'在 OpenChatCut 中查看'}));
  await screen.findByRole('region',{name:'OpenChatCut 查看副本'});
  await screen.findByTitle('OpenChatCut 查看副本');

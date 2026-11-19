@@ -10,7 +10,7 @@ import type {PoolClient} from 'pg';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import type {InputRuntime} from './episodeCommands.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
-import type {WorkspaceExport,WorkspaceExportCheck,WorkspaceExportIssue} from '../workspaceExport.js';
+import type {WorkspaceExport,WorkspaceExportCheck} from '../workspaceExport.js';
 import {activeOpenChatCutState} from '../worker/openchatcutProject.js';
 import {readWorkspaceCaptions,confirmWorkspaceCaptionTexts} from './workspaceCaptionsCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
@@ -60,32 +60,24 @@ export async function workspaceExportReadiness(c:PoolClient,root:string,row:Prod
   const captions=await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>used?.ids.has(b.itemId))},project);const required=captions.filter(x=>used?.ids.has(x.itemId)&&x.contract.enabled);if(required.some(x=>x.timing!=='current'||!x.contract.cues.length||x.contract.cues.some(q=>q.startMs<0||q.endMs<=q.startMs||q.endMs>x.durationMs+1)))throw Error('必要字幕缺少当前时序，请在剪辑器校时或使用字幕对齐。');checks.push({name:'captions',passed:true,detail:`已核对 ${required.length} 组字幕时序，正文随最终文件一次确认。`,evidence:required});}catch(error){checks.push({name:'captions',passed:false,detail:error instanceof Error?error.message:'字幕不可用。'});}
  return{checks,sources,used,dependencies};
 }
-export async function readWorkspaceExports(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<{exports:WorkspaceExport[];exportIssues:WorkspaceExportIssue[]}>{
- if(!(await c.query("SELECT to_regclass('local_identity.workspace_exports') present")).rows[0].present)return{exports:[],exportIssues:[]};
+export async function readWorkspaceExports(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<{exports:WorkspaceExport[]}>{
+ if(!(await c.query("SELECT to_regclass('local_identity.workspace_exports') present")).rows[0].present)return{exports:[]};
  const rows=(await c.query('SELECT * FROM local_identity.workspace_exports WHERE workspace_id=$1 ORDER BY created_at DESC,id DESC',[row.id])).rows;
- const issues=(await c.query('SELECT * FROM local_identity.workspace_export_issues WHERE workspace_id=$1 ORDER BY created_at DESC',[row.id])).rows;
  const exports:WorkspaceExport[]=[];
  for(const [index,e] of rows.entries()){
   const current=index===0&&e.content_sha256===row.content_sha256&&Number(e.project_content_version)===Number(row.revision);let available=true;
   if(index===0&&e.artifact)try{await verifyEpisodeFile(c,root,row.episode_id,e.artifact.relativePath,e.artifact.sha256,e.artifact.fileSize);}catch{available=false;}
-  exports.push({id:e.id,projectContentVersion:Number(e.project_content_version),contentSha256:e.content_sha256,project:e.project,status:e.status,artifact:e.artifact,checks:[...e.checks,...(!available?[{name:'export_file',passed:false,detail:'导出文件缺失或指纹已变化。'}]:[])],createdAt:e.created_at,confirmedAt:e.confirmed_at,confirmed:!!e.confirmed_at&&current&&available&&!issues.some(i=>!i.resolved_at||new Date(i.created_at)>new Date(e.confirmed_at)),current});
+  exports.push({id:e.id,projectContentVersion:Number(e.project_content_version),contentSha256:e.content_sha256,project:e.project,status:e.status,artifact:e.artifact,checks:[...e.checks,...(!available?[{name:'export_file',passed:false,detail:'导出文件缺失或指纹已变化。'}]:[])],createdAt:e.created_at,confirmedAt:e.confirmed_at,confirmed:!!e.confirmed_at&&current&&available,current});
  }
- return{exports,exportIssues:issues.map(i=>({id:i.id,exportId:i.export_id,reason:i.reason,resolved:!!i.resolved_at}))};
+ return{exports};
 }
 export async function executeWorkspaceExport(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>){
  const storage=await episodeFileIO(c,root,row.episode_id,true);
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再检查最终文件。');
- if(command==='recordWorkspaceExportIssue'){
-  if(data.exportId!==undefined&&(typeof data.exportId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.exportId)))throw new ConfigurationError(400,'导出标识无效。');
-  if(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>4000)throw new ConfigurationError(400,'请填写问题内容。');
-  if(data.exportId!==undefined&&!(await c.query('SELECT 1 FROM local_identity.workspace_exports WHERE id=$1 AND workspace_id=$2',[data.exportId,row.id])).rowCount)throw new ConfigurationError(409,'导出版本已变化。');
-  await c.query('INSERT INTO local_identity.workspace_export_issues(workspace_id,episode_id,export_id,reason) VALUES($1,$2,$3,$4)',[row.id,row.episode_id,data.exportId??null,data.reason.trim()]);return;
- }
- if(command==='resolveWorkspaceExportIssue'){if(typeof data.issueId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.issueId))throw new ConfigurationError(400,'问题标识无效。');if(!(await c.query('UPDATE local_identity.workspace_export_issues SET resolved_at=clock_timestamp() WHERE id=$1 AND workspace_id=$2',[data.issueId,row.id])).rowCount)throw new ConfigurationError(404,'问题记录不存在。');return;}
  if(command==='confirmWorkspaceExport'){
   if(typeof data.exportId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.exportId)||typeof data.expectedExportSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.expectedExportSha256)||typeof data.expectedContentSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.expectedContentSha256))throw new ConfigurationError(400,'最终文件确认身份无效。');
-  const {exports,exportIssues}=await readWorkspaceExports(c,root,row),e=exports[0];
-  if(!e||!e.current||e.id!==data.exportId||e.status!=='ready'||e.contentSha256!==data.expectedContentSha256||e.artifact?.sha256!==data.expectedExportSha256||e.checks.some(x=>!x.passed)||exportIssues.some(x=>!x.resolved))throw new ConfigurationError(409,'当前工程、最终文件或检查已变化，请重新检查这份文件。');
+  const {exports}=await readWorkspaceExports(c,root,row),e=exports[0];
+  if(!e||!e.current||e.id!==data.exportId||e.status!=='ready'||e.contentSha256!==data.expectedContentSha256||e.artifact?.sha256!==data.expectedExportSha256||e.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前工程、最终文件或检查已变化，请重新检查这份文件。');
   const readiness=await workspaceExportReadiness(c,root,row,project);if(readiness.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前已用内容或字幕检查未通过。');
   await verifyEpisodeFile(c,root,row.episode_id,e.project.relativePath,e.project.sha256,e.project.fileSize);
   await confirmWorkspaceCaptionTexts(c,root,{...row,bindings:row.bindings.filter(b=>readiness.used?.ids.has(b.itemId))},project);

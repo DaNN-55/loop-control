@@ -1,0 +1,16 @@
+.workspace-publication{display:grid;gap:.75rem;min-width:0}
+.workspace-publication-fields{display:grid;gap:.75rem;min-width:0;margin:0}
+.workspace-publication-field{display:grid;gap:.25rem;min-width:0}
+.workspace-publication-field :is(input,textarea){box-sizing:border-box;width:100%;min-width:0;padding:.5rem .75rem;font:inherit;font-size:1rem;line-height:1.5;border:1px solid var(--lc-line-strong,#bdcadd);border-radius:5px;color:var(--lc-ink,#17263e);background:var(--lc-surface,#fff)}
+.workspace-publication-field textarea{resize:vertical;min-height:5rem}
+.workspace-publication-cover{max-width:12rem}
+.workspace-more-downloads{position:relative;min-width:0}
+.workspace-more-downloads summary{cursor:pointer;padding:.5rem;font-size:.875rem}
+.workspace-more-downloads[open]{display:grid;gap:.5rem;width:100%}
+.workspace-more-downloads a{display:flex;align-items:center;gap:.5rem;min-height:2rem;overflow-wrap:anywhere}
+.workspace-more-downloads p{font-size:.75rem;color:var(--lc-muted,#596b83)}
+.workspace-export-secondary{padding:.5rem 0;min-width:0;font-size:.8125rem}
+.workspace-export-secondary>summary{cursor:pointer;padding:.5rem 0}
+.workspace-export-secondary :is(p,li){overflow-wrap:anywhere}
+.workspace-completion-retry{display:grid;gap:.5rem}
+@media(pointer:coarse){.workspace-publication :is(button,input,select),.workspace-more-downloads :is(summary,a){min-height:3rem}}

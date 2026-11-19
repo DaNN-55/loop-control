@@ -1,41 +1,30 @@
 import type {ProductionWorkspace} from './productionWorkspace';
 
-export type WorkspaceExportAction='exportWorkspace'|'confirmWorkspaceExport'|'recordWorkspaceExportIssue'|'resolveWorkspaceExportIssue';
-interface ReviewActivity {
- readOnly?:boolean;pending?:boolean;action?:WorkspaceExportAction|null;
- preparing?:boolean;checkingCover?:boolean;title?:string;hasCover?:boolean;
-}
-type ReviewWorkspace=Pick<ProductionWorkspace,'exports'|'exportIssues'|'deliveries'|'stale'>;
+export type WorkspaceExportAction='exportWorkspace'|'completeWorkspaceExport'|'retryWorkspaceDelivery';
+interface ReviewActivity {readOnly?:boolean;pending?:boolean;action?:WorkspaceExportAction|null}
+type ReviewWorkspace=Pick<ProductionWorkspace,'exports'|'deliveries'|'stale'>;
 
-/** Read-only UI decisions. Historical completion and latest delivery are distinct authorities. See ADR-0035. */
+/** Explain the current output without erasing the availability of older deliveries. */
 export function workspaceExportDeliveryState(workspace:ReviewWorkspace,activity:ReviewActivity={}){
- const latest=workspace.exports?.[0],issues=workspace.exportIssues??[],blocked=issues.some(issue=>!issue.resolved);
- const completed=!!workspace.deliveries?.some(delivery=>delivery.status==='completed'),delivered=!!workspace.deliveries?.some(delivery=>delivery.verified);
- const delivery=workspace.deliveries?.[0],running=!!delivery&&['ready','running'].includes(delivery.status),deliveryCompleted=delivery?.status==='completed';
+ const latest=workspace.exports?.[0],delivery=workspace.deliveries?.[0];
+ const running=!!delivery&&['ready','running'].includes(delivery.status);
  const confirmed=!!latest?.confirmed&&latest.current&&!workspace.stale;
- const failed=!!latest&&(latest.status!=='ready'||latest.checks.some(check=>!check.passed)),outdated=!!latest&&(!latest.current||workspace.stale);
- const status=activity.action==='exportWorkspace'?'正在导出与检查…':delivered?'交付已完成':completed?'交付文件需核验':running?'正在准备交付':!latest?'尚未导出':outdated?'需重新导出':failed?'检查未通过':confirmed?'成片已确认':blocked?'有待处理问题':'待确认成片与字幕';
- const previewMessage=latest?'最终文件尚未就绪。':'先导出最终视频，检查后确认这份文件。';
- const nextMessage=!latest?previewMessage:outdated?'这是旧导出，请先重新导出。':failed?'先处理未通过的检查。':blocked?'先处理已记录的问题。':'检查画面与字幕后，确认这份文件。';
- const busyReason=activity.readOnly?'read-only':activity.pending?'pending':activity.action?'operation-pending':null;
- const confirmReason=busyReason??(!latest?'missing-export':outdated?'export-outdated':failed?'checks-failed':!latest.artifact?'missing-file':blocked?'unresolved-issues':null);
- const fieldReason=activity.pending?'pending':!confirmed?'export-unconfirmed':null;
- const prepareReason=activity.pending?'pending':activity.preparing?'delivery-preparing':activity.checkingCover?'cover-checking':!confirmed?'export-unconfirmed':!activity.title?.trim()?'missing-title':!activity.hasCover?'missing-cover':null;
- const stage=delivery?.verified?{kind:'verified' as const,record:delivery}
-  :running?{kind:'running' as const,record:delivery,message:delivery.status==='running'?'正在校验交付文件…':'交付已排队…'}
-  :deliveryCompleted?{kind:'completed' as const,record:delivery,message:delivery.error||'交付文件需重新核验，请读取原交付状态。'}
-  :!confirmed?{kind:'locked' as const,message:!latest?'导出并确认成片后，再设置封面与发布文案。':!latest.current||workspace.stale?'工程已变化，请重新导出并确认成片。':'确认这份成片后，再设置封面与发布文案。'}
-  :{kind:'preparation' as const};
+ const failed=!!latest&&(latest.status!=='ready'||latest.checks.some(check=>!check.passed));
+ const outdated=!!latest&&(!latest.current||workspace.stale);
+ const delivered=!!delivery?.verified&&delivery.exportId===latest?.id&&!outdated;
+ const unavailable=delivery?.status==='completed'&&!delivery.verified;
+ const retryTarget=delivery&&['failed','blocked'].includes(delivery.status)&&delivery.exportId===latest?.id&&confirmed?delivery:null;
+ const busyReason=activity.readOnly?'read-only':activity.pending?'pending':activity.action?'operation-pending':running?'delivery-running':null;
+ const status=activity.action==='exportWorkspace'?'正在生成成片…':activity.action||running?'正在完成…':outdated?'视频需重新生成':failed?'成片检查未通过':retryTarget?'完成未成功':delivered?'已完成':unavailable?'交付文件不可用':!latest?'待生成成片':confirmed?'待完成':'待确认成片';
+ const confirmReason=busyReason??(!latest?'missing-export':outdated?'export-outdated':failed?'checks-failed':!latest.artifact?'missing-file':null);
  return{
-  review:{latest,issues,blocked,completed,delivered,confirmed,failed,outdated,status,nextMessage,previewMessage,
-   tone:confirmed||delivered?'is-confirmed':outdated||failed?'is-failed':'',
-   exportAction:{visible:!completed,label:activity.action==='exportWorkspace'?'正在导出与检查…':latest?'重新导出视频':'导出视频',disabledReason:busyReason??(workspace.stale?'workspace-stale':null)},
-   confirmAction:{label:activity.action==='confirmWorkspaceExport'?'正在确认…':'确认成片与字幕',disabledReason:confirmReason},
+  review:{latest,confirmed,failed,outdated,delivered,status,
+   tone:delivered?'is-confirmed':outdated||failed||unavailable||retryTarget?'is-failed':'',
+   previewMessage:latest?'成片文件尚未就绪。':'生成成片后，在这里观看并确认。',
+   nextMessage:outdated?'工程已变化，请重新生成成片。':failed?'请先处理未通过的检查。':'观看画面、声音和字幕，满意后确认完成。',
+   exportAction:{label:activity.action==='exportWorkspace'?'正在生成成片…':latest?'重新生成成片':'生成成片',visible:!activity.readOnly&&!running,primary:!latest||outdated||failed,disabledReason:busyReason??(workspace.stale?'workspace-stale':null)},
+   confirmAction:{label:activity.action==='completeWorkspaceExport'?'正在完成…':'确认并完成',visible:!!latest&&!delivered&&!running&&!retryTarget&&!activity.readOnly,disabledReason:confirmReason},
   },
-  delivery:{latest:delivery,running,stage,confirmed,coverVisible:stage.kind==='preparation',fieldsDisabledReason:fieldReason,
-   status:delivery?.verified?'验证完成':running?'正在准备':deliveryCompleted?'需核验':delivery&&['failed','blocked'].includes(delivery.status)?'交付失败':!latest?'尚未开始':confirmed?'可准备':'待确认',
-   prepareAction:{label:'生成并验证交付包',disabledReason:prepareReason},
-   retryAction:{target:stage.kind==='preparation'&&delivery&&['failed','blocked'].includes(delivery.status)?delivery:null,disabledReason:fieldReason},
-  },
+  delivery:{latest:delivery,running,retryTarget,unavailable},
  };
 }

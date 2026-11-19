@@ -179,7 +179,7 @@ it('saves before the explicit delivery action and returns the selected shot',asy
  const close=vi.fn(),save=vi.fn(async()=>workspace);render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={save} onClose={close}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
- deliver({type:'loop-control:state',writable:true,revision:1,items:[{id:'selected',startFrame:0,durationInFrames:30}],selectedIds:['selected'],shots:[{id:'S1',itemIds:['selected']}]});fireEvent.click(screen.getByRole('button',{name:'保存并前往交付'}));expect(close).not.toHaveBeenCalled();
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[{id:'selected',startFrame:0,durationInFrames:30}],selectedIds:['selected'],shots:[{id:'S1',itemIds:['selected']}]});fireEvent.click(screen.getByRole('button',{name:'生成成片'}));expect(close).not.toHaveBeenCalled();
  await act(async()=>deliver({type:'loop-control:result',requestId:post.mock.calls.at(-1)![0].requestId,ok:true}));expect(save).toHaveBeenCalledOnce();expect(close).toHaveBeenCalledWith('delivery',{shotId:'S1',itemId:'selected'});
 });
 it('holds navigation and tool selection until the complete tool operation finishes while its bridge can still save',async()=>{
@@ -190,7 +190,7 @@ it('holds navigation and tool selection until the complete tool operation finish
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
  deliver({type:'loop-control:state',writable:true,revision:1,items:[{id:'selected',startFrame:0,durationInFrames:30}],selectedIds:['selected'],shots:[{id:'S1',text:'镜头',itemIds:['selected']}]});fireEvent.click(screen.getByRole('button',{name:'补充工具'}));
  act(()=>reportBusy(true));
- for(const name of ['补充工具','画面与候选','字幕校时','保存','保存并返回分镜台','保存并前往交付'])expect(screen.getByRole('button',{name})).toHaveProperty('disabled',true);
+ for(const name of ['补充工具','画面与候选','字幕校时','保存','保存并返回分镜台','生成成片'])expect(screen.getByRole('button',{name})).toHaveProperty('disabled',true);
  expect(frame.hasAttribute('inert')).toBe(true);expect(bridge.connected).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'画面与候选'}));deliver({type:'loop-control:leave'});deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.getByText('audio候选工具')).toBeTruthy();expect(close).not.toHaveBeenCalled();expect(post).not.toHaveBeenCalled();
  let saved!:Promise<void>;act(()=>{saved=bridge.save();});expect(post.mock.calls.at(-1)![0].action).toBe('flush');

@@ -117,7 +117,7 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
       <nav className="embedded-studio-actions" aria-label={uiText("剪辑操作")}>
         <Tooltip title={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} className="dan-ui dan-ui-tooltip"><AriaButton className="embedded-studio-focus" aria-label={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} aria-pressed={focused} onPress={()=>setFocused(v=>!v)}>{focused?<Minimize2 size={16} aria-hidden="true"/>:<Maximize2 size={16} aria-hidden="true"/>}</AriaButton></Tooltip>
         {renderTools&&<button ref={toolsTrigger} type="button" aria-expanded={toolsOpen} aria-controls={toolsId} disabled={pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)setToolsOpen(v=>!v);}}>{uiText('补充工具')}</button>}
-        <button type="button" disabled={!writable||pending||toolsBusy} onClick={()=>void saveAndLeave('delivery')}>{uiText('保存并前往交付')}</button>
+        <button type="button" disabled={!writable||pending||toolsBusy} onClick={()=>void saveAndLeave('delivery')}>{uiText('生成成片')}</button>
         <button className="embedded-studio-save" disabled={!writable||pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)void saveCurrent().catch(()=>{});}}>{pending?<LoaderCircle size={15} aria-hidden="true"/>:<Save size={15} aria-hidden="true"/>}{pending?uiText("保存中…"):uiText("保存")}</button>
       </nav>
     </header>

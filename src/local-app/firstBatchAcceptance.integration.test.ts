@@ -18,13 +18,13 @@ it.skipIf(!enabled)('initial native subtitles export directly without an empty e
   expect(w.exports[0].checks.find((c:any)=>c.name==='visual_coverage')).toMatchObject({passed:true});
   if(process.env.LOOP_FIRST_BATCH_EVIDENCE)await writeFile(join(process.env.LOOP_FIRST_BATCH_EVIDENCE,'direct-export.json'),JSON.stringify(w));
   const approved=w.exports[0],base=()=>({workspaceId:w.id,expectedRevision:w.revision});
-  w=(await f.request('recordWorkspaceExportIssue',{...base(),exportId:approved.id,reason:'检查两镜衔接'})).body;
+  expect((await f.request('recordWorkspaceExportIssue',{...base(),exportId:approved.id,reason:'退役测试入口'})).status).toBe(410);
   const opened=await f.request('openWorkspaceStudio',base());expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
   await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{doc.timelines[0].items[0].durationInFrames=30;});
   const saved=await f.request('saveWorkspaceStudio',{...base(),workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
   w=(await f.request('closeWorkspaceStudio',base())).body;
   expect(w.captions[0].timing).toBe('stale');
-  // An explicit unresolved issue survives a newer edit even before a new export exists.
+  // Actual stale subtitle/file checks still block after issue tracking is retired.
   let catalog=await readLocalCatalog(f.pool,f.owner,parseCatalogQuery(new URLSearchParams('view=operations')));
   expect(catalog.operationRows.find((r:any)=>r.episodeId===f.episode)).toMatchObject({actionStatus:'blocked'});
   expect(catalog.blocked.items.some((r:any)=>r.blocker.code==='WORKSPACE_EXPORT_FAILED')).toBe(true);
