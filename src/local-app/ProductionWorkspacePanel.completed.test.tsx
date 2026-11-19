@@ -39,7 +39,7 @@ it('uses three completed-work sections and opens only an isolated Studio copy wi
  expect(within(nav).queryByRole('button',{name:/剪辑工作台/})).toBeNull();
  fireEvent.click(within(nav).getByRole('button',{name:/分镜台/}));
  await screen.findByRole('table',{name:'镜头'});
- expect(screen.queryByRole('separator',{name:'调整镜头列表宽度'})).toBeNull();
+ expect(screen.getByRole('separator',{name:'调整镜头列表宽度'})).toBeTruthy();
  expect(screen.getAllByRole('table')).toHaveLength(1);
  expect(screen.queryByRole('dialog')).toBeNull();
  const quality=document.querySelector('.workspace-preparation .completed-quality');
