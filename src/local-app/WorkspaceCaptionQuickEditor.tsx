@@ -5,6 +5,7 @@ import type {ProductionWorkspace} from '../productionWorkspace';
 import {isValidShotCaptionContract,normalizeShotCaptionContract,type ShotCaptionContract} from '../shotCaptions';
 import {workspaceCaptionFieldErrors} from '../workspaceCaptionValidation';
 import {useWorkspaceCaptionOperation} from './useWorkspaceCaptionOperation';
+import {captionPreparationIssue,captionFailureIssue} from './workspaceCaptionFeedback';
 import {captionDraftCues} from './workspaceCaptionPreparation';
 import './workspace-caption-preparation.css';
 
@@ -33,7 +34,8 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
  const operation=useWorkspaceCaptionOperation({workspace,clipId:clip?.id??'',itemId:clip?.itemId,inputFingerprint:draft?.inputFingerprint??state?.inputFingerprint,contract:contract??({} as ShotCaptionContract),readOnly:false,disabled:isDisabled,command,onChange,onSaved:()=>{setDraft(null);setOpened(false);}});
  if(!state||!clip||!contract)return null;
  const disabled=isDisabled||operation.pending||workspace.stale;
- const status=state.timing==='current'?state.alignmentMethod==='manual'?'字幕已就绪 · 已手工调整':'字幕已就绪':state.timing==='waiting'?'正在同步字幕…':state.timing==='failed'?'自动同步未完成，可直接调整':!state.audioTrackId?'采用声音后自动同步；也可手工调整':state.alignmentReady===false?'当前声音需要手工调整字幕':'等待自动同步';
+ const issue=captionPreparationIssue(state);
+ const status=issue?.status??(state.timing==='current'?state.alignmentMethod==='manual'?'字幕已就绪 · 已手工调整':'字幕已就绪':state.timing==='waiting'?'正在同步字幕…':state.timing==='failed'?'自动同步未完成，可直接调整':!state.audioTrackId?'采用声音后自动同步；也可手工调整':state.alignmentReady===false?'当前声音需要手工调整字幕':'等待自动同步');
  function edit(cues:ShotCaptionContract['cues']){operation.reset();setValidation('');const clean=cues.map(({id,text,startMs,endMs})=>({id,text,startMs,endMs}));setDraft({inputFingerprint:draft?.inputFingerprint??state!.inputFingerprint,contract:{...contract!,contentMode:'independent',text:clean.map(c=>c.text).join(''),cues:clean}});}
  function open(){const cues=state!.timing==='failed'&&state!.suggestedCues?.length?state!.suggestedCues:contract!.cues.length?contract!.cues:captionDraftCues(contract!.text,state!.durationMs);setDraft({inputFingerprint:state!.inputFingerprint,contract:normalizeShotCaptionContract({...contract!,contentMode:'independent',cues},{enabled:contract!.enabled,text:contract!.text})});setOpened(true);}
  function update(index:number,patch:Partial<ShotCaptionContract['cues'][number]>){edit(contract!.cues.map((c,i)=>i===index?{...c,...patch}:c));}
@@ -52,7 +54,7 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
    onLoadedMetadata={event=>{event.currentTarget.currentTime=preview.startSeconds;event.currentTarget.playbackRate=preview.playbackRate;}}
    onTimeUpdate={event=>{const media=event.currentTarget,time=preview.offsetSeconds+(media.currentTime-preview.startSeconds)/preview.playbackRate;setPosition(Math.max(0,Math.min(state.durationMs,Math.round(time*1000))));if(media.currentTime>preview.startSeconds+preview.durationSeconds*preview.playbackRate)media.pause();}}/>}
   {preview&&<p className="workspace-caption-playback-text" aria-label={uiText('当前播放字幕')}>{active?.text??'　'}</p>}
-  {state.timing!=='current'&&state.detail&&<p role="status">{uiText(state.detail)}</p>}
+  {state.timing!=='current'&&(issue?.message||state.detail)&&<p role="status">{uiText(issue?.message??state.detail??'')}</p>}
   {!!state.reviewPhrases?.length&&<p>{uiText('需要检查：')}{state.reviewPhrases.join('、')}</p>}
   {opened&&<div className="workspace-caption-quick-editor">
    {draft&&draft.inputFingerprint!==state.inputFingerprint&&<p role="alert">{uiText('声音、正文或镜头已变化；原调整已保留，请取消后按当前内容重新调整。')}</p>}
@@ -64,7 +66,7 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
    <footer><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setDraft(null);setOpened(false);setValidation('');}}>{uiText('取消')}</Button><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void save()}>{uiText('保存调整')}</Button></footer>
   </div>}
   {state.audioTrackId&&state.timing!=='waiting'&&<details><summary>{uiText('重新自动同步')}</summary><p>{uiText('重新处理会替换当前字幕时间，正文保持不变。')}</p><Button size="xs" color="secondary" isDisabled={disabled||opened} onPress={()=>void operation.run('requestWorkspaceCaptionAlignment',{localOnly:true})}>{uiText('确认重新同步')}</Button></details>}
-  {(validation||operation.error)&&<p role="alert">{uiText(validation||operation.error)}</p>}
+  {(validation||operation.error)&&<p role="alert">{uiText(validation||captionFailureIssue(operation.error)?.message||operation.error)}</p>}
   {operation.progress&&<p role="status">{uiText(operation.progress)}</p>}
   {operation.canResume&&<Button size="xs" color="secondary" isDisabled={disabled} onPress={()=>void operation.resume()}>{uiText('核对并继续保存')}</Button>}
  </section>;

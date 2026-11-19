@@ -1,3 +1,4 @@
+import {captionFailureIssue} from './workspaceCaptionFeedback';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -51,7 +52,7 @@ export function WorkspaceCaptionAutomation(props:Props){
      :await current.current.command(fresh.name,{episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision,clipId:c.clipId,expectedInputFingerprint:c.inputFingerprint,automatic:true,...(fresh.name==='requestWorkspaceCaptionAlignment'?{localOnly:true}:{taskId:c.taskId})}) as ProductionWorkspace|{workspace:ProductionWorkspace};
     if(!owner.alive)return;
     reader.publish('workspace' in result?result.workspace:result);if(errorTarget.current?.clipId===fresh.caption.clipId){errorTarget.current=null;setError('');}
-   }catch(cause){if(owner.alive&&!(cause instanceof Error&&cause.name==='AbortError')){owner.attempts.add(key);errorTarget.current={clipId:next.caption.clipId,inputFingerprint:next.caption.inputFingerprint};setError('字幕自动处理未完成，可直接调整字幕或重新尝试。');}}
+   }catch(cause){if(owner.alive&&!(cause instanceof Error&&cause.name==='AbortError')){owner.attempts.add(key);errorTarget.current={clipId:next.caption.clipId,inputFingerprint:next.caption.inputFingerprint};setError(captionFailureIssue(cause)?.message??'字幕自动处理未完成，请在字幕页核对具体状态或手工调整。');}}
    finally{owner.busy=false;if(owner.alive&&!current.current.disabled)setCycle(value=>value+1);}
   })();
  },[owner,reader,props.disabled,props.workspace.id,props.workspace.stale,props.bridge?.connected,signature,cycle]);
