@@ -7,6 +7,26 @@ import {afterEach,it,expect,vi} from 'vitest';
 import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract,migrateWorkspaceCaptionLanes} from '../src/workspaceCaptions';
 import {defaultShotCaptionContract} from '../src/shotCaptions';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
+it.each(['saved','checkpoint-failed','changed-during-checkpoint'])('records a native version before whole-shot replacement without overwriting intervening edits (%s)',async mode=>{
+ const host={postMessage:vi.fn()},channel='12345678-1234-1234-1234-123456789abc';
+ vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('parent',host);vi.stubGlobal('location',new URL(`http://127.0.0.1:5175/?lcChannel=${channel}&lcProject=p&lcParent=http%3A%2F%2F127.0.0.1%3A5174#/editor/p`));
+ vi.stubGlobal('requestAnimationFrame',(fn:FrameRequestCallback)=>setTimeout(()=>fn(0),0));
+ const original:any={version:3,activeTimelineId:'main',assets:[],mediaFolders:[],timelines:[{id:'main',name:'before',fps:30,items:[],tracks:{},trackOrder:[]}]};
+ let current=original;const applyDoc=vi.fn((next:any)=>{current=next;});
+ const saveVersion=vi.fn(async(_id:string,_name:string,doc:any)=>{expect(doc).toBe(original);if(mode==='checkpoint-failed')throw Error('history unavailable');if(mode==='changed-during-checkpoint')current={...original,manualEdit:true};});
+ const base={get doc(){return current;},state:original.timelines[0],selection:{selectedIds:new Set()},commands:{applyDoc}};
+ const source=readFileSync('scripts/openchatcut-embed-client.mjs','utf8').replace(/^import .*;\n/gm,'').replaceAll('export function ','function ');
+ const useHost=new Function('useEffect','useRef','browserProjectOwnership','isWorkspaceCandidateEdit','applyWorkspaceCandidate','saveVersion','saveProject','flushProjectSaves',source+'\nreturn useLoopControlHost;')(useEffect,useRef,()=>true,()=>true,(doc:any)=>({...doc,replaced:true}),saveVersion,async()=>({status:'saved'}),async()=>({ok:true}));
+ function Editor(){useHost('p',base,{flushBeforeLeaveRef:{current:async()=>true}},{setChatCollapsed:()=>{}});return null;}render(<Editor/>);
+ const send=(data:any)=>window.dispatchEvent(new MessageEvent('message',{origin:'http://127.0.0.1:5174',source:host as any,data:{type:'loop-control:command',channel,projectId:'p',...data}}));
+ await act(async()=>{send({action:'inspect',requestId:'11111111-1111-1111-1111-111111111111'});});
+ await waitFor(()=>expect(host.postMessage.mock.calls.map(c=>c[0]).find(c=>c.requestId==='11111111-1111-1111-1111-111111111111')).toBeTruthy());
+ const observed=host.postMessage.mock.calls.map(c=>c[0]).find(c=>c.requestId==='11111111-1111-1111-1111-111111111111').result;
+ await act(async()=>{send({action:'apply-candidate',requestId:'22222222-2222-2222-2222-222222222222',expectedRevision:observed.revision,expectedDocumentFingerprint:observed.documentFingerprint,edit:{source:{src:'/media/uploads/abcdef.mp4'},visual:{replacementScope:'shot'}}});});
+ await waitFor(()=>expect(host.postMessage.mock.calls.map(c=>c[0]).find(c=>c.requestId==='22222222-2222-2222-2222-222222222222')).toBeTruthy());
+ const result=host.postMessage.mock.calls.map(c=>c[0]).find(c=>c.requestId==='22222222-2222-2222-2222-222222222222');
+ expect(saveVersion).toHaveBeenCalledOnce();if(mode==='saved'){expect(result.ok,result.error).toBe(true);expect(current.replaced).toBe(true);}else{expect(result.ok).toBe(false);expect(applyDoc).not.toHaveBeenCalled();expect(current.replaced).toBeUndefined();}
+});
 it('flushes the actual manually edited native captions without rewriting their content or timing',async()=>{
  const host={postMessage:vi.fn()},channel='12345678-1234-1234-1234-123456789abc';
  vi.stubGlobal('parent',host);vi.stubGlobal('location',new URL(`http://127.0.0.1:5175/?lcChannel=${channel}&lcProject=p&lcParent=http%3A%2F%2F127.0.0.1%3A5174#/editor/p`));

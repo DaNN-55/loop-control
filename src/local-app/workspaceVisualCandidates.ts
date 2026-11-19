@@ -178,6 +178,7 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
   return readProductionWorkspace(c,row.episode_id,root);
  }
  if(command==='prepareWorkspaceVisualCandidate'){
+  if(data.replacementScope!==undefined&&!['fragment','shot'].includes(String(data.replacementScope)))throw new ConfigurationError(400,'请选择替换选中片段或整条分镜。');
   if(data.replaceCurrentVisual!==undefined&&typeof data.replaceCurrentVisual!=='boolean')throw new ConfigurationError(400,'画面替换参数无效。');
   if(candidate.kind==='image'&&data.replaceCurrentVisual!==true&&target(row,project,candidate.targetItemId).item.kind==='video')throw new ConfigurationError(409,'当前视频优先；请将图片保留为备用画面或视频首帧。');
   const {item}=target(row,project,candidate.targetItemId);
@@ -188,7 +189,7 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
   if(['sourceInSeconds','sourceOutSeconds'].some(k=>data[k]!==undefined&&(typeof data[k]!=='number'||!Number.isFinite(data[k]))))throw new ConfigurationError(400,'视频使用区间无效。');
   const sourceIn=data.sourceInSeconds??candidate.initialRange?.sourceInSeconds??0,sourceOut=data.sourceOutSeconds??candidate.initialRange?.sourceOutSeconds??candidate.durationSeconds;
   if((data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined||candidate.initialRange!==undefined)&&(candidate.kind!=='video'||typeof sourceIn!=='number'||!Number.isFinite(sourceIn)||sourceIn<0||typeof sourceOut!=='number'||!Number.isFinite(sourceOut)||sourceOut<=sourceIn||sourceOut>candidate.durationSeconds+0.001))throw new ConfigurationError(400,'视频使用区间无效。');
-  candidate.visual={...(candidate.kind==='video'&&(data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined||candidate.initialRange!==undefined)?{sourceInSeconds:Number(sourceIn),sourceOutSeconds:Number(sourceOut)}:{}),usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
+  candidate.visual={replacementScope:(data.replacementScope??'fragment') as 'fragment'|'shot',...(candidate.kind==='video'&&(data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined||candidate.initialRange!==undefined)?{sourceInSeconds:Number(sourceIn),sourceOutSeconds:Number(sourceOut)}:{}),usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
   return prepareRegisteredWorkspaceCandidate(c,root,row,project,candidate,data.durationPolicy);
  }
  if(command==='adoptWorkspaceVisualCandidate'){await finishRegisteredWorkspaceCandidate(c,root,row,project,candidate,data);return readProductionWorkspace(c,row.episode_id,root);}

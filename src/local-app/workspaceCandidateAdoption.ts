@@ -1,3 +1,4 @@
+import {synchronizeWorkspaceBindings} from '../workspaceShots.js';
 import {workspaceShotMediaName} from '../workspaceDisplayNames.js';
 import {workspaceRenderPreferences} from '../workspaceRenderPreferences.js';
 import {recordOwnedProductionMetric,metricRequestKey} from './productionMetricWrites.js';
@@ -12,10 +13,10 @@ import {relative} from 'node:path';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
-import {applyWorkspaceCandidate,workspaceCandidateTarget,workspaceCandidateVoiceRoute,workspaceCandidateDurationFrames,type WorkspaceCandidate,type WorkspaceCandidateEdit,type WorkspaceCandidatePreparation} from '../workspaceCandidates.js';
+import {applyWorkspaceCandidate,workspaceCandidateTarget,workspaceCandidateVoiceRoute,workspaceCandidateDurationFrames,workspaceCandidateShotReplacement,type WorkspaceCandidate,type WorkspaceCandidateEdit,type WorkspaceCandidatePreparation} from '../workspaceCandidates.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
-import {isOpenChatCutStudio,registerOpenChatCutStudioSource,inspectOpenChatCutStoredProject} from '../worker/openchatcutStudio.js';
+import {isOpenChatCutStudio,checkpointOpenChatCutDraftVersion,registerOpenChatCutStudioSource,inspectOpenChatCutStoredProject} from '../worker/openchatcutStudio.js';
 import {workspaceNarrationItemId,validateSpeechParameters} from './workspaceNarration.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
@@ -38,11 +39,24 @@ export async function prepareRegisteredWorkspaceCandidate(c:PoolClient,root:stri
  const timeline=timelines[0],visuals=timeline.items.filter(v=>ids.has(String(v.id))),start=Math.min(...visuals.map(v=>Number(v.startFrame))),end=Math.max(...visuals.map(v=>Number(v.startFrame)+Number(v.durationInFrames))),route=resolveWorkspaceMainVoice(project,candidate.shotId),activate=route.item?.id!==candidate.targetItemId;
  if(explicitSpeech&&durationPolicy==='keep-target'&&Math.ceil(observed*timeline.fps)>(activate?end-start:Number(item!.durationInFrames)))throw new ConfigurationError(409,'完整口播长于当前画面窗口，请采用候选时长后补充画面或拆镜；不会截断口播。');
  const edit:WorkspaceCandidateEdit={...(candidate.visual?{visual:candidate.visual}:{}),shotWindow:{startFrame:start,durationInFrames:end-start},...(canonical?{mainVoice:{narrationText:candidate.text,workspaceId:row.id,shotId:candidate.shotId,visualItemIds:[...ids],expectedRoute:workspaceCandidateVoiceRoute(project,candidate.shotId,[...ids]),activate,volume:Number(route.item?.volume??10**((workspaceRenderPreferences(project,candidate.shotId)?.voiceGainDb??0)/20)),window:activate?{startFrame:start,durationInFrames:end-start}:{startFrame:Number(item!.startFrame),durationInFrames:Number(item!.durationInFrames)}}}:{}),targetItemId:candidate.targetItemId,expectedTarget:item?workspaceCandidateTarget(item):null,durationPolicy:durationPolicy as WorkspaceCandidateEdit['durationPolicy'],source:{name:workspaceShotMediaName(candidate.shotId,candidate.kind==='audio'?'narration':'visual',row.bindings.map(binding=>binding.shotId)),id:candidate.audioTrackId?`audio-track-${candidate.audioTrackId}`:`candidate-${candidate.id}`,kind:candidate.kind,width:candidate.width,height:candidate.height,src:candidate.relativePath,sha256:candidate.sha256,inputFingerprint:candidate.inputFingerprint,durationSeconds:candidate.visual?.sourceOutSeconds!==undefined?candidate.visual.sourceOutSeconds-(candidate.visual.sourceInSeconds??0):candidate.durationSeconds,...(candidate.visual?.sourceInSeconds!==undefined?{sourceInSeconds:candidate.visual.sourceInSeconds,fullDurationSeconds:candidate.durationSeconds}:{})}};
+ if(edit.visual)edit.visual.shotId=candidate.shotId;
+ if(edit.visual?.replacementScope==='shot')edit.visual.replacement=workspaceCandidateShotReplacement(project,candidate.shotId);
  if(video){const sourceEnd=Math.round((edit.source.sourceInSeconds??0)*timeline.fps)+workspaceCandidateDurationFrames(edit,timeline.fps),available=Math.ceil(candidate.durationSeconds*timeline.fps);if(!Number.isSafeInteger(sourceEnd)||!Number.isSafeInteger(available)||sourceEnd>available)throw new ConfigurationError(409,'候选源区间短于所选帧窗口，请明确采用候选时长或重新选择区间。');}
  if(video&&edit.visual){
-  edit.visual.shotId=candidate.shotId;
   edit.videoSound=await prepareWorkspaceVideoSound(c,root,row.episode_id,candidate.relativePath,candidate.sha256,timeline.fps,
    Math.round((edit.source.sourceInSeconds??0)*timeline.fps),workspaceCandidateDurationFrames(edit,timeline.fps),1,video.hasAudio);
+ }
+ if(edit.visual&&edit.videoSound?.mode==='separate'){
+  const sound=edit.videoSound,replaced=new Set(edit.visual.replacement?.itemIds??[edit.targetItemId]);
+  const attached=timeline.items.some(voice=>[`workspace-source-shot-${candidate.shotId}`,`workspace-ambience-shot-${candidate.shotId}`].includes(String(voice.id))&&replaced.has(String((voice.loopControlAudio as {sourceItemId?:string}|undefined)?.sourceItemId)));
+  const silentSource=(item?.loopControlAudio as {voiceMode?:string;sourceAudioStatus?:string}|undefined);
+  if(attached||silentSource?.voiceMode==='source'&&silentSource.sourceAudioStatus==='silent'){
+   const registered=await resolveWorkspaceSource(c,root,row.episode_id,sound.asset.src);
+   const duration=await probeMp3Artifact(await (await episodeFileIO(c,root,row.episode_id)).resolveReference(sound.asset.src));
+   if(registered.registration!=='material'||Math.abs(duration-workspaceCandidateDurationFrames(edit,timeline.fps)/timeline.fps)>.1)throw new ConfigurationError(409,'新视频原声的登记或实际时长不匹配，请重新比较。');
+   const track=(await c.query('SELECT local_identity.register_workspace_replacement_source($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) id',[row.id,candidate.shotId,registered.id,sound.sha256,Number(registered.file_size),duration,candidate.relativePath,candidate.sha256,edit.source.sourceInSeconds??0,timeline.fps])).rows[0].id;
+   sound.boundSourceAsset={...sound.asset,id:`audio-track-${track}`,durationInFrames:Math.floor(duration*timeline.fps)};
+  }
  }
  if(edit.mainVoice&&!readWorkspaceCaption(project,edit.mainVoice.visualItemIds[0])){
   const caption=(await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>b.shotId===candidate.shotId)},project))[0];
@@ -55,10 +69,11 @@ export async function prepareRegisteredWorkspaceCandidate(c:PoolClient,root:stri
   const audio=nativeEdit.videoSound;
   const registered=await resolveWorkspaceSource(c,root,row.episode_id,audio.asset.src);
   audio.asset.src=await registerOpenChatCutStudioSource(root,row.episode_id,audio.asset.src,audio.sha256,Number(registered.file_size),await episodeFileIO(c,root,row.episode_id,true));
+  if(audio.boundSourceAsset)audio.boundSourceAsset.src=audio.asset.src;
  }
  const appliedItem=applied.timelines.flatMap(t=>t.items).find(i=>i.id===edit.targetItemId)!;
- const currentFrames=Number(edit.mainVoice?.window.durationInFrames??item?.durationInFrames),appliedFrames=Number(appliedItem.durationInFrames),appliedStart=Number(appliedItem.startFrame),changedStart=appliedStart+Math.min(currentFrames,appliedFrames),changedEnd=appliedStart+Math.max(currentFrames,appliedFrames),fps=timeline.fps;
- const impact:WorkspaceCandidatePreparation['impact']={currentSeconds:currentFrames/fps,sourceSeconds:edit.source.durationSeconds,appliedSeconds:appliedFrames/fps,deltaSeconds:(appliedFrames-currentFrames)/fps,startSeconds:appliedStart/fps,endSeconds:(appliedStart+appliedFrames)/fps,fps,affectedFragments:timeline.items.filter(other=>other.id!==edit.targetItemId&&changedStart<changedEnd&&Number(other.startFrame)<changedEnd&&Number(other.startFrame)+Number(other.durationInFrames)>changedStart).map(other=>({itemId:String(other.id),label:row.bindings.find(binding=>binding.itemId===other.id)?.text||String(other.name??other.id),kind:String(other.kind),track:String(other.track),startSeconds:Number(other.startFrame)/fps,endSeconds:(Number(other.startFrame)+Number(other.durationInFrames))/fps,changedStartSeconds:Math.max(changedStart,Number(other.startFrame))/fps,changedEndSeconds:Math.min(changedEnd,Number(other.startFrame)+Number(other.durationInFrames))/fps}))};
+ const currentFrames=Number(edit.mainVoice?.window.durationInFrames??edit.visual?.replacement?.durationInFrames??item?.durationInFrames),appliedFrames=Number(appliedItem.durationInFrames),appliedStart=Number(appliedItem.startFrame),changedStart=appliedStart+Math.min(currentFrames,appliedFrames),changedEnd=appliedStart+Math.max(currentFrames,appliedFrames),fps=timeline.fps;
+ const impact:WorkspaceCandidatePreparation['impact']={...(edit.visual?{replacementScope:edit.visual.replacementScope??'fragment',replacedItemIds:edit.visual.replacement?.itemIds??[edit.targetItemId],...(edit.videoSound?{videoSound:edit.videoSound.mode}:{})}:{}),currentSeconds:currentFrames/fps,sourceSeconds:edit.source.durationSeconds,appliedSeconds:appliedFrames/fps,deltaSeconds:(appliedFrames-currentFrames)/fps,startSeconds:appliedStart/fps,endSeconds:(appliedStart+appliedFrames)/fps,fps,affectedFragments:timeline.items.filter(other=>other.id!==edit.targetItemId&&!edit.visual?.replacement?.itemIds.includes(String(other.id))&&changedStart<changedEnd&&Number(other.startFrame)<changedEnd&&Number(other.startFrame)+Number(other.durationInFrames)>changedStart).map(other=>({itemId:String(other.id),label:row.bindings.find(binding=>binding.itemId===other.id)?.text||String(other.name??other.id),kind:String(other.kind),track:String(other.track),startSeconds:Number(other.startFrame)/fps,endSeconds:(Number(other.startFrame)+Number(other.durationInFrames))/fps,changedStartSeconds:Math.max(changedStart,Number(other.startFrame))/fps,changedEndSeconds:Math.min(changedEnd,Number(other.startFrame)+Number(other.durationInFrames))/fps}))};
  if(candidate.kind==='audio'||item?.kind!=='text'){
   const shotRow={...row,bindings:row.bindings.filter(binding=>binding.shotId===candidate.shotId)};
   const [before]=await readWorkspaceCaptions(c,root,shotRow,project);
@@ -82,7 +97,8 @@ export async function finishRegisteredWorkspaceCandidate(c:PoolClient,root:strin
  if(prepared.project_sha256!==row.project_sha256)throw new ConfigurationError(409,'工程已变化，请重新比较后采用。');
  let next;try{next=applyWorkspaceCandidate(project,edit);}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'采用未完成。');}
  await beforeApply?.();
- await persistWorkspaceRevision(c,root,row,next,row.bindings,candidate.visual?'采用画面候选':'采用局部口播候选',{nativeEdit:true});
+ if(edit.visual?.replacementScope==='shot')await checkpointOpenChatCutDraftVersion(root,row.episode_id,project,{},await episodeFileIO(c,root,row.episode_id,true));
+ await persistWorkspaceRevision(c,root,row,next,synchronizeWorkspaceBindings(next,row.bindings),candidate.visual?'采用画面候选':'采用局部口播候选',{nativeEdit:true});
  }
  await recordWorkspaceCandidateDecision(c,row,candidate,'adopted');
 }

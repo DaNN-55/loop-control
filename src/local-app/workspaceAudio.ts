@@ -1,3 +1,6 @@
+import {isWorkspaceAudioAdoptionEdit,workspaceAudioAdoptionItemState,type WorkspaceAudioAdoptionEdit} from '../workspaceAudioAdoption.js';
+import {episodeFileIO} from './episodeFiles.js';
+import {registerOpenChatCutStudioSource} from '../worker/openchatcutStudio.js';
 import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {adoptWorkspaceRecordedVoice} from './workspaceRecordedVoice.js';
 import {installWorkspaceMusic} from '../workspaceMusicAdoption.js';
@@ -39,6 +42,12 @@ async function priorSourceProvenance(c:PoolClient,root:string,episodeId:string,w
  const previous=await registeredWorkspaceAudio(c,root,episodeId,id,'source');
  if(item.sourceContentHash!==undefined&&item.sourceContentHash!==previous.track.sha256)throw new ConfigurationError(409,'原声音轨版本已变化。');
  if(item.src!==previous.track.relative_path)await verifyEpisodeFile(c,root,episodeId,item.src,previous.track.sha256,Number(previous.track.file_size));
+ if(previous.track.source_task_id===null){
+  const source=(asset as typeof asset&{loopControlAudioSource?:{sha256?:unknown;sourceInFrame?:unknown;sourceFrameRate?:unknown}}).loopControlAudioSource;
+  if(!source||typeof source.sha256!=='string'||!/^[a-f0-9]{64}$/.test(source.sha256)||!Number.isSafeInteger(source.sourceInFrame)||Number(source.sourceInFrame)<0||typeof source.sourceFrameRate!=='number'||!Number.isFinite(source.sourceFrameRate)||source.sourceFrameRate<=0)throw new ConfigurationError(409,'原声音轨区间缺少可核验证据，请保留当前工程核对。');
+  return{sha256:source.sha256,sourceInFrame:Number(source.sourceInFrame),sourceFrameRate:source.sourceFrameRate};
+ }
+
  const receipt=(await c.query("SELECT request_snapshot FROM local_identity.workspace_audio_preparations WHERE workspace_id=$1 AND episode_id=$2 AND kind='source' AND adopted_item_id=$3 AND request_snapshot->>'version'='registered-audio-input/v1' AND request_snapshot->>'purpose'='recorded-primary-voice/v1' AND request_snapshot->>'audioTrackId'=$4 AND request_snapshot->>'sha256'=$5 AND request_snapshot->>'fileSize'=$6 AND request_snapshot->>'sourceArtifactId'=$7 AND request_snapshot->>'sourceTaskId' IS NOT DISTINCT FROM $8 ORDER BY created_at DESC LIMIT 1",[workspaceId,episodeId,item.id,id,previous.track.sha256,String(previous.track.file_size),previous.track.source_artifact_id,previous.track.source_task_id])).rows[0]?.request_snapshot;
  if(receipt&&typeof receipt.sourceFrameRate==='number'&&Number.isFinite(receipt.sourceFrameRate)&&receipt.sourceFrameRate>0)return{sha256:previous.track.sha256,sourceInFrame:0,sourceFrameRate:receipt.sourceFrameRate};
  const source=(await c.query("SELECT input_snapshot->'workspace_source' source FROM public.tasks WHERE id=$1 AND episode_id=$2",[previous.track.source_task_id,episodeId])).rows[0]?.source;
@@ -76,7 +85,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
  }
  if(command==='prepareWorkspaceAudio'){
   if(!['bgm','sfx','source'].includes(String(data.kind)))throw new ConfigurationError(400,'音频类型无效。');
-  if(data.kind!=='source'&&!readWorkspaceSoundEnabled(project,data.kind as 'bgm'|'sfx'))throw new ConfigurationError(409,'请先开启对应声音，再准备或检索。');
+  if(data.kind!=='source'&&!isOpenChatCutStudio(row.episode_id)&&!readWorkspaceSoundEnabled(project,data.kind as 'bgm'|'sfx'))throw new ConfigurationError(409,'请先开启对应声音，再准备或检索。');
   if(Object.hasOwn(data,'audioTrackId')&&(data.kind==='source'||data.materialRevisionId||data.preparationId||data.retry!==undefined||data.candidateCount!==undefined))throw new ConfigurationError(400,'原登记音轨不能与素材、重试或批量请求混用。');
   const candidateCount=data.candidateCount??1;
   if(!Number.isInteger(candidateCount)||Number(candidateCount)<1||Number(candidateCount)>3||data.candidateCount!==undefined&&(data.kind!=='sfx'||data.materialRevisionId||data.preparationId)||data.intent!==undefined&&(data.kind!=='sfx'||typeof data.intent!=='string'||!data.intent.trim()||data.intent.length>240))throw new ConfigurationError(400,'音效意图或候选数量无效。');
@@ -84,7 +93,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
   if(data.preparationId){
    const p=(await c.query('SELECT * FROM local_identity.workspace_audio_preparations WHERE workspace_id=$1 AND id=$2',[row.id,data.preparationId])).rows[0];
    if(!p||!p.task_id||!data.retry)throw new ConfigurationError(409,'请选择失败的音频准备任务重试。');
-   if(['bgm','sfx'].includes(p.kind)&&!readWorkspaceSoundEnabled(project,p.kind))throw new ConfigurationError(409,'请先开启对应声音，再重试。');
+   if(['bgm','sfx'].includes(p.kind)&&!isOpenChatCutStudio(row.episode_id)&&!readWorkspaceSoundEnabled(project,p.kind))throw new ConfigurationError(409,'请先开启对应声音，再重试。');
    const task=(await c.query('SELECT input_snapshot,invalidated_at FROM public.tasks WHERE id=$1',[p.task_id])).rows[0];
    if(task?.invalidated_at||!await preparationCurrent(c,root,row,project,{...p,input_snapshot:task?.input_snapshot}))throw new ConfigurationError(409,'目标或输入已失效，请核对当前内容后重新准备。');
    await audioRuntime(runtime,p.kind,task?.input_snapshot);const queued=(await c.query('SELECT local_identity.queue_workspace_audio($1,true) task_id',[p.id])).rows[0];recordValidatedRequestLogContext({taskId:queued?.task_id});return;
@@ -130,7 +139,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
   if(!materialId&&!Object.hasOwn(data,'audioTrackId')){const queued=(await c.query('SELECT local_identity.queue_workspace_audio($1,false,$2) task_id',[id,source?JSON.stringify({relativePath:source.relative_path,sha256:source.sha256,fileSize:Number(source.file_size),durationSeconds:duration,startSeconds:source.startSeconds,sourceInFrame:source.sourceInFrame,sourceFrameRate:source.sourceFrameRate,playbackRate:source.playbackRate,visualDurationInFrames:source.visualDurationInFrames}):null])).rows[0];recordValidatedRequestLogContext({taskId:queued?.task_id,...(typeof shotId==='string'?{shotId}: {})});}
   }return;
  }
- if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请在剪辑面板调整混音；添加音轨请先保存并返回素材准备。');
+ if(isOpenChatCutStudio(row.episode_id)&&!['prepareWorkspaceAudioAdoption','commitWorkspaceAudioAdoption'].includes(command))throw new ConfigurationError(409,'请在剪辑面板调整混音或采用声音候选。');
  if(command==='adoptWorkspaceRecordedVoice'){await adoptWorkspaceRecordedVoice(c,root,row,project,data);return;}
  if(command==='mixWorkspaceAudio'){
   const edit=data.edit as WorkspaceAudioEdit;if(edit?.workspaceId!==row.id)throw new ConfigurationError(400,'混音工程身份无效。');
@@ -140,9 +149,10 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
   let next;try{next=applyWorkspaceAudioMix(project,edit);}catch(e){throw new ConfigurationError(409,e instanceof Error?e.message:'混音输入无效。');}
   await persistEdit(c,root,row,project,next,'调整实际混音');return;
  }
- if(command!=='adoptWorkspaceAudio')throw new ConfigurationError(400,'不支持的音频操作。');
+ if(!['adoptWorkspaceAudio','prepareWorkspaceAudioAdoption','commitWorkspaceAudioAdoption'].includes(command))throw new ConfigurationError(400,'不支持的音频操作。');
  const p=(await c.query(`SELECT p.*,t.input_snapshot,a.id audio_track_id,a.relative_path,a.sha256,a.file_size,a.duration_seconds actual_duration FROM local_identity.workspace_audio_preparations p LEFT JOIN public.tasks t ON t.id=p.task_id AND t.status='completed' ${workspacePreparedAudioJoin} WHERE p.workspace_id=$1 AND p.id=$2`,[row.id,data.preparationId])).rows[0];
  if(!p)throw new ConfigurationError(404,'音频准备记录不存在。');
+ if(command!=='adoptWorkspaceAudio'&&(!isOpenChatCutStudio(row.episode_id)||!['bgm','sfx'].includes(p.kind)))throw new ConfigurationError(409,'请在当前剪辑工程采用配乐或音效。');
  if(p.request_snapshot?.version==='registered-audio-input/v1'){
   const current=await registeredWorkspaceAudio(c,root,row.episode_id,p.request_snapshot.audioTrackId,p.kind==='source'?'source':p.kind==='bgm'?'bgm':'sfx');
   if(current.track.sha256!==p.request_snapshot.sha256||Number(current.track.file_size)!==p.request_snapshot.fileSize||current.track.source_artifact_id!==p.request_snapshot.sourceArtifactId||current.track.source_task_id!==p.request_snapshot.sourceTaskId)throw new ConfigurationError(409,'原登记音轨版本已变化。');
@@ -151,13 +161,32 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
    await adoptWorkspaceRecordedVoice(c,root,row,project,{shotId:p.shot_id,audioTrackId:p.request_snapshot.audioTrackId,expectedSha256:p.request_snapshot.sha256});return;
   }
  }
- if(['bgm','sfx'].includes(p.kind)&&!readWorkspaceSoundEnabled(project,p.kind))throw new ConfigurationError(409,'请先开启对应声音，再采用。');
+ if(['bgm','sfx'].includes(p.kind)&&!isOpenChatCutStudio(row.episode_id)&&!readWorkspaceSoundEnabled(project,p.kind))throw new ConfigurationError(409,'请先开启对应声音，再采用。');
  let path=p.relative_path,sha=p.sha256,size=Number(p.file_size),duration=Number(p.actual_duration),assetId=`audio-track-${p.audio_track_id}`;
  if(p.material_revision_id){const m=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 AND id=$2',[row.episode_id,p.material_revision_id])).rows[0];if(!m)throw new ConfigurationError(409,'人工音频登记已变化。');path=m.storage_path;sha=m.sha256;size=Number(m.file_size);assetId=`material-${m.id}`;}
  if(!path)throw new ConfigurationError(409,'音频任务尚未成功完成，请刷新或重试。');
  await verifyEpisodeFile(c,root,row.episode_id,path,sha,size);duration=await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),path));
- const timeline=project.timelines.find(t=>t.id===project.activeTimelineId)!;const next=structuredClone(project);let tl=next.timelines.find(t=>t.id===project.activeTimelineId)!;
+ if(command==='commitWorkspaceAudioAdoption'){
+  if(data.nativeApplied!==true||typeof data.adoptionId!=='string'||!/^[a-f0-9-]{36}$/.test(data.adoptionId))throw new ConfigurationError(400,'音频采用身份无效。');
+  const prepared=(await c.query('SELECT * FROM local_identity.workspace_candidate_adoptions WHERE id=$1 AND workspace_id=$2 AND candidate_id=$3',[data.adoptionId,row.id,p.id])).rows[0];
+  const edit=prepared?.edit;
+  if(!isWorkspaceAudioAdoptionEdit(edit)||prepared.input_fingerprint!==hash({preparationId:p.id,assetId,path,sha,size})||!matchesSavedAudioAdoption(project,edit))throw new ConfigurationError(409,'请先将此次音频采用保存到当前原生工程，再登记采用。');
+  await c.query('UPDATE local_identity.workspace_audio_preparations SET adopted_item_id=$2 WHERE id=$1',[p.id,String(edit.items[0].id)]);return;
+ }
+ const timeline=project.timelines.find(t=>t.id===project.activeTimelineId)!;const next=command==='prepareWorkspaceAudioAdoption'?setWorkspaceSoundEnabled(project,p.kind,true):structuredClone(project);let tl=next.timelines.find(t=>t.id===project.activeTimelineId)!;
  if(!next.assets.some(a=>a.id===assetId))next.assets.push({id:assetId,name:p.description,kind:'audio',src:path,durationInFrames:Math.floor(duration*timeline.fps)});
+ async function finishSound(after:OpenChatCutProject,itemId:string){
+  if(command!=='prepareWorkspaceAudioAdoption'){
+   await c.query('UPDATE local_identity.workspace_audio_preparations SET adopted_item_id=$2 WHERE id=$1',[p.id,itemId]);await persistEdit(c,root,row,project,after,p.kind==='bgm'?'采用配乐':'采用音效');return;
+  }
+  const changed=after.timelines.find(t=>t.id===project.activeTimelineId)!,items=changed.items.filter(i=>i.kind==='audio'&&(i.loopControlAudio as {workspaceId?:string;preparationId?:string})?.workspaceId===row.id&&(i.loopControlAudio as {preparationId?:string})?.preparationId===p.id),ids=new Set(items.map(i=>i.id));
+  const edit:WorkspaceAudioAdoptionEdit={version:'workspace-audio-adoption/v1',workspaceId:row.id,preparationId:p.id,timelineId:changed.id,expectedItems:timeline.items.filter(i=>ids.has(i.id)),items,tracks:Object.fromEntries([...new Set(items.map(i=>String(i.track)))].map(id=>[id,changed.tracks[id]])),asset:after.assets.find(a=>a.id===assetId)!};
+  const adoptionId=randomUUID();
+  await c.query('INSERT INTO local_identity.workspace_candidate_adoptions(id,workspace_id,candidate_id,input_fingerprint,project_sha256,edit) VALUES($1,$2,$3,$4,$5,$6)',[adoptionId,row.id,p.id,hash({preparationId:p.id,assetId,path,sha,size}),row.project_sha256,JSON.stringify(edit)]);
+  const native=structuredClone(edit),src=await registerOpenChatCutStudioSource(root,row.episode_id,path,sha,size,await episodeFileIO(c,root,row.episode_id,true));
+  native.asset.src=src;for(const item of native.items)item.src=src;
+  return{adoptionId,projectSha256:row.project_sha256,edit:native};
+ }
  let itemId:string;
  if(p.kind==='source'){
   const visual=tl.items.find(i=>i.id===p.source_item_id);if(!visual||typeof visual.src!=='string'||(await resolveWorkspaceSource(c,root,row.episode_id,visual.src)).sha256!==p.source_sha256)throw new ConfigurationError(409,'原片来源已变化，请重新提取当前原声。');
@@ -173,7 +202,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
  }
  if(p.kind==='bgm'){
   try{itemId=installWorkspaceMusic(next,row.id,p.id,{assetId,path,sha256:sha,durationSeconds:duration,description:p.description});}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'配乐采用未完成。');}
-  await c.query('UPDATE local_identity.workspace_audio_preparations SET adopted_item_id=$2 WHERE id=$1',[p.id,itemId]);await persistEdit(c,root,row,project,next,'采用配乐');return;
+  return finishSound(next,itemId);
  }
  const shotIds=p.anchor==='shot'?new Set(workspaceAudioShotIds(row)[p.shot_id]??[]):null,anchorItems=shotIds?tl.items.filter(i=>shotIds.has(String(i.id))):[];
  if(shotIds&&!anchorItems.length)throw new ConfigurationError(409,'音效锚点镜头已删除。');
@@ -187,11 +216,34 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
  if(previous&&previous.sourceAssetId!==assetId){delete item.sourceRevision;delete item.sourceFilename;}
  tl.items=tl.items.filter(i=>i.id!==itemId);tl.items.push(item);
  if(!tl.trackOrder.includes(track))tl.trackOrder.push(track);if(!tl.tracks[track])tl.tracks[track]={kind:'audio',name:'音效'};
- await c.query('UPDATE local_identity.workspace_audio_preparations SET adopted_item_id=$2 WHERE id=$1',[p.id,itemId]);await persistEdit(c,root,row,project,next,'采用配乐或音效');
+ return finishSound(next,itemId);
 }
 async function audioRuntime(runtime:InputRuntime,kind:string,snapshot?:Record<string,any>){
  if(!runtime.mediaReady)throw new ConfigurationError(503,'本地音频执行器未配置。');
  if(kind==='source'){await runtime.mediaReady({});return;}
  const execution=snapshot?.execution??{execution_path:'external',credential_ref:snapshot?.credential_ref,executor:snapshot?.executor};
  await runtime.mediaReady({soundtrack:execution});
+}
+
+function matchesSavedAudioAdoption(project:OpenChatCutProject,edit:WorkspaceAudioAdoptionEdit){
+ const timeline=project.timelines.find(t=>t.id===edit.timelineId);if(!timeline)return false;
+ return edit.items.every(expected=>{const item=timeline.items.find(i=>i.id===expected.id);return item&&item.src===expected.src&&workspaceAudioAdoptionItemState(item)===workspaceAudioAdoptionItemState(expected);});
+}
+/** The native save must correspond to a prepared sound adoption on this baseline. */
+export async function validateWorkspaceAudioAdoptionUses(c:PoolClient,row:ProductionWorkspaceRecord,baseline:OpenChatCutProject,document:OpenChatCutProject){
+ for(const item of document.timelines.flatMap(t=>t.items)){
+  const meta=item.loopControlAudio as {workspaceId?:string;kind?:string;preparationId?:string}|undefined;
+  if(item.kind!=='audio'||meta?.workspaceId!==row.id||!meta.preparationId||!['bgm','sfx'].includes(meta.kind??''))continue;
+  const before=baseline.timelines.flatMap(t=>t.items).find(i=>i.id===item.id),old=before?.loopControlAudio as {preparationId?:string}|undefined;
+  if(before?.sourceAssetId===item.sourceAssetId&&old?.preparationId===meta.preparationId)continue;
+  // Native undo and persisted history can legitimately restore an already adopted source.
+  // The immutable registered material/track owns its identity, not a stale receipt baseline.
+  const adopted=(await c.query(`SELECT p.kind,p.material_revision_id,a.id audio_track_id,coalesce(m.storage_path,a.relative_path) source_path,coalesce(m.sha256,a.sha256) source_sha
+   FROM local_identity.workspace_audio_preparations p LEFT JOIN public.tasks t ON t.id=p.task_id AND t.status='completed' ${workspacePreparedAudioJoin}
+   LEFT JOIN public.production_material_revisions m ON m.id=p.material_revision_id AND m.episode_id=p.episode_id
+   WHERE p.workspace_id=$1 AND p.id=$2 AND p.adopted_item_id IS NOT NULL`,[row.id,meta.preparationId])).rows[0];
+  if(adopted&&adopted.kind===meta.kind&&item.sourceAssetId===(adopted.material_revision_id?`material-${adopted.material_revision_id}`:`audio-track-${adopted.audio_track_id}`)&&item.src===adopted.source_path&&item.sourceContentHash===adopted.source_sha)continue;
+  const prepared=(await c.query("SELECT edit FROM local_identity.workspace_candidate_adoptions WHERE workspace_id=$1 AND candidate_id=$2 AND project_sha256=$3 AND edit->>'version'='workspace-audio-adoption/v1' ORDER BY created_at DESC LIMIT 1",[row.id,meta.preparationId,row.project_sha256])).rows[0]?.edit;
+  if(!isWorkspaceAudioAdoptionEdit(prepared)||!matchesSavedAudioAdoption(document,prepared))throw new ConfigurationError(409,'声音采用准备已失效，请保留当前编辑并重新核对声音候选。');
+ }
 }

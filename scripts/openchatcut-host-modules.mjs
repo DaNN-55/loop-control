@@ -9,6 +9,7 @@ const modules=[
  ['structure','src/workspaceShots.ts',true],
  ['ranges','src/workspaceVideo.ts'],
  ['audio','src/workspaceAudio.ts',true],
+ ['audio-adoption','src/workspaceAudioAdoption.ts',true],
  ['caption-drag','scripts/openchatcut-caption-drag.mjs',true],
  ['caption-layout','scripts/openchatcut-caption-layout.mjs',true],
  ['bridge-retry','scripts/openchatcut-bridge-retry.mjs',true],

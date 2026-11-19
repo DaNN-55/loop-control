@@ -196,14 +196,14 @@ it('accepts one unassigned MP3 for voice and queues local audio candidates witho
  await waitFor(()=>expect(command).toHaveBeenCalledWith('confirmWorkspaceNarration',expect.objectContaining({episodeId:'e',clipId:'clip'})));
  expect(command).toHaveBeenCalledWith('saveWorkspaceNarration',expect.objectContaining({mode:'manual',materialRevisionId:'audio'}));
  expect(command.mock.calls.some(([name])=>name.startsWith('adopt')||name==='generateWorkspaceNarration')).toBe(false);
- fireEvent.click(screen.getByRole('tab',{name:'配乐与声音'}));
- for(const [kind,label] of [['bgm','整期配乐'],['sfx','音效']] as const){
-  fireEvent.click(screen.getByRole('button',{name:label}));
-  const transfer=startMaterialDrag(audio),target=screen.getByRole('button',{name:kind==='bgm'?'使用已选配乐':'使用已选音效'});
-  fireEvent.dragOver(target,{dataTransfer:transfer});fireEvent.drop(target,{dataTransfer:transfer});fireEvent.dragEnd(audio,{dataTransfer:transfer});
-  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind,materialRevisionId:'audio'})));
- }
- expect(command.mock.calls.map(call=>call[0])).toEqual(['setWorkspaceNarrationEnabled','saveWorkspaceNarration','confirmWorkspaceNarration','prepareWorkspaceAudio','prepareWorkspaceAudio']);
+ fireEvent.click(screen.getByRole('tab',{name:'音效'}));
+ expect(screen.queryByRole('button',{name:'整期配乐'})).toBeNull();expect(screen.queryByRole('button',{name:'使用已选配乐'})).toBeNull();
+ const effectTransfer=startMaterialDrag(audio),effectTarget=screen.getByRole('button',{name:'使用已选音效'});
+ fireEvent.dragOver(effectTarget,{dataTransfer:effectTransfer});fireEvent.drop(effectTarget,{dataTransfer:effectTransfer});fireEvent.dragEnd(audio,{dataTransfer:effectTransfer});
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',materialRevisionId:'audio'})));
+ expect(command.mock.calls.map(call=>call[0])).toEqual(['setWorkspaceNarrationEnabled','saveWorkspaceNarration','confirmWorkspaceNarration','prepareWorkspaceAudio']);
+ expect(command.mock.calls.some(([name])=>name.startsWith('adopt')||name==='generateWorkspaceNarration')).toBe(false);
+
 });
 it('four-step navigation reads durable state and does not submit approvals or generation',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>new Response(JSON.stringify({workspace}),{status:200,headers:{'Content-Type':'application/json'}})));
@@ -366,7 +366,7 @@ it('keeps AudioSkin playback enabled in a completed order while narration and mu
  const {container}=render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByText('先导出最终视频，检查后确认这份文件。');fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));await screen.findByRole('table',{name:'镜头'});fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
  const media=await screen.findByLabelText('S01 已采用口播试听');expect(media.closest('fieldset')?.disabled).not.toBe(true);expect(container.querySelector('.app-audio-player button')?.matches(':disabled')).toBe(false);expect(screen.queryByRole('textbox',{name:'口播正文'})).toBeNull();
- fireEvent.click(screen.getByRole('tab',{name:'配乐与声音'}));expect(screen.getByRole('heading',{name:'配乐与声音制作记录'})).toBeTruthy();expect(screen.queryByRole('combobox',{name:'来源'})).toBeNull();expect(screen.queryByRole('button',{name:'上传 MP3'})).toBeNull();expect(command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('tab',{name:'音效'}));expect(screen.getByRole('heading',{name:'配乐与声音制作记录'})).toBeTruthy();expect(screen.queryByRole('combobox',{name:'来源'})).toBeNull();expect(screen.queryByRole('button',{name:'上传 MP3'})).toBeNull();expect(command).not.toHaveBeenCalled();
 });
 
 it('saves optional sound intent only on request and restores the right text when switching shots',async()=>{
@@ -374,13 +374,13 @@ it('saves optional sound intent only on request and restores the right text when
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:stored})));
  const command=vi.fn(async(name:string,data:unknown)=>{expect(name).toBe('saveWorkspaceSoundIntent');const input=data as {shotId:string;soundIntent:string};stored={...stored,clips:stored.clips.map(c=>c.shotId===input.shotId?{...c,soundIntent:input.soundIntent}:c)};return stored;});
  const view=render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByText('第一镜');fireEvent.click(screen.getByRole('tab',{name:'配乐与声音'}));fireEvent.click(screen.getByRole('button',{name:'音效'}));
+ await screen.findByText('第一镜');fireEvent.click(screen.getByRole('tab',{name:'音效'}));fireEvent.click(screen.getByRole('button',{name:'音效'}));
  fireEvent.change(screen.getByRole('textbox',{name:'音效意图或检索词'}),{target:{value:'开门时一声轻响'}});expect(command).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'保存音效意图'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceSoundIntent',{episodeId:'e',workspaceId:'w',expectedRevision:1,expectedProjectSha256:'a'.repeat(64),shotId:'S01',soundIntent:'开门时一声轻响'}));
  fireEvent.click(screen.getByText('第二镜'));fireEvent.click(screen.getByRole('button',{name:'音效'}));expect((await screen.findByRole('textbox',{name:'音效意图或检索词'} ) as HTMLTextAreaElement).value).toBe('结尾的钟声');
  fireEvent.click(screen.getByText('第一镜'));expect((screen.getByRole('textbox',{name:'音效意图或检索词'}) as HTMLTextAreaElement).value).toBe('开门时一声轻响');
  view.unmount();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
- fireEvent.click(await screen.findByRole('tab',{name:'配乐与声音'}));fireEvent.click(screen.getByRole('button',{name:'音效'}));expect(await screen.findByRole('textbox',{name:'音效意图或检索词'})).toHaveProperty('value','开门时一声轻响');expect(command).toHaveBeenCalledTimes(1);
+ fireEvent.click(await screen.findByRole('tab',{name:'音效'}));fireEvent.click(screen.getByRole('button',{name:'音效'}));expect(await screen.findByRole('textbox',{name:'音效意图或检索词'})).toHaveProperty('value','开门时一声轻响');expect(command).toHaveBeenCalledTimes(1);
 });
 
 it('keeps revision editing unavailable until the actual script baseline and retained original have loaded',async()=>{

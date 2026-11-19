@@ -34,7 +34,7 @@ import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js'
 import {readWorkspaceVisualCandidates,readWorkspaceVisualTasks,readWorkspaceVisualTargets,validateWorkspaceVisualUses,executeWorkspaceVisualCandidate} from './workspaceVisualCandidates.js';
 import {workspaceVisualFields} from '../workspaceVisualCandidates.js';
 import {readWorkspaceCandidates,readUsedWorkspaceNarrationVersions,validateWorkspaceCandidateUses,executeWorkspaceCandidateCommand} from './workspaceCandidates.js';
-import {executeWorkspaceAudio,readWorkspaceAudio} from './workspaceAudio.js';
+import {executeWorkspaceAudio,readWorkspaceAudio,validateWorkspaceAudioAdoptionUses} from './workspaceAudio.js';
 import {workspaceAudioFields,resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
 import {workspaceDeliveryFields} from '../workspaceDelivery.js';
@@ -288,7 +288,7 @@ export class ProductionWorkspaceCommands{
   }
   if(Object.hasOwn(workspaceVisualFields,command))return executeWorkspaceVisualCandidate(c,root,row,project,command,data,runtime);
   if(['prepareWorkspaceCandidate','adoptWorkspaceCandidate','rejectWorkspaceCandidate'].includes(command))return executeWorkspaceCandidateCommand(c,root,row,project,command,data);
-  if(Object.hasOwn(workspaceAudioFields,command)){await executeWorkspaceAudio(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
+  if(Object.hasOwn(workspaceAudioFields,command)){const prepared=await executeWorkspaceAudio(c,root,row,project,runtime,command,data);return command==='prepareWorkspaceAudioAdoption'?prepared:readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceDeliveryFields,command)){await executeWorkspaceDelivery(c,root,row,project,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceExportFields,command)){await executeWorkspaceExport(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);
@@ -315,7 +315,7 @@ export class ProductionWorkspaceCommands{
    return updateWorkspaceProject(c,root,row,project,row.bindings);
   }
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
-  const validate=async(doc:OpenChatCutProject,observation?:OpenChatCutProjectObservation)=>{await validateWorkspaceProject(c,root,e.id,doc,config,project,observation);await validateWorkspaceCandidateUses(c,row!,project,doc);await validateWorkspaceVisualUses(c,root,row!,project,doc);};
+  const validate=async(doc:OpenChatCutProject,observation?:OpenChatCutProjectObservation)=>{await validateWorkspaceProject(c,root,e.id,doc,config,project,observation);await validateWorkspaceCandidateUses(c,row!,project,doc);await validateWorkspaceVisualUses(c,root,row!,project,doc);await validateWorkspaceAudioAdoptionUses(c,row!,project,doc);};
   if(command==='openWorkspaceStudio'){
    const state=await readProductionWorkspace(c,e.id,root);
    if(state?.readiness.missingSources.length)throw new ConfigurationError(409,'当前采用的画面素材不可读取，请重新匹配后进入剪辑。');
@@ -331,8 +331,10 @@ export class ProductionWorkspaceCommands{
   }
   if(command==='closeWorkspaceStudio'){await this.closeEpisode(e.id);return readProductionWorkspace(c,e.id,root);}
   if(command==='saveWorkspaceStudio'){
-   if(data.projectId!==`loop-control-${e.id}`||typeof data.workspaceRelativePath!=='string'||data.workspaceRelativePath!==`${(await episodeFileIO(c,root,e.id,true)).relativePath}/openchatcut-work/current/project.json`||data.expectedWorkspaceSha256!==row.project_sha256)throw new ConfigurationError(409,'当前工程身份或文件版本已变化。');
-   let file;try{file=await snapshotOpenChatCutStudio(root,e.id,`${(await episodeFileIO(c,root,e.id,true)).relativePath}/openchatcut-work/current/project.json`,row.project_sha256,validate,await episodeFileIO(c,root,e.id,true));}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'Studio 会话或版本已失效，请重新打开当前工程。');}
+   // expectedRevision guards the canonical business snapshot. The native file SHA
+   // remains separate: binding metadata normalization can change canonical bytes.
+   if(data.projectId!==`loop-control-${e.id}`||typeof data.workspaceRelativePath!=='string'||data.workspaceRelativePath!==`${(await episodeFileIO(c,root,e.id,true)).relativePath}/openchatcut-work/current/project.json`||typeof data.expectedWorkspaceSha256!=='string'||!(/^[a-f0-9]{64}$/).test(data.expectedWorkspaceSha256))throw new ConfigurationError(409,'当前工程身份或文件版本已变化。');
+   let file;try{file=await snapshotOpenChatCutStudio(root,e.id,`${(await episodeFileIO(c,root,e.id,true)).relativePath}/openchatcut-work/current/project.json`,data.expectedWorkspaceSha256,validate,await episodeFileIO(c,root,e.id,true));}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'Studio 会话或版本已失效，请重新打开当前工程。');}
    const current=JSON.parse((await verifyEpisodeFile(c,root,e.id,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;
    const savedRow=await persistWorkspaceRevision(c,root,row,current,synchronizeWorkspaceBindings(current,row.bindings),'保存原生剪辑',{nativeEdit:true});
    if(savedRow.content_sha256!==row.content_sha256)await recordWorkspaceEditingMilestone(c,savedRow.id,'native_edit_saved');

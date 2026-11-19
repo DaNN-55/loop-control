@@ -1,8 +1,9 @@
+import {readWorkspaceCaption} from '../workspaceCaptions';
 import {uiText} from '../i18n/ui';
 import type {WorkspaceNativeItem} from './WorkspaceNativeControls';
 import {WorkspaceShotRail} from './WorkspaceShotRail';
 import type {WorkspaceShot,WorkspaceShotOperation} from '../workspaceShots';
-import {useEffect,useRef,useState} from 'react';
+import {useCallback,useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import type {ShotCaptionContract} from '../shotCaptions';
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
 import {ArrowLeft,Check,LoaderCircle,Save,Maximize2,Minimize2} from 'lucide-react';
@@ -11,12 +12,18 @@ import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
 import type {OpenChatCutStudioWorkspace} from '../reviews/reviewRevision';
 import './embedded-studio.css';
 export interface EmbeddedStudioSession {studioUrl:string;workspace:OpenChatCutStudioWorkspace;sourcePath:string;launchId?:string}
-export interface EmbeddedStudioBridge {selectedShotId?:string;connected:boolean;inspect:()=>Promise<{revision:number;documentFingerprint:string;document:OpenChatCutProject}>;applyCaptions:(itemId:string,contract:ShotCaptionContract,timingOnly?:boolean)=>Promise<ShotCaptionContract>;save:()=>Promise<void>;applyEdit:(operation:WorkspaceShotOperation)=>Promise<OpenChatCutProject>;applyNativeEdit:(action:'apply-workspace-edit'|'apply-candidate'|'apply-audio-mix'|'add-registered-source',payload:Record<string,unknown>)=>Promise<OpenChatCutProject>}
+export type EmbeddedStudioToolTarget='audio'|'visual'|'captions';
+export type EmbeddedStudioNativeAction='apply-workspace-edit'|'apply-candidate'|'apply-audio-mix'|'add-registered-source'|'apply-audio-candidate';
+export interface EmbeddedStudioBridge {selectedItemId?:string;selectedShotId?:string;connected:boolean;selectItem?:(itemId:string)=>Promise<void>;inspect:()=>Promise<{revision:number;documentFingerprint:string;document:OpenChatCutProject}>;applyCaptions:(itemId:string,contract:ShotCaptionContract,timingOnly?:boolean,expectedDocumentFingerprint?:string)=>Promise<ShotCaptionContract>;save:()=>Promise<void>;applyEdit:(operation:WorkspaceShotOperation)=>Promise<OpenChatCutProject>;applyNativeEdit:(action:EmbeddedStudioNativeAction,payload:Record<string,unknown>)=>Promise<OpenChatCutProject>}
 interface EditorState {writable?:boolean;structureEnabled?:boolean;shots?:WorkspaceShot[];revision:number;selectedIds:string[];items:WorkspaceNativeItem[]}
-export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose,initialShotId,initialItemId}:{episodeId:string;title:string;session:EmbeddedStudioSession;shots:Array<{id:string;text:string;soundIntent?:string}>;onSave:(workspace:OpenChatCutStudioWorkspace)=>Promise<OpenChatCutStudioWorkspace>;onClose:(destination:'preparation'|'delivery',selection?:{shotId:string;itemId:string})=>void|Promise<void>;initialShotId?:string;initialItemId?:string}){
+export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose,initialShotId,initialItemId,renderTools,renderBackground}:{episodeId:string;title:string;session:EmbeddedStudioSession;shots:Array<{id:string;text:string;soundIntent?:string}>;onSave:(workspace:OpenChatCutStudioWorkspace)=>Promise<OpenChatCutStudioWorkspace>;onClose:(destination:'preparation'|'delivery',selection?:{shotId:string;itemId:string})=>void|Promise<void>;initialShotId?:string;initialItemId?:string;renderTools?:(bridge:EmbeddedStudioBridge,target:EmbeddedStudioToolTarget,importFile:File|undefined,onBusyChange:(busy:boolean)=>void)=>ReactNode;renderBackground?:(bridge:EmbeddedStudioBridge)=>ReactNode}){
   const frame=useRef<HTMLIFrameElement>(null),[channel]=useState(()=>crypto.randomUUID());
   const [workspace,setWorkspace]=useState(session.workspace),[editor,setEditor]=useState<EditorState|null>(null),[pending,setPending]=useState(false),[error,setError]=useState(''),[saved,setSaved]=useState(false),[railCollapsed,setRailCollapsed]=useState(false),[focused,setFocused]=useState(false);
   const writable=editor?.writable===true;
+  const [toolsBusy,setToolsBusy]=useState(false),toolsBusyRef=useRef(false);
+  const reportToolsBusy=useCallback((busy:boolean)=>{toolsBusyRef.current=busy;setToolsBusy(busy);},[]);
+  const [importFile,setImportFile]=useState<File|undefined>();
+  const [toolsOpen,setToolsOpen]=useState(false),[toolTarget,setToolTarget]=useState<EmbeddedStudioToolTarget>('audio'),toolsId=useId();
   const writableRef=useRef(false);
   const lastShotSelection=useRef<{shotId:string;itemId:string}|undefined>(undefined);
   const workspaceRef=useRef(session.workspace),pendingRef=useRef(false),everWritable=useRef(false);
@@ -42,7 +49,7 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
         if(shot)lastShotSelection.current={shotId:shot.id,itemId:item.id};
         writableRef.current=data.writable===true;if(data.writable===true)everWritable.current=true;
         setEditor({writable:data.writable===true,structureEnabled:data.structureEnabled===true,shots:Array.isArray(data.shots)?data.shots:undefined,revision:data.revision,items:data.items,selectedIds:data.selectedIds});setSaved(false);
-      }else if(data.type==='loop-control:import-requested'){if(writableRef.current)setError('请返回分镜台，从「本期素材」导入文件。');}
+      }else if(data.type==='loop-control:import-requested'){if(writableRef.current&&!toolsBusyRef.current&&!pendingRef.current){setToolTarget(data.kind==='audio'?'audio':'visual');setImportFile(data.file instanceof File?data.file:undefined);setToolsOpen(true);}}
       else if(data.type==='loop-control:leave'){leave.current();}
       else if(data.type==='loop-control:closed'){writableRef.current=false;setEditor(null);}
       else if(data.type==='loop-control:result'){
@@ -53,7 +60,7 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
     window.addEventListener('message',receive);
     return()=>{window.removeEventListener('message',receive);for(const request of requests.current.values()){clearTimeout(request.timer);request.reject(new Error('编辑器连接已关闭，修改尚未确认保存。'));}requests.current.clear();};
   },[origin,channel,workspace.projectId]);
-  function request<T=void>(action:'flush'|'select'|'inspect'|'apply-workspace-edit',payload:Record<string,unknown>={}){
+  function request<T=void>(action:'flush'|'select'|'inspect'|'apply-captions'|EmbeddedStudioNativeAction,payload:Record<string,unknown>={}){
     return new Promise<T>((resolve,reject)=>{
       if(!editor||!frame.current?.contentWindow||!origin){reject(new Error('编辑器尚未连接。'));return;}
       const requestId=crypto.randomUUID();
@@ -62,34 +69,45 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
       frame.current.contentWindow.postMessage({type:'loop-control:command',channel,projectId:workspace.projectId,requestId,action,...payload},origin);
     });
   }
-  async function saveAndLeave(destination:'preparation'|'delivery'){
-    if(pendingRef.current||!writableRef.current)return;
+  async function saveBoundary(generation:number){
+    await request('flush');checkVisit(generation);const next=await onSave(workspaceRef.current);checkVisit(generation);remember(next);
+  }
+  async function saveCurrent(){
     const generation=begin();
-    try{
-      await request('flush');checkVisit(generation);
-      const next=await onSave(workspaceRef.current);checkVisit(generation);
-      remember(next);await onClose(destination,lastShotSelection.current);
-    }catch(cause){if(generation===visit.current)setError(cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。');}
+    try{await saveBoundary(generation);}
+    catch(cause){if(generation===visit.current)setError(cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。');throw cause;}
     finally{if(generation===visit.current)finish();}
   }
-  async function applyEdit(operation:WorkspaceShotOperation){
+  async function saveAndLeave(destination:'preparation'|'delivery'){
+    if(pendingRef.current||toolsBusyRef.current||!writableRef.current)return;
+    const generation=begin();
+    try{await saveBoundary(generation);checkVisit(generation);await onClose(destination,lastShotSelection.current);}
+    catch(cause){if(generation===visit.current)setError(cause instanceof Error?cause.message:'保存未完成，当前修改仍保留。');}
+    finally{if(generation===visit.current)finish();}
+  }
+  async function applyNativeEdit(action:EmbeddedStudioNativeAction|'apply-captions',payload:Record<string,unknown>){
     const generation=begin();
     try{
       const current=await request<{revision:number;documentFingerprint:string}>('inspect');checkVisit(generation);
-      const applied=await request<{document:OpenChatCutProject}>('apply-workspace-edit',{operation,expectedRevision:current.revision,expectedDocumentFingerprint:current.documentFingerprint});checkVisit(generation);
-      const next=await onSave(workspaceRef.current);checkVisit(generation);remember(next);return applied.document;
+      if(payload.expectedDocumentFingerprint!==undefined&&payload.expectedDocumentFingerprint!==current.documentFingerprint)throw Error('原生工程已有新修改，请重新读取后重试。');
+      const applied=await request<{document:OpenChatCutProject}>(action,{...payload,expectedRevision:current.revision,expectedDocumentFingerprint:current.documentFingerprint});checkVisit(generation);
+      await request('flush');checkVisit(generation);return applied.document;
     }catch(cause){if(generation===visit.current)setError(cause instanceof Error?cause.message:'修改未保存，当前编辑仍保留。');throw cause;}
     finally{if(generation===visit.current)finish();}
+  }
+  async function applyEdit(operation:WorkspaceShotOperation){
+    const document=await applyNativeEdit('apply-workspace-edit',{operation});await saveCurrent();return document;
   }
   const selectedItem=editor?.items.find(i=>editor.selectedIds.includes(i.id)),selectedShot=editor?.shots?.find(s=>s.itemIds.includes(selectedItem?.id??''));
   const selectedSoundIntent=shots.find(shot=>shot.id===selectedShot?.id)?.soundIntent;
   const initialSelection=useRef(false);
   useEffect(()=>{if(initialSelection.current||!writable||!initialShotId)return;const items=editor?.shots?.find(s=>s.id===initialShotId)?.itemIds;const target=initialItemId&&items?.includes(initialItemId)?initialItemId:items?.[0];if(target){initialSelection.current=true;void request('select',{itemId:target}).catch(cause=>setError(cause.message));}},[writable,initialShotId,initialItemId,editor?.shots]);
+  const bridge:EmbeddedStudioBridge={selectedItemId:selectedItem?.id,selectedShotId:selectedShot?.id,connected:writable&&!pending,selectItem:itemId=>request('select',{itemId}),inspect:()=>request('inspect'),applyNativeEdit,applyEdit,save:saveCurrent,applyCaptions:async(itemId,contract,timingOnly,expectedDocumentFingerprint)=>{const document=await applyNativeEdit('apply-captions',{itemId,contract,timingOnly,...(expectedDocumentFingerprint?{expectedDocumentFingerprint}:{})});await saveCurrent();return readWorkspaceCaption(document,itemId)?.contract??contract;}};
   leave.current=()=>{void saveAndLeave('preparation');};
   return <section className={`embedded-studio${focused?' is-focused':''}`} aria-label={uiText("整期剪辑工作台")} data-episode={episodeId}>
     <header className="embedded-studio-header">
       <Tooltip title={uiText("保存并返回分镜台")} className="dan-ui dan-ui-tooltip">
-        <AriaButton className="embedded-studio-back" aria-label={uiText("保存并返回分镜台")} isDisabled={!writable||pending} onPress={()=>void saveAndLeave('preparation')}><ArrowLeft size={16} aria-hidden="true"/></AriaButton>
+        <AriaButton className="embedded-studio-back" aria-label={uiText("保存并返回分镜台")} isDisabled={!writable||pending||toolsBusy} onPress={()=>void saveAndLeave('preparation')}><ArrowLeft size={16} aria-hidden="true"/></AriaButton>
       </Tooltip>
       <section className="embedded-studio-identity" aria-label={uiText("当前剪辑工程")}>
         <h2 title={title}>{title}</h2>
@@ -97,11 +115,17 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
       </section>
       <nav className="embedded-studio-actions" aria-label={uiText("剪辑操作")}>
         <Tooltip title={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} className="dan-ui dan-ui-tooltip"><AriaButton className="embedded-studio-focus" aria-label={focused?uiText("退出专注剪辑"):uiText("专注剪辑")} aria-pressed={focused} onPress={()=>setFocused(v=>!v)}>{focused?<Minimize2 size={16} aria-hidden="true"/>:<Maximize2 size={16} aria-hidden="true"/>}</AriaButton></Tooltip>
-        <button className="embedded-studio-save" disabled={!writable||pending} onClick={()=>void saveAndLeave('delivery')}>{pending?<LoaderCircle size={15} aria-hidden="true"/>:<Save size={15} aria-hidden="true"/>}{pending?uiText("保存中…"):uiText("保存")}</button>
+        {renderTools&&<button type="button" aria-expanded={toolsOpen} aria-controls={toolsId} disabled={pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)setToolsOpen(v=>!v);}}>{uiText('补充工具')}</button>}
+        <button type="button" disabled={!writable||pending||toolsBusy} onClick={()=>void saveAndLeave('delivery')}>{uiText('保存并前往交付')}</button>
+        <button className="embedded-studio-save" disabled={!writable||pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)void saveCurrent().catch(()=>{});}}>{pending?<LoaderCircle size={15} aria-hidden="true"/>:<Save size={15} aria-hidden="true"/>}{pending?uiText("保存中…"):uiText("保存")}</button>
       </nav>
     </header>
+    {writable&&renderBackground?.(bridge)}
+    {renderTools&&<section id={toolsId} className="embedded-studio-tools" hidden={!toolsOpen} aria-label={uiText('补充工具')}>
+      {toolsOpen&&<><nav aria-label={uiText('工具类型')}>{([['audio','配乐与音效'],['visual','画面与候选'],['captions','字幕校时']] as const).map(([target,label])=><button key={target} type="button" aria-pressed={toolTarget===target} disabled={pending||toolsBusy} onClick={()=>{if(!toolsBusyRef.current)setToolTarget(target);}}>{uiText(label)}</button>)}</nav>{renderTools(bridge,toolTarget,importFile,reportToolsBusy)}</>}
+    </section>}
     {selectedSoundIntent&&<p className="embedded-studio-sound-intent" aria-label={uiText("当前镜头音效意图")}>{uiText("音效意图：")}{selectedSoundIntent}</p>}
     {error&&<p role="alert" className="form-error">{uiText(error||'')}</p>}
-    {!src?<p role="alert">{uiText("Studio 地址或工程身份不匹配，未加载编辑器。")}</p>:<div className={`embedded-studio-body${railCollapsed?' rail-collapsed':''}`}><WorkspaceShotRail shots={editor?.shots??shots.map(shot=>{const items=editor?.items.filter(i=>i.id.startsWith(`shot-${shot.id}-`))??[];return{id:shot.id,text:shot.text,timelineId:'',itemIds:items.map(i=>i.id),startFrame:items[0]?.startFrame??0,durationInFrames:0,effective:true};})} selectedIds={editor?.selectedIds??[]} draftKey={workspace.projectId} editable={editor?.structureEnabled===true} disabled={!writable||pending} onCollapse={setRailCollapsed} select={itemId=>{void request('select',{itemId}).catch(cause=>setError(cause.message));}} edit={applyEdit}/><div className="embedded-studio-canvas"><iframe key="native-studio" ref={frame} inert={!writable} tabIndex={writable?0:-1} aria-busy={!writable} title={uiText("OpenChatCut 剪辑工程")} src={src} sandbox="allow-scripts allow-same-origin allow-downloads" allow="fullscreen"/>{!writable&&<div className="embedded-studio-connecting" aria-hidden="true">{uiText("正在连接编辑器…")}</div>}</div></div>}
+    {!src?<p role="alert">{uiText("Studio 地址或工程身份不匹配，未加载编辑器。")}</p>:<div className={`embedded-studio-body${railCollapsed?' rail-collapsed':''}`}><WorkspaceShotRail shots={editor?.shots??shots.map(shot=>{const items=editor?.items.filter(i=>i.id.startsWith(`shot-${shot.id}-`))??[];return{id:shot.id,text:shot.text,timelineId:'',itemIds:items.map(i=>i.id),startFrame:items[0]?.startFrame??0,durationInFrames:0,effective:true};})} selectedIds={editor?.selectedIds??[]} draftKey={workspace.projectId} editable={editor?.structureEnabled===true} disabled={!writable||pending||toolsBusy} onCollapse={setRailCollapsed} select={itemId=>{if(toolsBusyRef.current)return;void request('select',{itemId}).catch(cause=>setError(cause.message));}} edit={applyEdit}/><div className="embedded-studio-canvas"><iframe key="native-studio" ref={frame} inert={!writable||pending||toolsBusy} tabIndex={writable&&!pending&&!toolsBusy?0:-1} aria-busy={!writable||pending||toolsBusy} title={uiText("OpenChatCut 剪辑工程")} src={src} sandbox="allow-scripts allow-same-origin allow-downloads" allow="fullscreen"/>{!writable&&<div className="embedded-studio-connecting" aria-hidden="true">{uiText("正在连接编辑器…")}</div>}</div></div>}
   </section>;
 }

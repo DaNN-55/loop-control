@@ -364,3 +364,28 @@ it('formats the actual voice duration without rounding the generation request',a
  expect(screen.getByRole('button',{name:'生成时长'}).textContent).toBe('1.87 秒');fireEvent.click(screen.getByRole('button',{name:'生成时长'}));expect(screen.getByText('按当前口播使用 1.87 秒，服务请求 4 秒。')).toBeTruthy();expect(screen.getByLabelText('生成时长（秒）')).toHaveProperty('readOnly',true);expect(screen.getByLabelText('生成时长（秒）').getAttribute('aria-describedby')).toBeTruthy();expect(screen.getByText('本镜已采用口播，时长随该音频锁定；更换或撤回采用后会重新计算。')).toBeTruthy();await closeComposer();
  fireEvent.change(screen.getByRole('textbox',{name:'画面动作'}),{target:{value:'镜头缓慢推近'}});fireEvent.click(screen.getByRole('button',{name:'生成视频'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceVisualCandidate',expect.objectContaining({durationSeconds:duration})));
 });
+
+it('defaults to the selected fragment and requires explicit whole-shot scope before its preview',async()=>{
+ const w={...workspace,visualCandidates:[{...workspace.visualCandidates![0],durationSeconds:4}]};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{...preparation,edit:{...preparation.edit,visual:{replacementScope:'shot'}},impact:{...preparation.impact,replacementScope:'shot',replacedItemIds:['visual-1','visual-2']}}:workspace);
+ render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]}/>);
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));
+ expect(screen.getByRole('combobox',{name:'画面替换范围'})).toHaveProperty('value','fragment');
+ await userEvent.selectOptions(screen.getByRole('combobox',{name:'画面替换范围'}),'shot');
+ await userEvent.click(screen.getByRole('button',{name:'用到这个镜头'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({replacementScope:'shot'})));
+ expect(command.mock.calls.filter(([name])=>name==='adoptWorkspaceVisualCandidate')).toHaveLength(0);
+});
+it('applies a visual candidate to the live native document and saves before registering its adoption',async()=>{
+ const w={...workspace,visualCandidates:[{...workspace.visualCandidates![0],durationSeconds:4}]},changed={...w,revision:4,project:{...w.project,sha256:'saved-native'}};let readable=w;let finishSave!:()=>void;
+ const saved=new Promise<void>(resolve=>{finishSave=()=>{readable=changed;resolve();};});
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:readable})));
+ const bridge={connected:true,applyNativeEdit:vi.fn(async()=>({})),save:vi.fn(()=>saved)} as unknown as import('./EmbeddedStudioHost').EmbeddedStudioBridge;
+ const plan={...preparation,impact:{...preparation.impact,currentSeconds:3,appliedSeconds:3,deltaSeconds:0}};
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?plan:changed);
+ render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]} bridge={bridge}/>);
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'用到这个镜头'}));
+ await waitFor(()=>expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-candidate',{edit:plan.edit}));expect(command.mock.calls.filter(([name])=>name==='adoptWorkspaceVisualCandidate')).toHaveLength(0);
+ finishSave();await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.objectContaining({expectedRevision:4,nativeApplied:true,adoptionId:'adoption'})));
+});

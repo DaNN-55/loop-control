@@ -11,6 +11,8 @@ export const workspaceAudioFields:Record<string,string[]>={
  saveWorkspaceAudioDefaults:['episodeId','workspaceId','expectedRevision','selection'],
  prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','intent','candidateCount','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','audioTrackId','retry','selection'],
  saveWorkspaceMusicSettings:['episodeId','workspaceId','expectedRevision','settings'],
+ prepareWorkspaceAudioAdoption:['episodeId','workspaceId','expectedRevision','preparationId'],
+ commitWorkspaceAudioAdoption:['episodeId','workspaceId','expectedRevision','preparationId','adoptionId','nativeApplied'],
  adoptWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId'],
  mixWorkspaceAudio:['episodeId','workspaceId','expectedRevision','edit'],
  refreshWorkspaceAudio:['episodeId','workspaceId','expectedRevision'],

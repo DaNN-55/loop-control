@@ -101,8 +101,8 @@ it('keeps the same real host after save fails and closes only after a successful
 });
 it('retains the editor and saved file identity after close fails, then retries the existing save/close path',async()=>{
  let closes=0,saves=0;const command=vi.fn(async(name:string,_data:unknown)=>{if(name==='openWorkspaceStudio')return opened;if(name==='saveWorkspaceStudio')return{...studio,sha256:'c'.repeat(64),productionWorkspace:{...workspace,revision:++saves+1}};if(++closes===1)throw Error('关闭失败，工程保留');return{...workspace,revision:4};});
- const{frame,flush}=await enterStudio(command);flush();await screen.findAllByText('关闭失败，工程保留');expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
- flush();await screen.findByRole('button',{name:'检查与交付，当前查看'});expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();expect(command.mock.calls[3]).toEqual(['saveWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:2,workspaceRelativePath:studio.relativePath,projectId:studio.projectId,expectedWorkspaceSha256:'c'.repeat(64)}]);expect(command.mock.calls[4]).toEqual(['closeWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:3}]);
+ const{frame,flush}=await enterStudio(command);flush('保存并前往交付');await screen.findAllByText('关闭失败，工程保留');expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
+ flush('保存并前往交付');await screen.findByRole('button',{name:'检查与交付，当前查看'});expect(screen.queryByTitle('OpenChatCut 剪辑工程')).toBeNull();expect(command.mock.calls[3]).toEqual(['saveWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:2,workspaceRelativePath:studio.relativePath,projectId:studio.projectId,expectedWorkspaceSha256:'c'.repeat(64)}]);expect(command.mock.calls[4]).toEqual(['closeWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:3}]);
 });
 it('keeps an explicit viewing step on refresh without opening the saved native project',async()=>{
  readWorkspace();const command=vi.fn(),panel=<WorkspaceNavigationContext.Provider value={{episode:'e',step:'editing',tab:'visual',change:()=>{}}}><ProductionWorkspacePanel episodeId="e" title="操作转换" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/></WorkspaceNavigationContext.Provider>;
@@ -155,4 +155,22 @@ it('accepts a replacement workspace when a reload has no intervening command rec
  const app=render(view('board'));await screen.findByText('第一镜');
  app.rerender(view('new-board'));expect(await screen.findByText('新工作版本')).toBeTruthy();
  expect(command).not.toHaveBeenCalled();
+});
+it('keeps the native saved file SHA separate from the normalized canonical project SHA on the next save',async()=>{
+ let saves=0;
+ const firstNativeSha='c'.repeat(64),firstCanonicalSha='d'.repeat(64),secondNativeSha='e'.repeat(64),secondCanonicalSha='f'.repeat(64);
+ const command=vi.fn(async(name:string,_data:unknown)=>{
+  if(name==='openWorkspaceStudio')return opened;
+  if(name!=='saveWorkspaceStudio')throw Error('保存不应离开当前原生工程。');
+  const first=++saves===1;
+  return{...studio,sha256:first?firstNativeSha:secondNativeSha,productionWorkspace:{...workspace,revision:first?2:3,project:{...workspace.project,sha256:first?firstCanonicalSha:secondCanonicalSha}}};
+ });
+ const{frame,flush}=await enterStudio(command);
+ flush();await waitFor(()=>expect(screen.getByRole('button',{name:'保存'})).toHaveProperty('disabled',false));
+ expect(command.mock.calls).toHaveLength(2);expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
+ flush();await waitFor(()=>expect(command.mock.calls).toHaveLength(3));
+ expect(command.mock.calls[2]).toEqual(['saveWorkspaceStudio',{episodeId:'e',workspaceId:'w',expectedRevision:2,workspaceRelativePath:studio.relativePath,projectId:studio.projectId,expectedWorkspaceSha256:firstNativeSha}]);
+ expect((command.mock.calls[2][1] as {expectedWorkspaceSha256:string}).expectedWorkspaceSha256).not.toBe(firstCanonicalSha);
+ await waitFor(()=>expect(screen.getByRole('button',{name:'保存'})).toHaveProperty('disabled',false));expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
+ expect(command.mock.calls.map(([name])=>name)).toEqual(['openWorkspaceStudio','saveWorkspaceStudio','saveWorkspaceStudio']);
 });

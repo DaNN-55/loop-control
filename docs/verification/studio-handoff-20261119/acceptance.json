@@ -1,0 +1,93 @@
+{
+  "episodeId": "f73559c5-213c-4d83-a349-903025cdd738",
+  "revision": 17,
+  "nativeEditRevision": 16,
+  "projectId": "loop-control-f73559c5-213c-4d83-a349-903025cdd738",
+  "export": {
+    "confirmed": true,
+    "sha256": "2b4f71381d851386bff3debc22605d87e8d9a7d1e4bcd9fa044fe1c5a5bed6fc",
+    "bytes": 395680,
+    "checks": [
+      {
+        "name": "used_content",
+        "passed": true,
+        "detail": "已核对 6 个实际来源。"
+      },
+      {
+        "name": "visual_coverage",
+        "passed": true,
+        "detail": "整期画面连续，无未填充空档。"
+      },
+      {
+        "name": "captions",
+        "passed": true,
+        "detail": "已核对 1 组字幕时序，正文随最终文件一次确认。"
+      },
+      {
+        "name": "technical",
+        "passed": true,
+        "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。"
+      },
+      {
+        "name": "representative_frame",
+        "passed": true,
+        "detail": "已实际解码代表帧。"
+      },
+      {
+        "name": "export_file",
+        "passed": true,
+        "detail": "最终文件已按字节 SHA-256 与大小不可变登记。"
+      }
+    ]
+  },
+  "deliveries": [
+    {
+      "id": "217aa492-a938-40f6-9afc-9b0f58e0e092",
+      "verified": true
+    }
+  ],
+  "downloads": {
+    "videoSha256": "2b4f71381d851386bff3debc22605d87e8d9a7d1e4bcd9fa044fe1c5a5bed6fc",
+    "deliveryZipValid": true,
+    "editableJsonValid": true
+  },
+  "alignment": {
+    "method": "alignment",
+    "timing": "current",
+    "cues": [
+      {
+        "id": "phrase-1~0",
+        "text": "你好，",
+        "startMs": 20,
+        "endMs": 785
+      },
+      {
+        "id": "phrase-2~0",
+        "text": "欢迎看看这把黄色雨伞。",
+        "startMs": 905,
+        "endMs": 3379
+      }
+    ]
+  },
+  "validation": {
+    "base": "ad9aa9d05",
+    "integratedStoryboardBase": "5692c6d43",
+    "unitFiles": 362,
+    "unitTestsPassed": 2660,
+    "integrationFiles": 14,
+    "integrationCasesPassed": 44,
+    "optionalCasesSkipped": 1,
+    "completeBrowserRunsPassed": 1,
+    "integratedSmokeRunsPassed": 1,
+    "checkBuildRuntimePassed": true,
+    "mutationRejected": true
+  },
+  "cleanup": {
+    "checkedAt": "2026-11-19 10:42:41",
+    "pidAlive": false,
+    "environmentDirectoryRemoved": true,
+    "socketDirectoryRemoved": true,
+    "protectedOriginalDirectoryIdentityUnchanged": true,
+    "removedOnlyOwnedEnvironment": true
+  }
+}

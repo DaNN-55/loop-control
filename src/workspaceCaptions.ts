@@ -9,7 +9,7 @@ export const workspaceCaptionFields:Record<string,string[]>={
  saveWorkspaceNarrationCaptions:['episodeId','workspaceId','expectedRevision','clipId','contentMode','text'],
  saveWorkspaceCaptions:['episodeId','workspaceId','expectedRevision','clipId','captionContract','nativeApplied','expectedInputFingerprint'],
  requestWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','localOnly','automatic','expectedInputFingerprint'],
- prepareWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','taskId','expectedInputFingerprint'],
+ prepareWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','taskId','expectedInputFingerprint','automatic'],
  applyWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','taskId','expectedInputFingerprint','nativeApplied','automatic'],
  confirmWorkspaceCaptionText:['episodeId','workspaceId','expectedRevision','clipId','expectedInputFingerprint'],
 };

@@ -9,7 +9,7 @@ import {createNativeWorkspaceModules} from './openchatcut-host-modules.mjs';
 
 const sources=[
  'src/shotComposition.ts','src/workspaceDisplayNames.ts','src/workspaceVideoSound.ts','src/workspaceCandidates.ts',
- 'src/workspaceShots.ts','src/workspaceVideo.ts','src/workspaceAudio.ts',
+ 'src/workspaceShots.ts','src/workspaceVideo.ts','src/workspaceAudio.ts','src/workspaceAudioAdoption.ts',
  'src/workspaceCaptions.ts','src/shotCaptions.ts','src/workspaceRenderPreferences.ts','src/shotAudioMix.ts','scripts/openchatcut-caption-drag.mjs',
  'scripts/openchatcut-caption-layout.mjs','scripts/openchatcut-bridge-retry.mjs',
  'scripts/openchatcut-embed-client.mjs',

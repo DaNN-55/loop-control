@@ -187,7 +187,10 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   if(data.automatic!==undefined&&typeof data.automatic!=='boolean')throw new ConfigurationError(400,'自动同步标记无效。');
   if(command==='applyWorkspaceCaptionAlignment'&&isOpenChatCutStudio(row.episode_id)&&data.nativeApplied!==true)throw new ConfigurationError(409,'请先保存并返回，再采用声学对齐结果。');
   const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND shot_id=$2',[row.id,x.clip.shotId])).rows[0],task=typeof data.taskId==='string'?(await c.query('SELECT * FROM public.tasks WHERE id=$1 AND episode_id=$2',[data.taskId,row.episode_id])).rows[0]:null,alignment=task?.input_snapshot?.workspace_caption?task.last_result?.acousticAlignment:x.draft?.acoustic_alignment;
-  if(data.automatic===true&&e?.method!=='waiting')throw new ConfigurationError(409,'字幕已由人工或其他操作更新，自动结果不再应用。');
+  // Native flush records the actual edited cues before the alignment receipt is
+  // registered. Permit only a saved, exact alignment result to finish that receipt.
+  const registeringNative=command==='applyWorkspaceCaptionAlignment'&&data.nativeApplied===true&&e?.method==='manual';
+  if(data.automatic===true&&e?.method!=='waiting'&&!registeringNative)throw new ConfigurationError(409,'字幕已由人工或其他操作更新，自动结果不再应用。');
   if(data.automatic===true&&!x.alignmentWindow.ready)throw new ConfigurationError(409,x.alignmentWindow.detail??'当前声音已变化。');
   const target=task?.input_snapshot?.workspace_caption;
   let targetCurrent=false;

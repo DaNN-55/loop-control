@@ -14,7 +14,7 @@ export const workspaceVisualFields:Record<string,string[]>={
  retryWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
  prepareWorkspaceVisualPool:['episodeId','workspaceId','expectedRevision','materialRevisionId'],
  registerWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','materialRevisionId','usage','durationSeconds'],
- prepareWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','acceptTimelineImpact','motionPolicy','imageUsage','replaceCurrentVisual','sourceInSeconds','sourceOutSeconds'],
+ prepareWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','acceptTimelineImpact','motionPolicy','imageUsage','replaceCurrentVisual','replacementScope','sourceInSeconds','sourceOutSeconds'],
  adoptWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','adoptionId','nativeApplied'],
  rejectWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
  splitWorkspaceVideoSound:['episodeId','workspaceId','expectedRevision','targetItemId'],

@@ -201,6 +201,56 @@ export async function openOpenChatCutDraftStudio(assetRoot:string,episodeId:stri
   return openStudioDocument(assetRoot,episodeId,project,sourcePaths,inputFingerprint,undefined,runtimeConfig,{replaceWorkspace:true,recoverDraft:true,validateProject:validateCurrent,storage});
 }
 
+/** Same native versions namespace as the editor. Only the closed-editor path writes it here. */
+export async function checkpointOpenChatCutDraftVersion(assetRoot:string,episodeId:string,project:OpenChatCutProject,_runtimeConfig:OpenChatCutRuntimeConfig={},storage?:EpisodeFileIO):Promise<void>{
+  if(isOpenChatCutStudio(episodeId))throw Error('请在当前剪辑器中保留历史版本。');
+  await storage?.assertValid();
+  const root=await realpath(assetRoot),projectId=`loop-control-${episodeId}`,base=storage?.relativePath??`episodes/${episodeId}`;
+  const dataDir=join(root,base,'openchatcut-work/current/runtime'),metadataPath=await safeAssetOutputPath(root,`${base}/openchatcut-work/current/workspace.json`);
+  const metadata=await readWorkspaceMetadata(metadataPath),reverseSources=new Map(Object.entries(metadata?.reverseSources??{})),native=structuredClone(project);
+  const used=new Set(project.timelines.flatMap(t=>t.items.flatMap(i=>typeof i.src==='string'?[i.src]:[])));
+  const usedIds=new Set(project.timelines.flatMap(t=>t.items.map(i=>i.sourceAssetId)));
+  for(const asset of project.assets)if(usedIds.has(asset.id))used.add(asset.src);
+  const paths=new Set([...used,...project.assets.map(a=>a.src)]);
+  for(const path of paths){
+    if([...reverseSources.values()].includes(path))continue;
+    try{
+      const source=storage?await storage.resolveReference(path):resolve(root,path);
+      if(!isDescendant(root,source))throw Error('历史版本素材超出本期边界。');
+      const stat=await lstat(source);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1)throw Error('历史版本素材不是安全普通文件。');
+      const name=createHash('sha256').update(path).digest('hex').slice(0,20)+extname(path).toLowerCase();
+      const destination=await safeAssetOutputPath(root,`${base}/openchatcut-work/current/runtime/media/uploads/${name}`);
+      await copyFile(source,destination);reverseSources.set(`/media/uploads/${name}`,path);
+    }catch(error){if(!used.has(path))continue;throw error;} // Unused offline library media does not block editing.
+  }
+  rewriteSources(native,new Map([...reverseSources].map(([remote,original])=>[original,remote])));
+  await mkdir(dataDir,{recursive:true});
+  const key='versions:'+projectId,version={id:randomUUID(),name:'替换整条分镜前',createdAt:Date.now(),automatic:false,doc:native};
+  const append=(previous:unknown)=>{if(previous!==undefined&&!Array.isArray(previous))throw Error('原生历史版本格式无法安全追加。');return [version,...(previous as unknown[]|undefined??[])];};
+  const database=await storedSqliteDatabase(dataDir,false);
+  if(database){try{
+    database.exec('PRAGMA busy_timeout=5000; BEGIN IMMEDIATE;');
+    const previous=database.prepare('SELECT v FROM kv WHERE k=?').get(key) as {v:string}|undefined;
+    database.prepare('INSERT INTO kv(k,v) VALUES(?,?) ON CONFLICT(k) DO UPDATE SET v=excluded.v').run(key,JSON.stringify(append(previous?JSON.parse(previous.v):undefined)));
+    database.exec('COMMIT');
+  }finally{database.close();}}
+  else{
+    const directory=join(dataDir,'project-store-v1');
+    try{
+      await readFile(join(directory,'.ready'));
+      const path=await safeAssetOutputPath(root,relative(root,join(directory,encodeURIComponent(key)+'.json')));
+      const previous=await readFile(path,'utf8').catch(error=>{if(error.code!=='ENOENT')throw error;return 'null';});
+      await writeFile(path,JSON.stringify(append(JSON.parse(previous)??undefined))+'\n');
+    }catch(error){
+      if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;
+      const path=await safeAssetOutputPath(root,relative(root,join(dataDir,'project-store-v1.json')));
+      const raw=await readFile(path,'utf8').catch(error=>{if(error.code!=='ENOENT')throw error;return '{"version":1,"entries":{}}';});
+      const store=JSON.parse(raw);store.entries??={};store.entries[key]=append(store.entries[key]);await writeFile(path,JSON.stringify(store)+'\n');
+    }
+  }
+  await writeFile(metadataPath,JSON.stringify({...metadata,projectId,inputFingerprint:metadata?.inputFingerprint??'checkpoint-only',baseProjectSha256:metadata?.baseProjectSha256??projectSha256(project),reverseSources:Object.fromEntries(reverseSources)})+'\n');
+}
+
 async function openStudioDocument(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,composition:Composition|undefined,runtimeConfig:OpenChatCutRuntimeConfig,options:{replaceWorkspace?:boolean;recoverDraft?:boolean;validateProject?:StudioProjectValidator;storage?:EpisodeFileIO},render?:ReviewRender):Promise<OpenChatCutStudioOpenResult>{
   const existing=sessions.get(episodeId),root=await realpath(assetRoot),projectId=`loop-control-${episodeId}`;
   await options.storage?.assertValid();await assertStudioWorkspace(root,episodeId,projectId,options.storage?.relativePath);
@@ -247,7 +297,8 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   await safeAssetOutputPath(root,`${options.storage?.relativePath??`episodes/${episodeId}`}/openchatcut-work/current/runtime/media/uploads/.probe`);
   const uploadDir = join(dataDir, "media", "uploads");
   await mkdir(uploadDir, { recursive: true });
-  const reverseSources = new Map<string, string>(recoverStored?Object.entries(storedMetadata!.reverseSources):Object.entries(storedMetadata?.reverseSources??{}).filter(([source])=>source.startsWith('/media/uploads/lc-sfx-')));
+  // History versions can still reference media replaced in the current document.
+  const reverseSources = new Map<string, string>(Object.entries(storedMetadata?.reverseSources??{}));
   const bundledSdkRoot=runtimeConfig.root?.trim()||process.env.OPENCHATCUT_ROOT?.trim();
   if(!bundledSdkRoot)throw Error('未配置 OPENCHATCUT_ROOT，无法准备内置音效。');
   await cacheBundledStudioSounds(root,options.storage?.relativePath??`episodes/${episodeId}`,dataDir,bundledSdkRoot,reverseSources,options.storage);
@@ -487,7 +538,10 @@ async function writeStoredProject(dataDir: string, projectId: string, project: O
     await writeFile(join(directoryStore, `${encodeURIComponent(`project:${projectId}`)}.json`), JSON.stringify(project) + "\n");
   } catch (error) {
     if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
-    await writeFile(join(dataDir, "project-store-v1.json"), JSON.stringify(legacyStore, null, 2) + "\n");
+    const path=join(dataDir,'project-store-v1.json');
+    const previous=await readFile(path,'utf8').then(raw=>JSON.parse(raw)).catch(error=>{if(error.code!=='ENOENT')throw error;return{entries:{}};});
+    const store=legacyStore as {entries:Record<string,unknown>};
+    await writeFile(path,JSON.stringify({...previous,...store,entries:{...previous.entries,...store.entries}},null,2)+'\n');
   }
 }
 

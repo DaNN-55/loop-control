@@ -1,3 +1,4 @@
+import {workspaceShotIdentity} from './workspaceShots.js';
 import {workspaceShotMediaName} from './workspaceDisplayNames.js';
 import {applyWorkspaceVideoSound,removeLinkedVideoSound,type VideoSound} from './workspaceVideoSound.js';
 import {followWorkspaceNarrationCaption} from './workspaceCaptions.js';
@@ -5,7 +6,8 @@ import {isValidShotCaptionContract,type ShotCaptionContract} from './shotCaption
 import {applyWorkspaceAudioMix,resolveWorkspaceMainVoice} from './workspaceAudio.js';
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 export interface WorkspaceUsedNarration {shotId:string;itemId:string;audioTrackId:string;sha256:string;taskId:string|null;text:string|null;mainScriptText:string;inputFingerprint:string|null;sourceInFrame:number;durationInFrames:number;fps:number;fullSourceUsed:boolean;provenance:'owner_adoption'|'immutable_task'|'not_recorded'}
-export interface WorkspaceCandidateVisual {shotId?:string;sourceInSeconds?:number;sourceOutSeconds?:number;usage:'video'|'still'|'pan-zoom';motionPolicy:'preserve-target'|'replace-motion';acceptTimelineImpact:boolean;expectedAppearance:string;placeholder:boolean}
+export interface WorkspaceCandidateShotReplacement {timelineId:string;itemIds:string[];startFrame:number;durationInFrames:number;fingerprint:string}
+export interface WorkspaceCandidateVisual {replacementScope?:'fragment'|'shot';replacement?:WorkspaceCandidateShotReplacement;shotId?:string;sourceInSeconds?:number;sourceOutSeconds?:number;usage:'video'|'still'|'pan-zoom';motionPolicy:'preserve-target'|'replace-motion';acceptTimelineImpact:boolean;expectedAppearance:string;placeholder:boolean}
 export interface WorkspaceCandidate {canRestoreNarration?:boolean;speech?:{selection:import('./productionSelection.js').ProductionSelection;connectionName:string;voice:string;languageCode:string;speakingRate:number};visual?:WorkspaceCandidateVisual;width?:number;height?:number;id:string;kind:'audio'|'video'|'image';shotId:string;clipId:string;targetItemId:string;taskId:string|null;inputFingerprint:string;text:string;mainScriptText:string;audioTrackId:string|null;relativePath:string;sha256:string;fileSize:number;durationSeconds:number;status:'available'|'stale'|'adopted'|'rejected';currentDurationSeconds:number|null;currentVoiceMode?:'tts'|'source'|'none';targetDurationSeconds?:number;pendingConfirmation?:boolean;durationImpact?:{deltaSeconds:number;overlapItemIds:string[]}}
 /** Only source identity is compared; all editing properties remain native-owned. */
 export function workspaceCandidateTarget(item:Record<string,unknown>){
@@ -20,14 +22,25 @@ export function workspaceCandidateTarget(item:Record<string,unknown>){
   durationInFrames:item.durationInFrames,srcInFrame:item.srcInFrame??0,playbackRate:item.playbackRate??1,
  };
 }
+/** Runtime source URLs differ from registered paths; hash/asset identity and every edit remain comparable. */
+export function workspaceCandidateShotReplacement(project:OpenChatCutProject,shotId:string):WorkspaceCandidateShotReplacement {
+ const matches=project.timelines.map(timeline=>({timeline,items:timeline.items.filter(item=>['video','image','text'].includes(String(item.kind))&&workspaceShotIdentity(item)?.shotId===shotId)})).filter(match=>match.items.length);
+ if(matches.length!==1)throw Error('镜头画面跨时间线或已删除，请重新读取。');
+ const {timeline,items}=matches[0],startFrame=Math.min(...items.map(item=>Number(item.startFrame))),endFrame=Math.max(...items.map(item=>Number(item.startFrame)+Number(item.durationInFrames)));
+ const snapshots=items.map(item=>{const {src:_src,...snapshot}={...item,...workspaceCandidateTarget(item)};return snapshot;}).sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+ return {timelineId:timeline.id,itemIds:items.map(item=>String(item.id)).sort(),startFrame,durationInFrames:endFrame-startFrame,fingerprint:JSON.stringify(snapshots,(_key,value)=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().map(key=>[key,value[key]])):value)};
+}
 export interface WorkspaceCandidateMainVoice {initialCaptionContract?:ShotCaptionContract;narrationText?:string;workspaceId:string;shotId:string;visualItemIds:string[];expectedRoute:string;activate:boolean;volume:number;window:{startFrame:number;durationInFrames:number}}
 export function workspaceCandidateAppearance(item:Record<string,unknown>){return JSON.stringify({transform:item.transform??null,keyframes:item.keyframes??null,zoom:item.zoom??null},(_key,value)=>value&&typeof value==='object'&&!Array.isArray(value)?Object.fromEntries(Object.keys(value).sort().map(k=>[k,value[k]])):value);}
 export interface WorkspaceCandidateEdit {videoSound?:VideoSound;visual?:WorkspaceCandidateVisual;mainVoice?:WorkspaceCandidateMainVoice;shotWindow?:{startFrame:number;durationInFrames:number};targetItemId:string;expectedTarget:ReturnType<typeof workspaceCandidateTarget>|null;source:{name?:string;id:string;kind:'audio'|'video'|'image';src:string;sha256:string;inputFingerprint:string;durationSeconds:number;sourceInSeconds?:number;fullDurationSeconds?:number;width?:number;height?:number};durationPolicy:'keep-target'|'use-candidate'}
 /** Native IPC accepts only SDK media URLs; trusted server callers may supply a verified registered-source predicate. */
 export function isWorkspaceCandidateEdit(value:unknown,videoSoundSource:(src:string)=>boolean=src=>/^\/media\/uploads\/[a-f0-9]+\.[a-z0-9]+$/.test(src)):value is WorkspaceCandidateEdit {if(!value||typeof value!=='object')return false;const e=value as WorkspaceCandidateEdit;const sound=e.videoSound;
+ if(e.visual?.replacementScope!==undefined&&!['fragment','shot'].includes(e.visual.replacementScope))return false;
+ if(e.visual?.replacementScope==='shot'){const r=e.visual.replacement;if(!e.visual.shotId||!r||typeof r.timelineId!=='string'||!Array.isArray(r.itemIds)||!r.itemIds.length||!r.itemIds.every(id=>typeof id==='string')||!r.itemIds.includes(e.targetItemId)||!Number.isSafeInteger(r.startFrame)||r.startFrame<0||!Number.isSafeInteger(r.durationInFrames)||r.durationInFrames<1||typeof r.fingerprint!=='string')return false;}
  if(e.source?.name!==undefined&&(typeof e.source.name!=='string'||!e.source.name.trim()||e.source.name.length>200))return false;
  if(e.mainVoice?.initialCaptionContract!==undefined&&!isValidShotCaptionContract(e.mainVoice.initialCaptionContract))return false;
  if(sound&&(e.source?.kind!=='video'||!e.visual?.shotId||!['silent','embedded','separate'].includes(sound.mode)))return false;
+ if(sound?.mode==='separate'&&sound.boundSourceAsset&&(!/^audio-track-[a-f0-9-]{36}$/.test(sound.boundSourceAsset.id)||sound.boundSourceAsset.kind!=='audio'||sound.boundSourceAsset.src!==sound.asset.src||!Number.isSafeInteger(sound.boundSourceAsset.durationInFrames)||sound.boundSourceAsset.durationInFrames<1))return false;
  if(sound?.mode==='separate'&&(!/^material-[a-f0-9-]{36}$/.test(sound.asset?.id??'')||sound.asset?.kind!=='audio'||!videoSoundSource(sound.asset.src)||!Number.isSafeInteger(sound.asset.durationInFrames)||sound.asset.durationInFrames<1||!/^([a-f0-9]{64})$/.test(sound.sha256)))return false;
  return typeof e.targetItemId==='string'&&(!!e.expectedTarget||!!e.mainVoice)&&typeof e.source?.id==='string'&&['audio','video','image'].includes(e.source.kind)&&typeof e.source.src==='string'&&/^[a-f0-9]{64}$/.test(e.source.sha256)&&typeof e.source.inputFingerprint==='string'&&Number.isFinite(e.source.durationSeconds)&&e.source.durationSeconds>0&&(e.source.sourceInSeconds===undefined||e.source.kind==='video'&&Number.isFinite(e.source.sourceInSeconds)&&e.source.sourceInSeconds>=0&&Number.isFinite(e.source.fullDurationSeconds)&&e.source.sourceInSeconds+e.source.durationSeconds<=e.source.fullDurationSeconds!+0.05)&&['keep-target','use-candidate'].includes(e.durationPolicy)&&(!e.mainVoice||e.source.kind==='audio'&&(e.mainVoice.narrationText===undefined||typeof e.mainVoice.narrationText==='string'&&e.mainVoice.narrationText.length<=100000)&&e.targetItemId===`workspace-narration-shot-${e.mainVoice.shotId}`&&typeof e.mainVoice.workspaceId==='string'&&Array.isArray(e.mainVoice.visualItemIds)&&e.mainVoice.visualItemIds.length>0&&e.mainVoice.visualItemIds.every(id=>typeof id==='string')&&typeof e.mainVoice.expectedRoute==='string'&&typeof e.mainVoice.activate==='boolean'&&Number.isFinite(e.mainVoice.volume)&&e.mainVoice.volume>0&&Number.isSafeInteger(e.mainVoice.window?.startFrame)&&e.mainVoice.window.startFrame>=0&&Number.isSafeInteger(e.mainVoice.window?.durationInFrames)&&e.mainVoice.window.durationInFrames>0);}
 /** Native route identity excludes unrelated editing fields but includes gain, mute and used windows. */
@@ -36,7 +49,7 @@ export function workspaceCandidateVoiceRoute(project:OpenChatCutProject,shotId:s
  return JSON.stringify(project.timelines.filter(t=>t.items.some(i=>ids.has(String(i.id)))).map(t=>({id:t.id,visuals:t.items.filter(i=>ids.has(String(i.id))).sort((a,b)=>String(a.id).localeCompare(String(b.id))).map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames,volume:i.volume??1})),voices:t.items.filter(i=>voiceIds.has(String(i.id))).sort((a,b)=>String(a.id).localeCompare(String(b.id))).map(i=>({...workspaceCandidateTarget(i),volume:i.volume??1,track:i.track})),tracks:[...new Set(t.items.filter(i=>voiceIds.has(String(i.id))).map(i=>String(i.track)))].sort().map(id=>({id,muted:(t.tracks[id] as {muted?:boolean}|undefined)?.muted??false}))})));
 }
 export function workspaceCandidateDurationFrames(edit:WorkspaceCandidateEdit,fps:number){
- const full=Math.max(1,Math.ceil(edit.source.durationSeconds*fps)),window=Number(edit.mainVoice?.window.durationInFrames??edit.expectedTarget?.durationInFrames);
+ const full=Math.max(1,Math.ceil(edit.source.durationSeconds*fps)),window=Number(edit.mainVoice?.window.durationInFrames??(edit.visual?.replacementScope==='shot'?edit.visual.replacement?.durationInFrames:edit.expectedTarget?.durationInFrames));
  return edit.durationPolicy==='use-candidate'?full:edit.mainVoice?Math.min(full,window):window;
 }
 /** Restricted shared audio/video adoption. No pool-wide relink, ripple or project reconstruction. */
@@ -49,25 +62,43 @@ export function applyWorkspaceCandidate(project:OpenChatCutProject,edit:Workspac
  if(item&&(Object.entries(workspaceCandidateTarget(item)).some(([key,value])=>value!==expectedTarget?.[key as keyof typeof expectedTarget])||item.kind!==edit.source.kind&&!(edit.visual&&['video','image'].includes(String(item.kind))&&edit.source.kind!=='audio')&&!(edit.visual?.placeholder&&item.kind==='text'&&edit.source.kind!=='audio')))throw Error('目标输入或源身份已变化，请重新比较候选。');
  if(!timeline&&main){const timelines=next.timelines.filter(t=>t.items.some(i=>main.visualItemIds.includes(String(i.id))));if(timelines.length!==1)throw Error('镜头画面跨时间线或已删除。');timeline=timelines[0];}
  if(!timeline)throw Error('候选目标不存在。');
+ const replacement=edit.visual?.replacementScope==='shot'?edit.visual.replacement:undefined;
+ if(edit.visual?.replacementScope==='shot'&&!replacement)throw Error('缺少整条分镜替换依据，请重新比较。');
+ const replacingIds=new Set(replacement?.itemIds??[edit.targetItemId]);
+ const linkedIds=new Set(timeline.linkGroups?.filter(group=>group.itemIds.some(id=>replacingIds.has(id))).flatMap(group=>group.itemIds));
+ const modified=(member:Record<string,unknown>)=>replacingIds.has(String(member.id))||linkedIds.has(String(member.id))||/^workspace-(source|ambience)-shot-/.test(String(member.id))&&replacingIds.has(String((member.loopControlAudio as {sourceItemId?:string}|undefined)?.sourceItemId));
+ if(timeline.items.some(member=>modified(member)&&(timeline!.tracks[String(member.track)] as {locked?:boolean}|undefined)?.locked))throw Error('目标画面或绑定声音轨已锁定，请先在剪辑台解锁后再替换。');
+ if(replacement){const actual=workspaceCandidateShotReplacement(next,edit.visual!.shotId!);if(actual.timelineId!==replacement.timelineId||actual.startFrame!==replacement.startFrame||actual.durationInFrames!==replacement.durationInFrames||actual.fingerprint!==replacement.fingerprint||JSON.stringify(actual.itemIds)!==JSON.stringify(replacement.itemIds))throw Error('整条分镜的画面或边界已变化，请重新比较。');}
  if(edit.visual&&edit.visual.motionPolicy==='replace-motion'&&item&&workspaceCandidateAppearance(item)!==edit.visual.expectedAppearance)throw Error('目标人工构图或运动已变化，请重新比较。');
  const timelineId=timeline.id,frames=Math.max(1,Math.ceil(edit.source.durationSeconds*timeline.fps)),assetFrames=Math.max(1,Math.ceil((edit.source.fullDurationSeconds??edit.source.durationSeconds)*timeline.fps)),appliedDuration=workspaceCandidateDurationFrames(edit,timeline.fps);
- if(item&&(Number(item.playbackRate??1)!==1||item.edits))throw Error('目标已变速或分段，请先在原生编辑器明确恢复完整区间。');
- if(edit.durationPolicy==='keep-target'&&!main&&edit.source.kind!=='image'&&Number(item?.durationInFrames)>frames)throw Error('候选短于目标窗口，请明确采用候选时长。');
- if(edit.visual&&edit.durationPolicy==='use-candidate'&&Number(item?.durationInFrames)!==frames&&!edit.visual.acceptTimelineImpact)throw Error('候选时长将改变空隙或覆盖，请明确接受其它片段位置保持。');
+ if(!replacement&&item&&(Number(item.playbackRate??1)!==1||item.edits))throw Error('目标已变速或分段，请先在原生编辑器明确恢复完整区间。');
+ if(edit.durationPolicy==='keep-target'&&!main&&edit.source.kind!=='image'&&Number(replacement?.durationInFrames??item?.durationInFrames)>frames)throw Error('候选短于目标窗口，请明确采用候选时长。');
+ if(edit.visual&&edit.durationPolicy==='use-candidate'&&Number(replacement?.durationInFrames??item?.durationInFrames)!==frames&&!edit.visual.acceptTimelineImpact)throw Error('候选时长将改变空隙或覆盖，请明确接受其它片段位置保持。');
  const asset={...(edit.visual?{width:edit.source.width,height:edit.source.height,sourceContentHash:edit.source.sha256,sourceRevision:`source-sha256-${edit.source.sha256}`}:{ }),id:edit.source.id,name:edit.source.name??String(item?.name??workspaceShotMediaName(main?.shotId??edit.visual?.shotId??'',main?'narration':'visual')),kind:edit.source.kind,src:edit.source.src,durationInFrames:assetFrames};
  const existing=next.assets.find(a=>a.id===asset.id);if(existing&&existing.src!==asset.src)throw Error('候选素材身份已变化。');if(!existing)next.assets.push(asset);
  const ambience=main?timeline.items.find(i=>i.id===`workspace-ambience-shot-${main.shotId}`):undefined,ambienceTrack=ambience?structuredClone(timeline.tracks[String(ambience.track)]):undefined;
  const activate=()=>{if(!main)return;next=applyWorkspaceAudioMix(next,{kind:'voice',workspaceId:main.workspaceId,shotId:main.shotId,visualItemIds:main.visualItemIds,mode:'tts',gainDb:0,ambienceGainDb:null,narrationAssetId:edit.source.id},{narrationDurationInFrames:appliedDuration});timeline=next.timelines.find(t=>t.id===timelineId)!;item=timeline.items.find(i=>i.id===edit.targetItemId);if(item)item.volume=main.volume;if(ambience){timeline.items.push(ambience);if(ambienceTrack)timeline.tracks[String(ambience.track)]=ambienceTrack;}};
+ const replacedItems=replacement?timeline.items.filter(i=>replacement.itemIds.includes(String(i.id))):item?[item]:[];
+ const previousSources=Object.fromEntries(replacedItems.map(i=>[String(i.id),i.sourceAssetId]));
+ if(replacement&&item){
+  for(const other of replacedItems)if(other!==item)removeLinkedVideoSound(timeline,other);
+  const removed=new Set(replacement.itemIds.filter(id=>id!==item!.id));timeline.items=timeline.items.filter(i=>!removed.has(String(i.id)));
+  timeline.transitions=timeline.transitions.filter(transition=>!Object.values(transition).some(value=>typeof value==='string'&&removed.has(value)));
+  const voiceMode=replacedItems.map(i=>(i.loopControlAudio as {voiceMode?:string}|undefined)?.voiceMode).find(Boolean);
+  const retained=new Set(['id','kind','track','name','startFrame','durationInFrames','loopControlShot','loopControlAudio','volume']);for(const key of Object.keys(item))if(!retained.has(key))delete item[key];
+  item.startFrame=replacement.startFrame;item.transform={x:0,y:0,scale:1,rotation:0};if(voiceMode)item.loopControlAudio={...(item.loopControlAudio as object??{}),voiceMode};
+ }
  const created=!item;if(created)activate();if(created&&item&&edit.source.name)item.name=edit.source.name;if(!item)throw Error('主声音轨未建立。');
  if(main?.activate)item.startFrame=main.window.startFrame;
  Object.assign(item,{src:edit.source.src,sourceAssetId:asset.id,sourceRevision:`source-sha256-${edit.source.sha256}`,sourceContentHash:edit.source.sha256,loopControlCandidate:{inputFingerprint:edit.source.inputFingerprint,sourceId:edit.source.id,durationPolicy:edit.durationPolicy,startFrame:Number(item.startFrame),durationInFrames:appliedDuration,shotWindow:edit.shotWindow},srcInFrame:Math.round((edit.source.sourceInSeconds??0)*timeline.fps),durationInFrames:appliedDuration});
  if(edit.visual){
   if(edit.videoSound&&edit.source.kind==='video'){
    const shotId=edit.visual.shotId??'';
-   applyWorkspaceVideoSound(next,timeline,item,shotId,edit.videoSound,!!resolveWorkspaceMainVoice(next,shotId).item);
+   applyWorkspaceVideoSound(next,timeline,item,shotId,edit.videoSound,!!resolveWorkspaceMainVoice(next,shotId).item,previousSources);
   }else if(edit.source.kind==='image'){
-   removeLinkedVideoSound(timeline,item);
+   applyWorkspaceVideoSound(next,timeline,item,edit.visual.shotId??'',{mode:'silent'},!!resolveWorkspaceMainVoice(next,edit.visual.shotId??'').item,previousSources);
   }
+  if(replacement){item.fit='cover';}
   const wasPlaceholder=item.kind==='text';Object.assign(item,{kind:edit.source.kind,width:edit.source.width,height:edit.source.height});if(wasPlaceholder){delete item.props;if(!edit.videoSound)item.volume=0;}
   if(edit.visual.usage==='pan-zoom'&&edit.visual.motionPolicy==='replace-motion'){
    const transform=item.transform as {scale?:number;x?:number}|undefined,scale=Number(transform?.scale??1),x=Number(transform?.x??0);item.keyframes={...(item.keyframes as object??{}),scale:[{frame:0,value:scale,easing:'linear'},{frame:appliedDuration-1,value:scale*1.15,easing:'linear'}],x:[{frame:0,value:x,easing:'linear'},{frame:appliedDuration-1,value:Math.min(100,x+3),easing:'linear'}]};delete item.zoom;
@@ -86,4 +117,4 @@ export function addWorkspaceRegisteredSource(project:OpenChatCutProject,value:un
 }
 
 /** Prepared against the authoritative project; displayed before any native replacement. */
-export interface WorkspaceCandidatePreparation {restoration?:{currentText:string;restoredText:string};adoptionId:string;candidateId:string;projectSha256:string;edit:WorkspaceCandidateEdit;impact:{captionRecheck?:boolean;currentSeconds:number;sourceSeconds:number;appliedSeconds:number;deltaSeconds:number;startSeconds:number;endSeconds:number;fps:number;affectedFragments:{itemId:string;label:string;kind:string;track:string;startSeconds:number;endSeconds:number;changedStartSeconds:number;changedEndSeconds:number}[]}}
+export interface WorkspaceCandidatePreparation {restoration?:{currentText:string;restoredText:string};adoptionId:string;candidateId:string;projectSha256:string;edit:WorkspaceCandidateEdit;impact:{replacementScope?:'fragment'|'shot';replacedItemIds?:string[];videoSound?:'silent'|'embedded'|'separate';captionRecheck?:boolean;currentSeconds:number;sourceSeconds:number;appliedSeconds:number;deltaSeconds:number;startSeconds:number;endSeconds:number;fps:number;affectedFragments:{itemId:string;label:string;kind:string;track:string;startSeconds:number;endSeconds:number;changedStartSeconds:number;changedEndSeconds:number}[]}}

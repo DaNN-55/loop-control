@@ -16,7 +16,7 @@ it('waits for the real frame flush before saving and rejects foreign messages',a
  const post=vi.spyOn(frame.contentWindow!,'postMessage');fireEvent.click(screen.getByRole('button',{name:'保存'}));
  expect(save).not.toHaveBeenCalled();const message=post.mock.calls.at(-1)![0] as Record<string,unknown>;expect(message.action).toBe('flush');
  fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{type:'loop-control:result',channel,projectId:'loop-control-e',requestId:message.requestId,ok:true}}));
- await waitFor(()=>expect(close).toHaveBeenCalledWith('delivery',undefined));expect(save).toHaveBeenCalledWith(workspace);
+ await waitFor(()=>expect(save).toHaveBeenCalledWith(workspace));expect(close).not.toHaveBeenCalled();expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
 });
 it('keeps the editor open when its real flush fails and ignores a wrong channel',async()=>{
  const save=vi.fn(async()=>workspace),close=vi.fn();render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={close}/>);
@@ -70,11 +70,14 @@ it('does not treat a connected state without SDK ownership as write readiness',(
  deliver(true);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(false);expect(frame.hasAttribute('inert')).toBe(false);
  deliver(false);expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(true);expect(save).not.toHaveBeenCalled();
 });
-it('directs file imports to the storyboard once the native editor is writable',()=>{
- render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={async()=>workspace} onClose={()=>{}}/>);
- const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
- deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.queryByText('Owner 登记画面入口')).toBeNull();
- deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.getByRole('alert').textContent).toContain('请返回分镜台');expect(screen.queryByRole('tablist',{name:'补充工具'})).toBeNull();
+it('opens only requested supplementary tools without leaving the native editor',()=>{
+ const tools=vi.fn((_bridge,kind)=><p>{kind==='audio'?'声音候选入口':'画面候选入口'}</p>),close=vi.fn();
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={async()=>workspace} onClose={close} renderTools={tools}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ expect(tools).not.toHaveBeenCalled();
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});deliver({type:'loop-control:import-requested',kind:'audio'});
+ expect(screen.getByText('声音候选入口')).toBeTruthy();expect(screen.queryByRole('alert')).toBeNull();expect(close).not.toHaveBeenCalled();expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
 });
 
 it('ignores the retired subtitle-panel messages and returns the last selected shot after save',async()=>{
@@ -135,7 +138,58 @@ it('keeps structural edits bound to the inspected native document and latest sav
   await waitFor(()=>expect(post.mock.calls.at(-1)?.[0].action).toBe('apply-workspace-edit'));
   request=post.mock.calls.at(-1)![0];expect(request).toMatchObject({operation:{kind:'move',shotId:'S02',beforeShotId:'S01'},expectedRevision:index+1,expectedDocumentFingerprint:'c'.repeat(64)});
   deliver({type:'loop-control:result',requestId:request.requestId,ok:true,result:{document:{version:3}}});
+  for(let flush=0;flush<2;flush++){await waitFor(()=>expect(post.mock.calls.at(-1)?.[0].action).toBe('flush'));const sent=post.mock.calls.at(-1)![0];await act(async()=>deliver({type:'loop-control:result',requestId:sent.requestId,ok:true}));}
   await waitFor(()=>expect(save).toHaveBeenCalledTimes(index+1));await waitFor(()=>expect((screen.getByRole('button',{name:'保存'}) as HTMLButtonElement).disabled).toBe(false));
  }
  expect(save.mock.calls.map(call=>call[0])).toEqual([workspace,next]);
+});
+
+it('exposes native edits through inspect, checked apply and a real flush before returning',async()=>{
+ let bridge!:import('./EmbeddedStudioHost').EmbeddedStudioBridge;
+ const save=vi.fn(async()=>workspace);
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={save} onClose={()=>{}} renderTools={value=>{bridge=value;return null;}}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:state',writable:true,revision:4,items:[{id:'selected',startFrame:0,durationInFrames:30}],selectedIds:['selected'],shots:[{id:'S1',itemIds:['selected']}]});
+ fireEvent.click(screen.getByRole('button',{name:'补充工具'}));expect(bridge.selectedItemId).toBe('selected');
+ let result!:Promise<unknown>;act(()=>{result=bridge.applyNativeEdit('apply-candidate',{edit:{id:'candidate'}});});
+ expect(post.mock.calls.at(-1)![0].action).toBe('inspect');
+ await act(async()=>deliver({type:'loop-control:result',requestId:post.mock.calls.at(-1)![0].requestId,ok:true,result:{revision:4,documentFingerprint:'fingerprint',document:{}}}));
+ expect(post.mock.calls.at(-1)![0]).toMatchObject({action:'apply-candidate',expectedRevision:4,expectedDocumentFingerprint:'fingerprint'});expect(save).not.toHaveBeenCalled();
+ await act(async()=>deliver({type:'loop-control:result',requestId:post.mock.calls.at(-1)![0].requestId,ok:true,result:{document:{activeTimelineId:'real'}}}));
+ expect(post.mock.calls.at(-1)![0].action).toBe('flush');expect(save).not.toHaveBeenCalled();
+ await act(async()=>deliver({type:'loop-control:result',requestId:post.mock.calls.at(-1)![0].requestId,ok:true}));
+ await expect(result).resolves.toEqual({activeTimelineId:'real'});expect(save).not.toHaveBeenCalled();
+});
+it('rejects a supplied document fingerprint if the editor has changed since preparation',async()=>{
+ let bridge!:import('./EmbeddedStudioHost').EmbeddedStudioBridge;const save=vi.fn(async()=>workspace);
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={save} onClose={()=>{}} renderTools={value=>{bridge=value;return null;}}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});fireEvent.click(screen.getByRole('button',{name:'补充工具'}));
+ let failure!:Promise<unknown>;act(()=>{failure=bridge.applyNativeEdit('apply-audio-mix',{edit:{},expectedDocumentFingerprint:'prepared'}).catch(error=>error.message);});
+ await act(async()=>deliver({type:'loop-control:result',requestId:post.mock.calls.at(-1)![0].requestId,ok:true,result:{revision:2,documentFingerprint:'new-manual-edit'}}));
+ expect(await failure).toContain('已有新修改');expect(post.mock.calls).toHaveLength(1);expect(save).not.toHaveBeenCalled();
+});
+it('saves before the explicit delivery action and returns the selected shot',async()=>{
+ const close=vi.fn(),save=vi.fn(async()=>workspace);render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[]} onSave={save} onClose={close}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[{id:'selected',startFrame:0,durationInFrames:30}],selectedIds:['selected'],shots:[{id:'S1',itemIds:['selected']}]});fireEvent.click(screen.getByRole('button',{name:'保存并前往交付'}));expect(close).not.toHaveBeenCalled();
+ await act(async()=>deliver({type:'loop-control:result',requestId:post.mock.calls.at(-1)![0].requestId,ok:true}));expect(save).toHaveBeenCalledOnce();expect(close).toHaveBeenCalledWith('delivery',{shotId:'S1',itemId:'selected'});
+});
+it('holds navigation and tool selection until the complete tool operation finishes while its bridge can still save',async()=>{
+ let bridge!:import('./EmbeddedStudioHost').EmbeddedStudioBridge,reportBusy!:(busy:boolean)=>void;
+ const save=vi.fn(async()=>workspace),close=vi.fn();
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'project.json'}} shots={[{id:'S1',text:'镜头'}]} onSave={save} onClose={close} renderTools={(value,target,_file,onBusyChange)=>{bridge=value;reportBusy=onBusyChange!;return <p>{target}候选工具</p>;}}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[{id:'selected',startFrame:0,durationInFrames:30}],selectedIds:['selected'],shots:[{id:'S1',text:'镜头',itemIds:['selected']}]});fireEvent.click(screen.getByRole('button',{name:'补充工具'}));
+ act(()=>reportBusy(true));
+ for(const name of ['补充工具','画面与候选','字幕校时','保存','保存并返回分镜台','保存并前往交付','定位镜头 S1'])expect(screen.getByRole('button',{name})).toHaveProperty('disabled',true);
+ expect(frame.hasAttribute('inert')).toBe(true);expect(bridge.connected).toBe(true);
+ fireEvent.click(screen.getByRole('button',{name:'画面与候选'}));deliver({type:'loop-control:leave'});deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.getByText('audio候选工具')).toBeTruthy();expect(close).not.toHaveBeenCalled();expect(post).not.toHaveBeenCalled();
+ let saved!:Promise<void>;act(()=>{saved=bridge.save();});expect(post.mock.calls.at(-1)![0].action).toBe('flush');
+ await act(async()=>deliver({type:'loop-control:result',requestId:post.mock.calls.at(-1)![0].requestId,ok:true}));await saved;expect(save).toHaveBeenCalledOnce();expect(screen.getByRole('button',{name:'画面与候选'})).toHaveProperty('disabled',true);
+ act(()=>reportBusy(false));expect(frame.hasAttribute('inert')).toBe(false);expect(screen.getByRole('button',{name:'画面与候选'})).toHaveProperty('disabled',false);
 });

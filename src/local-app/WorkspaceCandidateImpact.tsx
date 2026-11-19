@@ -2,11 +2,13 @@ import {uiText} from '../i18n/ui';
 import type {WorkspaceCandidatePreparation} from '../workspaceCandidates';
 import './workspace-candidate-impact.css';
 export function needsCandidateImpactDialog(impact:WorkspaceCandidatePreparation['impact']|undefined){
- return !!impact&&(impact.deltaSeconds!==0||impact.captionRecheck||impact.affectedFragments.length>0);
+ return !!impact&&(impact.replacementScope==='shot'||impact.videoSound==='silent'||impact.deltaSeconds!==0||impact.captionRecheck||impact.affectedFragments.length>0);
 }
 export function WorkspaceCandidateImpactDetails({plan}:{plan:WorkspaceCandidatePreparation}){
  const {impact}=plan;
  return <>
+  {impact.replacementScope==='shot'&&<p role="status">{uiText("将整条分镜的 {value0} 个画面片段替换为一个新素材。保留口播、字幕和独立音效；其他分镜保持原位。",{value0:String(impact.replacedItemIds?.length??1)})}</p>}
+  {impact.videoSound==='silent'&&<p role="status">{uiText("新视频没有原声；绑定的旧视频原声不会继续播放。")}</p>}
   <p className="workspace-candidate-impact-duration">{uiText("当前 ")}{impact.currentSeconds.toFixed(2)}{uiText(" 秒 → 采用后 ")}{impact.appliedSeconds.toFixed(2)}{uiText(" 秒（")}{impact.deltaSeconds>0?'+':''}{impact.deltaSeconds.toFixed(2)}{uiText(" 秒）")}</p>
   <p>{uiText("素材区间 ")}{impact.sourceSeconds.toFixed(2)}{uiText(" 秒")}</p>
   <p>{impact.deltaSeconds===0?uiText("片段时长不变，其他片段保持原位。"):impact.deltaSeconds>0?uiText("片段延长，其他片段保持原位；新增区间可能与以下片段重叠。"):uiText("片段缩短，其他片段保持原位；缩短区间不再{value0}。",{value0:String(plan.edit.source.kind==='audio'?'播放此口播':'显示此画面')})}</p>
