@@ -1,4 +1,5 @@
 import {readScriptStudio} from './scriptStudioConfirmation.js';
+import {LocalWorkspacePublications} from './workspacePublicationStore.js';
 import {LocalRecycleBin} from './recycleBin.js';
 import {ProductionScriptError} from '../reviews/productionScript.js';
 import {readCommandReceipt} from './commandReceipt.js';
@@ -51,6 +52,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
  const lifecycle=new LocalEpisodeLifecycle(options.pool,options.mediaRoot,id=>options.episodes?.closeStudio(id)??Promise.resolve(),options.historyRoot);
  const recycleBin=new LocalRecycleBin(options.pool,lifecycle);
  const connections=options.connections??new LocalConnections(options.pool);
+ const publications=new LocalWorkspacePublications(options.pool,options.mediaRoot);
  const accounts=options.accounts??new LocalAccountCommands(options.pool,options.mediaRoot,options.episodes);
  return async(request:IncomingMessage,response:ServerResponse)=>{
   const observation=observeLocalRequest(request,response,options.log);
@@ -213,6 +215,14 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
      send(200,await connections.models.command(session,body));return;
     }
     send(405,{error:'模型设置请求方法无效。'});return;
+   }
+   const publication=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})\/publication$/);
+   if(publication&&uuid.test(publication[1])){
+    if(url.search)throw new ConfigurationError(400,'发布资料查询无效。');
+    if(request.method==='GET'){send(200,await publications.read(session.id,publication[1]));return;}
+    if(request.method!=='POST')throw new ConfigurationError(405,'发布资料需要 GET 或 POST。');
+    let body;try{body=await readBody(request,32*1024);}catch{throw new ConfigurationError(400,'发布资料请求格式无效或超过上限。');}
+    send(200,await publications.command(session,publication[1],body));return;
    }
    if(url.pathname==='/api/local/script-format'){send(410,{error:'格式修改建议入口已退役，请使用分镜识别。'});return;}
    if(url.pathname==='/api/local/script-studio'){
