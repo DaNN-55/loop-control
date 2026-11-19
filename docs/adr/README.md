@@ -1,5 +1,7 @@
 # 架构决策
 
+- [ADR-0074：核心交付、独立发布资料与完整生产单副本](0074-core-delivery-and-production-copies.md)
+
 - [ADR-0073：原生剪辑工程决定最终成片](0073-native-editor-authority.md)
 
 - [ADR-0071：确认识别结果作为制作依据](0071-confirmed-script-recognition.md)

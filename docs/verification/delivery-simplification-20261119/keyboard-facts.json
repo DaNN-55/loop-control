@@ -1,0 +1,29 @@
+{
+  "episodes": 1,
+  "renders": 1,
+  "ai_requests": 0,
+  "deliveries": 1,
+  "completed": 1,
+  "viewport": 320,
+  "pageWidth": 320,
+  "keyboardActions": [
+    "login",
+    "open editing",
+    "generate",
+    "play actual MP4",
+    "confirm and complete",
+    "download",
+    "edit title/description/tags",
+    "copy each field",
+    "select decoded frame",
+    "view details",
+    "return editing and leave unchanged"
+  ],
+  "refreshRestores": {
+    "title": "键盘演练标题",
+    "cover": true
+  },
+  "durationSeconds": 6.058667,
+  "downloadBytes": 3797486,
+  "downloadSha256": "7efd1da92f2227ab98b377243b6c740d84609137a78bcac2fa1e546bb5856bd5"
+}

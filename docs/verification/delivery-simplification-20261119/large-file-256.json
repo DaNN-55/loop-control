@@ -1,0 +1,16 @@
+{
+  "inputBytes": 268435456,
+  "zipBytes": 268436255,
+  "copyMs": 550,
+  "verifyMs": 237,
+  "zipMs": 425,
+  "totalMs": 1959,
+  "rssBefore": 167542784,
+  "rssPeak": 277200896,
+  "rssDelta": 109658112,
+  "independentInode": true,
+  "sourceLinks": 1,
+  "targetLinks": 1,
+  "zipIntegrity": "unzip -t passed",
+  "note": "256 MiB synthetic binary measures copy, manifest identity and HTTP ZIP; actual MP4 playback is verified separately."
+}

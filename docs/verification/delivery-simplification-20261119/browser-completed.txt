@@ -1,0 +1,117 @@
+- generic
+  - generic [ref=e930] clickable [onclick]
+    - link "跳到主要内容" [ref=e931]
+    - complementary "主导航"
+      - image "Loop Control"
+        - StaticText "Loop Control"
+      - navigation "工作区" [ref=e932]
+        - group "生产工作"
+          - button "工作台" [ref=e940]
+            - StaticText "工作台"
+          - button "生产单" [ref=e941]
+            - StaticText "生产单"
+        - group "账号管理"
+          - button "账号" [expanded=false, ref=e942]
+            - StaticText "账号"
+          - button "新建账号" [ref=e943]
+      - generic
+        - button "打开 OpenChatCut 独立剪辑" [ref=e935]
+          - StaticText "OpenChatCut"
+        - button "系统状态：不可用" [expanded=false, ref=e944]
+          - StaticText "系统状态"
+        - button "收起侧栏" [ref=e936]
+          - StaticText "收起侧栏"
+    - complementary "当前生产单详情"
+      - button "返回工作区" [ref=e933]
+        - StaticText "返回工作区"
+      - StaticText "生产单"
+      - group "工作区工具"
+        - textbox "查找生产单、账号或素材" [ref=e1189]
+        - button "待处理通知" [expanded=false, ref=e937]
+        - button "切换至深色模式" [ref=e938]
+        - button "所有者设置" [expanded=false, ref=e946]
+      - button "关闭生产单详情" [ref=e934]
+      - region "已完成作品查看" [ref=e939]
+        - sectionheader
+          - heading "四步制作 T02 验收（副本）" [level=2, ref=e947]
+          - StaticText "制作已完成"
+          - navigation "作品查看" [ref=e948]
+            - button "脚本确认" [ref=e950]
+              - StaticText "脚本确认"
+              - StaticText "已确认"
+            - button "分镜台" [ref=e951]
+              - StaticText "分镜台"
+              - StaticText "只读"
+            - button "检查与交付，当前查看" [ref=e953]
+              - StaticText "检查与交付"
+              - StaticText "已完成"
+          - button "文件夹更多操作" [expanded=false, ref=e949]
+        - group
+          - generic
+            - sectionheader
+              - heading "检查与交付" [level=3, ref=e1194]
+              - status
+                - StaticText "已完成"
+              - button "返回剪辑" [ref=e1195]
+                - StaticText "返回剪辑"
+            - heading "成片预览" [level=4, ref=e1190]
+            - group "最终导出视频播放器" [ref=e1191] focusable [tabindex]
+              - Video "最终导出视频"
+              - generic
+                - slider "视频进度" [ref=e1197]: 4.050000190734863
+                - group "视频播放控制"
+                  - button "播放视频" [ref=e1199]
+                  - StaticText "4.05 / 4.05"
+                  - StaticText " s"
+                  - button "静音" [ref=e1200]
+                  - generic [ref=e1201] clickable [cursor:pointer]
+                    - slider "音量" [ref=e1213]: 100
+                  - button "放大视频预览" [ref=e1202]
+              - status
+            - region "成片下载与发布资料" [ref=e1193]
+              - link "下载视频" [ref=e1214]
+              - group
+                - DisclosureTriangle "更多下载" [expanded=false]
+              - region "发布资料（可选）" [ref=e1196]
+                - sectionheader
+                  - heading "发布资料（可选）" [level=4, ref=e1203]
+                - status
+                  - StaticText "视频已更新，请核对发布资料。"
+                - button "重新生成发布文案" [ref=e1198]
+                  - StaticText "重新生成发布文案"
+                - generic
+                  - StaticText "选择大语言模型"
+                  - button "更换" [ref=e1204]
+                - group
+                  - DisclosureTriangle "补充要求（可选）" [expanded=false]
+                - alert
+                  - StaticText "Cannot read properties of null (reading 'csrfToken')"
+                - form "发布文案"
+                  - LabelText
+                    - StaticText "标题"
+                  - button "复制标题" [ref=e1205]
+                  - textbox "标题" [ref=e1206]: 完成后更新：红蓝杯子
+                    - StaticText "完成后更新：红蓝杯子"
+                  - LabelText
+                    - StaticText "简介"
+                  - button "复制简介" [ref=e1207]
+                  - textbox "简介" [ref=e1208]: 本视频仅展示当前保留的两段商品画面：开头为红色杯子，随后切换为蓝色杯子。未提供可核实口播或字幕信息，具体商品细节以画面呈现为准。
+                    - StaticText "本视频仅展示当前保留的两段商品画面：开头为红色杯子，随后切换为蓝色杯子。未提供可核实口播或字幕信息，具体商品细节以画面呈现为准。"
+                  - LabelText
+                    - StaticText "标签"
+                  - button "复制标签" [ref=e1209]
+                  - textbox "标签" [ref=e1210]: 商品展示, 杯子, 红色杯子, 蓝色杯子, 画面展示
+                    - StaticText "商品展示, 杯子, 红色杯子, 蓝色杯子, 画面展示"
+                - generic
+                  - button "放大交付封面" [ref=e1211]
+                    - image "交付封面"
+                  - link "下载封面" [ref=e1212]
+                - group
+                  - DisclosureTriangle "更换封面" [expanded=false]
+            - group "查看详情"
+              - DisclosureTriangle "查看详情" [expanded=false]
+  - region "通知" [ref=e1215]
+    - status "操作提示"
+      - paragraph
+        - StaticText "已复制标签"
+      - button "关闭操作提示" [ref=e1216]

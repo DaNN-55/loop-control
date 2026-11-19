@@ -1,0 +1,79 @@
+{
+  "browser": "Chrome for Testing 153.0.8010.36 / agent-browser 0.43.0",
+  "initialPublicationEmpty": true,
+  "initialLanguageModelConnections": 0,
+  "explicitVideoRenders": 2,
+  "formalEpisodeCount": 2,
+  "sourceUnchanged": true,
+  "episodes": [
+    {
+      "id": "605ab6a9-9c83-418e-a758-2a1bcda719df",
+      "stage": "production_completed",
+      "workspace_id": "20090e12-9e3d-4832-a9f5-990150dc2775",
+      "revision": "10",
+      "content_sha256": "8cf421ad05fdad75048954f827348b894e7ceb17bbaa4f6dd60edb7bd7d3f332",
+      "project_sha256": "1a2ae3950d7600464422ac2586dc9633ef1fad6778ef7d5add0789c270a4abda",
+      "exports": 1,
+      "deliveries": 1
+    },
+    {
+      "id": "a3ce699d-7b1b-415c-a0e0-5f95570fdf32",
+      "stage": "production_completed",
+      "workspace_id": "7200af75-3f90-4470-ac75-f35c7af4d3bd",
+      "revision": "6",
+      "content_sha256": "947b7316abb4613983bd97ac7897728a1b040955677671e928bde0cccf2ff905",
+      "project_sha256": "46092087ff89f2decdbcf852557dc59b04c5afa918aa27fedb63c22f4aa3a3d0",
+      "exports": 1,
+      "deliveries": 1
+    }
+  ],
+  "actualResponsesRequests": 2,
+  "models": [
+    "deepseek-flash",
+    "deepseek-flash"
+  ],
+  "requestStatuses": [
+    "completed",
+    "completed"
+  ],
+  "deletedProductAbsentFromAllRequests": true,
+  "secondRequestReferencesManualTitle": true,
+  "secondRequestIncludesInstruction": true,
+  "clipboard": [
+    {
+      "field": "标题",
+      "value": "完成后更新：红蓝杯子"
+    },
+    {
+      "field": "简介",
+      "value": "本视频仅展示当前保留的两段商品画面：开头为红色杯子，随后切换为蓝色杯子。未提供可核实口播或字幕信息，具体商品细节以画面呈现为准。"
+    },
+    {
+      "field": "标签",
+      "value": "#商品展示 #杯子 #红色杯子 #蓝色杯子 #画面展示"
+    }
+  ],
+  "videos": [
+    {
+      "name": "browser-first-video.mp4",
+      "bytes": 2525414,
+      "sha256": "c6274130b491f2452bf4b61d28cf565b5ae0bac9e5c0b802eebee052b277052a"
+    },
+    {
+      "name": "browser-copy-final-video.mp4",
+      "bytes": 2494919,
+      "sha256": "5fbb35555e832cb98b91909dc5ffa011af2cb7f49e3befb260755c975399fbc7"
+    }
+  ],
+  "originalZipUnchanged": true,
+  "narrowWidths": [
+    {
+      "viewport": 390,
+      "pageWidth": 390
+    },
+    {
+      "viewport": 320,
+      "pageWidth": 320
+    }
+  ]
+}

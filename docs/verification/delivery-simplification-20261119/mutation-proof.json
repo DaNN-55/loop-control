@@ -1,0 +1,9 @@
+{
+  "ref": "7638306e4a2fe0a2be0b955a74bbbe9dac8aaed9",
+  "cleanBeforeAndAfter": true,
+  "mutation": "negate package/publication presence condition",
+  "test": "WorkspaceAdditionalDownloads.test.tsx",
+  "mutantExit": 1,
+  "restoredExit": 0,
+  "result": "regression test rejects inverted condition; original restored and passes"
+}
