@@ -5,13 +5,13 @@ import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('removes issue data and database gates while keeping orders and a recoverable issue snapshot',async()=>{
- const f=await productionWorkspaceFixture({schemaThrough:214});
+ const f=await productionWorkspaceFixture({schemaThrough:215});
  try{
   const w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   await f.c.query("INSERT INTO local_identity.workspace_export_issues(workspace_id,episode_id,reason,created_by) VALUES($1,$2,'待清理测试问题',$3)",[w.id,f.episode,f.owner]);
   const rows=(await f.c.query('SELECT * FROM local_identity.workspace_export_issues')).rows;
   await writeFile(join(f.root,'issues-before-retirement.json'),JSON.stringify(rows));
-  await f.c.query(await readFile('db/current/215-retire-workspace-issues.sql','utf8'));
+  await f.c.query(await readFile('db/current/216-retire-workspace-issues.sql','utf8'));
   expect((await f.c.query("SELECT to_regclass('local_identity.workspace_export_issues') value")).rows[0].value).toBeNull();
   const read=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(read.status).toBe(200);expect((await read.json()).workspace).not.toHaveProperty('exportIssues');
   expect((await f.request('recordWorkspaceExportIssue',{workspaceId:w.id,expectedRevision:w.revision,reason:'旧客户端'})).status).toBe(410);
