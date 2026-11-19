@@ -1,10 +1,10 @@
 import {uiText} from '../i18n/ui';
 import {Children,useEffect,useRef,useState,type CSSProperties,type ReactNode} from 'react';
 
-const storageKey='loop.production.preparation.listRatio.v1',defaultRatio=41;
+const storageKey='loop.production.preparation.listRatio.v2',legacyStorageKey='loop.production.preparation.listRatio.v1',defaultRatio=36;
 const clamp=(value:number)=>Math.max(20,Math.min(75,value));
 export function WorkspacePreparationLayout({children}:{children:ReactNode}){
- const [ratio,setRatio]=useState(()=>{try{const saved=localStorage.getItem(storageKey);return saved!==null&&Number.isFinite(Number(saved))?clamp(Number(saved)):defaultRatio;}catch{return defaultRatio;}}),[dragging,setDragging]=useState(false);
+ const [ratio,setRatio]=useState(()=>{try{const saved=localStorage.getItem(storageKey),legacy=saved===null?localStorage.getItem(legacyStorageKey):null,value=saved??legacy;return value!==null&&value.trim()!==''&&Number.isFinite(Number(value))?clamp(saved===null&&Number(value)===41?defaultRatio:Number(value)):defaultRatio;}catch{return defaultRatio;}}),[dragging,setDragging]=useState(false);
  const grid=useRef<HTMLDivElement>(null),pointer=useRef<number|null>(null);
  useEffect(()=>{try{localStorage.setItem(storageKey,String(ratio));}catch{/* A blocked preference store does not prevent resizing. */}},[ratio]);
  const panes=Children.toArray(children);
