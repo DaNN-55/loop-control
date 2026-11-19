@@ -165,7 +165,7 @@ it('keeps an automatic subtitle failure local and leaves manual preparation usab
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
  const command=vi.fn(async()=>{throw Object.assign(Error('校时环境不可用'),{code:'local_service_unavailable'});});
  render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" command={command} onLegacy={()=>{}} materials={[]}/>);
- await screen.findByText('字幕自动处理未完成，可直接调整字幕或重新尝试。');
+ await screen.findByText('字幕自动处理未完成，请在字幕页核对具体状态或手工调整。');
  expect(screen.queryByText('字幕校时结果暂未确认')).toBeNull();expect(screen.queryByRole('button',{name:'重新读取已保存工程'})).toBeNull();
  expect(screen.getByRole('button',{name:'进入剪辑工作台'})).toHaveProperty('disabled',false);
 });
