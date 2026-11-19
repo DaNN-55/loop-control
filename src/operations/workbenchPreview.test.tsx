@@ -1,6 +1,18 @@
 import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {WorkbenchArtwork,useWorkbenchPreview} from './workbenchPreview';
+
+it('does not inherit script presence from another production when metadata arrives before its workspace',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>{
+  if(path.startsWith('/api/local/script-studio'))return Response.json({sourceText:'账号 A 的脚本'});
+  if(path.includes('/episode-b/workspace'))return new Promise<Response>(()=>{});
+  if(path.endsWith('/workspace'))return Response.json({workspace:{exports:[]}});
+  return Response.json({sections:{artifacts:[],materialRevisions:path.includes('episode-a')?[{id:'script-a',is_main_script:true,revision_number:1}]:[]}});
+ }));
+ function Preview({id}:{id:string}){const result=useWorkbenchPreview(id,'v1',true);return <output>{result.data?.hasScript?'script':'empty'}</output>;}
+ const app=render(<Preview id="episode-a"/>);await screen.findByText('script');
+ await act(async()=>{app.rerender(<Preview id="episode-b"/>);});expect(screen.getByText('empty')).toBeTruthy();
+});
 import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 beforeEach(()=>{vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new Event('play'));return Promise.resolve();});});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();});

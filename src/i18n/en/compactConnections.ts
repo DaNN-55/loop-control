@@ -1,4 +1,15 @@
 export const compactConnections:Record<string,string>={
+ '关闭制作服务':'Close production services','配置制作服务':'Configure production services','更多':'More',
+ '保存并验证':'Save & verify','保存并测试语音':'Save & test speech','仅保存':'Save only',
+ '已保存；':'Saved; ','已保存；验证未通过：':'Saved; verification failed: ','已保存；验证未完成：':'Saved; verification did not finish: ',
+ '请核对 API Key 和服务权限。':'Check the API key and service permissions.','请稍后测试当前版本。':'Test the saved version later.',
+ '已保存；连接验证已结束。验证不代表所有模型均可生成。':'Saved; connection verification finished. This does not confirm generation access for every model.',
+ '测试会实际合成一小段语音，可能消耗服务额度；也可以仅保存。':'The test synthesizes a short speech sample and may use your service quota. You can also save only.',
+ '测试会实际合成一小段语音，可能消耗服务额度。':'The test synthesizes a short speech sample and may use your service quota.',
+ '返回制作使用的模型':'Model to use in production','使用此服务并返回':'Use this service & return',
+ '所选服务或模型已变化，请重新核对制作服务。':'The selected service or model changed. Review production services again.',
+ '请在制作服务中选择 Pexels 素材检索。':'Select Pexels material search in production services.',
+
  '连接资料已变化，请重新打开核对；本次修改保留。':'Connection details changed. Reopen to review; your edits are retained.',
  '此连接资料暂不可修改。':'Connection details cannot be edited right now.',
  '此连接暂不可更换密钥。':'The key cannot be replaced right now.',

@@ -1,3 +1,4 @@
+import {readConfiguredService,type ConnectionSetupSelection} from './connectionSetup';
 import {useEffect,useMemo,useState} from 'react';
 import type {ProductionServiceCatalog} from '../connections/serviceCatalog';
 import type {PublicationRequestResult} from '../workspacePublication';
@@ -22,6 +23,13 @@ export function usePublicationAssistant(episodeId:string,p:PublicationEditing,re
  },[visit,readOnly]);
  async function recover(){try{const value=await localRequest(path) as PublicationRequestResult|null;if(visit.active)setLatest(value);}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'文案请求核对失败。');}}
  function choose(value:string){setSelection(value);setChoosing(false);try{if(key)localStorage.setItem(key,value);}catch{/* Preference failure never selects a different provider. */}}
+ async function useConfiguredConnection(selection:ConnectionSetupSelection){
+  if(readOnly||visit.busy)return;
+  const configured=await readConfiguredService('language_model',selection);
+  if(!visit.active)return;
+  await refresh();
+  if(visit.active)choose(configured.service.id+':'+selection.modelId);
+ }
  async function generate(){
   if(readOnly||visit.busy||unresolved)return;
   if(!choice){setChoosing(true);setError(options.length?'请明确选择本次模型。':'请先添加并验证大语言模型连接；仍可手写和下载视频。');return;}
@@ -36,5 +44,5 @@ export function usePublicationAssistant(episodeId:string,p:PublicationEditing,re
  }
  async function undo(){if(readOnly||visit.busy)return;visit.busy=true;setBusy(true);setError('');try{await p.mutate('undo',{},path);if(visit.active)setLatest(null);}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'撤回未完成。');}finally{visit.busy=false;if(visit.active)setBusy(false);}}
  async function closeUnknown(){if(!latest||visit.busy)return;visit.busy=true;setBusy(true);try{const saved=await p.flush(),value=await localCommand<PublicationRequestResult>('closeUnknown',{expectedRevision:saved.revision,requestId:latest.requestId},undefined,path);if(visit.active){setLatest(value);setError('');}}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'请求尚未结束。');}finally{visit.busy=false;if(visit.active)setBusy(false);}}
- return{options,choice,choose,choosing,setChoosing,busy,error,latest,unresolved,generate,undo,recover,refresh,closeUnknown};
+ return{options,choice,choose,useConfiguredConnection,choosing,setChoosing,busy,error,latest,unresolved,generate,undo,recover,refresh,closeUnknown};
 }

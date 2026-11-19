@@ -11,7 +11,7 @@ html[data-interface="impeccable"] .product-ui .owner-settings-pane.connections-s
 .compact-connection-toolbar>.dan-select-field{flex:0 0 132px;min-width:0}
 .compact-connection-toolbar>button,.compact-connection-toolbar form button{flex:none;white-space:nowrap}
 .compact-connection-scroll{flex:1;min-height:0;min-width:0;overflow:auto;padding:16px 28px;overscroll-behavior:contain;scrollbar-color:var(--lc-line) transparent}
-.compact-connection-list-columns,.compact-connection-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,1fr) 36px;gap:20px;align-items:center}
+.compact-connection-list-columns,.compact-connection-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,1fr);gap:20px;align-items:center}
 .compact-connection-list-columns{padding:0 0 8px;border-bottom:1px solid var(--lc-line);color:var(--lc-muted);font-size:11px}
 .compact-connection-row{min-height:66px;padding:12px 0;border-bottom:1px solid var(--lc-line)}
 .compact-connection-row>div{min-width:0}.compact-connection-name{padding:0;border:0;background:transparent;color:var(--lc-ink);font:inherit;font-weight:600;cursor:pointer;text-align:left;max-width:100%;overflow-wrap:anywhere}
@@ -73,3 +73,8 @@ html[data-interface="impeccable"] .product-ui .connections-settings-dialog>heade
 .compact-connection-read-error{display:flex;align-items:center;gap:12px;flex:none;min-width:0;max-height:120px;overflow:auto;padding:8px 28px;border-bottom:1px solid var(--lc-line);background:var(--lc-danger-soft);color:var(--lc-danger);font-size:12px;line-height:1.6}
 .compact-connection-read-error>p{flex:1;min-width:0;margin:0;overflow-wrap:anywhere}.compact-connection-read-error>.dan-ui-tooltip{flex:none}
 @media(max-width:720px){.compact-connection-read-error{padding-inline:20px}}
+
+.compact-connection-tabs>button[hidden]{display:none}
+.compact-connection-tabs>button[data-secondary]{font-size:11px}
+.compact-connection-tabs>button:last-child{margin-inline-start:auto}
+@media(max-width:720px){.compact-connection-row{grid-template-columns:minmax(0,1fr)}.compact-connection-footer{flex-wrap:wrap}.compact-connection-footer>div{flex-wrap:wrap}}

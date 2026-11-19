@@ -22,7 +22,7 @@ it.each([['search',false],['search',true],['sidebar',false],['sidebar',true]] as
   await user.click(toggle);expect(screen.getByRole('heading',{name:'选中账号：账号A'})).toBeTruthy();expect(confirm).not.toHaveBeenCalled();
   await user.click(toggle);await user.click(screen.getByRole('button',{name:'账号B'}));
  }else{
-  await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));await user.type(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}),'账号B');await user.click(await screen.findByRole('button',{name:'账号B 账号与系列'}));
+  await user.click(screen.getByRole('textbox',{name:'搜索全部内容'}));await user.type(screen.getByRole('textbox',{name:'搜索全部内容'}),'账号B');await user.click(await screen.findByRole('button',{name:'账号B 账号与系列'}));
  }
  expect(confirm).toHaveBeenCalledWith('当前配置有未保存修改，确定放弃吗？');expect(screen.getByRole('heading',{name:accepted?'选中账号：账号B':'选中账号：账号A'})).toBeTruthy();
 });

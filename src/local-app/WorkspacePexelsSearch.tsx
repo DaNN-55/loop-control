@@ -1,3 +1,4 @@
+import {readConfiguredService,requestConnectionSetup} from './connectionSetup';
 import {uiText} from '../i18n/ui';
 import {WorkspaceGenerationComposer,WorkspaceComposerSetting} from './WorkspaceGenerationComposer';
 import {WorkspaceGenerationModel} from './WorkspaceGenerationModel';
@@ -20,7 +21,7 @@ function PexelsThumbnail({id,url}:{id:number;url?:string}){
   {(!url||state!=='ready')&&<span role="status">{!url?uiText("暂无缩略图"):state==='failed'?uiText("缩略图加载失败"):uiText("缩略图加载中…")}</span>}
  </div>;
 }
-export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,prepare,reader,disabled=false,composer}:{workspace:ProductionWorkspace;targetItemId:string;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;prepare:()=>Promise<ProductionWorkspace>;reader:WorkspaceReading;disabled?:boolean;composer?:{services:ProductionService[];selection?:ProductionSelection|null;onModelChange:(value:string)=>void;catalogError?:string;catalog:ProductionCatalogReading}}){
+export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,prepare,reader,disabled=false,composer}:{workspace:ProductionWorkspace;targetItemId:string;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;prepare:()=>Promise<ProductionWorkspace>;reader:WorkspaceReading;disabled?:boolean;composer?:{services:ProductionService[];selection?:ProductionSelection|null;onModelChange:(value:string)=>void;onSetupSelection?:(selection:ProductionSelection)=>void;catalogError?:string;catalog:ProductionCatalogReading}}){
  const key=`loop-pexels-draft:${workspace.id}:${targetItemId}`;
  const [draft,setDraft]=useState<{query:string;orientation:string;size:string;page:string;selection?:ProductionSelection|null}>(()=>{try{return JSON.parse(sessionStorage.getItem(key)??'null')??{query:'',orientation:'portrait',size:'medium',page:'1'};}catch{return{query:'',orientation:'portrait',size:'medium',page:'1'};}}),[busy,setBusy]=useState(false),[error,setError]=useState(''),[resultsError,setResultsError]=useState(''),[resultsLoading,setResultsLoading]=useState(false);
  const [settingsPanel,setSettingsPanel]=useState('');
@@ -50,11 +51,12 @@ export function WorkspacePexelsSearch({workspace,targetItemId,command,onChange,p
  return <div className="workspace-pexels">
   {composer?<WorkspaceGenerationComposer kind="video" operation="search" disabled={locked} reference={null}
    prompt={<WorkspacePromptField label={uiText("检索词")} ariaLabel={uiText("检索词")} value={draft.query} limit={100} disabled={locked} onChange={query=>setDraft(d=>({...d,query}))} placeholder={uiText("例如：山间云海、城市夜景，或 mountain clouds")}/>}
-   model={<WorkspaceGenerationModel compact kind="视频" services={composer.services} selection={selection} disabled={locked} onChange={composer.onModelChange}/>}
+   model={<WorkspaceGenerationModel compact kind="视频" services={composer.services} selection={selection} disabled={locked} onChange={composer.onModelChange} onSetupSelection={composer.onSetupSelection}/>}
    settings={<><WorkspaceComposerSetting label={uiText("Pexels 方向")} summary={uiText({portrait:'竖屏',landscape:'横屏',square:'方形'}[draft.orientation]??draft.orientation)} open={settingsPanel==='orientation'} onOpenChange={open=>setSettingsPanel(open?'orientation':'')} disabled={locked} compact>{orientationField}</WorkspaceComposerSetting><WorkspaceComposerSetting label={uiText("Pexels 尺寸")} summary={uiText({large:'大',medium:'中',small:'小'}[draft.size]??draft.size)} open={settingsPanel==='size'} onOpenChange={open=>setSettingsPanel(open?'size':'')} disabled={locked} compact>{sizeField}</WorkspaceComposerSetting><WorkspaceComposerSetting label={uiText("Pexels 页码")} summary={uiText("第 {value0} 页",{value0:String(draft.page)})} open={settingsPanel==='page'} onOpenChange={open=>setSettingsPanel(open?'page':'')} disabled={locked} compact>{pageField}</WorkspaceComposerSetting></>}
    submit={submit} onMaterial={()=>{}} onFiles={()=>{}}>
   </WorkspaceGenerationComposer>:<>
   <label>{uiText("连接")}<NativeSelect aria-label={uiText("Pexels 连接")} size="sm" value={service?.id??''} disabled={locked} onChange={e=>{const s=services.find(s=>s.id===e.target.value);setDraft(d=>({...d,selection:s?{capability:'video',provider:s.provider,adapter:s.adapter,connectionVersionId:s.connectionVersionId??undefined}:null}));}}><option value="">{uiText("选择 Pexels 连接")}</option>{services.map(s=><option key={s.id} value={s.id} disabled={!s.executable}>{s.connectionName??s.label} · v{s.connectionVersion??'—'}{!s.executable?` · ${s.unavailableReason}`:''}</option>)}</NativeSelect></label>
+  <Button size="sm" color="tertiary" isDisabled={locked} onPress={()=>requestConnectionSetup({capability:'video',onUse:async choice=>{const configured=await readConfiguredService('video',choice);if(configured.service.adapter!=='pexels_video')throw Error('请在制作服务中选择 Pexels 素材检索。');setDraft(d=>({...d,selection:configured.selection}));}})}>{uiText('配置制作服务')}</Button>
   <label>{uiText("检索词")}<input aria-label={uiText("检索词")} value={draft.query} maxLength={100} disabled={locked} onChange={e=>setDraft(d=>({...d,query:e.target.value}))}/></label>
   <div className="workspace-visual-fields">{orientationField}{sizeField}{pageField}</div>
   {submit}</>}

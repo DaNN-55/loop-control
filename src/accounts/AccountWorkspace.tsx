@@ -1,3 +1,5 @@
+import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
+import './account-rules.css';
 import {uiText} from '../i18n/ui';
 import type {AccountDeletionStatus} from './accountDeletionStatus';
 import './account-deletion.css';
@@ -5,7 +7,7 @@ import type {PanelNavigation} from '../local-app/catalogNavigation';
 import {SeriesDirectoryPanel} from './SeriesDirectoryPanel';
 import {AccountDirectoryPanel} from './AccountDirectoryPanel';
 import {useDialogFocus} from '../ui/useDialogFocus';
-import {Archive,Pencil,Trash2,Settings,RefreshCw,Search,Plus,X} from 'lucide-react';
+import {Archive,Pencil,Trash2,MoreHorizontal,Search,Plus,X} from 'lucide-react';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {PaginationControls} from '../ui/PaginationControls';
@@ -59,7 +61,7 @@ interface AccountWorkspaceProps {
 
 const emptySeriesRules: Json = {};
 
-export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0, readDeletionStatus, onViewAccountEpisodes, onViewDeletionCleanup, blueprints, connectionVersions = [], externalConnections = [], isPending, onCreateConnection, onCreatePromptVersion, onCreateEpisode, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onRenameSeries = async () => {}, onDeleteAccount = async () => {}, onDirtyChange, onRefresh, onRenameAccount = async () => {}, onRotateConnection, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0, readDeletionStatus, onViewAccountEpisodes, onViewDeletionCleanup, blueprints, connectionVersions = [], externalConnections = [], isPending, onCreateConnection, onCreatePromptVersion, onCreateEpisode, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onRenameSeries = async () => {}, onDeleteAccount = async () => {}, onDirtyChange, onRenameAccount = async () => {}, onRotateConnection, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [configurationDirty, setConfigurationDirtyState] = useState(false);
   const dirty = configurationDirty;
   useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
@@ -94,21 +96,20 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
   return <section className="impeccable-config-workspace account-blueprint-workspace" aria-label={uiText("账号工作区")}>
     <header className="account-page-heading">
       <div><h1>{account.name}</h1>{account.archived_at && <span className="account-archived-badge">{uiText("已归档")}</span>}</div>
-      <Button size="sm" color="secondary" iconLeading={Settings} ref={accountSettingsRef} type="button"
-        aria-haspopup="dialog" onClick={() => setAccountSettingsOpen(true)}>{uiText("账号设置")}</Button>
+      <Button size="sm" color="secondary" iconLeading={MoreHorizontal} ref={accountSettingsRef} type="button"
+        aria-haspopup="dialog" onClick={() => setAccountSettingsOpen(true)}>{uiText("更多操作")}</Button>
     </header>
     {account.archived_at ? <p className="account-archived-note" role="status">{uiText("此账号已归档，不会出现在新建生产单的账号列表中；恢复后可继续生产。")}</p> : null}
     {!currentBlueprint ? <div className="empty-state">{uiText("该账号没有可读取的蓝图配置。")}</div> : <SeriesSettings onCreateEpisode={onCreateEpisode} navigation={navigation} key={account.id} accountId={account.id} onRename={onRenameSeries} commonEditor={<>
       <header className="account-editor-heading">
         <div><h2>{uiText("通用规则")}</h2><p className="account-rule-scope">{uiText("作为此账号下各系列的默认规则。")}</p></div>
-        <span className="account-save-state" role="status">{uiText("已应用 · v")}{currentBlueprint.version}</span>
+        <span className="account-save-state" role="status">{dirty ? uiText("有未保存修改") : uiText("已保存")}</span>
       </header>
-      <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{dirty ? uiText("有未应用更改") : uiText("修改中")}</span>} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if(onUpdateBlueprint){const result=await onUpdateBlueprint(nextPolicy);if(result===null)throw new Error(uiText("规则未保存，请处理错误后重试。"));} }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
+      <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{dirty ? uiText("有未保存修改") : uiText("修改中")}</span>} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if(onUpdateBlueprint){const result=await onUpdateBlueprint(nextPolicy);if(result===null)throw new Error(uiText("规则未保存，请处理错误后重试。"));} }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
 
     </>} accountPolicy={policy} isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions}/>}
     {accountSettingsOpen && <AccountSettingsDialog account={account} episodeCount={accountEpisodeCount} returnFocusRef={accountSettingsRef}
       onClose={() => setAccountSettingsOpen(false)}
-      onRefresh={onRefresh ? () => leaveConfiguration(() => void onRefresh()) : undefined}
       onRename={() => {accountSettingsRef.current?.focus();setAccountSettingsOpen(false);setRenameOpen(true);}}
       onArchive={() => {accountSettingsRef.current?.focus();setAccountSettingsOpen(false);setArchiveOpen(true);}}
       onDelete={() => {accountSettingsRef.current?.focus();setAccountSettingsOpen(false);setDeleteOpen(true);}} />}
@@ -118,29 +119,28 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
   </section>;
 }
 
-function AccountSettingsDialog({account, episodeCount, returnFocusRef, onClose, onRefresh, onRename, onArchive, onDelete}: {
+function AccountSettingsDialog({account, episodeCount, returnFocusRef, onClose, onRename, onArchive, onDelete}: {
   account: Account;
   episodeCount: number;
   returnFocusRef: React.RefObject<HTMLButtonElement | null>;
   onClose: () => void;
-  onRefresh?: () => void;
   onRename: () => void;
   onArchive: () => void;
   onDelete: () => void;
 }) {
   const dialogRef = useDialogFocus<HTMLElement>(true, onClose, returnFocusRef);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   return <div className="modal-backdrop">
-    <section className="modal-card account-settings-dialog" role="dialog" aria-modal="true" aria-label={uiText("账号设置")} ref={dialogRef}>
-      <header><h2>{uiText("账号设置")}</h2><Button size="sm" color="tertiary" aria-label={uiText("关闭账号设置")} type="button" iconLeading={X} onClick={onClose} /></header>
-      <dl className="account-settings-facts">
+    <section className="modal-card account-settings-dialog" role="dialog" aria-modal="true" aria-label={uiText("更多操作")} ref={dialogRef}>
+      <header><h2>{uiText("更多操作")}</h2><Button size="sm" color="tertiary" aria-label={uiText("关闭更多操作")} type="button" iconLeading={X} onClick={onClose} /></header>
+      <Disclosure label={uiText("查看资料")} onToggle={event=>setDetailsOpen(event.currentTarget.open)}>{detailsOpen && <dl className="account-settings-facts">
         <div><dt>{uiText("账号名称")}</dt><dd>{account.name}</dd></div>
         <div><dt>{uiText("标识")}</dt><dd>{account.slug}</dd></div>
         <div><dt>{uiText("时区")}</dt><dd>{account.timezone}</dd></div>
         <div><dt>{uiText("生产单")}</dt><dd>{episodeCount} {uiText("个")}</dd></div>
-      </dl>
-      <AccountDirectoryPanel accountId={account.id} />
+      </dl>}</Disclosure>
+      <AccountDirectoryPanel accountId={account.id} compact={!detailsOpen} />
       <footer className="account-settings-actions">
-        {onRefresh && <Button size="sm" color="secondary" iconLeading={RefreshCw} onClick={onRefresh}>{uiText("刷新账号")}</Button>}
         <Button size="sm" color="secondary" iconLeading={Pencil} onClick={onRename}>{uiText("重命名")}</Button>
         <Button size="sm" color="secondary" iconLeading={Archive} onClick={onArchive}>{account.archived_at ? uiText("恢复账号") : uiText("归档账号")}</Button>
         <Button size="sm" color="secondary-destructive" iconLeading={Trash2} onClick={onDelete}>{uiText("删除账号")}</Button>
@@ -246,7 +246,7 @@ export function SeriesSettings({ onCreateEpisode, navigation,commonRequested=fal
         const active = (tab === "common") === commonActive;
         return <button key={tab} role="tab" type="button" id={`${tabsId}-${tab}`} aria-controls={`${tabsId}-${tab}-panel`}
           aria-selected={active} tabIndex={active ? 0 : -1} onClick={() => activateTab(tab)}>
-          {tab === "common" ? uiText("通用规则") : uiText("系列规则")}
+          {tab === "common" ? uiText("通用规则") : uiText("系列规则（选填）")}
         </button>;
       })}
     </div>

@@ -14,16 +14,16 @@ beforeEach(()=>{Element.prototype.scrollIntoView=vi.fn();});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();vi.clearAllMocks();});
 
 it('opens search with the keyboard, restores focus and does not query empty input',async()=>{
- const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();
- const trigger=screen.getByRole('textbox',{name:'查找生产单、账号或素材'});await user.click(trigger);await screen.findByRole('region',{name:'工作区搜索结果'});await waitFor(()=>expect(document.activeElement).toBe(screen.getByRole('textbox',{name:'查找生产单、账号或素材'})));expect(fetcher).not.toHaveBeenCalled();expect(screen.queryByRole('dialog')).toBeNull();expect(document.querySelector('.workspace-search-overlay')).toBeNull();
+ const fetcher=vi.fn();vi.stubGlobal('fetch',fetcher);render(<WorkspaceTopbar {...props} ownerMenu={<button>设置</button>}/>);const user=userEvent.setup();
+ const trigger=screen.getByRole('textbox',{name:'搜索全部内容'});await user.click(trigger);await screen.findByRole('region',{name:'工作区搜索结果'});await waitFor(()=>expect(document.activeElement).toBe(screen.getByRole('textbox',{name:'搜索全部内容'})));expect(fetcher).not.toHaveBeenCalled();expect(screen.queryByRole('dialog')).toBeNull();expect(document.querySelector('.workspace-search-overlay')).toBeNull();
  await user.keyboard('{Escape}');await waitFor(()=>expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull());await waitFor(()=>expect(document.activeElement).toBe(trigger));
- fireEvent.keyDown(document,{key:'k',ctrlKey:true});expect(await screen.findByRole('region',{name:'工作区搜索结果'})).toBeTruthy();expect(screen.queryByRole('button',{name:/模拟数据/})).toBeNull();await user.click(screen.getByRole('button',{name:'切换至深色模式'}));expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull();
+ fireEvent.keyDown(document,{key:'k',ctrlKey:true});expect(await screen.findByRole('region',{name:'工作区搜索结果'})).toBeTruthy();expect(screen.queryByRole('button',{name:/模拟数据/})).toBeNull();await user.click(screen.getByRole('button',{name:'设置'}));expect(screen.queryByRole('region',{name:'工作区搜索结果'})).toBeNull();
 });
 
 it('does not let an old response replace a newer search and opens the real result',async()=>{
  const finish=new Map<string,(response:Response)=>void>();
  vi.stubGlobal('fetch',vi.fn((url:string)=>new Promise<Response>(resolve=>finish.set(new URL(url,'http://localhost').searchParams.get('q')!,resolve))));
- render(<WorkspaceTopbar {...props}/>);await userEvent.setup().click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));const input=await screen.findByRole('textbox',{name:'查找生产单、账号或素材'});
+ render(<WorkspaceTopbar {...props}/>);await userEvent.setup().click(screen.getByRole('textbox',{name:'搜索全部内容'}));const input=await screen.findByRole('textbox',{name:'搜索全部内容'});
  fireEvent.change(input,{target:{value:'first'}});await waitFor(()=>expect(finish.has('first')).toBe(true));
  fireEvent.change(input,{target:{value:'second'}});await waitFor(()=>expect(finish.has('second')).toBe(true));
  finish.get('second')!(Response.json({...empty('second'),episodes:[{id:episodeId,kind:'episode',episodeId,title:'最新结果',subtitle:'真实账号'}]}));await screen.findByRole('button',{name:/最新结果/});
@@ -34,7 +34,7 @@ it('does not let an old response replace a newer search and opens the real resul
 it('keeps registered files separate from preview, download and production navigation and pages all results',async()=>{
  const sha='a'.repeat(64),path=`episodes/${episodeId}/main-script.md`,requests:string[]=[];
  vi.stubGlobal('fetch',vi.fn(async(url:string)=>{requests.push(url);if(url.startsWith('/_local-artifact'))return new Response('A real script preview');const p=new URL(url,'http://localhost').searchParams;return Response.json({...empty('fixture'),accounts:[{id:accountId,kind:'account',accountId,title:'真实账号',subtitle:'账号配置'}],materials:[{id:'material',kind:'material',episodeId,path,sha256:sha,title:p.get('page')==='2'?'second-script.md':'main-script.md',subtitle:'当前脚本',fileType:'script',typeLabel:'脚本'}],hasMore:{episodes:false,accounts:false,materials:p.get('page')!=='2'},pagination:{category:p.get('category')||'all',page:Number(p.get('page')||1),pageSize:8,total:{episodes:0,accounts:1,materials:9},pages:{episodes:1,accounts:1,materials:2}}});}));
- render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));fireEvent.change(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}),{target:{value:'fixture'}});
+ render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'搜索全部内容'}));fireEvent.change(screen.getByRole('textbox',{name:'搜索全部内容'}),{target:{value:'fixture'}});
  await screen.findByText('main-script.md');expect(props.onOpenEpisode).not.toHaveBeenCalled();const row=screen.getByText('main-script.md').closest('li')!;
  const download=within(row).getByRole('link',{name:'下载 main-script.md'});expect(download.getAttribute('href')).toBe('/_local-artifact?'+new URLSearchParams({episode:episodeId,path,sha256:sha})+'&download=1');
  await user.click(within(row).getByRole('button',{name:'预览 main-script.md'}));expect(await screen.findByText('A real script preview')).toBeTruthy();expect(props.onOpenEpisode).not.toHaveBeenCalled();await user.click(screen.getByRole('button',{name:'关闭预览'}));
@@ -44,7 +44,7 @@ it('keeps registered files separate from preview, download and production naviga
 
 it('shows a readable search error and retries the same query',async()=>{
  let calls=0;vi.stubGlobal('fetch',vi.fn(async()=>++calls===1?Response.json({error:'本机查询暂不可用'},{status:503}):Response.json(empty('retry'))));
- render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));fireEvent.change(await screen.findByRole('textbox',{name:'查找生产单、账号或素材'}),{target:{value:'retry'}});
+ render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'搜索全部内容'}));fireEvent.change(await screen.findByRole('textbox',{name:'搜索全部内容'}),{target:{value:'retry'}});
  expect((await screen.findByRole('alert')).textContent).toContain('本机查询暂不可用');await user.click(screen.getByRole('button',{name:'重新搜索'}));await screen.findByText('没有匹配的结果。');expect(calls).toBe(2);
 });
 
@@ -58,9 +58,9 @@ it('reads global pending work on demand, merges duplicate episodes and retains e
  await user.click(screen.getByRole('button',{name:'待处理通知'}));await user.click(await screen.findByRole('button',{name:'后台任务 · 3 项失败'}));expect(props.onOpenTaskQueue).toHaveBeenCalledOnce();
 });
 
-it('retries unavailable notifications and invokes the existing theme action',async()=>{
+it('retries unavailable notifications while appearance controls live in settings',async()=>{
  let calls=0;vi.stubGlobal('fetch',vi.fn(async()=>++calls===1?Response.json({error:'暂时离线'},{status:503}):Response.json({pending:{total:0,items:[]},blocked:{total:0,items:[]},worker:{failed:0}})));
- render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'切换至深色模式'}));expect(props.onToggleTheme).toHaveBeenCalledTimes(1);
+ render(<WorkspaceTopbar {...props}/>);const user=userEvent.setup();expect(screen.queryByRole('button',{name:'切换至深色模式'})).toBeNull();expect(props.onToggleTheme).not.toHaveBeenCalled();
  await user.click(screen.getByRole('button',{name:'待处理通知'}));expect((await screen.findByRole('alert')).textContent).toContain('暂时离线');await user.click(screen.getByRole('button',{name:'重新读取'}));await screen.findByText('暂无待处理事项。');
 });
 it('filters each category and opens completed packages and failed connections from recent reminders',async()=>{
@@ -89,7 +89,7 @@ it.each([[false,false],[false,true],[true,false],[true,true]])('uses only the in
 
 it('clears visible results and pending responses when the Owner changes',async()=>{
  const finish=new Map<string,(response:Response)=>void>();vi.stubGlobal('fetch',vi.fn((url:string)=>new Promise<Response>(resolve=>finish.set(new URL(url,'http://localhost').searchParams.get('q')!,resolve))));
- const {rerender}=render(<WorkspaceTopbar {...props} ownerId="owner-a"/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));fireEvent.change(screen.getByRole('textbox'),{target:{value:'owner-a query'}});await waitFor(()=>expect(finish.has('owner-a query')).toBe(true));
+ const {rerender}=render(<WorkspaceTopbar {...props} ownerId="owner-a"/>);const user=userEvent.setup();await user.click(screen.getByRole('textbox',{name:'搜索全部内容'}));fireEvent.change(screen.getByRole('textbox'),{target:{value:'owner-a query'}});await waitFor(()=>expect(finish.has('owner-a query')).toBe(true));
  rerender(<WorkspaceTopbar {...props} ownerId="owner-b"/>);expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('');finish.get('owner-a query')!(Response.json({...empty('owner-a query'),episodes:[{id:episodeId,kind:'episode',episodeId,title:'旧 Owner 私有作品',subtitle:'账号 A'}]}));await user.click(screen.getByRole('textbox'));expect(screen.queryByText('旧 Owner 私有作品')).toBeNull();expect(screen.queryByRole('button',{name:/打开所属/})).toBeNull();
 });
 

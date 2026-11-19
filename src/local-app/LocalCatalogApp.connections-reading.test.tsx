@@ -9,7 +9,7 @@ const catalog={accounts:[{id:account,name:'Audit account',slug:'audit',timezone:
 const choices=(name:string)=>Response.json({connections:[{id:name,name}],versions:[]});
 function deferred<T>(){let resolve!:(value:T)=>void;const promise=new Promise<T>(done=>{resolve=done;});return{promise,resolve};}
 function defaultResponse(path:string){if(path.endsWith('/session'))return Response.json({owner:{id:'initial-owner'},csrfToken:'fixture'});if(path.includes('/catalog?'))return Response.json(catalog);return Response.json({});}
-async function openAccount(){fireEvent.click(screen.getByRole('button',{name:'账号'}));fireEvent.click(await screen.findByRole('button',{name:'Audit account'}));}
+async function openAccount(){const heading=screen.getByRole('button',{name:'账号'});if(heading.getAttribute('aria-expanded')!=='true')fireEvent.click(heading);fireEvent.click(await screen.findByRole('button',{name:'Audit account'}));}
 afterEach(()=>{cleanup();vi.useRealTimers();vi.restoreAllMocks();vi.unstubAllGlobals();sessionStorage.clear();localStorage.clear();history.replaceState(null,'','/');});
 
 it('starts connections beside the catalog and shows the catalog while connections are still pending',async()=>{

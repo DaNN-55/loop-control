@@ -1,12 +1,14 @@
+import {useState} from 'react';
+import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {uiText} from '../i18n/ui';
 import type { Json } from '../lib/database.types';
 import { TextAreaBase } from '../ui/dan-ui/components/base/textarea/textarea';
 import { InputBase } from '../ui/dan-ui/components/base/input/input';
 
 const ruleLabels: Record<string, string> = {
-  positioning: '账号定位',
-  target_audience: '目标受众', audience: '受众', tone: '语气风格', visual_style: '视觉风格',
-  restrictions: '限制与禁用内容', content_boundaries: '内容边界', hard_constraints: '硬性规则',
+  positioning: '内容定位',
+  target_audience: '目标受众', audience: '受众', tone: '说话方式', visual_style: '画面风格',
+  restrictions: '内容禁区', content_boundaries: '内容边界', hard_constraints: '硬性规则',
   defaults: '默认偏好', forbidden_topics: '禁用主题', forbidden_content: '禁用内容',
   language: '语言', format: '内容格式', characters: '角色设定', locations: '地点设定',
   narrative_structure: '叙事结构', subtitle_style: '字幕样式', extension: '扩展规则',
@@ -25,12 +27,17 @@ function RuleValue({ label, value, onChange, readOnly, isDisabled }: { label: st
 }
 
 /** Edit creative values without flattening nested or previously saved rules. */
-export function CreativeRuleFields({ source, onChange, readOnly = false, isDisabled = false, showDefaults = false }: { source: string; onChange: (source: string) => void; readOnly?: boolean; isDisabled?: boolean; showDefaults?: boolean }) {
+export function CreativeRuleFields({ source, onChange, readOnly = false, isDisabled = false, showDefaults = false, labelPrefix = '' }: { source: string; onChange: (source: string) => void; readOnly?: boolean; isDisabled?: boolean; showDefaults?: boolean; labelPrefix?: string }) {
+  const [extrasOpen, setExtrasOpen] = useState(false);
   const rules = JSON.parse(source) as Record<string, Json>;
-  const keys = [...new Set([...(showDefaults ? ['tone', 'visual_style', 'restrictions'] : []), ...Object.keys(rules)])];
-  return <div className="creative-rule-fields">{keys.map(key => <RuleValue key={key} label={uiText(ruleLabels[key] ?? key.replaceAll('_', ' '))} value={rules[key] ?? ''} readOnly={readOnly} isDisabled={isDisabled} onChange={value => {
+  const commonKeys = ['tone', 'visual_style', 'restrictions'];
+  const extraKeys = Object.keys(rules).filter(key => !commonKeys.includes(key));
+  const renderField = (key: string) => <RuleValue key={key} label={uiText(labelPrefix) + uiText(ruleLabels[key] ?? key.replaceAll('_', ' '))} value={rules[key] ?? ''} readOnly={readOnly} isDisabled={isDisabled} onChange={value => {
     const next = { ...rules };
     if (value === '' && !(key in rules)) delete next[key]; else next[key] = value;
     onChange(JSON.stringify(next));
-  }}/>)}</div>;
+  }}/>;
+  return <div className="creative-rule-fields">{(showDefaults ? commonKeys : Object.keys(rules)).map(renderField)}
+    {showDefaults && extraKeys.length > 0 && <Disclosure label={uiText("其他已存规则")} onToggle={event => setExtrasOpen(event.currentTarget.open)}>{extrasOpen && extraKeys.map(renderField)}</Disclosure>}
+  </div>;
 }

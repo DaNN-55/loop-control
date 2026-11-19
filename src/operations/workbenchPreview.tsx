@@ -8,18 +8,32 @@ import {artifactPreviewKind,localArtifactUrl,localArtifactThumbnailUrl} from '..
 import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import type {WorkspaceExport,WorkspaceExportArtifact} from '../workspaceExport';
 
-type Preview=Pick<EpisodeProductionSnapshot,'artifacts'|'materialRevisions'|'shotPreparationDrafts'|'reviewPackages'>&{exportedVideo?:WorkspaceExportArtifact|null};
+type Preview=Pick<EpisodeProductionSnapshot,'artifacts'|'materialRevisions'|'shotPreparationDrafts'|'reviewPackages'>&{exportedVideo?:WorkspaceExportArtifact|null;sourceText?:string;hasScript?:boolean};
 export function useWorkbenchPreview(episodeId:string,revision:string,enabled:boolean){
  const [result,setResult]=useState<{id:string;data:Partial<Preview>|null;error:boolean}>({id:'',data:null,error:false});
  useEffect(()=>{
   if(!enabled||!episodeId)return;
   const controller=new AbortController();
+  const requestedScripts=new Set<string>();
+  function readScript(revisionId:string){
+   if(!revisionId||requestedScripts.has(revisionId))return;
+   requestedScripts.add(revisionId);
+   void localRequest('script-studio?episodeId='+encodeURIComponent(episodeId)+'&scriptRevisionId='+encodeURIComponent(revisionId),{signal:controller.signal}).then(value=>{
+    if(!controller.signal.aborted&&typeof value.sourceText==='string')setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),sourceText:value.sourceText,hasScript:true},error:current.id===episodeId&&current.error}));
+   }).catch(()=>{});
+  }
   void localRequest(`episodes/${encodeURIComponent(episodeId)}?known=${encodeURIComponent('{}')}`,{signal:controller.signal})
-   .then(value=>{if(!controller.signal.aborted)setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),...value.sections},error:false}));})
+   .then(value=>{
+    if(controller.signal.aborted)return;
+    const script=(value.sections?.materialRevisions as Preview['materialRevisions'])?.filter(item=>item.is_main_script).sort((a,b)=>b.revision_number-a.revision_number)[0];
+    setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),...value.sections,hasScript:!!script||current.id===episodeId&&!!current.data?.hasScript},error:false}));
+    if(script)readScript(script.id);
+   })
    .catch(()=>{if(!controller.signal.aborted)setResult(current=>({id:episodeId,data:current.id===episodeId?current.data:null,error:true}));});
   void localRequest(`episodes/${encodeURIComponent(episodeId)}/workspace`,{signal:controller.signal})
    .then(value=>{
     if(controller.signal.aborted)return;
+    if(value.workspace?.scriptRevisionId)readScript(value.workspace.scriptRevisionId);
     const exportedVideo=(value.workspace?.exports as WorkspaceExport[]|undefined)?.find(item=>item.status==='ready'&&item.artifact&&item.checks.every(check=>check.passed)&&artifactPreviewKind(item.artifact.relativePath)==='video')?.artifact??null;
     setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),exportedVideo},error:current.id===episodeId&&current.error}));
    }).catch(()=>{});

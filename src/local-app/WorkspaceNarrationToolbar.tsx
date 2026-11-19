@@ -1,3 +1,4 @@
+import {readConfiguredService,requestConnectionSetup} from './connectionSetup';
 import {uiText} from '../i18n/ui';
 import type {ReactNode} from 'react';
 import {Gauge,Mic,Save} from 'lucide-react';
@@ -18,7 +19,7 @@ export function WorkspaceNarrationToolbar({mode,value,services,disabled,changed,
  const languages=Object.keys(service?.voiceCatalog??{});
  const available=!!service?.executable&&!!service.voiceCatalog?.[value.languageCode]?.includes(value.voice)&&value.speakingRate>=(service.constraints.speakingRate?.min??.5)&&value.speakingRate<=(service.constraints.speakingRate?.max??2);
  return <div className="workspace-narration-composer-toolbar">
-  {(allowManual||mode==='tts')&&<div className="workspace-narration-source"><Mic size={14} aria-hidden="true"/><WorkspaceModelPicker label={uiText(allowManual?"口播来源":"语音模型")} title={uiText("选择语音模型")} disabled={disabled} value={mode==='manual'?'manual':choice} options={[...services.flatMap(s=>s.models.map(model=>({id:`${s.id}:${model}`,label:model,provider:s.provider,connection:`${s.connectionName??s.label} · v${s.connectionVersion??'—'}`,disabled:!s.executable}))),...(allowManual?[{id:'manual',get label(){return uiText("人工口播");},manual:true}]:[])]} onChange={id=>{
+  {(allowManual||mode==='tts')&&<div className="workspace-narration-source"><Mic size={14} aria-hidden="true"/><WorkspaceModelPicker label={uiText(allowManual?"口播来源":"语音模型")} title={uiText("选择语音模型")} disabled={disabled} value={mode==='manual'?'manual':choice} options={[...services.flatMap(s=>s.models.map(model=>({id:`${s.id}:${model}`,label:model,provider:s.provider,connection:`${s.connectionName??s.label} · v${s.connectionVersion??'—'}`,disabled:!s.executable}))),...(allowManual?[{id:'manual',get label(){return uiText("人工口播");},manual:true}]:[])]} onConfigure={()=>requestConnectionSetup({capability:'speech',onUse:async choice=>{const configured=await readConfiguredService('speech',choice);const catalog=configured.service.voiceCatalog??{};const voice=catalog[value.languageCode]?.includes(value.voice)?value.voice:(catalog[value.languageCode]??[])[0]??'';onMode('tts');onChange({...value,selection:configured.selection,voice});}})} onChange={id=>{
    if(id==='manual'){onMode('manual');return;}
    onMode('tts');const selection=productionModelSelection(services,id,'speech');
    const next=services.find(s=>s.connectionVersionId===selection?.connectionVersionId&&s.provider===selection?.provider&&s.adapter===selection?.adapter),catalog=next?.voiceCatalog??{};

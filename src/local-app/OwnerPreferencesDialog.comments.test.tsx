@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {useState} from 'react';
 import {OwnerPreferencesDialog} from './OwnerPreferencesDialog';
+import {MediaRootSettingsDialog} from './MediaRootSettingsDialog';
 import {defaultOwnerPreferences,parseOwnerPreferences} from '../preferences/preferences';
 import {setUiLocale,useUiLocale} from '../i18n/ui';
 const request=vi.hoisted(()=>vi.fn());
@@ -12,7 +13,7 @@ const props={preferences:{...defaultOwnerPreferences,displayName:'保留中文�
 it('saves English through validated preferences without translating the owner name',async()=>{
  const user=userEvent.setup();function Host(){useUiLocale();const [preferences,setPreferences]=useState(props.preferences);return <OwnerPreferencesDialog {...props} preferences={preferences} onSave={async value=>{const saved=parseOwnerPreferences(value);setPreferences(saved);setUiLocale(saved.language);return true;}}/>;}
  render(<Host/>);const language=screen.getByRole('combobox',{name:'界面语言'});expect(language.parentElement?.querySelector('.dan-select-leading')).toBeNull();
- await user.selectOptions(language,'en-US');await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByRole('heading',{name:'Preferences'});expect(screen.getByRole('textbox',{name:'Display name'})).toHaveProperty('value','保留中文名称');expect(screen.getByRole('combobox',{name:'Interface language'})).toHaveProperty('value','en-US');
+ await user.selectOptions(language,'en-US');await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByRole('heading',{name:'Interface & notifications'});expect(screen.queryByRole('textbox',{name:'Display name'})).toBeNull();expect(screen.getByRole('combobox',{name:'Interface language'})).toHaveProperty('value','en-US');
 });
 it('gives each appearance option its own semantic icon',async()=>{
  const user=userEvent.setup();render(<OwnerPreferencesDialog {...props}/>);await user.click(screen.getByRole('combobox',{name:'外观'}));const list=within(await screen.findByRole('listbox',{name:'外观'}));
@@ -26,7 +27,7 @@ it('lets the embedded media directory be chosen and checked without starting a m
   if(body.command==='choose')return {path:'/test/new-media'};
   return {id:'checked-plan',status:'planned',manifest:{sourceBinding:{path:root.path},targetBinding:{path:body.path},accounts:[],episodes:[],fileCount:0,totalBytes:0,space:{freeBytes:1000,reserveBytes:0,requiredBytes:0},canExecute:true,conflicts:[],blockers:[]}};
  });
- const user=userEvent.setup();render(<OwnerPreferencesDialog {...props} csrf="synthetic"/>);await user.click(screen.getByRole('tab',{name:'存储位置'}));const input=await screen.findByRole('textbox',{name:'素材保存目录'});expect(input).toHaveProperty('value','/test/media');
+ const user=userEvent.setup();render(<MediaRootSettingsDialog csrf="synthetic" onClose={vi.fn()} embedded/>);await screen.findByText('/test/media');await user.click(screen.getByRole('button',{name:'更换存储位置'}));const input=await screen.findByRole('textbox',{name:'素材保存目录'});expect(input).toHaveProperty('value','/test/media');
  await user.click(screen.getByRole('button',{name:'选择素材文件夹'}));await waitFor(()=>expect(input).toHaveProperty('value','/test/new-media'));await user.click(screen.getByRole('button',{name:'检查迁移计划'}));await screen.findByRole('checkbox',{name:'确认迁移完成后使用新位置，原文件保留'});
  expect(calls.map(value=>value.command)).toEqual(['choose','planMigration']);expect(calls[1].path).toBe('/test/new-media');expect(screen.getByRole('button',{name:'开始迁移'})).toHaveProperty('disabled',true);
 });

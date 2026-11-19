@@ -1,8 +1,7 @@
 import {uiText,getUiLocale} from '../i18n/ui';
-import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import type {OperationsEvidence} from '../orchestration/operationsEvidence';
-import {SystemStatusSurface, stateLabel, type StatusItem, type SystemState} from '../observability/SystemStatusSurface';
+import {type StatusItem, type SystemState} from '../observability/SystemStatusSurface';
 import {localRequest} from './client';
 import {SystemStatusDrawer} from './SystemStatusDrawer';
 import type {RuntimeStatus} from '../observability/runtimeStatus';
@@ -15,11 +14,11 @@ interface Report {
 }
 const names={schedule:'调度检查',notification:'事件提醒',health:'每日健康检查',backup:'完整备份',snapshot:'部分快照'} as const;
 const date=(v:string|null)=>v?new Intl.DateTimeFormat(getUiLocale(),{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Shanghai'}).format(new Date(v)):uiText("暂无记录");
-export function LocalSystemStatus({embedded=false,triggerLabel,onOpenEpisode,queueRequest=0,onQueueChange}:{embedded?:boolean;triggerLabel?:string;onOpenEpisode?:(id:string)=>boolean|void;queueRequest?:number;onQueueChange?:(queue:RuntimeStatus['queue'])=>void}){
+export function LocalSystemStatus({embedded=false,triggerLabel,onOpenSettings,onClose=()=>{},onOpenEpisode,queueRequest=0,onQueueChange}:{embedded?:boolean;triggerLabel?:string;onOpenSettings?:()=>void;onClose?:()=>void;onOpenEpisode?:(id:string)=>boolean|void;queueRequest?:number;onQueueChange?:(queue:RuntimeStatus['queue'])=>void}){
  const [payload,setPayload]=useState<Report|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(true);
  const [open,setOpen]=useState(false),[page,setPage]=useState(1);
  const report=payload?.automation?payload:null;
- useEffect(()=>{if(queueRequest){setPage(1);setOpen(true);}},[queueRequest]);
+ useEffect(()=>{if(queueRequest){setPage(1);if(onOpenSettings)onOpenSettings();else setOpen(true);}},[queueRequest]);
  const queue=payload?.runtime?.queue??null;
  useEffect(()=>onQueueChange?.(queue),[queue,onQueueChange]);
  const request=useRef(0),controller=useRef<AbortController|null>(null);
@@ -33,12 +32,12 @@ export function LocalSystemStatus({embedded=false,triggerLabel,onOpenEpisode,que
  },[page]);
  useEffect(()=>{void refresh();return()=>{request.current++;controller.current?.abort();controller.current=null;};},[refresh]);
  useEffect(()=>{
-  if(!open)return;
+  if((!open&&!embedded)||onOpenSettings)return;
   void refresh();
   const timer=window.setInterval(()=>{if(!document.hidden)void refresh();},5000);
   const visible=()=>{if(!document.hidden)void refresh();};document.addEventListener('visibilitychange',visible);
   return()=>{clearInterval(timer);document.removeEventListener('visibilitychange',visible);};
- },[open,refresh]);
+ },[open,embedded,onOpenSettings,refresh]);
  const automationState:SystemState=error?'offline':!report?'unknown':report.automation.stopped||report.automation.lastError?'attention':'healthy';
  const scanFrequency=report?.automation.intervalMs?uiText("每 {value0} 秒扫描",{value0:report.automation.intervalMs/1000}):uiText("每 4 秒扫描（默认）");
  const unreadText=error?uiText("不可用"):pending?uiText("读取中…"):uiText("待确认");
@@ -53,9 +52,5 @@ export function LocalSystemStatus({embedded=false,triggerLabel,onOpenEpisode,que
   const failures=checks?.filter(check=>!check.passed).length;
   items.push({id:kind,label:uiText(names[kind]),state:error?'offline':disabled||unavailable?'unknown':evidence?evidence.latest.passed?'healthy':'attention':'unknown',stateText:!report?unreadText:disabled?uiText("已关闭"):unavailable?uiText("未启用"):checks?(failures?uiText("{value0} 项异常",{value0:failures}):uiText("3 项通过")):evidence?undefined:uiText("尚未执行"),detail:!report?(error||uiText("正在读取当前状态。")):disabled?uiText("自动备份已关闭。"):unavailable?uiText("未启用部分快照。"):evidence?.latest.detail??uiText("尚未执行。"),detailRows:report?rows:[],checks,lastFailureChecks:kind==='health'&&evidence?.latest.passed?evidence.lastFailure?.checks:undefined});
  }
- const overallState:SystemState=error?'offline':items.some(i=>i.state==='attention')?'attention':automationState;
- if(!embedded)return <SystemStatusDrawer open={open} onOpen={()=>setOpen(true)} onClose={()=>setOpen(false)} runtime={payload?.runtime??null} maintenance={items} maintenanceAvailable={!!report&&payload?.maintenanceAvailable!==false} pending={pending} error={error} observedAt={payload?.observedAt??null} onRefresh={()=>void refresh()} onPage={setPage} onOpenEpisode={onOpenEpisode} triggerLabel={triggerLabel}/>;
- return <SystemStatusSurface triggerLabel={triggerLabel} embedded={embedded} items={items} overallState={overallState} summary={items.map(i=>`${i.label}：${i.stateText??stateLabel(i.state)}`).join('；')} description={uiText("查看本机调度、事件提醒与日常运维结果。")} onOpen={()=>{if(!pending)void refresh();}} footer={<><span>{uiText("页面加载、打开面板或手动刷新时读取 · 最近读取 ")}{report?date(report.observedAt):uiText("暂无")}</span><div><Button size="sm" color="secondary" className="button button-secondary" isDisabled={pending} onClick={()=>void refresh()} type="button">{pending?uiText("读取中…"):uiText("刷新系统状态")}</Button></div></>}>
-  {error&&<p role="alert" className="form-error">{error}</p>}
- </SystemStatusSurface>;
+ return <SystemStatusDrawer embedded={embedded} triggerOnly={!!onOpenSettings} open={embedded||open} onOpen={onOpenSettings??(()=>setOpen(true))} onClose={embedded?onClose:()=>setOpen(false)} runtime={payload?.runtime??null} maintenance={items} maintenanceAvailable={!!report&&payload?.maintenanceAvailable!==false} pending={pending} error={error} observedAt={payload?.observedAt??null} onRefresh={()=>void refresh()} onPage={setPage} onOpenEpisode={onOpenEpisode} triggerLabel={triggerLabel}/>;
 }

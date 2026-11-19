@@ -17,14 +17,14 @@ it('the blueprint page offers creative configuration without review switches or 
   return Response.json({connections:[],versions:[],capabilities:{externalReady:false}});
  });vi.stubGlobal('fetch',fetcher);
  await act(async()=>{render(<LocalCatalogApp/>);});const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号'}));await user.click(screen.getByRole('button',{name:'Native account'}));
- expect(screen.getByLabelText('账号定位')).toBeTruthy();
+ expect(screen.getByLabelText('内容定位')).toBeTruthy();
  expect(screen.queryByText('审核设置')).toBeNull();expect(screen.queryByLabelText('账号默认配置检查')).toBeNull();
- expect((screen.getByLabelText('账号定位') as HTMLTextAreaElement).readOnly).toBe(true);
+ expect((screen.getByLabelText('内容定位') as HTMLTextAreaElement).readOnly).toBe(true);
  expect(screen.queryByRole('button',{name:'保存通用规则'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'修改'}));
- expect((screen.getByLabelText('账号定位') as HTMLTextAreaElement).readOnly).toBe(false);
+ expect((screen.getByLabelText('内容定位') as HTMLTextAreaElement).readOnly).toBe(false);
  expect(screen.getByRole('button',{name:'保存通用规则'})).toBeTruthy();
- await user.click(screen.getByRole('button',{name:'账号设置'}));await user.click(screen.getByRole('button',{name:'刷新账号'}));
+ await user.click(screen.getByRole('button',{name:'更多操作'}));expect(screen.queryByRole('button',{name:'刷新账号'})).toBeNull();await user.click(screen.getByRole('button',{name:'关闭更多操作'}));
  expect(fetcher.mock.calls.some(([path,init])=>String(path).includes('/account-commands')&&JSON.parse(String(init?.body??'{}')).command==='checkBlueprint')).toBe(false);
 });
 
@@ -41,7 +41,7 @@ it('shows five active accounts, keeps archived accounts reachable, and opens a n
   if(path.endsWith('/session'))return Response.json({csrfToken:'account-sidebar-fixture'});
   if(path.includes('/catalog?'))return Response.json(data);
   if(path.endsWith('/configuration')){
-   expect(JSON.parse(String(init?.body))).toMatchObject({command:'createAccount',data:{name:created.name}});
+   expect(JSON.parse(String(init?.body))).toMatchObject({command:'createAccount',data:{name:created.name,timezone:'Asia/Shanghai',slug:expect.stringMatching(/^account-[a-f0-9-]+$/)}});
    data.accounts.push(created);
    data.blueprints.push({...baseBlueprint,account_id:created.id,id:created.current_blueprint_version_id!});
    return Response.json(created);
@@ -53,7 +53,7 @@ it('shows five active accounts, keeps archived accounts reachable, and opens a n
  const sidebar=within(await screen.findByRole('group',{name:'账号管理'}));
  await user.click(sidebar.getByRole('button',{name:'账号'}));
  expect(within(sidebar.getByRole('list',{name:'使用中的账号'})).getAllByRole('button')).toHaveLength(5);
- expect(screen.getByRole('heading',{name:'内容工作台'})).toBeTruthy();
+ expect(screen.getByRole('heading',{name:'生产单',level:1})).toBeTruthy();
  await user.click(sidebar.getByRole('button',{name:'查看全部 6 个账号'}));
  await user.click(sidebar.getByRole('button',{name:'测试账号 6'}));
  expect(screen.getByRole('heading',{name:'测试账号 6',level:1})).toBeTruthy();
@@ -63,7 +63,7 @@ it('shows five active accounts, keeps archived accounts reachable, and opens a n
  await user.click(sidebar.getByRole('button',{name:'新建账号'}));
  const dialog=within(screen.getByRole('dialog',{name:'新建账号'}));
  await user.type(dialog.getByRole('textbox',{name:'账号名称'}),created.name);
- await user.type(dialog.getByRole('textbox',{name:'账号标识'}),'test-sidebar');
+ expect(dialog.queryByRole('textbox',{name:'账号标识'})).toBeNull();
  await user.click(dialog.getByRole('button',{name:'创建账号'}));
  expect(await screen.findByRole('heading',{name:created.name,level:1})).toBeTruthy();
  expect(sidebar.getByRole('button',{name:created.name}).getAttribute('aria-current')).toBe('page');
@@ -78,7 +78,7 @@ it('closes acknowledged account creation while its independent catalog refresh r
   return Response.json({connections:[],versions:[]});
  }));
  render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建账号'}));const dialog=within(screen.getByRole('dialog',{name:'新建账号'}));
- fireEvent.change(dialog.getByRole('textbox',{name:'账号名称'}),{target:{value:'已保存账号'}});fireEvent.change(dialog.getByRole('textbox',{name:'账号标识'}),{target:{value:'saved-account'}});fireEvent.click(dialog.getByRole('button',{name:'创建账号'}));
+ fireEvent.change(dialog.getByRole('textbox',{name:'账号名称'}),{target:{value:'已保存账号'}});fireEvent.click(dialog.getByRole('button',{name:'创建账号'}));
  await waitFor(()=>expect(reads.length).toBeGreaterThan(0));await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建账号'})).toBeNull());expect(posts).toBe(1);
  await act(async()=>{for(const finish of reads)finish(Response.json({error:'catalog unavailable'},{status:503}));});expect((await screen.findByRole('alert')).textContent).toContain('配置已保存');expect(posts).toBe(1);
 });
@@ -93,7 +93,7 @@ it('does not navigate or publish an earlier Owner account acknowledgement after 
   return Response.json({connections:[],versions:[]});
  }));
  render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建账号'}));const dialog=within(screen.getByRole('dialog',{name:'新建账号'}));
- fireEvent.change(dialog.getByRole('textbox',{name:'账号名称'}),{target:{value:'旧身份新账号'}});fireEvent.change(dialog.getByRole('textbox',{name:'账号标识'}),{target:{value:'old-owner-account'}});fireEvent.click(dialog.getByRole('button',{name:'创建账号'}));await waitFor(()=>expect(finish).toBeTypeOf('function'));
- fireEvent(window,new Event('loop-local-session-expired'));await screen.findByRole('heading',{name:'登录控制台'});fireEvent.change(screen.getByLabelText('邮箱'),{target:{value:'next@example.invalid'}});fireEvent.change(screen.getByLabelText('密码'),{target:{value:'next-owner-password'}});fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));await screen.findByRole('button',{name:'新建生产单'});const before=reads,notice=screen.queryByRole('alert')?.textContent;
+ fireEvent.change(dialog.getByRole('textbox',{name:'账号名称'}),{target:{value:'旧身份新账号'}});fireEvent.click(dialog.getByRole('button',{name:'创建账号'}));await waitFor(()=>expect(finish).toBeTypeOf('function'));
+ fireEvent(window,new Event('loop-local-session-expired'));await screen.findByRole('heading',{name:'登录控制台'});fireEvent.change(screen.getByLabelText('邮箱'),{target:{value:'next@example.invalid'}});fireEvent.change(screen.getByLabelText('密码'),{target:{value:'next-owner-password'}});fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));await screen.findByRole('button',{name:'创建内容账号'});const before=reads,notice=screen.queryByRole('alert')?.textContent;
  await act(async()=>finish(Response.json({...catalog().accounts[0],id:'old-created',name:'旧身份新账号'})));expect(screen.queryByRole('heading',{name:'旧身份新账号'})).toBeNull();expect(screen.queryByRole('dialog',{name:'新建账号'})).toBeNull();expect(screen.queryByRole('alert')?.textContent).toBe(notice);expect(reads).toBe(before);
 });

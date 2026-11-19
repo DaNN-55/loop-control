@@ -1,4 +1,5 @@
-import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {MediaRootSettingsDialog} from './MediaRootSettingsDialog';
 const manifest={sourceBinding:{path:'/old'},targetBinding:{path:'/new'},accounts:[],episodes:[],fileCount:2,totalBytes:200,space:{freeBytes:1000,reserveBytes:100,requiredBytes:300},canExecute:true,conflicts:[],blockers:[]};
@@ -15,6 +16,7 @@ it('pauses polling while hidden and immediately reads on return without overlapp
  hidden=false;await act(async()=>document.dispatchEvent(new Event('visibilitychange')));expect(reads).toBe(3);
 });
 it('a late progress response cannot replace the completed command readback',async()=>{
+ const user=userEvent.setup();
  let finish!:(response:Response)=>void,progress!:(response:Response)=>void,reads=0;
  vi.stubGlobal('fetch',vi.fn(async(_url,init?:RequestInit)=>{
   if(init?.method==='POST')return new Promise<Response>(resolve=>{finish=resolve;});
@@ -23,7 +25,10 @@ it('a late progress response cannot replace the completed command readback',asyn
   return Response.json({...copying,path:'/new',executing:false,migration:{...copying.migration,status:'completed'}});
  }));
  render(<MediaRootSettingsDialog csrf="test" onClose={()=>{}}/>);
- await screen.findByText('/old');fireEvent.click(screen.getByRole('checkbox'));fireEvent.click(screen.getByRole('button',{name:'开始迁移'}));
+ await screen.findByText('/old');await user.click(screen.getByRole('checkbox'));
+ const start=screen.getByRole('button',{name:'开始迁移'});
+ await waitFor(()=>expect((start as HTMLButtonElement).disabled).toBe(false));await user.click(start);
+ await waitFor(()=>{expect(typeof finish).toBe('function');expect(typeof progress).toBe('function');});
  await act(async()=>finish(Response.json({status:'completed'})));
  expect(screen.getByText('媒体根迁移完成，服务已使用新位置。')).toBeTruthy();
  await act(async()=>progress(Response.json(copying)));

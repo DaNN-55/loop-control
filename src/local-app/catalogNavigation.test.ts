@@ -1,8 +1,15 @@
 import {expect,it} from 'vitest';
 import {readCatalogNavigation,catalogNavigationUrl} from './catalogNavigation';
+it('opens one production list and preserves a legacy workbench stage filter',()=>{
+ expect(readCatalogNavigation('').view).toBe('episodes');
+ const value=readCatalogNavigation('?view=operations&catalogStage=editing&q=山&page=2');
+ expect(value).toMatchObject({view:'episodes',filters:{view:'episodes',catalogStage:'editing',q:'山',page:2}});
+ expect(catalogNavigationUrl(value,'http://localhost/')).toContain('catalogStage=editing');
+ expect(catalogNavigationUrl(value,'http://localhost/')).not.toContain('operations');
+});
 it('opens legacy episode links and discards unsupported locations and malformed paging',()=>{
  const legacy=readCatalogNavigation('?episode=episode-one');expect(legacy.view).toBe('episodes');expect(legacy.episode).toBe('episode-one');
- const invalid=readCatalogNavigation('?view=secrets&episode=../../other&step=approve&tab=credentials&page=-1&pendingPage=99999999&visibility=hidden&status=approved&sort=unsafe');expect(invalid).toMatchObject({view:'operations',episode:'',step:null,tab:'visual',filters:{page:1,pendingPage:1,visibility:'active',status:'all',sort:'updated'}});
+ const invalid=readCatalogNavigation('?view=secrets&episode=../../other&step=approve&tab=credentials&page=-1&pendingPage=99999999&visibility=hidden&status=approved&sort=unsafe');expect(invalid).toMatchObject({view:'episodes',episode:'',step:null,tab:'visual',filters:{page:1,pendingPage:1,visibility:'active',status:'all',sort:'updated'}});
 });
 it('keeps current list and workspace positions while discarding retired history parameters',()=>{
  const value=readCatalogNavigation('?view=episodes&accountId=account-one&seriesId=series-one&q=山&status=blocked&page=3&episode=episode-one&step=preparation&tab=voice&historyTab=sources&historyPage=2');
@@ -23,6 +30,6 @@ it('keeps cleanup task links with the current workspace and removes them when th
  expect(readCatalogNavigation('?cleanupOpen=1&cleanupTask=../../outside').panels.cleanup).toEqual({open:true,task:''});
 });
 
-it('normalizes retired history links to the workbench and strips obsolete panel state',()=>{
- const value=readCatalogNavigation('?view=history&source=old&historyEpisode=old&historyTab=sources&sourcesQ=legacy&historyPage=3');expect(value.view).toBe('operations');expect('sources' in value.panels).toBe(false);expect('history' in value.panels).toBe(false);const url=catalogNavigationUrl(value,'http://localhost/?view=history&source=old&historyTab=sources&outside=kept');expect(url).toBe('/?outside=kept&view=operations');
+it('normalizes retired history links to the production list and strips obsolete panel state',()=>{
+ const value=readCatalogNavigation('?view=history&source=old&historyEpisode=old&historyTab=sources&sourcesQ=legacy&historyPage=3');expect(value.view).toBe('episodes');expect('sources' in value.panels).toBe(false);expect('history' in value.panels).toBe(false);const url=catalogNavigationUrl(value,'http://localhost/?view=history&source=old&historyTab=sources&outside=kept');expect(url).toBe('/?outside=kept&view=episodes');
 });

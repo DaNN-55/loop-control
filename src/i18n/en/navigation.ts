@@ -1,4 +1,9 @@
 export const navigationMessages:Record<string,string>={
+  "请先检查文件存储，再创建内容账号。": "Check file storage before creating a content account.",
+  "请先完成存储位置设置。": "Finish setting the storage location first.",
+  "存储位置读取失败，请重试。": "Could not read the storage location. Please retry.",
+  "请先保存或取消当前修改，再使用此服务。": "Save or cancel your current edits before using this service.",
+
   "操作提示": "Action feedback", "关闭操作提示": "Dismiss action feedback", "错误通知": "Error notification", "文件清理提示": "File cleanup notice", "，有可用操作。": ", actions available.", "有未提交修改": "Unsubmitted changes",
 
   "搜索标题或编号": "Search title or ID",
@@ -304,5 +309,25 @@ export const navigationMessages:Record<string,string>={
   "在线制作暂不可用": "Online production unavailable",
   "本机在线制作授权或请求预算不可用，不会发出在线请求。手动连接测试使用独立授权。": "Online production authorization or request budget is unavailable on this device. No online request will be sent. Manual connection tests use separate authorization.",
   "当前配置引用的连接不属于本地执行所有者，或连接已不可用。请在账号配置中重新选择可用连接。": "The referenced connection does not belong to the local execution owner or is unavailable. Select an available connection in account settings.",
-  "打开账号配置": "Open account settings"
+  "打开账号配置": "Open account settings",
+  "搜索全部内容": "Search all content",
+  "独立剪辑": "Standalone editor",
+  "生产单预览": "Production preview",
+  "收起预览": "Hide preview",
+  "关闭生产单预览": "Close production preview",
+  "预览": "Preview",
+  "脚本摘要": "Script summary",
+  "正在读取预览…": "Loading preview…",
+  "预览暂不可用，仍可进入制作。": "Preview unavailable. You can still open production.",
+  "脚本已添加，进入制作查看。": "Script added. Open production to view it.",
+  "尚未添加脚本": "No script added yet",
+  "已导出视频": "Exported video",
+  "已保存视频预览": "Saved video preview",
+  "进入制作": "Open production",
+  "查看成果": "View result",
+  "隐藏统计": "Hide statistics",
+  "显示统计": "Show statistics",
+  "生产单列表": "Production list",
+  "创建内容账号": "Create content account",
+  "继续创建内容账号": "Continue creating account",
 };

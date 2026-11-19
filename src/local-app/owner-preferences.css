@@ -85,3 +85,8 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop>.ow
 @media(max-width:1000px){.owner-preferences-embedded .owner-profile-fields{grid-template-columns:minmax(0,1fr)}.owner-preferences-embedded .owner-profile-fields .owner-avatar-field{align-items:center}}
 
 @media(max-width:480px){.owner-preferences-embedded form>footer>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);width:100%;justify-self:stretch}.owner-preferences-embedded form>footer>div>button{white-space:normal;min-height:40px}.owner-preferences-embedded form>footer>div>button [data-text]{white-space:normal}.owner-preferences-embedded .owner-restore-scope{text-align:left;justify-self:start}}
+.owner-notification-events{border:0;padding:0;background:transparent;font-size:13px}
+.owner-notification-events>summary{cursor:pointer;color:var(--lc-muted)}
+.owner-notification-events[open]>.owner-notification-toggles{margin-top:20px}
+.owner-preferences-dialog:not(.owner-preferences-embedded) .owner-preferences-section{display:grid;gap:16px}
+.owner-preferences-dialog:not(.owner-preferences-embedded) .owner-appearance-field{display:flex;align-items:center;justify-content:space-between;gap:16px}

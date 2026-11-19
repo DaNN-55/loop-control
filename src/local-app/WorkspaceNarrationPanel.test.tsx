@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import userEvent from '@testing-library/user-event';
-import {render,screen,fireEvent,cleanup,waitFor,within} from '@testing-library/react';
+import {act,render,screen,fireEvent,cleanup,waitFor,within} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {workspaceSettingsFingerprint} from './workspaceSettingsDraft';
 import {WorkspaceNarrationPanel} from './WorkspaceNarrationPanel';
@@ -301,5 +301,18 @@ it('opens the requested preparation subtab and honors later requests without sub
  fireEvent.click(screen.getByRole('tab',{name:'字幕'}));
  view.rerender(<WorkspaceNarrationPanel {...props} tabRequest={{id:3,tab:'voice'}}/>);
  expect(screen.getByRole('tab',{name:'口播'}).getAttribute('aria-selected')).toBe('true');
+ expect(command).not.toHaveBeenCalled();
+});
+
+it('returns from speech setup without losing narration text or submitting synthesis',async()=>{
+ const {command}=setup();await sourceReady();fireEvent.change(screen.getByRole('textbox',{name:'口播草稿'}),{target:{value:'配置服务前写好的口播'}});
+ let request:import('./connectionSetup').ConnectionSetupRequest|undefined;
+ window.addEventListener('open-external-connections',event=>{request=(event as CustomEvent).detail;},{once:true});
+ fireEvent.click(screen.getByRole('button',{name:'口播来源'}));fireEvent.click(screen.getByRole('button',{name:'配置制作服务'}));expect(request?.capability).toBe('speech');
+ const choice=registeredAdapters.productionChoices().find(c=>c.capability==='speech')!;
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[{capability:'speech',services:[{...choice,id:'fresh',connectionId:'fresh',connectionVersionId:'fresh-v',connectionName:'Fresh',connectionVersion:1,executable:true}]}]}})));
+ await act(async()=>{await request!.onUse({connectionId:'fresh',versionId:'fresh-v',modelId:'seed-tts-2.0'});});
+ expect(screen.getByRole('textbox',{name:'口播草稿'})).toHaveProperty('value','配置服务前写好的口播');
+ expect(JSON.parse(sessionStorage.getItem('loop-speech-default-draft:w')!).value.selection.connectionVersionId).toBe('fresh-v');
  expect(command).not.toHaveBeenCalled();
 });

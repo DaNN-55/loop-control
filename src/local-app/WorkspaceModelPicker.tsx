@@ -8,7 +8,7 @@ import {WorkspaceModelLogo} from './WorkspaceModelLogo';
 import './workspace-generation-composer.css';
 
 export interface WorkspaceModelOption {id:string;label:string;provider?:string;connection?:string;disabled?:boolean;manual?:boolean}
-export function WorkspaceModelPicker({label,title,closeLabel='关闭模型选择',options,value,disabled,onChange,empty,clear,clearLabel='清除模型选择',showConnections=false,compact=true}:{label:string;title:string;closeLabel?:string;options:WorkspaceModelOption[];value:string;disabled?:boolean;onChange:(id:string)=>void;empty?:string;clear?:boolean;clearLabel?:string;showConnections?:boolean;compact?:boolean}){
+export function WorkspaceModelPicker({label,title,closeLabel='关闭模型选择',options,value,disabled,onChange,onConfigure,empty,clear,clearLabel='清除模型选择',showConnections=false,compact=true}:{label:string;title:string;closeLabel?:string;options:WorkspaceModelOption[];value:string;disabled?:boolean;onChange:(id:string)=>void;onConfigure?:()=>void;empty?:string;clear?:boolean;clearLabel?:string;showConnections?:boolean;compact?:boolean}){
  const [open,setOpen]=useState(false);
  const selected=options.find(option=>option.id===value),duplicates=new Set(options.filter((option,index)=>options.some((other,i)=>i!==index&&other.label===option.label)).map(option=>option.label));
 
@@ -25,6 +25,7 @@ export function WorkspaceModelPicker({label,title,closeLabel='关闭模型选择
       {option.manual?<Mic size={16} aria-hidden="true"/>:<WorkspaceModelLogo model={option.label} provider={option.provider}/>}<strong title={option.connection}>{option.label}</strong>{(showConnections||duplicates.has(option.label))&&<small>{option.connection}</small>}{option.id===value&&<Check size={14} aria-hidden="true"/>}
      </MenuItem>)}
     </Menu>
+    {onConfigure&&<Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setOpen(false);onConfigure();}}>{uiText("配置制作服务")}</Button>}
     {clear&&<Button size="xs" color="tertiary" isDisabled={disabled} onPress={()=>{setOpen(false);onChange('');}}>{uiText(clearLabel)}</Button>}
    </Dialog>
   </Popover>

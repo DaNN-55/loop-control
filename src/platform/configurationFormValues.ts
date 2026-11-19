@@ -6,6 +6,7 @@ export interface BlueprintFormValues {positioning:string;advancedJson:string}
 
 export interface SeriesFormValues {
   advancedJson?: string;
+  originalRulesJson?: string;
   positioning: string;
   format: string;
   characters: string;
@@ -31,7 +32,8 @@ function displayValue(value: Json | undefined): string {
 }
 
 function blueprintAdvancedJson(value: JsonObject): string {
-  const {positioning: _positioning, ...rules} = creativeAccountRules(value);
+  const rules = creativeAccountRules(value);
+  if (typeof rules.positioning === "string") delete rules.positioning;
   return JSON.stringify(rules, null, 2);
 }
 
@@ -52,12 +54,15 @@ export function blueprintPolicyToForm(policy:Json):BlueprintFormValues {
  return {positioning:stringValue(value.positioning),advancedJson:blueprintAdvancedJson(value)};
 }
 export function blueprintFormToPolicy(form:BlueprintFormValues):Json {
- return {...creativeAccountRules(parseAdvancedJson(form.advancedJson)),positioning:form.positioning.trim()} as Json;
+ const rules=creativeAccountRules(parseAdvancedJson(form.advancedJson));
+ const keepStructuredPositioning = "positioning" in rules && typeof rules.positioning !== "string" && !form.positioning.trim();
+ return {...rules,...(keepStructuredPositioning ? {} : {positioning:form.positioning.trim()})} as Json;
 }
 
 export function seriesRulesToForm(rules: Json): SeriesFormValues {
   const value = objectValue(rules);
   return {
+    originalRulesJson: JSON.stringify(value),
     advancedJson: JSON.stringify(Object.fromEntries(Object.entries(value).filter(([key]) => !seriesKnownKeys.has(key))), null, 2),
     positioning: displayValue(value.positioning),
     format: displayValue(value.format),
@@ -70,18 +75,20 @@ export function seriesRulesToForm(rules: Json): SeriesFormValues {
 }
 
 export function seriesFormToRules(form: SeriesFormValues): Json {
+  const original = parseAdvancedJson(form.originalRulesJson ?? "{}");
   return {...parseAdvancedJson(form.advancedJson ?? "{}"), ...Object.fromEntries([
-    ["positioning", parseSeriesField(form.positioning)],
-    ["format", parseSeriesField(form.format)],
-    ["characters", parseSeriesField(form.characters)],
-    ["locations", parseSeriesField(form.locations)],
-    ["visual_style", parseSeriesField(form.visualStyle)],
-    ["narrative_structure", parseSeriesField(form.narrativeStructure)],
-    ["restrictions", parseSeriesField(form.restrictions)],
+    ["positioning", parseSeriesField(form.positioning, original.positioning)],
+    ["format", parseSeriesField(form.format, original.format)],
+    ["characters", parseSeriesField(form.characters, original.characters)],
+    ["locations", parseSeriesField(form.locations, original.locations)],
+    ["visual_style", parseSeriesField(form.visualStyle, original.visual_style)],
+    ["narrative_structure", parseSeriesField(form.narrativeStructure, original.narrative_structure)],
+    ["restrictions", parseSeriesField(form.restrictions, original.restrictions)],
   ].filter(([, value]) => value !== undefined))} as Json;
 }
 
-function parseSeriesField(source: string): Json | undefined {
+function parseSeriesField(source: string, original?: Json): Json | undefined {
+  if (source === displayValue(original)) return original;
   const value = source.trim();
   if (!value) return undefined;
   if (value.startsWith("{") || value.startsWith("[")) {

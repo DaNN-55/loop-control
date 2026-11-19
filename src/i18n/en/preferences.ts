@@ -1,4 +1,8 @@
 export const preferencesMessages:Record<string,string> = {
+  "制作文件会保存在所选位置。": "Production files will be saved in the selected location.",
+  "先检查迁移范围，再确认搬迁。": "Review the move plan before confirming the transfer.",
+
+ '界面与通知':'Interface & notifications','文件存储':'File storage','制作服务':'Production services','维护工具':'Maintenance','高级密钥':'Advanced secrets','自定义提醒':'Customize notifications','恢复界面设置和所有通知开关。':'Restores interface settings and all notification switches.','更换位置':'Change location',
  '个人偏好':'Personal preferences','通知':'Notifications','图片处理失败，请重试。':'Image processing failed. Please try again.',
  '头像预览':'Avatar preview','处理中…':'Working…','上传头像':'Upload avatar','移除':'Remove','PNG、JPEG、WebP，最大 5 MB':'PNG, JPEG or WebP, up to 5 MB','上传头像图片':'Upload avatar image',
  '显示名称':'Display name','未填写时使用登录邮箱':'Uses your login email when empty','外观':'Appearance','浅色':'Light','深色':'Dark','跟随系统':'System','界面语言':'Interface language','简体中文':'Simplified Chinese','使用紧凑行距':'Use compact rows',

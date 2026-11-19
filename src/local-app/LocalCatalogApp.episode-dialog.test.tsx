@@ -38,7 +38,7 @@ it('inherits the filtered account into creation and resets every list scope with
  }));
  const user=userEvent.setup();render(<LocalCatalogApp/>);
  const nav=within(await screen.findByRole('complementary',{name:'主导航'}));
- const search=await screen.findByRole('search',{name:'搜索工作台生产单'});
+ const search=await screen.findByRole('search',{name:'搜索生产单'});
  await user.type(within(search).getByRole('textbox'),'  金山  ');
  expect(requests.at(-1)?.get('q')).toBe('');
  await user.click(within(search).getByRole('button',{name:'搜索'}));
@@ -53,12 +53,12 @@ it('inherits the filtered account into creation and resets every list scope with
  await user.type(within(search).getByRole('textbox'),'  {Enter}');
  expect(requests.at(-1)?.get('q')).toBe('');
  expect((within(search).getByRole('textbox') as HTMLInputElement).value).toBe('');
- await user.selectOptions(screen.getByRole('combobox',{name:'工作台账号筛选'}),'current');
+ await user.selectOptions(screen.getByRole('combobox',{name:'账号'}),'current');
  await user.click(screen.getByRole('button',{name:'新建生产单'}));
  expect((within(screen.getByRole('dialog',{name:'新建生产单'})).getByRole('combobox',{name:'账号'}) as HTMLSelectElement).value).toBe('current');
  await user.click(screen.getByRole('button',{name:'取消'}));
  await user.click(nav.getByRole('button',{name:'生产单'}));
- await user.selectOptions(await screen.findByRole('combobox',{name:'归档范围'}),'archived');
+ await user.click(screen.getByRole('button',{name:'筛选'}));await user.selectOptions(await screen.findByRole('combobox',{name:'归档范围'}),'archived');
  await user.click(screen.getByRole('tab',{name:'需处理'}));
  expect(requests.at(-1)?.get('visibility')).toBe('archived');
  expect(requests.at(-1)?.get('status')).toBe('blocked');

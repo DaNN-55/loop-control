@@ -2,7 +2,7 @@ import {uiText,getUiLocale} from '../i18n/ui';
 import {defaultOwnerPreferences,type OwnerPreferences} from '../preferences/preferences';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
 import {Dialog,DialogTrigger,Popover} from 'react-aria-components';
-import {AlertCircle,Bell,ChevronRight,Moon,RefreshCw,Sun} from 'lucide-react';
+import {AlertCircle,Bell,ChevronRight,RefreshCw} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {WorkspaceSearch} from './WorkspaceSearchPanel';
 import {localRequest} from './client';
@@ -11,14 +11,14 @@ import type {LocalCatalog} from './catalog';
 import './workspace-topbar.css';
 
 export interface WorkspaceTopbarProps {
-    theme:'light'|'dark';
+    theme?:'light'|'dark';
     searchScope?:string;
     ownerId?:string;
     notificationPreferences?:OwnerPreferences['notifications'];
     notificationEventsEnabled?:boolean;
     onOpenConnections?:()=>void;
     ownerMenu?:ReactNode;
-    onToggleTheme:()=>void;
+    onToggleTheme?:()=>void;
     themeSaving?:boolean;
     onOpenEpisode:(id:string,search?:WorkspaceSearchLocation)=>void;
     onOpenAccount:(id:string,search?:WorkspaceSearchLocation)=>void;
@@ -31,7 +31,7 @@ export interface WorkspaceTopbarProps {
 const attentionPath='catalog?view=operations&visibility=active&page=1&pendingPage=1&blockedPage=1';
 
 /** The single live tool group is shared by the workspace and production detail header. */
-export function WorkspaceTopbar({ownerId,ownerMenu,theme,themeSaving,searchScope,onToggleTheme,onOpenEpisode,onOpenAccount,onOpenCatalog,notificationPreferences=defaultOwnerPreferences.notifications,notificationEventsEnabled=false,onOpenConnections,onOpenTaskQueue,episodeTitles,taskQueue}:WorkspaceTopbarProps){
+export function WorkspaceTopbar({ownerId,ownerMenu,searchScope,onOpenEpisode,onOpenAccount,onOpenCatalog,notificationPreferences=defaultOwnerPreferences.notifications,notificationEventsEnabled=false,onOpenConnections,onOpenTaskQueue,episodeTitles,taskQueue}:WorkspaceTopbarProps){
     const [notificationsOpen,setNotificationsOpen]=useState(false);
     const [notificationEvents,setNotificationEvents]=useState<Array<{id:string;event_type:string;episode_id:string|null;episode_title?:string|null;created_at:string;payload:{name?:string;detail?:string}}>>([]);
     const [notificationEventsError,setNotificationEventsError]=useState('');
@@ -91,7 +91,7 @@ export function WorkspaceTopbar({ownerId,ownerMenu,theme,themeSaving,searchScope
                 </Dialog>
             </Popover>
         </DialogTrigger>
-        <Button size="sm" color="tertiary" className="workspace-topbar-icon" iconLeading={theme==='light'?Moon:Sun} aria-label={theme==='light'?uiText("切换至深色模式"):uiText("切换至浅色模式")} title={theme==='light'?uiText("切换至深色模式"):uiText("切换至浅色模式")} aria-pressed={theme==='dark'} isDisabled={themeSaving} onPress={onToggleTheme}/>
+
         {ownerMenu}
 
     </div>;

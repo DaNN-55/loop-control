@@ -82,3 +82,9 @@ html[data-interface="impeccable"] .status-drawer-layer { background: transparent
 .status-drawer-check-history { border:0; padding:0; margin-bottom:14px; font-size:12px; }
 .status-drawer-check-history > summary { cursor:pointer; color:var(--lc-muted); padding:6px 0; }
 
+.status-drawer-embedded{color:var(--lc-ink);font-size:13px}
+.status-drawer-embedded .status-drawer-section>summary{display:flex;align-items:center;list-style:none;gap:12px;cursor:pointer;min-height:76px;padding:20px 0}
+.status-drawer-embedded .status-drawer-warning{color:var(--lc-warning)}
+.status-drawer-embedded :focus-visible{outline:2px solid var(--lc-accent);outline-offset:3px}
+.status-drawer-embedded .status-drawer-heading{border-bottom:1px solid var(--lc-line)}
+.status-drawer-embedded .status-drawer-footer{flex-wrap:wrap}

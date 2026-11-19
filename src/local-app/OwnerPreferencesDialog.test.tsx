@@ -6,36 +6,36 @@ import {defaultOwnerPreferences} from '../preferences/preferences';
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
 const base={preferences:{...defaultOwnerPreferences,displayName:'Dan'},page:'personal' as const,loading:false,saving:false,unavailable:false,error:'',onReload:vi.fn(),onClose:vi.fn()};
 const avatar='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5f8AAAAASUVORK5CYII=';
-it('opens a standalone personal page and saves only personal fields',async()=>{
- const save=vi.fn(async()=>true),user=userEvent.setup();render(<OwnerPreferencesDialog {...base} onSave={save}/>);
- expect(screen.getByRole('dialog',{name:'个人偏好'})).toBeTruthy();expect(screen.queryByRole('tablist')).toBeNull();expect(screen.queryByText('需要人工确认时通知')).toBeNull();
- await user.clear(screen.getByRole('textbox',{name:'显示名称'}));await user.type(screen.getByRole('textbox',{name:'显示名称'}),'新名称');
+it('opens a standalone interface and notification page and preserves historical identity',async()=>{
+ const save=vi.fn(async()=>true),user=userEvent.setup();render(<OwnerPreferencesDialog {...base} preferences={{...base.preferences,avatar}} onSave={save}/>);
+ expect(screen.getByRole('dialog',{name:'界面与通知'})).toBeTruthy();expect(screen.queryByRole('tablist')).toBeNull();expect(screen.queryByRole('textbox',{name:'显示名称'})).toBeNull();
  await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'system');await user.click(screen.getByRole('switch',{name:'使用紧凑行距'}));
- await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');expect(save).toHaveBeenLastCalledWith({...base.preferences,displayName:'新名称',appearance:'system',compactRows:false});
+ await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');expect(save).toHaveBeenLastCalledWith({...base.preferences,avatar,appearance:'system',compactRows:false});
 });
-it('opens notifications separately, preserving personal preferences when saving and restoring',async()=>{
+it('accepts a legacy notification page and retains identity when saving and restoring',async()=>{
  const save=vi.fn(async()=>true),user=userEvent.setup();render(<OwnerPreferencesDialog {...base} preferences={{...base.preferences,avatar}} page="notifications" onSave={save}/>);
- expect(screen.getByRole('dialog',{name:'通知'})).toBeTruthy();expect(screen.queryByRole('tablist')).toBeNull();expect(screen.queryByRole('textbox',{name:'显示名称'})).toBeNull();
- await user.click(screen.getByRole('switch',{name:'需要人工确认时通知'}));await user.click(screen.getByRole('button',{name:'保存偏好'}));
+ expect(screen.getByRole('dialog',{name:'界面与通知'})).toBeTruthy();expect(screen.queryByRole('tablist')).toBeNull();expect(screen.queryByRole('textbox',{name:'显示名称'})).toBeNull();
+ await user.click(screen.getByText('自定义提醒'));await user.click(screen.getByRole('switch',{name:'需要人工确认时通知'}));await user.click(screen.getByRole('button',{name:'保存偏好'}));
  expect(save).toHaveBeenLastCalledWith({...base.preferences,avatar,notifications:{...defaultOwnerPreferences.notifications,review:false}});
  await user.click(screen.getByRole('button',{name:'恢复默认'}));expect(save).toHaveBeenCalledTimes(1);expect((screen.getByRole('switch',{name:'需要人工确认时通知'}) as HTMLInputElement).checked).toBe(true);
  expect(screen.getByText('关闭提醒后，待处理事项和任务仍可查看。')).toBeTruthy();
 });
 it('retains the draft after a failed save and allows retry',async()=>{
  const save=vi.fn().mockResolvedValueOnce(false).mockResolvedValueOnce(true),user=userEvent.setup();render(<OwnerPreferencesDialog {...base} onSave={save}/>);
- await user.type(screen.getByRole('textbox',{name:'显示名称'}),' Retry');await user.click(screen.getByRole('button',{name:'保存偏好'}));
- await waitFor(()=>expect(save).toHaveBeenCalledTimes(1));expect(screen.queryByText('已保存')).toBeNull();expect((screen.getByRole('textbox',{name:'显示名称'}) as HTMLInputElement).value).toBe('Dan Retry');
+ await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');await user.click(screen.getByRole('button',{name:'保存偏好'}));
+ await waitFor(()=>expect(save).toHaveBeenCalledTimes(1));expect(screen.queryByText('已保存')).toBeNull();expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','dark');
  await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');expect(save).toHaveBeenCalledTimes(2);
 });
-it('removes an avatar only when the personal preference is saved',async()=>{
- const save=vi.fn(async()=>true),user=userEvent.setup();render(<OwnerPreferencesDialog {...base} preferences={{...base.preferences,avatar}} onSave={save}/>);
- expect(screen.getByRole('img',{name:'头像预览'}).getAttribute('src')).toBe(avatar);await user.click(screen.getByRole('button',{name:'移除'}));
- expect(screen.queryByRole('img',{name:'头像预览'})).toBeNull();expect(save).not.toHaveBeenCalled();await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(save).toHaveBeenCalledWith({...base.preferences,avatar:null});
+it('restores current controls without clearing a historical name or avatar',async()=>{
+ const save=vi.fn(async()=>true),user=userEvent.setup();const preferences={...base.preferences,avatar,appearance:'dark' as const,notifications:{...base.preferences.notifications,review:false}};
+ render(<OwnerPreferencesDialog {...base} preferences={preferences} onSave={save}/>);
+ expect(screen.queryByRole('img',{name:'头像预览'})).toBeNull();expect(screen.queryByLabelText('上传头像图片')).toBeNull();
+ await user.click(screen.getByRole('button',{name:'恢复默认'}));expect(save).not.toHaveBeenCalled();await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(save).toHaveBeenCalledWith({...preferences,appearance:'light',notifications:defaultOwnerPreferences.notifications});
 });
-it('shows upload errors without losing the existing avatar',async()=>{
- render(<OwnerPreferencesDialog {...base} preferences={{...base.preferences,avatar}} onSave={vi.fn(async()=>true)}/>);
- await userEvent.setup({applyAccept:false}).upload(screen.getByLabelText('上传头像图片'),new File(['<svg/>'],'bad.svg',{type:'image/svg+xml'}));
- expect((await screen.findByRole('alert')).textContent).toContain('PNG、JPEG 或 WebP');expect(screen.getByRole('img',{name:'头像预览'}).getAttribute('src')).toBe(avatar);
+it('keeps existing event choices hidden until customizing reminders',async()=>{
+ render(<OwnerPreferencesDialog {...base} preferences={{...base.preferences,notifications:{...base.preferences.notifications,review:false}}} onSave={vi.fn(async()=>true)}/>);
+ expect(screen.getByText('自定义提醒').closest('details')).toHaveProperty('open',false);await userEvent.setup().click(screen.getByText('自定义提醒'));
+ expect(screen.getByRole('switch',{name:'需要人工确认时通知'})).toHaveProperty('checked',false);
 });
 it('offers supported languages and distinguishes unchanged, draft, saving, saved and failed preferences',async()=>{
  const user=userEvent.setup();let finish:(saved:boolean)=>void=()=>{};
@@ -43,12 +43,12 @@ it('offers supported languages and distinguishes unchanged, draft, saving, saved
  const {rerender}=render(<OwnerPreferencesDialog {...base} onSave={save}/>);
  expect(screen.getByRole('combobox',{name:'界面语言'})).toHaveProperty('value','zh-CN');expect(screen.getByText('简体中文')).toBeTruthy();
  expect(screen.getByRole('status').textContent).toBe('未修改');expect((screen.getByRole('button',{name:'保存偏好'}) as HTMLButtonElement).disabled).toBe(true);
- await user.type(screen.getByRole('textbox',{name:'显示名称'}),'修改');expect(screen.getByRole('status').textContent).toBe('有未保存修改');
+ await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');expect(screen.getByRole('status').textContent).toBe('有未保存修改');
  await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(screen.getByRole('status').textContent).toBe('保存中…');finish(true);
  await waitFor(()=>expect(screen.getByRole('status').textContent).toBe('已保存'));
  await user.click(screen.getByRole('button',{name:'恢复默认'}));expect(screen.getByRole('status').textContent).toBe('有未保存修改');
  await user.click(screen.getByRole('button',{name:'保存偏好'}));finish(false);await waitFor(()=>expect(screen.getByRole('status').textContent).toBe('保存失败，修改尚未保存'));
- expect((screen.getByRole('textbox',{name:'显示名称'}) as HTMLInputElement).value).toBe('');
+ expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','light');
  rerender(<OwnerPreferencesDialog {...base} error="暂时无法保存" onSave={save}/>);expect(screen.getByRole('alert').textContent).toBe('暂时无法保存');
 });
 it('saves independent reminder channels and keeps channel edits until explicitly saved',async()=>{
@@ -67,11 +67,11 @@ it('starts a separate notification visit while a personal save is still pending'
  let finish!:(saved:boolean)=>void;
  const save=vi.fn(()=>new Promise<boolean>(resolve=>{finish=resolve;}));
  const app=render(<OwnerPreferencesDialog key="personal" {...base} onSave={save}/>);
- fireEvent.change(screen.getByRole('textbox',{name:'显示名称'}),{target:{value:'旧页面修改'}});
+ fireEvent.change(screen.getByRole('combobox',{name:'外观'}),{target:{value:'dark'}});
  fireEvent.submit(screen.getByRole('button',{name:'保存偏好'}).closest('form')!);
  app.rerender(<OwnerPreferencesDialog key="notifications" {...base} page="notifications" onSave={save}/>);
  expect(screen.getByRole('status').textContent).toBe('未修改');
- fireEvent.click(screen.getByRole('switch',{name:'需要人工确认时通知'}));
+ fireEvent.click(screen.getByText('自定义提醒'));fireEvent.click(screen.getByRole('switch',{name:'需要人工确认时通知'}));
  await act(async()=>finish(true));
  expect(screen.getByRole('status').textContent).toBe('有未保存修改');
  expect(screen.getByRole('switch',{name:'需要人工确认时通知'})).toHaveProperty('checked',false);
@@ -81,7 +81,7 @@ it('accepts one preference save when the form is submitted twice before a render
  let finish!:(saved:boolean)=>void;
  const save=vi.fn(()=>new Promise<boolean>(resolve=>{finish=resolve;}));
  render(<OwnerPreferencesDialog {...base} onSave={save}/>);
- fireEvent.change(screen.getByRole('textbox',{name:'显示名称'}),{target:{value:'新名称'}});
+ fireEvent.change(screen.getByRole('combobox',{name:'外观'}),{target:{value:'dark'}});
  const form=screen.getByRole('button',{name:'保存偏好'}).closest('form')!;
  act(()=>{form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));});
  expect(save).toHaveBeenCalledTimes(1);

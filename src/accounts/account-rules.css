@@ -1,0 +1,6 @@
+.account-blueprint-workspace .account-blueprint-form > .field-hint { margin: 0; padding: 8px 24px 16px; }
+.account-blueprint-workspace .dan-disclosure-content { min-width: 0; }
+.account-blueprint-workspace .account-settings-facts { padding-block: 8px; }
+@media (max-width: 640px) {
+  .account-blueprint-workspace .account-blueprint-form > .field-hint { padding-inline: 16px; }
+}

@@ -3,6 +3,12 @@ import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {EpisodeDetailDrawer} from './EpisodeDetailDrawer';
 afterEach(cleanup);
+it('moves focus into production after the settings overlay releases it',()=>{
+ const close=vi.fn();const app=render(<><button>系统状态</button><EpisodeDetailDrawer isOpen inert onClose={close}><p>生产内容</p></EpisodeDetailDrawer></>);
+ screen.getByRole('button',{name:'系统状态'}).focus();
+ app.rerender(<><button>系统状态</button><EpisodeDetailDrawer isOpen inert={false} onClose={close}><p>生产内容</p></EpisodeDetailDrawer></>);
+ expect(document.activeElement).toBe(screen.getByRole('button',{name:'返回工作区'}));
+});
 it('点击抽屉外遮罩或按 Escape 可以关闭生产单详情',async()=>{
  const user=userEvent.setup(),onClose=vi.fn();render(<EpisodeDetailDrawer isOpen onClose={onClose}><p>详情内容</p></EpisodeDetailDrawer>);
  await user.click(screen.getByTestId('episode-detail-scrim'));expect(onClose).toHaveBeenCalledTimes(1);await user.keyboard('{Escape}');expect(onClose).toHaveBeenCalledTimes(2);

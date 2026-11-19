@@ -1,3 +1,4 @@
+import {connectionUsagePlaceholder} from './connectionUsage';
 import {render,screen,within,waitFor} from '@testing-library/react';
 import {useState} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -42,4 +43,15 @@ it('confirms a dirty billing close without offering to retain credentials and cl
  await user.click(screen.getByRole('button',{name:'关闭账务设置'}));await user.click(screen.getByRole('button',{name:'放弃修改并关闭'}));
  expect(onClose).toHaveBeenCalledOnce();expect(screen.queryByLabelText('账务 AccessKey ID')).toBeNull();expect(onStateChange).toHaveBeenLastCalledWith({busy:false,dirty:false});
  expect(storage).not.toHaveBeenCalled();storage.mockRestore();
+});
+
+it('does not show save or cancel actions for an embedded read-only usage provider',async()=>{
+ render(<ConnectionBillingDialog embedded connection={{...connection,provider:'minimax'}} onClose={vi.fn()} onReadUsage={async()=>connectionUsagePlaceholder('minimax')}/>);
+ await screen.findByRole('region',{name:'供应商账务数据'});
+ expect(screen.queryByRole('button',{name:'保存'})).toBeNull();expect(screen.queryByRole('button',{name:'取消'})).toBeNull();
+});
+it('shows embedded billing save only while editing credentials',async()=>{
+ const user=userEvent.setup();render(<ConnectionBillingDialog embedded connection={connection} onClose={vi.fn()} onReadBilling={async()=>({...settings,configured:true})}/>);
+ await screen.findByRole('button',{name:'更换凭据'});expect(screen.queryByRole('button',{name:'保存'})).toBeNull();
+ await user.click(screen.getByRole('button',{name:'更换凭据'}));expect(screen.getByRole('button',{name:'保存'})).toBeTruthy();
 });

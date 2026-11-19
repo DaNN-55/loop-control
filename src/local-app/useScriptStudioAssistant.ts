@@ -1,3 +1,4 @@
+import {readConfiguredService,type ConnectionSetupSelection} from './connectionSetup';
 import {sameScriptStudioAttachments,type ScriptStudioAttachmentRef} from '../scriptStudioAttachments';
 import {useEffect,useRef,useState} from 'react';
 import type {ProductionServiceCatalog} from '../connections/serviceCatalog';
@@ -73,6 +74,15 @@ export function useScriptStudioAssistant({episodeId,scriptRevisionId,source,targ
   }catch(cause){if(current(sequence,captured)){setError(cause instanceof Error?cause.message:'拍法生成未完成，原文已保留。');const status=(cause as {status?:number}).status;if(!status||status>=500)setRecoveryRequired(true);}}
   finally{if(current(sequence,captured)){visit.current.locked=false;setBusy(false);setActivity(null);}}
  }
+ async function useConfiguredConnection(selection:ConnectionSetupSelection){
+  if(disabled||busy||unresolved)return;
+  const captured=scope;
+  const configured=await readConfiguredService('language_model',selection);
+  if(!visit.current.active||visit.current.scope!==captured)return;
+  await refresh();
+  if(!visit.current.active||visit.current.scope!==captured)return;
+  choose(configured.service.id+':'+selection.modelId);
+ }
  function choose(value:string){if(busy||unresolved)return;setNeedsChoice(false);setSelected(value);setError('');}
  async function changeShot(index:number,fields?:Partial<ScriptStudioShotText>){
   if(disabled||visit.current.locked||conversationLoading||unresolved||!result?.plan||result.status!=='completed')return false;
@@ -82,5 +92,5 @@ export function useScriptStudioAssistant({episodeId,scriptRevisionId,source,targ
   finally{if(current(sequence,captured)){visit.current.locked=false;setBusy(false);setActivity(null);}}
  }
  const saveShot=(index:number,fields:Partial<ScriptStudioShotText>)=>changeShot(index,fields),deleteShot=(index:number)=>changeShot(index);
- return {scope,attachments,result,busy,opened,error,turns,latestRequestId,unresolved,conversationLoading,conversationError,restoreConversation,options,choice,choose,reasoningOptions,reasoningEffort,chooseReasoning,refresh,send,saveShot,deleteShot,needsChoice,modelsLoading,modelError,activity,mode:restoredMode};
+ return {scope,attachments,result,busy,opened,error,turns,latestRequestId,unresolved,conversationLoading,conversationError,restoreConversation,options,choice,choose,useConfiguredConnection,reasoningOptions,reasoningEffort,chooseReasoning,refresh,send,saveShot,deleteShot,needsChoice,modelsLoading,modelError,activity,mode:restoredMode};
 }

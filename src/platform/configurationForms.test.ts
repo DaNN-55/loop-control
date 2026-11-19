@@ -30,3 +30,10 @@ describe("系列规则表单转换", () => {
     expect(result).toMatchObject({ characters: [{ name: "林砚" }] });
   });
 });
+
+it('keeps structured positioning and non-string series values when saving another rule',()=>{
+ const positioning={audience:['读者'],topics:{primary:'自然'}};
+ const blueprint=blueprintPolicyToForm({positioning,tone:'自然'});expect(creativeBlueprintFormToPolicy(blueprint)).toEqual({positioning,tone:'自然'});
+ const rules={positioning:false,format:3,characters:null,locations:['山间'],restrictions:{content:['禁止造假']},extension:{enabled:true}};
+ expect(seriesFormToRules(seriesRulesToForm(rules))).toEqual(rules);
+});

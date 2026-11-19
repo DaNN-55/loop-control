@@ -2,6 +2,7 @@ import {cleanup,render,screen,waitFor,act} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {OwnerPreferencesDialog} from './OwnerPreferencesDialog';
+import {MediaRootSettingsDialog} from './MediaRootSettingsDialog';
 import {defaultOwnerPreferences} from '../preferences/preferences';
 const mediaRequest=vi.hoisted(()=>vi.fn());
 vi.mock('./client',()=>({localRequest:(path:string,init?:RequestInit)=>path==='log-storage'?Promise.resolve({activeDirectory:'/test/logs',configuredDirectory:'/test/logs',defaultDirectory:'/test/logs',pending:false,warning:null}):mediaRequest(path,init)}));
@@ -9,7 +10,8 @@ afterEach(()=>{cleanup();mediaRequest.mockReset();});
 const manifest={sourceBinding:{path:'/test/old'},targetBinding:{path:'/test/new'},accounts:[{id:'account',name:'测试账号'}],episodes:[{id:'one',title:'第一期'},{id:'two',title:'第二期'}],fileCount:2,directoryCount:3,totalBytes:1572864,space:{freeBytes:3221225472,reserveBytes:1048576,requiredBytes:2621440},canExecute:true,conflicts:[],blockers:[]};
 const root={path:'/test/old',canInitialize:false,status:'ready',migration:{id:'old',status:'completed',manifest}};
 const props={preferences:defaultOwnerPreferences,page:'personal' as const,loading:false,saving:false,unavailable:false,error:'',onReload:vi.fn(),onSave:vi.fn(),onClose:vi.fn(),csrf:'synthetic'};
-it('embeds storage in personal preferences, omits old migration details, and shows active progress then completion',async()=>{
+function Fixture({onSave=props.onSave}:{onSave?:typeof props.onSave}){return <section role="dialog" aria-modal="true" aria-label="界面与通知"><OwnerPreferencesDialog {...props} onSave={onSave} embedded/><MediaRootSettingsDialog csrf={props.csrf} onClose={props.onClose} embedded/></section>;}
+it('keeps storage separate from preferences, omits old migration details, and shows active progress then completion',async()=>{
  const commands:string[]=[];let state:any=root,finish!:(value:unknown)=>void;
  mediaRequest.mockImplementation(async(_path,init)=>{
   if(!init?.body)return state;
@@ -19,8 +21,8 @@ it('embeds storage in personal preferences, omits old migration details, and sho
   if(body.command==='executeMigration'){state={...state,migration:{...state.migration,status:'copying',progress:{copiedFiles:1,copiedBytes:100}}};return new Promise(resolve=>{finish=resolve;});}
   return {};
  });
- const user=userEvent.setup();render(<OwnerPreferencesDialog {...props}/>);
- await screen.findByRole('textbox',{name:'素材保存目录'});expect(screen.getAllByRole('dialog')).toHaveLength(1);expect(screen.getByRole('dialog',{name:'个人偏好'})).toBeTruthy();
+ const user=userEvent.setup();render(<Fixture/>);
+ await screen.findByText('/test/old');expect(screen.queryByRole('textbox',{name:'素材保存目录'})).toBeNull();expect(screen.getAllByRole('dialog')).toHaveLength(1);expect(screen.getByRole('dialog',{name:'界面与通知'})).toBeTruthy();await user.click(screen.getByRole('button',{name:'更换存储位置'}));
  expect(screen.queryByRole('button',{name:/复制/})).toBeNull();expect(screen.queryByText('迁移完成')).toBeNull();expect(screen.queryByText('迁移范围')).toBeNull();expect(screen.queryByText(/盘点时空间|保留原位置/)).toBeNull();
  await screen.findByRole('textbox',{name:'素材保存目录'});await user.click(screen.getByRole('button',{name:'选择素材文件夹'}));
  await user.click(screen.getByRole('button',{name:'检查迁移计划'}));await screen.findByRole('button',{name:'开始迁移'});await user.click(screen.getByRole('checkbox',{name:'确认迁移完成后使用新位置，原文件保留'}));await user.click(screen.getByRole('button',{name:'开始迁移'}));
@@ -28,18 +30,18 @@ it('embeds storage in personal preferences, omits old migration details, and sho
  state={...root,path:'/test/new',migration:{id:'plan',status:'completed',manifest}};
  await act(async()=>finish({status:'completed'}));await screen.findByText('媒体根迁移完成，服务已使用新位置。');
  expect(screen.queryByRole('progressbar')).toBeNull();expect(screen.queryByLabelText('已保存的迁移计划')).toBeNull();expect(commands).toEqual(['choose','planMigration','executeMigration']);
- await waitFor(()=>expect(screen.getByRole('textbox',{name:'素材保存目录'})).toHaveProperty('value','/test/new'));
+ await waitFor(()=>expect(screen.getByText('/test/new')).toBeTruthy());expect(screen.queryByRole('textbox',{name:'素材保存目录'})).toBeNull();
 });
 
 it('retries storage reads locally without replacing a personal preference draft or its saved feedback',async()=>{
  const user=userEvent.setup(),save=vi.fn(async()=>true);
  mediaRequest.mockRejectedValueOnce(new Error('存储暂时无法读取')).mockResolvedValue(root);
- render(<OwnerPreferencesDialog {...props} onSave={save}/>);
+ render(<Fixture onSave={save}/>);
  await screen.findByText('存储暂时无法读取');
- await user.type(screen.getByRole('textbox',{name:'显示名称'}),'个人草稿');
+ await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');
  await user.click(screen.getByRole('button',{name:'重新读取存储位置'}));
- await screen.findByRole('textbox',{name:'素材保存目录'});
- expect((screen.getByRole('textbox',{name:'显示名称'}) as HTMLInputElement).value).toBe('个人草稿');
+ await screen.findByText('/test/old');
+ expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','dark');
  expect(screen.getByText('有未保存修改')).toBeTruthy();expect(save).not.toHaveBeenCalled();
  await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');
 
@@ -52,7 +54,7 @@ it('checks a readable migration scope before explicit confirmation and invalidat
   if(!init?.body)return root;const body=JSON.parse(String(init.body));commands.push(body.command);
   return {id:'plan',status:'planned',manifest};
  });
- render(<OwnerPreferencesDialog {...props}/>);await screen.findByRole('textbox',{name:'素材保存目录'});
+ render(<Fixture/>);await screen.findByText('/test/old');await user.click(screen.getByRole('button',{name:'更换存储位置'}));
 
  const input=screen.getByRole('textbox',{name:'素材保存目录'});await user.clear(input);await user.type(input,'/test/new');
  await user.click(screen.getByRole('button',{name:'检查迁移计划'}));
@@ -73,7 +75,7 @@ it('distinguishes a finished copy from migration completion and resumes the same
   if(!init?.body)return state;const body=JSON.parse(String(init.body));commands.push(body);
   state={...state,migration:{...state.migration,status:'completed'},path:'/test/new'};return {status:'completed'};
  });
- render(<OwnerPreferencesDialog {...props}/>);await screen.findByText('迁移已中断');
+ render(<Fixture/>);await screen.findByText('迁移已中断');
  expect(screen.getByText('2 / 2 个文件 · 1.5 MB / 1.5 MB')).toBeTruthy();
  expect(screen.getByText('复制完成，尚需验证文件并切换位置。')).toBeTruthy();
  expect(screen.queryByText('媒体根迁移完成，服务已使用新位置。')).toBeNull();
@@ -87,8 +89,8 @@ it('keeps preference and migration pending and failure feedback independent',asy
  mediaRequest.mockImplementation(async(_path,init)=>{
   if(!init?.body)return root;return new Promise(resolve=>{finishPlan=resolve;});
  });
- render(<OwnerPreferencesDialog {...props} onSave={save}/>);await screen.findByRole('textbox',{name:'素材保存目录'});
- await user.type(screen.getByRole('textbox',{name:'显示名称'}),'偏好草稿');
+ render(<Fixture onSave={save}/>);await screen.findByText('/test/old');await user.click(screen.getByRole('button',{name:'更换存储位置'}));
+ await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');
  await user.clear(screen.getByRole('textbox',{name:'素材保存目录'}));await user.type(screen.getByRole('textbox',{name:'素材保存目录'}),'/test/new');
  await user.click(screen.getByRole('button',{name:'检查迁移计划'}));
  expect((screen.getByRole('button',{name:'保存偏好'}) as HTMLButtonElement).disabled).toBe(false);
@@ -96,7 +98,7 @@ it('keeps preference and migration pending and failure feedback independent',asy
  await act(async()=>finishPlan({id:'plan',status:'planned',manifest}));
  expect(screen.getByText('保存中…',{selector:'footer>[role="status"]'})).toBeTruthy();expect(screen.getByText('迁移计划已检查，尚未开始迁移。')).toBeTruthy();
  await act(async()=>finishSave(false));expect(screen.getByText('保存失败，修改尚未保存')).toBeTruthy();
- expect(screen.getByText('迁移计划已检查，尚未开始迁移。')).toBeTruthy();expect((screen.getByRole('textbox',{name:'显示名称'}) as HTMLInputElement).value).toBe('偏好草稿');
+ expect(screen.getByText('迁移计划已检查，尚未开始迁移。')).toBeTruthy();expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','dark');
 });
 it('does not release a pending migration command when its progress read is retried',async()=>{
  const user=userEvent.setup();let executing=false,retry=false,finish!:(value:unknown)=>void;
@@ -105,7 +107,7 @@ it('does not release a pending migration command when its progress read is retri
   if(!init?.body){if(executing&&!retry)throw new Error('进度暂时无法读取');return planned;}
   return new Promise(resolve=>{finish=resolve;});
  });
- render(<OwnerPreferencesDialog {...props}/>);await screen.findByRole('textbox',{name:'素材保存目录'});
+ render(<Fixture/>);await screen.findByText('/test/old');await user.click(screen.getByRole('button',{name:'更换存储位置'}));
  await user.click(screen.getByRole('checkbox',{name:'确认迁移完成后使用新位置，原文件保留'}));executing=true;
  await user.click(screen.getByRole('button',{name:'开始迁移'}));await screen.findByText('进度暂时无法读取');retry=true;
  await user.click(screen.getByRole('button',{name:'重新读取存储位置'}));await waitFor(()=>expect(screen.queryByText('进度暂时无法读取')).toBeNull());
@@ -114,7 +116,7 @@ it('does not release a pending migration command when its progress read is retri
 });
 it('rechecks an unavailable registered storage location in place',async()=>{
  mediaRequest.mockResolvedValueOnce({...root,status:'unavailable',reason:'存储卷暂时不可用'}).mockResolvedValue(root);
- render(<OwnerPreferencesDialog {...props}/>);await screen.findByText('存储卷暂时不可用');
+ render(<Fixture/>);await screen.findByText('存储卷暂时不可用');
  await userEvent.setup().click(screen.getByRole('button',{name:'重新读取存储位置'}));
- await waitFor(()=>expect(screen.queryByText('存储卷暂时不可用')).toBeNull());expect(screen.getByRole('textbox',{name:'素材保存目录'})).toBeTruthy();
+ await waitFor(()=>expect(screen.queryByText('存储卷暂时不可用')).toBeNull());expect(screen.getByText('/test/old')).toBeTruthy();
 });

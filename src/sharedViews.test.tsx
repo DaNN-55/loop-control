@@ -76,6 +76,7 @@ describe("approval console", () => {
     const onCreate = vi.fn().mockResolvedValue(undefined);
     render(<SeriesSettings isPending={false} onCreate={onCreate} series={[]} seriesVersions={[]} />);
 
+    const user=userEvent.setup();await user.click(screen.getByText("创作规则（选填）"));
     fireEvent.change(screen.getByRole("textbox", { name: "系列名称" }), { target: { value: "越南道士" } });
     fireEvent.change(screen.getByRole("textbox", { name: "系列定位" }), { target: { value: "雨夜民俗" } });
     fireEvent.click(screen.getByRole("button", { name: "创建系列" }));
@@ -84,14 +85,15 @@ describe("approval console", () => {
     await waitFor(() => expect(onCreate).toHaveBeenCalledWith({ name: "越南道士", rules: { positioning: "雨夜民俗" } }));
   });
 
-  it("系列设置隐藏版本入口，但保存仍保留递增快照", async () => {
+  it("系列设置隐藏版本入口，直接保存仍提交系列规则", async () => {
     const series = { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-1", name: "越南道士" } as Database["public"]["Tables"]["series"]["Row"];
     const seriesVersions = [
       { account_id: "account-1", created_at: "2026-08-17T00:00:00.000Z", id: "series-version-2", rules: {}, series_id: series.id, version: 2 },
       { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-version-1", rules: {}, series_id: series.id, version: 1 },
     ] as Database["public"]["Tables"]["series_versions"]["Row"][];
 
-    render(<SeriesSettings isPending={false} onCreate={vi.fn()} series={[series]} seriesVersions={seriesVersions} />);
+    const save=vi.fn().mockResolvedValue(undefined);
+    render(<SeriesSettings isPending={false} onCreate={vi.fn()} onCreateVersion={save} series={[series]} seriesVersions={seriesVersions} />);
 
     expect(screen.getByRole("heading", { name: "越南道士" })).toBeTruthy();
     expect(screen.queryByText("当前 v2")).toBeNull();
@@ -100,7 +102,9 @@ describe("approval console", () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "修改" }));
     await user.click(screen.getByRole("button", { name: "保存系列设置" }));
-    expect(screen.getByRole("button", { name: "确认保存为 v3" })).toBeTruthy();
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(save).toHaveBeenCalledExactlyOnceWith({seriesId:series.id,rules:{}});
+    expect(screen.getByRole("status").textContent).toBe("已保存");
   });
 
   it("通过结构化表单编辑蓝图并保留高级创作规则", async () => {
@@ -112,10 +116,10 @@ describe("approval console", () => {
     render(<AccountWorkspace account={account} blueprints={[blueprint]} connectionVersions={[{ adapter: "freesound_preview", connection_id: "44444444-4444-4444-8444-444444444444", created_at: "2026-08-15T00:00:00.000Z", endpoint: "https://api.freesound.org", id: "44444444-4444-4444-8444-444444444444", is_current: true, provider: "freesound", revoked_at: null, status: "verified", version: 1 }]} externalConnections={[{ adapter: "freesound_preview", created_at: "2026-08-15T00:00:00.000Z", created_by: "owner-1", current_version_id: "44444444-4444-4444-8444-444444444444", id: "44444444-4444-4444-8444-444444444444", last_verification_detail: null, last_verified_at: "2026-08-15T00:00:00.000Z", name: "主 Freesound", provider: "freesound", status: "verified", description:"", endpoint:"https://api.freesound.org" }]} isPending="" onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} promptVersions={[storyboardHarness]} series={[]} seriesVersions={[]} />);
 
     await user.click(screen.getByRole("button", { name: "修改" }));
-    await user.clear(screen.getByLabelText("账号定位"));
-    await user.type(screen.getByLabelText("账号定位"), "新定位");
+    await user.clear(screen.getByLabelText("内容定位"));
+    await user.type(screen.getByLabelText("内容定位"), "新定位");
     await user.click(screen.getByRole("button", { name: /保存通用规则|保存通用规则/ }));
-    await user.click(screen.getByRole("button", { name: "确认保存通用规则" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
 
     await waitFor(() => expect(onUpdateBlueprint).toHaveBeenCalledWith({ positioning: "新定位", visual_style: "保留手绘线条" }));
     expect(blueprint.policy).toMatchObject({ soundtrack: { executor: { adapter: "freesound_preview" } } });

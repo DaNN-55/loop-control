@@ -34,24 +34,23 @@ function setup(options:{studioFails?:boolean;noTaskIssues?:boolean}={}) {
   return {queries,posts,lastQuery:()=>queries.at(-1)!};
 }
 const nav=()=>within(screen.getByRole('complementary',{name:'主导航'}));
-async function mount(){await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByRole('heading',{name:'内容工作台',level:1});}
+async function mount(){await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByRole('heading',{name:'生产单',level:1});}
 afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();history.replaceState(null,'','/');localStorage.clear();sessionStorage.clear();});
 
 it('待审核合并到生产单，工作台审核入口使用真实目录筛选',async()=>{
  const {queries,lastQuery}=setup({noTaskIssues:true});await mount();
- expect(lastQuery().get('view')).toBe('operations');
+ expect(lastQuery().get('view')).toBe('episodes');
  expect(nav().queryByRole('button',{name:'待审核'})).toBeNull();
  expect(nav().getByRole('button',{name:'生产单'}).textContent).toContain('45');
- fireEvent.click(screen.getByRole('button',{name:'开始审核'}));
+ fireEvent.click(screen.getByRole('tab',{name:'待审核'}));
  await screen.findByRole('table',{name:'生产单'});
  expect(lastQuery().get('view')).toBe('episodes');expect(lastQuery().get('status')).toBe('review');
  expect(screen.getByRole('tab',{name:'待审核'}).getAttribute('aria-selected')).toBe('true');expect(screen.getByRole('tab',{name:'待审核'}).textContent).toContain('45');
  const count=queries.length;
- fireEvent.click(screen.getByRole('button',{name:'所有者设置'}));
- fireEvent.click(await screen.findByRole('menuitem',{name:'连接配置'}));
- await screen.findByRole('dialog',{name:'连接配置'});
+ fireEvent.click(screen.getByRole('button',{name:'设置'}));
+ await screen.findByRole('dialog',{name:'制作服务'});
  expect(new URLSearchParams(location.search).get('view')).toBe('episodes');
- fireEvent.click(screen.getByRole('button',{name:'关闭连接配置'}));
+ fireEvent.click(screen.getByRole('button',{name:'关闭制作服务'}));
  await screen.findByRole('table',{name:'生产单'});
  expect(queries).toHaveLength(count);
  fireEvent.click(nav().getByRole('button',{name:'账号'}));fireEvent.click(nav().getByRole('button',{name:'原始账号'}));await waitFor(()=>expect(lastQuery().get('view')).toBe('accounts'));
@@ -61,19 +60,19 @@ it('待审核合并到生产单，工作台审核入口使用真实目录筛选'
 
 it('工作台生产单和需处理筛选使用服务端分页，切换范围重置页码',async()=>{
  const {lastQuery}=setup();await mount();
- fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByRole('button',{name:'下一页'}));
+ fireEvent.click(screen.getByRole('button',{name:'下一页'}));
  await waitFor(()=>expect(lastQuery().get('page')).toBe('2'));
- await screen.findByRole('complementary',{name:'当前作品'});
- expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('生产单 21')).toBeTruthy();
- fireEvent.click(within(screen.getByRole('tablist',{name:'工作台状态筛选'})).getByRole('tab',{name:/需处理/}));
+ await screen.findByRole('complementary',{name:'生产单预览'});
+ expect(within(screen.getByRole('region',{name:'生产单列表'})).getByText('生产单 21')).toBeTruthy();
+ fireEvent.click(within(screen.getByRole('tablist',{name:'制作状态筛选'})).getByRole('tab',{name:/需处理/}));
  await waitFor(()=>expect(lastQuery().get('status')).toBe('blocked'));expect(lastQuery().get('page')).toBe('1');
- await within(screen.getByRole('region',{name:'系列生产单'})).findByText('阻塞生产单 201');fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByRole('button',{name:'下一页'}));
+ await within(screen.getByRole('region',{name:'生产单列表'})).findByText('阻塞生产单 201');fireEvent.click(screen.getByRole('button',{name:'下一页'}));
  await waitFor(()=>expect(lastQuery().get('page')).toBe('2'));expect(lastQuery().get('blockedPage')).toBe('1');expect(lastQuery().get('pendingPage')).toBe('1');
- await within(screen.getByRole('region',{name:'系列生产单'})).findByText('阻塞生产单 221');
- fireEvent.change(screen.getByRole('combobox',{name:'运营系列筛选'}),{target:{value:seriesId}});
+ await within(screen.getByRole('region',{name:'生产单列表'})).findByText('阻塞生产单 221');
+ fireEvent.click(screen.getByRole('button',{name:'筛选'}));fireEvent.change(screen.getByRole('combobox',{name:'系列'}),{target:{value:seriesId}});
  await waitFor(()=>expect(lastQuery().get('seriesId')).toBe(seriesId));
  expect(['page','pendingPage','blockedPage'].map(key=>lastQuery().get(key))).toEqual(['1','1','1']);
- await within(screen.getByRole('region',{name:'系列生产单'})).findByText('阻塞生产单 201');
+ await within(screen.getByRole('region',{name:'生产单列表'})).findByText('阻塞生产单 201');
  const filters=within(screen.getByRole('group',{name:'已应用筛选'}));
  fireEvent.click(filters.getByRole('button',{name:'清除状态筛选：需处理'}));
  await waitFor(()=>expect(lastQuery().get('status')).toBe('all'));
@@ -86,19 +85,19 @@ it('工作台生产单和需处理筛选使用服务端分页，切换范围重�
 
 it('选择作品更新下一步，打开及返回详情保留第二页上下文',async()=>{
  const {lastQuery,queries}=setup();await mount();
- fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByRole('button',{name:'下一页'}));
+ fireEvent.click(screen.getByRole('button',{name:'下一页'}));
  await waitFor(()=>expect(lastQuery().get('page')).toBe('2'));
- await screen.findByRole('complementary',{name:'当前作品'});
- fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByText('生产单 22'));
- const current=screen.getByRole('complementary',{name:'当前作品'});expect(within(current).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
+ await screen.findByRole('complementary',{name:'生产单预览'});
+ fireEvent.click(within(screen.getByRole('region',{name:'生产单列表'})).getByRole('button',{name:'生产单 22'}).closest('tr')!);
+ const current=screen.getByRole('complementary',{name:'生产单预览'});expect(within(current).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
  const before=lastQuery().toString(),beforeUrl=location.search,count=queries.length;
- fireEvent.click(within(current).getByRole('button',{name:'继续审核'}));
+ fireEvent.click(within(current).getByRole('button',{name:'进入制作'}));
  await screen.findByText('实际生产单 '+uuid(22));
  expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'返回工作区'}));
  expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(false);
  expect(location.search).toBe(beforeUrl);expect(lastQuery().toString()).toBe(before);expect(queries).toHaveLength(count);
- expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
+ expect(within(screen.getByRole('complementary',{name:'生产单预览'})).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
 });
 
 it('搜索、状态和排序全部送服务端，切换范围重置分页且不写业务数据',async()=>{
@@ -107,7 +106,7 @@ it('搜索、状态和排序全部送服务端，切换范围重置分页且不�
  fireEvent.change(screen.getByRole('textbox',{name:'搜索标题或编号'}),{target:{value:'指定标题'}});fireEvent.submit(screen.getByRole('search',{name:'搜索生产单'}));
  await waitFor(()=>expect(lastQuery().get('q')).toBe('指定标题'));expect(lastQuery().get('page')).toBe('1');
  await screen.findByRole('table',{name:'生产单'});
- fireEvent.change(screen.getByRole('combobox',{name:'生产单排序'}),{target:{value:'title'}});await waitFor(()=>expect(lastQuery().get('sort')).toBe('title'));
+ fireEvent.click(screen.getByRole('button',{name:'筛选'}));fireEvent.change(screen.getByRole('combobox',{name:'生产单排序'}),{target:{value:'title'}});await waitFor(()=>expect(lastQuery().get('sort')).toBe('title'));
  await screen.findByRole('table',{name:'生产单'});fireEvent.click(screen.getByRole('tab',{name:'待审核'}));await waitFor(()=>expect(lastQuery().get('status')).toBe('review'));
  expect(lastQuery().get('visibility')).toBe('active');expect(lastQuery().get('q')).toBe('指定标题');
  fireEvent.keyDown(screen.getByRole('tab',{name:'待审核'}),{key:'ArrowRight'});await waitFor(()=>expect(lastQuery().get('status')).toBe('running'));expect(posts).toHaveLength(0);
@@ -115,17 +114,17 @@ it('搜索、状态和排序全部送服务端，切换范围重置分页且不�
 
 it('侧栏分组和底部工具保持已认可设计，Owner焦点与状态不丢',async()=>{
  setup();await mount();
- expect(within(nav().getByRole('group',{name:'生产工作'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['工作台','生产单']);
- expect(nav().queryByRole('button',{name:'连接配置'})).toBeNull();
- expect(nav().getByRole('button',{name:/OpenChatCut/}).closest('.sidebar-footer')).toBeTruthy();
- fireEvent.click(screen.getByRole('button',{name:'切换至深色模式'}));expect(screen.getByRole('button',{name:'切换至浅色模式'}).getAttribute('aria-pressed')).toBe('true');
+ expect(within(nav().getByRole('group',{name:'生产工作'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['生产单']);
+ expect(nav().queryByRole('button',{name:'制作服务'})).toBeNull();
+ expect(nav().getByRole('button',{name:'独立剪辑'}).closest('.sidebar-footer')).toBeTruthy();
+ expect(screen.queryByRole('button',{name:'切换至深色模式'})).toBeNull();
  fireEvent.click(nav().getByRole('button',{name:'收起侧栏'}));expect(nav().getByRole('button',{name:'展开侧栏'}).getAttribute('aria-pressed')).toBe('true');
- const owner=screen.getByRole('button',{name:'所有者设置'});fireEvent.click(owner);fireEvent.click(await screen.findByRole('menuitem',{name:'登录与安全'}));await screen.findByRole('dialog',{name:'登录与安全'});expect(owner.getAttribute('data-active')).toBe('true');
+ const owner=screen.getByRole('button',{name:'设置'});fireEvent.click(owner);fireEvent.click(await screen.findByRole('button',{name:'登录与安全'}));await screen.findByRole('dialog',{name:'登录与安全'});expect(owner.getAttribute('data-active')).toBe('true');
 });
 
 it('制作区Studio失败通知仍在可操作区域并保留CSRF',async()=>{
  const {posts}=setup({studioFails:true});const close=vi.fn();vi.spyOn(window,'open').mockReturnValue({close,location:{replace:vi.fn()}}as unknown as Window);await mount();
- fireEvent.click(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续审核'}));await screen.findByText('实际生产单 '+uuid(1));
- fireEvent.click(nav().getByRole('button',{name:'打开 OpenChatCut 独立剪辑'}));const alert=await screen.findByRole('alert');expect(alert.textContent).toContain('Studio 工作区不可用');expect(alert.closest('[inert]')).toBeNull();expect(close).toHaveBeenCalledOnce();
+ fireEvent.click(within(screen.getByRole('complementary',{name:'生产单预览'})).getByRole('button',{name:'进入制作'}));await screen.findByText('实际生产单 '+uuid(1));
+ fireEvent.click(nav().getByRole('button',{name:'独立剪辑'}));const alert=await screen.findByRole('alert');expect(alert.textContent).toContain('Studio 工作区不可用');expect(alert.closest('[inert]')).toBeNull();expect(close).toHaveBeenCalledOnce();
  expect(posts[0].body).toMatchObject({command:'openStandaloneStudio',data:{}});expect(posts[0].headers.get('X-CSRF-Token')).toBe('navigation-fixture-csrf');
 });

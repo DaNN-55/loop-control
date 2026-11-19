@@ -11,7 +11,7 @@ import {healthCheckLabels,type HealthCheck} from '../observability/healthChecks'
 import './SystemStatusDrawer.css';
 
 interface Props {
-  open: boolean; onOpen: () => void; onClose: () => void;
+  embedded?: boolean; triggerOnly?: boolean; open: boolean; onOpen: () => void; onClose: () => void;
   runtime: RuntimeStatus | null; maintenance: StatusItem[]; maintenanceAvailable: boolean;
   pending: boolean; error: string; observedAt: string | null;
   onRefresh: () => void; onPage: (page:number) => void;
@@ -36,10 +36,10 @@ function Section({title,summary,attention=false,children,initialOpen=false}:{tit
   useEffect(()=>{if(attention)setOpen(true);},[attention]);
   return <details className="status-drawer-section" open={open} onToggle={event=>setOpen(event.currentTarget.open)}><summary><h3>{title}</h3><span className={attention?'status-drawer-warning':''}>{summary}</span><ChevronDown size={16}/></summary><div className="status-drawer-content">{children}</div></details>;
 }
-export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,maintenanceAvailable,pending,error,observedAt,onRefresh,onPage,onOpenEpisode,triggerLabel}:Props) {
+export function SystemStatusDrawer({embedded=false,triggerOnly=false,open,onOpen,onClose,runtime,maintenance,maintenanceAvailable,pending,error,observedAt,onRefresh,onPage,onOpenEpisode,triggerLabel}:Props) {
   const [expanded,setExpanded]=useState(false),[hovering,setHovering]=useState(false);
   const [present,setPresent]=useState(false);
-  const ref=useDialogFocus<HTMLElement>(open,onClose),layer=useRef<HTMLDivElement>(null),animations=useRef<Animation[]>([]);
+  const ref=useDialogFocus<HTMLElement>(open&&!embedded&&!triggerOnly,onClose),layer=useRef<HTMLDivElement>(null),animations=useRef<Animation[]>([]);
   useEffect(()=>{
     const panel=ref.current,overlay=layer.current;
     if(!panel||!overlay)return;
@@ -61,10 +61,10 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
   },[open]);
   useEffect(()=>()=>{animations.current.forEach(animation=>animation.cancel());},[]);
   useEffect(()=>{
-    if(!open)return;
+    if(!open||embedded||triggerOnly)return;
     const previous=document.body.style.overflow;document.body.style.overflow='hidden';
     return()=>{document.body.style.overflow=previous;};
-  },[open]);
+  },[open,embedded,triggerOnly]);
   const version=runtime?.version,versionFailure=version?.state==='running_invalid'||version?.state==='mismatch';
   const worker=runtime?.worker,queue=runtime?.queue,resources=runtime?.resources;
   const maintenanceState=maintenanceAvailable?combined(maintenance.filter(item=>item.stateText!==uiText("已关闭")&&item.stateText!==uiText("未启用")).map(item=>item.state)):'unknown';
@@ -80,10 +80,7 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
   const mediaReadable=resources&&(resources.media.state==='healthy'||resources.media.state==='attention');
   const mediaVolume=resources?.media.sameVolume&&resources.systemDisk?resources.systemDisk:resources?.media;
   const hoverSummary=uiText("Worker {value0}；{value1}；最近读取 {value2}",{value0:workerSummary,value1:queueSummary,value2:date(observedAt)});
-  return <div className="system-status">
-    <Button size="sm" color="tertiary" aria-label={uiText("系统状态：{value0}",{value0:statusText})} aria-expanded={open} aria-haspopup="dialog" data-status-summary={hoverSummary} className={`system-status-trigger system-status-${overall}`} onClick={open?onClose:onOpen} onMouseEnter={()=>setHovering(true)} onMouseLeave={()=>setHovering(false)} onFocus={()=>setHovering(true)} onBlur={()=>setHovering(false)}><i aria-hidden="true"/>{triggerLabel&&<span className="sidebar-tool-label">{triggerLabel}</span>}</Button>
-    {hovering&&!open&&<div className="system-status-hover-card" aria-hidden="true"><div className="system-status-hover-row"><i className={`system-status-hover-dot system-status-hover-dot-${worker?.state??'unknown'}`}/><strong>Worker</strong><span>{workerSummary}</span></div><div className="system-status-hover-row"><i className={`system-status-hover-dot system-status-hover-dot-${!queue?'unknown':queue.blocked+queue.failed?'attention':'healthy'}`}/><strong>{uiText("任务队列")}</strong><span>{queueSummary}</span></div></div>}
-    {(open||present)&&createPortal(<div ref={layer} className="status-drawer-layer dan-ui product-ui" inert={!open}><div className="status-drawer-scrim" onClick={onClose}/><section role="dialog" aria-modal="true" aria-label={uiText("系统状态详情")} className="status-drawer-drawer" ref={ref}>
+  const content=<section role={embedded?undefined:'dialog'} aria-modal={embedded?undefined:true} aria-label={embedded?undefined:uiText("系统状态详情")} className={embedded?'owner-settings-pane status-drawer-embedded':'status-drawer-drawer'} ref={ref}>
       <header className="status-drawer-heading"><h2>{uiText("系统状态")}</h2><span className={`status-drawer-status${overall==='healthy'?'':overall==='unknown'?' is-muted':' is-warning'}`} role="status"><i/>{statusText}</span><Button size="sm" color="tertiary" aria-label={uiText("关闭系统状态详情")} iconLeading={X} onClick={onClose}/></header>
       <div className="status-drawer-body" aria-busy={pending}>
         {error&&<p role="alert" className="status-drawer-problem">{error}</p>}
@@ -128,6 +125,11 @@ export function SystemStatusDrawer({open,onOpen,onClose,runtime,maintenance,main
         </Section>
       </div>
       <footer className="status-drawer-footer"><span>{uiText("最近读取 ")}{date(observedAt)}</span><Button size="sm" color="secondary" isDisabled={pending} onClick={onRefresh}>{pending?uiText("读取中…"):uiText("刷新系统状态")}</Button></footer>
-    </section></div>,document.body)}
+    </section>;
+  if(embedded)return content;
+  return <div className="system-status">
+    <Button size="sm" color="tertiary" aria-label={uiText("系统状态：{value0}",{value0:statusText})} aria-expanded={open} aria-haspopup="dialog" data-status-summary={hoverSummary} className={`system-status-trigger system-status-${overall}`} onClick={open?onClose:onOpen} onMouseEnter={()=>setHovering(true)} onMouseLeave={()=>setHovering(false)} onFocus={()=>setHovering(true)} onBlur={()=>setHovering(false)}><i aria-hidden="true"/>{triggerLabel&&<span className="sidebar-tool-label">{triggerLabel}</span>}</Button>
+    {hovering&&!open&&<div className="system-status-hover-card" aria-hidden="true"><div className="system-status-hover-row"><i className={`system-status-hover-dot system-status-hover-dot-${worker?.state??'unknown'}`}/><strong>Worker</strong><span>{workerSummary}</span></div><div className="system-status-hover-row"><i className={`system-status-hover-dot system-status-hover-dot-${!queue?'unknown':queue.blocked+queue.failed?'attention':'healthy'}`}/><strong>{uiText("任务队列")}</strong><span>{queueSummary}</span></div></div>}
+    {!triggerOnly&&(open||present)&&createPortal(<div ref={layer} className="status-drawer-layer dan-ui product-ui" inert={!open}><div className="status-drawer-scrim" onClick={onClose}/>{content}</div>,document.body)}
   </div>;
 }

@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {WorkspaceVisualPreparation} from './WorkspaceVisualPreparation';
 import {WorkspaceMaterialSelectionProvider,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -130,4 +130,20 @@ it('prefills the video prompt independently and offers a named visual only on ex
  expect(screen.getByRole('textbox',{name:'画面动作'})).toHaveProperty('value','独立运镜提示');
  fireEvent.click(screen.getByRole('tab',{name:'图片'}));
  expect(screen.getByRole('button',{name:'准备素材：产品.png'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
+});
+
+it('returns from service setup with the exact model while preserving the shot input and avoiding generation',async()=>{
+ const {command}=setup({imagePrompt:'保留本镜头画面输入',references:['ref-0']});await modelReady();
+ let request:import('./connectionSetup').ConnectionSetupRequest|undefined;
+ const receive=(event:Event)=>{request=(event as CustomEvent).detail;};window.addEventListener('open-external-connections',receive,{once:true});
+ fireEvent.click(screen.getByRole('button',{name:'图片连接与模型'}));
+ fireEvent.click(screen.getByRole('button',{name:'配置制作服务'}));
+ expect(request?.capability).toBe('image');expect(command).not.toHaveBeenCalled();
+ const configured={...service,id:'configured-image',connectionId:'configured',connectionVersionId:'configured-v',models:['gpt-image-2']};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[{capability:'image',services:[configured]}]}})));
+ await act(async()=>{await request!.onUse({connectionId:'configured',versionId:'configured-v',modelId:'gpt-image-2'});});
+ expect(screen.getByRole('textbox',{name:'图片提示词'})).toHaveProperty('value','保留本镜头画面输入');
+ expect(screen.getAllByRole('button',{name:/放大参考图/})).toHaveLength(1);
+ await waitFor(()=>expect(JSON.parse(sessionStorage.getItem('loop-visual-draft:form-workspace:target')!).imageSelection.connectionVersionId).toBe('configured-v'));
+ expect(command).not.toHaveBeenCalled();
 });

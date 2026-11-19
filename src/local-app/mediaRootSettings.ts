@@ -45,7 +45,7 @@ export class LocalMediaRootSettings{
    if(!row.authorized)throw new ConfigurationError(403,'仅工作区存储所有者可管理媒体根。');
    let reason:string|undefined;try{if(row.binding){if(row.binding.path!==this.mediaRoot)throw Error('服务与已提交媒体根不一致，请重启本机服务。');await verifyMediaRootBinding(row.binding,this.runtime?.minimumFreeBytes??0);}else await inspectMediaRoot(this.mediaRoot,this.runtime?.minimumFreeBytes??0);}catch(e){reason=e instanceof Error?e.message:'媒体根不可用。';}
    const migration=await readMediaRootMigration(c);
-   return{migration,executing:this.busy&&migration?.status==='copying',path:row.binding?.path??this.mediaRoot,canInitialize:row.empty,status:reason?'unavailable':'ready',...(reason?{reason}:{})};
+   return{migration,executing:this.busy&&migration?.status==='copying',path:row.binding?.path??this.mediaRoot,initialized:!!row.binding,canInitialize:row.empty,status:reason?'unavailable':'ready',...(reason?{reason}:{})};
   });
  }
  async execute(session:OwnerSession,body:Record<string,unknown>){
@@ -93,7 +93,7 @@ export class LocalMediaRootSettings{
     throw new ConfigurationError(503,'媒体根重载失败，已恢复原配置；请重试。');
    }
    await undo?.commit?.();
-   return{path:binding.path,canInitialize:true,status:'ready'};
+   return{path:binding.path,initialized:true,canInitialize:true,status:'ready'};
   }finally{this.busy=false;}
  }
 }

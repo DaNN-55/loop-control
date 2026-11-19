@@ -13,8 +13,8 @@ it('quietly reads only the catalog and pauses when hidden or a protected dialog 
  await act(async()=>{await vi.advanceTimersByTimeAsync(15000);});expect(reads.slice(before)).toHaveLength(1);expect(reads.at(-1)).toContain('/catalog?');
  const hidden=vi.spyOn(document,'hidden','get').mockReturnValue(true);const hiddenStart=reads.length;
  await act(async()=>{await vi.advanceTimersByTimeAsync(30000);});expect(reads).toHaveLength(hiddenStart);hidden.mockReturnValue(false);
- await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'新建生产单'}));});expect(screen.getByRole('dialog',{name:'新建生产单'})).toBeTruthy();
- await act(async()=>{await vi.advanceTimersByTimeAsync(15000);});expect(reads).toHaveLength(hiddenStart);
+ await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'创建内容账号'}));});expect(screen.getByRole('dialog',{name:'新建账号'})).toBeTruthy();expect(reads.slice(hiddenStart)).toEqual(['/api/local/media-root']);const dialogStart=reads.length;
+ await act(async()=>{await vi.advanceTimersByTimeAsync(15000);});expect(reads).toHaveLength(dialogStart);
 });
 it('keeps an explicit read retry when the quiet update fails',async()=>{
  vi.useFakeTimers();let fail=false;const requests:string[]=[];

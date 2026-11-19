@@ -1,0 +1,36 @@
+.production-catalog{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;min-width:0}
+.production-catalog[data-preview=true]{grid-template-columns:minmax(0,1fr) 300px}
+.episode-list-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.episode-extra-filters:not([hidden]){display:flex;flex-basis:100%;gap:12px;flex-wrap:wrap;padding-block:8px}
+.episode-extra-filters label{display:grid;gap:5px;flex:1 1 130px;min-width:0}
+.episode-extra-filters>.dan-select-field{flex:1 1 150px}
+.episode-extra-filters[hidden]{display:none!important}
+.episode-table-scroll{max-inline-size:100%;overflow:auto;container-type:inline-size}
+html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table{display:table;table-layout:auto;border-collapse:separate;border-spacing:0;inline-size:100%;min-inline-size:560px;font-size:12px}
+html[data-interface=impeccable] .product-ui .episode-list-workspace[data-statistics=true] .episode-table{min-inline-size:920px}
+html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table .table-row{display:table-row;min-height:0;min-width:0;cursor:pointer}
+html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table .table-row>*{display:table-cell!important;vertical-align:middle;text-align:start;padding:12px;border-bottom:1px solid var(--lc-line)}
+html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table thead th{position:sticky;inset-block-start:0;z-index:1;background:var(--lc-surface);color:var(--lc-muted);font-weight:500;white-space:nowrap}
+html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table .episode-name{min-inline-size:150px;max-inline-size:320px}
+.episode-table .episode-name small{display:block}
+.episode-table .episode-cost>span,.episode-table .episode-generation-counts>span{display:block;margin-block:4px}
+.episode-table .episode-row:focus-visible,.episode-table-scroll:focus-visible{outline:2px solid var(--lc-accent);outline-offset:-2px}
+.episode-table .episode-row.is-selected{background:var(--lc-accent-soft)}
+.episode-blocker-reason{display:block;max-width:180px;margin-top:4px;color:var(--lc-danger);font-size:11px;line-height:1.5}
+.production-preview{position:sticky;top:20px;max-height:calc(100dvh - 100px);overflow:auto;border:1px solid var(--lc-line);border-radius:10px;background:var(--lc-surface);min-width:0}
+.production-preview-content>header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--lc-line)}
+.production-preview-content h2{font-size:14px;margin:0}
+.production-preview-content h3{font-size:14px;line-height:1.5;margin:0}
+.production-preview-content .work-artwork{min-height:180px;aspect-ratio:4/3}
+.production-preview-body{display:grid;gap:12px;padding:16px;font-size:12px;line-height:1.7}
+.production-preview-body p{margin:0;overflow-wrap:anywhere}
+.production-preview-context,.production-preview-source{color:var(--lc-muted);font-size:11px}
+.production-preview-source{padding:8px 16px;margin:0;border-bottom:1px solid var(--lc-line)}
+.production-preview-state{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.production-script-summary{padding:16px;border-bottom:1px solid var(--lc-line);background:var(--lc-surface-2)}
+.production-script-summary p{margin:8px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto;font-size:12px;line-height:1.8}
+.production-preview-dialog{position:fixed;inset:0;margin:auto;box-sizing:border-box;width:min(420px,calc(100vw - 24px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);color:var(--lc-ink);overflow:auto}
+.production-preview-dialog::backdrop{background:rgb(0 0 0/.35)}
+@container(max-width:620px){.episode-table .episode-stage-name{max-inline-size:100px}.episode-table time{white-space:normal!important}}
+@media(max-width:1000px){.production-catalog[data-preview=true]{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){.episode-list-tools{margin-inline-start:auto}.production-preview-content .work-artwork{aspect-ratio:16/10}}

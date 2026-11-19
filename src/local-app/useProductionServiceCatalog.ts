@@ -74,8 +74,8 @@ export function useProductionServiceCatalog({scope,active=true,refreshKey}:{scop
  current.current=reading.owner;
  useEffect(()=>{
   if(!active)return;
-  reading.start();window.addEventListener('focus',reading.refresh);window.addEventListener('loop-local-session-expired',reading.expire);
-  return()=>{reading.stop();window.removeEventListener('focus',reading.refresh);window.removeEventListener('loop-local-session-expired',reading.expire);};
+  reading.start();window.addEventListener('focus',reading.refresh);window.addEventListener('loop-production-catalog-changed',reading.refresh);window.addEventListener('loop-local-session-expired',reading.expire);
+  return()=>{reading.stop();window.removeEventListener('focus',reading.refresh);window.removeEventListener('loop-production-catalog-changed',reading.refresh);window.removeEventListener('loop-local-session-expired',reading.expire);};
  },[reading,active,refreshKey]);
  const value=view?.owner===reading.owner?view:null;
  return {catalog:value?.catalog??null,pending:active&&(value?.pending??true),error:value?.error??null,refresh:reading.refresh};
