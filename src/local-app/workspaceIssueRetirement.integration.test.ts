@@ -19,5 +19,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('removes issue data and d
   expect(JSON.parse(await readFile(join(f.root,'issues-before-retirement.json'),'utf8'))).toHaveLength(1);
   const functions=(await f.c.query("SELECT pg_get_functiondef('local_identity.workspace_delivery_current(uuid,uuid)'::regprocedure) a,pg_get_functiondef('public.delete_episode(uuid,uuid)'::regprocedure) b")).rows[0];
   expect(functions.a+functions.b).not.toContain('workspace_export_issues');
+  expect(functions.a).toContain("w.editor_authority='native'");
+  const catalog=await fetch(f.origin+'/api/local/catalog?view=operations',{headers:{Cookie:'loop_owner_session='+f.token}});expect(catalog.status,await catalog.clone().text()).toBe(200);
  }finally{await f.close();}
 },60000);

@@ -10,8 +10,7 @@ export const localCatalogSql=` with owned_base as materialized (
   select e.*,greatest(e.updated_at,
    (select max(w.updated_at) from local_identity.production_workspaces w where w.episode_id=e.id),
    (select max(coalesce(t.completed_at,t.claimed_at,t.created_at)) from public.tasks t where t.episode_id=e.id and t.invalidated_at is null and not local_identity.is_historical_task(t.id)),
-   (select max(greatest(x.created_at,x.confirmed_at)) from local_identity.workspace_exports x where x.episode_id=e.id),
-   (select max(greatest(i.created_at,i.resolved_at)) from local_identity.workspace_export_issues i join local_identity.production_workspaces w on w.id=i.workspace_id where w.episode_id=e.id)) activity_at
+   (select max(greatest(x.created_at,x.confirmed_at)) from local_identity.workspace_exports x where x.episode_id=e.id)) activity_at
   from owned_base e
  ), current_collections as materialized (
   select e.id episode_id,c.container_id,c.series_id from owned e cross join lateral local_identity.episode_storage_collection(e.id) c
@@ -31,7 +30,6 @@ export const localCatalogSql=` with owned_base as materialized (
    coalesce(x.project_content_version=w.revision and x.content_sha256=w.content_sha256,false) export_current,
    coalesce(x.status='ready' and x.artifact is not null and not exists(select 1 from jsonb_array_elements(case when jsonb_typeof(x.checks)='array' then x.checks else '[]'::jsonb end) check_row where check_row->>'passed' is distinct from 'true'),false) export_ready,
    d.task_id delivery_task_id,d.status delivery_status,
-   exists(select 1 from local_identity.workspace_export_issues i where i.workspace_id=w.id and i.resolved_at is null) open_issue,
    coalesce(e.main_script_revision_id=w.script_revision_id and local_identity.preparation_source_current(p.id),false) basis_current
   from owned e join local_identity.production_workspaces w on w.episode_id=e.id
   join local_identity.production_preparation_revisions p on p.id=w.preparation_revision_id and p.episode_id=w.episode_id and p.script_revision_id=w.script_revision_id
@@ -48,7 +46,7 @@ export const localCatalogSql=` with owned_base as materialized (
   select r.* from current_packages r where r.stage<>'production_ready'
   union all select w.export_id,w.episode_id,'workspace_export',w.revision::integer from workspace_facts w join scoped e on e.id=w.episode_id
    where $2::text<>'accounts' and e.archived_at is null and e.stage<>'production_completed' and not local_identity.is_historical_episode(e.id)
-   and w.basis_current and w.export_current and w.export_ready and w.confirmed_at is null and not w.open_issue
+   and w.basis_current and w.export_current and w.export_ready and w.confirmed_at is null
  ), scoped_tasks as materialized (
   select t.*,case when t.task_type='generate_review_render' then t.task_type::text
    when jsonb_typeof(t.input_snapshot#>'{shot_preparation,draft_id}')='string' or jsonb_typeof(t.input_snapshot#>'{shot_preparation,shot_id}')='string'
@@ -99,13 +97,13 @@ export const localCatalogSql=` with owned_base as materialized (
   union all select w.id,'workspace_content',w.episode_id,jsonb_build_object('code','WORKSPACE_CONTENT_UNAVAILABLE','detail','当前工程或存储位置不可读取，请检查系统状态后重试。')
    from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and e.stage<>'production_completed' and w.basis_current and w.native_usage->>'unavailable'='true'
   union all select w.export_id,'workspace_export',w.episode_id,jsonb_build_object('code','WORKSPACE_EXPORT_FAILED','detail','成片检查未通过，请打开检查与交付处理。')
-   from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and (w.basis_current and w.export_current and w.export_status='failed' or w.open_issue)
+   from workspace_facts w join scoped e on e.id=w.episode_id where e.archived_at is null and not local_identity.is_historical_episode(e.id) and e.stage<>'production_completed' and w.basis_current and w.export_current and w.export_status='failed'
  ), episode_states as materialized (
   select e.id episode_id,case
    when w.id is not null and e.stage='production_completed' then 'done'
    when w.id is not null then case
     when e.archived_at is not null or local_identity.is_historical_episode(e.id) then 'draft'
-    when w.open_issue or exists(select 1 from task_blockers b where b.episode_id=e.id) then 'blocked'
+    when exists(select 1 from task_blockers b where b.episode_id=e.id) then 'blocked'
     when exists(select 1 from pending p where p.episode_id=e.id) then 'review'
     else 'running' end
    when exists(select 1 from latest_tasks t where t.episode_id=e.id and t.status in ('blocked','failed') and not exists(
@@ -192,7 +190,7 @@ export const localCatalogSql=` with owned_base as materialized (
    group by 1
   ) counts),'{}'),
   'unassignedAccountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select e.account_id,count(*) n from owned e left join current_collections c on c.episode_id=e.id where (c.container_id is not null and c.series_id is null) or (c.container_id is null and e.series_version_id is null) group by e.account_id)s),'{}'),
-  'reviewCount',(select count(*) from owned e where archived_at is null and not local_identity.is_historical_episode(e.id) and ((not exists(select 1 from local_identity.production_workspaces w where w.episode_id=e.id) and stage in ('script_review','visual_review','storyboard_review','qc_review')) or exists(select 1 from workspace_facts w where w.episode_id=e.id and w.basis_current and w.export_current and w.export_ready and w.confirmed_at is null and not w.open_issue and e.stage<>'production_completed'))),
+  'reviewCount',(select count(*) from owned e where archived_at is null and not local_identity.is_historical_episode(e.id) and ((not exists(select 1 from local_identity.production_workspaces w where w.episode_id=e.id) and stage in ('script_review','visual_review','storyboard_review','qc_review')) or exists(select 1 from workspace_facts w where w.episode_id=e.id and w.basis_current and w.export_current and w.export_ready and w.confirmed_at is null and e.stage<>'production_completed'))),
   'stages',coalesce((select jsonb_object_agg(stage,n) from(select stage,count(*) n from filtered group by stage)s),'{}'),
   'artifactCounts',coalesce((select jsonb_object_agg(episode_id,n) from(select a.episode_id,count(*) n from public.artifacts a join page_rows e on e.id=a.episode_id group by a.episode_id)s),'{}'),
   'pending',case when $2::text='operations' then jsonb_build_object('total',(select total from pending_bounds),'page',(select page from pending_bounds),

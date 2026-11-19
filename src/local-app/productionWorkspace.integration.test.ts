@@ -1,5 +1,6 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
+import {editStudioDocument} from './studioDocument.fixture';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,readFile} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -38,14 +39,21 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner persists incomplet
   const restored=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:filled.body.revision});expect(restored.status,JSON.stringify(restored.body)).toBe(200);
   const edited=JSON.parse(await readFile(join(f.assetRoot,restored.body.workspace.relativePath),'utf8'));expect(edited.timelines[0].items.map((i:{id:string})=>i.id)).toEqual(w.clips.map((i:{itemId:string})=>i.itemId));expect(edited.assets).toHaveLength(1);
   const originalSha=restored.body.productionWorkspace.project.sha256;
-  const closedAgain=await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:restored.body.productionWorkspace.revision});expect(closedAgain.status).toBe(200);
+  let closedAgain=await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:restored.body.productionWorkspace.revision});expect(closedAgain.status).toBe(200);
   const script2=randomUUID(),board2=randomUUID(),path2=`episodes/${f.episode}/script-v2.md`,text2=Buffer.from('明确重新规划的脚本。');await writeFile(join(f.assetRoot,path2),text2);
   await f.c.query("INSERT INTO public.production_material_revisions(id,episode_id,revision_number,material_type,source_kind,source_path,storage_path,mime_type,sha256,file_size,is_main_script,created_by,material_purpose) VALUES($1,$2,3,'script','paste',$3,$3,'text/markdown',$4,$5,true,$6,'main_script')",[script2,f.episode,path2,createHash('sha256').update(text2).digest('hex'),text2.length,f.owner]);
   await f.c.query("UPDATE public.episodes SET main_script_revision_id=$2 WHERE id=$1;",[f.episode,script2]);
   await f.c.query("UPDATE public.review_packages SET invalidated_at=now(),invalidated_reason='受控重规划' WHERE id=$1",[f.board]);
   await f.c.query("INSERT INTO public.review_packages(id,episode_id,stage,revision_number,artifact_id,task_id,context_snapshot) SELECT $1,episode_id,stage,2,artifact_id,task_id,context_snapshot FROM public.review_packages WHERE id=$2",[board2,f.board]);
-  const staleRead=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect((await staleRead.json()).workspace.stale).toBe(true);
-  expect((await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:closedAgain.body.revision})).status).toBe(409);
+  expect((await f.c.query('SELECT editor_authority FROM local_identity.production_workspaces WHERE id=$1',[w.id])).rows[0].editor_authority).toBe('native');
+  const staleRead=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect((await staleRead.json()).workspace.stale).toBe(false);
+  const nativeReopened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:closedAgain.body.revision});expect(nativeReopened.status,JSON.stringify(nativeReopened.body)).toBe(200);expect(nativeReopened.body.productionWorkspace.project.sha256).toBe(originalSha);
+  let nativeWorkspace=nativeReopened.body.productionWorkspace;
+  await editStudioDocument(nativeReopened.body.studioUrl,nativeWorkspace.project.projectId,doc=>{doc.timelines[0].items[0].transform.opacity=.7;});
+  const nativeSaved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:nativeWorkspace.revision,workspaceRelativePath:nativeReopened.body.workspace.relativePath,projectId:nativeWorkspace.project.projectId,expectedWorkspaceSha256:nativeWorkspace.project.sha256});expect(nativeSaved.status,JSON.stringify(nativeSaved.body)).toBe(200);nativeWorkspace=nativeSaved.body.productionWorkspace;
+  closedAgain=await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:nativeWorkspace.revision});expect(closedAgain.status).toBe(200);
+  const nativeExport=await f.request('exportWorkspace',{workspaceId:w.id,expectedRevision:nativeWorkspace.revision});expect(nativeExport.status,JSON.stringify(nativeExport.body)).toBe(200);expect(nativeExport.body.exports[0].status,JSON.stringify(nativeExport.body.exports[0].checks)).toBe('ready');
+  const exportFile=nativeExport.body.exports[0];const accepted=await f.request('confirmWorkspaceExport',{workspaceId:w.id,expectedRevision:nativeWorkspace.revision,exportId:exportFile.id,expectedExportSha256:exportFile.artifact.sha256,expectedContentSha256:exportFile.contentSha256});expect(accepted.status,JSON.stringify(accepted.body)).toBe(200);expect((await f.c.query('SELECT local_identity.workspace_delivery_current($1,$2) current',[w.id,exportFile.id])).rows[0].current).toBe(true);
   await f.c.query("INSERT INTO public.audit_events(account_id,episode_id,event_type,payload,actor_id) SELECT account_id,id,'main_script_reconfirmed',jsonb_build_object('material_id',$2::text,'reason','调整叙事顺序'),$3 FROM public.episodes WHERE id=$1",[f.episode,script2,f.owner]);
   const replan=await f.request('replanWorkspace',{workspaceId:w.id,expectedRevision:closedAgain.body.revision,reviewPackageId:board2,expectedScriptRevisionId:script2,reason:'调整叙事顺序'});expect(replan.status,JSON.stringify(replan.body)).toBe(200);expect(replan.body.scriptRevisionId).toBe(script2);expect(replan.body.history.some((h:{reason:string})=>h.reason==='调整叙事顺序')).toBe(true);expect(replan.body.history.some((h:{sha256:string})=>h.sha256===originalSha)).toBe(true);
   const history=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace/project?sha=${originalSha}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(history.status).toBe(200);expect((await history.json()).project.timelines[0].items.map((i:{id:string})=>i.id)).toEqual(w.clips.map((i:{itemId:string})=>i.itemId));

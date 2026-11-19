@@ -80,6 +80,10 @@ export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:Pic
 }
 /** A native save adopts actual cue edits without claiming that a human reviewed the text. */
 export async function syncNativeWorkspaceCaptions(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+ // A changed script is a separate preparation; keep its inputs separate from
+ // the existing native project. Final validation reads actual native lanes.
+ if(row.editor_authority==='native'&&!(await c.query('SELECT EXISTS(SELECT 1 FROM public.episodes WHERE id=$1 AND main_script_revision_id=$2) AND local_identity.preparation_source_current($3) current',[row.episode_id,row.script_revision_id,row.preparation_revision_id])).rows[0]?.current)return;
+
  const records=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1',[row.id])).rows;
  const seen=new Set<string>();
  for(const clip of row.bindings){
@@ -159,6 +163,7 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'manual');
   return updateWorkspaceProject(c,root,row,finalProject,row.bindings,'编辑字幕',{nativeEdit:true});
  }
+ if(data.automatic===true&&project.loopControl?.editorAuthority==='native')throw new ConfigurationError(409,'请直接在剪辑台调整字幕。');
  if(command==='requestWorkspaceCaptionAlignment'){
   if(data.automatic!==undefined&&typeof data.automatic!=='boolean')throw new ConfigurationError(400,'自动同步标记无效。');
   if(data.automatic===true){

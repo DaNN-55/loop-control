@@ -1,3 +1,5 @@
+import {readNativeStudioImports} from '../worker/openchatcutStudio.js';
+import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import {openChatCutBundledSounds,openChatCutBundledSoundVersion,bundledSoundMaterialName} from '../openchatcutBundledSounds.js';
 import {readTrustedBundledSound} from '../worker/openchatcutBundledSounds.js';
@@ -39,4 +41,22 @@ export async function registerWorkspaceBundledSound(c:PoolClient,root:string,epi
  let bytes:Buffer;try{bytes=await readTrustedBundledSound(sdkRoot,id);}catch{throw new ConfigurationError(409,'内置音效文件不可用或指纹已变化，请恢复当前 Studio 安装后重试。');}
  await io.assertValid();const file=await snapshotInput(root,episodeId,{sourceKind:'file',sourcePath:bundledSoundMaterialName(id),contentBase64:bytes.toString('base64')},io.relativePath);await io.assertValid();
  await c.query("SELECT public.import_production_material($1,'audio','file',$2,$3,'audio/mpeg',$4,$5,false,'sound_effect')",[episodeId,origin,file.storagePath,sound.sha256,sound.fileSize]);
+}
+
+/** Register only receipted SDK uploads at their exact owned episode coordinate.
+ * This runs inside the same Owner save transaction, with no extra UI action. */
+export async function registerWorkspaceNativeImports(c:PoolClient,root:string,episodeId:string,project:OpenChatCutProject){
+ const storage=await episodeFileIO(c,root,episodeId,true),imports=await readNativeStudioImports(root,episodeId,storage);
+ const paths=new Set<string>();
+ function scan(value:unknown){if(Array.isArray(value)){value.forEach(scan);return;}if(value&&typeof value==='object')for(const[key,child]of Object.entries(value)){if(key==='src'&&typeof child==='string')paths.add(child);else scan(child);}}
+ scan(project);
+ for(const path of paths){
+  const record=imports.find(imported=>imported.relativePath===path);if(!record)continue;
+  const extension=path.slice(path.lastIndexOf('.'));
+  if(!/^[a-f0-9]{64}$/.test(record.sha256)||!Number.isSafeInteger(record.fileSize)||record.fileSize<1||!['image','video','audio'].includes(record.kind)||path!==`${storage.relativePath}/materials/${record.sha256}-native${extension}`||!/^[.][a-z0-9]+$/.test(extension))throw new ConfigurationError(409,'原生素材归档回执无效。');
+  await verifyEpisodeFile(c,root,episodeId,path,record.sha256,record.fileSize);
+  const existing=(await c.query('SELECT sha256,file_size FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];
+  if(existing){if(existing.sha256!==record.sha256||Number(existing.file_size)!==record.fileSize)throw new ConfigurationError(409,'原生素材登记指纹已变化。');continue;}
+  await c.query("SELECT public.import_production_material($1,$2,'file',$3,$4,$5,$6,$7,false,$8)",[episodeId,record.kind,`openchatcut-native/${record.displayName.replace(/[\\/\x00-\x1f]/g,'_')}`,path,record.mimeType,record.sha256,record.fileSize,record.kind==='audio'?'general_reference':'visual_reference']);
+ }
 }

@@ -83,12 +83,12 @@ export class CompletedProductionCopies {
   for(const row of [...s.decisions,...s.audioPreparations]){const id=String(row.candidate_id??row.id);mapping[id]=productionCopyId(copyId,id);}
   for(const binding of s.workspace.bindings)mapping[binding.id]=productionCopyId(copyId,binding.id);
   for(const file of s.files){const relativePath=`${io.relativePath}/materials/${file.sha256}-native-${file.sha256}${extname(file.path)}`;await copyProductionMedia(file.path,join(root,relativePath),file.sha256,file.fileSize);for(const ref of file.references)mapping[ref]=relativePath;}
-  let project=remapProductionCopy(s.project,mapping);if(project.loopControl)project.loopControl.inputFingerprint=workspaceId;
+  let project=remapProductionCopy(s.project,mapping);project.loopControl={version:'four-step-workspace/v1',transitionMode:'studio',...project.loopControl,inputFingerprint:workspaceId,editorAuthority:'native'};
   const bindings=synchronizeWorkspaceBindings(project,remapProductionCopy(s.workspace.bindings,mapping));
   const native=await persistWorkspaceProject(c,root,targetId,project),contentSha=workspaceContentSha256(project);
   const manifest=remapProductionCopy(s.preparation.manifest,mapping),prepFile=await persistPublicationFile(c,root,targetId,`${io.relativePath}/preparation/${prepId}.json`,Buffer.from(JSON.stringify(manifest,null,2)+'\n'));
   const sourceRow=(row:MediaRow)=>({sourceId:row.id,value:remapProductionCopy(row,mapping)});
-  const workspace={...remapProductionCopy(s.workspace,mapping),id:workspaceId,episode_id:targetId,script_revision_id:mapping[s.workspace.script_revision_id],storyboard_package_id:null,preparation_revision_id:prepId,revision:1,native_edit_revision:1,bindings,project_path:native.relativePath,project_sha256:native.sha256,project_size:native.fileSize,content_sha256:contentSha};
+  const workspace={...remapProductionCopy(s.workspace,mapping),id:workspaceId,episode_id:targetId,script_revision_id:mapping[s.workspace.script_revision_id],storyboard_package_id:null,preparation_revision_id:prepId,revision:1,native_edit_revision:1,editor_authority:'native',bindings,project_path:native.relativePath,project_sha256:native.sha256,project_size:native.fileSize,content_sha256:contentSha};
   const narrations=remapProductionCopy(s.narrations,mapping).map(row=>({...row,task_id:null,requested_project_sha256:null,requested_native_edit_revision:null,manual_audio_track_id:row.manual_audio_track_id??row.adopted_audio_track_id}));
   const audioPreparations=s.audioPreparations.map(raw=>{
    const row=remapProductionCopy(raw,mapping),track=s.audio.find(track=>track.source_task_id===raw.task_id&&raw.task_id||track.id===(raw.request_snapshot as {audioTrackId?:string})?.audioTrackId);

@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {editStudioDocument} from './studioDocument.fixture';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('native text, style and timing save once, final-file approval confirms captions and later edits invalidate it',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('native text, style and timing save once, final-file approval confirms native output without changing old caption approvals and later edits invalidate it',async()=>{
  const f=await productionWorkspaceFixture();
  try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
@@ -28,8 +28,8 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('native text, style and t
   const exported=await send('exportWorkspace');expect(exported.status,JSON.stringify(exported.body)).toBe(200);w=exported.body;expect(w.exports[0].status,JSON.stringify(w.exports[0].checks)).toBe('ready');expect(w.captions[0].textConfirmed).toBe(false);
   const approve={exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256};
   expect((await send('confirmWorkspaceExport',{...approve,expectedExportSha256:'0'.repeat(64)})).status).toBe(409);
-  const confirmed=await send('confirmWorkspaceExport',approve);expect(confirmed.status,JSON.stringify(confirmed.body)).toBe(200);w=confirmed.body;expect(w.exports[0].confirmed).toBe(true);expect(w.captions.every((c:any)=>c.textConfirmed)).toBe(true);expect(w.readiness.deliverable).toBe(true);
-  await nativeEdit(doc=>{firstLane(doc).style.fontSize=.055;});expect(w.captions[0].timing).toBe('current');expect(w.captions[0].textConfirmed).toBe(true);expect(w.exports[0].confirmed).toBe(false);expect(w.exports[0].current).toBe(false);
+  const confirmed=await send('confirmWorkspaceExport',approve);expect(confirmed.status,JSON.stringify(confirmed.body)).toBe(200);w=confirmed.body;expect(w.exports[0].confirmed).toBe(true);expect(w.captions.every((c:any)=>!c.textConfirmed)).toBe(true);expect(w.readiness.deliverable).toBe(true);
+  await nativeEdit(doc=>{firstLane(doc).style.fontSize=.055;});expect(w.captions[0].timing).toBe('current');expect(w.captions[0].textConfirmed).toBe(false);expect(w.exports[0].confirmed).toBe(false);expect(w.exports[0].current).toBe(false);
   await nativeEdit(doc=>{firstLane(doc).words[0].end=99999;});expect(w.captions[0].timing).toBe('stale');const invalid=await send('exportWorkspace');expect(invalid.status).toBe(200);w=invalid.body;expect(w.exports[0].status).toBe('failed');expect(w.exports[0].checks.find((x:any)=>x.name==='captions').passed).toBe(false);
   await nativeEdit(doc=>{firstLane(doc).words[0].end=700;});expect(w.captions[0].timing).toBe('current');expect(w.captions[0].textConfirmed).toBe(false);
   await nativeEdit(doc=>{const timeline=doc.timelines[0];for(const track of Object.values(timeline.tracks) as any[])if(track.captions)track.captions.sourceEntries=track.captions.sourceEntries.filter((entry:any)=>entry.id!==`workspace-caption-shot-${w.clips[0].shotId}`);});expect(w.captions[0].contract.enabled).toBe(false);

@@ -377,15 +377,3 @@ it('defaults to the selected fragment and requires explicit whole-shot scope bef
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({replacementScope:'shot'})));
  expect(command.mock.calls.filter(([name])=>name==='adoptWorkspaceVisualCandidate')).toHaveLength(0);
 });
-it('applies a visual candidate to the live native document and saves before registering its adoption',async()=>{
- const w={...workspace,visualCandidates:[{...workspace.visualCandidates![0],durationSeconds:4}]},changed={...w,revision:4,project:{...w.project,sha256:'saved-native'}};let readable=w;let finishSave!:()=>void;
- const saved=new Promise<void>(resolve=>{finishSave=()=>{readable=changed;resolve();};});
- vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:readable})));
- const bridge={connected:true,applyNativeEdit:vi.fn(async()=>({})),save:vi.fn(()=>saved)} as unknown as import('./EmbeddedStudioHost').EmbeddedStudioBridge;
- const plan={...preparation,impact:{...preparation.impact,currentSeconds:3,appliedSeconds:3,deltaSeconds:0}};
- const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?plan:changed);
- render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]} bridge={bridge}/>);
- await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'用到这个镜头'}));
- await waitFor(()=>expect(bridge.applyNativeEdit).toHaveBeenCalledWith('apply-candidate',{edit:plan.edit}));expect(command.mock.calls.filter(([name])=>name==='adoptWorkspaceVisualCandidate')).toHaveLength(0);
- finishSave();await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.objectContaining({expectedRevision:4,nativeApplied:true,adoptionId:'adoption'})));
-});

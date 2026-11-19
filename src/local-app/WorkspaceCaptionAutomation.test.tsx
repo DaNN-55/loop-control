@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {act,cleanup,render,screen,waitFor} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import {WorkspaceCaptionAutomation} from './WorkspaceCaptionAutomation';
 import {defaultShotCaptionContract} from '../shotCaptions';
@@ -59,4 +59,25 @@ it('stops after a pending read is disabled and resumes only when enabled again',
  const view=render(<WorkspaceCaptionAutomation {...props}/>);await waitFor(()=>expect(read).toHaveBeenCalledTimes(1));view.rerender(<WorkspaceCaptionAutomation {...props} disabled/>);
  await act(async()=>{release(Response.json({workspace}));await new Promise(resolve=>setTimeout(resolve,30));});expect(read).toHaveBeenCalledTimes(1);expect(command).not.toHaveBeenCalled();
  view.rerender(<WorkspaceCaptionAutomation {...props}/>);await waitFor(()=>expect(command).toHaveBeenCalledTimes(1));expect(read).toHaveBeenCalledTimes(2);
+});
+
+it('shows automatic-caption failures in the shared floating notice without occupying the workspace',async()=>{
+ const workspace=fixture();workspace.captions=workspace.captions!.slice(0,1);
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
+ const command=vi.fn(async()=>{throw Error('环境不可用');});
+ const view=render(<section aria-label="准备区"><WorkspaceCaptionAutomation workspace={workspace} command={command} onChange={vi.fn()}/></section>);
+ const message=await screen.findByText('字幕自动处理未完成，可直接调整字幕或重新尝试。');
+ const notice=screen.getByRole('region',{name:'通知'});
+ expect(notice.contains(message)).toBe(true);
+ expect(view.container.contains(message)).toBe(false);
+ expect(message.closest('[role="status"]')?.getAttribute('data-tone')).toBe('warning');
+ fireEvent.click(screen.getByRole('button',{name:'关闭操作提示'}));
+ await waitFor(()=>expect(screen.queryByText('字幕自动处理未完成，可直接调整字幕或重新尝试。')).toBeNull());
+ expect(command).toHaveBeenCalledTimes(1);
+});
+it('does not automatically rewrite a project that became native while its preparation read was pending',async()=>{
+ const workspace=fixture(),native={...workspace,editorAuthority:'native' as const};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:native})));
+ const command=vi.fn(),onChange=vi.fn();render(<WorkspaceCaptionAutomation workspace={workspace} command={command} onChange={onChange}/>);
+ await waitFor(()=>expect(onChange).toHaveBeenCalled());expect(command).not.toHaveBeenCalled();
 });

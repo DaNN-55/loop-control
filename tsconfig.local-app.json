@@ -23,6 +23,7 @@
     "src/local-app/productionMetricsReport.ts",
     "src/local-app/runtimeLogs.ts",
     "src/local-app/keychainStore.ts",
+    "src/local-app/studioAgentBridge.ts",
     "src/local-app/pexelsLiveProbe.ts",
     "src/local-app/providerProbe.ts",
     "src/local-app/localWorkerService.ts",
