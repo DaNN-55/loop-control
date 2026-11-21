@@ -2,7 +2,7 @@
 
 ## 交付范围
 
-- 单文件：[HTML](../../prototypes/settings-layouts-20261121.html)，内联 CSS/JS，无新增依赖。可直接打开，或使用 [原型目录说明](../../prototypes/README.md) 中的静态服务命令。
+- 原单文件路径 `docs/prototypes/settings-layouts-20261121.html`，内联 CSS/JS，无新增依赖。该演示在用户选型、正式实现后已授权退役，原源码保留于提交 `707a63f74`；见 [原型记录](../../prototypes/README.md)。
 - 沿用当前 `OwnerSettingsDialog.tsx`、`OwnerPreferencesDialog.tsx`、`CompactConnectionWorkspace.tsx` 及 ADR-0075 的五分组与维护工具范围，仅比较布局；不决定正式功能调整。
 - A 左侧导航与行内编辑；B 顶部导航与列表/编辑双区，小屏转上下结构；C 单页分组摘要与按需展开，界面/通知在宽屏并排。
 - 骨架默认静态；实际加载时闪动，切页有短过渡，尊重 `prefers-reduced-motion`。主要标签、操作与关键状态保留文字。顶部可切换示例文字及正常/加载/空数据/失败。
@@ -14,9 +14,13 @@
 - Chrome for Testing 153：3 布局 × 5 分组 × 320/390/768/1440px，共 60 项，无页面或内容区意外横向溢出，内容区可见。
 - 49 项浏览器交互检查通过：各方案的加载/空数据/错误/重试、连接编辑/测试/模型范围/保存反馈、搜索空结果与恢复、新建连接、迁移检查与确认、跨布局保留开关、密码不一致与成功保存、日志级别/搜索空结果、占位密钥显示/隐藏、示例文字与重置。
 - 另实际按 Enter 切页及展开 C 分组，焦点在重绘后保留；密码表单 Enter 提交后两个字段清空并显示成功。深色按钮文字与默认恢复检查通过。
-- 查看 B/C 桌面及 C 手机截图，确认分区、收起/展开和表单布局。A 桌面也实际查看。截图及原始浏览器结果留在 `.scratch/settings-layouts-20261121/`，不纳入正式产物。
+- 查看 B/C 桌面及 C 手机截图，确认分区、收起/展开和表单布局。A 桌面也实际查看。当时截图及结果位于 `.scratch/settings-layouts-20261121/`；收尾后原始 `browser-results.json` 已归档，临时目录与截图已清理。
 - HTML 解析、内联 JavaScript 的 `node --check`、`npm run check`、`git diff --check` 通过；浏览器无页面脚本错误。
 
 ## 限制
 
 独立可撤销演示，正式源码、运行服务、数据库和已有工程均未修改。未运行完整单测/构建，原型不进入应用构建；未验证 Safari、实体手机、真实屏幕阅读器或后端操作。已实现减少动态效果的媒体查询，未用系统级设置实际验收。
+
+## 后续选型与退役
+
+用户随后选择 A，[正式实现与验收](../settings-compact-20261121/REPORT.md) 已合入本地 main。2026-11-21 收尾清理移除本 HTML、专用预览标签/服务和本次临时产物；本报告保留。原始浏览器结果归档至 `.loop-control/local/activation-recovery/settings-compact-20261121/acceptance/browser-results.json`，实现 patch 与恢复说明位于同一恢复根目录。已有配置和工程不在清理范围。
