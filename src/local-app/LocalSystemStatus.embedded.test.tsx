@@ -10,9 +10,9 @@ it('系统整页直接展示同源实际证据，保留已关闭/未启用语义
   const report={observedAt:at,automation:{stopped:false,lastError:null,lastScanAt:at,backupsEnabled:false},plans:[],jobs:[],operations:{notification:{latest:{at,passed:false,detail:'事件投递失败'}}}};
   vi.mocked(localRequest).mockResolvedValue(report);
   const user=userEvent.setup();render(<LocalSystemStatus embedded/>);
-  const table=screen.getByText('日常维护').closest('details')!;await user.click(screen.getByText('日常维护'));await user.click(await screen.findByText('事件提醒'));
+  const table=screen.getByRole('region',{name:'运行状态'});await user.click(await screen.findByText('事件提醒'));
   await within(table).findByText('事件投递失败');
-  expect(localRequest).toHaveBeenCalledTimes(1);expect(screen.getByRole('heading',{name:'任务队列'})).toBeTruthy();expect(screen.getByRole('heading',{name:'资源状态'})).toBeTruthy();expect(screen.queryByRole('dialog')).toBeNull();
+  expect(localRequest).toHaveBeenCalledTimes(1);expect(screen.getByText('任务与最近活动').closest('details')!.open).toBe(false);expect(screen.queryByText('日常维护')).toBeNull();expect(screen.getByRole('heading',{name:'任务与最近活动'})).toBeTruthy();expect(screen.getByRole('heading',{name:'资源状态'})).toBeTruthy();expect(screen.queryByRole('dialog')).toBeNull();
   expect(within(table).getAllByText('已关闭',{exact:true}).length).toBeGreaterThan(0);
   expect(within(table).getAllByText('未启用',{exact:true}).length).toBeGreaterThan(0);
   expect(screen.queryByRole('button',{name:/系统状态：/})).toBeNull();

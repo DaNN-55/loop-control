@@ -1,4 +1,5 @@
 export const preferencesMessages:Record<string,string> = {
+ '维护工具页面':'Maintenance pages','制作文件':'Production files','其他文件位置':'Other file locations','数据库与运行文件':'Database & runtime files','由本机运行时管理':'Managed by the local runtime','日志文件':'Log files','前往日志':'Open logs','任务与最近活动':'Tasks & recent activity','本机系统':'Local system','搜索日志':'Search logs','修改密码':'Change password',
   "制作文件会保存在所选位置。": "Production files will be saved in the selected location.",
   "先检查迁移范围，再确认搬迁。": "Review the move plan before confirming the transfer.",
 

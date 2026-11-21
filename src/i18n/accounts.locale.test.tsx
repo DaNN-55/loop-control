@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {AccountForm} from '../accounts/AccountForm';
 import {CreativeRuleFields} from '../platform/CreativeRuleFields';
-import {OwnerSettingsDialog} from '../local-app/OwnerSettingsDialog';
+import {OwnerSettingsDialog,OwnerSettingsMaintenance} from '../local-app/OwnerSettingsDialog';
 import {setUiLocale} from './ui';
 import {accountsMessages} from './en/accounts';
 afterEach(()=>{cleanup();setUiLocale('zh-CN');});
@@ -16,5 +16,5 @@ it('translates rule field labels without translating saved creative values',()=>
  setUiLocale('en-US');render(<CreativeRuleFields source={JSON.stringify({positioning:'讲述家乡故事',restrictions:['禁止虚构事实']})} onChange={()=>{}}/>);expect(screen.getByRole('textbox',{name:'Content focus'})).toHaveProperty('value','讲述家乡故事');expect(screen.getByRole('textbox',{name:'Content limits'})).toHaveProperty('value','禁止虚构事实');
 });
 it('translates the settings navigation while preserving the displayed owner identity',()=>{
- setUiLocale('en-US');render(<OwnerSettingsDialog page="system" onNavigate={()=>{}} onClose={()=>{}} returnFocusRef={{current:null}} canManageSecrets busy={false} displayName="中文所有者" email="owner@example.invalid"><p>Body</p></OwnerSettingsDialog>);expect(screen.getByRole('navigation',{name:'Settings pages'})).toBeTruthy();expect(screen.getByRole('button',{name:'Production services'})).toBeTruthy();expect(screen.getByRole('button',{name:'Advanced secrets'})).toBeTruthy();expect(screen.getByText('owner@example.invalid')).toBeTruthy();expect(screen.queryByText('中文所有者')).toBeNull();
+ setUiLocale('en-US');render(<OwnerSettingsDialog page="system" onNavigate={()=>{}} onClose={()=>{}} returnFocusRef={{current:null}} canManageSecrets busy={false} displayName="中文所有者" email="owner@example.invalid"><p>Body</p><OwnerSettingsMaintenance/></OwnerSettingsDialog>);expect(screen.getByRole('navigation',{name:'Settings pages'})).toBeTruthy();expect(screen.getByRole('button',{name:'Production services'})).toBeTruthy();expect(screen.getByRole('button',{name:'Advanced secrets'})).toBeTruthy();expect(screen.getByText('owner@example.invalid')).toBeTruthy();expect(screen.queryByText('中文所有者')).toBeNull();
 });

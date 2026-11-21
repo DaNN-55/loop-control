@@ -65,7 +65,7 @@ export function MediaRootSettingsDialog({csrf,onClose,embedded=false,onStateChan
  const storageReadFeedback=readError||(root?.status==='unavailable'&&plan?.status!=='committed'?root.reason:'');
  const active=['copying','failed','committed'].includes(plan?.status??''),feedback=error||plan?.error;
  const content=<section className="media-root-content" aria-label={uiText("存储位置")}>
-  <h3>{uiText("存储位置")}</h3>
+  <h3 className="media-root-section-heading"><span>{uiText(embedded?"制作文件":"存储位置")}</span>{embedded&&root&&<span role="status" className={root.status==='ready'?"is-ready":"is-unavailable"}>{uiText(root.status==='ready'?"可用":"不可用")}</span>}</h3>
   {root?<>
    <div className="media-root-current"><span className="media-root-path" title={root.path}>{root.path}</span><div>
     <Button size="sm" color="tertiary" iconLeading={FolderOpen} aria-label={uiText("打开存储文件夹")} title={uiText("打开文件夹")} type="button" isDisabled={busy||root.status!=='ready'} onClick={()=>void command('open')}>{uiText("打开文件夹")}</Button>

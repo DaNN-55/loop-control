@@ -5,7 +5,7 @@ import {render,screen,fireEvent,waitFor,cleanup,act,within} from '@testing-libra
 import {webcrypto} from 'node:crypto';
 import {LocalCatalogApp} from './LocalCatalogApp';
 import type {LocalCatalog} from './catalog';
-vi.mock('./LocalSystemStatus',()=>({LocalSystemStatus:()=>null}));
+vi.mock('./LocalSystemStatus',async()=>{const {OwnerSettingsMaintenance}=await import('./OwnerSettingsDialog');return{LocalSystemStatus:({embedded}:{embedded?:boolean})=>embedded?<OwnerSettingsMaintenance/>:null};});
 import {localCommand} from './client';
 async function productionButton(){return within(await screen.findByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'});}
 function clickLogout(){if(!screen.queryByRole('button',{name:'退出登录'})){if(!screen.queryByRole('navigation',{name:'设置页面'}))flushSync(()=>{fireEvent.click(screen.getByRole('button',{name:'设置'}));});flushSync(()=>{fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'登录与安全'}));});}fireEvent.click(screen.getByRole('button',{name:'退出登录'}));}
@@ -167,7 +167,7 @@ it('clears the administrator secret page when another browser tab changes identi
  class Channel{onmessage:((event:{data:unknown})=>void)|null=null;constructor(){channels.push(this);}postMessage(){}close(){}}
  vi.stubGlobal('BroadcastChannel',Channel);
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>new Response(JSON.stringify(path.endsWith('/session')?{owner:{id:'fixture-owner'},secretAdministration:true,csrfToken:'fixture-csrf'}:path.includes('/catalog?')?pagedCatalog('fixture'):path.includes('/secrets?')?{items:[],total:0,page:1,pageSize:50}:{}))));
- render(<LocalCatalogApp/>);await productionButton();fireEvent.click(screen.getByRole('button',{name:'设置'}));fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'维护工具'}));fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'高级密钥'}));await screen.findByRole('dialog',{name:'高级密钥'});
+ render(<LocalCatalogApp/>);await productionButton();fireEvent.click(screen.getByRole('button',{name:'设置'}));fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'维护工具'}));fireEvent.click(within(await screen.findByRole('navigation',{name:'维护工具页面'})).getByRole('button',{name:'高级密钥'}));await screen.findByRole('dialog',{name:'高级密钥'});
  await act(async()=>{channels[0].onmessage?.({data:{kind:'changed',sender:'other-browser-tab'}});});
  expect(screen.queryByRole('dialog',{name:'高级密钥'})).toBeNull();expect(screen.getByRole('heading',{name:'登录控制台'})).toBeTruthy();
 });

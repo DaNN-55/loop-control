@@ -1,3 +1,4 @@
+import {OwnerSettingsMaintenance} from './OwnerSettingsDialog';
 import {uiText,getUiLocale} from '../i18n/ui';
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
@@ -80,10 +81,15 @@ export function SystemStatusDrawer({embedded=false,triggerOnly=false,open,onOpen
   const mediaReadable=resources&&(resources.media.state==='healthy'||resources.media.state==='attention');
   const mediaVolume=resources?.media.sameVolume&&resources.systemDisk?resources.systemDisk:resources?.media;
   const hoverSummary=uiText("Worker {value0}；{value1}；最近读取 {value2}",{value0:workerSummary,value1:queueSummary,value2:date(observedAt)});
+  const maintenanceEntries=!maintenanceAvailable?<p className="status-drawer-empty">{uiText("维护状态暂不可用，请刷新重试。")}</p>:maintenance.map(item=><details className="status-drawer-maintenance" key={item.id}><summary><span>{item.label}</span><span className={item.state==='attention'||item.state==='offline'?'status-drawer-warning':''}>{item.stateText??uiText(stateLabel(item.state))}</span><ChevronDown size={14}/></summary>{item.checks?<HealthChecks checks={item.checks}/>:item.detail&&<p>{item.detail}</p>}{item.id==='health'&&!item.checks&&item.detailRows?.some(row=>row.label===uiText("最近结果"))&&<p>{uiText("此记录未保存分项结果。")}</p>}{!!item.detailRows?.length&&<dl className="status-drawer-facts">{item.detailRows.map((row,index)=><div key={index}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}{item.lastFailureChecks&&<details className="status-drawer-check-history"><summary>{uiText("最近失败分项")}</summary><HealthChecks checks={item.lastFailureChecks}/></details>}</details>);
   const content=<section role={embedded?undefined:'dialog'} aria-modal={embedded?undefined:true} aria-label={embedded?undefined:uiText("系统状态详情")} className={embedded?'owner-settings-pane status-drawer-embedded':'status-drawer-drawer'} ref={ref}>
-      <header className="status-drawer-heading"><h2>{uiText("系统状态")}</h2><span className={`status-drawer-status${overall==='healthy'?'':overall==='unknown'?' is-muted':' is-warning'}`} role="status"><i/>{statusText}</span><Button size="sm" color="tertiary" aria-label={uiText("关闭系统状态详情")} iconLeading={X} onClick={onClose}/></header>
+      <header className="status-drawer-heading"><h2>{uiText(embedded?"维护工具":"系统状态")}</h2><span className={`status-drawer-status${overall==='healthy'?'':overall==='unknown'?' is-muted':' is-warning'}`} role="status"><i/>{statusText}</span><Button size="sm" color="tertiary" aria-label={uiText("关闭系统状态详情")} iconLeading={X} onClick={onClose}/></header>
+  <OwnerSettingsMaintenance/>
       <div className="status-drawer-body" aria-busy={pending}>
         {error&&<p role="alert" className="status-drawer-problem">{error}</p>}
+        <section className={embedded?"status-settings-overview":undefined} aria-label={embedded?uiText("运行状态"):undefined}>
+        {embedded&&<h3>{uiText("运行状态")}</h3>}
+        <div className={embedded?"status-settings-grid":undefined}>
         <Section title={uiText("运行版本")} summary={version?uiText(versionLabels[version.state]):uiText("版本待确认")} attention={versionFailure}>
           <dl className="status-drawer-facts">
             <div><dt>{uiText("后台版本")}</dt><dd title={version?.backendReleaseId??undefined}>{version?.backendReleaseId?.slice(0,12)??uiText("待确认")}</dd></div>
@@ -102,7 +108,9 @@ export function SystemStatusDrawer({embedded=false,triggerOnly=false,open,onOpen
           <dl className="status-drawer-facts"><div><dt>{uiText("最近心跳")}</dt><dd>{date(worker?.heartbeatAt)}</dd></div><div><dt>{uiText("执行位")}</dt><dd>{worker?.active!=null&&worker.capacity!=null?uiText("{value0} / {value1} 使用中",{value0:worker.active,value1:worker.capacity}):uiText("未读取")}</dd></div><div><dt>{uiText("最近扫描")}</dt><dd>{date(worker?.lastScanAt)}</dd></div></dl>
           {worker?.problem&&<p className="status-drawer-problem">{worker.problem}</p>}
         </Section>
-        <Section title={uiText("任务队列")} summary={queueSummary} initialOpen attention={!!queue&&(queue.blocked+queue.failed)>0}>
+        {embedded&&maintenanceEntries}
+        </div></section>
+        <Section title={uiText(embedded?"任务与最近活动":"任务队列")} summary={queueSummary} initialOpen={!embedded} attention={!!queue&&(queue.blocked+queue.failed)>0}>
           {!queue?<p className="status-drawer-empty">{uiText("任务队列尚未读取或暂不可用，请刷新重试。")}</p>:!queue.total?<p className="status-drawer-empty">{uiText("当前没有等待或执行中的任务。")}</p>:<>
             <ul className="status-drawer-tasks">{queue.items.slice(0,expanded?queue.items.length:2).map(task=><li key={task.id}><div className="status-drawer-task-heading"><strong>{uiText(taskTypeLabel(task.taskType))}</strong><span className={task.status==='running'?'status-drawer-running':task.status==='failed'||task.status==='blocked'?'status-drawer-warning':''}>{uiText(taskStatusLabel(task.status))}</span></div><div className="status-drawer-task-meta"><span>{task.episodeTitle}</span>{onOpenEpisode?<button aria-label={uiText("查看生产单：{value0}",{value0:task.episodeTitle})} onClick={()=>{if(onOpenEpisode(task.episodeId)!==false)onClose();}}>{uiText("查看")}</button>:<a href={`?episode=${encodeURIComponent(task.episodeId)}`}>{uiText("查看")}</a>}</div>{expanded&&<p className="status-drawer-empty">{task.status==='running'?uiText("开始于 {value0}",{value0:date(task.claimedAt)}):task.status==='ready'&&task.availableAt&&Date.parse(task.availableAt)>Date.parse(runtime!.observedAt)?uiText("等待重试 · {value0}",{value0:date(task.availableAt)}):task.status==='ready'?uiText("等待 Worker 领取"):task.status==='failed'?uiText("任务执行失败，请查看生产单。"):uiText("任务存在阻塞，请查看生产单。")}</p>}</li>)}</ul>
             {queue.items.length>2&&<button className="status-drawer-expand" onClick={()=>setExpanded(!expanded)}>{expanded?uiText("收起"):queue.total>queue.pageSize?uiText("展开本页 {value0} 项",{value0:queue.items.length}):uiText("展开全部 {value0} 项",{value0:queue.total})}</button>}
@@ -120,9 +128,9 @@ export function SystemStatusDrawer({embedded=false,triggerOnly=false,open,onOpen
           {resources?.media.state==='offline'&&<p className="status-drawer-problem">{uiText("检查素材盘挂载及媒体目录读写权限。")}</p>}
           {resources?.media.state==='attention'&&<p className="status-drawer-problem">{uiText("素材盘可用空间低于运行要求（")}{bytes(resources.media.minimumFreeBytes)}）。</p>}
         </Section>
-        <Section title={uiText("日常维护")} summary={uiText(stateLabel(maintenanceState))}>
-          {!maintenanceAvailable?<p className="status-drawer-empty">{uiText("维护状态暂不可用，请刷新重试。")}</p>:maintenance.map(item=><details className="status-drawer-maintenance" key={item.id}><summary><span>{item.label}</span><span className={item.state==='attention'||item.state==='offline'?'status-drawer-warning':''}>{item.stateText??uiText(stateLabel(item.state))}</span><ChevronDown size={14}/></summary>{item.checks?<HealthChecks checks={item.checks}/>:item.detail&&<p>{item.detail}</p>}{item.id==='health'&&!item.checks&&item.detailRows?.some(row=>row.label===uiText("最近结果"))&&<p>{uiText("此记录未保存分项结果。")}</p>}{!!item.detailRows?.length&&<dl className="status-drawer-facts">{item.detailRows.map((row,index)=><div key={index}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}{item.lastFailureChecks&&<details className="status-drawer-check-history"><summary>{uiText("最近失败分项")}</summary><HealthChecks checks={item.lastFailureChecks}/></details>}</details>)}
-        </Section>
+        {!embedded&&<Section title={uiText("日常维护")} summary={uiText(stateLabel(maintenanceState))}>
+          {maintenanceEntries}
+        </Section>}
       </div>
       <footer className="status-drawer-footer"><span>{uiText("最近读取 ")}{date(observedAt)}</span><Button size="sm" color="secondary" isDisabled={pending} onClick={onRefresh}>{pending?uiText("读取中…"):uiText("刷新系统状态")}</Button></footer>
     </section>;
