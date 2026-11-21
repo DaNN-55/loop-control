@@ -2,7 +2,7 @@
 
 - [设置布局三方案（2026-11-21）](settings-layouts-20261121.html)：A 侧栏紧凑行、B 顶栏双区、C 单页折叠。同一个 HTML 切换，覆盖当前五分组；支持骨架/示例文字、加载/空数据/错误、编辑与保存反馈。全部使用内存模拟，不访问业务 API。
 - 直接用浏览器打开 HTML，或在仓库根目录运行 `python3 -m http.server 5186 --bind 127.0.0.1 --directory docs/prototypes` 后访问 `http://127.0.0.1:5186/settings-layouts-20261121.html`。刷新清空模拟修改，URL 保留方案和分组。
-- [验收记录](../verification/settings-layouts-20261121/REPORT.md)。当前交付仅供选择方案，正式设置尚未替换。
+- [原型验收记录](../verification/settings-layouts-20261121/REPORT.md)。用户随后选定 A，正式设置已采用侧栏紧凑行，原型保留用于比较；见[正式设置验收](../verification/settings-compact-20261121/REPORT.md)。
 
 ## 已归档的历史原型
 

@@ -13,7 +13,7 @@ export function ConnectionsSettingsDialog({onClose, returnFocusRef,embedded=fals
   const ref = useDialogFocus<HTMLElement>(!embedded, onClose, returnFocusRef);
   const content=<section ref={ref} role={embedded?undefined:'dialog'} aria-modal={embedded?undefined:true} aria-labelledby="connections-settings-title" className={`modal-card connections-settings-dialog${embedded?' owner-settings-pane':''}`}>
       <header>
-        <div className="compact-connection-header-title">{heading.back&&<Button size="sm" color="tertiary" iconLeading={ArrowLeft} aria-label={heading.backLabel??uiText("返回连接列表")} isDisabled={busy} onPress={heading.back}/>}<h2 id="connections-settings-title" title={heading.title}>{heading.title}</h2></div>
+        <div className="compact-connection-header-title">{!embedded&&heading.back&&<Button size="sm" color="tertiary" iconLeading={ArrowLeft} aria-label={heading.backLabel??uiText("返回连接列表")} isDisabled={busy} onPress={heading.back}/>}<h2 id="connections-settings-title" title={embedded?uiText('制作服务'):heading.title}>{embedded?uiText('制作服务'):heading.title}</h2></div>
         <Button size="sm" color="tertiary" aria-label={uiText("关闭制作服务")} iconLeading={X} isDisabled={busy} data-dialog-initial-focus onPress={onClose}/>
       </header>
       <LocalConnectionsPanel setupCapability={setupCapability} onUseConnection={onUseConnection} inlineBilling settingsLayout inlineEditor={embedded} onHeaderChange={setHeading} onStateChange={stateChange} onOpenSecrets={onOpenSecrets} initialConnectionId={initialConnectionId}/>

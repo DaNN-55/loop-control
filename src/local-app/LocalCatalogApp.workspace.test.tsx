@@ -63,7 +63,7 @@ it('保留安全弹窗焦点，从设置打开制作服务且跨页保留连接�
  expect(screen.queryByLabelText('新密码')).toBeNull();expect(requests.some(path=>path.includes('/history?'))).toBe(false);
  await user.click(within(maintenance).getByRole('button',{name:'新建连接'}));
  await user.type(await screen.findByRole('textbox',{name:'连接名称'}),'未提交的连接草稿');
- await user.click(screen.getByRole('button',{name:'返回连接列表'}));
+ await user.click(screen.getByRole('button',{name:'收起'}));
  await user.click(screen.getByRole('button',{name:'保留修改并离开'}));
  await user.click(within(maintenance).getByRole('button',{name:'关闭制作服务'}));
  expect(screen.queryByRole('dialog',{name:'制作服务'})).toBeNull();
@@ -74,7 +74,7 @@ it('保留安全弹窗焦点，从设置打开制作服务且跨页保留连接�
  maintenance=await screen.findByRole('dialog',{name:'制作服务'});
  await user.click(await within(maintenance).findByRole('button',{name:'新建连接'}));
  expect((screen.getByRole('textbox',{name:'连接名称'})as HTMLInputElement).value).toBe('未提交的连接草稿');
- await user.click(screen.getByRole('button',{name:'返回连接列表'}));
+ await user.click(screen.getByRole('button',{name:'收起'}));
  await user.click(screen.getByRole('button',{name:'保留修改并离开'}));
  await user.keyboard('{Escape}');
  expect(screen.queryByRole('dialog',{name:'制作服务'})).toBeNull();

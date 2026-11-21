@@ -13,6 +13,46 @@ const base={connections:[connection],versions,onCreateConnection:vi.fn(),onTestC
 async function secondary(name:string){if(!screen.queryByRole('tab',{name}))await userEvent.click(screen.getByRole('button',{name:'更多'}));await userEvent.click(screen.getByRole('tab',{name}));}
 async function saveOnly(){await userEvent.click(screen.queryByRole('button',{name:'仅保存'})??screen.getByRole('button',{name:'保存'}));}
 async function open(){await userEvent.click(screen.getByRole('button',{name:'Images'}));}
+it('focuses an embedded connection opened directly from its saved URL selection',async()=>{
+ render(<CompactConnectionWorkspace {...base} inlineEditor initialConnectionId="c"/>);
+ const name=screen.getByRole('textbox',{name:'连接名称'});
+ await waitFor(()=>expect(name).toHaveProperty('value','Images'));
+ await waitFor(()=>expect(document.activeElement).toBe(name));
+});
+it('expands an embedded connection below its row and keeps the surrounding list visible',async()=>{
+ render(<CompactConnectionWorkspace {...base} inlineEditor/>);
+ await open();
+ expect(screen.getByRole('button',{name:'Images'}).getAttribute('aria-expanded')).toBe('true');
+ expect(screen.getByLabelText('查找已存连接')).toBeTruthy();
+ expect(screen.getByRole('region',{name:'Images'}).contains(screen.getByLabelText('连接名称'))).toBe(true);
+ await userEvent.click(screen.getByRole('button',{name:'Images'}));
+ expect(screen.queryByLabelText('连接名称')).toBeNull();
+ expect(screen.getByRole('button',{name:'Images'}).getAttribute('aria-expanded')).toBe('false');
+});
+it('guards switching between embedded rows and never drops the edited connection silently',async()=>{
+ const other={...connection,id:'other',name:'Other images'};
+ render(<CompactConnectionWorkspace {...base} inlineEditor connections={[connection,other]}/>);
+ await open();fireEvent.change(screen.getByLabelText('连接名称'),{target:{value:'Unsaved name'}});
+ await userEvent.click(screen.getByRole('button',{name:'Other images'}));
+ expect(screen.getByRole('dialog',{name:'离开前处理修改'})).toBeTruthy();
+ await userEvent.click(screen.getByRole('button',{name:'关闭确认，继续编辑'}));
+ expect(screen.getByLabelText('连接名称')).toHaveProperty('value','Unsaved name');
+ await userEvent.click(screen.getByRole('button',{name:'Other images'}));
+ await userEvent.click(screen.getByRole('button',{name:'放弃修改并离开'}));
+ expect(screen.getByLabelText('连接名称')).toHaveProperty('value','Other images');
+ expect(screen.getByRole('button',{name:'Images'}).getAttribute('aria-expanded')).toBe('false');
+});
+it('keeps a just-created embedded connection editable before its parent list refreshes',async()=>{
+ const create=vi.fn().mockResolvedValue({...connection,id:'created',name:'New embedded'});
+ render(<CompactConnectionWorkspace {...base} inlineEditor connections={[]} onCreateConnection={create}/>);
+ await userEvent.click(screen.getByRole('button',{name:'新建连接'}));
+ fireEvent.change(screen.getByLabelText('连接名称'),{target:{value:'New embedded'}});
+ fireEvent.change(screen.getByLabelText('API Key'),{target:{value:'synthetic'}});
+ await saveOnly();
+ expect(await screen.findByRole('region',{name:'New embedded'})).toBeTruthy();
+ expect(screen.getByLabelText('连接名称')).toHaveProperty('value','New embedded');
+ expect(create).toHaveBeenCalledOnce();
+});
 it('replaces the list with one detail surface and saves metadata without testing or selecting a version',async()=>{const update=vi.fn(),test=vi.fn();render(<CompactConnectionWorkspace {...base} onUpdateConnection={update} onTestConnection={test}/>);await open();expect(screen.queryByLabelText('查找已存连接')).toBeNull();expect(screen.getAllByRole('tab')).toHaveLength(2);fireEvent.change(screen.getByLabelText('连接名称'),{target:{value:'New name'}});await saveOnly();await waitFor(()=>expect(update).toHaveBeenCalledExactlyOnceWith({connectionId:'c',name:'New name',description:''}));expect(test).not.toHaveBeenCalled();expect(screen.getByRole('status').textContent).toContain('需单独执行');});
 it('retains a failed key rotation for retry without testing or exposing the key',async()=>{const rotate=vi.fn().mockRejectedValueOnce(Error('Temporary failure')).mockResolvedValue({...connection,current_version_id:'v3',status:'unverified'}),test=vi.fn();render(<CompactConnectionWorkspace {...base} onRotateConnection={rotate} onTestConnection={test}/>);await open();await userEvent.click(screen.getByRole('button',{name:'更换密钥'}));fireEvent.change(screen.getByLabelText('新的 API Key（选填）'),{target:{value:'synthetic-key'}});await saveOnly();expect((await screen.findByRole('alert')).textContent).toBe('Temporary failure');expect(screen.getByLabelText('新的 API Key（选填）')).toHaveProperty('value','synthetic-key');await saveOnly();await waitFor(()=>expect(rotate).toHaveBeenCalledTimes(2));expect(test).not.toHaveBeenCalled();expect(document.body.textContent).not.toContain('synthetic-key');expect(screen.queryByLabelText('新的 API Key（选填）')).toBeNull();});
 it('keeps model edits while switching tabs and saves them independently in the fixed pane',async()=>{const save=vi.fn(async input=>({...models,enabledModels:input.enabledModels,revision:'r2'})),test=vi.fn();render(<CompactConnectionWorkspace {...base} onTestConnection={test} onReadModels={async()=>models} onSaveModels={save}/>);await open();await userEvent.click(screen.getByRole('tab',{name:'模型'}));await userEvent.click(await screen.findByRole('checkbox',{name:'gpt-image-2'}));await secondary('记录');expect(screen.queryByRole('checkbox')).toBeNull();await userEvent.click(screen.getByRole('tab',{name:'模型'}));expect(screen.getByRole('checkbox',{name:'gpt-image-2'})).toHaveProperty('checked',false);await saveOnly();await waitFor(()=>expect(save).toHaveBeenCalledExactlyOnceWith({connectionId:'c',versionId:'v2',revision:'r1',enabledModels:[]}));expect(screen.getByRole('tab',{name:'模型'}).getAttribute('aria-selected')).toBe('true');expect(screen.queryByRole('dialog')).toBeNull();expect(test).not.toHaveBeenCalled();});

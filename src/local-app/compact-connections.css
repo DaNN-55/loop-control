@@ -78,3 +78,50 @@ html[data-interface="impeccable"] .product-ui .connections-settings-dialog>heade
 .compact-connection-tabs>button[data-secondary]{font-size:11px}
 .compact-connection-tabs>button:last-child{margin-inline-start:auto}
 @media(max-width:720px){.compact-connection-row{grid-template-columns:minmax(0,1fr)}.compact-connection-footer{flex-wrap:wrap}.compact-connection-footer>div{flex-wrap:wrap}}
+
+/* A connection opens under its existing row, with one outer scroll area. */
+.compact-connection-rows>.compact-connection-toolbar{padding:10px 20px;gap:8px}
+.compact-connection-rows>.compact-connection-scroll{padding:0 20px 12px}
+.compact-connection-rows>.compact-connection-footer{min-height:48px;padding:8px 20px}
+.compact-connection-rows .compact-connection-row{min-height:56px;padding:10px 0;gap:16px}
+.compact-connection-rows .compact-connection-row[data-expanded]{background:var(--lc-accent-soft)}
+.compact-connection-rows .compact-connection-name{font-size:12px}
+.compact-connection-inline-editor{padding:12px 14px 0;background:var(--lc-surface-2);border-bottom:1px solid var(--lc-line);min-width:0}
+.compact-connection-inline-editor>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.compact-connection-inline-editor>header h3{margin:0;font-size:13px;font-weight:600;overflow-wrap:anywhere;min-width:0}
+.compact-connection-inline-editor>header>.compact-connection-meta{flex:1;min-width:0;gap:12px;padding:0}
+.compact-connection-inline-editor .compact-connection-meta{padding:0 0 8px;font-size:11px}
+.compact-connection-inline-editor .compact-connection-tabs{padding:0;gap:16px;margin-bottom:8px}
+.compact-connection-inline-editor .compact-connection-scroll{padding:0;overflow:visible}
+.compact-connection-inline-editor .compact-connection-field{grid-template-columns:104px minmax(0,1fr);max-width:none;padding-block:5px;gap:12px}
+.compact-connection-inline-editor .compact-connection-field textarea{min-height:36px}
+.compact-connection-inline-editor .compact-connection-footer{min-height:52px;padding:10px 0;background:transparent;margin-top:8px}
+.compact-connection-inline-editor .compact-connection-workspace,.compact-connection-inline-editor .connection-embedded-pane{display:block;height:auto;max-height:none;overflow:visible}
+.compact-connection-inline-editor .connection-embedded-pane>.connection-models-body{padding:4px 0 0;overflow:visible}
+.compact-connection-inline-editor .connection-embedded-pane>.reference-connections-dialog-footer{padding:10px 0;min-height:52px;margin-top:8px;background:transparent}
+.compact-connection-inline-editor .connection-billing-summary{gap:12px;margin-block:12px}
+.compact-connection-inline-editor .connection-billing-fields{gap:10px}
+.owner-settings-dialog .compact-connection-toolbar form>input{border:0!important;border-radius:0!important;box-shadow:none!important;min-height:32px;padding:5px 0!important}
+.compact-connection-loading{padding:0 20px}
+.compact-connection-loading>div{display:flex;justify-content:space-between;align-items:center;gap:20px;min-height:56px;border-bottom:1px solid var(--lc-line)}
+.compact-connection-loading span:not(.sr-only){display:block;width:40%;height:8px;border-radius:3px;background:var(--lc-line)}
+.compact-connection-loading span:last-child{width:24%}
+@media(prefers-reduced-motion:no-preference){.compact-connection-loading>div{animation:compact-settings-loading 1s ease-in-out infinite alternate}@keyframes compact-settings-loading{to{opacity:.4}}}
+@media(max-width:1000px) and (min-width:721px){
+ .compact-connection-rows>.compact-connection-toolbar form{flex-basis:180px}
+ .compact-connection-rows>.compact-connection-toolbar>.dan-select-field{flex:0 1 118px}
+}
+@media(max-width:720px){
+ .compact-connection-rows>.compact-connection-toolbar{padding:10px 16px}
+ .compact-connection-rows>.compact-connection-toolbar form{flex:1 1 130px;order:0}
+ .compact-connection-rows>.compact-connection-toolbar>button{order:1}
+ .compact-connection-rows>.compact-connection-toolbar>.dan-select-field{flex:1 1 calc(50% - 4px);order:2}
+ .compact-connection-rows>.compact-connection-scroll{padding-inline:16px}
+ .compact-connection-rows>.compact-connection-footer{padding-inline:16px}
+ .compact-connection-rows .compact-connection-row{gap:4px 12px;padding-block:8px}
+ .compact-connection-inline-editor{padding:10px 10px 0}
+ .compact-connection-inline-editor .compact-connection-field{grid-template-columns:1fr;gap:4px}
+ .compact-connection-inline-editor .compact-connection-label{padding-top:0}
+ .compact-connection-inline-editor .compact-connection-footer{gap:8px;flex-wrap:wrap}
+ .compact-connection-inline-editor .compact-connection-footer>div{flex-wrap:wrap}
+}
