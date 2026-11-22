@@ -1,3 +1,4 @@
+import {HelpTip} from '../ui/HelpTip';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {uiText} from '../i18n/ui';
 import {useEffect,useId,useState,type ReactNode} from 'react';
@@ -18,11 +19,10 @@ export function WorkspaceNarrationCaptions({storageKey,contract,followText,disab
    </div>
    <div className="workspace-narration-controls workspace-narration-actions">
     <span id={hint} className="workspace-caption-feedback">{uiText("直接修改正文，保存后单独使用")}</span>
-    {(!following||dirty)&&<Button size="xs" color="tertiary" iconLeading={Link} isDisabled={disabled} onPress={()=>void save('follow_tts')}>{uiText("跟随口播")}</Button>}
+    {(!following||dirty)&&<div className="workspace-caption-follow-action"><Button size="xs" color="tertiary" iconLeading={Link} isDisabled={disabled} onPress={()=>void save('follow_tts')}>{uiText("跟随口播")}</Button>{followText&&<HelpTip label="口播原文"><span className="workspace-caption-reference-text">{followText}</span></HelpTip>}</div>}
     <Button size="sm" color="primary" isDisabled={disabled||!dirty||!text.trim()} onPress={()=>void save('independent')}>{uiText("保存字幕")}</Button>
    </div>
   </div>
-  {!following&&<p className="workspace-caption-reference" title={followText}>{uiText("口播原文 ")}<span>{followText}</span></p>}
   <FeedbackNotice message={notice} onDismiss={()=>setNotice('')}/>
   {renderTiming?.(dirty)}
  </section>;

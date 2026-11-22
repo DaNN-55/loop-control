@@ -117,7 +117,7 @@ html[data-interface="impeccable"] .product-ui .workspace-narration-voice-row>lab
 .workspace-narration-text{min-width:0}
 .workspace-caption-editor-heading{display:flex;align-items:center;gap:8px;padding:10px 12px 0;margin:0;font-size:12px;color:var(--lc-muted)}
 .workspace-caption-editor-heading h3{margin:0;font-size:12px;font-weight:500}
-.workspace-speech-composer .workspace-narration-input .workspace-caption-editor-heading{padding-top:0;flex-wrap:wrap}
+.workspace-narration-input .workspace-caption-editor-heading{padding-top:0;flex-wrap:wrap}
 .workspace-narration-draft-state{margin-inline-start:auto;font-size:11px;line-height:1.5;color:var(--lc-muted)}
 .workspace-speech-composer .workspace-narration-editor>textarea,.workspace-narration-caption-editor .workspace-narration-editor>textarea{min-height:150px}
 .workspace-narration-composer-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0;min-width:0}
@@ -140,8 +140,8 @@ html[data-interface="impeccable"] .product-ui .workspace-narration-composer-tool
 .workspace-narration-file-slot>.workspace-material-drop>small{font-size:12px}
 .workspace-narration-file-slot>.workspace-material-drop[data-drag-over]{border-color:var(--lc-accent);background:var(--lc-accent-soft)}
 .workspace-narration-caption-editor{display:grid;gap:10px;min-width:0}
-.workspace-caption-reference{display:flex;align-items:baseline;gap:8px;margin:0;color:var(--lc-muted);font-size:12px;min-width:0;white-space:nowrap}
-.workspace-caption-reference>span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.workspace-caption-follow-action{display:flex;align-items:center;gap:2px;flex:none}
+.workspace-caption-reference-text{display:block;max-height:min(50vh,320px);overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-weight:400;line-height:1.6}
 .workspace-narration-caption-editor .workspace-narration-controls>.workspace-caption-feedback{font-size:12px;margin-inline-end:auto}
 @container(max-width:460px){.workspace-narration-source{max-width:100%;flex-basis:100%}.workspace-narration-composer-toolbar .workspace-voice-picker{width:170px}}
 .workspace-narration-composer-toolbar .workspace-narration-rate{display:block;width:84px;flex:none}
@@ -175,3 +175,7 @@ html[data-interface="impeccable"] .product-ui :is(.workspace-speech-composer,.wo
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-narration-subheader>.workspace-main-voice-picker .dan-select-trigger{padding:5px 24px 5px 28px!important}
 .workspace-narration-composer-toolbar>.dan-select-field{flex:none;min-width:76px;width:96px!important}
 @media(pointer:coarse){.workspace-narration-subheader>.workspace-main-voice-picker .dan-select-trigger{min-height:44px;height:44px}}
+
+/* Keep horizontal text insets; only the annotated composer text areas lose vertical padding. */
+.workspace-narration :is(.workspace-speech-composer,.workspace-caption-composer) .workspace-narration-input>textarea{padding-block:0}
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-caption-composer .workspace-caption-editor-heading h3{font-size:12px!important;font-weight:650}

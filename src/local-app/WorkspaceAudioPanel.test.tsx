@@ -204,7 +204,7 @@ it('toggles episode music and all effects independently while retaining input dr
  function Harness(){const[w,setW]=useState(workspace);return <WorkspaceAudioPreparation workspace={w} command={command} onChange={setW} selectedShotId="S1"/>;}
  render(<Harness/>);fireEvent.change(screen.getByLabelText('英文检索词'),{target:{value:'保留配乐草稿'}});fireEvent.click(screen.getByRole('switch',{name:'启用整期配乐'}));
  await waitFor(()=>expect(screen.queryByRole('button',{name:'音频来源'})).toBeNull());expect(command).toHaveBeenCalledWith('setWorkspaceAudioEnabled',expect.objectContaining({kind:'bgm',enabled:false}));
- fireEvent.click(screen.getByRole('button',{name:'音效'}));expect(screen.getByRole('switch',{name:'启用音效'})).toHaveProperty('checked',true);
+ fireEvent.click(screen.getByRole('button',{name:'音效'}));expect(screen.getByRole('combobox',{name:'音效来源方式'})).toHaveProperty('value','search');
  fireEvent.click(screen.getByRole('button',{name:'整期配乐'}));fireEvent.click(screen.getByRole('switch',{name:'启用整期配乐'}));await waitFor(()=>expect(screen.getByRole('button',{name:'音频来源'})).toBeTruthy());expect(screen.getByLabelText('英文检索词')).toHaveProperty('value','保留配乐草稿');
 });
 
@@ -270,4 +270,34 @@ it('limits storyboard sound preparation to effects even with an older episode mu
  render(<WorkspaceAudioPreparation workspace={value} command={command} onChange={()=>{}} selectedShotId="S1" effectsOnly materials={[{id:'m',material_type:'audio',source_path:'step.mp3',material_purpose:'sound_effect'}]}/>);
  expect(screen.queryByRole('button',{name:'整期配乐'})).toBeNull();expect(screen.queryByText('旧整期配乐')).toBeNull();expect(screen.getByLabelText('音效意图或检索词')).toBeTruthy();fireEvent.change(screen.getByLabelText('音效意图或检索词'),{target:{value:'脚步声'}});expect(screen.getByLabelText('音效意图或检索词')).toHaveProperty('value','脚步声');selectAudio('m');
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',shotId:'S1'})));
+});
+
+it('disables and re-enables effects from the source menu while preserving draft and candidate state',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({serviceCatalog:{groups:[]}})));
+ const initial={...workspace,audio:{...workspace.audio!,preparations:[effect('kept')]}} as ProductionWorkspace;
+ const command=vi.fn(async(_name:string,data:unknown)=>({...initial,revision:3,audio:{...initial.audio!,enabled:{bgm:true,sfx:(data as {enabled:boolean}).enabled}}}));
+ function View(){const [value,setValue]=useState(initial);return <WorkspaceAudioPreparation effectsOnly selectedShotId="S1" workspace={value} command={command} onChange={setValue}/>;}
+ render(<View/>);
+ fireEvent.change(screen.getByLabelText('音效意图或检索词'),{target:{value:'door creak'}});
+ expect(screen.queryByRole('switch',{name:'启用音效'})).toBeNull();
+ fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'none'}});
+ await waitFor(()=>expect(screen.getByRole('combobox',{name:'音效来源方式'})).toHaveProperty('value','none'));
+ expect(screen.queryByRole('textbox',{name:'音效意图或检索词'})).toBeNull();
+ fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'upload'}});
+ await screen.findByRole('button',{name:'拖入音效文件'});
+ fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'search'}});
+ expect(screen.getByLabelText('音效意图或检索词')).toHaveProperty('value','door creak');
+ fireEvent.click(screen.getByRole('button',{name:'音频来源'}));
+ expect(screen.queryByRole('button',{name:'清除来源选择'})).toBeNull();
+ expect(command.mock.calls.map(([name])=>name)).toEqual(['setWorkspaceAudioEnabled','setWorkspaceAudioEnabled']);
+ expect(command.mock.calls.map(([,data])=>data)).toEqual([expect.objectContaining({kind:'sfx',enabled:false}),expect.objectContaining({kind:'sfx',enabled:true})]);
+});
+it('retains a disabled effect and its source draft when enabling fails',async()=>{
+ const disabled={...workspace,audio:{...workspace.audio!,enabled:{sfx:false,bgm:true}}};
+ const command=vi.fn(async()=>{throw Error('保存失败');});
+ render(<WorkspaceAudioPreparation effectsOnly selectedShotId="S1" workspace={disabled} command={command} onChange={()=>{}}/>);
+ fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'upload'}});
+ expect(await screen.findByRole('alert')).toHaveProperty('textContent','保存失败');
+ expect(screen.getByRole('combobox',{name:'音效来源方式'})).toHaveProperty('value','none');
+ expect(screen.queryByRole('button',{name:'拖入音效文件'})).toBeNull();
 });

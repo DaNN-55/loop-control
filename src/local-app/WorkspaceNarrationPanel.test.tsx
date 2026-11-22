@@ -316,3 +316,15 @@ it('returns from speech setup without losing narration text or submitting synthe
  expect(JSON.parse(sessionStorage.getItem('loop-speech-default-draft:w')!).value.selection.connectionVersionId).toBe('fresh-v');
  expect(command).not.toHaveBeenCalled();
 });
+
+it('reveals the narration reference on demand without replacing independent captions',async()=>{
+ const {workspace}=setup();cleanup();
+ const command=vi.fn(async()=>workspace);
+ render(<WorkspaceNarrationPanel episodeId="e" workspace={{...workspace,captions:[{clipId:'c',shotId:'S01',contract:{enabled:true,contentMode:'independent',text:'独立字幕'}}] as ProductionWorkspace['captions']}} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
+ fireEvent.click(screen.getByRole('tab',{name:'字幕'}));
+ expect(document.querySelector('.workspace-caption-reference')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'口播原文说明'}));
+ expect(await screen.findByRole('tooltip')).toHaveProperty('textContent',expect.stringContaining('完整口播'));
+ expect(screen.getByRole('textbox',{name:'字幕内容'})).toHaveProperty('value','独立字幕');
+ expect(command).not.toHaveBeenCalled();
+});

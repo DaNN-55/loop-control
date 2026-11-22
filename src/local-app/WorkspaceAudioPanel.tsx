@@ -1,7 +1,7 @@
 import {uiText} from '../i18n/ui';
 import {templateReferenceProblem} from '../workspaceTemplateInputs';
 import {WorkspaceAudioSourceOptions} from './WorkspaceAudioSourceOptions';
-import {Paperclip,Save,SlidersHorizontal} from 'lucide-react';
+import {Paperclip,Save,Search,SlidersHorizontal,Upload,VolumeX} from 'lucide-react';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
 import {WorkspaceAudioInstanceSettings} from './WorkspaceAudioInstanceSettings';
 import {soundIntentQuery} from '../soundIntent';
@@ -29,6 +29,7 @@ import './workspace-generation-composer.css';
 type Command=(name:string,data:unknown)=>Promise<unknown>;
 interface Props {onBusyChange?:(busy:boolean)=>void;effectsOnly?:boolean;readOnly?:boolean;workspace:ProductionWorkspace;command:Command;onChange:(workspace:ProductionWorkspace)=>void;materials?:Array<{id:string;material_type:string;source_path:string;material_purpose?:string|null}>;project?:OpenChatCutProject|null;selectedShotId?:string}
 type AudioDraft={inputMode?:'search'|'upload';prompt?:string;selection?:ProductionSelection|null;kind:'bgm'|'sfx'|'source';description:string;query:string;manual:string;sourceItem:string;duration:number;anchor:'absolute'|'shot';offset:number;shot:string};
+const effectModeIcons={none:VolumeX,search:Search,upload:Upload};
 const emptyAudioDraft=():AudioDraft=>({kind:'bgm',description:'整期配乐',query:'',manual:'',sourceItem:'',duration:1,anchor:'absolute',offset:0,shot:''});
 export function WorkspaceAudioPreparation(props:Props){
  return props.readOnly?<WorkspaceAudioRecord workspace={props.workspace} project={props.project} selectedShotId={props.selectedShotId}/>:<EditableWorkspaceAudioPreparation {...props}/>;
@@ -88,6 +89,15 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  async function run(name:string,extra:Record<string,unknown>){return perform(async()=>{
   const saved=await savedWorkspace();reading.publish(await command(name,{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,...extra}) as ProductionWorkspace);
  },'音频准备未完成。');}
+ async function changeEffectMode(next:'none'|'search'|'upload'){
+  if(disabled)return;
+  const nextEnabled=next!=='none';
+  if(nextEnabled!==enabled){
+   const saved=await run('setWorkspaceAudioEnabled',{kind:'sfx',enabled:nextEnabled});
+   if(!saved)return;
+  }
+  if(next!=='none')change({inputMode:next});
+ }
  function musicSelection(chosen:ProductionService):ProductionSelection{
   return {capability:'music_sound',provider:chosen.provider,adapter:chosen.adapter,
    ...(chosen.connectionVersionId?{connectionVersionId:chosen.connectionVersionId}:{})};
@@ -150,8 +160,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
   <header className="workspace-narration-toolbar">
    <div className="workspace-visual-preview-tabs" role="group" aria-label={uiText("声音类型")}>{([['sfx','音效'],['bgm','整期配乐']] as const).filter(([next])=>!effectsOnly||next==='sfx').map(([next,label])=><button key={next} type="button" aria-pressed={kind===next} disabled={disabled} onClick={()=>{if(next!==kind)change({kind:next,description:next==='bgm'?'整期配乐':'导入音效',...(next==='sfx'?{anchor:'shot',shot:selectedShotId??w.clips[0]?.shotId??''}:{anchor:'absolute'})});}}>{label}</button>)}</div>
    <div className="workspace-audio-header-actions">
-    {kind==='sfx'&&<NativeSelect className="workspace-audio-mode-picker" size="sm" aria-label={uiText('音效来源方式')} value={draft.inputMode??'search'} disabled={disabled||!enabled} onChange={event=>change({inputMode:event.target.value as 'search'|'upload'})}><option value="search">{uiText('检索音效')}</option><option value="upload">{uiText('上传音效')}</option></NativeSelect>}
-    <Toggle className="workspace-feature-switch" size="sm" label={enabled?uiText("已开启"):uiText("已关闭")} aria-label={kind==='bgm'?uiText("启用整期配乐"):uiText("启用音效")} isSelected={enabled} isDisabled={disabled} onChange={value=>void run('setWorkspaceAudioEnabled',{kind,enabled:value})}/>
+    {kind==='sfx'?<NativeSelect className="workspace-audio-mode-picker" size="sm" aria-label={uiText('音效来源方式')} icon={effectModeIcons[!enabled?'none':draft.inputMode??'search']} optionIcons={effectModeIcons} value={!enabled?'none':draft.inputMode??'search'} disabled={disabled} onChange={event=>void changeEffectMode(event.target.value as 'none'|'search'|'upload')}><option value="none">{uiText('关闭音效')}</option><option value="search">{uiText('检索音效')}</option><option value="upload">{uiText('上传音效')}</option></NativeSelect>:<Toggle className="workspace-feature-switch" size="sm" label={enabled?uiText("已开启"):uiText("已关闭")} aria-label={uiText("启用整期配乐")} isSelected={enabled} isDisabled={disabled} onChange={value=>void run('setWorkspaceAudioEnabled',{kind,enabled:value})}/>}
    </div>
   </header>
   <div hidden={!enabled} className="workspace-audio-enabled-content">
@@ -171,7 +180,7 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
     <label>{kind==='sfx'?uiText("音效意图或检索词"):uiText("配乐检索词")}<textarea aria-label={kind==='sfx'?uiText("音效意图或检索词"):uiText("英文检索词")} rows={3} maxLength={kind==='sfx'?240:100} value={prompt} disabled={disabled} placeholder={kind==='sfx'?uiText("描述需要的声音，例如：开门时一声轻响；也可输入 door creak"):uiText("输入英文检索词，例如：calm ambient piano")} onChange={event=>change({prompt:event.target.value,...(kind==='bgm'?{query:event.target.value}:{})})}/></label>
    </div>
    <div className="workspace-composer-toolbar workspace-audio-submit workspace-audio-composer-toolbar">
-    <WorkspaceAudioSourceOptions onSetupSelection={selection=>change({selection,manual:''})} services={services} value={service?.id??''} disabled={disabled} onChange={value=>{const chosen=services.find(item=>item.id===value);change({selection:chosen?musicSelection(chosen):null,...(chosen?{manual:''}:{})});}}/>
+    <WorkspaceAudioSourceOptions allowClear={kind!=='sfx'} onSetupSelection={selection=>change({selection,manual:''})} services={services} value={service?.id??''} disabled={disabled} onChange={value=>{const chosen=services.find(item=>item.id===value);change({selection:chosen?musicSelection(chosen):null,...(chosen?{manual:''}:{})});}}/>
     {kind==='bgm'&&<Tooltip title={uiText("MP3 · 最大 100 MB")}><Button size="xs" color="tertiary" iconLeading={Paperclip} aria-label={uiText("添加本地配乐（MP3）")} title={uiText("MP3 · 最大 100 MB")} isDisabled={disabled} onPress={()=>input.current?.click()}/></Tooltip>}
     {kind==='sfx'&&<Button size="sm" color="tertiary" iconLeading={Save} aria-label={uiText("保存音效意图")} title={uiText("保存本镜音效意图")} isDisabled={disabled||!prompt.trim()||prompt.trim()===(intentShot?.soundIntent??'')} onPress={()=>void run('saveWorkspaceSoundIntent',{expectedProjectSha256:w.project.sha256,shotId:shot,soundIntent:prompt.trim()})}/>}
     {kind==='bgm'&&<Button size="xs" color="tertiary" iconLeading={Save} aria-label={uiText("保存本期配乐配置")} title={uiText("保存到本生产单，所有镜头共用")} isDisabled={disabled||!description.trim()} onPress={()=>void run('saveWorkspaceMusicSettings',{settings:{description,query:prompt,materialRevisionId:manual}}).then(saved=>{if(saved)setMusicSettingsSaved(true);})}/>}

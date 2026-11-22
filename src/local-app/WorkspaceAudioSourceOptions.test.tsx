@@ -51,3 +51,10 @@ it('shows the exact identity and unavailable reason for a single disabled source
  expect(item.getAttribute('aria-disabled')).toBe('true');
  expect(screen.getByText('未验证 · v1 · 连接未验证').closest('[role="menuitemradio"]')).toBe(item);
 });
+
+it('omits the redundant clear action when the effect source is controlled by its mode picker',()=>{
+ render(<WorkspaceAudioSourceOptions services={services} value="sound-a" onChange={vi.fn()} allowClear={false}/>);
+ fireEvent.click(screen.getByRole('button',{name:'音频来源'}));
+ expect(screen.queryByRole('button',{name:'清除来源选择'})).toBeNull();
+ expect(screen.getByRole('menuitemradio',{name:/声音 A/}).getAttribute('aria-checked')).toBe('true');
+});

@@ -17,3 +17,5 @@
  .workspace-caption-cue-time:nth-of-type(2){grid-column:2}
  .workspace-caption-cue-time>span{position:static;width:auto;height:auto;overflow:visible;clip-path:none;font-size:11px}
 }
+
+.workspace-caption-quick-editor>footer{justify-content:flex-end}

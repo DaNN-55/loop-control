@@ -137,7 +137,7 @@ html[data-interface="impeccable"] .product-ui .workspace-audio-preparation[data-
 .workspace-audio-preparation[data-compact-audio] .workspace-audio-composer-input{position:relative}
 .workspace-audio-preparation[data-compact-audio] .workspace-audio-composer-input>.workspace-material-drop[data-surface=preview]{position:absolute;inset:0;z-index:2;display:grid;place-content:center;gap:8px;background:var(--lc-surface-2);border:1px dashed var(--lc-accent);border-radius:6px}
 
-.workspace-audio-mode-picker{width:138px!important;min-width:0;flex:none}
+.workspace-audio-mode-picker{width:154px!important;min-width:0;flex:none}
 .workspace-audio-mode-picker select{height:32px!important;min-height:32px!important;font-size:12px!important}
 .workspace-audio-upload-composer .workspace-audio-upload-slot{display:grid;gap:8px;padding:12px;min-width:0}
 .workspace-audio-upload-slot h3{margin:0;font-size:12px;font-weight:500}
@@ -146,3 +146,7 @@ html[data-interface="impeccable"] .product-ui .workspace-audio-preparation[data-
 .workspace-audio-preparation>.workspace-narration-toolbar{flex-wrap:wrap}
 .workspace-audio-header-actions{max-width:100%}
 .workspace-audio-upload-slot h3 small{margin-inline-start:8px;font-size:11px;font-weight:400;color:var(--lc-muted)}
+
+/* Match the main-voice selector; compact workflow defaults otherwise hide leading glyphs. */
+.workspace-audio-mode-picker .dan-select-leading{display:block!important;left:8px;width:14px;height:14px}
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-audio-mode-picker .dan-select-trigger{padding:5px 24px 5px 28px!important}
