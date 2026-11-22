@@ -1,0 +1,617 @@
+{
+  "phase": "before",
+  "episodeId": "f339edf0-8324-4201-8533-e6b08fef47b1",
+  "protectedTables": {
+    "public.episodes": {
+      "rows": 11,
+      "sha256": "42b8d149cab3619074171ed1c0b8e4262783d6c96c5b9c23e3168c80c4be7499"
+    },
+    "local_identity.production_workspaces": {
+      "rows": 9,
+      "sha256": "aedc514dfa46bb9913d37de89d510e60524079a912216a9bd01dcfcad2de2e69"
+    }
+  },
+  "mediaRoot": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1",
+  "files": [
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/materials/900487f4900c0a3ee4d0a520a6d67f3bcc7d488e338923fa9b121500fbc46fed-视频原声-ff1192ea9aeb7310518496bad4541b8650d895383277edcff85113eb06571bb1.mp3",
+      "bytes": 68048,
+      "sha256": "900487f4900c0a3ee4d0a520a6d67f3bcc7d488e338923fa9b121500fbc46fed"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/materials/a0eb23f196d566ba753126bbc0e8244fad2cd436690388655d7451c5c5a17ffa-script-studio.md",
+      "bytes": 1652,
+      "sha256": "a0eb23f196d566ba753126bbc0e8244fad2cd436690388655d7451c5c5a17ffa"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/materials/aeafe1a93309b8f1b7d2264b9270b71e7aa18c497dbd273b2294a5742b1fc7db-视频原声-4c89396b36a0d765c2048e5ff96588fe4f49540c5d9eb91e7afd179994f15127.mp3",
+      "bytes": 71631,
+      "sha256": "aeafe1a93309b8f1b7d2264b9270b71e7aa18c497dbd273b2294a5742b1fc7db"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/materials/d5e3db57b787189e2b69da089aee47d64358a77abddb577fb5c766e2cad9b932-soft-chime.mp3",
+      "bytes": 16526,
+      "sha256": "d5e3db57b787189e2b69da089aee47d64358a77abddb577fb5c766e2cad9b932"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/054b8db4-7b0e-41f8-b286-d18e34385fa2/narration-e3fccc8e-ac90-493b-99ad-4c5c2c01ee62.mp3",
+      "bytes": 21357,
+      "sha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/23060af2-e710-4fea-8d30-f5c14129cbcf/23060af2-e710-4fea-8d30-f5c14129cbcf.mp4",
+      "bytes": 792023,
+      "sha256": "f15fc5ec2b0c93155910239c56de1b5620443b172b02c47e00fdc5e1bfb7ac2c"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/38db65de-07a9-4557-ac0f-f556e615e28d/alignment.json",
+      "bytes": 1110,
+      "sha256": "0a8e6ac1c1db2f7f51942880962fd24eb9f349fb0796267f6f49f49e51b6a5fe"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/518d4678-3e67-4403-aa85-6c2cbe5649cb/alignment.json",
+      "bytes": 1121,
+      "sha256": "179c07ed845aeb8a6f8d30709f6358a3564540a57e88218cad1cb25bca63c08d"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/558b559a-c95d-49ac-b00f-824e9e1cfe1e/alignment.json",
+      "bytes": 1110,
+      "sha256": "2ab0c0cf3c89be39b93005d805ffe389aa70d05eaddfd3dbb29271f31843f5d3"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/6dc397af-c7ff-42fd-b669-f37172a5a0e6/image.png",
+      "bytes": 1691631,
+      "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/82eb89ce-9a7c-46a8-b888-9af0084ff267/alignment.json",
+      "bytes": 1110,
+      "sha256": "e3df50c48584b8d716c9f5cc7253bced2d3e9b4c94bcf71d884db61a3c44f5ec"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/82ecdb6d-fb00-4e4f-a031-3321d9383d24/82ecdb6d-fb00-4e4f-a031-3321d9383d24.mp4",
+      "bytes": 1916256,
+      "sha256": "34f855650904f414734a6ed16c89f32a14969d9662b64a3f396486832657ec2b"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/90d120ba-6fd2-4bca-9801-cd8ca1342600/image.png",
+      "bytes": 1733681,
+      "sha256": "01e2af840d76e4a2accf57821939e6a6366fee1b8caeff8b26e1ccb25d2de3e0"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/a36e43b9-66a1-45c8-8264-5845cfa8aec7/image.png",
+      "bytes": 1756595,
+      "sha256": "7b2cbf28ccf562c94c58f29f33a30614700fd8bc5584bf7df2e3b475baf3c972"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/bb5e8c1e-32c7-4176-af6b-065580af975a/bb5e8c1e-32c7-4176-af6b-065580af975a.mp4",
+      "bytes": 1883254,
+      "sha256": "e496812f0717176888f36f5287d967f79006d7a6afdd13f30ed00c4f24916615"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/bc52d18e-fb0a-4248-b739-19b136641b2c/bc52d18e-fb0a-4248-b739-19b136641b2c.mp4",
+      "bytes": 422279,
+      "sha256": "0ac3c34dccced4dcee336e29051b9aa146f1511765084a821d476287f08577f9"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/ead20e3b-7eca-4d9e-b1aa-e90998a74b48/narration-2b01492a-08d8-464e-82ff-5e496db31be0.mp3",
+      "bytes": 25197,
+      "sha256": "322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/fdc0e0ac-28ab-4217-aeb7-6ee00d563a09/alignment.json",
+      "bytes": 1110,
+      "sha256": "c317d5bed95e98ea5f592811e747944fff845c8a568592d9e6490db960e78218"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/fe10959e-b444-4f61-ba16-f045d64895e3/narration-aa2d7c91-e773-4d8b-b788-74766bb85922.mp3",
+      "bytes": 21549,
+      "sha256": "c120d26daa27d0e257e96123d9feb4418eddd46d70d3e27350fe0e7647ad6811"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/generated-project.json",
+      "bytes": 29333,
+      "sha256": "c2aeb436d5fc4620b9ba7734bc5ef6f6601a6dc2562e45c53b3da85c313745f0"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/project.json",
+      "bytes": 30881,
+      "sha256": "4cbcd1be2eec92779320be0266bb9a23b31c08e96462b8d37fe4894311a11b4b"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/loop-bundled-sounds.json",
+      "bytes": 4429,
+      "sha256": "cb6ed605b386a222e10ac542069e582a4b54cd6fe64742d3213a18dc9f649c87"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/036179151672f9f80014.mp4.preview-v3-1883254-1795353114157302.peaks.json",
+      "bytes": 2441,
+      "sha256": "4a570af8825cc598a75bcc37a95ef9b1dbc529cf59f0b72f8fe6aaa7c5042a56"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/036179151672f9f80014.mp4.preview-v3-1883254-1795353114157302.poster.jpg",
+      "bytes": 29850,
+      "sha256": "0e265e884f4f709f965668846a1716c66aa86d530660574b0aabe8d1c9cb023c"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/036179151672f9f80014.mp4.preview-v3-1883254-1795353114157302.strip.jpg",
+      "bytes": 3167,
+      "sha256": "3b1ed84409ce6b757216dbfce85bc9fd7dda23e052972d8eb3d48ac02460f4d0"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/102be4c84d8762e8f9e5.mp3.preview-v3-25197-1795353114158897.peaks.json",
+      "bytes": 1886,
+      "sha256": "a5303d73534d0b1d23c9d0a0537be2e1d7f69dd3f2148baf374b2d689bd77ee6"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/2393d8417e242fd34110.mp3.preview-v3-21549-1795353114159192.peaks.json",
+      "bytes": 1632,
+      "sha256": "ab3682f83620721f0ae7deeb21aa9eb3b81a8322fe7b3135c55890c9c7a448ec"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/23aa31196b8624bc1072.mp4.preview-v3-422279-1795353114156073.peaks.json",
+      "bytes": 990,
+      "sha256": "e84aec5f99266b037e70de6e4137cfbc23607e3e61a4b6844925445285abdc38"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/23aa31196b8624bc1072.mp4.preview-v3-422279-1795353114156073.poster.jpg",
+      "bytes": 29118,
+      "sha256": "b80468027a0680571e33b4f67b004cbc3cb3a4da88e544addbd8ab2fe3035d08"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/23aa31196b8624bc1072.mp4.preview-v3-422279-1795353114156073.strip.jpg",
+      "bytes": 2944,
+      "sha256": "98d52a3fbd1969ecab4136a7e4f288a4efeb48804f1d2ece021d12ec6ebb94be"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/46158e50c1c68096b53f.mp3.preview-v3-16526-1795353114159490.peaks.json",
+      "bytes": 1228,
+      "sha256": "d07e0fe246bb636d54e4b8f4315d9a3578f3b51620e08d942f398fad8b11bee8"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/4ef6d7395d16a3119fee.mp3.preview-v3-71631-1795353114160134.peaks.json",
+      "bytes": 2451,
+      "sha256": "96f379cd78f4c06899efdc12ca5817d972bd4fd566771f28346441b783a34731"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/c380532af5caf56099cb.mp3.preview-v3-68048-1795353114159824.peaks.json",
+      "bytes": 930,
+      "sha256": "ecf6e319d36b9d0050f905fe56e8a744c18192c31d04ae1e502a5f360c0f0c1d"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/.preview/f596368403997dcdb971.mp3.preview-v3-21357-1795353114158592.peaks.json",
+      "bytes": 1608,
+      "sha256": "5e14131983d96bff0f0623c9f0b02b3623ea7b7323de96f63e1ddf0b04ea2562"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/036179151672f9f80014.mp4",
+      "bytes": 1883254,
+      "sha256": "e496812f0717176888f36f5287d967f79006d7a6afdd13f30ed00c4f24916615"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/102be4c84d8762e8f9e5.mp3",
+      "bytes": 25197,
+      "sha256": "322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/2393d8417e242fd34110.mp3",
+      "bytes": 21549,
+      "sha256": "c120d26daa27d0e257e96123d9feb4418eddd46d70d3e27350fe0e7647ad6811"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/23aa31196b8624bc1072.mp4",
+      "bytes": 422279,
+      "sha256": "0ac3c34dccced4dcee336e29051b9aa146f1511765084a821d476287f08577f9"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/46158e50c1c68096b53f.mp3",
+      "bytes": 16526,
+      "sha256": "d5e3db57b787189e2b69da089aee47d64358a77abddb577fb5c766e2cad9b932"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/4ef6d7395d16a3119fee.mp3",
+      "bytes": 71631,
+      "sha256": "aeafe1a93309b8f1b7d2264b9270b71e7aa18c497dbd273b2294a5742b1fc7db"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/b7d002c397932539bf75.png",
+      "bytes": 1691631,
+      "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/c380532af5caf56099cb.mp3",
+      "bytes": 68048,
+      "sha256": "900487f4900c0a3ee4d0a520a6d67f3bcc7d488e338923fa9b121500fbc46fed"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/f596368403997dcdb971.mp3",
+      "bytes": 21357,
+      "sha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-02a9840babfe7774aaa9d780519ab14965043eb3748a828ba9306c26c88303c2.mp3",
+      "bytes": 26880,
+      "sha256": "02a9840babfe7774aaa9d780519ab14965043eb3748a828ba9306c26c88303c2"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-1392033e9d476896b2e7820058e2d569c300b8b859876ed3696983c4b03ae2f4.mp3",
+      "bytes": 15360,
+      "sha256": "1392033e9d476896b2e7820058e2d569c300b8b859876ed3696983c4b03ae2f4"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-197eda4baae9748eb9e8b6f4c7fd2998707dbeb4df92d94a19f4e89b8ffa6b13.mp3",
+      "bytes": 139200,
+      "sha256": "197eda4baae9748eb9e8b6f4c7fd2998707dbeb4df92d94a19f4e89b8ffa6b13"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-1c40c7995c14d40c8ada1d86a813bbcaf608a930779c0ce32319bedb55ff5137.mp3",
+      "bytes": 14400,
+      "sha256": "1c40c7995c14d40c8ada1d86a813bbcaf608a930779c0ce32319bedb55ff5137"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-237265c7cf7567109c802bf6ac0a0225e3c76f1721ee7e2550690dbf96c5a753.mp3",
+      "bytes": 1686,
+      "sha256": "237265c7cf7567109c802bf6ac0a0225e3c76f1721ee7e2550690dbf96c5a753"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-3506a0f9e402d96e322ee7992e0ff87ce8a11bf90f963b58d989999a0ab4fd81.mp3",
+      "bytes": 6720,
+      "sha256": "3506a0f9e402d96e322ee7992e0ff87ce8a11bf90f963b58d989999a0ab4fd81"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-3e88048014b2959004c23790788dec06df80172abb98639a42d458999594423f.mp3",
+      "bytes": 9600,
+      "sha256": "3e88048014b2959004c23790788dec06df80172abb98639a42d458999594423f"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-3ff8ad4d247345208fbc238f7ecf0f6cfb3237d9b74b8464e1f2482fd2db2f9b.mp3",
+      "bytes": 53760,
+      "sha256": "3ff8ad4d247345208fbc238f7ecf0f6cfb3237d9b74b8464e1f2482fd2db2f9b"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-44461adbcd561745d9bd6e51d480e8f45df9799716e60c7bc861d21b4a4eb0b0.mp3",
+      "bytes": 9600,
+      "sha256": "44461adbcd561745d9bd6e51d480e8f45df9799716e60c7bc861d21b4a4eb0b0"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-4a52caed94d3fdeb0df37f2fa7d1af07a0010e2d9f305ce8338fdc165094bbac.mp3",
+      "bytes": 16320,
+      "sha256": "4a52caed94d3fdeb0df37f2fa7d1af07a0010e2d9f305ce8338fdc165094bbac"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-4b2b645d87f970765359c57351122950ae4d48cc5e7de48088e6d65592828509.mp3",
+      "bytes": 59520,
+      "sha256": "4b2b645d87f970765359c57351122950ae4d48cc5e7de48088e6d65592828509"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-51e3ef85d08155d6c741eeb9628b445a02cf34e1c1b37f4da21612aff6bda1cd.mp3",
+      "bytes": 11068,
+      "sha256": "51e3ef85d08155d6c741eeb9628b445a02cf34e1c1b37f4da21612aff6bda1cd"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-528dca71ccc3e4a5a3d36d9648fea416312fad17b386af35eca4c452f0e3c093.mp3",
+      "bytes": 7266,
+      "sha256": "528dca71ccc3e4a5a3d36d9648fea416312fad17b386af35eca4c452f0e3c093"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-543fc9cc5eb72034b807229219fb970d3b2ef63d07ebd688bc6d721df00bdff9.mp3",
+      "bytes": 176640,
+      "sha256": "543fc9cc5eb72034b807229219fb970d3b2ef63d07ebd688bc6d721df00bdff9"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-58a3edb35201d02e541f7c8fe3a43d4b02e8cec9c81f417a150fe21bfc3852be.mp3",
+      "bytes": 9600,
+      "sha256": "58a3edb35201d02e541f7c8fe3a43d4b02e8cec9c81f417a150fe21bfc3852be"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-61cf5b25ddba3a7f12dfc1ec918f551bf55e71884a27509337c35c8179619645.mp3",
+      "bytes": 150720,
+      "sha256": "61cf5b25ddba3a7f12dfc1ec918f551bf55e71884a27509337c35c8179619645"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-6b9b1ec11a705ce49020fc257790fbb056946ebefa5f557a19993ffe7742d6ac.mp3",
+      "bytes": 26880,
+      "sha256": "6b9b1ec11a705ce49020fc257790fbb056946ebefa5f557a19993ffe7742d6ac"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-7437920b1448d84ef9f3ae81e03abfbab09da6cd4f30d67d14f68759d0fdc7b9.mp3",
+      "bytes": 82560,
+      "sha256": "7437920b1448d84ef9f3ae81e03abfbab09da6cd4f30d67d14f68759d0fdc7b9"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-758526695f2c2fc49e5c96834b6389a3f4ca0038f94491e41681d6d6a4ec42b2.mp3",
+      "bytes": 99840,
+      "sha256": "758526695f2c2fc49e5c96834b6389a3f4ca0038f94491e41681d6d6a4ec42b2"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-78535f0b3bd7242624fec9cbd8cb7e9a258f560ac44d8f5a40ac4a0e0478a32c.mp3",
+      "bytes": 37440,
+      "sha256": "78535f0b3bd7242624fec9cbd8cb7e9a258f560ac44d8f5a40ac4a0e0478a32c"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-7da4de31c5679870a6c393b0c282095ee7b44c9e6ab3af5ce82198b6263793f5.mp3",
+      "bytes": 623040,
+      "sha256": "7da4de31c5679870a6c393b0c282095ee7b44c9e6ab3af5ce82198b6263793f5"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-7f73019f13a1cca97995148ac5cf955daa0646e8f504e75493dc4ad32d08aad8.mp3",
+      "bytes": 70080,
+      "sha256": "7f73019f13a1cca97995148ac5cf955daa0646e8f504e75493dc4ad32d08aad8"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-7fb62644dab5f6399eba8cd73f156ebc639750949b97779ff265393af6b983da.mp3",
+      "bytes": 31680,
+      "sha256": "7fb62644dab5f6399eba8cd73f156ebc639750949b97779ff265393af6b983da"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-97d167310bc3b1ceedb8282172adce0468afcfbe02ca17407d73d6588759ab8e.mp3",
+      "bytes": 116160,
+      "sha256": "97d167310bc3b1ceedb8282172adce0468afcfbe02ca17407d73d6588759ab8e"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-a2646449c887ef36c5cf8d1bdb418157b7f35e6241383ec0d77103297ed12374.mp3",
+      "bytes": 2012160,
+      "sha256": "a2646449c887ef36c5cf8d1bdb418157b7f35e6241383ec0d77103297ed12374"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-ac0b2c1dda415ffd027662ade18017f56737ced3803a701df17556fd47d3dd06.mp3",
+      "bytes": 5197,
+      "sha256": "ac0b2c1dda415ffd027662ade18017f56737ced3803a701df17556fd47d3dd06"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-ad00c275c00175ac3beb06b714ee77450e713c72974030ff4e787cc38e1cbdf8.mp3",
+      "bytes": 31680,
+      "sha256": "ad00c275c00175ac3beb06b714ee77450e713c72974030ff4e787cc38e1cbdf8"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-b1c2067761bb72570a41c01566f3febec7c887aeb5158b73ace960ff3f705177.mp3",
+      "bytes": 149760,
+      "sha256": "b1c2067761bb72570a41c01566f3febec7c887aeb5158b73ace960ff3f705177"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-b35dc03f2dd5178d390931ad151fbb491de2b420881e7b3818ec44c8624f3973.mp3",
+      "bytes": 327360,
+      "sha256": "b35dc03f2dd5178d390931ad151fbb491de2b420881e7b3818ec44c8624f3973"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-b6879a7767e0b6e953e805cc834a42b417bb511c4a5ece4887c45af5679da610.mp3",
+      "bytes": 117120,
+      "sha256": "b6879a7767e0b6e953e805cc834a42b417bb511c4a5ece4887c45af5679da610"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-bdff2d6a49274543157577647c221133c4c6f90cad279e052f110062d165ac30.mp3",
+      "bytes": 2734080,
+      "sha256": "bdff2d6a49274543157577647c221133c4c6f90cad279e052f110062d165ac30"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-c43290bb7699de6e725281df0a3caeabaf0f34a3632c74707d65171438995415.mp3",
+      "bytes": 29760,
+      "sha256": "c43290bb7699de6e725281df0a3caeabaf0f34a3632c74707d65171438995415"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-cfabf0a6e59afc95a6295d930714a1eed56d2f712d7747a6785148bfaf598cfb.mp3",
+      "bytes": 32640,
+      "sha256": "cfabf0a6e59afc95a6295d930714a1eed56d2f712d7747a6785148bfaf598cfb"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-d728f01e8dda01abbdb4ec1204926badaf5879d9e548961aa47095bccdc273a4.mp3",
+      "bytes": 39360,
+      "sha256": "d728f01e8dda01abbdb4ec1204926badaf5879d9e548961aa47095bccdc273a4"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-e41ee4f58ad7f4f8d5cba913a8e7c4b60cf3442e7184afa1aa888ea5e691de79.mp3",
+      "bytes": 14400,
+      "sha256": "e41ee4f58ad7f4f8d5cba913a8e7c4b60cf3442e7184afa1aa888ea5e691de79"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-e5c99fd6901252ce289b5bad40f8991b96696766470c1e37ee1a0ef4b468f1b9.mp3",
+      "bytes": 18240,
+      "sha256": "e5c99fd6901252ce289b5bad40f8991b96696766470c1e37ee1a0ef4b468f1b9"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-ec5a6364fd90dd071f93f2950924b95105ba02efa5f9f1776a7b10631b99d6c0.mp3",
+      "bytes": 52800,
+      "sha256": "ec5a6364fd90dd071f93f2950924b95105ba02efa5f9f1776a7b10631b99d6c0"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-f00a41e93d25d38bfcb02a796da6f55da7244bb8324416677d7da4f75ae24894.mp3",
+      "bytes": 21120,
+      "sha256": "f00a41e93d25d38bfcb02a796da6f55da7244bb8324416677d7da4f75ae24894"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/media/uploads/lc-sfx-f031a649116863986819aba86bf81506f0c35501c7d88b537a96150b629112f9.mp3",
+      "bytes": 67200,
+      "sha256": "f031a649116863986819aba86bf81506f0c35501c7d88b537a96150b629112f9"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/project-store-v1.json",
+      "bytes": 28840,
+      "sha256": "a3fe300f358112d31dc789b89d96eff250646367ed6b73b02e4efb09db51d412"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/project-store-v1.sqlite3",
+      "bytes": 286720,
+      "sha256": "273072cb0d4be4023d5ea824cb95fa479c78ead5601f1232df6eb80beb1f0ea5"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/project-store-v1.sqlite3-shm",
+      "bytes": 32768,
+      "sha256": "3652e41dbf9d019da371e61c9bf46d64a370d9e2010ac2cf8ca6332a94d1eaa7"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/project-store-v1.sqlite3-wal",
+      "bytes": 115392,
+      "sha256": "d7c963e13424d893a2ef86a40e3775917c6c8fe773dfc7a214b5cfce00fef87e"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/project-store-v1.sqlite3.receipt.json",
+      "bytes": 1585,
+      "sha256": "c0cf3de3859060faba358399dea0f27b2ff8b45a82c5985dc725e2df0bda913e"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/runtime/settings.env",
+      "bytes": 36,
+      "sha256": "5e70e2e95e8049a519eddee3f5dc65176dc6f6a226387b72569ac80924c0f868"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/openchatcut-work/current/workspace.json",
+      "bytes": 16247,
+      "sha256": "76b6aa2910a9f3d579157a1648785799e6e0f62783366bcace9ca44c86e04a40"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/preparation/42cadae0-14cf-4bdc-a676-c2bfe9a27fd6.json",
+      "bytes": 2651,
+      "sha256": "2372523a19519c4286838b9bbc933c4250051200d67143d7e08ebeda9570d925"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/02da9b3ee07cb0955797cb294531e1e8d72a314e529286c8f16dc0cf1669c8ad.json",
+      "bytes": 18322,
+      "sha256": "02da9b3ee07cb0955797cb294531e1e8d72a314e529286c8f16dc0cf1669c8ad"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/0da1c3b32fa3da9e9364aeb9512de1124d00dc4db15d06c8db93b60cb6e32be4.json",
+      "bytes": 30789,
+      "sha256": "0da1c3b32fa3da9e9364aeb9512de1124d00dc4db15d06c8db93b60cb6e32be4"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/112824fec21b0e4875e34b6bd044083b329a012a69ff7517811a6bebb4d2ab46.json",
+      "bytes": 13895,
+      "sha256": "112824fec21b0e4875e34b6bd044083b329a012a69ff7517811a6bebb4d2ab46"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/2d5defdfafc96aac6c51037a907f345d3f87071f5241f38af3d08e193980ee96.json",
+      "bytes": 21791,
+      "sha256": "2d5defdfafc96aac6c51037a907f345d3f87071f5241f38af3d08e193980ee96"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/3289902033f7a952a9da5dc47060614e36279fd02aced6cbaf88069aa4e93d43.json",
+      "bytes": 20131,
+      "sha256": "3289902033f7a952a9da5dc47060614e36279fd02aced6cbaf88069aa4e93d43"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/375f8ba976b8cb4f52d3125e317b7dffae04784ae45385a7e134c0d3e048d3ef.json",
+      "bytes": 29300,
+      "sha256": "375f8ba976b8cb4f52d3125e317b7dffae04784ae45385a7e134c0d3e048d3ef"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/3e4d4643e2f64a0698732eef8a9deb791e58683186c71e214f350645862be2f2.json",
+      "bytes": 14068,
+      "sha256": "3e4d4643e2f64a0698732eef8a9deb791e58683186c71e214f350645862be2f2"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/49674779e4ae797ca9884175eb2f285276e5c4daea8a809ecdd05ab16d6b953d.json",
+      "bytes": 20132,
+      "sha256": "49674779e4ae797ca9884175eb2f285276e5c4daea8a809ecdd05ab16d6b953d"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/4cbcd1be2eec92779320be0266bb9a23b31c08e96462b8d37fe4894311a11b4b.json",
+      "bytes": 30881,
+      "sha256": "4cbcd1be2eec92779320be0266bb9a23b31c08e96462b8d37fe4894311a11b4b"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/6586e3c5f4cd24abbb5cf16d3c163c0edf590e7208cf7da3abc11c3064b230d2.json",
+      "bytes": 25679,
+      "sha256": "6586e3c5f4cd24abbb5cf16d3c163c0edf590e7208cf7da3abc11c3064b230d2"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/73b23e94040496b866f9d73baaced6404a005631d39b0b7d2b1d05e02f361116.json",
+      "bytes": 18497,
+      "sha256": "73b23e94040496b866f9d73baaced6404a005631d39b0b7d2b1d05e02f361116"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/866e6296380383fe78144e8bde2ca23fc4c9c28ed2122e845257260f1431ccdd.json",
+      "bytes": 16109,
+      "sha256": "866e6296380383fe78144e8bde2ca23fc4c9c28ed2122e845257260f1431ccdd"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/976777d222beb81e25a142603c702e53ff9b546cb403f0fb94a746abc54deecb.json",
+      "bytes": 11696,
+      "sha256": "976777d222beb81e25a142603c702e53ff9b546cb403f0fb94a746abc54deecb"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/9e84d2adefc2e39d750341b14f90ce36d013b7ab2cb67cc3fb8fb494b7c4da79.json",
+      "bytes": 18150,
+      "sha256": "9e84d2adefc2e39d750341b14f90ce36d013b7ab2cb67cc3fb8fb494b7c4da79"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/a15c86d156db15716f8ed5f025b4a55663117df9dd49fcb2ec33954922fd21b0.json",
+      "bytes": 21895,
+      "sha256": "a15c86d156db15716f8ed5f025b4a55663117df9dd49fcb2ec33954922fd21b0"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/c2aeb436d5fc4620b9ba7734bc5ef6f6601a6dc2562e45c53b3da85c313745f0.json",
+      "bytes": 29333,
+      "sha256": "c2aeb436d5fc4620b9ba7734bc5ef6f6601a6dc2562e45c53b3da85c313745f0"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/f1951f19e0e5b2938a3aeea96ce6afe08a85e05b15a6bd1d0a609789536cee8d.json",
+      "bytes": 20084,
+      "sha256": "f1951f19e0e5b2938a3aeea96ce6afe08a85e05b15a6bd1d0a609789536cee8d"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/publication/covers/27e9c99d-74e8-4cf0-9c55-8875571f2953.png",
+      "bytes": 1406385,
+      "sha256": "bf081050b4eccbebc9d3cfd6fe6157f4b28409279ea730d56140d3485e8cc1b6"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/publication/covers/cda2bd6d-c955-4361-b5d9-08c24bb7fbd8.png",
+      "bytes": 1691631,
+      "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/publication/packages/de310079-c64e-46cf-bdc1-823acda93b4b/manifest.json",
+      "bytes": 3258,
+      "sha256": "f3d2a49f0b79693f7e62b284e147e01c7547574f0e3c071326ec31fd886eca95"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/publication/packages/de310079-c64e-46cf-bdc1-823acda93b4b/metadata.json",
+      "bytes": 560,
+      "sha256": "4d77ad150ee3948d9629bb5063960c40f65c216e9224428fbac99cd44c5c7304"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-deliveries/bf651a98-ef2f-441e-825a-9a326b374851/checks.json",
+      "bytes": 5402,
+      "sha256": "d7b2f0c5b37d05586e5f20e6e4bb5bf70f69965ccae1e310d506499032802840"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-deliveries/bf651a98-ef2f-441e-825a-9a326b374851/manifest.json",
+      "bytes": 2505,
+      "sha256": "1f88e761f20f48245c927e69b237ec4fe291b0f588c33b66f209479ad91bea0c"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-exports/dd1ab5c0-48c5-4413-8506-a512d96ed10c/913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b.mp4",
+      "bytes": 10618490,
+      "sha256": "913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-exports/dd1ab5c0-48c5-4413-8506-a512d96ed10c/representative.jpg",
+      "bytes": 91959,
+      "sha256": "3251d083a2d38d1c58aba174fd9fb6f32d74f68c9f4f98e1f8265f58fbc02632"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付/光落在杯沿.mp4",
+      "bytes": 10618490,
+      "sha256": "913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付/发布资料.json",
+      "bytes": 325,
+      "sha256": "68d221835ad06e56a748edae680cfdafc9c6175ff0ee5d94febd8c1fe27cf746"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付/可编辑工程.json",
+      "bytes": 30881,
+      "sha256": "4cbcd1be2eec92779320be0266bb9a23b31c08e96462b8d37fe4894311a11b4b"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付/完整交付包.zip",
+      "bytes": 12350960,
+      "sha256": "617eeb6bd7756cb738ce045143fe1b4b158e8d8aa27f7e52ff233f1b53d69fbb"
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付/封面.png",
+      "bytes": 1691631,
+      "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e"
+    }
+  ]
+}

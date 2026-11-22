@@ -18,3 +18,7 @@
 未验证Safari、Firefox、真实触屏或屏幕阅读器；没有重新执行导出或付费生成。
 
 截图：`video-tools.jpg`、`caption-confirmation.jpg`。
+
+## 过程附件清理（2026-11-22）
+
+经用户授权，已完成用途的 Demo、过程截图与临时输出移入废纸篓；本报告保留历史验收事实，未重新执行的测试不计为本次清理通过。恢复清单与保留项见[本轮清理记录](../conversation-cleanup-20261122/REPORT.md)。

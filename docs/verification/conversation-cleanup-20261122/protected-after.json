@@ -1,0 +1,17 @@
+{
+  "protectedTables": {
+    "public.episodes": {
+      "rows": 11,
+      "sha256": "42b8d149cab3619074171ed1c0b8e4262783d6c96c5b9c23e3168c80c4be7499"
+    },
+    "local_identity.production_workspaces": {
+      "rows": 9,
+      "sha256": "aedc514dfa46bb9913d37de89d510e60524079a912216a9bd01dcfcad2de2e69"
+    }
+  },
+  "tablesUnchanged": true,
+  "mediaFilesVerified": 120,
+  "mediaBytesVerified": 61597965,
+  "changedMediaPaths": [],
+  "allProtectedMediaUnchanged": true
+}

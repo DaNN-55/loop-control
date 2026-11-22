@@ -29,4 +29,8 @@ Safari、实体触屏、横版实片未实测；未触发付费AI生成。生成
 
 浏览器验收命令：先 `npm run runtime:prepare`；设置 `LOOP_TEST_CONTEXT_MODULE=/Users/dan/Programs/loop-control/scripts/runtime/environment.mjs LOOP_WORKSPACE_ACCEPTANCE=1 LOOP_DELIVERY_LAYOUT_BROWSER=1` 运行新集成。夹具等待真实浏览器写入两个验收标记，并从数据库核对结果；不把伪造响应当作保存验收。省略浏览器开关可运行API保存／重启部分。临时端口、Cookie和标记未纳入提交。
 
-![正式页桌面效果](formal-desktop.jpg)
+正式页桌面效果（过程附件已清理：`formal-desktop.jpg`）
+
+## 过程附件清理（2026-11-22）
+
+经用户授权，已完成用途的 Demo、过程截图与临时输出移入废纸篓；本报告保留历史验收事实，未重新执行的测试不计为本次清理通过。恢复清单与保留项见[本轮清理记录](../conversation-cleanup-20261122/REPORT.md)。

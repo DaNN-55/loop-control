@@ -1,0 +1,2308 @@
+{
+  "baseline": "9c1facfc8",
+  "trashRoot": "/Users/dan/.Trash/loop-control-conversation-20261122-214524",
+  "method": "move-to-trash-with-content-verification",
+  "entries": [
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/delivery-demo",
+      "files": 20,
+      "bytes": 1058491,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/delivery-demo",
+      "sha256": "533cfb11372dee94eefc6fc25c946746267963900329e120d369eac66ef131c1",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/delivery-disclosures-before.png",
+      "files": 1,
+      "bytes": 58110,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/delivery-disclosures-before.png",
+      "sha256": "f7f81bc8ee5cab657939a565592ddcf533986b29cdec8ef9dc58c3725b2e666b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/delivery-header-clean.png",
+      "files": 1,
+      "bytes": 69930,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/delivery-header-clean.png",
+      "sha256": "a8e52437f5258f9cf8d75cec5f780dc0000019072dbb100514fb85fb79bf72db",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/delivery-header-left.png",
+      "files": 1,
+      "bytes": 70364,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/delivery-header-left.png",
+      "sha256": "7cd04965eca1a3daa60c07c42c76c5afb434234ca4ff1389c13e2d54028bb916",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/delivery-visual-audit.jpg",
+      "files": 1,
+      "bytes": 63286,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/delivery-visual-audit.jpg",
+      "sha256": "3ca1fd62ca2d1645a17546759a6957edb52a4ba200b82b22c176b31d2eb24e51",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/detail-review-delivery.jpg",
+      "files": 1,
+      "bytes": 87118,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/detail-review-delivery.jpg",
+      "sha256": "ceb8000ca800cc2b1f7c3e383810aafaa6ee2395b6de5518a655c6c210608da9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/detail-review-script-editing.jpg",
+      "files": 1,
+      "bytes": 64802,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/detail-review-script-editing.jpg",
+      "sha256": "69d0e931857140312b768e75ef45b696b9d0e0e18370c991223ec5e637e4d0c1",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/detail-review-script-readonly.jpg",
+      "files": 1,
+      "bytes": 72740,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/detail-review-script-readonly.jpg",
+      "sha256": "165ec2b9de7f753cc9da2a5c77aaafa7cb21e49ea522b4ddfe424400b9c587c4",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/detail-review-storyboard-editing.jpg",
+      "files": 1,
+      "bytes": 79025,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/detail-review-storyboard-editing.jpg",
+      "sha256": "215b8778d050e32a6a273a703694601f490bd17792c2f5670c9835659767721f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/detail-review-storyboard-readonly.jpg",
+      "files": 1,
+      "bytes": 88259,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/detail-review-storyboard-readonly.jpg",
+      "sha256": "a9a18f6b2b6492848d4963c4ab2ed055ef93c4f79572fb546df44c5a59f15144",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/pagination-A.jpg",
+      "files": 1,
+      "bytes": 63921,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/pagination-A.jpg",
+      "sha256": "1ed050a1e1199892e6f26813af98153e3c89c9fc102160fc2534e6b856254b3f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/pagination-B.jpg",
+      "files": 1,
+      "bytes": 64924,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/pagination-B.jpg",
+      "sha256": "36a8a92f0173c38b2165c8d932ed54f5ec525b32a0c224630706de240d1eb728",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/pagination-C.jpg",
+      "files": 1,
+      "bytes": 64433,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/pagination-C.jpg",
+      "sha256": "6efa4a11051a4de6da0588226a8a6265d1631b4229dbcad0678a901e8833144b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-demo-checked.jpg",
+      "files": 1,
+      "bytes": 83329,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-demo-checked.jpg",
+      "sha256": "662ca3a44377ecd51f2a9adadda62f12269e11c9741fc74f990a78c7e24c4490",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-detail-demo-board.jpg",
+      "files": 1,
+      "bytes": 68204,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-detail-demo-board.jpg",
+      "sha256": "2b3139e6aa7fce93d95a51d37a63ebb72368dd75476e4b7f3067b583351150ac",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-detail-demo-script.jpg",
+      "files": 1,
+      "bytes": 105229,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-detail-demo-script.jpg",
+      "sha256": "97b63611329b1542030b65325dfd04bf82e1807ecbc2cca30b47cd7b63db8962",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-detail-demo.html",
+      "files": 1,
+      "bytes": 37096,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-detail-demo.html",
+      "sha256": "a82f4f5dac1ebea654a77af3c8d7d2e45d42e90da0d4681e6d1d6f841159bd58",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-page-before.jpg",
+      "files": 1,
+      "bytes": 115646,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-page-before.jpg",
+      "sha256": "99b34445228994283ad16d29a99c607d2d1c7f884318996bb57eefdb619f2961",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-page-demo.html",
+      "files": 1,
+      "bytes": 38532,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-page-demo.html",
+      "sha256": "ae364e47aaa1d18feba560aae9c207c26f4c82c034e2eba551087c717fc03bf1",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-page-media-first-checked.jpg",
+      "files": 1,
+      "bytes": 84619,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-page-media-first-checked.jpg",
+      "sha256": "670b470d5e8f2f34d4455980b756bd9f32d35eb8cfcdd1b933e83b272e2d0e0a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-page-media-first.html",
+      "files": 1,
+      "bytes": 43879,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-page-media-first.html",
+      "sha256": "2f625c5cbe4689e9dcb8c32afbcf4fda260eb35b513ecc6b6cde5eb4d7ec00c9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-page-pagination-options.html",
+      "files": 1,
+      "bytes": 56749,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-page-pagination-options.html",
+      "sha256": "01c683ea01af8ad67a52d27215b10a544d3e0a374d84ff35156ed70f51d17285",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-page-refinement-checked.jpg",
+      "files": 1,
+      "bytes": 90634,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-page-refinement-checked.jpg",
+      "sha256": "1be882104ea92347f4b4ae40ec811527ec055714650ead01f62cc7b9f984ee7d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/production-page-refinement.html",
+      "files": 1,
+      "bytes": 40055,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/production-page-refinement.html",
+      "sha256": "c6d533a1306fd460a6a23d66f01e6607ede970ea2abb0c4f2f89941ee00085ca",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/settings-formal",
+      "files": 6,
+      "bytes": 462766,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/settings-formal",
+      "sha256": "fe94db39c079ccd608e1388f024905f6368c4c7328f12672bea48ff5ea936e67",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/.codex/visualizations/2026/11/22/01a200d4-a8e0-7ce0-9cc2-2dae4cc7252a/settings-services-before.png",
+      "files": 1,
+      "bytes": 59158,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/visualizations/settings-services-before.png",
+      "sha256": "77175f0ce220323e2069e38877377d82c34064da65946afc5978ab783768d39b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/owner-settings-migration-preview/cache",
+      "files": 154,
+      "bytes": 20206793,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/owner-settings-migration-preview/cache",
+      "sha256": "4e715e1f5f6edaf196ed2d3e9738154a6d3d3d484d5da270944ce2e7d3e81ab7",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/production-page-refinement-20261122",
+      "files": 5,
+      "bytes": 290054,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/production-page-refinement-20261122",
+      "sha256": "df2ca7efc93d5baf1fe5b355e48aeabd59b522cea36231452842070a42f7f069",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/production-page-visual-20261122",
+      "files": 8,
+      "bytes": 725553,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/production-page-visual-20261122",
+      "sha256": "7ec1575d09fa0847e43a5fc27d7a9fe376e779bfde653b0b6af5e4a9e2eb5565",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/production-pagination-c-20261122",
+      "files": 14,
+      "bytes": 684470,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/production-pagination-c-20261122",
+      "sha256": "6c4e261831d7e5e1dbb350a5e35a58b3b1e5d4f6ae05131720d3b4ed2a63c4cc",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/production-preview-media-first-20261122",
+      "files": 9,
+      "bytes": 605524,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/production-preview-media-first-20261122",
+      "sha256": "e4ca17b6fc176999e87bca840f35a46399ae3754fa13518460e05df9470c4290",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/production-row-click-20261122",
+      "files": 4,
+      "bytes": 12320,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/production-row-click-20261122",
+      "sha256": "ace1d3d03d01e42998d2c3ffe2bbb8168a117e44958e6f64d5687d97d71c740c",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/real-production-e2e-20261122",
+      "files": 16,
+      "bytes": 1815398,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/real-production-e2e-20261122",
+      "sha256": "b16edcb6d0ff0cc008f95d3378c16edd86c1147f58b6240a48f9b42099b2ddc9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/verification/board-annotations-20261122",
+      "files": 17,
+      "bytes": 1256042,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/verification/board-annotations-20261122",
+      "sha256": "61aa043bf29cdcf23b3542564bb3e68201694ea2b105a229953281f94991b35e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/verification/board-followup-20261122",
+      "files": 10,
+      "bytes": 909253,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/verification/board-followup-20261122",
+      "sha256": "acd82197799ac9aef244e43fbe46a52cb6d382e8531d52b44f76e0dad1321860",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.scratch/verification/board-polish-20261122",
+      "files": 11,
+      "bytes": 996638,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/.scratch/verification/board-polish-20261122",
+      "sha256": "19eaa0b9cc49eb4c426545a832646eccb3e85dc647a6b2faa82f230eb4dfd612",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/prototypes/media-playback-comparison-20261122",
+      "files": 10,
+      "bytes": 470992,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/prototypes/media-playback-comparison-20261122",
+      "sha256": "b4e8a21fb5b6af89a4dc63a39082dadd187e1b6074c08abe938cafa572316769",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/prototypes/media-playback-comparison-20261122.html",
+      "files": 1,
+      "bytes": 1785016,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/prototypes/media-playback-comparison-20261122.html",
+      "sha256": "5f90d610cbcc46a965bd38f7ac504b867ebbb4a2771d881a193629eea1a39626",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/delivery-disclosures-20261122/expanded-desktop.jpg",
+      "files": 1,
+      "bytes": 92012,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/delivery-disclosures-20261122/expanded-desktop.jpg",
+      "sha256": "11b9a714c1bf7ceedecb690c6fc1396264374f4e67fe8aff9e024a881c6ef6ec",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/delivery-layout-20261122/formal-desktop.jpg",
+      "files": 1,
+      "bytes": 102021,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/delivery-layout-20261122/formal-desktop.jpg",
+      "sha256": "b60587f9ba61dce7716e1b9141ff7dd75e2df274b9d32e17e7b1a99fee661e09",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/player-a-crop-20261122/audio-crop-expanded.jpg",
+      "files": 1,
+      "bytes": 85484,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/player-a-crop-20261122/audio-crop-expanded.jpg",
+      "sha256": "3dbba8364d4aaea0cca0343d0935789cac4077e8ab021610022c2bea8446cb09",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/player-a-crop-20261122/formal-audio-settings.jpg",
+      "files": 1,
+      "bytes": 85573,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/player-a-crop-20261122/formal-audio-settings.jpg",
+      "sha256": "c06b5988bb1ff8f3a5441c9659b76ab9a1a4b956e0f91964320b87b38e4db281",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/player-a-crop-20261122/formal-video.jpg",
+      "files": 1,
+      "bytes": 73344,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/player-a-crop-20261122/formal-video.jpg",
+      "sha256": "25fe020bdc03295fe00df57e7b9b65bcf0316e81bcf7ac86159417c202fba310",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/player-a-crop-20261122/isolated-saved-audio.jpg",
+      "files": 1,
+      "bytes": 44187,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/player-a-crop-20261122/isolated-saved-audio.jpg",
+      "sha256": "0b425872b67ecb03982a71da37a6469f87ce64ef34bec1077638d0616e4600cc",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/player-a-crop-20261122/video-crop-expanded.jpg",
+      "files": 1,
+      "bytes": 72584,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/player-a-crop-20261122/video-crop-expanded.jpg",
+      "sha256": "5bab1b046b144b1c3beb4dad028e418db80974708c59f7e255e78ec306b37be9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/preparation-resize-repair-20261122/caption-confirmation.jpg",
+      "files": 1,
+      "bytes": 66768,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/preparation-resize-repair-20261122/caption-confirmation.jpg",
+      "sha256": "3169f17c9e8e5353a2abce8d309fe8423ae519b831b5a78ef2187378eee7d89d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/preparation-resize-repair-20261122/video-tools.jpg",
+      "files": 1,
+      "bytes": 76193,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/preparation-resize-repair-20261122/video-tools.jpg",
+      "sha256": "26a7e781a4d0b1681e42f7fa81cb25ca89e0fd3fafe028d534c00a0816844bc0",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/production-page-refinement-20261122/desktop.jpg",
+      "files": 1,
+      "bytes": 116050,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/production-page-refinement-20261122/desktop.jpg",
+      "sha256": "687ace877376db752b2acbefdeec1071b9fc47a551f719f5f37fdb093b531042",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/production-page-visual-20261122/desktop.jpg",
+      "files": 1,
+      "bytes": 109737,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/production-page-visual-20261122/desktop.jpg",
+      "sha256": "abf978a48e69993678ec4d27e251a914491e24e8c55669deaeb78a4e0dd0f507",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/production-pagination-c-20261122/production-page.jpg",
+      "files": 1,
+      "bytes": 108102,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/production-pagination-c-20261122/production-page.jpg",
+      "sha256": "d54602003b11043b45ad285a911ee0e2a3857b82f807f4fc2f809f777ca42097",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/production-preview-media-first-20261122/production-page.jpg",
+      "files": 1,
+      "bytes": 112558,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/production-preview-media-first-20261122/production-page.jpg",
+      "sha256": "ccae53427589b7564738a4988dac945572fab1fcdad0a849a7c2e6db139eab51",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/production-row-click-20261122/formal-page.jpg",
+      "files": 1,
+      "bytes": 108284,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/production-row-click-20261122/formal-page.jpg",
+      "sha256": "0b6bbe738a84760f45b0b0c242447bd89ae8b5dd72b3ee084be1c5914dd5e69a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/real-production-e2e-20261122/frame-01.jpg",
+      "files": 1,
+      "bytes": 19191,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/real-production-e2e-20261122/frame-01.jpg",
+      "sha256": "3685d96054cfd362e20426c06deb2516af16706d2c7e2aab5fca18e65db65793",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/real-production-e2e-20261122/frame-02.jpg",
+      "files": 1,
+      "bytes": 18942,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/real-production-e2e-20261122/frame-02.jpg",
+      "sha256": "83d82c41c72459329ff801f55449fe28d022354d118789501eb1f87f74e635f2",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/real-production-e2e-20261122/frame-03.jpg",
+      "files": 1,
+      "bytes": 18449,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/real-production-e2e-20261122/frame-03.jpg",
+      "sha256": "7414de3bc105efa62c996034ab7d78b7cffb3abf9856615a86cfb0bc49576923",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/storyboard-unified-media-20261122/effect-settings.jpg",
+      "files": 1,
+      "bytes": 82450,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/storyboard-unified-media-20261122/effect-settings.jpg",
+      "sha256": "372ba68ffbd1f670228869b2fe0fd099395d1fa7e5783596b96d91e45ae00cb3",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/storyboard-unified-media-20261122/media-comparison-a.jpg",
+      "files": 1,
+      "bytes": 140778,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/storyboard-unified-media-20261122/media-comparison-a.jpg",
+      "sha256": "d595238e49542ae6f37bfa0e014f717d520f88e9e933b927c560032cbd101049",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/storyboard-unified-media-20261122/media-comparison-b.jpg",
+      "files": 1,
+      "bytes": 142455,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/storyboard-unified-media-20261122/media-comparison-b.jpg",
+      "sha256": "3bd57d172a85824866d69ab3e4ac928f6cc13f8574d60377bcac4901e18b992f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/docs/verification/storyboard-unified-media-20261122/model-menu.jpg",
+      "files": 1,
+      "bytes": 86441,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/project/docs/verification/storyboard-unified-media-20261122/model-menu.jpg",
+      "sha256": "41ca5b835a72daa743625c9d752ed8dc68c3c1c6e05339cf7527ff91a9f14503",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-build.log",
+      "files": 1,
+      "bytes": 9741,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/059-board-annotations-build.log",
+      "sha256": "a481e419c1a1561db40f47c5e897bf408c048094a38cc07e2333dd2d3f7fe4a6",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/060-board-annotations-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-delivery-build.log",
+      "files": 1,
+      "bytes": 9741,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/061-board-annotations-delivery-build.log",
+      "sha256": "0e1b576a83f94e73712ea973301aad26273c32a0311057690c8bb741b3978e71",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-final-build.log",
+      "files": 1,
+      "bytes": 9741,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/062-board-annotations-final-build.log",
+      "sha256": "87edbd455ad636881eb41bd9dc012f9cf8aae0e2ad91a6f4b094acbb2d887c7b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-final-focused.log",
+      "files": 1,
+      "bytes": 150041,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/063-board-annotations-final-focused.log",
+      "sha256": "b7937d9086854e31ad2ac9b054e4b581bf9d1f1d84b500e1f022a99e217b1156",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-focused.log",
+      "files": 1,
+      "bytes": 148962,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/064-board-annotations-focused.log",
+      "sha256": "cf6a14386a55aac7386935632bcbad6ceada0b7569bd8fddb28d4ccb1f87bb42",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-full.log",
+      "files": 1,
+      "bytes": 252707,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/065-board-annotations-full.log",
+      "sha256": "08d828c68ad5674bb18175e39d500ff220d938b5e2752346e7d660a2b08d18c5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-red.log",
+      "files": 1,
+      "bytes": 117712,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/066-board-annotations-red.log",
+      "sha256": "7ebbd4cf57c59887a33eee9047d8ca572bc3eb1132788eb953055f2c8926aa3c",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-annotations-review.diff",
+      "files": 1,
+      "bytes": 17182,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/067-board-annotations-review.diff",
+      "sha256": "044c15f54174260f017b0c2b7f12401ab0b71154ea0aa6d157dfffcdb2283f95",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-build.log",
+      "files": 1,
+      "bytes": 9741,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/068-board-followup-build.log",
+      "sha256": "8970057c4219afc63a2dc5a167bb0f1904b6cbb2382702f4ac08126f1e11108a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/069-board-followup-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-delivery-build.log",
+      "files": 1,
+      "bytes": 9741,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/070-board-followup-delivery-build.log",
+      "sha256": "e4aa914b02c1ac26042a83b57767004441b5fcb6437fb28303b96b951cd87394",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-delivery-focused.log",
+      "files": 1,
+      "bytes": 147310,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/071-board-followup-delivery-focused.log",
+      "sha256": "26e94ce0d7af3f2a9ae5aa3803d7e8a71b79212ed6a375290aea046d704535a8",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-focused.log",
+      "files": 1,
+      "bytes": 150627,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/072-board-followup-focused.log",
+      "sha256": "5d445f607aa90caa240e8ba272e2d634a326098985626369bd9ecef9bdfc525b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-full.log",
+      "files": 1,
+      "bytes": 260312,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/073-board-followup-full.log",
+      "sha256": "eca6a46c59a0c137401ffc85058a6c76d5c2c670485c8de2341d353730477ea6",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-red.log",
+      "files": 1,
+      "bytes": 160017,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/074-board-followup-red.log",
+      "sha256": "54d79ae620f63d34c644c2f0d33da2d80a65cc2d28a30b1bb482c0cf238d8968",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-followup-tooltip-guide.txt",
+      "files": 1,
+      "bytes": 20678,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/075-board-followup-tooltip-guide.txt",
+      "sha256": "d5f1bd9f880ca9f905f089dccc1ac3cb96e5aa768fa10924e035792978d4bd03",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-polish-build.log",
+      "files": 1,
+      "bytes": 9741,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/076-board-polish-build.log",
+      "sha256": "f1712db4ee8f2d92e18aeee19337ef447e8a487bb06f01434a196b841192711f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-polish-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/077-board-polish-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-polish-delivery-build.log",
+      "files": 1,
+      "bytes": 9741,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/078-board-polish-delivery-build.log",
+      "sha256": "87da20f9fc8ecdc4a8c1a8027790079c211912b30df33b3abd151b1d2fd97e5a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-polish-focused.log",
+      "files": 1,
+      "bytes": 152110,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/079-board-polish-focused.log",
+      "sha256": "7e0a42a354135ba7d55d5e23e6d68b71ea0ad1c13121ced534ae9bc8749f095b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-polish-full.log",
+      "files": 1,
+      "bytes": 262161,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/080-board-polish-full.log",
+      "sha256": "68fb52c4c00a1c8d961b868640ded44e7250ad7f4b5b676d4753ac75b7c99b98",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-polish-red.log",
+      "files": 1,
+      "bytes": 335232,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/081-board-polish-red.log",
+      "sha256": "8ce99508587ff97dc2e88b9e6cdb61a2f34ca21375629863abf9c89cf9df9d47",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/board-polish-select-guide.txt",
+      "files": 1,
+      "bytes": 5828,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/082-board-polish-select-guide.txt",
+      "sha256": "9858beac84a9cb2dfa993bbc6b640c130b2a1d9b3a3cbecdb0e850de3f3a5275",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-completed-label-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/083-delivery-completed-label-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-completed-label-tests.log",
+      "files": 1,
+      "bytes": 2986,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/084-delivery-completed-label-tests.log",
+      "sha256": "cbe39ad9ef984b07d2906d6e2955c104f60936649769c1fafa739c2671260773",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-demo-check.js",
+      "files": 1,
+      "bytes": 4436,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/085-delivery-demo-check.js",
+      "sha256": "e1a370a552b9ae6ec8b9fb75aa4520ccd09f093819668d292503e43afd66fb91",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-demo-guidance-search.log",
+      "files": 1,
+      "bytes": 2316,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/086-delivery-demo-guidance-search.log",
+      "sha256": "f879702e465b7577229282010e87f542e4adb4fb4b9adfb781da1120e9d75359",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-demo-responsive-guide.txt",
+      "files": 1,
+      "bytes": 2025,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/087-delivery-demo-responsive-guide.txt",
+      "sha256": "c502f2e6e4b3e939d7af966cca7fac94b37be05941de444ea6bdc4509edd52b8",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-disclosure-guidance.log",
+      "files": 1,
+      "bytes": 23781,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/088-delivery-disclosure-guidance.log",
+      "sha256": "69826e232a2a9c107af9a1a732ebbc4c54cc8d70b5ed0e09d670e0bacd11737e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-disclosure-migrate-search.log",
+      "files": 1,
+      "bytes": 2316,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/089-delivery-disclosure-migrate-search.log",
+      "sha256": "f879702e465b7577229282010e87f542e4adb4fb4b9adfb781da1120e9d75359",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-header-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/090-delivery-header-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-header-guidance.log",
+      "files": 1,
+      "bytes": 2056,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/091-delivery-header-guidance.log",
+      "sha256": "e8667a970a440174c138f4f4bbb1ac1c02ee5e20fcfb4c8531692063d17e7930",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-header-tests.log",
+      "files": 1,
+      "bytes": 3032,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/092-delivery-header-tests.log",
+      "sha256": "0ea936489c699c571b42dfcde8a166e845dd04bf83ae64ca19edfed7f56f9c3b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-header-toolbar.log",
+      "files": 1,
+      "bytes": 22377,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/093-delivery-header-toolbar.log",
+      "sha256": "35b71d211a06e714a0a2cc9ce32e056339905d416dc8f4575a334a09e5da37cb",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/094-delivery-layout-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-browser-integration.log",
+      "files": 1,
+      "bytes": 888,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/095-delivery-layout-browser-integration.log",
+      "sha256": "6ba43bf29704595e7242f01c5f85af14692a50123a41a690e506f6cbbd6e06a4",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-build-final.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/096-delivery-layout-build-final.log",
+      "sha256": "2df1327609f142eec0ced6772b2b502bcd2af516c5fe83bb3914b58bce41a08c",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-build-final2.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/097-delivery-layout-build-final2.log",
+      "sha256": "0415aee08668cf261198a84d7a390b1a761bb33e42ad47db087705c9100c0a56",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/098-delivery-layout-build.log",
+      "sha256": "f599e5abcc86fa4368b540b180463f4f858cd04f1257d927f5bf67529dba36e7",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-check-final.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/099-delivery-layout-check-final.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-check1.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/100-delivery-layout-check1.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-check2.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/101-delivery-layout-check2.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-check3.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/102-delivery-layout-check3.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-check4.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/103-delivery-layout-check4.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-check5.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/104-delivery-layout-check5.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-final-related.log",
+      "files": 1,
+      "bytes": 1395,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/105-delivery-layout-final-related.log",
+      "sha256": "f93d966d791dcd6147f22ec5c78b0b2a2f094e1f783b49726fbbeb0b5ba8e486",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-fixed.log",
+      "files": 1,
+      "bytes": 1991,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/106-delivery-layout-fixed.log",
+      "sha256": "739e7bdded4c273664b00b0d24425250166e37c0816b9445714f229063815cea",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-full.log",
+      "files": 1,
+      "bytes": 426740,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/107-delivery-layout-full.log",
+      "sha256": "93fd5889df38c12318ddd608330dc684c331008d83abcf6ae700a180ddd2ca6b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-full2.log",
+      "files": 1,
+      "bytes": 294884,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/108-delivery-layout-full2.log",
+      "sha256": "1c766d936483e858bdff2e2385480a8d28192c22a28862b125c234d84aed5fdb",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-integration.log",
+      "files": 1,
+      "bytes": 797,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/109-delivery-layout-integration.log",
+      "sha256": "c87b0b9331ac31822bef9fda14ad54f08025b21e29e9cf06a7dfa86abe9267a6",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-mutation.log",
+      "files": 1,
+      "bytes": 6414,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/110-delivery-layout-mutation.log",
+      "sha256": "a41225ea594f0bbed35bb4c500f1d4eceb835216c6cdb946a2c9a744bc49a9c6",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-red.log",
+      "files": 1,
+      "bytes": 95300,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/111-delivery-layout-red.log",
+      "sha256": "bd77ffeceb6efdf3da94eec357f391e97933f6f74c848da5abf6e555cad2172f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-related.log",
+      "files": 1,
+      "bytes": 46784,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/112-delivery-layout-related.log",
+      "sha256": "39ba47f7c62a2bc64c3acf22f953c9a5c5df35de5d789286971c8112c928b2b9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-related2.log",
+      "files": 1,
+      "bytes": 10988,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/113-delivery-layout-related2.log",
+      "sha256": "45c137f02a988f1dc40a3e36f64ecd807aecbf56b36dc87e53df4eb006402625",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-restored.log",
+      "files": 1,
+      "bytes": 1140,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/114-delivery-layout-restored.log",
+      "sha256": "e4cee48af63d7cd0b2469c1918203cd8e9f113cf69d0f708c80fadb057c47404",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-layout-runtime.log",
+      "files": 1,
+      "bytes": 353,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/115-delivery-layout-runtime.log",
+      "sha256": "ec164a820742f0137cbf02a063d4499096559e4a0a876473751a1db91f8dfd35",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-publication-green.log",
+      "files": 1,
+      "bytes": 829,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/116-delivery-publication-green.log",
+      "sha256": "1e24eaf3f351665d8f45de360f568ae713519211627c85b626c259181a2ea216",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/delivery-responsive-guidance.log",
+      "files": 1,
+      "bytes": 2025,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/117-delivery-responsive-guidance.log",
+      "sha256": "c502f2e6e4b3e939d7af966cca7fac94b37be05941de444ea6bdc4509edd52b8",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/118-e2e-build.log",
+      "sha256": "58068300039ce213e13ccf24c7729496bd82a6ecb3508e893cae27748d1261a3",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-caption-green.log",
+      "files": 1,
+      "bytes": 512,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/119-e2e-caption-green.log",
+      "sha256": "4435c75a8f15c2425ee8816aba816595df73c50fcda6ac16e30249f779e95b34",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-caption-lock.log",
+      "files": 1,
+      "bytes": 7287,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/120-e2e-caption-lock.log",
+      "sha256": "25920f80bc96f3bab555db2afdfcbe67ce4cfaa49564a94863820cdc5fc40dbd",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-caption-red.log",
+      "files": 1,
+      "bytes": 1363,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/121-e2e-caption-red.log",
+      "sha256": "49c92dd62fe6fb3cafee8b069b187a2f3cb49e4e26b1e884e2877dd61d6801ad",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/122-e2e-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-check2.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/123-e2e-check2.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-check3.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/124-e2e-check3.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-fixes-green.log",
+      "files": 1,
+      "bytes": 196801,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/125-e2e-fixes-green.log",
+      "sha256": "554240b849f3a8990619d65b775033269439f363343983d8b9d1deeb2e95f68d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-fixes-green2.log",
+      "files": 1,
+      "bytes": 180504,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/126-e2e-fixes-green2.log",
+      "sha256": "3d07ec6f54bd6d61430030e0b11ec7d16040e374d91a089d05f7b874a784e103",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-forms-guide.log",
+      "files": 1,
+      "bytes": 19410,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/127-e2e-forms-guide.log",
+      "sha256": "5aa8c13819f5a09bd99feb136935f64a8d5ee00bc6b818765c1b02fa67287638",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-restart.log",
+      "files": 1,
+      "bytes": 243,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/128-e2e-restart.log",
+      "sha256": "d065220d76fef0a8ecbc931585b30a6a27c41bb4ae483bd089e6dd670acc2fe0",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-runtime.log",
+      "files": 1,
+      "bytes": 353,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/129-e2e-runtime.log",
+      "sha256": "ec164a820742f0137cbf02a063d4499096559e4a0a876473751a1db91f8dfd35",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-shot-green.log",
+      "files": 1,
+      "bytes": 379,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/130-e2e-shot-green.log",
+      "sha256": "1df7be1319932ca4f123ffd54fff9aaf8e8b4164f50d085618b394f02de74600",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-shot-red.log",
+      "files": 1,
+      "bytes": 1291,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/131-e2e-shot-red.log",
+      "sha256": "5c0a19f34374b0cee6f71c8bdfeaabe689c10b54c27b8c98d5cf12ebfe589202",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-tests-final.log",
+      "files": 1,
+      "bytes": 303133,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/132-e2e-tests-final.log",
+      "sha256": "09f64179d1b3c453313796b8fbceedc95ca2f0a78cdd1b4b796efb171906cb97",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-tests.log",
+      "files": 1,
+      "bytes": 300630,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/133-e2e-tests.log",
+      "sha256": "c95cd04c3e89be4fba96134a9e856f6f5ca15423df4d5862b91542d2ee63368c",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/e2e-voice-red.log",
+      "files": 1,
+      "bytes": 189280,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/134-e2e-voice-red.log",
+      "sha256": "dd1150e01186b3e30be6abe2af38da09aebbedeed0fa62a0dd0c52dbc7160c7a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-backend-build-20261122.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/135-loop-catalog-backend-build-20261122.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-build-20261122.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/136-loop-catalog-build-20261122.log",
+      "sha256": "ede4c16fd2542b1b7580030905e4755c91f087de6a6f7a9815b70fc81898cfab",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-build-final-20261122.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/137-loop-catalog-build-final-20261122.log",
+      "sha256": "59cbca5455932a655d2eb78edfad813505042c4ebc6321e468346169d889a470",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-css-layout.txt",
+      "files": 1,
+      "bytes": 21864,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/138-loop-catalog-css-layout.txt",
+      "sha256": "6ddecdfa3c39bc366217768d155435f70ff17acb40ee211992f9271fcb5baa19",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-focused-20261122.log",
+      "files": 1,
+      "bytes": 22104,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/139-loop-catalog-focused-20261122.log",
+      "sha256": "4025bd1c1f76b7c65453a7234d4cb2d8ae2a295ae411b6226187e7591b22f26c",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-focused-final-20261122.log",
+      "files": 1,
+      "bytes": 1184,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/140-loop-catalog-focused-final-20261122.log",
+      "sha256": "2ed5e8ca97fc803723deb5df8080ed751ce57b2ed262918dca40cd42e8c7219e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-full-20261122.log",
+      "files": 1,
+      "bytes": 428532,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/141-loop-catalog-full-20261122.log",
+      "sha256": "f092f2c00abec14961f108723c7a36dd7a0f91329221d6cbc041f998f2b48c81",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-full-final-20261122.log",
+      "files": 1,
+      "bytes": 252178,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/142-loop-catalog-full-final-20261122.log",
+      "sha256": "542ba8bb9856e09cc13cdafb7c12016967a295c41ef3e01460d16079611cf76a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/143-loop-catalog-media-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/144-loop-catalog-media-build.log",
+      "sha256": "4130fbed2a75027d1f8f3e8a22e676cc9d1a8f39030e521b4d290a0d071e909d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/145-loop-catalog-media-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-focused.log",
+      "files": 1,
+      "bytes": 2502,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/146-loop-catalog-media-focused.log",
+      "sha256": "73dc6898e5d815753402f4c871e6122f224238fb9c54800767da949d9a449e19",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-full-retry.log",
+      "files": 1,
+      "bytes": 251463,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/147-loop-catalog-media-full-retry.log",
+      "sha256": "e6b1d46c87433d210340d2488986a84deafc83744132d5ea52431146c8748bc0",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-full.log",
+      "files": 1,
+      "bytes": 286248,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/148-loop-catalog-media-full.log",
+      "sha256": "2772d8fe972ee9a4685868ed3380c0867dfca9d437202a2d4ff05469e6f93d2e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-green.log",
+      "files": 1,
+      "bytes": 1674,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/149-loop-catalog-media-green.log",
+      "sha256": "8450a8a700db089717e88b2f8c92e699febde1c035bbf23127b8042c6c0816df",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-red.log",
+      "files": 1,
+      "bytes": 53377,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/150-loop-catalog-media-red.log",
+      "sha256": "e7e9927f2255ce3146c94f968e7eb3ac45b3098cbad1956fc23cae3fd059bf74",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-media-retry.log",
+      "files": 1,
+      "bytes": 442,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/151-loop-catalog-media-retry.log",
+      "sha256": "b3612bea536616c459548b933800b0a5cb08071377c3aee77e7bb6ebf5fe173b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-navigation-20261122.log",
+      "files": 1,
+      "bytes": 2167,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/152-loop-catalog-navigation-20261122.log",
+      "sha256": "bf9f784aa0a8e8ef194a049185e865bd5f7e991d48a324f441db30560493c0f3",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-pagination-guides.txt",
+      "files": 1,
+      "bytes": 26457,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/153-loop-catalog-pagination-guides.txt",
+      "sha256": "72061cae248eb2c480e4a1a1cb01ebadf6e22e0bde26eed0d3d84b16be38a7da",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-ratio-backend-20261122.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/154-loop-catalog-ratio-backend-20261122.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-ratio-build-20261122.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/155-loop-catalog-ratio-build-20261122.log",
+      "sha256": "925fcd612222d298e22b956ce76805e925a7a3936afaf155e05e305c4273677a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-ratio-full-20261122.log",
+      "files": 1,
+      "bytes": 253778,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/156-loop-catalog-ratio-full-20261122.log",
+      "sha256": "587bdc696e8c3255026252dadf29ef71029b8ecf98be7b4035fe251571d8f9dd",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-refinement-focused-20261122.log",
+      "files": 1,
+      "bytes": 2564,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/157-loop-catalog-refinement-focused-20261122.log",
+      "sha256": "58b81f50fff5dfd2fd33e0eaac268fe9d17492bab589a3896d5948f1923e672f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-refinement-red-20261122.log",
+      "files": 1,
+      "bytes": 23971,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/158-loop-catalog-refinement-red-20261122.log",
+      "sha256": "58a72aca20524f757609bd2556ff9343488f86a882c1568525295a12e5d10a53",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-row-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/159-loop-catalog-row-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-row-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/160-loop-catalog-row-build.log",
+      "sha256": "d26337f7dcdfb49ee0cd30ba1a3f70afde7ddfede206eb73f11d0486bedfcf3e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-row-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/161-loop-catalog-row-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-row-click-tests.log",
+      "files": 1,
+      "bytes": 402,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/162-loop-catalog-row-click-tests.log",
+      "sha256": "ae7d784ad3bb1964262e30b8aa34569d252bc50fed6d5e321279d357bfe33328",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-catalog-row-focused.log",
+      "files": 1,
+      "bytes": 2502,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/163-loop-catalog-row-focused.log",
+      "sha256": "6a9607161847b0b9423776b8788cf2033c4a3b8dc214beb6ea03bccb87c481d7",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-media-comparison-deps",
+      "files": 433,
+      "bytes": 5341268,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/164-loop-media-comparison-deps",
+      "sha256": "fe2c8ff6e3c28fa2a20d35af82547159a69b4f9ee28117cc4dd23fad50678c36",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-accessibility.txt",
+      "files": 1,
+      "bytes": 51734,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/165-loop-pagination-accessibility.txt",
+      "sha256": "90d3bc2204a172d91645f89d02deeab0396eeefb8730c44f67896658e0226b0e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-backend-final.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/166-loop-pagination-c-backend-final.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/167-loop-pagination-c-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-build-final.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/168-loop-pagination-c-build-final.log",
+      "sha256": "cc468577cbde9db8c17ad2cfa2849fecc1e35718c426223859bbefbf393dbfb0",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/169-loop-pagination-c-build.log",
+      "sha256": "a91bfa312bd437bea6b7366222e7b75a993b8e2c3dfb9270af221bc8e642be8d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-check-final.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/170-loop-pagination-c-check-final.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/171-loop-pagination-c-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-focused.log",
+      "files": 1,
+      "bytes": 1834,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/172-loop-pagination-c-focused.log",
+      "sha256": "45d8da037a819902ff0cae5b55241c6c981f7169d02bccaf1d123c292cc12bd9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-full-retry.log",
+      "files": 1,
+      "bytes": 253323,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/173-loop-pagination-c-full-retry.log",
+      "sha256": "fc5380ae2ff83eadbcb33c95945f1b8c44ad3e8d09a6d4df0bd258a2c8bb802f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-full.log",
+      "files": 1,
+      "bytes": 255487,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/174-loop-pagination-c-full.log",
+      "sha256": "8e1a14a22a2ca6c7399b2b03055dd7500a19e50f078dccd68f3d7e19ade9b72c",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-green.log",
+      "files": 1,
+      "bytes": 786,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/175-loop-pagination-c-green.log",
+      "sha256": "74c45cf09d0b6a30efcf0cda4d90157755bc8c6893070bc6c1a58c599ed591da",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-isolated.log",
+      "files": 1,
+      "bytes": 442,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/176-loop-pagination-c-isolated.log",
+      "sha256": "bf1d62378e6943fd3921c43e831d8621cb46d4f5a609eb63e8ab4fc71bcb375b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-locale.log",
+      "files": 1,
+      "bytes": 419,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/177-loop-pagination-c-locale.log",
+      "sha256": "2d4934a36e2f81dc5a65a170a8529311a8785de00fa460224208a0254c60f1ce",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-red.log",
+      "files": 1,
+      "bytes": 151922,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/178-loop-pagination-c-red.log",
+      "sha256": "bd461f0bff01acc2fd6c462057f4e253ce2346d8870c3dd264aa25d2f7f7c74a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-pagination-c-reset.log",
+      "files": 1,
+      "bytes": 621,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/179-loop-pagination-c-reset.log",
+      "sha256": "12c5934885aa0c9b44a8b47d47fb717613d39b4146a110c516691daac5c34fed",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-settings-demo-before-log-row-20261122.html",
+      "files": 1,
+      "bytes": 67907,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/180-loop-settings-demo-before-log-row-20261122.html",
+      "sha256": "ffb3217b02d26d731304c13891a334cc15334c7b4636d2f06230d43aaf40c88f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-settings-demo-before-maintenance-20261122.html",
+      "files": 1,
+      "bytes": 54573,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/181-loop-settings-demo-before-maintenance-20261122.html",
+      "sha256": "660a423c3335eb3db345396e618f416ee0de197f0332f780c68d8c248643b0ba",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/loop-settings-demo-before-storage-20261122.html",
+      "files": 1,
+      "bytes": 48039,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/182-loop-settings-demo-before-storage-20261122.html",
+      "sha256": "6421ffacb461caee10e69378b7aeb649c9c5a7058b57db7ae4d8af165fd46d4a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/media-demo-build.log",
+      "files": 1,
+      "bytes": 111,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/183-media-demo-build.log",
+      "sha256": "1e3206a8be98a535f4453d33e136d0351e062196b107a3ae1789b43014462d69",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/media-demo-delivery-build.log",
+      "files": 1,
+      "bytes": 111,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/184-media-demo-delivery-build.log",
+      "sha256": "5806aa7860a4fd26e7b66fc51da006557c3efd0424bf2bdb9da6cf693b129496",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/media-demo-final-build.log",
+      "files": 1,
+      "bytes": 111,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/185-media-demo-final-build.log",
+      "sha256": "347c528a3ba37652222c2dd916c8f03c39830e784a180849ebc0772b3b13c3ac",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/media-demo-install.log",
+      "files": 1,
+      "bytes": 24,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/186-media-demo-install.log",
+      "sha256": "dca72eb21d0bf24ce7e41444fc5e35eeeddb4b867dd06905747627ff6af3b33a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/media-demo-license-build.log",
+      "files": 1,
+      "bytes": 111,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/187-media-demo-license-build.log",
+      "sha256": "c3210688f07ada63c4fe699d8d0f440966b25856d88c41830c21ff904b3aa795",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/patch-storyboard.py",
+      "files": 1,
+      "bytes": 5040,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/188-patch-storyboard.py",
+      "sha256": "6bfb1f147edd1d4a7b9744e4e77ecda6fd513afb781ee93035b72b58dfa01648",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/189-player-a-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-backend2.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/190-player-a-backend2.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-build.log",
+      "files": 1,
+      "bytes": 1798,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/191-player-a-build.log",
+      "sha256": "756fed562a70a541cd6e19f44daf05e0276b5a44562203e69c725756a756db9a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-build2.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/192-player-a-build2.log",
+      "sha256": "51b3a182bcdc00bc4031104e049320a70cea22048b5585843db8704c366df435",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/193-player-a-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check2.log",
+      "files": 1,
+      "bytes": 162,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/194-player-a-check2.log",
+      "sha256": "0c71e66f381ef8b6e887111275a51d99760a094ac16c916d7364ab59f2fffc32",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check3.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/195-player-a-check3.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check4.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/196-player-a-check4.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check5.log",
+      "files": 1,
+      "bytes": 439,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/197-player-a-check5.log",
+      "sha256": "2f5a23e6cd665d3e7f1a1b6a6ecf887f56017e1bc62725651003a3cc02899b73",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check6.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/198-player-a-check6.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check7.log",
+      "files": 1,
+      "bytes": 1799,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/199-player-a-check7.log",
+      "sha256": "42b2a92db5485fca4e0c2f67e055c97e7652d2f4002b6aede9ffc0cb06d110d0",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-check8.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/200-player-a-check8.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-delivery-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/201-player-a-delivery-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-delivery-integration.log",
+      "files": 1,
+      "bytes": 512,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/202-player-a-delivery-integration.log",
+      "sha256": "6256ada337d750315c144aa3d293d7d0d70669a0bf5072dd0836d765aba742cb",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-final-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/203-player-a-final-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-final-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/204-player-a-final-build.log",
+      "sha256": "0f0d6d2d0e9a042d6406f0f82eb265584e990eaef06728f9a80b7297ca19c7b8",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-final-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/205-player-a-final-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-final-focused.log",
+      "files": 1,
+      "bytes": 3654,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/206-player-a-final-focused.log",
+      "sha256": "e9eebe884a97c0e94b8239a811351cbfab7bbd1be6ce432871a94ac5eb20eb66",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-final-full.log",
+      "files": 1,
+      "bytes": 288200,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/207-player-a-final-full.log",
+      "sha256": "0701c1c5ce52cef2a1fa775c8ca9cf9c9e181a04874add0b7ae0ec420093073a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-final-integration.log",
+      "files": 1,
+      "bytes": 512,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/208-player-a-final-integration.log",
+      "sha256": "b7689de137fc0ecd23b7e3a069f9cdae5d86de45226fcbdfe8ca0b93cc875ae7",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-fix-tests.log",
+      "files": 1,
+      "bytes": 51547,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/209-player-a-fix-tests.log",
+      "sha256": "ba2562b7c38eb7c7dcfcb4757a13af10392d384c8c5a2e8acb08350014644ac1",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-fix2.log",
+      "files": 1,
+      "bytes": 13972,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/210-player-a-fix2.log",
+      "sha256": "5ba4293139265c021d2ac33ec5a210fd70063bdd7aa8540dbf26136e5f663cb6",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-full-tests.log",
+      "files": 1,
+      "bytes": 293421,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/211-player-a-full-tests.log",
+      "sha256": "bfb9efa5410a14a77476cb22ecea87f4cd419acc2785214eee3578857e72b273",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-integration.log",
+      "files": 1,
+      "bytes": 1018,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/212-player-a-integration.log",
+      "sha256": "9e8796849b310610cc12d45a287c468a7b2f8ca721998a7cf1551250c57d1775",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-integration2.log",
+      "files": 1,
+      "bytes": 1154,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/213-player-a-integration2.log",
+      "sha256": "32f2942e04fd248dd8b0cad99ed5f420a09fd7d77d5978125389354c38252aef",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-integration3.log",
+      "files": 1,
+      "bytes": 8356,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/214-player-a-integration3.log",
+      "sha256": "cde80023fa56ce2d4df88f8fcb1a7fb315c4495f38c964a6217368e51829d8aa",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-new-tests.log",
+      "files": 1,
+      "bytes": 2365,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/215-player-a-new-tests.log",
+      "sha256": "701b7fab6d4d6b6b4274c63d40cfe3d88fab33bce207742b97fca841a8e9eb46",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-related.log",
+      "files": 1,
+      "bytes": 55532,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/216-player-a-related.log",
+      "sha256": "81792795ed578d68ba106c91185ac2bff1a616b668d5f4d284084f19fb2f9619",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-ship-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/217-player-a-ship-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-ship-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/218-player-a-ship-build.log",
+      "sha256": "6c1d3aa9a6ab755f8dfe90c246ac1dad89f059bd775221d813f1cdc6a55ba3c7",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-ship-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/219-player-a-ship-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-ship-focused.log",
+      "files": 1,
+      "bytes": 16770,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/220-player-a-ship-focused.log",
+      "sha256": "e0d686c19ba9399e7667ba49b5be7a08665ff4067f471113e68a8e5ba6d34b02",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-slider-guide.txt",
+      "files": 1,
+      "bytes": 7003,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/221-player-a-slider-guide.txt",
+      "sha256": "4e7baddf9edff395ba7f1a23619165a6065163e5dcd740a05e1965b056f9e575",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-a-tests.log",
+      "files": 1,
+      "bytes": 42660,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/222-player-a-tests.log",
+      "sha256": "c4812e04f7ace70dbfd29a20e1bafa6aad2b0516919becc8e33ad3a03af71039",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-crop-collapse-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/223-player-crop-collapse-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-crop-collapse-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/224-player-crop-collapse-build.log",
+      "sha256": "e408a2256accfb0d04e7f162ada2be50566081d9057cfcae1e9e9de434fcdbef",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-crop-collapse-full.log",
+      "files": 1,
+      "bytes": 289638,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/225-player-crop-collapse-full.log",
+      "sha256": "2416e157b3f8afd3ac2322ca79a51dca9e4ca48c336f08ea6396c1257a1ec6b2",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-crop-toggle-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/226-player-crop-toggle-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-crop-toggle-green.log",
+      "files": 1,
+      "bytes": 12757,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/227-player-crop-toggle-green.log",
+      "sha256": "95bb2c87ef10569aea6461fb4262f321b7cce5e12680ac833ac348a2cd3ca94e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/player-crop-toggle-red.log",
+      "files": 1,
+      "bytes": 23298,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/228-player-crop-toggle-red.log",
+      "sha256": "42484bf56da377eba66f55a8e86224bb2721efe0c395395a6af37087387544d3",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-build-final.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/229-settings-build-final.log",
+      "sha256": "c7c87e89e6dff43aa75216c443398e0f66b08915036dc7d886b760285e3cd87b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/230-settings-build.log",
+      "sha256": "692cf2b1ccdeefc069efed6ebb9d1d7fbac8c172bb43c338d6e03c69eb05324d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-connection-final.log",
+      "files": 1,
+      "bytes": 415,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/231-settings-connection-final.log",
+      "sha256": "24bd92f5d06b07702235586cad03a09b40114bd6090317db8a159d7d76419097",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-demo-dialog-guide.log",
+      "files": 1,
+      "bytes": 12516,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/232-settings-demo-dialog-guide.log",
+      "sha256": "edaca6809468c9fc92743855670fc1a5c06a3828067311970eb7e5bfcb47be69",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-demo-dialog-search.log",
+      "files": 1,
+      "bytes": 2258,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/233-settings-demo-dialog-search.log",
+      "sha256": "e967cf4f0101d24dccbd18b916b975f04f53463db7bb4a4d2db8120297372108",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-demo-guidance-search.log",
+      "files": 1,
+      "bytes": 2180,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/234-settings-demo-guidance-search.log",
+      "sha256": "a2b6a446183c259cfad5bf66f769d15817c5555d15bef846aca7a971591af31e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-focused-final.log",
+      "files": 1,
+      "bytes": 71501,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/235-settings-focused-final.log",
+      "sha256": "52a658af1c3096da902abcd9e05be659810202217fb2994d04f0c134d8189585",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-full-tests-final.json",
+      "files": 1,
+      "bytes": 876405,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/236-settings-full-tests-final.json",
+      "sha256": "978d0393c5794aaf152c6b4ba06a77253957af7749e0374f9b65cf60c27fc763",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-full-tests-final.log",
+      "files": 1,
+      "bytes": 226,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/237-settings-full-tests-final.log",
+      "sha256": "9fac7a024efb7afb7dc88489f688c6567732d35b41071980096581c3b75831ad",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-full-tests.json",
+      "files": 1,
+      "bytes": 972453,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/238-settings-full-tests.json",
+      "sha256": "03f6ff5207b5e78a9bf91e14ce747f7b4b0791d0b6aba79740b9e644c99b4a60",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-full-tests.log",
+      "files": 1,
+      "bytes": 214,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/239-settings-full-tests.log",
+      "sha256": "0d6bc1f14fd647619310b917bc996a187bdb3e8f2850ec5152dd8026bfc41be2",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-media-cancel-red.log",
+      "files": 1,
+      "bytes": 37114,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/240-settings-media-cancel-red.log",
+      "sha256": "5ffe7dcf0b8ac178414eb48646195bbb7cdfe6bf433fa18d809a9ce89bacfff9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-navigation-results.json",
+      "files": 1,
+      "bytes": 161299,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/241-settings-navigation-results.json",
+      "sha256": "6f315be0bef853908a2894c23aa00f28494b0f042d0ac1805fc337ceb8e63733",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-navigation-test.log",
+      "files": 1,
+      "bytes": 509,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/242-settings-navigation-test.log",
+      "sha256": "457d5f1a9688a645ab16e4cdada1435a9b5dc597754073796df9f31b8dd9d374",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-open-mutation.log",
+      "files": 1,
+      "bytes": 1453,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/243-settings-open-mutation.log",
+      "sha256": "4a9ea9aaf3f4e75f17b0bd4572a02dcbcca560ea7b9509c31115a5d9c2a0bd45",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-open-restored.log",
+      "files": 1,
+      "bytes": 464,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/244-settings-open-restored.log",
+      "sha256": "4b4b7bafca95afe21239d5a461e813bf4cfb50fca26888217590ea397b399844",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-radio-red.log",
+      "files": 1,
+      "bytes": 41467,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/245-settings-radio-red.log",
+      "sha256": "6ea3307bb5bfbdf4035ee29620ba54bf4900548d7297945394cf97f9d4066f99",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-runtime-prepare-final.log",
+      "files": 1,
+      "bytes": 353,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/246-settings-runtime-prepare-final.log",
+      "sha256": "ec164a820742f0137cbf02a063d4499096559e4a0a876473751a1db91f8dfd35",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-runtime-prepare.log",
+      "files": 1,
+      "bytes": 353,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/247-settings-runtime-prepare.log",
+      "sha256": "ec164a820742f0137cbf02a063d4499096559e4a0a876473751a1db91f8dfd35",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-runtime-restart.log",
+      "files": 1,
+      "bytes": 243,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/248-settings-runtime-restart.log",
+      "sha256": "d065220d76fef0a8ecbc931585b30a6a27c41bb4ae483bd089e6dd670acc2fe0",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-visual-forms.log",
+      "files": 1,
+      "bytes": 19500,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/249-settings-visual-forms.log",
+      "sha256": "fcf60881f17462b34781f2d95c9a5b43cfe62bd4afe62bc7c0655a502d67850b",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/settings-visual-guidance-search.log",
+      "files": 1,
+      "bytes": 2180,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/250-settings-visual-guidance-search.log",
+      "sha256": "a2b6a446183c259cfad5bf66f769d15817c5555d15bef846aca7a971591af31e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/251-storyboard-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/252-storyboard-build.log",
+      "sha256": "f0ec8f7f06f5a05d1a0ea27a06747824fee9014b95faf8482bf9cb44f04728c3",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-check.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/253-storyboard-check.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-check2.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/254-storyboard-check2.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-check3.log",
+      "files": 1,
+      "bytes": 77,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/255-storyboard-check3.log",
+      "sha256": "12e355da5c67926b74f244c9d9149c6105309b58a26658550f0c1a0a26ba2da5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-complete-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/256-storyboard-complete-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-complete-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/257-storyboard-complete-build.log",
+      "sha256": "71ae3684af008fdd00a4f23d013ff9f8c94e2020a8032edcd3109f0d19cccd1f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-complete-tests.log",
+      "files": 1,
+      "bytes": 288625,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/258-storyboard-complete-tests.log",
+      "sha256": "d21fd0c5275bd0f712c3425c46cbefd40812c96def7bab810044db83a0a8b222",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-final-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/259-storyboard-final-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-final-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/260-storyboard-final-build.log",
+      "sha256": "f895e2b676e879700aad0dd3a5e82ed7863b09294d8310f689c21a867457ef1e",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-final-extra.log",
+      "files": 1,
+      "bytes": 175571,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/261-storyboard-final-extra.log",
+      "sha256": "7972cd00d0d5e29f6f26a469e2ca44cbf850e94be14367a459d439c79be2525d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-final-full.log",
+      "files": 1,
+      "bytes": 286973,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/262-storyboard-final-full.log",
+      "sha256": "bedfa51033f23289c8894439e65e9b921fe1c6f3d8c04827223af65488e3d9a8",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-final-related.log",
+      "files": 1,
+      "bytes": 178909,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/263-storyboard-final-related.log",
+      "sha256": "192522591eb014ca015cc92fabbb4651066a7e6187868cd2010eea072219eed9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-full.log",
+      "files": 1,
+      "bytes": 346918,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/264-storyboard-full.log",
+      "sha256": "4060e6de2db652ac106624bc5bd74f528260360d42358bc2c5b4e9a937d50222",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-green.log",
+      "files": 1,
+      "bytes": 229473,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/265-storyboard-green.log",
+      "sha256": "d99f65e593aa2623e1bb617b5647e36e4ec91cc8bfeb30844d7883969694d6e9",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-green2.log",
+      "files": 1,
+      "bytes": 163512,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/266-storyboard-green2.log",
+      "sha256": "e3a165acee247a66d64efcb869d65aca3134b6493a505898ec70f42377dd5499",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-mutation.log",
+      "files": 1,
+      "bytes": 39212,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/267-storyboard-mutation.log",
+      "sha256": "70e42644352ac552f21f067e036cbfa760dd1edb8340ce5e699b2f7a866bb66a",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-red.log",
+      "files": 1,
+      "bytes": 223872,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/268-storyboard-red.log",
+      "sha256": "247b606298de006d0a57bf4e4d1bb16ee84d5e835b4454cc5b184bc4d768078d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-refresh-api.log",
+      "files": 1,
+      "bytes": 1431,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/269-storyboard-refresh-api.log",
+      "sha256": "d79b0924474949ceb713de994f204d8a93f47467ebcd8d45d0ba1f5ace503bc2",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-refresh-fixed.log",
+      "files": 1,
+      "bytes": 2174,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/270-storyboard-refresh-fixed.log",
+      "sha256": "875d043b22ee36bcef808de605c208e1878ee28f21937eeaa7aadf4dc002f034",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-related.log",
+      "files": 1,
+      "bytes": 171528,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/271-storyboard-related.log",
+      "sha256": "29f1cbbf3a93d47c712282e2062c194b0964469baa166de4de753f173dc3620f",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-release-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/272-storyboard-release-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-release-build.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/273-storyboard-release-build.log",
+      "sha256": "78aff47a0d5ae7760e51bc81ef099d4cb84b732863ed15f2d00273d7b8c8be8d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-release-tests.log",
+      "files": 1,
+      "bytes": 290165,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/274-storyboard-release-tests.log",
+      "sha256": "76ee6a2a7cb47347cd69276675d1d2a4a236b3fecbdc85dd263a3e86ecb79676",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-updated.log",
+      "files": 1,
+      "bytes": 5634,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/275-storyboard-updated.log",
+      "sha256": "9e98f40b8474126b27833822be724e995cf6df6153bb7166dc843c14b29a4e54",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-verified-backend.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/276-storyboard-verified-backend.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-verified-backend2.log",
+      "files": 1,
+      "bytes": 94,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/277-storyboard-verified-backend2.log",
+      "sha256": "3cd5b9d993ec32440628e03cd6b9d45e70da9e1672699882440fedca9c9b90bf",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-verified-build.log",
+      "files": 1,
+      "bytes": 377,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/278-storyboard-verified-build.log",
+      "sha256": "1dea68b9596f98596c38e497b7cc63f630f378da599725abac4fa74119928956",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-verified-build2.log",
+      "files": 1,
+      "bytes": 9647,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/279-storyboard-verified-build2.log",
+      "sha256": "9bcc65afee2f8e2633b96d694f73a1d6772f822443186e8365ed2aa397f87f99",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-verified-full.log",
+      "files": 1,
+      "bytes": 290627,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/280-storyboard-verified-full.log",
+      "sha256": "1337b07e015ddf54d9ae11ef32e923d3f80c4c3236e0b89b540d6bf03b8fb468",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/private/tmp/storyboard-verified-related2.log",
+      "files": 1,
+      "bytes": 5627,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/281-storyboard-verified-related2.log",
+      "sha256": "c5f36cda4fddee731fca9d3325504cf4064c61c7e80940d92f36f328efe4c04d",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-media-comparison-deps",
+      "files": 433,
+      "bytes": 5341436,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/282-loop-media-comparison-deps",
+      "sha256": "058acd650597a36b727831faf1edfe8e08eaa986a390e101f34656f196c6a724",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-openchatcut-vite-hbv0is",
+      "files": 0,
+      "bytes": 0,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/283-loop-openchatcut-vite-hbv0is",
+      "sha256": "a569e8b28c923d9042fc1b29f7b99afee2d3d9b0018f916b68c39df0dc9cb2b5",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/mwg-guide-56622-1795349332991.md",
+      "files": 1,
+      "bytes": 21863,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/284-mwg-guide-56622-1795349332991.md",
+      "sha256": "77c1d0463bf8535464f1517b21bd1dba41a7a50fcbe0376fd9972c5c681d9001",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/mwg-guide-56823-1795349801229.md",
+      "files": 1,
+      "bytes": 51733,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/285-mwg-guide-56823-1795349801229.md",
+      "sha256": "e20ea54f155493c772564e342ceedba140190d965b75d3e112a84c79d361a110",
+      "status": "moved-and-verified"
+    },
+    {
+      "path": "/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/mwg-guide-99044-1795315512917.md",
+      "files": 1,
+      "bytes": 21863,
+      "trashPath": "/Users/dan/.Trash/loop-control-conversation-20261122-214524/temporary/286-mwg-guide-99044-1795315512917.md",
+      "sha256": "77c1d0463bf8535464f1517b21bd1dba41a7a50fcbe0376fd9972c5c681d9001",
+      "status": "moved-and-verified"
+    }
+  ],
+  "totals": {
+    "targets": 287,
+    "files": 1421,
+    "bytes": 58657761
+  }
+}
