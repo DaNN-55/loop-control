@@ -10,7 +10,7 @@ interface EditingSession {
 }
 
 /** Publication edits have their own revision; video changes never discard this draft. */
-export function useWorkspacePublication(episodeId:string,workspaceId:string){
+export function useWorkspacePublication(episodeId:string,workspaceId:string,{autoSave=true}:{autoSave?:boolean}={}){
  const ownerId=useWorkspaceOwnerId(),[,render]=useState(0);
  const path=`episodes/${episodeId}/publication`,storageKey=ownerId?'loop-control.publication-draft:'+JSON.stringify([ownerId,episodeId,workspaceId]):'';
  const session=useMemo<EditingSession>(()=>({active:false,state:null,content:{...emptyPublicationContent,tags:[]},error:'',storageError:false,blocked:false,sequence:0,saving:null,controller:new AbortController()}),[ownerId,episodeId,workspaceId]);
@@ -64,14 +64,18 @@ export function useWorkspacePublication(episodeId:string,workspaceId:string){
  }
  const contentKey=JSON.stringify(session.content),revision=session.state?.revision;
  useEffect(()=>{
-  if(!session.state||session.blocked||same(session.content,session.state.content))return;
+  if(!autoSave||!session.state||session.blocked||same(session.content,session.state.content))return;
   const timer=setTimeout(()=>{void flush().catch(()=>{});},450);
   return()=>clearTimeout(timer);
- },[session,contentKey,revision,session.blocked,!!session.saving]);
+ },[session,contentKey,revision,session.blocked,!!session.saving,autoSave]);
+ function discard(){
+  if(!session.state||session.saving)return false;
+  session.content=structuredClone(session.state.content);session.sequence++;session.blocked=false;session.error='';persist();changed();return true;
+ }
  async function mutate(command:string,data:Record<string,unknown>={},endpoint=path){
   const saved=await flush(),sequence=session.sequence;
   const value=await localCommand<WorkspacePublication>(command,{...data,expectedRevision:saved.revision},undefined,endpoint);
   accept(value,session.sequence===sequence);return value;
  }
- return{state:session.state,content:session.content,error:session.error,storageError:session.storageError,saving:!!session.saving,dirty:!!session.state&&!same(session.content,session.state.content),edit,flush,accept,acceptGenerated:(value:WorkspacePublication,submitted:PublicationContent)=>accept(value,same(session.content,submitted)),mutate,reload:()=>load(true),retry:()=>{session.blocked=false;session.error='';return flush();}};
+ return{state:session.state,content:session.content,error:session.error,storageError:session.storageError,saving:!!session.saving,dirty:!!session.state&&!same(session.content,session.state.content),edit,flush,discard,accept,acceptGenerated:(value:WorkspacePublication,submitted:PublicationContent)=>accept(value,same(session.content,submitted)),mutate,reload:()=>load(true),retry:()=>{session.blocked=false;session.error='';return flush();}};
 }

@@ -225,3 +225,52 @@ html[data-interface="impeccable"] .product-ui .workspace-script-compact .confirm
 .workspace-review-flow .workspace-export-secondary dl {margin:0;gap:12px 16px;}
 .workspace-review-flow .workspace-delivery .workspace-review-heading {margin-bottom:8px;}
 .workspace-review-flow .workspace-delivery-locked {margin:8px 0 0!important;}
+/* Approved delivery layout: bounded media and a compact publication reading pane. */
+.workspace-export.workspace-review-flow .workspace-export-layout{display:grid;grid-template-columns:minmax(285px,.82fr) minmax(0,1.18fr);align-items:start;flex:none;overflow:visible}
+.workspace-review-flow .workspace-final-preview{background:var(--lc-surface,#fff);align-items:center;overflow:visible;gap:12px;padding:20px 24px}
+.workspace-review-flow .workspace-final-heading{align-self:stretch;min-height:32px;margin-bottom:4px}
+.workspace-review-flow .workspace-final-media{inline-size:min(100%,clamp(210px,calc((100dvh - 340px)*var(--final-preview-ratio,.5625)),var(--final-preview-max,280px)));max-inline-size:100%;min-width:0}
+.workspace-review-flow .workspace-final-media>.app-video-player:not([data-expanded]){height:auto;min-height:0;max-height:none;border:1px solid var(--lc-line,#d8e1ee);border-radius:7px;overflow:clip;background:var(--lc-surface,#fff)}
+.workspace-review-flow .workspace-final-media>.app-video-player:not([data-expanded])>video{flex:none;inline-size:100%;block-size:auto;aspect-ratio:var(--final-preview-ratio,9/16);max-height:none;object-fit:contain}
+.workspace-review-flow .workspace-final-media-meta{display:flex;justify-content:center;align-items:center;gap:8px 14px;flex-wrap:wrap;color:var(--lc-muted,#596b83);font-size:11px;line-height:1.6;margin:0!important}
+.workspace-review-flow .workspace-final-actions{width:100%;margin-top:4px}
+.workspace-review-flow .workspace-final-empty{min-height:260px;width:100%;flex:none}
+.workspace-review-flow .workspace-export-review{padding:20px 24px;overflow:visible;min-width:0}
+.workspace-review-flow .workspace-export-review>.workspace-delivery{padding-top:0;border-top:0}
+.workspace-review-flow .workspace-publication{gap:14px}
+.workspace-review-flow>.workspace-export-secondary{margin:0 20px;padding:9px 0;border-top:1px solid var(--lc-line,#d8e1ee);font-size:12px}
+.workspace-final-header-actions,.workspace-download-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.workspace-download-toolbar:empty{display:none}
+.workspace-download-toolbar .workspace-delivery-downloads{display:flex;align-items:center;gap:8px;margin:0;padding:0}
+.workspace-download-toolbar .workspace-delivery-downloads>a{white-space:nowrap;min-height:34px;font-size:12px}
+.workspace-download-toolbar .workspace-more-downloads{position:relative;margin:0}
+.workspace-download-toolbar .workspace-more-downloads[open]{display:block;width:auto}
+.workspace-download-toolbar .workspace-more-downloads>summary{display:flex;align-items:center;justify-content:center;gap:6px;list-style:none;padding:6px 10px;min-height:34px;border:1px solid var(--lc-line,#d8e1ee);border-radius:6px;font-size:12px;background:var(--lc-surface,#fff)}
+.workspace-download-toolbar .workspace-more-downloads>summary::-webkit-details-marker{display:none}
+.workspace-download-toolbar .workspace-more-downloads[open]>summary{background:var(--lc-accent-soft,#edf1ff);color:var(--lc-accent,#365fe0)}
+.workspace-download-toolbar .workspace-more-download-options{position:absolute;z-index:20;right:0;top:calc(100% + 6px);width:min(260px,calc(100vw - 40px));padding:9px;background:var(--lc-surface,#fff);border:1px solid var(--lc-line-strong,#bdcadd);border-radius:7px;box-shadow:0 8px 24px rgb(23 38 62 / .12);font-size:12px}
+.workspace-more-download-options{display:grid;gap:5px}
+.workspace-download-toolbar .workspace-more-download-options :is(a,button){justify-content:flex-start;text-align:left}
+.workspace-download-toolbar .workspace-more-download-options>p{padding:4px;margin:0!important;font-size:11px;line-height:1.6}
+@container workspace-review (max-width:830px){
+ .workspace-export.workspace-review-flow .workspace-export-layout{grid-template-columns:minmax(250px,.8fr) minmax(0,1.2fr)}
+ .workspace-review-flow .workspace-final-preview,.workspace-review-flow .workspace-export-review{padding:16px}
+ .workspace-publication-heading{align-items:flex-start;flex-wrap:wrap;gap:6px}
+ .workspace-publication-actions{margin-inline-start:auto}
+}
+@container workspace-review (max-width:640px){
+ .workspace-export.workspace-review-flow .workspace-export-layout{grid-template-columns:minmax(0,1fr)}
+ .workspace-review-flow .workspace-final-preview{border-right:0;border-bottom:1px solid var(--lc-line,#d8e1ee)}
+ .workspace-review-flow .workspace-final-media{inline-size:min(248px,100%)}
+ .workspace-export.workspace-review-flow>header{flex-wrap:wrap;gap:12px}
+ .workspace-final-header-actions{margin-inline-start:auto;justify-content:flex-end}
+ .workspace-review-flow>.workspace-export-secondary{margin-inline:16px}
+}
+@container workspace-review (max-width:380px){
+ .workspace-publication-actions{margin-inline-start:0}
+ .workspace-publication-cover-row{grid-template-columns:68px minmax(0,1fr);gap:12px}
+ .workspace-publication-cover-row .workspace-publication-cover{width:68px}
+ .workspace-review-flow .workspace-final-preview,.workspace-review-flow .workspace-export-review{padding:14px}
+}
+.workspace-review-flow .workspace-delivery .workspace-publication-heading{margin-bottom:0}
+html[data-interface="impeccable"] .product-ui .workspace-download-toolbar .workspace-more-downloads>summary::before{display:none}

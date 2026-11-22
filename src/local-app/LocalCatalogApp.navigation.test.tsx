@@ -14,10 +14,10 @@ it('opens and reloads the URL list context while keeping unsubmitted search out 
  app.unmount();app=render(<LocalCatalogApp/>);expect((await screen.findByRole('search',{name:'搜索生产单'})).querySelector('input')?.value).toBe('未搜索');expect(writes).toEqual([]);
 });
 it('restores episode delivery on direct opening without issuing production commands',async()=>{
- history.replaceState(null,'',`/?view=episodes&episode=${draftEpisode}&step=delivery&tab=sound`);const {writes}=fixture();render(<LocalCatalogApp/>);await screen.findByRole('heading',{name:'发布资料（可选）'});expect(screen.getByRole('button',{name:'检查与交付，当前查看'})).toBeTruthy();expect(writes).toEqual([]);
+ history.replaceState(null,'',`/?view=episodes&episode=${draftEpisode}&step=delivery&tab=sound`);const {writes}=fixture();render(<LocalCatalogApp/>);await screen.findByRole('heading',{name:'发布资料'});expect(screen.getByRole('button',{name:'检查与交付，当前查看'})).toBeTruthy();expect(writes).toEqual([]);
 });
 it('moves through list, episode and viewing steps with browser Back and Forward',async()=>{
- history.replaceState(null,'','/?view=episodes');const {writes}=fixture();render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'草稿验证生产单'}));await screen.findByRole('textbox',{name:'脚本正文'});fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'发布资料（可选）'});
+ history.replaceState(null,'','/?view=episodes');const {writes}=fixture();render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'草稿验证生产单'}));await screen.findByRole('textbox',{name:'脚本正文'});fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'发布资料'});
  act(()=>history.back());await screen.findByRole('button',{name:'脚本确认，当前查看'});await waitFor(()=>expect(new URLSearchParams(location.search).get('step')).not.toBe('delivery'));act(()=>history.back());await waitFor(()=>expect(screen.queryByRole('complementary',{name:'当前生产单详情'})).toBeNull());act(()=>history.forward());await screen.findByRole('button',{name:'脚本确认，当前查看'});act(()=>history.forward());await screen.findByRole('button',{name:'检查与交付，当前查看'});expect(writes).toEqual([]);
 });
 it('cancels browser Back with the draft and address intact, then keeps and completes the deferred navigation',async()=>{
