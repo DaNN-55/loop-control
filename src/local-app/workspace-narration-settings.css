@@ -109,7 +109,7 @@ html[data-interface="impeccable"] .product-ui .workspace-narration-voice-row>lab
 .product-ui .workspace-speech-result .workspace-audio-audition[data-layout=bar]>button[data-rac]{inline-size:32px;min-inline-size:32px;padding:0!important}
 
 /* Narration and captions share one preparation destination, with independent switches. */
-.workspace-narration-subheader{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;min-height:40px;margin-bottom:12px}
+.workspace-narration-subheader{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;margin-bottom:12px}
 .workspace-narration-subheader>[role=switch]{flex:none;margin-inline-start:auto;align-items:center}
 .workspace-narration-subheader .workspace-visual-preview-tabs{flex:none}
 .workspace-narration-fields [hidden]{display:none!important}
@@ -117,6 +117,8 @@ html[data-interface="impeccable"] .product-ui .workspace-narration-voice-row>lab
 .workspace-narration-text{min-width:0}
 .workspace-caption-editor-heading{display:flex;align-items:center;gap:8px;padding:10px 12px 0;margin:0;font-size:12px;color:var(--lc-muted)}
 .workspace-caption-editor-heading h3{margin:0;font-size:12px;font-weight:500}
+.workspace-speech-composer .workspace-narration-input .workspace-caption-editor-heading{padding-top:0;flex-wrap:wrap}
+.workspace-narration-draft-state{margin-inline-start:auto;font-size:11px;line-height:1.5;color:var(--lc-muted)}
 .workspace-speech-composer .workspace-narration-editor>textarea,.workspace-narration-caption-editor .workspace-narration-editor>textarea{min-height:150px}
 .workspace-narration-composer-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:0;min-width:0}
 .workspace-narration-source{display:flex;align-items:center;gap:4px;min-width:0;max-width:260px;color:var(--lc-accent)}

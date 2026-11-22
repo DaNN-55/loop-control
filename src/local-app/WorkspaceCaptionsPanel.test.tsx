@@ -17,7 +17,7 @@ it('keeps automatic caption preparation separate from styling and final approval
  const contract=defaultShotCaptionContract('原生字幕','independent');
  const workspace={id:'w',episodeId:'e',revision:2,clips:[{id:'c',itemId:'native',shotId:'S1',text:'口播'}],captions:[{clipId:'c',itemId:'native',shotId:'S1',contract,inputFingerprint:'a',timing:'current',textConfirmed:false,audioTrackId:'voice',taskId:null}]} as unknown as ProductionWorkspace;
  render(<WorkspaceCaptionsPanel workspace={workspace} alignmentOnly command={vi.fn()} onChange={()=>{}}/>);
- expect(screen.getByRole('button',{name:'调整字幕'})).toBeTruthy();expect(screen.getByText('字幕已就绪')).toBeTruthy();
+ expect(screen.getByRole('button',{name:'编辑分句与时间'})).toBeTruthy();expect(screen.getByText('字幕已就绪')).toBeTruthy();
  expect(screen.queryByLabelText('字幕正文')).toBeNull();expect(screen.queryByLabelText('字幕位置')).toBeNull();expect(screen.queryByRole('button',{name:'正文已核对'})).toBeNull();expect(screen.queryByRole('button',{name:'声学对齐'})).toBeNull();expect(screen.queryByRole('button',{name:'采用对齐'})).toBeNull();
 });
 
@@ -32,7 +32,7 @@ it('targets the selected shot and keeps retries explicit after completed or fail
  fireEvent.click(screen.getByText('重新自动同步'));fireEvent.click(screen.getByRole('button',{name:'确认重新同步'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceCaptionAlignment',expect.objectContaining({clipId:'c2',localOnly:true})));
  const failed={...workspace,captions:[{...caption,timing:'failed',alignmentStatus:'failed'},workspace.captions![1]]} as ProductionWorkspace;
- view.rerender(<WorkspaceCaptionsPanel {...props} workspace={failed} selectedShotId="S1"/>);expect(screen.getByText('自动同步未完成，可直接调整')).toBeTruthy();expect(screen.getByRole('button',{name:'调整字幕'})).toHaveProperty('disabled',false);
+ view.rerender(<WorkspaceCaptionsPanel {...props} workspace={failed} selectedShotId="S1"/>);expect(screen.getByText('自动同步未完成，可直接调整')).toBeTruthy();expect(screen.getByRole('button',{name:'编辑分句与时间'})).toHaveProperty('disabled',false);
 });
 
 it('lets completed-project readers switch saved captions without exposing editing actions',()=>{

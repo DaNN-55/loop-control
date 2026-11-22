@@ -112,6 +112,7 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
 }
 /* Form-label margins must not make the switch row taller than its sibling tabs. */
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-feature-switch {
+ align-items: center !important;
  margin: 0 !important;
 }
 .workspace-shot-preparation-popover .workspace-preparation-item-state {
@@ -128,4 +129,9 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
 [data-compact-workflow] .workspace-preparation .workspace-preparation-grid.is-fixed .workspace-shot-table.is-readonly {
  width: 100%;
  min-width: 528px;
+}
+
+/* Local controls override the shared full-width select and switch utilities. */
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-audio-mode-picker {
+ width: 138px !important;
 }

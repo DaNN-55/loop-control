@@ -88,7 +88,7 @@ html[data-interface="impeccable"] .product-ui .workspace-audio-composer-options>
 .workspace-audio-source-popover .workspace-audio-source-controls :is(select,input){max-width:100%}
 .workspace-audio-source-popover .workspace-material-drop{min-height:32px;max-width:100%}
 
-.workspace-audio-header-actions{display:flex;align-items:center;gap:8px;margin-inline-start:auto}
+.workspace-audio-header-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-inline-start:auto;min-width:0;flex:none}
 .workspace-audio-enabled-content{display:grid;gap:12px;min-width:0}
 .workspace-audio-enabled-content[hidden]{display:none!important}
 
@@ -136,3 +136,13 @@ html[data-interface="impeccable"] .product-ui .workspace-audio-preparation[data-
 
 .workspace-audio-preparation[data-compact-audio] .workspace-audio-composer-input{position:relative}
 .workspace-audio-preparation[data-compact-audio] .workspace-audio-composer-input>.workspace-material-drop[data-surface=preview]{position:absolute;inset:0;z-index:2;display:grid;place-content:center;gap:8px;background:var(--lc-surface-2);border:1px dashed var(--lc-accent);border-radius:6px}
+
+.workspace-audio-mode-picker{width:138px!important;min-width:0;flex:none}
+.workspace-audio-mode-picker select{height:32px!important;min-height:32px!important;font-size:12px!important}
+.workspace-audio-upload-composer .workspace-audio-upload-slot{display:grid;gap:8px;padding:12px;min-width:0}
+.workspace-audio-upload-slot h3{margin:0;font-size:12px;font-weight:500}
+.workspace-audio-upload-composer .workspace-audio-upload-slot>.workspace-material-drop{min-height:150px;border:1px dashed var(--lc-line-strong);background:var(--lc-surface)}
+@media(pointer:coarse){.workspace-audio-mode-picker select{min-height:44px!important}}
+.workspace-audio-preparation>.workspace-narration-toolbar{flex-wrap:wrap}
+.workspace-audio-header-actions{max-width:100%}
+.workspace-audio-upload-slot h3 small{margin-inline-start:8px;font-size:11px;font-weight:400;color:var(--lc-muted)}

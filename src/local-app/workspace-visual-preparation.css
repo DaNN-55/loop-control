@@ -266,3 +266,8 @@ html[data-interface="impeccable"] .product-ui .workspace-candidate-tools .worksp
 .workspace-candidate-trim-popover .workspace-adoption-settings{display:grid;gap:12px}
 .workspace-candidate-trim-popover .workspace-visual-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media(pointer:coarse){.workspace-candidate-tools :is(button,a){min-width:40px;min-height:40px;height:40px}}
+
+/* The shared inline grid grows an implicit track to the image’s natural height.
+   Give this fixed preview a flex wrapper so 100% resolves against the media well. */
+.workspace-preparation .workspace-shot-preview-media>.media-image-trigger{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-width:0;min-height:0}
+.workspace-preparation .workspace-shot-preview-media>.media-image-trigger>img{display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain}

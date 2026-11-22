@@ -377,3 +377,12 @@ it('defaults to the selected fragment and requires explicit whole-shot scope bef
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({replacementScope:'shot'})));
  expect(command.mock.calls.filter(([name])=>name==='adoptWorkspaceVisualCandidate')).toHaveLength(0);
 });
+
+it('omits redundant replacement scope on a single-fragment shot',async()=>{
+ const w={...workspace,clips:[workspace.clips[0],{...workspace.clips[1],shotId:'S2'}]};
+ render(<WorkspaceVisualPreparation workspace={w} command={vi.fn()} onChange={vi.fn()} materials={[]} selectedShotId="S1"/>);
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));
+ await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));
+ expect(screen.queryByRole('combobox',{name:'画面替换范围'})).toBeNull();
+ expect(screen.getByRole('button',{name:'裁剪与时长'})).toBeTruthy();
+});

@@ -19,9 +19,9 @@ it('places subtitle readiness under the selected shot and blocks local timing ed
  const current={...workspace,captions:[{clipId:'c',itemId:'native',shotId:'S01',contract,inputFingerprint:'caption-input',timing:'current',audioTrackId:'audio',taskId:null,durationMs:2400}]} as ProductionWorkspace;
  const command=vi.fn(async()=>current);
  render(<WorkspaceNarrationPanel episodeId="e" workspace={current} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()}/>);
- fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByText('字幕已就绪')).toBeTruthy();expect(screen.getByRole('button',{name:'调整字幕'})).toHaveProperty('disabled',false);expect(screen.queryByRole('button',{name:'声学对齐'})).toBeNull();
- fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'未保存的字幕'}});expect(screen.getByRole('button',{name:'调整字幕'})).toHaveProperty('disabled',true);expect(command).not.toHaveBeenCalled();
- fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'已有字幕'}});fireEvent.click(screen.getByRole('button',{name:'调整字幕'}));
+ fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByText('字幕已就绪')).toBeTruthy();expect(screen.getByRole('button',{name:'编辑分句与时间'})).toHaveProperty('disabled',false);expect(screen.queryByRole('button',{name:'声学对齐'})).toBeNull();
+ fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'未保存的字幕'}});expect(screen.getByRole('button',{name:'编辑分句与时间'})).toHaveProperty('disabled',true);expect(command).not.toHaveBeenCalled();
+ fireEvent.change(screen.getByRole('textbox',{name:'字幕内容'}),{target:{value:'已有字幕'}});fireEvent.click(screen.getByRole('button',{name:'编辑分句与时间'}));
  expect(screen.getByRole('textbox',{name:'第 1 句字幕'})).toHaveProperty('value','已有字幕');expect(command).not.toHaveBeenCalled();
 });
 it('uses the saved episode voice even when the shot has an older voice and rate',async()=>{

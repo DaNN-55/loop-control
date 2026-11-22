@@ -6,6 +6,30 @@ import type {ProductionWorkspace} from '../productionWorkspace';
 const workspace={id:'w',episodeId:'e',revision:2,project:{sha256:'h'},clips:[{id:'c',itemId:'visual',shotId:'S1',text:'镜头',source:null}],audio:{mix:{voices:[{shotId:'S1',mode:'none',gainDb:0,ambienceGainDb:null,sourceItemId:null,sourceAssetId:null}],sounds:[]},preparations:[]}} as unknown as ProductionWorkspace;
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.useRealTimers();sessionStorage.clear();});
 function selectAudio(id:string){fireEvent.drop(screen.getByRole('group',{name:'音频输入'}),{dataTransfer:{types:['application/x-loop-workspace-material'],getData:()=>id,files:[]}});}
+it('switches effect search and upload without losing the query or adopting audio',()=>{
+ const command=vi.fn();
+ const props={workspace,command,onChange:()=>{},selectedShotId:'S1',effectsOnly:true};
+ const view=render(<WorkspaceAudioPreparation {...props}/>);
+ fireEvent.change(screen.getByLabelText('音效意图或检索词'),{target:{value:'door creak'}});
+ expect(screen.queryByRole('button',{name:'添加本地音效（MP3）'})).toBeNull();
+ fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'upload'}});
+ expect(screen.getByRole('button',{name:'拖入音效文件'})).toBeTruthy();
+ expect(screen.queryByLabelText('音效意图或检索词')).toBeNull();
+ view.unmount();render(<WorkspaceAudioPreparation {...props}/>);
+ expect(screen.getByRole('combobox',{name:'音效来源方式'})).toHaveProperty('value','upload');
+ fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'search'}});
+ expect(screen.getByLabelText('音效意图或检索词')).toHaveProperty('value','door creak');
+ expect(command).not.toHaveBeenCalled();
+});
+it('imports an effect from the upload slot as a shot candidate without adoption',async()=>{
+ const command=vi.fn(async(name:string)=>name==='importMaterial'?{id:'uploaded-effect'}:workspace);
+ render(<WorkspaceAudioPreparation workspace={workspace} command={command} onChange={()=>{}} selectedShotId="S1" effectsOnly/>);
+ fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'upload'}});
+ fireEvent.drop(screen.getByRole('button',{name:'拖入音效文件'}),{dataTransfer:{types:['Files'],getData:()=>'',files:[new File(['mp3'],'door.mp3',{type:'audio/mpeg'})]}});
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',materialRevisionId:'uploaded-effect',shotId:'S1',anchor:'shot'})));
+ expect(command).toHaveBeenCalledWith('importMaterial',expect.objectContaining({materialPurpose:'sound_effect',sourcePath:'door.mp3'}));
+ expect(command.mock.calls.map(([name])=>name)).toEqual(['importMaterial','prepareWorkspaceAudio']);
+});
 it.each([0,.75])('uses filled script effect timing (%s) when explicitly preparing a local sound',async offset=>{
  const value=structuredClone(workspace);value.clips[0].renderPreferences={version:'workspace-render-preferences/v2',sfxStart:offset,sfxDuration:.4};
  const command=vi.fn(async()=>value);render(<WorkspaceAudioPreparation workspace={value} command={command} onChange={()=>{}} selectedShotId="S1" materials={[{id:'effect',material_type:'audio',source_path:'effect.mp3',material_purpose:'sound_effect'}]}/>);

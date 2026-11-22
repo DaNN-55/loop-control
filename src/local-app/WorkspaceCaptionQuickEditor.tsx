@@ -49,7 +49,7 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
  const active=contract.cues.find(c=>position>=c.startMs&&position<c.endMs);
  const preview=state.audioPreview;
  return <section className="workspace-captions workspace-caption-preparation" aria-label={uiText('字幕准备')}>
-  <header><span role="status">{uiText(status)}</span><Button size="xs" color="secondary" isDisabled={disabled||opened} onPress={open}>{uiText('调整字幕')}</Button></header>
+  <header><span role="status">{uiText(status)}</span><Button size="xs" color="secondary" isDisabled={disabled||opened} onPress={open}>{uiText('编辑分句与时间')}</Button></header>
   {preview&&<audio key={JSON.stringify(preview)} ref={audio} controls preload="none" aria-label={uiText('播放当前声音并核对字幕')} src={'/_local-artifact?'+new URLSearchParams({episode:workspace.episodeId,path:preview.relativePath})}
    onLoadedMetadata={event=>{event.currentTarget.currentTime=preview.startSeconds;event.currentTarget.playbackRate=preview.playbackRate;}}
    onTimeUpdate={event=>{const media=event.currentTarget,time=preview.offsetSeconds+(media.currentTime-preview.startSeconds)/preview.playbackRate;setPosition(Math.max(0,Math.min(state.durationMs,Math.round(time*1000))));if(media.currentTime>preview.startSeconds+preview.durationSeconds*preview.playbackRate)media.pause();}}/>}
@@ -59,9 +59,12 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
   {opened&&<div className="workspace-caption-quick-editor">
    {draft&&draft.inputFingerprint!==state.inputFingerprint&&<p role="alert">{uiText('声音、正文或镜头已变化；原调整已保留，请取消后按当前内容重新调整。')}</p>}
    {state.timing!=='current'&&<p>{uiText('以下时间供你调整，保存后按人工安排使用。')}</p>}
-   {contract.cues.map((cue,index)=><fieldset key={cue.id} disabled={disabled} className="workspace-caption-quick-cue"><legend>{uiText('第 {value0} 句',{value0:String(index+1)})}</legend>
-    <label>{uiText('字幕')}<input aria-label={uiText('第 {value0} 句字幕',{value0:String(index+1)})} value={cue.text} onChange={e=>update(index,{text:e.target.value})}/></label>
-    <div className="workspace-caption-fields">{(['startMs','endMs'] as const).map((field,i)=><label key={field}>{uiText(i?'消失时间（秒）':'出现时间（秒）')}<input type="number" min="0" max={state.durationMs/1000} step="0.01" aria-label={uiText('第 {value0} 句{value1}时间（秒）',{value0:String(index+1),value1:i?'消失':'出现'})} value={Number.isFinite(cue[field])?cue[field]/1000:''} onChange={e=>update(index,{[field]:e.target.value.trim()===''?NaN:Number(e.target.value)*1000})}/>{preview&&<Button size="xs" color="tertiary" onPress={()=>update(index,{[field]:position})}>{uiText(i?'到这里消失':'从这里出现')}</Button>}</label>)}</div>
+   <div className="workspace-caption-cue-columns" aria-hidden="true"><span>#</span><span>{uiText('字幕内容')}</span><span>{uiText('出现（秒）')}</span><span>{uiText('消失（秒）')}</span></div>
+   {contract.cues.map((cue,index)=><fieldset key={cue.id} disabled={disabled} className="workspace-caption-quick-cue workspace-caption-cue-row">
+    <legend className="workspace-caption-sr-only">{uiText('第 {value0} 句',{value0:String(index+1)})}</legend>
+    <span className="workspace-caption-cue-index" aria-hidden="true">{index+1}</span>
+    <label className="workspace-caption-cue-text"><span className="workspace-caption-sr-only">{uiText('字幕')}</span><textarea rows={2} aria-label={uiText('第 {value0} 句字幕',{value0:String(index+1)})} value={cue.text} onChange={e=>update(index,{text:e.target.value})}/></label>
+    {(['startMs','endMs'] as const).map((field,i)=><label className="workspace-caption-cue-time" key={field}><span>{uiText(i?'消失（秒）':'出现（秒）')}</span><input type="number" min="0" max={state.durationMs/1000} step="0.01" aria-label={uiText('第 {value0} 句{value1}时间（秒）',{value0:String(index+1),value1:i?'消失':'出现'})} value={Number.isFinite(cue[field])?cue[field]/1000:''} onChange={e=>update(index,{[field]:e.target.value.trim()===''?NaN:Number(e.target.value)*1000})}/>{preview&&<Button size="xs" color="tertiary" onPress={()=>update(index,{[field]:position})}>{uiText(i?'到这里消失':'从这里出现')}</Button>}</label>)}
    </fieldset>)}
    <footer><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setDraft(null);setOpened(false);setValidation('');}}>{uiText('取消')}</Button><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void save()}>{uiText('保存调整')}</Button></footer>
   </div>}
