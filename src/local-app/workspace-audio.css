@@ -161,3 +161,11 @@ html[data-interface="impeccable"] .product-ui .workspace-audio-withdraw:not(:dis
 .workspace-audio-settings-popover p[role=alert]{font-size:12px;color:var(--lc-danger)}
 
 html[data-interface="impeccable"] .product-ui.workspace-audio-settings-popover .workspace-audio-instance-settings>label:has(>.dan-select-field){display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}
+/* The portaled settings surface owns every field's baseline and control size. */
+html[data-interface="impeccable"] .product-ui.workspace-audio-settings-popover .workspace-audio-instance-settings>label{display:grid!important;grid-template-columns:minmax(0,1fr)!important;align-content:start;gap:6px!important;font-size:12px!important;line-height:18px!important;margin:0!important;color:var(--lc-muted)}
+html[data-interface="impeccable"] .product-ui.workspace-audio-settings-popover .workspace-audio-instance-settings :is(input:not([type=range]),select,.dan-select-control){box-sizing:border-box;height:34px!important;min-height:34px!important;font-size:12px!important;line-height:18px!important}
+.workspace-audio-settings-popover{max-height:calc(100dvh - 24px);overflow:auto}
+.workspace-audio-instance-preview{grid-column:1/-1;min-width:0}
+.workspace-audio-preparation[data-compact-audio] .workspace-audio-candidate-row>.workspace-audio-unified{order:1;flex:1 1 100%;width:100%;min-width:0}
+.workspace-audio-unified>.app-audio-player{width:100%;min-width:0}
+.workspace-audio-preparation[data-compact-audio] .workspace-audio-candidate-row{flex-wrap:wrap}

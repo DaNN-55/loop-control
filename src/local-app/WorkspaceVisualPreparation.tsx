@@ -1,6 +1,6 @@
 import {restoreVisualDraft,recordVisualDefaultEdits,updatedVisualDefaults,type VisualDefaultOverrides} from './workspaceVisualDefaults';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
-import {WorkspacePopover as Popover} from './WorkspacePopover';
+import {MediaRangeEditor} from '../ui/media/MediaRangeEditor';
 import {uiText} from '../i18n/ui';
 import {templateReferenceProblem} from '../workspaceTemplateInputs';
 import {WorkspaceResolutionChoices,WorkspaceVideoModeChoices,WorkspaceDurationControl,WorkspaceFrameFitChoices} from './WorkspaceGenerationChoices';
@@ -39,8 +39,7 @@ import {WorkspaceReferencePicker} from './WorkspaceReferencePicker';
 import {productionModelSelection} from './productionModelSelection';
 import {WorkspacePexelsSearch} from './WorkspacePexelsSearch';
 import {useEffect,useId,useRef,useState,useSyncExternalStore,type ReactNode,type SetStateAction} from 'react';
-import {Check,Upload,Image as ImageIcon,Video,Maximize2,Download,Scissors,AudioLines,Trash2} from 'lucide-react';
-import {Dialog,DialogTrigger} from 'react-aria-components';
+import {Check,Upload,Image as ImageIcon,Video,Maximize2,Download,AudioLines,Trash2} from 'lucide-react';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
@@ -167,7 +166,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const [uploadState]=useState(()=>uploadSession(`visual:${uploadOwnerId}:${workspace.episodeId}:${workspace.id}:${targetItemId}`));
  const {rows:uploadRows,running:uploading,notice:uploadNotice,retainedMaterials}=useSyncExternalStore(uploadState.subscribe,uploadState.read);
  const formRef=useRef<HTMLDivElement>(null);
- const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomTrigger=useRef<HTMLButtonElement>(null),trimTrigger=useRef<HTMLButtonElement>(null),adoptTrigger=useRef<HTMLButtonElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
+ const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomTrigger=useRef<HTMLButtonElement>(null),videoPreviewRef=useRef<HTMLVideoElement>(null),adoptTrigger=useRef<HTMLButtonElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);
  useEffect(()=>{try{sessionStorage.setItem(storageKey,JSON.stringify(draft));}catch{/* Storage is optional. */}},[storageKey,draft]);
  useEffect(()=>{if(!zoom)return;return()=>zoomTrigger.current?.focus();},[zoom]);
@@ -381,12 +380,23 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const existingVideoIn=visual?.kind==='video'&&timeline?Number(visual.srcInFrame??0)/timeline.fps:0;
  const currentVideo=current&&visual?.kind==='video'&&timeline?visual:undefined,previewRate=currentVideo?Number(currentVideo.playbackRate??1):1;
  const initialVideoIn=currentVideo?existingVideoIn:candidate?.initialRange?.sourceInSeconds??existingVideoIn,initialVideoOut=currentVideo?existingVideoIn+Number(currentVideo.durationInFrames)*previewRate/timeline!.fps:candidate?.initialRange?.sourceOutSeconds??candidate?.durationSeconds??0;
- const rangeStartSeconds=currentVideo||rangeStart===''?initialVideoIn:Number(rangeStart),rangeEndSeconds=currentVideo||rangeEnd===''?initialVideoOut:Number(rangeEnd);
- const selectedVideoDuration=candidate?.kind==='video'?rangeEndSeconds-rangeStartSeconds:null;
- const rangeValid=candidate?.kind!=='video'||rangeStartSeconds>=0&&Number.isFinite(selectedVideoDuration)&&selectedVideoDuration!>0&&rangeEndSeconds<=candidate.durationSeconds;
- const previewSegment=candidate?.kind==='video'&&rangeValid&&(rangeStartSeconds>0||rangeEndSeconds<candidate.durationSeconds||previewRate!==1)
-  ?{start:rangeStartSeconds,end:rangeEndSeconds}:undefined;
- const targetSeconds=replacementScope==='shot'&&props.project?(()=>{const window=readWorkspaceShotWindow(props.project!,targetItemId);return window?window.durationInFrames/window.timeline.fps:candidate?.currentDurationSeconds;})():candidate?.currentDurationSeconds;
+ useEffect(()=>{setRangeStart('');setRangeEnd('');setAcceptImpact(false);},[currentVideo?.id,currentVideo?.srcInFrame,currentVideo?.durationInFrames,currentVideo?.playbackRate]);
+ const rangeStartSeconds=rangeStart===''?initialVideoIn:Number(rangeStart),rangeEndSeconds=rangeEnd===''?initialVideoOut:Number(rangeEnd);
+ const videoAsset=currentVideo?props.project?.assets?.find(asset=>asset.id===currentVideo.sourceAssetId):undefined;
+ const rangeDuration=candidate?.kind==='video'?candidate.durationSeconds:currentVideo&&videoAsset?videoAsset.durationInFrames/timeline!.fps:0;
+ const videoSource=candidate?.kind==='video'?url(candidate.relativePath,candidate.sha256):currentVideo&&props.currentVisualPath?url(props.currentVisualPath,props.currentVisualSha256):undefined;
+ const selectedVideoDuration=tab==='video'&&videoSource?rangeEndSeconds-rangeStartSeconds:null;
+ const rangeValid=tab!=='video'||!videoSource||rangeStartSeconds>=0&&Number.isFinite(selectedVideoDuration)&&selectedVideoDuration!>0&&rangeEndSeconds<=rangeDuration;
+ const previewSegment=tab==='video'&&rangeValid&&videoSource&&(rangeStartSeconds>0||rangeEndSeconds<rangeDuration||previewRate!==1)?{start:rangeStartSeconds,end:rangeEndSeconds}:undefined;
+ const currentRangeChanged=!!currentVideo&&(Math.abs(rangeStartSeconds-initialVideoIn)>.0001||Math.abs(rangeEndSeconds-initialVideoOut)>.0001);
+ async function saveCurrentRange(){await run(async()=>{
+  if(!currentVideo||!timeline||!rangeValid)return;
+  const latest=await fresh();if(latest.project.sha256!==workspace.project.sha256)throw Error('工程已变化，请刷新后重新裁剪。');
+  const next=await command('editWorkspaceStructure',{...base(latest),operation:{kind:'trim',itemId:targetItemId,sourceInFrame:Math.round(rangeStartSeconds*timeline.fps),sourceOutFrame:Math.round(rangeEndSeconds*timeline.fps),keepDuration:policy==='keep-target'}}) as ProductionWorkspace;
+  onChange(next);setRangeStart('');setRangeEnd('');setNotice('裁剪已保存。');
+ });}
+ const targetSeconds=replacementScope==='shot'&&props.project?(()=>{const window=readWorkspaceShotWindow(props.project!,targetItemId);return window?window.durationInFrames/window.timeline.fps:candidate?.currentDurationSeconds;})():currentVideo?Number(currentVideo.durationInFrames)/timeline!.fps:candidate?.currentDurationSeconds;
+ const currentRangeTooShort=!!currentVideo&&policy==='keep-target'&&selectedVideoDuration!=null&&selectedVideoDuration/previewRate+.00001<Number(currentVideo.durationInFrames)/timeline!.fps;
  const canAdopt=rangeValid&&!!candidate&&candidate.status==='available'&&(candidate.kind==='image'||(policy==='keep-target'?targetSeconds==null||(selectedVideoDuration??candidate.durationSeconds)+0.05>=targetSeconds:acceptImpact));
  const shortCandidate=candidate?.kind==='video'&&!current&&policy==='keep-target'&&targetSeconds!=null&&rangeValid&&(selectedVideoDuration??0)+.05<targetSeconds;
  const adoptionLabel=tab==='image'?'作为镜头画面':props.currentVisualPath?'替换当前画面':'应用镜头';
@@ -468,20 +478,8 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
    {candidate&&!current&&hasMultipleFragments&&<div className="workspace-visual-range"><label htmlFor={adoptionDescriptionId+'-scope'}>{uiText("画面替换范围")}</label><NativeSelect id={adoptionDescriptionId+'-scope'} name="replacementScope" size="sm" disabled={disabled} value={replacementScope} onChange={event=>setReplacementScope(event.target.value as 'fragment'|'shot')}><option value="fragment">{uiText("选中片段")}</option><option value="shot">{uiText("整条分镜")}</option></NativeSelect>{replacementScope==='shot'&&<p role="status">{uiText("将本分镜全部画面换为一个新素材；保留口播、字幕、独立音效和其他分镜位置。")}</p>}</div>}
    {visual?.kind==='video'&&(visual.loopControlAudio as {sourceAudioStatus?:string}|undefined)?.sourceAudioStatus==='silent'&&<p role="status">{uiText("当前视频没有原声。")}</p>}
    <div className="workspace-unified-preview" onKeyDown={e=>{if(e.target!==e.currentTarget||entries.length<2)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();select(entries[(index+(e.key==='ArrowRight'?1:-1)+entries.length)%entries.length].id);}}} tabIndex={entries.length>1?0:undefined} aria-label={uiText("{value0}预览",{value0:uiText(kindName)})}>
-    {active?.id==='current'?props.preview:candidate?(tab==='image'?imagePreviewFailed?<div className="workspace-visual-empty"><p role="alert">{uiText("图片未能加载。")}</p><Button size="sm" color="secondary" onPress={()=>{setImagePreviewError('');retryImagePreview(value=>value+1);}}>{uiText("重试预览")}</Button></div>:<img key={`${candidate.id}:${imagePreviewAttempt}`} src={url(candidate.relativePath,candidate.sha256)} alt={uiText("{value0}候选 {value1}",{value0:uiText(kindName),value1:String(index+1)})} onError={()=>setImagePreviewError(candidate.id)}/>:<VideoPreview key={candidate.id} title={uiText("视频候选预览")} aria-label={uiText("视频候选预览")} src={url(candidate.relativePath,candidate.sha256)} segment={previewSegment} playbackRate={previewRate}/>):pendingUpload?<div className="workspace-upload-preview" role="status" aria-label={uiText("{value0}候选上传中",{value0:uiText(kindName)})}><div className="workspace-upload-preview-placeholder" style={{aspectRatio:`${target?.width??9}/${target?.height??16}`}} aria-hidden="true"/><p>{uiText("正在准备")}{kindName}{uiText("候选…")}</p><small>{pendingUpload.name}</small></div>:!showEmptyCandidateDrop&&<div className="workspace-visual-empty">{tab==='image'?<ImageIcon size={28} aria-hidden="true"/>:<Video size={28} aria-hidden="true"/>}<p>{entries.length?uiText("选择左侧缩略图预览"):uiText("尚未添加{value0}",{value0:uiText(kindName)})}</p>{!entries.length&&<span>{shelf?uiText("从左侧本期素材拖入，或使用 AI 生成"):uiText("上传素材，或使用 AI 生成")}</span>}</div>}
+    {active?.id==='current'?(currentVideo&&videoSource?<VideoPreview mediaRef={videoPreviewRef} title={uiText('当前视频')} src={videoSource} segment={previewSegment} playbackRate={previewRate}/>:props.preview):candidate?(tab==='image'?imagePreviewFailed?<div className="workspace-visual-empty"><p role="alert">{uiText("图片未能加载。")}</p><Button size="sm" color="secondary" onPress={()=>{setImagePreviewError('');retryImagePreview(value=>value+1);}}>{uiText("重试预览")}</Button></div>:<img key={`${candidate.id}:${imagePreviewAttempt}`} src={url(candidate.relativePath,candidate.sha256)} alt={uiText("{value0}候选 {value1}",{value0:uiText(kindName),value1:String(index+1)})} onError={()=>setImagePreviewError(candidate.id)}/>:<VideoPreview mediaRef={videoPreviewRef} key={candidate.id} title={uiText("视频候选预览")} aria-label={uiText("视频候选预览")} src={url(candidate.relativePath,candidate.sha256)} segment={previewSegment} playbackRate={previewRate}/>):pendingUpload?<div className="workspace-upload-preview" role="status" aria-label={uiText("{value0}候选上传中",{value0:uiText(kindName)})}><div className="workspace-upload-preview-placeholder" style={{aspectRatio:`${target?.width??9}/${target?.height??16}`}} aria-hidden="true"/><p>{uiText("正在准备")}{kindName}{uiText("候选…")}</p><small>{pendingUpload.name}</small></div>:!showEmptyCandidateDrop&&<div className="workspace-visual-empty">{tab==='image'?<ImageIcon size={28} aria-hidden="true"/>:<Video size={28} aria-hidden="true"/>}<p>{entries.length?uiText("选择左侧缩略图预览"):uiText("尚未添加{value0}",{value0:uiText(kindName)})}</p>{!entries.length&&<span>{shelf?uiText("从左侧本期素材拖入，或使用 AI 生成"):uiText("上传素材，或使用 AI 生成")}</span>}</div>}
     {active&&<div className="workspace-preview-actions workspace-candidate-tools" role="group" aria-label={uiText("候选工具")}>
-     {tab==='video'&&candidate&&!current&&<DialogTrigger isOpen={trimOpen} onOpenChange={setTrimOpen}>
-      <Tooltip title={uiText("裁剪与时长")}><Button ref={trimTrigger} size="xs" color="secondary" aria-label={uiText("裁剪与时长")} iconLeading={Scissors} isDisabled={disabled||!!review}/></Tooltip>
-      <Popover className="dan-ui product-ui workspace-composer-popover workspace-candidate-trim-popover" placement="top end" offset={8} containerPadding={12} shouldFlip>
-       <Dialog aria-label={uiText("裁剪与时长")} className="workspace-composer-settings"><header><h3>{uiText("裁剪与时长")}</h3><Button size="xs" color="tertiary" onPress={()=>setTrimOpen(false)}>{uiText("完成")}</Button></header><div className="workspace-adoption-settings">
-    <div className="workspace-visual-fields"><label>{uiText("使用起点（秒）")}<input type="number" aria-label={uiText("视频使用起点（秒）")} min="0" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeStart===''?String(initialVideoIn):rangeStart} onChange={e=>setRangeStart(e.target.value)}/></label><label>{uiText("使用终点（秒）")}<input type="number" aria-label={uiText("视频使用终点（秒）")} min="0.1" max={candidate.durationSeconds} step="0.1" disabled={disabled} value={rangeEnd===''?String(initialVideoOut):rangeEnd} onChange={e=>setRangeEnd(e.target.value)}/></label></div>
-    <label>{uiText("采用时长")}<NativeSelect size="sm" aria-label={uiText("视觉候选时长处理")} disabled={disabled} value={policy} onChange={e=>{setPolicy(e.target.value);setAcceptImpact(false);}}><option value="keep-target">{uiText("保留镜头时长")}</option><option value="use-candidate">{uiText(rangeStartSeconds>0||rangeEndSeconds<candidate.durationSeconds?"使用所选区间时长":"使用素材完整时长")}</option></NativeSelect></label>
-    {policy==='use-candidate'&&<label className="workspace-visual-checkbox"><input type="checkbox" disabled={disabled} checked={acceptImpact} onChange={e=>setAcceptImpact(e.target.checked)}/>{uiText("保留其他片段位置，接受空隙或覆盖")}</label>}
-    {policy==='keep-target'&&candidate.kind==='video'&&candidate.currentDurationSeconds!==null&&(!rangeValid||(selectedVideoDuration??candidate.durationSeconds)+0.05<candidate.currentDurationSeconds)&&<p role="alert">{uiText("所选区间无法保留当前片段时长，请调整起止点或采用素材区间的时长。")}</p>}
-
-       </div></Dialog>
-      </Popover>
-     </DialogTrigger>}
      {tab==='video'&&current&&canSplitVideo&&<Tooltip title={uiText("拆分视频原声")}><Button size="xs" color="secondary" aria-label={uiText("拆分视频原声")} iconLeading={AudioLines} isDisabled={disabled||!!review} onPress={()=>void run(async()=>{const w=await fresh();onChange(await command('splitWorkspaceVideoSound',{...base(w),targetItemId}) as ProductionWorkspace);setNotice('视频原声已拆分，可在剪辑工作台单独编辑。');})}/></Tooltip>}
      {candidate&&tab==='video'&&<a className="workspace-preview-zoom" href={url(candidate.relativePath,candidate.sha256)+'&download=1'} download aria-label={uiText("下载视频")} title={uiText("下载视频")}><Download size={16} aria-hidden="true"/></a>}
      {candidate&&tab==='image'&&!imagePreviewFailed&&<><a className="workspace-preview-zoom" href={url(candidate.relativePath,candidate.sha256)+'&download=1'} download aria-label={uiText("下载图片")} title={uiText("下载原图")}><Download size={16} aria-hidden="true"/></a><button ref={zoomTrigger} className="workspace-preview-zoom" type="button" aria-label={uiText("放大图片")} title={uiText("放大图片")} onClick={()=>setZoom(true)}><Maximize2 size={16} aria-hidden="true"/></button></>}
@@ -489,6 +487,12 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
     </div>}
     {dropCandidate}
    </div>
+
+      {tab==='video'&&videoSource&&rangeDuration>0&&<MediaRangeEditor key={candidate?.id??targetItemId} label="视频" duration={rangeDuration} value={[rangeStartSeconds,rangeEndSeconds]} step={1/(timeline?.fps??30)} disabled={disabled||!!review} onChange={range=>{setRangeStart(String(range[0]));setRangeEnd(String(range[1]));setAcceptImpact(false);}} media={videoPreviewRef} videoSrc={videoSource} preciseOpen={trimOpen} onPreciseOpenChange={setTrimOpen} actions={currentRangeChanged&&<div className="workspace-current-trim-save"><span role={currentRangeTooShort?'alert':undefined}>{uiText(currentRangeTooShort?'所选区间较短，请在精确时间中选择采用所选区间时长。':'裁剪尚未保存')}</span><Button size="sm" color="primary" isDisabled={disabled||!rangeValid||currentRangeTooShort||policy==='use-candidate'&&!acceptImpact} onPress={()=>void saveCurrentRange()}>{uiText('保存裁剪')}</Button></div>}>
+       <label>{uiText("采用时长")}<NativeSelect size="sm" aria-label={uiText("视觉候选时长处理")} disabled={disabled} value={policy} onChange={e=>{setPolicy(e.target.value);setAcceptImpact(false);}}><option value="keep-target">{uiText("保留镜头时长")}</option><option value="use-candidate">{uiText(rangeStartSeconds>0||rangeEndSeconds<rangeDuration?"使用所选区间时长":"使用素材完整时长")}</option></NativeSelect></label>
+       {policy==='use-candidate'&&<label className="workspace-visual-checkbox"><input type="checkbox" disabled={disabled} checked={acceptImpact} onChange={e=>setAcceptImpact(e.target.checked)}/>{uiText("保留其他片段位置，接受空隙或覆盖")}</label>}
+       {policy==='keep-target'&&targetSeconds!=null&&(!rangeValid||(selectedVideoDuration??rangeDuration)/previewRate+.05<targetSeconds)&&<p role="alert">{uiText("所选区间无法保留当前片段时长，请调整起止点或采用素材区间的时长。")}</p>}
+      </MediaRangeEditor>}
 
       {active&&<div className="workspace-result-footer">
        <p title={inlineReview?reviewSummary:candidateMeta||candidate?.relativePath}><strong>{candidate?uiText("候选 {value0} / {value1}",{value0:String(String(index+1).padStart(2,'0')),value1:String(String(entries.length).padStart(2,'0'))}):uiText("当前画面")}</strong>{inlineReview?<span role="status">{uiText(reviewSummary)}</span>:candidateMeta&&<span className={current?'workspace-candidate-used-status':undefined}>{current?uiText("已采用"):candidateMeta}</span>}</p>

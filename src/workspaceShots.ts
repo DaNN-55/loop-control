@@ -13,6 +13,7 @@ export type WorkspaceShotOperation=
  |{kind:'move';shotId:string;beforeShotId:string|null}
  |{kind:'remove-range';itemId:string}
  |{kind:'range';itemId:string;edge:'in'|'out';deltaFrames:number}
+ |{kind:'trim';itemId:string;sourceInFrame:number;sourceOutFrame:number;keepDuration:boolean}
  |{kind:'lock';itemId:string;locked:boolean}
  |{kind:'appearance';itemId:string;fit?:'cover'|'contain';focusX?:number;focusY?:number;transition?:'cut'|'fade'};
 export function workspaceShotIdentity(item:Record<string,unknown>,workspaceId=''):WorkspaceShotIdentity|null{
@@ -63,7 +64,7 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
   let frame=shot.startFrame;for(const [index,item] of items.entries()){
    const slot=composition.slots[Math.min(index,composition.slots.length-1)],trackId=operation.layout==='full'?String(items[0].track):`workspace-visual-${index}`;
    if(!timeline.tracks[trackId]){timeline.tracks[trackId]={kind:'video',name:`画面 ${index+1}`};timeline.trackOrder.push(trackId);}
-   const audio=linkedVideoSound(timeline,item);
+  const audio=linkedVideoSound(timeline,item);
    const start=operation.layout==='full'?frame:shot.startFrame;
    if(audio)audio.startFrame=Number(audio.startFrame)+start-Number(item.startFrame);
    item.track=trackId;item.startFrame=start;frame+=Number(item.durationInFrames);item.transform={...(item.transform as object),...shotCompositionTransform(shotCompositionRect(operation.layout,slot.id),slot)};item.loopControlComposition={layout:operation.layout};
@@ -94,12 +95,24 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
   timeline.items=timeline.items.filter(i=>i!==item);timeline.transitions=timeline.transitions.filter(t=>!Object.values(t).includes(item.id));clearSelection(timeline,new Set([String(item.id)]));return next;
  }
  if(operation.kind==='lock'){item.loopControlVideo={...(item.loopControlVideo as object),durationLocked:operation.locked};return next;}
- if(operation.kind==='range'){
+ if(operation.kind==='range'||operation.kind==='trim'){
   if(item.kind!=='video')throw Error('只有视频片段可以调整源区间。');
   const asset=next.assets.find(a=>a.id===item.sourceAssetId);if(!asset||!Number.isFinite(asset.durationInFrames))throw Error('当前原片时长不可用。');
-  const range=adjustWorkspaceVideoRange({sourceInFrame:Number(item.srcInFrame??0),durationInFrames:Number(item.durationInFrames),durationLocked:(item.loopControlVideo as {durationLocked?:boolean})?.durationLocked===true},operation.edge,operation.deltaFrames,asset.durationInFrames);
+  const rate=Number(item.playbackRate??1),locked=(item.loopControlVideo as {durationLocked?:boolean})?.durationLocked===true;
+  let range;
+  if(operation.kind==='trim'){
+   const selectedFrames=operation.sourceOutFrame-operation.sourceInFrame;
+   if(!Number.isFinite(rate)||rate<=0||operation.sourceOutFrame>asset.durationInFrames||operation.keepDuration&&selectedFrames+1<Number(item.durationInFrames)*rate)throw Error('所选区间无法保留当前片段时长。');
+   const duration=operation.keepDuration?Number(item.durationInFrames):Math.round(selectedFrames/rate);
+   if(duration<1||locked&&duration!==Number(item.durationInFrames))throw Error('片段时长已锁定，请在剪辑工作台解除锁定。');
+   range={sourceInFrame:operation.sourceInFrame,durationInFrames:duration};
+  }else range=adjustWorkspaceVideoRange({sourceInFrame:Number(item.srcInFrame??0),durationInFrames:Number(item.durationInFrames),durationLocked:locked},operation.edge,operation.deltaFrames,asset.durationInFrames);
   const voice=timeline.items.find(i=>i.id===`workspace-narration-shot-${x.shotId}`),newEnd=Math.max(...x.items.map(i=>Number(i.startFrame)+(i===item?range.durationInFrames:Number(i.durationInFrames))));
   if(voice&&newEnd<Number(voice.startFrame)+Number(voice.durationInFrames))throw Error('画面不能短于完整主声，请先调整主声。');
+  if(operation.kind==='trim'){
+   const lanes=Object.values(timeline.tracks).flatMap(track=>track.captions?.sourceEntries??[]).filter(entry=>entry.id===`workspace-caption-shot-${x.shotId}`||x.items.some(part=>entry.id===`workspace-caption-${part.id}`));
+   if(lanes.some(entry=>entry.words.some(word=>word.end>newEnd*1000/timeline.fps+.01)))throw Error('画面不能短于完整字幕，请先调整字幕。');
+  }
   const audio=linkedVideoSound(timeline,item);
   if(audio){
    const start=Number(audio.srcInFrame??0)+range.sourceInFrame-Number(item.srcInFrame??0);
@@ -120,12 +133,13 @@ export function applyWorkspaceShotOperation(project:OpenChatCutProject,operation
 }
 export function isWorkspaceShotOperation(value:unknown):value is WorkspaceShotOperation{
  if(!value||typeof value!=='object'||Array.isArray(value))return false;const v=value as Record<string,unknown>;
- const keys:Record<string,string[]>={insert:['kind','afterShotId','text','clipId'],composition:['kind','shotId','layout'],remove:['kind','shotId'],move:['kind','shotId','beforeShotId'],'remove-range':['kind','itemId'],range:['kind','itemId','edge','deltaFrames'],lock:['kind','itemId','locked'],appearance:['kind','itemId','fit','focusX','focusY','transition']};
+ const keys:Record<string,string[]>={insert:['kind','afterShotId','text','clipId'],composition:['kind','shotId','layout'],remove:['kind','shotId'],move:['kind','shotId','beforeShotId'],'remove-range':['kind','itemId'],range:['kind','itemId','edge','deltaFrames'],trim:['kind','itemId','sourceInFrame','sourceOutFrame','keepDuration'],lock:['kind','itemId','locked'],appearance:['kind','itemId','fit','focusX','focusY','transition']};
  if(typeof v.kind!=='string'||!keys[v.kind]||Object.keys(v).some(k=>!keys[v.kind as string].includes(k)))return false;
  const id=(x:unknown)=>typeof x==='string'&&x.length>0&&x.length<=300;
  if(v.kind==='insert')return(v.afterShotId===null||id(v.afterShotId))&&typeof v.text==='string'&&!!v.text.trim()&&v.text.length<=100000&&(v.clipId===undefined||typeof v.clipId==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(v.clipId));
  if(v.kind==='composition')return id(v.shotId)&&shotCompositionLayouts.includes(v.layout as ShotCompositionLayout);
  if(v.kind==='remove')return id(v.shotId);if(v.kind==='move')return id(v.shotId)&&(v.beforeShotId===null||id(v.beforeShotId));if(!id(v.itemId))return false;
+ if(v.kind==='trim')return Number.isSafeInteger(v.sourceInFrame)&&Number(v.sourceInFrame)>=0&&Number.isSafeInteger(v.sourceOutFrame)&&Number(v.sourceOutFrame)>Number(v.sourceInFrame)&&typeof v.keepDuration==='boolean';
  if(v.kind==='remove-range')return true;if(v.kind==='range')return['in','out'].includes(String(v.edge))&&Number.isSafeInteger(v.deltaFrames)&&Math.abs(Number(v.deltaFrames))<=1000000;if(v.kind==='lock')return typeof v.locked==='boolean';
  return(v.fit===undefined||['contain','cover'].includes(String(v.fit)))&&(v.transition===undefined||['cut','fade'].includes(String(v.transition)))&&['focusX','focusY'].every(k=>v[k]===undefined||typeof v[k]==='number'&&Number.isFinite(v[k])&&Math.abs(Number(v[k]))<=100);
 }

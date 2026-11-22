@@ -1,3 +1,5 @@
+import {VideoPreview} from '../ui/media/VideoPreview';
+import {AudioPreview} from '../ui/media/AudioPreview';
 import {uiText} from '../i18n/ui';
 import {useWorkspaceMaterialSelection,workspaceMaterialDragType} from './WorkspaceMaterialDrop';
 import {useEffect,useId,useRef,useState,type PointerEvent} from 'react';
@@ -157,8 +159,8 @@ function MaterialPreview({episodeId,material}:{episodeId:string;material:ShelfMa
   {failed||!material.storage_path?<p>{uiText("无法预览此素材")}</p>:material.material_type==='reference'?<a href={src+'&download=1'} download={name}>{uiText("下载文档")}</a>:material.material_type==='script'?<pre>{script||uiText("正在读取脚本…")}</pre>:material.material_type==='image'
    ?<img src={src} alt={name} onError={onError}/>
    :material.material_type==='video'
-    ?<video src={src} controls playsInline preload="metadata" aria-label={name} onError={onError} onLoadedMetadata={onLoadedMetadata}/>
-    :<audio src={src} controls preload="metadata" aria-label={uiText("试听 {value0}",{value0:String(name)})} onError={onError} onLoadedMetadata={onLoadedMetadata}/>}
+    ?<VideoPreview src={src} title={name} aria-label={name} onError={onError} onDuration={setDuration}/>
+    :<AudioPreview src={src} preload="metadata" aria-label={uiText("试听 {value0}",{value0:String(name)})} onError={onError} onLoadedMetadata={onLoadedMetadata}/>}
   <p title={name}>{name}{duration!==undefined&&uiText(" · {value0} 秒",{value0:String(duration.toFixed(1))})}</p>
  </>;
 }

@@ -2,16 +2,16 @@ import {afterEach,expect,it,vi} from 'vitest';
 import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {WorkspaceAudioAudition} from './WorkspaceAudioAudition';
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
-it('plays the original media from the compact button and keeps the full player available',async()=>{
- const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){this.dispatchEvent(new Event('play'));return Promise.resolve();});
- vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(function(this:HTMLMediaElement){this.dispatchEvent(new Event('pause'));});
+it('plays the original media with the shared controls without a second player or disclosure',async()=>{
+ const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new Event('play'));return Promise.resolve();});
+ vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:true,configurable:true});this.dispatchEvent(new Event('pause'));});
  const view=render(<WorkspaceAudioAudition label="候选一" aria-label="候选音频" src="/local.mp3" preload="none"/>);fireEvent.click(screen.getByRole('button',{name:'试听 候选一'}));await waitFor(()=>expect(play).toHaveBeenCalledOnce());expect(screen.getByRole('button',{name:'暂停 候选一'})).toBeTruthy();
- const media=view.container.querySelector('audio')!;expect(media.getAttribute('src')).toBe('/local.mp3');expect(media.closest('[data-media-visibility]')).toBeTruthy();fireEvent.click(screen.getByLabelText('展开 候选一 播放控制'));expect(view.container.querySelector('details')?.open).toBe(true);expect(screen.getByRole('button',{name:'播放速度 1'})).toBeTruthy();
+ const media=view.container.querySelector('audio')!;expect(media.getAttribute('src')).toBe('/local.mp3');expect(media.closest('[data-media-visibility]')).toBeTruthy();expect(view.container.querySelector('details')).toBeNull();expect(view.container.querySelectorAll('audio')).toHaveLength(1);expect(screen.getByRole('slider',{name:'候选一 播放进度'})).toBeTruthy();expect(screen.getByRole('button',{name:'静音'})).toBeTruthy();
 });
 
 it('auditions compact narration without disclosure and releases the original media on unmount',async()=>{
- const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){this.dispatchEvent(new Event('play'));return Promise.resolve();});
- const pause=vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(function(this:HTMLMediaElement){this.dispatchEvent(new Event('pause'));});
+ const play=vi.spyOn(HTMLMediaElement.prototype,'play').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:false,configurable:true});this.dispatchEvent(new Event('play'));return Promise.resolve();});
+ const pause=vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:true,configurable:true});this.dispatchEvent(new Event('pause'));});
  const view=render(<WorkspaceAudioAudition label="口播候选" showControls={false} src="/original.mp3" preload="none"/>);
  expect(view.container.querySelector('details')).toBeNull();const media=view.container.querySelector('audio')!;expect(media.getAttribute('src')).toBe('/original.mp3');
  fireEvent.click(screen.getByRole('button',{name:'试听 口播候选'}));await waitFor(()=>expect(play).toHaveBeenCalledOnce());
@@ -44,5 +44,5 @@ it('loads before seeking and resets the progress when the source changes',()=>{
  const view=render(<WorkspaceAudioAudition {...props} src="/one.mp3"/>),audio=view.container.querySelector('audio')!;
  const range=screen.getByRole('slider',{name:'候选二 播放进度'});fireEvent.change(range,{target:{value:'1.2'}});expect(load).toHaveBeenCalled();
  Object.defineProperty(audio,'duration',{value:3});fireEvent.loadedMetadata(audio);expect(audio.currentTime).toBe(1.2);
- view.rerender(<WorkspaceAudioAudition {...props} src="/two.mp3"/>);expect(range).toHaveProperty('value','0');expect(screen.getByRole('button',{name:'试听 候选二'})).toBeTruthy();
+ view.rerender(<WorkspaceAudioAudition {...props} src="/two.mp3"/>);expect(screen.getByRole('slider',{name:'候选二 播放进度'})).toHaveProperty('value','0');expect(screen.getByRole('button',{name:'试听 候选二'})).toBeTruthy();
 });

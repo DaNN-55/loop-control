@@ -1,0 +1,60 @@
+{
+  "sound": {
+    "id": "workspace-sfx-8e3992f6-37ce-4bcf-8504-ca9b1582da4b",
+    "kind": "audio",
+    "name": "裁剪验收音效",
+    "track": "workspace-sfx-8e3992f6-37ce-4bcf-8504-ca9b1582da4b",
+    "src": "episodes/92fce9c1-c8da-4ee1-b4fc-b259646efcb3/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-crop-tone.mp3",
+    "sourceAssetId": "material-2188aea7-18c0-4daf-84e4-914ad5b07f41",
+    "sourceContentHash": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+    "startFrame": 15,
+    "durationInFrames": 60,
+    "srcInFrame": 60,
+    "volume": 0.35481338923357547,
+    "loopControlAudio": {
+      "workspaceId": "c8586dde-67b2-407a-a8f1-52d705a821a0",
+      "kind": "sfx",
+      "preparationId": "8e3992f6-37ce-4bcf-8504-ca9b1582da4b",
+      "shotId": "shot-1",
+      "anchor": "shot",
+      "offsetSeconds": 0.5
+    }
+  },
+  "video": {
+    "id": "shot-shot-1-cf3d7918-766a-4208-a34f-5e223dba7233",
+    "track": "V1",
+    "kind": "video",
+    "name": "shot-1",
+    "startFrame": 0,
+    "durationInFrames": 30,
+    "width": 360,
+    "height": 640,
+    "transform": {
+      "scale": 1,
+      "x": 0,
+      "y": 0,
+      "rotation": 0
+    },
+    "loopControlShot": {
+      "workspaceId": "c8586dde-67b2-407a-a8f1-52d705a821a0",
+      "shotId": "shot-1",
+      "clipId": "cf3d7918-766a-4208-a34f-5e223dba7233",
+      "text": "第一镜",
+      "provenance": {
+        "materialRevisionId": "05a6bb2d-cba4-4445-9642-fdfdeaa11c07",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "kind": "video"
+      }
+    },
+    "src": "episodes/92fce9c1-c8da-4ee1-b4fc-b259646efcb3/shot.mp4",
+    "sourceAssetId": "material-05a6bb2d-cba4-4445-9642-fdfdeaa11c07",
+    "sourceRevision": "05a6bb2d-cba4-4445-9642-fdfdeaa11c07",
+    "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+    "srcInFrame": 8,
+    "volume": 0,
+    "loopControlAudio": {
+      "sourceAudioStatus": "silent"
+    }
+  }
+}

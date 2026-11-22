@@ -16,5 +16,5 @@ it('explains a short candidate next to adoption and exposes a direct duration ac
  fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));
  expect(screen.getByText('素材可用 3.00 秒，短于当前镜头 5.00 秒，还差 2.00 秒。可换素材，或进入剪辑工作台调整。')).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'选用其他区间'}));
- expect(screen.getByLabelText('视觉候选时长处理').closest('[role=dialog]')).toBeTruthy();expect(command).not.toHaveBeenCalled();
+ expect(screen.getByLabelText('视觉候选时长处理').closest('.app-range-precise:not([hidden])')).toBeTruthy();expect(command).not.toHaveBeenCalled();
 });

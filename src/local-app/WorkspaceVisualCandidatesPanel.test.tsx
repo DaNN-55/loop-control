@@ -22,10 +22,10 @@ afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
 it('shows and previews the verified initial video interval without adopting or generating',async()=>{
  const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}};
  const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]}} command={command} onChange={vi.fn()} materials={[]}/>);
- await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));togglePrecision();
  expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('1');
  expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('2');
- await userEvent.click(screen.getByRole('button',{name:'完成'}));
+ togglePrecision();
  expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('min')).toBe('1');expect(screen.getByRole('slider',{name:'片段进度'}).getAttribute('max')).toBe('2');
  expect(command).not.toHaveBeenCalled();
 });
@@ -35,8 +35,8 @@ it('uses the explicit zero start and displayed interval without redundant confir
  const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));
  const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{...preparation,impact:{...preparation.impact,currentSeconds:1,appliedSeconds:1,deltaSeconds:0}}:w);
  render(<WorkspaceVisualPreparation workspace={w} command={command} onChange={vi.fn()} materials={[]}/>);
- await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
- fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));togglePrecision();
+ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});togglePrecision();
  await userEvent.click(screen.getByRole('button',{name:'应用镜头'}));
  expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate',sourceInSeconds:0,sourceOutSeconds:2}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',expect.objectContaining({candidateId:'candidate',adoptionId:'adoption'})));
@@ -45,12 +45,12 @@ it('uses the explicit zero start and displayed interval without redundant confir
 it('resets each selected video to its own source interval and describes the selected duration',async()=>{
  const candidates=[{...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:.5,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}},{...workspace.visualCandidates![0],id:'other',relativePath:'other.mp4',durationSeconds:2,currentDurationSeconds:.5,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:.25,sourceOutSeconds:.75}}];
  const command=vi.fn();render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:candidates}} command={command} onChange={vi.fn()} materials={[]}/>);
- await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
- fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
- await userEvent.click(screen.getByRole('button',{name:'预览视频候选 02'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));togglePrecision();
+ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});togglePrecision();
+ await userEvent.click(screen.getByRole('button',{name:'预览视频候选 02'}));togglePrecision();
  expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('0.25');expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('0.75');
  expect(screen.getByRole('option',{name:'使用所选区间时长'})).toBeTruthy();
- await userEvent.click(screen.getByRole('button',{name:'完成'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+ togglePrecision();await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));togglePrecision();
  expect((screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}) as HTMLInputElement).value).toBe('1');expect((screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}) as HTMLInputElement).value).toBe('2');expect(command).not.toHaveBeenCalled();
 });
 
@@ -64,13 +64,13 @@ it.each([
  render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]}} command={vi.fn()} onChange={vi.fn()} materials={[]} project={project} currentVisualKind="video" currentVisualPath={candidate.relativePath}/>);
  const video=screen.getByLabelText('视频候选预览');Object.defineProperty(video,'duration',{value:3,configurable:true});fireEvent.loadedMetadata(video);
  expect(screen.getByRole('slider',{name:slider}).getAttribute('min')).toBe(start);expect(screen.getByRole('slider',{name:slider}).getAttribute('max')).toBe(end);expect((video as HTMLVideoElement).playbackRate).toBe(rate);
- expect(screen.queryByRole('button',{name:'裁剪与时长'})).toBeNull();
+ expect(screen.getByRole('button',{name:'裁剪'})).toBeTruthy();expect(screen.queryByRole('button',{name:'精确时间'})).toBeNull();
 });
 
 it('uses the adopted native window immediately even when the pending form retained an explicit end',async()=>{
  const candidate={...workspace.visualCandidates![0],durationSeconds:3,currentDurationSeconds:1,initialRange:{version:'workspace-source-range/v1' as const,sourceInSeconds:1,sourceOutSeconds:2}},w={...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]},props={command:vi.fn(),onChange:vi.fn(),materials:[]};
- const view=render(<WorkspaceVisualPreparation {...props} workspace={w}/>);await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));await userEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
- fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}),{target:{value:'1.5'}});await userEvent.click(screen.getByRole('button',{name:'完成'}));
+ const view=render(<WorkspaceVisualPreparation {...props} workspace={w}/>);await userEvent.click(screen.getByRole('tab',{name:'视频'}));await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));togglePrecision();
+ fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用起点（秒）'}),{target:{value:'0'}});fireEvent.change(screen.getByRole('spinbutton',{name:'视频使用终点（秒）'}),{target:{value:'1.5'}});togglePrecision();
  const project={timelines:[{fps:30,items:[{id:'visual-1',kind:'video',srcInFrame:0,durationInFrames:30}]}]} as unknown as import('../worker/openchatcutProject').OpenChatCutProject;
  view.rerender(<WorkspaceVisualPreparation {...props} workspace={{...w,visualCandidates:[{...candidate,status:'adopted'}]}} project={project} currentVisualKind="video" currentVisualPath={candidate.relativePath}/>);
  const video=screen.getByLabelText('视频候选预览');Object.defineProperty(video,'duration',{value:3,configurable:true});fireEvent.loadedMetadata(video);
@@ -191,10 +191,10 @@ it.each(['image','video'] as const)('requires explicit %s selection and adoption
  expect(screen.getByText('候选 02 / 02')).toBeTruthy();
  if(kind==='video'){
 
-  fireEvent.click(screen.getByRole('button',{name:'裁剪与时长'}));
+  togglePrecision();
   fireEvent.change(screen.getByLabelText('视频使用起点（秒）'),{target:{value:'0.5'}});
   fireEvent.change(screen.getByLabelText('视频使用终点（秒）'),{target:{value:'4'}});
-  expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'完成'}));
+  expect(command).not.toHaveBeenCalled();togglePrecision();
  }
 
  fireEvent.click(screen.getByRole('button',{name:/作为镜头画面|应用镜头|替换当前画面/}));await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceVisualCandidate',{episodeId:'episode',workspaceId:'workspace',expectedRevision:3,candidateId:kind+'2',adoptionId:'explicit'}));expect(screen.queryByRole('group',{name:'采用前核对'})).toBeNull();expect(command).toHaveBeenCalledWith('prepareWorkspaceVisualCandidate',expect.objectContaining({candidateId:kind+'2',durationPolicy:'keep-target',motionPolicy:'preserve-target',...(kind==='video'?{sourceInSeconds:0.5,sourceOutSeconds:4}:{})}));
@@ -384,5 +384,7 @@ it('omits redundant replacement scope on a single-fragment shot',async()=>{
  await userEvent.click(screen.getByRole('tab',{name:'视频'}));
  await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));
  expect(screen.queryByRole('combobox',{name:'画面替换范围'})).toBeNull();
- expect(screen.getByRole('button',{name:'裁剪与时长'})).toBeTruthy();
+ expect(screen.getByRole('button',{name:'裁剪'})).toBeTruthy();expect(screen.queryByRole('button',{name:'精确时间'})).toBeNull();
 });
+
+function togglePrecision(){if(!screen.queryByRole('button',{name:'精确时间'}))fireEvent.click(screen.getByRole('button',{name:'裁剪'}));fireEvent.click(screen.getByRole('button',{name:'精确时间'}));}

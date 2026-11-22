@@ -62,3 +62,11 @@ it('detects retained original audio from a replaced video without treating it as
  expect(resolveWorkspaceMainVoice(mixed,'s1').sourceCurrent).toBe(false);
  expect(readWorkspaceAudioMix(mixed,{s1:['visual-1']}).voices[0].sourceCurrent).toBe(false);
 });
+
+it('saves an exact audio source window without moving its placement or touching other media',()=>{
+ const p=project(),tl=p.timelines[0];tl.items.push({id:'effect',kind:'audio',track:'fx',src:'source.mp3',sourceAssetId:'audio-track-source',srcInFrame:0,startFrame:30,durationInFrames:30,playbackRate:1.5,loopControlAudio:{workspaceId:'w',kind:'sfx',anchor:'absolute'}});tl.tracks.fx={kind:'audio',name:'fx'};
+ const edit={kind:'sound' as const,workspaceId:'w',itemId:'effect',gainDb:-6,duckDepthDb:0,placement:{anchor:'absolute' as const,offsetSeconds:1,durationSeconds:2,sourceInSeconds:1.5}};
+ const next=applyWorkspaceAudioMix(p,edit);expect(next.timelines[0].items.find(i=>i.id==='effect')).toMatchObject({srcInFrame:45,startFrame:30,durationInFrames:60,playbackRate:1.5});expect(p.timelines[0].items.find(i=>i.id==='effect')?.srcInFrame).toBe(0);expect(next.timelines[0].items[0]).toEqual(tl.items[0]);
+ expect(()=>applyWorkspaceAudioMix(p,{...edit,placement:{...edit.placement,sourceInSeconds:5}})).toThrow('可用区间');
+ expect(()=>applyWorkspaceAudioMix(p,{...edit,placement:{...edit.placement,sourceInSeconds:-1}})).toThrow();
+});

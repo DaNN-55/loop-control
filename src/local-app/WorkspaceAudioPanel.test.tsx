@@ -256,11 +256,13 @@ it('preselects named template music and effects without preparing until the user
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace,serviceCatalog:{groups:[]}})));
  const sound={id:'effect',name:'轻响.mp3',type:'audio',purpose:'sound_effect',sha256:'effect',relativePath:'effect.mp3',fileSize:100},music={...sound,id:'music',name:'背景.mp3',purpose:'background_music'};
  const current={...workspace,templateInputs:{version:'workspace-template-inputs/v1' as const,narration:{},bgm:{reference:'背景',status:'bound' as const,material:music,candidates:[music]},shots:[{shotId:'S1',imagePrompt:'',videoPrompt:'',narration:{},sfx:{reference:'轻响',status:'bound' as const,material:sound,candidates:[sound]}}]}};
- const command=vi.fn(async()=>current),materials=[sound,music].map(m=>({id:m.id,material_type:m.type,source_path:m.name,material_purpose:m.purpose}));
+ const prepared={...current,audio:{mix:{voices:[],sounds:[]},preparations:[{...effect('prepared','S1','轻响'),source:{...effect('prepared','S1','轻响').source,materialRevisionId:'effect'}}]}};
+ const command=vi.fn(async(name:string)=>name==='prepareWorkspaceAudio'?prepared:current),materials=[sound,music].map(m=>({id:m.id,material_type:m.type,source_path:m.name,material_purpose:m.purpose}));
  render(<WorkspaceAudioPreparation workspace={current} command={command} onChange={()=>{}} selectedShotId="S1" materials={materials}/>);
  expect(screen.getByRole('button',{name:'准备配乐：背景.mp3'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
- fireEvent.click(screen.getByRole('button',{name:'音效'}));fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'upload'}});fireEvent.click(screen.getByRole('button',{name:'加入候选：轻响.mp3'}));
+ fireEvent.click(screen.getByRole('button',{name:'音效'}));fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'upload'}});fireEvent.click(screen.getByRole('button',{name:'加入镜头'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',materialRevisionId:'effect',shotId:'S1',anchor:'shot'})));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('adoptWorkspaceAudio',expect.objectContaining({preparationId:'prepared'})));
 });
 
 it('limits storyboard sound preparation to effects even with an older episode music draft',async()=>{

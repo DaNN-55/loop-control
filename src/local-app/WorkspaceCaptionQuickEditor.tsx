@@ -1,3 +1,4 @@
+import {AudioPreview} from '../ui/media/AudioPreview';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {createPortal} from 'react-dom';
@@ -52,7 +53,7 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
  const preview=state.audioPreview;
  return <section className="workspace-captions workspace-caption-preparation" aria-label={uiText('字幕准备')}>
   <header><span role="status">{uiText(status)}</span><Button size="xs" color="secondary" isDisabled={disabled||opened} onPress={open}>{uiText('编辑分句与时间')}</Button></header>
-  {preview&&<audio key={JSON.stringify(preview)} ref={audio} controls preload="none" aria-label={uiText('播放当前声音并核对字幕')} src={'/_local-artifact?'+new URLSearchParams({episode:workspace.episodeId,path:preview.relativePath})}
+  {preview&&<AudioPreview key={JSON.stringify(preview)} ref={audio} segment={{start:preview.startSeconds,end:preview.startSeconds+preview.durationSeconds*preview.playbackRate}} playbackRate={preview.playbackRate} preload="none" aria-label={uiText('播放当前声音并核对字幕')} src={'/_local-artifact?'+new URLSearchParams({episode:workspace.episodeId,path:preview.relativePath})}
    onLoadedMetadata={event=>{event.currentTarget.currentTime=preview.startSeconds;event.currentTarget.playbackRate=preview.playbackRate;}}
    onTimeUpdate={event=>{const media=event.currentTarget,time=preview.offsetSeconds+(media.currentTime-preview.startSeconds)/preview.playbackRate;setPosition(Math.max(0,Math.min(state.durationMs,Math.round(time*1000))));if(media.currentTime>preview.startSeconds+preview.durationSeconds*preview.playbackRate)media.pause();}}/>}
   {preview&&<p className="workspace-caption-playback-text" aria-label={uiText('当前播放字幕')}>{active?.text??'　'}</p>}

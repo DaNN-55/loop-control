@@ -1,11 +1,12 @@
 import {uiText} from '../../i18n/ui';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {Container,Controls,Gesture,Hotkey,I18nProvider,MuteButton,PlayButton,StatusAnnouncer,VolumeSlider} from '@videojs/react';
+import {Container,Controls,Gesture,Hotkey,I18nProvider,StatusAnnouncer} from '@videojs/react';
 import {Video,VideoPlayer} from '@videojs/react/video';
 import '@videojs/react/i18n/locales/zh-CN/register';
-import {Download,Maximize,X,Pause,Play,Volume2,VolumeX} from 'lucide-react';
+import {Download,Maximize,X} from 'lucide-react';
 import {useDialogFocus} from '../useDialogFocus';
 import {useMediaLifecycle} from './useMediaLifecycle';
+import {MediaTransport} from './MediaTransport';
 import './media.css';
 
 export interface VideoPreviewProps {
@@ -61,16 +62,10 @@ function VideoPreviewSource({src,title,poster,className,'aria-label':label,prelo
   {loading&&!failed&&<p className="app-media-feedback" role="status">{uiText("正在加载视频…")}</p>}
   {failed&&<div className="app-media-feedback"><p role="alert">{uiText("视频未能加载，请重试。")}</p><button type="button" onClick={()=>{setFailed(false);setLoading(true);retry(value=>value+1);}}>{uiText("重试加载视频")}</button></div>}
   <Controls.Root visibility="always"><Controls.Content className="app-video-controls">
-   <input className="app-video-progress" type="range" aria-label={hasTrim&&clipped?uiText("片段进度"):uiText("视频进度")} aria-valuetext={uiText("{value0} 秒",{value0:String(displayTime)})} min={start} max={Math.max(start,lastFrame)} step={segment?.frameDuration??0.01} value={Math.max(start,Math.min(lastFrame,time))} disabled={failed||end<=start} onChange={event=>{if(media.current){media.current.currentTime=Number(event.target.value);update();}}}/>
-   <Controls.Group className="app-video-toolbar" aria-label={uiText("视频播放控制")}>
-    <PlayButton render={(button,state)=><button {...button} aria-label={state.paused?uiText("播放视频"):uiText("暂停视频")}>{state.paused?<Play size={16}/>:<Pause size={16}/>}</button>}/>
-    <span className="app-video-time">{displayTime} s</span>
-    {hasTrim&&<span className="app-video-range-context">{clipped?`${sourceLabel} ${time.toFixed(2)} / ${duration.toFixed(2)} s`:uiText("当前片段 {value0}–{value1} s",{value0:String(segment.start.toFixed(2)),value1:String(segment.end.toFixed(2))})}</span>}
-    {hasTrim&&<button className="app-video-range-toggle" type="button" onClick={mode}>{whole?uiText("仅播放当前片段"):uiText("查看整段{value0}",{value0:String(sourceLabel)})}</button>}
-    <MuteButton render={(button,state)=><button {...button} aria-label={state.muted?uiText("取消静音"):uiText("静音")}>{state.muted?<VolumeX size={16}/>:<Volume2 size={16}/>}</button>}/>
-    <VolumeSlider.Root className="app-video-volume"><VolumeSlider.Track className="app-video-volume-track"><VolumeSlider.Fill className="app-video-volume-fill"/></VolumeSlider.Track><VolumeSlider.Thumb className="app-video-volume-thumb" aria-label={uiText("音量")}/></VolumeSlider.Root>
+   <MediaTransport media={media} time={time} start={start} end={Math.max(start,lastFrame)} step={segment?.frameDuration??.01} timeLabel={displayTime+' s'} playLabel={uiText('播放视频')} pauseLabel={uiText('暂停视频')} progressLabel={uiText(hasTrim&&clipped?'片段进度':'视频进度')} disabled={failed} onSeek={seconds=>{if(media.current){media.current.currentTime=seconds;update();}}} onPlaybackError={()=>onError?.()}>
     <button type="button" aria-label={uiText("放大视频预览")} hidden={expanded} onClick={openFocus}><Maximize size={16}/></button>
-   </Controls.Group>
+   </MediaTransport>
+   {hasTrim&&<div className="app-media-range-context"><span>{clipped?`${sourceLabel} ${time.toFixed(2)} / ${duration.toFixed(2)} s`:uiText("当前片段 {value0}–{value1} s",{value0:String(segment.start.toFixed(2)),value1:String(segment.end.toFixed(2))})}</span><button className="app-video-range-toggle" type="button" onClick={mode}>{whole?uiText("仅播放当前片段"):uiText("查看整段{value0}",{value0:String(sourceLabel)})}</button></div>}
   </Controls.Content></Controls.Root>
   <Gesture type="tap" pointer="mouse" action="togglePaused"/>
   <Hotkey keys="Space" action="togglePaused"/><Hotkey keys="m" action="toggleMuted"/><Hotkey keys="ArrowLeft" action="seekStep" value={-5}/><Hotkey keys="ArrowRight" action="seekStep" value={5}/>

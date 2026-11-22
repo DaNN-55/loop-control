@@ -144,21 +144,33 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
  async function reconcile(p:typeof preparations[number],recover=false){await perform(async()=>{
   if(recover&&p.generationTask)await reconcileWorkspaceOutput(w.episodeId,p.generationTask);await reading.read();
  },'音频状态未能核对，请重试。');}
+ async function useSelectedEffect(){
+  if(!selectedMaterial)return;
+  await perform(async saved=>{
+   let next=saved;let prepared=next.audio?.preparations.find(p=>p.kind==='sfx'&&p.source?.materialRevisionId===manual&&p.shotId===shot);
+   if(!prepared){next=await command('prepareWorkspaceAudio',{episodeId:saved.episodeId,workspaceId:saved.id,expectedRevision:saved.revision,kind:'sfx',description:selectedMaterial.source_path,durationSeconds:duration,anchor:'shot',shotId:shot,offsetSeconds:offset,materialRevisionId:manual}) as ProductionWorkspace;reading.publish(next);prepared=next.audio?.preparations.find(p=>p.kind==='sfx'&&p.source?.materialRevisionId===manual&&p.shotId===shot);}
+   if(!prepared)throw Error('音效素材尚未就绪，请重试。');
+   reading.publish(await command('adoptWorkspaceAudio',{episodeId:next.episodeId,workspaceId:next.id,expectedRevision:next.revision,preparationId:prepared.id}) as ProductionWorkspace);
+  },'音效未加入镜头，请重试。');
+ }
  async function adoptSound(preparationId:string){return run('adoptWorkspaceAudio',{preparationId});}
  function candidate(p:typeof preparations[number]){
   const sound=currentSound(p),ready=['completed','ready'].includes(p.status)&&(!p.taskId||p.status==='completed');
   const task=workspaceTaskPresentation(p.generationTask??{status:p.status});
   const timeline=doc?.timelines.find(t=>t.items.some(i=>shotIds[p.shotId??'']?.includes(String(i.id)))),start=timeline?Math.min(...timeline.items.filter(i=>shotIds[p.shotId??'']?.includes(String(i.id))).map(i=>Number(i.startFrame)/timeline.fps)):null;
   const usedPlacement=placement(p),offsetSeconds=sound?(usedPlacement.anchor==='shot'&&start!==null?sound.startSeconds-start:sound.startSeconds):p.offsetSeconds;
+  const soundItem=sound?nativeItems.get(sound.itemId):undefined,soundTimeline=sound?doc?.timelines.find(t=>t.items.some(i=>i.id===sound.itemId)):undefined;
+  const soundRate=Number(soundItem?.playbackRate??1),sourceStart=Number(soundItem?.srcInFrame??0)/(soundTimeline?.fps??30);
+  const soundSegment=sound?{start:sourceStart,end:sourceStart+sound.durationSeconds*soundRate}:undefined;
   return <div className="workspace-audio-candidate" key={p.id}>
    <div className="workspace-audio-candidate-row">
    <div className="workspace-audio-candidate-summary"><strong title={[p.source?.title??p.description,p.connection?`${p.connection.name} v${p.connection.version} · ${p.selection?.provider} · 检索：${p.query}`:p.source?.provider==='manual'?'人工来源':null].filter(Boolean).join('\n')}>{p.source?.provider==='freesound'?String(p.source.title??p.description):p.description}</strong><span>{p.kind==='bgm'?uiText("整期"):p.kind==='source'?uiText("原片"):usedPlacement.anchor==='shot'?uiText("{value0}+{value1} 秒",{value0:String(selectedShotId?'跟随镜头 · ':usedPlacement.shotId+' · 跟随镜头 · '),value1:String(offsetSeconds.toFixed(2))}):uiText("固定时间线 · {value0} 秒",{value0:String(sound?.startSeconds??p.offsetSeconds)})} · {sound?uiText("已加入"):!task.held&&!task.unknown&&(p.status==='completed'||!p.taskId)?uiText("可用"):task.summary}{sound?uiText(" · {value0} 秒 · {value1} dB",{value0:String(sound.durationSeconds.toFixed(2)),value1:String(sound.gainDb)}):p.kind==='sfx'?uiText(" · {value0} 秒",{value0:String(p.durationSeconds.toFixed(2))}):''}</span></div>
-   {p.relativePath&&<WorkspaceAudioAudition label={p.source?.title?String(p.source.title):p.description} showControls={false} aria-label={uiText("{value0}试听",{value0:String(p.description)})} preload="none" src={`/_local-artifact?episode=${w.episodeId}&path=${encodeURIComponent(p.relativePath)}&sha256=${p.sha256}`}/>}
+   {p.relativePath&&<WorkspaceAudioAudition durationSeconds={sound?.durationSeconds??p.durationSeconds} label={p.source?.title?String(p.source.title):p.description} segment={soundSegment} playbackRate={soundRate} showControls={false} aria-label={uiText("{value0}试听",{value0:String(p.description)})} preload="none" src={`/_local-artifact?episode=${w.episodeId}&path=${encodeURIComponent(p.relativePath)}&sha256=${p.sha256}`}/>}
    <div className="workspace-audio-actions">{p.source?.provider==='freesound'&&<><a className="workspace-audio-creator" title={String(p.source.creator)} href={String(p.source.sourceUrl)} target="_blank" rel="noreferrer">{String(p.source.creator)}</a><a href={String(p.source.license)} target="_blank" rel="noreferrer">{uiText("许可")}</a></>}
     {sound&&<><DialogTrigger isOpen={expandedCandidate===p.id} onOpenChange={open=>{if(!busy)setExpandedCandidate(open?p.id:'');}}>
      <Button size="xs" color="tertiary" iconLeading={SlidersHorizontal} aria-label={uiText("设置 {value0}",{value0:String(p.description)})} isDisabled={disabled}>{uiText("设置")}</Button>
      <WorkspacePopover className="dan-ui product-ui workspace-audio-preparation workspace-audio-settings-popover" data-compact-audio placement="bottom end" offset={6} containerPadding={12} isKeyboardDismissDisabled={busy}>
-      <Dialog aria-label={uiText("{value0}设置",{value0:String(p.description)})}><h3>{p.description}</h3><WorkspaceAudioInstanceSettings key={sound.itemId+JSON.stringify(sound)+JSON.stringify(nativeItems.get(sound.itemId)?.loopControlAudio)} sound={sound} workspaceId={w.id} project={doc} shotId={placement(p).shotId??selectedShotId} shotItemIds={shotIds[placement(p).shotId??selectedShotId??'']??[]} disabled={disabled} apply={applySound} onApplied={()=>setExpandedCandidate('')}/>{error&&<p role="alert">{error}</p>}</Dialog>
+      <Dialog aria-label={uiText("{value0}设置",{value0:String(p.description)})}><h3>{p.description}</h3><WorkspaceAudioInstanceSettings src={p.relativePath?`/_local-artifact?${new URLSearchParams({episode:w.episodeId,path:p.relativePath,sha256:p.sha256??''})}`:undefined} key={sound.itemId+JSON.stringify(sound)+JSON.stringify(nativeItems.get(sound.itemId)?.loopControlAudio)} sound={sound} workspaceId={w.id} project={doc} shotId={placement(p).shotId??selectedShotId} shotItemIds={shotIds[placement(p).shotId??selectedShotId??'']??[]} disabled={disabled} apply={applySound} onApplied={()=>setExpandedCandidate('')}/>{error&&<p role="alert">{error}</p>}</Dialog>
      </WorkspacePopover>
     </DialogTrigger><Button size="xs" color="tertiary" className="workspace-audio-withdraw" aria-label={uiText("撤回 {value0}",{value0:String(p.description)})} isDisabled={disabled} onPress={()=>void applySound({kind:'sound',workspaceId:w.id,itemId:sound.itemId,gainDb:sound.gainDb,duckDepthDb:sound.duckDepthDb,remove:true})}>{uiText("撤回")}</Button></>}
     {ready&&!sound&&<Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void adoptSound(p.id)}>{p.kind==='sfx'?p.anchor==='shot'?uiText("加入镜头"):uiText("加入时间线"):p.adoptedItemId?uiText("重新采用"):uiText("采用")}</Button>}
@@ -178,16 +190,18 @@ function EditableWorkspaceAudioPreparation({workspace:w,command,onChange,materia
   </header>
   {kind==='sfx'&&!enabled&&<p className="workspace-audio-off-explanation" role="status">{uiText(hasLinkedEffects?'本镜头关联音效已保留，音效关闭时不会播放。':'本镜头没有关联音效。')}{uiText(' 当前音效开关作用于本生产单。')}</p>}
   <div hidden={!enabled} className="workspace-audio-enabled-content">
+  {kind==='sfx'&&selectedMaterial&&!w.audio?.preparations.some(p=>p.kind==='sfx'&&p.source?.materialRevisionId===manual&&p.shotId===shot)&&<div className="workspace-audio-candidate"><div className="workspace-audio-candidate-row"><div className="workspace-audio-candidate-summary"><strong>{selectedMaterial.source_path}</strong><span>{uiText('跟随镜头')} · {uiText('待加入')}</span></div><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void useSelectedEffect()}>{uiText('加入镜头')}</Button></div></div>}
   {kind==='sfx'&&!!effects.length&&<section className="workspace-audio-group" aria-label={uiText("本镜头音效")}><div className="workspace-audio-group-heading"><h4>{selectedShotId?uiText("{value0} · 本镜头音效",{value0:String(selectedShotId)}):uiText("音效")}</h4><span>{effects.length}{uiText(" 条")}</span></div>{effects.map(candidate)}</section>}
   {kind==='sfx'&&!!absoluteEffects.length&&<section className="workspace-audio-group" aria-label={uiText("整期定位音效")}><h4>{uiText("整期定位音效")}</h4>{absoluteEffects.map(candidate)}</section>}
   {!!other.length&&<section className="workspace-audio-group" aria-label={uiText("配乐与原声")}><h4>{uiText("配乐与原声")}</h4>{other.map(candidate)}</section>}
   <input ref={input} aria-label={kind==='sfx'?uiText("上传音效"):uiText("上传配乐")} hidden type="file" accept=".mp3,audio/mpeg" disabled={disabled} onChange={event=>{const file=event.target.files?.[0];event.target.value='';if(file)void upload(file);}}/>
   {templateReferenceProblem(kind==='bgm'?w.templateInputs?.bgm:templateShot?.sfx)&&<p role="status">{templateReferenceProblem(kind==='bgm'?w.templateInputs?.bgm:templateShot?.sfx)}</p>}
-  {kind==='bgm'&&selectedMaterial&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void addLocalMaterial(manual,selectedMaterial.source_path)}>{`准备${kind==='bgm'?'配乐':'音效'}：${selectedMaterial.source_path}`}</Button>}
+
+  {kind==='bgm'&&selectedMaterial&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void addLocalMaterial(manual,selectedMaterial.source_path)}>{`准备配乐：${selectedMaterial.source_path}`}</Button>}
   {uploadingEffect?<div className="workspace-generation-composer workspace-audio-composer workspace-audio-upload-composer">
    <div className="workspace-audio-upload-slot"><h3>{uiText('本地音效')}<small>{uiText('MP3 · 最大 100 MB')}</small></h3>
     <WorkspaceMaterialDrop label={uiText('拖入音效文件')} kind="audio" purpose="sound_effect" surface="preview" persistent disabled={disabled} onBrowse={()=>input.current?.click()} onFiles={files=>{if(files[0])void upload(files[0]);}} onSelect={id=>{const material=eligibleMaterials.find(m=>m.id===id);void addLocalMaterial(id,material?.source_path.split('/').pop());}}/>
-    {selectedMaterial&&!w.audio?.preparations.some(p=>p.kind==='sfx'&&p.source?.materialRevisionId===manual&&p.shotId===shot)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void addLocalMaterial(manual,selectedMaterial.source_path)}>{`加入候选：${selectedMaterial.source_path}`}</Button>}
+
    </div>
   </div>:<div className="workspace-generation-composer workspace-audio-composer" data-audio-kind={kind}>
    <div className="workspace-audio-composer-input workspace-audio-single-input" role="group" aria-label={uiText("音频输入")} onDragOver={event=>{if(event.dataTransfer.types.includes('Files')||event.dataTransfer.types.includes(workspaceMaterialDragType))event.preventDefault();}} onDrop={event=>{if(event.defaultPrevented||disabled)return;const id=event.dataTransfer.getData(workspaceMaterialDragType),material=eligibleMaterials.find(m=>m.id===id);if(material){event.preventDefault();void addLocalMaterial(material.id,material.source_path.split('/').pop());}else if(event.dataTransfer.files?.length){event.preventDefault();void upload(event.dataTransfer.files[0]);}}}>

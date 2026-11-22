@@ -7,10 +7,10 @@ beforeEach(()=>{
  vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(function(this:HTMLMediaElement){Object.defineProperty(this,'paused',{value:true,configurable:true});this.dispatchEvent(new Event('pause'));});
 });
 afterEach(()=>{cleanup();vi.restoreAllMocks();});
-it('uses the real AudioSkin controls to play and pause the original audio source',async()=>{
+it('uses the shared A controls to play and pause the original audio source',async()=>{
  const {container}=render(<AudioPreview src="/registered.mp3?sha256=original" aria-label="口播试听" preload="none"/>);
  const audio=screen.getByLabelText('口播试听') as HTMLAudioElement;
- expect(container.querySelector('.audio-skin')).toBeTruthy();expect(audio.controls).toBe(false);expect(audio.preload).toBe('none');expect(audio.src).toContain('/registered.mp3?sha256=original');
+ expect(container.querySelector('.app-media-transport')).toBeTruthy();expect(audio.controls).toBe(false);expect(audio.preload).toBe('none');expect(audio.src).toContain('/registered.mp3?sha256=original');
  await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'播放'}));});expect(audio.play).toHaveBeenCalled();
  await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'暂停'}));});expect(audio.pause).toHaveBeenCalled();
 });
