@@ -5,11 +5,13 @@ import {uiText} from '../../i18n/ui';
 import {useVideoFilmstrip} from './useVideoFilmstrip';
 import './media-range.css';
 
-export function MediaRangeEditor({label,duration,value,step=.01,disabled=false,onChange,media,videoSrc,preciseOpen,onPreciseOpenChange,children,actions}:{label:string;duration:number;value:[number,number];step?:number;disabled?:boolean;onChange:(value:[number,number])=>void;media?:RefObject<HTMLMediaElement|null>;videoSrc?:string;preciseOpen?:boolean;onPreciseOpenChange?:(open:boolean)=>void;children?:ReactNode;actions?:ReactNode}){
- const [expanded,setExpanded]=useState(preciseOpen===true);
- const [localPrecise,setLocalPrecise]=useState(false),[error,setError]=useState(''),id=useId(),seekFrame=useRef(0);
+export function MediaRangeEditor({label,duration,value,step=.01,disabled=false,onChange,media,videoSrc,preciseOpen,onPreciseOpenChange,children,actions,isOpen,onOpenChange,showTrigger=true,id:providedId}:{label:string;duration:number;value:[number,number];step?:number;disabled?:boolean;onChange:(value:[number,number])=>void;media?:RefObject<HTMLMediaElement|null>;videoSrc?:string;preciseOpen?:boolean;onPreciseOpenChange?:(open:boolean)=>void;children?:ReactNode;actions?:ReactNode;isOpen?:boolean;onOpenChange?:(open:boolean)=>void;showTrigger?:boolean;id?:string}){
+ const [localOpen,setLocalOpen]=useState(preciseOpen===true);
+ const expanded=isOpen??localOpen,setExpanded=onOpenChange??setLocalOpen;
+ const [localPrecise,setLocalPrecise]=useState(false),[error,setError]=useState(''),generatedId=useId(),seekFrame=useRef(0);
+ const id=providedId??generatedId;
  const precise=preciseOpen??localPrecise,setPrecise=onPreciseOpenChange??setLocalPrecise;
- useEffect(()=>{if(preciseOpen)setExpanded(true);},[preciseOpen]);
+ useEffect(()=>{if(preciseOpen)setExpanded(true);},[preciseOpen,setExpanded]);
  useEffect(()=>()=>cancelAnimationFrame(seekFrame.current),[]);
  const strip=useVideoFilmstrip(expanded?videoSrc:undefined,duration),valid=Number.isFinite(duration)&&duration>0&&value.every(Number.isFinite)&&value[0]>=0&&value[1]>value[0]&&value[1]<=duration+.001;
  function change(next:[number,number]){
@@ -19,8 +21,8 @@ export function MediaRangeEditor({label,duration,value,step=.01,disabled=false,o
   cancelAnimationFrame(seekFrame.current);seekFrame.current=requestAnimationFrame(()=>{const element=media?.current;if(!element)return;element.pause();element.currentTime=Math.min(target,Math.max(0,duration-step));});
  }
  async function preview(){const element=media?.current;if(!element)return;try{element.pause();element.currentTime=value[0];await element.play();}catch{setError('无法播放选区，请重试。');}}
- return <section className="app-media-range" aria-label={uiText('{value0}使用范围',{value0:label})}>
-  <header className="app-range-toggle"><button className="app-range-action" type="button" disabled={disabled} aria-expanded={expanded} aria-controls={id+'-crop'} onClick={()=>{setExpanded(!expanded);if(expanded)setPrecise(false);}}><Scissors size={13} aria-hidden="true"/>{uiText('裁剪')}</button></header>
+ return <section hidden={!showTrigger&&!expanded} className="app-media-range" aria-label={uiText('{value0}使用范围',{value0:label})}>
+  {showTrigger&&<header className="app-range-toggle"><button className="app-range-action" type="button" disabled={disabled} aria-expanded={expanded} aria-controls={id+'-crop'} onClick={()=>{setExpanded(!expanded);if(expanded)setPrecise(false);}}><Scissors size={13} aria-hidden="true"/>{uiText('裁剪')}</button></header>}
   <div id={id+'-crop'} hidden={!expanded} className="app-range-content">
   <header><span>{uiText('使用范围')}</span><div><button className="app-range-action" type="button" aria-expanded={precise} aria-controls={id} onClick={()=>setPrecise(!precise)}><Clock3 size={13} aria-hidden="true"/>{uiText('精确时间')}</button><button className="app-range-action" type="button" disabled={disabled||!duration} onClick={()=>change([0,duration])}><RotateCcw size={13} aria-hidden="true"/>{uiText('重置')}</button></div></header>
   <Slider aria-label={uiText('{value0}使用范围',{value0:label})} minValue={0} maxValue={duration||1} step={step} value={valid?value:[0,duration||1]} isDisabled={disabled||!valid} onChange={next=>change(next as [number,number])}>

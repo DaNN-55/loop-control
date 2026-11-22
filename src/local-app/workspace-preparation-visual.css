@@ -1,6 +1,6 @@
 /* Keep the pane split independent of table content and column sizing. */
 [data-compact-workflow] .workspace-preparation-grid.is-fixed.is-resizable {
- grid-template-columns: minmax(300px, var(--workspace-list-size, 572px)) 9px minmax(0, 1fr);
+ grid-template-columns: minmax(572px, var(--workspace-list-size, 572px)) 9px minmax(0, 1fr);
 }
 .workspace-preparation-grid.is-resizable > .workspace-preparation-resizer {
  display: flex;

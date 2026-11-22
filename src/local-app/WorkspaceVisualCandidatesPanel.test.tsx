@@ -64,7 +64,7 @@ it.each([
  render(<WorkspaceVisualPreparation workspace={{...workspace,clips:[workspace.clips[0]],visualCandidates:[candidate]}} command={vi.fn()} onChange={vi.fn()} materials={[]} project={project} currentVisualKind="video" currentVisualPath={candidate.relativePath}/>);
  const video=screen.getByLabelText('视频候选预览');Object.defineProperty(video,'duration',{value:3,configurable:true});fireEvent.loadedMetadata(video);
  expect(screen.getByRole('slider',{name:slider}).getAttribute('min')).toBe(start);expect(screen.getByRole('slider',{name:slider}).getAttribute('max')).toBe(end);expect((video as HTMLVideoElement).playbackRate).toBe(rate);
- expect(screen.getByRole('button',{name:'裁剪'})).toBeTruthy();expect(screen.queryByRole('button',{name:'精确时间'})).toBeNull();
+ expect(screen.getByRole('button',{name:'裁剪'}).closest('.workspace-preview-actions')).toBeTruthy();expect(screen.queryByRole('button',{name:'精确时间'})).toBeNull();
 });
 
 it('uses the adopted native window immediately even when the pending form retained an explicit end',async()=>{
@@ -384,7 +384,7 @@ it('omits redundant replacement scope on a single-fragment shot',async()=>{
  await userEvent.click(screen.getByRole('tab',{name:'视频'}));
  await userEvent.click(screen.getByRole('button',{name:'预览视频候选 01'}));
  expect(screen.queryByRole('combobox',{name:'画面替换范围'})).toBeNull();
- expect(screen.getByRole('button',{name:'裁剪'})).toBeTruthy();expect(screen.queryByRole('button',{name:'精确时间'})).toBeNull();
+ expect(screen.getByRole('button',{name:'裁剪'}).closest('.workspace-preview-actions')).toBeTruthy();expect(screen.queryByRole('button',{name:'精确时间'})).toBeNull();
 });
 
 function togglePrecision(){if(!screen.queryByRole('button',{name:'精确时间'}))fireEvent.click(screen.getByRole('button',{name:'裁剪'}));fireEvent.click(screen.getByRole('button',{name:'精确时间'}));}

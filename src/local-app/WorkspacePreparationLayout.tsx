@@ -3,7 +3,7 @@ import {uiText} from '../i18n/ui';
 import './workspace-preparation-visual.css';
 
 const storageKey='loop.production.preparation.listWidth.v1';
-const defaultWidth=572,minWidth=300,rightMinWidth=360,dividerWidth=9;
+const defaultWidth=572,minWidth=572,rightMinWidth=360,dividerWidth=9;
 
 /** The pane preference is independent of the table's fixed column widths. */
 export function WorkspacePreparationLayout({children}:{children:ReactNode}){

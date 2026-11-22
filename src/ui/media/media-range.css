@@ -26,3 +26,5 @@
 .app-range-content[hidden]{display:none}
 
 .app-range-action:disabled{opacity:.5;cursor:default}
+
+.app-media-range[hidden]{display:none}
