@@ -1,26 +1,19 @@
-import {parseProductionScript} from '../reviews/productionScript';
+export interface CatalogVideoMetadata {width:number;height:number;duration:number}
+type Caption={contract:{enabled:boolean}};
 
-/** Read-only presentation of the original script; never supplies production defaults. */
-export function productionCatalogScriptPreview(source:string){
- const text=source.replace(/\r\n?/g,'\n').trim();
- const settingsText=text.split(/^##[ \t]+制作设置[ \t]*$/m)[1]?.split(/^##[ \t]+/m)[0]??'';
- const settings=Array.from(settingsText.matchAll(/^\s*-\s+([^：:\n]+)[：:][ \t]*(.*)$/gm))
-  .map(([,label,value])=>({label:label.trim(),value:value.trim()}))
-  .filter(item=>item.label!=='模板版本'&&item.value);
- const body=text.split(/^##[ \t]+(?:正文|旁白脚本|口播正文)[ \t]*$/m)[1]?.split(/^##[ \t]+/m)[0]??(settingsText?'':text);
- let summary='';
- try{
-  const script=parseProductionScript(text);
-  if(script)summary=script.segments.map(segment=>[segment.narration,segment.subtitle,segment.visual,segment.videoPrompt]
-   .find(value=>value?.trim()&&!['无','none','关闭'].includes(value.trim()))??'').filter(Boolean).join('\n\n');
- }catch{
-  // Historical or incomplete drafts still have a readable preview; validation stays in production.
+/** Preview values never replace editing settings or infer captions from the original script. */
+export function productionCatalogParameters(source:string,video?:CatalogVideoMetadata,captions?:Caption[]){
+ const originalAspect=source.replace(/\r\n?/g,'\n').split(/^##[ \t]+制作设置[ \t]*$/m)[1]?.split(/^##[ \t]+/m)[0]?.match(/^\s*-\s*画幅[：:][ \t]*(9:16|16:9|1:1)[ \t]*$/m)?.[1];
+ let aspect=originalAspect?`${originalAspect}（原稿）`:'未确认';
+ if(video&&Number.isFinite(video.width)&&Number.isFinite(video.height)&&video.width>0&&video.height>0){
+  const gcd=(a:number,b:number):number=>b?gcd(b,a%b):a;
+  const divisor=gcd(video.width,video.height);
+  aspect=`${video.width/divisor}:${video.height/divisor}`;
  }
- if(!summary){
-  const narration=Array.from(body.matchAll(/^\s*[-*•]\s*(?:口播|旁白)[：:][ \t]*(.+)$/gm)).map(match=>match[1].trim());
-  summary=narration.length?narration.join('\n\n'):body.replace(/^\s*#{1,6}[ \t]+.*$/gm,'').replace(/^[ \t]*[-*•][ \t]+/gm,'').trim();
- }
- const paragraphs=summary.split(/\n\s*\n/).filter(part=>part.trim());
- const characters=Array.from(paragraphs.slice(0,2).join('\n\n'));
- return {summary:characters.slice(0,240).join('')+(characters.length>240||paragraphs.length>2?'…':''),settings};
+ const enabled=captions?.filter(item=>item.contract.enabled).length??0;
+ return [
+  {label:'画幅',value:aspect},
+  {label:'时长',value:video&&Number.isFinite(video.duration)&&video.duration>0?`${Math.round(video.duration*10)/10} 秒`:'视频加载后显示'},
+  {label:'字幕',value:!captions?.length?'未确认':enabled===0?'关闭':enabled===captions.length?'开启':'部分开启'},
+ ];
 }

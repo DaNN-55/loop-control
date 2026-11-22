@@ -77,3 +77,14 @@ it('keeps the cover when the optional workspace read fails',async()=>{
  function Preview(){const result=useWorkbenchPreview('episode-a','v1',true);return <WorkbenchArtwork episodeId="episode-a" title="作品" {...result.data}/>;}
  render(<Preview/>);await screen.findByRole('img');expect(screen.queryByRole('button',{name:'查看视频'})).toBeNull();
 });
+
+it('reports actual video dimensions and duration without loading another media element',async()=>{
+ const onVideoMetadata=vi.fn();
+ render(<WorkbenchArtwork episodeId="episode-a" title="作品" artifacts={[artifact('v','render','render.mp4')]} onVideoMetadata={onVideoMetadata}/>);
+ fireEvent.click(screen.getByRole('button',{name:'查看视频'}));
+ const video=screen.getByLabelText('作品视频预览');
+ Object.defineProperties(video,{videoWidth:{value:1920},videoHeight:{value:1080},duration:{value:12.4}});
+ await act(async()=>{fireEvent.loadedMetadata(video);});
+ expect(onVideoMetadata).toHaveBeenCalledWith({width:1920,height:1080,duration:12.4});
+ expect(document.querySelectorAll('video')).toHaveLength(1);
+});

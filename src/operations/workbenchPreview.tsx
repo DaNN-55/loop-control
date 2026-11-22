@@ -1,5 +1,5 @@
 import {uiText} from '../i18n/ui';
-import {useEffect,useState} from 'react';
+import {useEffect,useRef,useState} from 'react';
 import {ChevronLeft,ChevronRight} from 'lucide-react';
 import {ImagePreview} from '../ui/media/ImagePreview';
 import {WorkbenchVideoPlayer} from './WorkbenchVideoPlayer';
@@ -8,7 +8,7 @@ import {artifactPreviewKind,localArtifactUrl,localArtifactThumbnailUrl} from '..
 import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import type {WorkspaceExport,WorkspaceExportArtifact} from '../workspaceExport';
 
-type Preview=Pick<EpisodeProductionSnapshot,'artifacts'|'materialRevisions'|'shotPreparationDrafts'|'reviewPackages'>&{exportedVideo?:WorkspaceExportArtifact|null;sourceText?:string;hasScript?:boolean};
+type Preview=Pick<EpisodeProductionSnapshot,'artifacts'|'materialRevisions'|'shotPreparationDrafts'|'reviewPackages'>&{exportedVideo?:WorkspaceExportArtifact|null;sourceText?:string;hasScript?:boolean;captions?:Array<{contract:{enabled:boolean}}>};
 export function useWorkbenchPreview(episodeId:string,revision:string,enabled:boolean){
  const [result,setResult]=useState<{id:string;data:Partial<Preview>|null;error:boolean}>({id:'',data:null,error:false});
  useEffect(()=>{
@@ -35,14 +35,15 @@ export function useWorkbenchPreview(episodeId:string,revision:string,enabled:boo
     if(controller.signal.aborted)return;
     if(value.workspace?.scriptRevisionId)readScript(value.workspace.scriptRevisionId);
     const exportedVideo=(value.workspace?.exports as WorkspaceExport[]|undefined)?.find(item=>item.status==='ready'&&item.artifact&&item.checks.every(check=>check.passed)&&artifactPreviewKind(item.artifact.relativePath)==='video')?.artifact??null;
-    setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),exportedVideo},error:current.id===episodeId&&current.error}));
+    setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),exportedVideo,captions:value.workspace?.captions},error:current.id===episodeId&&current.error}));
    }).catch(()=>{});
   return()=>controller.abort();
  },[episodeId,revision,enabled]);
  return result.id===episodeId?result:{id:episodeId,data:null,error:false};
 }
 
-export function WorkbenchArtwork({episodeId,title,artifacts=[],exportedVideo,error=false}:{episodeId:string;title:string;artifacts?:Preview['artifacts'];exportedVideo?:WorkspaceExportArtifact|null;error?:boolean}){
+export function WorkbenchArtwork({episodeId,title,artifacts=[],exportedVideo,error=false,onVideoMetadata}:{episodeId:string;title:string;artifacts?:Preview['artifacts'];exportedVideo?:WorkspaceExportArtifact|null;error?:boolean;onVideoMetadata?:(value:{width:number;height:number;duration:number})=>void}){
+ const media=useRef<HTMLVideoElement|null>(null);
  const [failed,setFailed]=useState<string[]>([]);
  const [selection,setSelection]=useState({episodeId,video:false});
  const newest=[...artifacts].sort((a,b)=>b.created_at.localeCompare(a.created_at));
@@ -57,7 +58,7 @@ export function WorkbenchArtwork({episodeId,title,artifacts=[],exportedVideo,err
  const source=showingVideo?videoSource:coverSource;
  const mediaFailed=Boolean(source&&failed.includes(source));
  return <div className={`work-artwork ${source&&!mediaFailed?'has-media':''}`}>
-  {source&&!mediaFailed?(showingVideo?<WorkbenchVideoPlayer key={source} source={source} poster={coverSource??undefined} title={title}/>:<ImagePreview src={source} alt={uiText("{value0}作品预览",{value0:String(title)})} onError={()=>setFailed(current=>[...current,source])}/>):<><strong>{title}</strong><span>{error||mediaFailed?uiText("预览暂不可用"):uiText("尚未生成封面")}</span></>}
+  {source&&!mediaFailed?(showingVideo?<WorkbenchVideoPlayer key={source} source={source} mediaRef={media} onDuration={duration=>{if(media.current)onVideoMetadata?.({width:media.current.videoWidth,height:media.current.videoHeight,duration});}} poster={coverSource??undefined} title={title}/>:<ImagePreview src={source} alt={uiText("{value0}作品预览",{value0:String(title)})} onError={()=>setFailed(current=>[...current,source])}/>):<><strong>{title}</strong><span>{error||mediaFailed?uiText("预览暂不可用"):uiText("尚未生成封面")}</span></>}
   {videoSource&&<div className="work-artwork-navigation" role="group" aria-label={uiText("作品预览切换")}>
    <button type="button" aria-label={uiText("查看封面")} disabled={!showingVideo} onClick={()=>setSelection({episodeId,video:false})}><ChevronLeft size={18} aria-hidden="true"/></button>
    <span className="sr-only" role="status">{showingVideo?uiText("视频预览"):uiText("封面预览")}</span>

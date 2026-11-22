@@ -1,5 +1,5 @@
 import {uiText,getUiLocale} from '../i18n/ui';
-import { ScrollText,ChevronDown,ListFilter,Archive,ArchiveRestore,ArrowDownWideNarrow,Bell,FolderOpen,KeyRound,Layers,MoreHorizontal,Plug,Search,ShieldCheck,SlidersHorizontal } from 'lucide-react';
+import { ScrollText,ListFilter,Archive,ArchiveRestore,ArrowDownWideNarrow,Bell,FolderOpen,KeyRound,Layers,MoreHorizontal,Plug,Search,ShieldCheck,SlidersHorizontal } from 'lucide-react';
 import { Button } from '../ui/dan-ui/components/base/buttons/button';
 import { Dropdown } from '../ui/dan-ui/components/base/dropdown/dropdown';
 import { InputBase } from '../ui/dan-ui/components/base/input/input';
@@ -173,7 +173,7 @@ function EpisodeDeleteModal({ assetRoot, episode, isPending, onClose, onArchive,
 
 const episodeStatusFilters=[['all','全部'],['review','待审核'],['running','制作中'],['blocked','需处理'],['done','已完成']] as const;
 
-export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewControl,tools,onRecycle, catalogControls, metrics, operationRows, actions, reviewOnly = false, isPageLoading = false, serverPage, artifactCounts, accounts, accountsById, artifacts, blueprintsById, episodeVisibility, episodes, filter, onDelete = async () => {}, onPlanDelete, onOpenDirectory, onMoveCollection, collections, seriesEpisodeCounts, filterAccountCounts, visibilityCounts, onEpisodeVisibilityChange, onFilter, onSetArchived = async () => {}, onSeriesFilter, onSelectEpisode, onUpdateTitle = async () => {}, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode, isArchivePending = () => false, isDeletePending = () => false, isTitlePending = () => false }: { onPreviewEpisode?:(id:string)=>void;previewEpisodeId?:string;previewControl?:{visible:boolean;disabled:boolean;onToggle:()=>void};tools?:ReactNode;onRecycle?:(episodeId:string)=>Promise<void>;metrics?:EpisodeCatalog["metrics"];catalogControls?: {stage?:ProductionStep|'all';onStage?:(stage:ProductionStep|'all')=>void;query:string;status:"all"|"review"|"running"|"blocked"|"done";sort:CatalogSort;counts?:Record<string,number>;onSearch:(query:string)=>void;onReset?:()=>void;onClearAccount?:()=>void;onStatus:(status:"all"|"review"|"running"|"blocked"|"done")=>void;onSort:(sort:CatalogSort)=>void};operationRows?:EpisodeCatalog["operationRows"];collections?:EpisodeCatalog["collections"];seriesEpisodeCounts?:EpisodeCatalog["seriesEpisodeCounts"];filterAccountCounts?:Record<string,number>;visibilityCounts?:Record<string,number>;actions?: ReactNode; reviewOnly?: boolean; isPageLoading?: boolean; serverPage?: ServerPage; artifactCounts?: Record<string, number>; accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; episodeVisibility: EpisodeVisibility; episodes: Episode[]; filter: string; isArchivePending?: (episodeId: string) => boolean; isDeletePending?: (episodeId: string) => boolean; isTitlePending?: (episodeId: string) => boolean; onDelete?: (episodeId: string, confirmation: string, plan?: EpisodeDeletionPlan) => Promise<void>; onPlanDelete?: (episodeId:string)=>Promise<EpisodeDeletionPlan>; onOpenDirectory?: (episodeId:string)=>Promise<void>; onMoveCollection?: (episodeId:string)=>void; onEpisodeVisibilityChange: (value: EpisodeVisibility) => void; onFilter: (value: string) => void; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; onUpdateTitle?: (episodeId: string, title: string) => Promise<void>; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
+export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewControl,tools,footerActions,onRecycle, catalogControls, metrics, operationRows, actions, reviewOnly = false, isPageLoading = false, serverPage, artifactCounts, accounts, accountsById, artifacts, blueprintsById, episodeVisibility, episodes, filter, onDelete = async () => {}, onPlanDelete, onOpenDirectory, onMoveCollection, collections, seriesEpisodeCounts, filterAccountCounts, visibilityCounts, onEpisodeVisibilityChange, onFilter, onSetArchived = async () => {}, onSeriesFilter, onSelectEpisode, onUpdateTitle = async () => {}, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode, isArchivePending = () => false, isDeletePending = () => false, isTitlePending = () => false }: { onPreviewEpisode?:(id:string)=>void;previewEpisodeId?:string;previewControl?:{visible:boolean;disabled:boolean;onToggle:()=>void};tools?:ReactNode;footerActions?:ReactNode;onRecycle?:(episodeId:string)=>Promise<void>;metrics?:EpisodeCatalog["metrics"];catalogControls?: {stage?:ProductionStep|'all';onStage?:(stage:ProductionStep|'all')=>void;query:string;status:"all"|"review"|"running"|"blocked"|"done";sort:CatalogSort;counts?:Record<string,number>;onSearch:(query:string)=>void;onReset?:()=>void;onClearAccount?:()=>void;onStatus:(status:"all"|"review"|"running"|"blocked"|"done")=>void;onSort:(sort:CatalogSort)=>void};operationRows?:EpisodeCatalog["operationRows"];collections?:EpisodeCatalog["collections"];seriesEpisodeCounts?:EpisodeCatalog["seriesEpisodeCounts"];filterAccountCounts?:Record<string,number>;visibilityCounts?:Record<string,number>;actions?: ReactNode; reviewOnly?: boolean; isPageLoading?: boolean; serverPage?: ServerPage; artifactCounts?: Record<string, number>; accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; episodeVisibility: EpisodeVisibility; episodes: Episode[]; filter: string; isArchivePending?: (episodeId: string) => boolean; isDeletePending?: (episodeId: string) => boolean; isTitlePending?: (episodeId: string) => boolean; onDelete?: (episodeId: string, confirmation: string, plan?: EpisodeDeletionPlan) => Promise<void>; onPlanDelete?: (episodeId:string)=>Promise<EpisodeDeletionPlan>; onOpenDirectory?: (episodeId:string)=>Promise<void>; onMoveCollection?: (episodeId:string)=>void; onEpisodeVisibilityChange: (value: EpisodeVisibility) => void; onFilter: (value: string) => void; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; onUpdateTitle?: (episodeId: string, title: string) => Promise<void>; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
   const [filtersOpen,setFiltersOpen]=useState(false);
   const [displayOpen,setDisplayOpen]=useState(false);
   const [showStatistics,setShowStatistics]=useState(()=>localStorage.getItem('loop-control.catalog.statistics.v1')==='shown');
@@ -201,6 +201,7 @@ export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewCont
     const key=collection?collection.seriesId??'unassigned':version&&seriesById.has(version.series_id)?version.series_id:episode.series_version_id?'unavailable':'unassigned';
     counts[key]=(counts[key]??0)+1;return counts;
   },{});
+  const hasSeries=Object.entries(seriesCounts).some(([id,count])=>id!=='unassigned'&&id!=='unavailable'&&count>0);
   const seriesOptions=[{id:'unassigned',name:uiText('未分系列')},{id:'unavailable',name:uiText('旧系列不可用')},...series];
   const accountFilterCounts=filterAccountCounts??(serverPage?undefined:Object.fromEntries(accounts.map(account=>[account.id,filteredEpisodes.filter(episode=>episode.account_id===account.id).length])));
   const archiveCounts=visibilityCounts??(serverPage?undefined:{active:episodes.filter(e=>(filter==='全部账号'||e.account_id===filter)&&!episodeIsArchived(e)).length,archived:episodes.filter(e=>(filter==='全部账号'||e.account_id===filter)&&episodeIsArchived(e)).length});
@@ -239,18 +240,19 @@ export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewCont
       <div className="episode-list-tools">
         {catalogControls&&actions}{tools}
         <Dropdown.Root isOpen={displayOpen} onOpenChange={setDisplayOpen}>
-          <Button size="sm" color="secondary" iconLeading={SlidersHorizontal} iconTrailing={ChevronDown}>{uiText('显示')}</Button>
+          <Button size="sm" color="secondary">{uiText('显示')}</Button>
           <Dropdown.Popover className="dan-ui product-ui episode-display-popover" placement="bottom end">
             <Dropdown.Menu aria-label={uiText('显示选项')} selectionMode="multiple" selectedKeys={new Set([...(showStatistics?['statistics']:[]),...(showSeries?['series']:[]),...(previewControl?.visible?['preview']:[])])} shouldCloseOnSelect={false} onSelectionChange={keys=>{
               if(keys==='all')return;
               if(keys.has('statistics')!==showStatistics)toggleStatistics();
-              if(keys.has('series')!==showSeries)toggleSeries();
+              if(hasSeries&&keys.has('series')!==showSeries)toggleSeries();
               if(previewControl&&keys.has('preview')!==previewControl.visible){setDisplayOpen(false);previewControl.onToggle();}
             }}>
               {previewControl&&<Dropdown.Item id="preview" selectionIndicator="checkbox" isDisabled={previewControl.disabled}>{uiText('生产单预览')}</Dropdown.Item>}
               <Dropdown.Item id="statistics" selectionIndicator="checkbox">{uiText('显示统计')}</Dropdown.Item>
-              <Dropdown.Item id="series" selectionIndicator="checkbox">{uiText('列表显示系列')}</Dropdown.Item>
+              <Dropdown.Item id="series" selectionIndicator="checkbox" isDisabled={!hasSeries}>{uiText('列表显示系列')}</Dropdown.Item>
             </Dropdown.Menu>
+            {!hasSeries&&<p className="episode-display-note">{uiText('当前列表暂无系列')}</p>}
           </Dropdown.Popover>
         </Dropdown.Root>
       </div>
@@ -279,6 +281,7 @@ export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewCont
     })}</tbody></table></div>
     {filteredEpisodes.length===0&&!isPageLoading?<div className="empty-state compact"><h2>{hasFilters?uiText("没有符合条件的生产单"):reviewOnly?uiText("当前没有待审核生产单"):uiText("还没有生产单")}</h2><p>{catalogControls?.query?uiText("试试其他关键词，或清除搜索。"):uiText("调整筛选条件，或新建生产单。")}</p></div>:null}
     <footer className="episode-list-footer">
+      {footerActions&&<div className="episode-footer-actions">{footerActions}</div>}
       {isPageLoading ? <p role="status">{uiText("正在读取生产单…")}</p> :
         <PaginationControls page={safePage} pageSize={pageSize} total={total} onPageChange={serverPage?.onPageChange??setPage}
           pageSizeControl={!reviewOnly&&(!serverPage||serverPage.onPageSizeChange) ? <label className="episode-page-size">

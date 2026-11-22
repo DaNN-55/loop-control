@@ -32,18 +32,33 @@ function desktopProps():ComponentProps<typeof ProductionCatalog>{
  return {accounts:[],accountsById:new Map(),artifacts:[],blueprintsById:new Map(),episodeVisibility:'active',episodes:[episode],filter:'全部账号',onEpisodeVisibilityChange:vi.fn(),onFilter:vi.fn(),onSeriesFilter:vi.fn(),onSelectEpisode:vi.fn(),series:[],seriesById:new Map(),seriesFilter:'全部系列',seriesVersionsById:new Map(),selectedEpisode:null};
 }
 
-it('puts the episode and action before the readable script with original parameters collapsed',async()=>{
- const sourceText='# 标题\n## 制作设置\n- 模板版本：3\n- 画幅：9:16\n## 正文\n### 段落 01\n- 口播：清晨的光落在窗边。\n- 画面来源：图片';
- vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path.includes('script-studio?')?{sourceText}:path.endsWith('/workspace')?{workspace:{scriptRevisionId:'script'}}:{sections:{artifacts:[],materialRevisions:[]}})));
- const props=desktopProps();
- const app=render(<ProductionCatalog {...props}/>);
+it('puts media before the stage, removes the excerpt and keeps only major parameters',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path.includes('script-studio?')?{sourceText:'# 标题\n## 制作设置\n- 画幅：9:16\n- 字幕：开启\n## 正文\n清晨的光落在窗边。'}:path.endsWith('/workspace')?{workspace:{scriptRevisionId:'script',captions:[{contract:{enabled:false}}]}}:{sections:{artifacts:[{id:'cover',artifact_type:'cover',relative_path:'cover.png',sha256:'a'.repeat(64),created_at:'2026-11-22'}],materialRevisions:[]}})));
+ const props=desktopProps(),app=render(<ProductionCatalog {...props}/>);
  const preview=screen.getByRole('complementary',{name:'生产单预览'});
- await within(preview).findByText('清晨的光落在窗边。');
- const action=within(preview).getByRole('button',{name:'进入制作'});
- expect(action.compareDocumentPosition(within(preview).getByRole('heading',{name:'脚本摘要'}))&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
- expect(app.container.querySelector('details.production-preview-parameters')?.hasAttribute('open')).toBe(false);
- fireEvent.click(action);expect(props.onSelectEpisode).toHaveBeenCalledWith('one');
- expect(within(preview).queryByText(/模板版本/)).toBeNull();
+ await within(preview).findByText('9:16（原稿）');
+ const media=within(preview).getByRole('img');
+ expect(media.compareDocumentPosition(within(preview).getByText('当前阶段'))&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+ expect(within(preview).queryByText('脚本摘要')).toBeNull();
+ expect(within(preview).queryByText('清晨的光落在窗边。')).toBeNull();
+ expect(app.container.querySelectorAll('.production-preview-parameters dt')).toHaveLength(3);
+ expect(within(preview).getByText('关闭')).toBeTruthy();
+ expect(app.container.querySelector('details.production-preview-parameters')).toBeNull();
+ fireEvent.click(within(preview).getByRole('button',{name:'进入制作'}));expect(props.onSelectEpisode).toHaveBeenCalledWith('one');
+});
+
+it('explains unavailable series display and uses catalog counts across pages',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({sections:{artifacts:[],materialRevisions:[]},workspace:null})));
+ const props=desktopProps(),app=render(<ProductionCatalog {...props} footerActions={<button>回收站</button>}/>);
+ expect(app.container.querySelector('.episode-list-footer button')?.textContent).toBe('回收站');
+ expect(screen.getByRole('button',{name:'显示'}).querySelector('svg')).toBeNull();
+ await userEvent.click(screen.getByRole('button',{name:'显示'}));
+ expect((await screen.findByRole('menuitemcheckbox',{name:'列表显示系列'})).getAttribute('aria-disabled')).toBe('true');
+ expect(screen.getByText('当前列表暂无系列')).toBeTruthy();
+ await userEvent.keyboard('{Escape}');
+ app.rerender(<ProductionCatalog {...props} seriesEpisodeCounts={{unassigned:8,another:1}}/>);
+ await userEvent.click(screen.getByRole('button',{name:'显示'}));
+ expect((await screen.findByRole('menuitemcheckbox',{name:'列表显示系列'})).getAttribute('aria-disabled')).not.toBe('true');
 });
 
 it('keeps statistics and the preview accessible from the display menu and persists preview changes',async()=>{
