@@ -50,3 +50,16 @@ it('uses real HTTP and file IO behind Owner, origin and CSRF checks; does not ac
   expect((await get('log-storage')).status).toBe(200);
  }finally{server.closeAllConnections();await new Promise<void>(r=>server.close(()=>r()));await rm(root,{recursive:true,force:true});}
 });
+it('opens only the validated active log directory through authenticated POST without a client path',async()=>{
+ const mod=await import(pathToFileURL(join(process.cwd(),'scripts/runtime/log-storage.mjs')).href),root=await realpath(await mkdtemp(join(tmpdir(),'loop-log-open-')));
+ const opened:string[]=[],storage=mod.createLogStorage(root,join(root,'app-private.log'),{openDirectory:async(path:string)=>{opened.push(path);}});
+ const token='b'.repeat(64),pool={query:async()=>({rows:[{id:'owner',email:'owner@example.invalid'}]})} as unknown as Pool;
+ let handler:ReturnType<typeof createLocalHandler>;const server=createServer((q,r)=>handler(q,r));server.listen(0,'127.0.0.1');await once(server,'listening');const origin='http://127.0.0.1:'+(server.address() as {port:number}).port;
+ try{
+  handler=createLocalHandler({pool,origin,mediaRoot:'/unused',logs:{read:async()=>({observedAt:new Date().toISOString(),entries:[],truncated:false,sourceAvailable:false,maxEntries:200}),storage}});
+  const post=(body:unknown,csrf=csrfFor(token))=>fetch(origin+'/api/local/log-storage',{method:'POST',headers:{Cookie:'loop_owner_session='+token,Origin:origin,'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(body)});
+  expect((await post({command:'open'},'invalid')).status).toBe(403);
+  expect((await post({command:'open',path:'/etc'})).status).toBe(400);expect(opened).toEqual([]);
+  expect((await post({command:'open'})).status).toBe(200);expect(opened).toEqual([root]);
+ }finally{server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));await rm(root,{recursive:true,force:true});}
+});

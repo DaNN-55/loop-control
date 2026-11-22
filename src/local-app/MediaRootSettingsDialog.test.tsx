@@ -38,10 +38,10 @@ it('retries storage reads locally without replacing a personal preference draft 
  mediaRequest.mockRejectedValueOnce(new Error('存储暂时无法读取')).mockResolvedValue(root);
  render(<Fixture onSave={save}/>);
  await screen.findByText('存储暂时无法读取');
- await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');
+ await user.click(screen.getByRole('radio',{name:'深色'}));
  await user.click(screen.getByRole('button',{name:'重新读取存储位置'}));
  await screen.findByText('/test/old');
- expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','dark');
+ expect(screen.getByRole('radio',{name:'深色'})).toHaveProperty('checked',true);
  expect(screen.getByText('有未保存修改')).toBeTruthy();expect(save).not.toHaveBeenCalled();
  await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');
 
@@ -90,7 +90,7 @@ it('keeps preference and migration pending and failure feedback independent',asy
   if(!init?.body)return root;return new Promise(resolve=>{finishPlan=resolve;});
  });
  render(<Fixture onSave={save}/>);await screen.findByText('/test/old');await user.click(screen.getByRole('button',{name:'更换存储位置'}));
- await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');
+ await user.click(screen.getByRole('radio',{name:'深色'}));
  await user.clear(screen.getByRole('textbox',{name:'素材保存目录'}));await user.type(screen.getByRole('textbox',{name:'素材保存目录'}),'/test/new');
  await user.click(screen.getByRole('button',{name:'检查迁移计划'}));
  expect((screen.getByRole('button',{name:'保存偏好'}) as HTMLButtonElement).disabled).toBe(false);
@@ -98,7 +98,7 @@ it('keeps preference and migration pending and failure feedback independent',asy
  await act(async()=>finishPlan({id:'plan',status:'planned',manifest}));
  expect(screen.getByText('保存中…',{selector:'footer>[role="status"]'})).toBeTruthy();expect(screen.getByText('迁移计划已检查，尚未开始迁移。')).toBeTruthy();
  await act(async()=>finishSave(false));expect(screen.getByText('保存失败，修改尚未保存')).toBeTruthy();
- expect(screen.getByText('迁移计划已检查，尚未开始迁移。')).toBeTruthy();expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','dark');
+ expect(screen.getByText('迁移计划已检查，尚未开始迁移。')).toBeTruthy();expect(screen.getByRole('radio',{name:'深色'})).toHaveProperty('checked',true);
 });
 it('does not release a pending migration command when its progress read is retried',async()=>{
  const user=userEvent.setup();let executing=false,retry=false,finish!:(value:unknown)=>void;

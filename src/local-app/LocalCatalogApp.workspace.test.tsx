@@ -35,7 +35,7 @@ it('uses the approved navigation with real table paging and a contextual product
  fireEvent.click(screen.getByRole('button',{name:'第 3 页'}));await waitFor(()=>expect(requests.some(p=>p.includes('page=3'))).toBe(true));await waitFor(()=>expect(screen.getByRole('button',{name:'第 3 页'}).getAttribute('aria-current')).toBe('page'));fireEvent.click(screen.getByRole('button',{name:'上一页'}));await waitFor(()=>expect(requests.some(p=>p.includes('page=2'))).toBe(true));
  fireEvent.change(await screen.findByRole('combobox',{name:'每页生产单条数'}),{target:{value:'50'}});await waitFor(()=>expect(requests.some(path=>{if(!path.includes('/catalog?'))return false;const q=new URL(path,'http://localhost').searchParams;return q.get('pageSize')==='50'&&q.get('page')==='1';})).toBe(true));await waitFor(()=>expect(screen.getByRole('button',{name:'第 1 页'}).getAttribute('aria-current')).toBe('page'));
  fireEvent.click(await screen.findByRole('button',{name:'普通长度完整生产单'}));await screen.findByText('已打开 '+episode);expect(location.search).toContain(episode);
- expect(document.querySelector('.app-shell')).toBeTruthy();expect(screen.queryByRole('button',{name:'切换至深色模式'})).toBeNull();const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'设置'}));await user.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'界面与通知'}));await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');await user.click(screen.getByRole('button',{name:'保存偏好'}));await waitFor(()=>expect(document.querySelector('.app-shell')?.getAttribute('data-theme')).toBe('dark'));
+ expect(document.querySelector('.app-shell')).toBeTruthy();expect(screen.queryByRole('button',{name:'切换至深色模式'})).toBeNull();const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'设置'}));await user.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'界面与通知'}));await user.click(screen.getByRole('radio',{name:'深色'}));await user.click(screen.getByRole('button',{name:'保存偏好'}));await waitFor(()=>expect(document.querySelector('.app-shell')?.getAttribute('data-theme')).toBe('dark'));
  expect(requests.every(p=>p.startsWith('/api/local/'))).toBe(true);
 });
 it('保留安全弹窗焦点，从设置打开制作服务且跨页保留连接草稿',async()=>{
@@ -64,7 +64,7 @@ it('保留安全弹窗焦点，从设置打开制作服务且跨页保留连接�
  expect(screen.queryByLabelText('新密码')).toBeNull();expect(requests.some(path=>path.includes('/history?'))).toBe(false);
  await user.click(within(maintenance).getByRole('button',{name:'新建连接'}));
  await user.type(await screen.findByRole('textbox',{name:'连接名称'}),'未提交的连接草稿');
- await user.click(screen.getByRole('button',{name:'收起'}));
+ await user.click(screen.getByRole('button',{name:'返回连接列表'}));
  await user.click(screen.getByRole('button',{name:'保留修改并离开'}));
  await user.click(within(maintenance).getByRole('button',{name:'关闭制作服务'}));
  expect(screen.queryByRole('dialog',{name:'制作服务'})).toBeNull();
@@ -75,7 +75,7 @@ it('保留安全弹窗焦点，从设置打开制作服务且跨页保留连接�
  maintenance=await screen.findByRole('dialog',{name:'制作服务'});
  await user.click(await within(maintenance).findByRole('button',{name:'新建连接'}));
  expect((screen.getByRole('textbox',{name:'连接名称'})as HTMLInputElement).value).toBe('未提交的连接草稿');
- await user.click(screen.getByRole('button',{name:'收起'}));
+ await user.click(screen.getByRole('button',{name:'返回连接列表'}));
  await user.click(screen.getByRole('button',{name:'保留修改并离开'}));
  await user.keyboard('{Escape}');
  expect(screen.queryByRole('dialog',{name:'制作服务'})).toBeNull();

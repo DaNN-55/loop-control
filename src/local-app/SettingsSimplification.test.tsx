@@ -20,13 +20,14 @@ it('saves interface and notification edits together while retaining historical i
  const user=userEvent.setup(),save=vi.fn(async()=>true),preferences={...defaultOwnerPreferences,displayName:'旧名称',avatar:'historical-avatar',notifications:{...defaultOwnerPreferences.notifications,review:false}};
  render(<OwnerPreferencesDialog page="personal" preferences={preferences} loading={false} saving={false} unavailable={false} error="" onReload={vi.fn()} onSave={save} onClose={vi.fn()} embedded csrf="test"/>);
  expect(screen.queryByRole('textbox',{name:'显示名称'})).toBeNull();expect(screen.queryByLabelText('上传头像图片')).toBeNull();expect(screen.getByText('自定义提醒').closest('details')).toHaveProperty('open',false);expect(request).not.toHaveBeenCalled();
- await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'system');await user.click(screen.getByRole('switch',{name:'macOS 桌面提醒'}));await user.click(screen.getByRole('button',{name:'保存偏好'}));
+ await user.click(screen.getByRole('radio',{name:'跟随系统'}));await user.click(screen.getByRole('switch',{name:'macOS 桌面提醒'}));await user.click(screen.getByRole('button',{name:'保存偏好'}));
  expect(save).toHaveBeenCalledWith({...preferences,appearance:'system',notifications:{...preferences.notifications,macOS:false}});
 });
 it('keeps the media path read-only until changing location',async()=>{
  request.mockResolvedValue({path:'/test/media',canInitialize:false,status:'ready',migration:null});render(<MediaRootSettingsDialog csrf="test" onClose={vi.fn()} embedded/>);
  await screen.findByText('/test/media');expect(screen.queryByRole('textbox')).toBeNull();expect(screen.queryByRole('button',{name:'检查迁移计划'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'更换存储位置'}));expect(screen.getByRole('textbox',{name:'素材保存目录'})).toHaveProperty('value','/test/media');
+ fireEvent.change(screen.getByRole('textbox',{name:'素材保存目录'}),{target:{value:'/test/other'}});fireEvent.click(screen.getByRole('button',{name:'取消'}));expect(screen.queryByRole('textbox')).toBeNull();expect(request.mock.calls.filter(([,init])=>init?.method==='POST')).toHaveLength(0);
 });
 it('uses a navigation trigger and embeds full runtime content without an extra dialog',async()=>{
  request.mockResolvedValue({observedAt:'2026-11-19T01:00:00Z',automation:{stopped:false,lastError:null,lastScanAt:null},plans:[],jobs:[],operations:{}});

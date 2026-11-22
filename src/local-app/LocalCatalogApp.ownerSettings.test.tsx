@@ -6,6 +6,18 @@ import {ownerSettingsFixture} from './fixtures/ownerSettingsFixture';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();vi.restoreAllMocks();localStorage.clear();sessionStorage.clear();history.replaceState(null,'','/');});
 function setup(){const f=ownerSettingsFixture();vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('fetch',vi.fn(f.request));return f;}
 async function openSettings(name='界面与通知'){const trigger=await screen.findByRole('button',{name:'设置'});act(()=>trigger.focus());fireEvent.click(trigger);await screen.findByRole('dialog',{name:'制作服务'});if(name!=='制作服务')fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name}));return screen.findByRole('dialog',{name});}
+it('opens a connection in the fixed detail surface and guards edited metadata on Back',async()=>{
+ const f=setup();render(<LocalCatalogApp/>);await openSettings('制作服务');
+ fireEvent.click(await screen.findByRole('button',{name:'演示图片连接'}));
+ expect(screen.queryByLabelText('查找已存连接')).toBeNull();
+ expect(screen.getByRole('heading',{name:'演示图片连接'})).toBeTruthy();
+ fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'未保存的名称'}});
+ fireEvent.click(screen.getByRole('button',{name:'返回连接列表'}));
+ await screen.findByRole('dialog',{name:'离开前处理修改'});
+ fireEvent.click(screen.getByRole('button',{name:'关闭确认，继续编辑'}));
+ expect(screen.getByRole('textbox',{name:'连接名称'})).toHaveProperty('value','未保存的名称');
+ expect(f.writes).toEqual([]);
+});
 it('opens every real settings page in one frame with its actual content and restores focus',async()=>{
  const f=setup();render(<LocalCatalogApp/>);await openSettings();
  const nav=within(screen.getByRole('navigation',{name:'设置页面'}));expect(Array.from(document.querySelectorAll('.owner-settings-pages>button')).map(button=>button.textContent)).toEqual(['制作服务','文件存储','界面与通知','登录与安全','维护工具']);expect(nav.queryByRole('button',{name:'回收站'})).toBeNull();
@@ -13,13 +25,13 @@ it('opens every real settings page in one frame with its actual content and rest
  fireEvent.keyDown(window,{key:'Escape'});await waitFor(()=>expect(screen.queryByRole('dialog')).toBeNull());expect(document.activeElement).toBe(screen.getByRole('button',{name:'设置'}));expect(f.writes).toEqual([]);
 });
 it('protects edited preferences during a page switch and saves through the actual preference API',async()=>{
- const f=setup();render(<LocalCatalogApp/>);await openSettings();await screen.findByRole('combobox',{name:'外观'});fireEvent.change(screen.getByRole('combobox',{name:'外观'}),{target:{value:'dark'}});fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'}));
- await screen.findByRole('dialog',{name:'离开当前设置？'});fireEvent.click(screen.getByRole('button',{name:'继续编辑'}));expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','dark');fireEvent.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');expect(f.preferences.appearance).toBe('dark');expect(f.preferences.displayName).toBe('');await waitFor(()=>expect(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'})).toHaveProperty('disabled',false));fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'}));await screen.findByRole('dialog',{name:'文件存储'});expect(f.writes).toEqual([{path:'preferences',command:'update'}]);
+ const f=setup();render(<LocalCatalogApp/>);await openSettings();await screen.findByRole('radiogroup',{name:'外观'});fireEvent.click(screen.getByRole('radio',{name:'深色'}));fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'}));
+ await screen.findByRole('dialog',{name:'离开当前设置？'});fireEvent.click(screen.getByRole('button',{name:'继续编辑'}));expect(screen.getByRole('radio',{name:'深色'})).toHaveProperty('checked',true);fireEvent.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByText('已保存');expect(f.preferences.appearance).toBe('dark');expect(f.preferences.displayName).toBe('');await waitFor(()=>expect(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'})).toHaveProperty('disabled',false));fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'}));await screen.findByRole('dialog',{name:'文件存储'});expect(f.writes).toEqual([{path:'preferences',command:'update'}]);
 });
 it('links connection keys to one fixed sensitive pane and global metadata back to the connection',async()=>{
  const f=setup();render(<LocalCatalogApp/>);await openSettings('制作服务');fireEvent.click(await screen.findByRole('button',{name:'演示图片连接'}));fireEvent.click(await screen.findByRole('button',{name:'查看密钥'}));expect(await screen.findByLabelText('当前登录密码')).toBeTruthy();expect(screen.queryByLabelText('密钥明文')).toBeNull();expect(screen.getAllByRole('dialog')).toHaveLength(1);fireEvent.click(screen.getByRole('button',{name:'返回连接详情'}));expect(await screen.findByRole('textbox',{name:'连接名称'})).toBeTruthy();fireEvent.click(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'维护工具'}));await screen.findByRole('dialog',{name:'系统状态'});fireEvent.click(within(screen.getByRole('navigation',{name:'维护工具页面'})).getByRole('button',{name:'高级密钥'}));await screen.findByRole('dialog',{name:'高级密钥'});fireEvent.click(await screen.findByRole('button',{name:'演示图片连接 v1'}));fireEvent.click(await screen.findByRole('button',{name:'前往连接更换密钥'}));await waitFor(()=>expect(screen.getByRole('textbox',{name:'连接名称'})).toHaveProperty('value','演示图片连接'));expect(screen.queryByLabelText('密钥明文')).toBeNull();expect(f.writes).toEqual([]);
 });
 it('does not switch away while a real preference save is in flight',async()=>{
  const f=setup();let finish!:(value:Response)=>void;const original=f.request;vi.stubGlobal('fetch',vi.fn((input:RequestInfo|URL,init?:RequestInit)=>init?.method==='POST'&&String(input).endsWith('/preferences')?new Promise<Response>(resolve=>{finish=resolve;}):original(input,init)));
- render(<LocalCatalogApp/>);await openSettings();fireEvent.change(await screen.findByRole('combobox',{name:'外观'}),{target:{value:'dark'}});fireEvent.click(screen.getByRole('button',{name:'保存偏好'}));await waitFor(()=>expect(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'})).toHaveProperty('disabled',true));await act(async()=>finish(Response.json({...f.preferences,appearance:'dark'})));await screen.findByText('已保存');expect(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'})).toHaveProperty('disabled',false);
+ render(<LocalCatalogApp/>);await openSettings();fireEvent.click(await screen.findByRole('radio',{name:'深色'}));fireEvent.click(screen.getByRole('button',{name:'保存偏好'}));await waitFor(()=>expect(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'})).toHaveProperty('disabled',true));await act(async()=>finish(Response.json({...f.preferences,appearance:'dark'})));await screen.findByText('已保存');expect(within(screen.getByRole('navigation',{name:'设置页面'})).getByRole('button',{name:'文件存储'})).toHaveProperty('disabled',false);
 });

@@ -15,9 +15,14 @@ it('saves English through validated preferences without translating the owner na
  render(<Host/>);const language=screen.getByRole('combobox',{name:'界面语言'});expect(language.parentElement?.querySelector('.dan-select-leading')).toBeNull();
  await user.selectOptions(language,'en-US');await user.click(screen.getByRole('button',{name:'保存偏好'}));await screen.findByRole('heading',{name:'Interface & notifications'});expect(screen.queryByRole('textbox',{name:'Display name'})).toBeNull();expect(screen.getByRole('combobox',{name:'Interface language'})).toHaveProperty('value','en-US');
 });
-it('gives each appearance option its own semantic icon',async()=>{
- const user=userEvent.setup();render(<OwnerPreferencesDialog {...props}/>);await user.click(screen.getByRole('combobox',{name:'外观'}));const list=within(await screen.findByRole('listbox',{name:'外观'}));
- expect(list.getByRole('option',{name:'浅色'}).querySelector('.lucide-sun')).toBeTruthy();expect(list.getByRole('option',{name:'深色'}).querySelector('.lucide-moon')).toBeTruthy();expect(list.getByRole('option',{name:'跟随系统'}).querySelector('.lucide-monitor')).toBeTruthy();
+it('shows appearance as one native radio group with icons and an explicit save',async()=>{
+ const user=userEvent.setup(),save=vi.fn(async()=>true);render(<OwnerPreferencesDialog {...props} onSave={save}/>);
+ const group=within(screen.getByRole('radiogroup',{name:'外观'}));
+ expect(group.getByRole('radio',{name:'浅色'}).closest('label')?.querySelector('.lucide-sun')).toBeTruthy();
+ expect(group.getByRole('radio',{name:'深色'}).closest('label')?.querySelector('.lucide-moon')).toBeTruthy();
+ expect(group.getByRole('radio',{name:'跟随系统'}).closest('label')?.querySelector('.lucide-monitor')).toBeTruthy();
+ await user.click(group.getByRole('radio',{name:'深色'}));expect(save).not.toHaveBeenCalled();
+ await user.click(screen.getByRole('button',{name:'保存偏好'}));expect(save).toHaveBeenCalledWith({...props.preferences,appearance:'dark'});
 });
 it('lets the embedded media directory be chosen and checked without starting a migration',async()=>{
  const root={path:'/test/media',canInitialize:false,status:'ready',migration:null},calls:Array<{command:string;path?:string}>=[];

@@ -14,9 +14,9 @@ const props={preferences:{...defaultOwnerPreferences,displayName:'Owner'},page:'
 it('embeds one combined preference pane and keeps drafts across legacy page aliases',async()=>{
  const user=userEvent.setup(),state=vi.fn();const app=render(<section role="dialog" aria-label="设置"><OwnerPreferencesDialog {...props} onStateChange={state}/></section>);
  expect(screen.getAllByRole('dialog')).toHaveLength(1);expect(document.querySelector('.owner-settings-pane')).toBeTruthy();expect(screen.queryByRole('tab')).toBeNull();expect(request).not.toHaveBeenCalled();
- await user.selectOptions(screen.getByRole('combobox',{name:'外观'}),'dark');await waitFor(()=>expect(state).toHaveBeenLastCalledWith({busy:false,dirty:true}));
+ await user.click(screen.getByRole('radio',{name:'深色'}));await waitFor(()=>expect(state).toHaveBeenLastCalledWith({busy:false,dirty:true}));
  app.rerender(<section role="dialog" aria-label="设置"><OwnerPreferencesDialog {...props} page="notifications" onStateChange={state}/></section>);
- expect(screen.getByRole('combobox',{name:'外观'})).toHaveProperty('value','dark');expect(screen.getByRole('switch',{name:'应用内提醒'})).toBeTruthy();
+ expect(screen.getByRole('radio',{name:'深色'})).toHaveProperty('checked',true);expect(screen.getByRole('switch',{name:'应用内提醒'})).toBeTruthy();
 });
 it('reports ordinary log reads as idle and protects an independently edited log directory while saving',async()=>{
  let finish!:(value:unknown)=>void;const state=vi.fn();request.mockImplementation(async(_path:string,init?:RequestInit)=>init?.body?new Promise(resolve=>{finish=resolve;}):logs);

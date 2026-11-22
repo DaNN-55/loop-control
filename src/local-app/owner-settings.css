@@ -1,6 +1,6 @@
 /* Shared Owner setting frame; feature forms retain their own data and handlers. */
-html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop.owner-settings-backdrop{padding:24px;align-items:flex-start;overflow:hidden;z-index:70}
-.owner-settings-dialog{position:relative;display:grid;grid-template-columns:164px minmax(0,1fr);width:min(1080px,100%);height:min(680px,calc(100dvh - 48px));min-height:0;overflow:hidden;background:var(--lc-surface);color:var(--lc-ink);border-radius:10px;box-shadow:0 18px 50px #0002}
+html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop.owner-settings-backdrop{padding:32px;align-items:center;overflow:hidden;z-index:70}
+.owner-settings-dialog{position:relative;display:grid;grid-template-columns:166px minmax(0,1fr);width:min(940px,100%);height:min(640px,calc(100dvh - 64px));min-height:0;overflow:hidden;background:var(--lc-surface);color:var(--lc-ink);border-radius:10px;box-shadow:0 18px 50px #0002}
 .owner-settings-nav{display:flex;flex-direction:column;gap:16px;min-width:0;min-height:0;padding:20px 10px 14px;background:var(--lc-surface-2);border-right:1px solid var(--lc-line)}
 .owner-settings-nav>h2{margin:0;padding-inline:12px;font-size:14px;font-weight:600}
 .owner-settings-pages{display:grid;gap:4px;overflow:auto;min-height:0}
@@ -41,14 +41,14 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .secret-table-footer{padding:12px 20px;border-top:1px solid var(--lc-line)}
 .owner-settings-dialog .secret-inline-detail{border:0;border-radius:0;background:var(--lc-surface-2)}
 @media(max-width:1000px){.owner-settings-dialog{grid-template-columns:164px minmax(0,1fr)}.owner-settings-dialog .runtime-logs-dialog :is(.rl-col-id,.rl-col-source){width:70px}.owner-settings-dialog .runtime-logs-dialog .rl-col-time{width:105px}.owner-settings-dialog .runtime-logs-dialog :is(th,td){padding-inline:8px}}
-@media(max-width:720px){html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop.owner-settings-backdrop{padding:12px}.owner-settings-dialog{display:flex;flex-direction:column;height:calc(100dvh - 24px)}.owner-settings-nav{padding:8px;border-right:0;border-bottom:1px solid var(--lc-line);flex:none;max-height:35dvh;overflow:auto}.owner-settings-nav>h2,.owner-settings-identity{display:none}.owner-settings-pages{display:flex;flex-wrap:wrap;gap:4px;overflow:visible}.owner-settings-pages>button{min-height:34px;padding:7px 8px;gap:6px;font-size:12px}.owner-settings-pages svg{width:14px;height:14px}.owner-settings-main{flex:1}.owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{padding:10px 16px;min-height:54px}.owner-settings-dialog .owner-settings-pane>header h2{font-size:18px}.owner-settings-dialog :is(.runtime-logs-body,.deletion-cleanup-body){padding:0 16px 16px}.owner-settings-dialog .owner-password-form>:is(label,section,p){margin-inline:16px}.owner-settings-dialog .owner-password-form .modal-actions{padding-inline:16px}.owner-settings-dialog :is(.secret-table-toolbar,.secret-table-notices,.secret-table-scroll){padding-inline:20px}.owner-settings-dialog .secret-table-footer{padding-inline:20px}.owner-settings-dialog .runtime-logs-dialog .rl-filters{gap:8px}.owner-settings-dialog .runtime-logs-dialog .rl-filter{flex-basis:140px}.owner-settings-dialog .owner-password-form{gap:16px}}
+@media(max-width:580px){html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop.owner-settings-backdrop{padding:12px}.owner-settings-dialog{display:flex;flex-direction:column;height:calc(100dvh - 24px)}.owner-settings-nav{padding:8px;border-right:0;border-bottom:1px solid var(--lc-line);flex:none;max-height:35dvh;overflow:auto}.owner-settings-nav>h2,.owner-settings-identity{display:none}.owner-settings-pages{display:flex;flex-wrap:wrap;gap:4px;overflow:visible}.owner-settings-pages>button{min-height:34px;padding:7px 8px;gap:6px;font-size:12px}.owner-settings-pages svg{width:14px;height:14px}.owner-settings-main{flex:1}.owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{padding:10px 16px;min-height:54px}.owner-settings-dialog .owner-settings-pane>header h2{font-size:18px}.owner-settings-dialog :is(.runtime-logs-body,.deletion-cleanup-body){padding:0 16px 16px}.owner-settings-dialog .owner-password-form>:is(label,section,p){margin-inline:16px}.owner-settings-dialog .owner-password-form .modal-actions{padding-inline:16px}.owner-settings-dialog :is(.secret-table-toolbar,.secret-table-notices,.secret-table-scroll){padding-inline:20px}.owner-settings-dialog .secret-table-footer{padding-inline:20px}.owner-settings-dialog .runtime-logs-dialog .rl-filters{gap:8px}.owner-settings-dialog .runtime-logs-dialog .rl-filter{flex-basis:140px}.owner-settings-dialog .owner-password-form{gap:16px}}
 @media(prefers-reduced-motion:no-preference){.owner-settings-dialog{animation:owner-settings-enter 160ms cubic-bezier(.16,1,.3,1)}@keyframes owner-settings-enter{from{transform:translateY(8px);opacity:.6}to{transform:translateY(0);opacity:1}}}
 .owner-settings-maintenance{display:flex;flex-wrap:wrap;flex:none;gap:4px;margin:0 20px 12px;padding:0 0 10px;border-bottom:1px solid var(--lc-line)}
 .owner-settings-maintenance>button{display:flex;align-items:center;gap:8px;min-height:34px;text-align:left;padding:7px 10px;border:0;border-radius:6px;background:none;color:var(--lc-muted);font:inherit;font-size:12px;cursor:pointer}
 .owner-settings-maintenance>button[aria-current=page]{color:var(--lc-accent);background:var(--lc-accent-soft)}
 .owner-settings-maintenance>button:disabled{opacity:.6;cursor:default}
 .owner-settings-dialog .media-root-content{margin:0;padding:0 20px 16px;min-width:0;overflow:auto}
-@media(max-width:720px){.owner-settings-maintenance{margin-inline:16px;gap:2px}.owner-settings-maintenance>button{padding-inline:8px}.owner-settings-dialog .media-root-content{padding:0 16px 16px}}
+@media(max-width:580px){.owner-settings-maintenance{margin-inline:16px;gap:2px}.owner-settings-maintenance>button{padding-inline:8px}.owner-settings-dialog .media-root-content{padding:0 16px 16px}}
 
 .owner-storage-pane{display:flex;flex:1;flex-direction:column;min-height:0;overflow:auto}
 .owner-storage-pane>.dan-button,.owner-storage-pane>button{align-self:flex-start;margin:16px}
@@ -98,9 +98,9 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .runtime-logs-dialog :is(.rl-level,th:nth-child(2)){white-space:nowrap}
 .owner-settings-dialog .runtime-logs-dialog .rl-message button{min-width:0;overflow-wrap:anywhere}
 .owner-settings-dialog .runtime-logs-dialog .rl-message button>span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
-@media(min-width:721px){.owner-settings-page-system{height:min(560px,calc(100dvh - 48px))}}
+
 @media(max-width:600px){.owner-settings-dialog .runtime-logs-dialog .rl-table-surface table{min-width:0}.owner-settings-dialog .runtime-logs-dialog .rl-col-time{width:78px}.owner-settings-dialog .runtime-logs-dialog .rl-col-level{width:40px}.owner-settings-dialog .runtime-logs-dialog .rl-time{font-size:11px;white-space:normal}.owner-settings-dialog .runtime-logs-dialog :is(th,td){padding-inline:4px}.owner-settings-dialog .runtime-logs-dialog .rl-message button{white-space:normal;font-size:12px}.owner-settings-dialog .runtime-logs-dialog .rl-search{flex-basis:100%}}
-@media(max-width:720px){.owner-settings-dialog .status-settings-grid{grid-template-columns:1fr}.owner-settings-dialog .owner-storage-other{margin-inline:16px}.owner-settings-dialog .owner-password-form .owner-password-section-title{margin-inline:16px}.owner-settings-dialog .secret-usage-groups .secret-detail-metadata>div{grid-template-columns:1fr;gap:2px}}
+@media(max-width:580px){.owner-settings-dialog .status-settings-grid{grid-template-columns:1fr}.owner-settings-dialog .owner-storage-other{margin-inline:16px}.owner-settings-dialog .owner-password-form .owner-password-section-title{margin-inline:16px}.owner-settings-dialog .secret-usage-groups .secret-detail-metadata>div{grid-template-columns:1fr;gap:2px}}
 @media(max-width:600px){html[data-interface="impeccable"] .product-ui .owner-settings-dialog .secret-usage-groups .secret-entry-actions button>svg[data-icon]{display:none}}
 @media(max-width:650px){
  .owner-settings-dialog .runtime-logs-dialog .rl-table-surface table{display:table;table-layout:fixed;width:100%;min-width:0}
@@ -157,12 +157,7 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .owner-settings-main .runtime-logs-dialog dl{gap:6px 12px;margin-bottom:12px}
 .owner-settings-dialog .owner-settings-main .log-storage-settings{border:0;margin:0;padding-top:12px;gap:8px}
 .owner-settings-dialog .owner-settings-main .log-storage-settings>h3{display:none}
-@media(min-width:721px){
- .owner-settings-page-storage{height:min(360px,calc(100dvh - 48px))}
- .owner-settings-page-personal,.owner-settings-page-notifications{height:min(560px,calc(100dvh - 48px))}
- .owner-settings-page-security{height:min(480px,calc(100dvh - 48px))}
-}
-@media(max-width:720px){
+@media(max-width:580px){
  .owner-settings-dialog .owner-settings-main .owner-preferences-embedded .owner-preferences-card{padding:0 16px 16px}
  .owner-settings-dialog .owner-settings-main .owner-preferences-section{padding:12px 0}
  .owner-settings-dialog .owner-settings-main .owner-preferences-embedded form>footer{padding:10px 16px}
@@ -177,3 +172,101 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
  .owner-settings-dialog :is(.secret-group-heading,.secret-table-help){padding-inline:16px}
  .owner-maintenance-logs>details{padding-inline:16px}
 }
+
+/* Approved settings demo: one compact frame and shared content/action edges. */
+.owner-settings-dialog{border:1px solid var(--lc-line)}
+.owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{min-height:64px;padding:14px 24px;border-bottom:1px solid var(--lc-line)}
+.owner-settings-dialog .owner-settings-pane>header h2,.owner-settings-dialog .owner-password-form h2{font-size:16px;letter-spacing:normal}
+.owner-settings-nav>h2{font-size:17px}
+.owner-settings-pages>button{min-height:38px;font-size:12px}
+.owner-settings-main .owner-settings-maintenance{margin:0;min-height:45px;padding:0 24px;gap:22px;flex-wrap:nowrap;overflow:auto}
+.owner-settings-maintenance>button{position:relative;border-radius:0;padding:10px 2px;white-space:nowrap}
+.owner-settings-maintenance>button[aria-current=page]{background:transparent;font-weight:600}
+.owner-settings-maintenance>button[aria-current=page]::after{content:'';position:absolute;inset:auto 0 0;height:2px;background:var(--lc-accent)}
+.owner-settings-dialog .owner-storage-body{flex:1;min-width:0;min-height:0;overflow:auto;padding:20px 24px;overscroll-behavior:contain}
+.owner-settings-dialog .owner-storage-body .media-root-content{padding:0;overflow:visible}
+.owner-settings-dialog .owner-storage-body .media-root-section-heading{font-size:13px;color:var(--lc-ink);margin:0 0 5px}
+.media-root-description{font-size:12px;color:var(--lc-muted);margin:0 0 15px}
+.owner-settings-dialog .media-root-current{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:0}
+.owner-settings-dialog .media-root-current>.media-root-location{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface-2);min-width:0;flex-shrink:1}
+.media-root-location>svg{flex:none;color:var(--lc-muted)}
+.media-root-location>div{min-width:0}
+.media-root-location strong{display:block;font-size:13px;font-weight:600}
+.owner-settings-dialog .media-root-current .media-root-path{display:block;white-space:normal;overflow-wrap:anywhere;color:var(--lc-muted);font-size:12px;margin-top:3px}
+.owner-settings-dialog .media-root-current>.media-root-current-actions{justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.owner-settings-dialog .owner-storage-body .owner-storage-other{margin:24px 0 0;padding:20px 0 0}
+.owner-storage-other>h3{font-size:13px;font-weight:600;margin:0 0 6px}
+.owner-settings-dialog .owner-storage-other>div{min-height:60px}
+.owner-settings-dialog .owner-settings-main .media-root-location-form>label{grid-template-columns:1fr;gap:6px}
+.owner-settings-dialog .owner-settings-main .owner-preferences-embedded .owner-preferences-card{padding:6px 24px 20px}
+.owner-settings-dialog .owner-settings-main .owner-preferences-section{padding-block:14px 12px}
+.owner-settings-dialog .owner-settings-main .owner-preferences-section>h3{font-size:13px;font-weight:600;color:var(--lc-ink);margin-bottom:8px}
+.owner-settings-dialog :is(.owner-appearance-field,.owner-preference-toggle){min-height:52px;padding-block:12px}
+.owner-settings-dialog .owner-settings-main .owner-preferences-embedded form>footer{min-height:62px;padding:12px 24px}
+.owner-settings-dialog .owner-restore-scope{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}
+.owner-settings-dialog .owner-settings-main .owner-password-form>label{grid-template-columns:1fr;gap:6px;margin-inline:24px}
+.owner-settings-dialog .owner-settings-main .owner-password-form>label>.form-hint{grid-column:1}
+.owner-settings-dialog .owner-password-form>:is(section,p){margin-inline:24px}
+.owner-settings-dialog .owner-settings-main .owner-password-form .modal-actions{padding:12px 24px;min-height:62px}
+.owner-settings-dialog .owner-password-form>header p{font-size:11px}
+.owner-settings-dialog .runtime-logs-body{padding:20px 24px;scrollbar-gutter:stable}
+.owner-settings-dialog .runtime-logs-dialog .rl-filters{padding:0;border:0;background:none}
+.owner-settings-dialog .runtime-logs-dialog .rl-search{flex:1 1 100%}
+.owner-settings-dialog .runtime-logs-dialog .rl-filter:not(.rl-search){flex:1 1 160px;min-width:0}
+.owner-settings-dialog .runtime-logs-dialog .rl-note{font-size:11px}
+.owner-settings-dialog .runtime-logs-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;min-height:62px;padding:12px 24px;border-top:1px solid var(--lc-line);flex:none;font-size:11px;color:var(--lc-muted)}
+.owner-log-storage{margin-top:22px;padding-top:12px;border-top:1px solid var(--lc-line)}
+.owner-log-storage>summary{font-size:11px;color:var(--lc-muted);cursor:pointer;min-height:28px}
+.log-storage-location{display:flex;align-items:center;flex-wrap:wrap;gap:10px;min-width:0;padding-block:12px}
+.log-storage-path{flex:1 1 260px;min-width:0;overflow-wrap:anywhere;color:var(--lc-muted);font-size:12px}
+.log-storage-location>div{display:flex;gap:8px;flex-wrap:wrap;margin-inline-start:auto}
+.log-storage-editor{display:grid;gap:8px;min-width:0;padding-block:12px;border-top:1px solid var(--lc-line)}
+.log-storage-editor>label{display:grid;gap:6px;font-size:12px;min-width:0}
+.log-storage-editor .log-storage-actions{justify-content:flex-end}
+.owner-settings-dialog .owner-settings-main .secret-table-toolbar{padding:20px 24px 12px}
+.owner-settings-dialog .secret-table-toolbar>:first-child{flex:1;min-width:0}
+.owner-settings-dialog .secret-table-toolbar>.dan-select-field{width:136px;min-width:0;flex:0 1 136px}
+.owner-settings-dialog .secret-table-scroll{padding:0 24px;overscroll-behavior:contain}
+.owner-settings-dialog .secret-table-footer{min-height:62px;padding:12px 24px;font-size:11px}
+.owner-settings-dialog .secret-usage-groups>details>summary{color:var(--lc-ink);font-weight:550}
+.owner-settings-dialog .secret-detail-pane{display:flex;flex:1;flex-direction:column;min-height:0;min-width:0;border:0;border-radius:0;background:var(--lc-surface)}
+.owner-settings-dialog .secret-detail-heading{padding:16px 24px}
+.owner-settings-dialog .secret-detail-body{padding:8px 24px 20px;overscroll-behavior:contain}
+.owner-settings-dialog .secret-detail-metadata>div{padding-block:10px;border-bottom:1px solid var(--lc-line)}
+.owner-settings-dialog .secret-detail-footer{min-height:62px;padding:12px 24px;flex-wrap:wrap}
+@media(max-width:580px){
+ html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop.owner-settings-backdrop{padding:8px}
+ .owner-settings-dialog{width:100%;height:calc(100dvh - 16px)}
+ .owner-settings-nav{padding:7px 9px;max-height:none;overflow:visible}
+ .owner-settings-pages{flex-wrap:nowrap;overflow:auto}
+ .owner-settings-pages>button{flex:none;font-size:11px;white-space:nowrap}
+ .owner-settings-pages svg{display:none}
+ .owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{min-height:56px;padding:10px 14px}
+ .owner-settings-dialog .owner-settings-pane>header h2{font-size:15px}
+ .owner-settings-main .owner-settings-maintenance{padding-inline:14px;gap:18px}
+ .owner-settings-dialog .owner-storage-body,.owner-settings-dialog .runtime-logs-body{padding:16px 14px}
+ .owner-settings-dialog .owner-settings-main .owner-preferences-embedded .owner-preferences-card{padding-inline:14px}
+ .owner-settings-dialog .owner-settings-main .owner-preferences-embedded form>footer,.owner-settings-dialog .runtime-logs-footer,.owner-settings-dialog .secret-table-footer,.owner-settings-dialog .secret-detail-footer{padding-inline:14px;min-height:58px}
+ .owner-settings-dialog .owner-settings-main .secret-table-toolbar{padding:16px 14px 12px}
+ .owner-settings-dialog :is(.secret-table-scroll,.secret-detail-heading,.secret-detail-body){padding-inline:14px}
+ .owner-settings-dialog .owner-password-form>:is(label,section,p),.owner-settings-dialog .owner-settings-main .owner-password-form>label{margin-inline:14px}
+ .owner-settings-dialog .owner-settings-main .owner-password-form .modal-actions{padding-inline:14px}
+ .owner-settings-dialog .secret-entry-row{flex-wrap:wrap}
+ .owner-settings-dialog .secret-entry-actions{margin-inline-start:auto}
+}
+@media(pointer:coarse){.owner-settings-dialog :is(.owner-settings-pages>button,.owner-settings-maintenance>button){min-height:48px}.owner-settings-dialog input[type=radio]{min-width:24px;min-height:24px}}
+
+.owner-appearance-segmented{display:flex;gap:2px;flex:none;padding:3px;background:var(--lc-surface-2);border-radius:6px}
+html[data-interface="impeccable"] .product-ui .owner-appearance-segmented>label{position:relative;display:block;margin:0;min-width:0;cursor:pointer}
+.owner-appearance-segmented input{position:absolute;width:1px;height:1px;clip-path:inset(50%);overflow:hidden}
+.owner-appearance-segmented label>span{display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:4px;color:var(--lc-muted);font-size:11px;white-space:nowrap}
+.owner-appearance-segmented input:checked+span{background:var(--lc-surface);color:var(--lc-accent);box-shadow:0 1px 3px #17263e12}
+.owner-appearance-segmented input:focus-visible+span{outline:2px solid var(--lc-accent);outline-offset:2px}
+.owner-appearance-segmented input:disabled+span{opacity:.5;cursor:default}
+@media(max-width:580px){.owner-settings-dialog .owner-appearance-field{flex-wrap:wrap;gap:10px}.owner-appearance-segmented label>span{padding-inline:7px}}
+@media(pointer:coarse){.owner-appearance-segmented label>span{min-height:48px}}
+
+.owner-settings-dialog .owner-settings-main .owner-storage-body .media-root-content>h3{font-size:13px;color:var(--lc-ink)}
+.owner-settings-dialog .owner-storage-other>h3{font-size:13px}
+.owner-storage-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none;min-height:62px;padding:12px 24px;border-top:1px solid var(--lc-line);color:var(--lc-muted);font-size:11px}
+@media(max-width:580px){.owner-storage-footer{min-height:58px;padding-inline:14px}}

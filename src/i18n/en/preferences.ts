@@ -1,4 +1,7 @@
 export const preferencesMessages:Record<string,string> = {
+ '素材、生成结果和交付文件保存在这里。':'Source media, generated results and delivery files are saved here.',
+ '打开日志文件夹':'Open log folder','修改日志位置':'Edit log location','已打开日志文件夹。':'Log folder opened.','刷新日志':'Refresh logs','已启用模型':'Enabled models','已启用 {count} 个模型':'Enabled {count} models','尚未测试连接':'Connection not tested yet',
+
  '维护工具页面':'Maintenance pages','制作文件':'Production files','其他文件位置':'Other file locations','数据库与运行文件':'Database & runtime files','由本机运行时管理':'Managed by the local runtime','日志文件':'Log files','前往日志':'Open logs','任务与最近活动':'Tasks & recent activity','本机系统':'Local system','搜索日志':'Search logs','修改密码':'Change password',
   "制作文件会保存在所选位置。": "Production files will be saved in the selected location.",
   "先检查迁移范围，再确认搬迁。": "Review the move plan before confirming the transfer.",

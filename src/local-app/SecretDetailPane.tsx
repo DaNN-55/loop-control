@@ -14,6 +14,7 @@ export interface SecretDetailPaneProps {
  expectedConnectionId?:string;expectedVersion?:number;hideHeading?:boolean;
 }
 export function SecretDetailPane({reference,csrf,initialAction=null,onBack,onOpenConnection,onStateChange,expectedConnectionId,expectedVersion,hideHeading=false}:SecretDetailPaneProps){
+ const heading=useRef<HTMLHeadingElement>(null);
  const id=useId(),generation=useRef(0),detailGeneration=useRef(0),request=useRef<AbortController|null>(null),passwordInput=useRef<HTMLInputElement>(null);
  const [selected,setSelected]=useState<SecretMetadata|null>(null),[loading,setLoading]=useState(true),[retry,setRetry]=useState(0),[error,setError]=useState('');
  const [action,setAction]=useState<'view'|'copy'|null>(null),[password,setPassword]=useState(''),[plain,setPlain]=useState(''),[expiresAt,setExpiresAt]=useState(0),[remaining,setRemaining]=useState(0),[busy,setBusy]=useState(false),[verificationError,setVerificationError]=useState(''),[notice,setNotice]=useState('');
@@ -53,11 +54,12 @@ export function SecretDetailPane({reference,csrf,initialAction=null,onBack,onOpe
   }catch(e){if(current===generation.current)setVerificationError(e instanceof Error?e.message:uiText('密钥读取失败。'));}
   finally{verification='';if(current===generation.current){setBusy(false);requestAnimationFrame(()=>{if(current===generation.current)passwordInput.current?.focus();});}}
  }
+ useEffect(()=>{if(selected&&!action&&!plain)heading.current?.focus();},[selected?.reference]);
  const revealAllowed=!!selected?.revealAllowed&&selected.category!=='system';
  const currentConnections=selected?.connections.filter(connection=>connection.current&&!connection.revoked)||[];
  const name=selected?.names[0]||uiText('密钥详情');
  return <section className="secret-detail-pane" aria-label={uiText('密钥详情')} aria-busy={loading}>
-  {!hideHeading&&<header className="secret-detail-heading"><Button size="sm" color="tertiary" iconLeading={ArrowLeft} aria-label={uiText('返回密钥列表')} onPress={()=>{clearSensitive();onBack();}}/><div><h3 title={name}>{selected?.category==='system'?uiText(name):name}</h3>{selected&&<p>{/^当前连接[:：]/.test(selected.purpose)?uiText('当前连接')+' · '+selected.purpose.replace(/^当前连接[:：]\s*/,''):uiText(selected.purpose)}</p>}</div></header>}
+  {!hideHeading&&<header className="secret-detail-heading"><Button size="sm" color="tertiary" iconLeading={ArrowLeft} aria-label={uiText('返回密钥列表')} onPress={()=>{clearSensitive();onBack();}}/><div><h3 ref={heading} tabIndex={-1} title={name}>{selected?.category==='system'?uiText(name):name}</h3>{selected&&<p>{/^当前连接[:：]/.test(selected.purpose)?uiText('当前连接')+' · '+selected.purpose.replace(/^当前连接[:：]\s*/,''):uiText(selected.purpose)}</p>}</div></header>}
   <div className="secret-detail-body">
    {loading&&<p role="status">{uiText('正在读取详情…')}</p>}
    {error&&<div className="secret-detail-error"><p role="alert" className="form-error">{error}</p><Button size="sm" color="secondary" iconLeading={RefreshCw} onPress={()=>setRetry(value=>value+1)}>{uiText('重试')}</Button></div>}

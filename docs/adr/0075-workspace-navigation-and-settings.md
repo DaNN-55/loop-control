@@ -33,3 +33,7 @@
 生产单内的剪辑入口继续打开该单工程。完成作品修改仍遵循 ADR-0074 创建新生产单，与独立工程库的临时剪辑用途分开。
 
 实施与验收：[计划](../plans/account-navigation-simplification-20261119/PLAN.md)、[报告](../verification/account-navigation-simplification-20261119/REPORT.md)。
+
+## 设置视觉统一（2026-11-22）
+
+按已批准 Demo 收紧为最大940×640的居中窗口，主分组、日志和高级密钥保持同一框架；连接及密钥详情同位切换。模型和偏好表单统一内容边界，文件目录按需编辑、显式保存。日志目录的打开/修改与路径同排，打开仅由服务端选取并验证当前写入目录；原Owner、Origin、CSRF和单项秘密验证边界不变。验收见[设置视觉迁移](../verification/settings-layout-20261122/REPORT.md)。

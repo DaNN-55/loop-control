@@ -115,9 +115,10 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     }
     if(request.method==='GET'){send(200,options.logs.storage.read());return;}
     if(request.method!=='POST'){send(405,{error:'日志位置请求方法无效。'});return;}
-    let body;try{body=await readBody(request);if(!['choose','save'].includes(String(body.command))||Object.keys(body).some(key=>!['command','path'].includes(key))||body.command==='choose'&&body.path!==undefined||body.command==='save'&&(typeof body.path!=='string'||body.path.length>4096))throw Error();}catch{send(400,{error:'日志位置请求格式无效。'});return;}
+    let body;try{body=await readBody(request);if(!['choose','save','open'].includes(String(body.command))||Object.keys(body).some(key=>!['command','path'].includes(key))||body.command!=='save'&&body.path!==undefined||body.command==='save'&&(typeof body.path!=='string'||body.path.length>4096))throw Error();}catch{send(400,{error:'日志位置请求格式无效。'});return;}
     try{
-     if(body.command==='choose'){if(!options.logs.storage.choose){send(503,{error:'本机目录选择不可用，请填写绝对路径。'});return;}send(200,await options.logs.storage.choose());}
+     if(body.command==='open'){if(!options.logs.storage.open){send(503,{error:'本机目录打开不可用。'});return;}send(200,await options.logs.storage.open());}
+     else if(body.command==='choose'){if(!options.logs.storage.choose){send(503,{error:'本机目录选择不可用，请填写绝对路径。'});return;}send(200,await options.logs.storage.choose());}
      else send(200,options.logs.storage.save(body.path as string));
     }catch{send(400,{error:'日志目录不可用，请选择当前用户拥有且可写的普通目录。'});}return;
    }

@@ -19,7 +19,7 @@ export function runtimeLogBinding(root){
  try{requested=configured(root);const path=directory(requested),file=logFile(root,path);validateFile(file);return{directory:path,file,configuredDirectory:path,fallbackReason:null};}
  catch{return{directory:root,file:join(root,'app-private.log'),configuredDirectory:requested,fallbackReason:'自定义日志位置不可用，当前使用默认位置。'};}
 }
-export function createLogStorage(root,activeFile){
+export function createLogStorage(root,activeFile,{openDirectory}={}){
  const read=()=>{const binding=runtimeLogBinding(root);return{activeDirectory:resolve(activeFile,'..'),configuredDirectory:binding.configuredDirectory,defaultDirectory:root,pending:binding.file!==activeFile,warning:binding.fallbackReason};};
  const save=path=>{
   const target=directory(path),file=logFile(root,target);validateFile(file);
@@ -27,5 +27,6 @@ export function createLogStorage(root,activeFile){
   try{writeFileSync(temporary,JSON.stringify({version:1,directory:target})+'\n',{mode:0o600,flag:'wx'});renameSync(temporary,join(root,'log-storage.json'));}finally{try{unlinkSync(temporary);}catch(error){if(error.code!=='ENOENT')throw error;}}
   return read();
  };
- return{read,save};
+ const open=openDirectory?async()=>{await openDirectory(directory(read().activeDirectory));return{opened:true};}:undefined;
+ return{read,save,open};
 }

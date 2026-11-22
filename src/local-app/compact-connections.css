@@ -125,3 +125,44 @@ html[data-interface="impeccable"] .product-ui .connections-settings-dialog>heade
  .compact-connection-inline-editor .compact-connection-footer{gap:8px;flex-wrap:wrap}
  .compact-connection-inline-editor .compact-connection-footer>div{flex-wrap:wrap}
 }
+
+/* Owner settings use the approved three-column list and full-width detail forms. */
+.owner-settings-dialog .compact-connection-list-columns,.owner-settings-dialog .compact-connection-row{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(0,.85fr);gap:20px}
+.compact-connection-identity{display:flex;align-items:center;gap:11px;min-width:0}
+.compact-connection-identity>div{min-width:0}
+.compact-connection-identity .workspace-model-logo{width:22px;height:22px;flex:none}
+.owner-settings-dialog .compact-connection-row{min-height:65px;padding-block:10px}
+.owner-settings-dialog .compact-connection-name{font-size:13px}
+.owner-settings-dialog .compact-connection-status{display:inline-block;font-size:11px;padding:2px 7px;background:var(--lc-surface-2);border-radius:4px}
+.owner-settings-dialog .compact-connection-status[data-status=verified]{background:var(--lc-success-soft)}
+.owner-settings-dialog .compact-connection-toolbar,.owner-settings-dialog .compact-connection-scroll,.owner-settings-dialog .compact-connection-workspace .connection-embedded-pane>.connection-models-body{padding:20px 24px}
+.owner-settings-dialog .compact-connection-toolbar{padding-bottom:12px}
+.owner-settings-dialog .compact-connection-toolbar>.dan-select-field{flex:0 1 110px}
+.owner-settings-dialog .compact-connection-toolbar form{flex:1 1 180px}
+.owner-settings-dialog .compact-connection-footer,.owner-settings-dialog .compact-connection-workspace .connection-embedded-pane>.reference-connections-dialog-footer{min-height:62px;padding:12px 24px}
+.owner-settings-dialog .compact-connection-field{grid-template-columns:minmax(0,1fr);gap:6px;padding-block:0;margin-bottom:20px;max-width:none}
+.owner-settings-dialog .compact-connection-label{padding:0;color:var(--lc-ink);font-weight:500}
+.owner-settings-dialog .compact-connection-field textarea{min-height:70px}
+.owner-settings-dialog .compact-connection-meta{padding:12px 24px 8px;font-size:11px}
+.owner-settings-dialog .compact-connection-tabs{padding-inline:24px;min-height:45px}
+.owner-settings-dialog .compact-connection-workspace .connection-models-filters>:first-child{flex:1 1 180px;min-width:0}
+.owner-settings-dialog .compact-connection-workspace .connection-models-filters>:not(:first-child){flex:0 1 136px;min-width:120px}
+html[data-interface="impeccable"] .product-ui .owner-settings-dialog .connection-model-native{display:flex;align-items:center;gap:9px;min-width:0;font-size:12px;cursor:pointer}
+.connection-model-native>input[type=checkbox]{appearance:auto;accent-color:var(--lc-accent);flex:none;width:16px;height:16px;min-width:16px;min-height:0;padding:0;margin:0;box-shadow:none;border:0}
+.connection-model-native>span{overflow-wrap:anywhere}
+@media(max-width:800px){.owner-settings-dialog .compact-connection-toolbar form{flex-basis:100%}}
+@media(max-width:580px){
+ .owner-settings-dialog .compact-connection-toolbar,.owner-settings-dialog .compact-connection-scroll,.owner-settings-dialog .compact-connection-workspace .connection-embedded-pane>.connection-models-body{padding-inline:14px}
+ .owner-settings-dialog .compact-connection-list-columns{display:grid;font-size:10px}
+ .owner-settings-dialog .compact-connection-list-columns,.owner-settings-dialog .compact-connection-row{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:6px 12px}
+ .owner-settings-dialog .compact-connection-row>.compact-connection-identity{grid-column:1;grid-row:1/3}
+ .owner-settings-dialog .compact-connection-row>div:nth-child(2){grid-column:2;grid-row:1}
+ .owner-settings-dialog .compact-connection-row>div:nth-child(3){grid-column:2;grid-row:2}
+ .owner-settings-dialog .compact-connection-list-columns>span:last-child{display:none}
+ .owner-settings-dialog .compact-connection-identity .workspace-model-logo{width:18px;height:18px}
+ .owner-settings-dialog .compact-connection-name{font-size:12px}
+ .owner-settings-dialog .compact-connection-row small{font-size:10px;margin-top:2px}
+ .owner-settings-dialog .compact-connection-footer,.owner-settings-dialog .compact-connection-workspace .connection-embedded-pane>.reference-connections-dialog-footer{min-height:58px;padding-inline:14px}
+ .owner-settings-dialog .compact-connection-meta,.owner-settings-dialog .compact-connection-tabs{padding-inline:14px}
+ .owner-settings-dialog .compact-connection-workspace .connection-models-filters>:first-child{flex-basis:100%}
+}

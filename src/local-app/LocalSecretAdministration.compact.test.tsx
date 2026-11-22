@@ -17,19 +17,19 @@ it('shows production actions in the first usage disclosure and keeps other group
  expect(productionGroup.open).toBe(true);expect(within(systemGroup).queryByRole('button',{name:/^查看密钥：/})).toBeNull();
  expect(screen.queryByRole('button',{name:'返回密钥分组'})).toBeNull();expect(localRequest).toHaveBeenCalledTimes(1);
 });
-it('opens verification under its row and clears it on collapse without leaving the inventory',async()=>{
+it('opens verification in the same surface and clears it when returning to the inventory',async()=>{
  inventory();render(<LocalSecretAdministration embedded csrf="synthetic" onClose={()=>{}}/>);
  fireEvent.click(await screen.findByRole('button',{name:/^查看密钥：/}));await screen.findByLabelText('当前登录密码');
- expect(screen.getByText('本机系统')).toBeTruthy();expect(screen.getByLabelText('搜索密钥')).toBeTruthy();
- fireEvent.click(screen.getByText('制作服务'));await waitFor(()=>expect(screen.queryByLabelText('当前登录密码')).toBeNull());
+ expect(screen.queryByLabelText('搜索密钥')).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'返回密钥列表'}));await waitFor(()=>expect(screen.queryByLabelText('当前登录密码')).toBeNull());
  expect(vi.mocked(localRequest).mock.calls.some(([path])=>path==='secrets/reveal')).toBe(false);
 });
-it('cancels an in-flight copy as soon as its group is collapsed',async()=>{
+it('cancels an in-flight copy as soon as the detail is left',async()=>{
  let finish!:(value:unknown)=>void;const copy=vi.fn();Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:copy}});
  inventory();const read=vi.mocked(localRequest).getMockImplementation()!;vi.mocked(localRequest).mockImplementation((path,init)=>path==='secrets/reveal'?new Promise(resolve=>{finish=resolve;}):read(path,init));
  render(<LocalSecretAdministration embedded csrf="synthetic" onClose={()=>{}}/>);fireEvent.click(await screen.findByRole('button',{name:/^复制密钥：/}));
  fireEvent.change(await screen.findByLabelText('当前登录密码'),{target:{value:'synthetic-password'}});fireEvent.submit(screen.getByRole('form',{name:'验证管理员身份'}));await screen.findByText('正在验证…');
- fireEvent.click(screen.getByText('制作服务'));await act(async()=>finish({value:'synthetic-secret',expiresAt:new Date(Date.now()+30000).toISOString()}));
+ fireEvent.click(screen.getByRole('button',{name:'返回密钥列表'}));await act(async()=>finish({value:'synthetic-secret',expiresAt:new Date(Date.now()+30000).toISOString()}));
  expect(copy).not.toHaveBeenCalled();expect(screen.queryByLabelText('当前登录密码')).toBeNull();
 });
 it('keeps a credential shared by two connections in one usage row',async()=>{

@@ -29,7 +29,7 @@ it('keeps setup open on a failed explicit return and closes only after the reque
  await screen.findByRole('dialog',{name:'制作服务'});await open('模型设置');
  fireEvent.click(screen.getByRole('button',{name:'使用此服务并返回'}));
  expect((await screen.findByRole('alert')).textContent).toContain('制作位置已变化');
- expect(screen.getByRole('dialog',{name:'制作服务'})).toBeTruthy();expect(screen.getByRole('region',{name:'隔离图片连接'})).toBeTruthy();
+ expect(screen.getByRole('dialog',{name:'隔离图片连接'})).toBeTruthy();expect(screen.getByRole('tab',{name:'模型'}).getAttribute('aria-selected')).toBe('true');
  fireEvent.click(screen.getByRole('button',{name:'使用此服务并返回'}));
  await waitFor(()=>expect(screen.queryByRole('dialog')).toBeNull());
  expect(onUse).toHaveBeenNthCalledWith(2,{connectionId:'connection-draft',versionId:'v',modelId:'gpt-image-2'});expect(writes).toEqual([]);

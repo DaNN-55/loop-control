@@ -1,6 +1,6 @@
 import {OwnerSettingsMaintenance} from './OwnerSettingsDialog';
 import {uiText,getUiLocale} from '../i18n/ui';
-import {Fragment,useEffect,useRef,useState,type RefObject} from 'react';
+import {Fragment,useEffect,useRef,useState,type RefObject,type ReactNode} from 'react';
 import {ArrowLeft,CalendarClock,ChevronDown,ChevronRight,FileText,RefreshCw,X} from 'lucide-react';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -12,7 +12,7 @@ import './runtime-logs.css';
 
 const displayDate=(value:string)=>new Intl.DateTimeFormat(getUiLocale(),{dateStyle:'short',timeStyle:'medium'}).format(new Date(value));
 const sameOperation=(a:RuntimeLogEntry,b:RuntimeLogEntry)=>!!a.operationId&&a.operationId===b.operationId&&a.episodeId===b.episodeId;
-export function RuntimeLogsDialog({onClose,returnFocusRef,embedded=false}:{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean}){
+export function RuntimeLogsDialog({onClose,returnFocusRef,embedded=false,storage}:{onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean;storage?:ReactNode}){
  const ref=useDialogFocus<HTMLElement>(!embedded,onClose,returnFocusRef);
  const [report,setReport]=useState<RuntimeLogReport|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(true);
  const [episode,setEpisode]=useState('all'),[range,setRange]=useState('all'),[errors,setErrors]=useState(false),[query,setQuery]=useState(''),[start,setStart]=useState(''),[end,setEnd]=useState('');
@@ -33,20 +33,20 @@ export function RuntimeLogsDialog({onClose,returnFocusRef,embedded=false}:{onClo
  function resetSelection(){setSelected(null);}
  function leaveContext(){focusRecord.current=origin;setSelected(origin);setOrigin(null);}
  const content=<section ref={embedded?undefined:ref} role={embedded?undefined:"dialog"} aria-modal={embedded?undefined:true} aria-labelledby={embedded?undefined:"runtime-logs-title"} className={`modal-card runtime-logs-dialog${embedded?" owner-settings-pane":""}`}>
-  <header><h2 id="runtime-logs-title">{uiText(embedded?"维护工具":"日志")}</h2><div><Button size="sm" color="secondary" iconLeading={RefreshCw} isDisabled={pending} onPress={()=>void refresh()}>{pending?uiText("读取中…"):uiText("刷新")}</Button><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText("关闭日志")} data-dialog-initial-focus onPress={onClose}/></div></header>
+  <header><h2 id="runtime-logs-title">{uiText("日志")}</h2><div>{!embedded&&<Button size="sm" color="secondary" iconLeading={RefreshCw} isDisabled={pending} onPress={()=>void refresh()}>{pending?uiText("读取中…"):uiText("刷新")}</Button>}<Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText("关闭日志")} data-dialog-initial-focus onPress={onClose}/></div></header>
   <OwnerSettingsMaintenance/>
   <div className="runtime-logs-body">
    <fieldset className="rl-filters" disabled={!!anchor} aria-label={uiText("日志筛选")}>
     {embedded&&<div className="rl-filter rl-search"><InputBase size="sm" type="search" aria-label={uiText("搜索日志")} placeholder={uiText("搜索日志")} value={query} onChange={event=>{setQuery(event.target.value);resetSelection();}}/></div>}
-    <div className="rl-filter"><NativeSelect size="sm" aria-label={uiText("生产单")} icon={FileText} value={episode} onChange={e=>{setEpisode(e.target.value);resetSelection();}} options={[{value:'all',label:uiText("全部生产单")},...choices,...(entries.some(e=>!e.episodeId)?[{value:'unknown',label:uiText("生产单未记录")}]:[])]}/></div>
-    <div className="rl-filter"><NativeSelect size="sm" aria-label={uiText("时间范围")} icon={CalendarClock} value={range} onChange={e=>{setRange(e.target.value);resetSelection();}} options={[{value:'all',label:uiText("全部已读取时间")},{value:'day',label:uiText("最近 24 小时")},{value:'week',label:uiText("最近 7 天")},{value:'custom',label:uiText("自定义时间")},{value:'unknown',label:uiText("发生日期未记录")}]}/></div>
+    <div className="rl-filter"><NativeSelect size="sm" aria-label={uiText("生产单")} icon={embedded?null:FileText} value={episode} onChange={e=>{setEpisode(e.target.value);resetSelection();}} options={[{value:'all',label:uiText("全部生产单")},...choices,...(entries.some(e=>!e.episodeId)?[{value:'unknown',label:uiText("生产单未记录")}]:[])]}/></div>
+    <div className="rl-filter"><NativeSelect size="sm" aria-label={uiText("时间范围")} icon={embedded?null:CalendarClock} value={range} onChange={e=>{setRange(e.target.value);resetSelection();}} options={[{value:'all',label:uiText("全部已读取时间")},{value:'day',label:uiText("最近 24 小时")},{value:'week',label:uiText("最近 7 天")},{value:'custom',label:uiText("自定义时间")},{value:'unknown',label:uiText("发生日期未记录")}]}/></div>
     <label className="rl-errors"><input type="checkbox" checked={errors} onChange={e=>{setErrors(e.target.checked);resetSelection();}}/>{uiText("只看错误")}</label>
     {range==='custom'&&<div className="rl-custom"><label>{uiText("开始时间")}<input type="datetime-local" aria-label={uiText("开始时间")} value={start} onChange={e=>{setStart(e.target.value);resetSelection();}}/></label><label>{uiText("结束时间")}<input type="datetime-local" aria-label={uiText("结束时间")} aria-invalid={invalid} aria-describedby="rl-range-error" value={end} onChange={e=>{setEnd(e.target.value);resetSelection();}}/></label></div>}
    </fieldset>
    {invalid&&!anchor&&<p className="form-error" id="rl-range-error" role="alert">{uiText("结束时间应晚于或等于开始时间。")}</p>}
    {error&&<p className="form-error" role="alert">{error}{report?uiText(" 当前保留上次读取的结果。"):''}</p>}
    {anchor&&<div className="rl-context"><div><strong>{uiText("同次操作 · ")}{anchor.operationId}</strong><span>{uiText("包含已读取的普通记录和错误，暂不应用上方筛选。")}</span></div><Button size="sm" color="secondary" ref={back} iconLeading={ArrowLeft} onPress={leaveContext}>{uiText("返回筛选结果")}</Button></div>}
-   <div className="rl-result" role="status">{pending&&!report?uiText("正在读取日志…"):uiText("显示 {value0} 条记录{value1}",{value0:filtered.length,value1:anchor?uiText(' · 同次操作'):''})}{report?.truncated?uiText(" · 当前为最近 {value0} 条以内的摘录",{value0:report.maxEntries}):''}</div>
+   {!embedded&&<div className="rl-result" role="status">{pending&&!report?uiText("正在读取日志…"):uiText("显示 {value0} 条记录{value1}",{value0:filtered.length,value1:anchor?uiText(' · 同次操作'):''})}{report?.truncated?uiText(" · 当前为最近 {value0} 条以内的摘录",{value0:report.maxEntries}):''}</div>}
    {!anchor&&!errors&&entries.length>0&&entries.every(entry=>entry.level==='ERROR')&&<p className="rl-note">{uiText('当前摘录只有错误记录；没有普通日志不代表没有成功操作。')}</p>}
    {!anchor&&range!=='all'&&range!=='unknown'&&entries.some(e=>!e.occurredAt)&&<p className="rl-note">{uiText("未记录发生日期的日志未参与此时间筛选。")}</p>}
    <div className="rl-table-surface"><table aria-label={uiText("后端日志")}><colgroup><col className="rl-col-time"/><col className="rl-col-level"/>{!embedded&&<><col className="rl-col-name"/><col className="rl-col-id"/><col className="rl-col-source"/></>}<col/></colgroup><thead><tr>{(embedded?[uiText("时间"),uiText("级别"),uiText("内容")]:[uiText("时间"),uiText("级别"),uiText("生产单名称"),uiText("生产单编号"),uiText("处理位置"),uiText("内容")]).map(label=><th key={label} scope="col">{label}</th>)}</tr></thead><tbody>
@@ -57,7 +57,9 @@ export function RuntimeLogsDialog({onClose,returnFocusRef,embedded=false}:{onClo
     {!pending&&!filtered.length&&<tr><td colSpan={embedded?3:6} className="rl-empty">{error&&!report?uiText("日志读取失败，请点击刷新重试。"):invalid?uiText("请先调整时间范围。"):report&&!report.sourceAvailable?uiText("日志文件尚未生成。"):entries.length?uiText("没有符合条件的日志，请调整筛选。"):uiText("暂未读取到可识别的日志。")}</td></tr>}
    </tbody></table></div>
    <footer className="rl-note">{uiText("打开或刷新时读取 · ")}{report?uiText("最近读取 {value0}",{value0:displayDate(report.observedAt)}):uiText("尚未读取")}{uiText("。缺失信息保持未知；日志不代表当前服务状态。")}</footer>
+   {storage}
   </div>
+  {embedded&&<footer className="runtime-logs-footer"><span role="status">{pending&&!report?uiText("正在读取日志…"):uiText("显示 {value0} 条记录{value1}",{value0:filtered.length,value1:anchor?uiText(' · 同次操作'):''})}{report?.truncated?uiText(" · 当前为最近 {value0} 条以内的摘录",{value0:report.maxEntries}):''}</span><Button size="sm" color="secondary" iconLeading={RefreshCw} isDisabled={pending} onPress={()=>void refresh()}>{pending?uiText('读取中…'):uiText('刷新日志')}</Button></footer>}
  </section>;
  return embedded?content:<div className="modal-backdrop runtime-logs-backdrop">{content}</div>;
 }

@@ -4,7 +4,7 @@ export interface RuntimeLogEntry{
 }
 export interface RuntimeLogReport{observedAt:string;entries:RuntimeLogEntry[];truncated:boolean;sourceAvailable:boolean;maxEntries:number}
 export interface LogStorageState{activeDirectory:string;configuredDirectory:string;defaultDirectory:string;pending:boolean;warning:string|null}
-export interface LogStoragePort{read:()=>LogStorageState;save:(path:string)=>LogStorageState;choose?:()=>Promise<{path?:string;cancelled?:boolean}>}
+export interface LogStoragePort{read:()=>LogStorageState;save:(path:string)=>LogStorageState;choose?:()=>Promise<{path?:string;cancelled?:boolean}>;open?:()=>Promise<{opened:boolean}>}
 export function parseLogStorageState(value:unknown):LogStorageState{
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('日志位置返回格式无效，请重新读取。');
  const state=value as Record<string,unknown>;
