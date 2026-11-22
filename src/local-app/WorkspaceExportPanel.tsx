@@ -32,8 +32,8 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
   catch(cause){if(currentScope.current===scope)setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
   finally{flight.active=false;setOperation(value=>value?.scope===scope?null:value);}
  }
- return <section className="production-workspace-section workspace-export workspace-export-compact workspace-review-flow">
-  <header><div className="workspace-compact-heading"><h3>{uiText('检查与交付')}</h3><span role="status" className={review.tone}>{uiText(review.status)}</span></div><div className="workspace-final-header-actions">{onEdit&&<Button size="sm" color="secondary" iconLeading={ArrowLeft} isDisabled={pending||!!action} onPress={onEdit}>{uiText('返回剪辑')}</Button>}<div ref={setDownloadTarget} className="workspace-download-toolbar" aria-label={uiText('成片下载')}/></div></header>
+ return <section className="production-workspace-section workspace-export workspace-export-compact workspace-review-flow" aria-label={uiText('检查与交付')}>
+  <header><div className="workspace-compact-heading">{onEdit&&<Button size="sm" color="secondary" iconLeading={ArrowLeft} isDisabled={pending||!!action} onPress={onEdit}>{uiText('返回剪辑')}</Button>}<span role="status" className={review.tone}>{uiText(review.status)}</span></div><div className="workspace-final-header-actions"><div ref={setDownloadTarget} className="workspace-download-toolbar" aria-label={uiText('成片下载')}/></div></header>
   <div className="workspace-export-layout">
    <div className="workspace-final-preview">
     <div className="workspace-final-heading"><h4>{uiText('成片预览')}</h4></div>
