@@ -54,6 +54,8 @@ html[data-interface=impeccable] .product-ui .production-catalog :is(.episode-lis
 html[data-interface=impeccable] .product-ui .production-catalog .episode-list-toolbar .dan-select-trigger{padding-block:6px;border-color:var(--lc-line)}
 .production-catalog .episode-list-tools{margin-inline-start:auto;border-inline-start:1px solid var(--lc-line);padding-inline-start:8px}
 html[data-interface=impeccable] .product-ui .production-catalog .episode-name .lc-table-title{font-size:15px;font-weight:500}
+/* The shared table-name rule stretches buttons; only the visible title opens production. */
+html[data-interface=impeccable] .product-ui .production-catalog .episode-name .lc-table-name{width:fit-content!important;max-width:100%}
 html[data-interface=impeccable] .product-ui .production-catalog .episode-name .lc-table-text{display:block;line-height:1.55;max-height:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html[data-interface=impeccable] .product-ui .production-catalog .episode-name small{font-size:12px;margin-top:4px}
 html[data-interface=impeccable] .product-ui .production-catalog .episode-stage-name{font-size:13px}

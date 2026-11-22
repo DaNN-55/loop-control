@@ -110,3 +110,18 @@ it('restores optional series information without showing empty series placeholde
  expect(restored.container.querySelector('.episode-name small')).toBeNull();
  await act(async()=>{});
 });
+
+it('previews ordinary cells and account text but enters production only from the title',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({sections:{artifacts:[],materialRevisions:[]},workspace:null})));
+ const props=propsWithSeries();
+ const other={...props.episodes[0],id:'two',title:'测试'};
+ const app=render(<ProductionCatalog {...props} episodes={[props.episodes[0],other]}/>);
+ const row=app.container.querySelector('[data-preview-id="two"]')!;
+ await userEvent.click(row.querySelectorAll('td')[1]);
+ expect(within(screen.getByRole('complementary',{name:'生产单预览'})).getByRole('heading',{name:'测试'})).toBeTruthy();
+ expect(props.onSelectEpisode).not.toHaveBeenCalled();
+ await userEvent.click(row.querySelector('small')!);
+ expect(props.onSelectEpisode).not.toHaveBeenCalled();
+ await userEvent.click(within(row as HTMLElement).getByRole('button',{name:/^测试$/}));
+ expect(props.onSelectEpisode).toHaveBeenCalledExactlyOnceWith('two');
+});
