@@ -58,7 +58,7 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
       onDragOver={event=>dragOver(event,clip.shotId)}
       onDrop={event=>{event.preventDefault();const id=dragged.current;dragged.current=null;setDrop(null);if(locked||!id||id===clip.shotId)return;const rect=event.currentTarget.getBoundingClientRect(),after=event.clientY>rect.top+rect.height/2,remaining=clips.filter(c=>c.shotId!==id),target=remaining.findIndex(c=>c.shotId===clip.shotId);void move(id,after?remaining[target+1]?.shotId??null:clip.shotId);}}
       onDragEnd={()=>{dragged.current=null;setDrop(null);}}>
-      <td><button type="button" draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>onSelect(clip.shotId)}>{shotLabel}</button></td>
+      <td><button type="button" draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>onSelect(clip.shotId)}>{String(index+1).padStart(2,"0")}</button></td>
       <td><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div></td>
       <td>{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</td>
       <td><WorkspaceShotPreparationStatus preparation={preparation} shotLabel={shotLabel} onNavigate={onPreparationNavigate?target=>onPreparationNavigate(clip.shotId,target):undefined}/></td>

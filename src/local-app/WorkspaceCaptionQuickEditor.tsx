@@ -1,4 +1,6 @@
 import {useEffect,useMemo,useRef,useState} from 'react';
+import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
+import {createPortal} from 'react-dom';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -28,7 +30,7 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
   }catch{/* A corrupt optional draft does not alter saved captions. */}
   return restored;
  },[draftKey]);
- const [draft,setDraft]=useState(recovered),[opened,setOpened]=useState(!!recovered),[position,setPosition]=useState(0),[validation,setValidation]=useState('');
+ const [draft,setDraft]=useState(recovered),[opened,setOpened]=useState(!!recovered),[position,setPosition]=useState(0),[validation,setValidation]=useState(''),[confirmAlignment,setConfirmAlignment]=useState(false);
  useEffect(()=>{try{if(draft)sessionStorage.setItem(draftKey,JSON.stringify(draft));else sessionStorage.removeItem(draftKey);}catch{/* Optional local draft. */}},[draftKey,draft]);
  const contract=draft?.contract??(state?.contract?normalizeShotCaptionContract(state.contract,{enabled:state.contract.enabled,text:state.contract.text}):undefined);
  const operation=useWorkspaceCaptionOperation({workspace,clipId:clip?.id??'',itemId:clip?.itemId,inputFingerprint:draft?.inputFingerprint??state?.inputFingerprint,contract:contract??({} as ShotCaptionContract),readOnly:false,disabled:isDisabled,command,onChange,onSaved:()=>{setDraft(null);setOpened(false);}});
@@ -68,7 +70,8 @@ export function WorkspaceCaptionPreparation({workspace,selectedShotId,isDisabled
    </fieldset>)}
    <footer><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setDraft(null);setOpened(false);setValidation('');}}>{uiText('取消')}</Button><Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void save()}>{uiText('保存调整')}</Button></footer>
   </div>}
-  {state.audioTrackId&&state.timing!=='waiting'&&<details><summary>{uiText('重新自动同步')}</summary><p>{uiText('重新处理会替换当前字幕时间，正文保持不变。')}</p><Button size="xs" color="secondary" isDisabled={disabled||opened} onPress={()=>void operation.run('requestWorkspaceCaptionAlignment',{localOnly:true})}>{uiText('确认重新同步')}</Button></details>}
+  {state.audioTrackId&&state.timing!=='waiting'&&<Button size="xs" color="tertiary" isDisabled={disabled||opened} onPress={()=>setConfirmAlignment(true)}>{uiText('按声音重新对齐')}</Button>}
+  {createPortal(<ConfirmationModalPresence>{confirmAlignment&&<ConfirmationModal title={uiText('重新对齐字幕时间')} confirmLabel={uiText('确认重新对齐')} isPending={operation.pending} onCancel={()=>setConfirmAlignment(false)} onConfirm={async()=>{await operation.run('requestWorkspaceCaptionAlignment',{localOnly:true});setConfirmAlignment(false);}}><p>{uiText('按照当前采用的声音，重新计算字幕出现和消失时间。当前手工时间将被替换，字幕正文保持不变。')}</p></ConfirmationModal>}</ConfirmationModalPresence>,document.body)}
   {(validation||operation.error)&&<p role="alert">{uiText(validation||captionFailureIssue(operation.error)?.message||operation.error)}</p>}
   {operation.progress&&<p role="status">{uiText(operation.progress)}</p>}
   {operation.canResume&&<Button size="xs" color="secondary" isDisabled={disabled} onPress={()=>void operation.resume()}>{uiText('核对并继续保存')}</Button>}

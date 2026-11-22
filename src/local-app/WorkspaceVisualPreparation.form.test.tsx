@@ -42,7 +42,8 @@ it('模型选项平铺展示并保留连接提示，不兼容反馈定位具体�
  fireEvent.click(screen.getByRole('button',{name:'图片连接与模型'}));
  expect(screen.queryByRole('group',{name:/OpenAI/})).toBeNull();
  expect(screen.getByRole('menuitemradio',{name:/^gpt-image-2/}).querySelector('strong')?.title).toContain('工作室图片连接');
- expect(screen.getByRole('menuitemradio',{name:/^gpt-image-2/}).textContent).toBe('gpt-image-2');
+ expect(screen.getByRole('menuitemradio',{name:/^gpt-image-2/}).querySelector('.workspace-model-menu-provider')?.textContent).toBe('OpenAI');
+ expect(screen.getByRole('menuitemradio',{name:/^gpt-image-2/}).querySelector('strong')?.textContent).toBe('gpt-image-2');
  fireEvent.click(screen.getByRole('button',{name:'关闭模型选择'}));
  const problems=screen.getByRole('list',{name:'图片设置不兼容'});
  expect(problems.textContent).toContain('实际像素：1536 × 1024；当前模型支持 1024 × 1536');

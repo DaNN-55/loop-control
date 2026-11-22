@@ -29,7 +29,7 @@ it('targets the selected shot and keeps retries explicit after completed or fail
  const view=render(<WorkspaceCaptionsPanel {...props} workspace={workspace} selectedShotId="S1"/>);
  expect(screen.queryByRole('combobox',{name:'字幕片段'})).toBeNull();expect(screen.getByText('正在同步字幕…')).toBeTruthy();expect(screen.queryByRole('button',{name:'采用对齐'})).toBeNull();
  view.rerender(<WorkspaceCaptionsPanel {...props} workspace={workspace} selectedShotId="S2"/>);
- fireEvent.click(screen.getByText('重新自动同步'));fireEvent.click(screen.getByRole('button',{name:'确认重新同步'}));
+ fireEvent.click(screen.getByRole('button',{name:'按声音重新对齐'}));expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'确认重新对齐'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceCaptionAlignment',expect.objectContaining({clipId:'c2',localOnly:true})));
  const failed={...workspace,captions:[{...caption,timing:'failed',alignmentStatus:'failed'},workspace.captions![1]]} as ProductionWorkspace;
  view.rerender(<WorkspaceCaptionsPanel {...props} workspace={failed} selectedShotId="S1"/>);expect(screen.getByText('自动同步未完成，可直接调整')).toBeTruthy();expect(screen.getByRole('button',{name:'编辑分句与时间'})).toHaveProperty('disabled',false);

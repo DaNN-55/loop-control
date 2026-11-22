@@ -259,7 +259,7 @@ it('preselects named template music and effects without preparing until the user
  const command=vi.fn(async()=>current),materials=[sound,music].map(m=>({id:m.id,material_type:m.type,source_path:m.name,material_purpose:m.purpose}));
  render(<WorkspaceAudioPreparation workspace={current} command={command} onChange={()=>{}} selectedShotId="S1" materials={materials}/>);
  expect(screen.getByRole('button',{name:'准备配乐：背景.mp3'})).toBeTruthy();expect(command).not.toHaveBeenCalled();
- fireEvent.click(screen.getByRole('button',{name:'音效'}));fireEvent.click(screen.getByRole('button',{name:'准备音效：轻响.mp3'}));
+ fireEvent.click(screen.getByRole('button',{name:'音效'}));fireEvent.change(screen.getByRole('combobox',{name:'音效来源方式'}),{target:{value:'upload'}});fireEvent.click(screen.getByRole('button',{name:'加入候选：轻响.mp3'}));
  await waitFor(()=>expect(command).toHaveBeenCalledWith('prepareWorkspaceAudio',expect.objectContaining({kind:'sfx',materialRevisionId:'effect',shotId:'S1',anchor:'shot'})));
 });
 
@@ -300,4 +300,23 @@ it('retains a disabled effect and its source draft when enabling fails',async()=
  expect(await screen.findByRole('alert')).toHaveProperty('textContent','保存失败');
  expect(screen.getByRole('combobox',{name:'音效来源方式'})).toHaveProperty('value','none');
  expect(screen.queryByRole('button',{name:'拖入音效文件'})).toBeNull();
+});
+
+it('explains disabled effects without claiming a retained association is empty',()=>{
+ const effectRow={...effect('one','S1','门铃声'),adoptedItemId:'workspace-sfx-one'};
+ const w={...workspace,audio:{enabled:{sfx:false},mix:{voices:[],sounds:[sound('one')]},preparations:[effectRow]}} as unknown as ProductionWorkspace;
+ const view=render(<WorkspaceAudioPreparation workspace={w} effectsOnly selectedShotId="S1" command={vi.fn()} onChange={vi.fn()}/>);
+ expect(screen.getByRole('status').textContent).toContain('关联音效已保留');
+ view.rerender(<WorkspaceAudioPreparation workspace={{...w,audio:{...w.audio!,mix:{voices:[],sounds:[]}}}} effectsOnly selectedShotId="S1" command={vi.fn()} onChange={vi.fn()}/>);
+ expect(screen.getByRole('status').textContent).toContain('本镜头没有关联音效');
+});
+it('opens adopted effect settings on demand and leaves the project untouched until apply',async()=>{
+ const row={...effect('one','S1','门铃声'),adoptedItemId:'workspace-sfx-one'};
+ const w={...workspace,audio:{mix:{voices:[],sounds:[sound('one')]},preparations:[row]}} as unknown as ProductionWorkspace;
+ const command=vi.fn(async()=>w);render(<WorkspaceAudioPreparation workspace={w} effectsOnly selectedShotId="S1" command={command} onChange={vi.fn()}/>);
+ expect(screen.getByText(/跟随镜头/)).toBeTruthy();expect(screen.queryByRole('spinbutton',{name:'音量 dB'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'设置 门铃声'}));const dialog=await screen.findByRole('dialog',{name:'门铃声设置'});
+ fireEvent.change(within(dialog).getByRole('spinbutton',{name:'音量 dB'}),{target:{value:'-10'}});expect(command).not.toHaveBeenCalled();
+ fireEvent.click(within(dialog).getByRole('button',{name:'应用设置'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('mixWorkspaceAudio',expect.objectContaining({edit:expect.objectContaining({itemId:'workspace-sfx-one',gainDb:-10})})));
+ await waitFor(()=>expect(screen.queryByRole('dialog',{name:'门铃声设置'})).toBeNull());
 });

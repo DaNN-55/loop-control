@@ -9,14 +9,14 @@ import {localRequest} from './client';
 
 let activeSample:HTMLAudioElement|undefined;
 
-type Props={label:string;selection:ProductionSelection|null;voice:string;rate:number;disabled:boolean;buttonColor?:'secondary'|'tertiary'};
+type Props={label:string;selection:ProductionSelection|null;voice:string;rate:number;disabled:boolean;buttonColor?:'secondary'|'tertiary';showLabel?:boolean};
 export function WorkspaceSpeechSample(props:Props){
  const {selection,voice}=props;
  const identity=JSON.stringify([selection?.capability,selection?.provider,selection?.adapter,selection?.model,selection?.preset,selection?.connectionVersionId,voice]);
  // Playback speed is local; a different source owns a new player, request and confirmation.
  return <SpeechSample key={identity} {...props}/>;
 }
-function SpeechSample({label,selection,voice,rate,disabled,buttonColor='secondary'}:Props){
+function SpeechSample({label,selection,voice,rate,disabled,buttonColor='secondary',showLabel=false}:Props){
  const audio=useRef<HTMLAudioElement>(null),request=useRef<AbortController|null>(null);
  const [busy,setBusy]=useState(false),[playing,setPlaying]=useState(false),[confirm,setConfirm]=useState(false),[error,setError]=useState('');
  const rateRef=useRef(rate);
@@ -59,7 +59,7 @@ function SpeechSample({label,selection,voice,rate,disabled,buttonColor='secondar
   <div className="workspace-speech-sample">
   <Button size="sm" color={buttonColor} iconLeading={playing?Square:Volume2}
    aria-label={playing?uiText("停止{value0}音色试听",{value0:String(label)}):uiText("试听{value0}音色",{value0:String(label)})} title={playing?uiText("停止试听"):uiText("试听音色")}
-   isDisabled={disabled||busy} onPress={()=>playing?audio.current?.pause():void load(false)}/>
+   isDisabled={disabled||busy} onPress={()=>playing?audio.current?.pause():void load(false)}>{showLabel&&uiText(playing?'停止':'试听')}</Button>
   <audio ref={audio} onPlaying={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)}/>
   </div>
   {error&&!confirm&&<p className="workspace-speech-sample-error" role="alert">{uiText(error||'')}</p>}

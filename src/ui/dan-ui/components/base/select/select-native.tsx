@@ -23,6 +23,8 @@ interface NativeSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>
     selectClassName?: string;
     /** Controls the select's padding, text size, and the size of the chevron. Ignored when the select sits inside an `InputGroup`, which imposes its own sizing. */
     size?: "sm" | "md" | "lg";
+    /** Additional class on the portaled options surface. */
+    popoverClassName?: string;
     /** Optional action shown below the listbox. */
     popupAction?: { label: string; onPress: () => void; kind?: "navigation" };
     /** The options to render. Each entry becomes an `option` element showing `label` and submitting `value`. */
@@ -48,7 +50,7 @@ type MenuOption = { id: string; value: string; label: string; disabled: boolean;
 type MenuGroup = { id: string; label?: string; options: MenuOption[] };
 type MenuSnapshot = { groups: MenuGroup[]; label: string };
 
-export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, options, optionIcons, popupAction, children, className, selectClassName, size = "md", id: providedId, ...props }: NativeSelectProps) => {
+export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, options, optionIcons, popoverClassName, popupAction, children, className, selectClassName, size = "md", id: providedId, ...props }: NativeSelectProps) => {
     const id = useId();
     const selectId = providedId ?? `select-native-${id}`;
     const labelId = `${selectId}-label`;
@@ -277,7 +279,7 @@ export const NativeSelect = ({ icon: Icon = SlidersHorizontal, label, hint, opti
                 />
             </div>
 
-            <Popover isOpen={open} onOpenChange={next => { if (next) setOpen(true); else closeMenu(); }} triggerRef={selectRef} placement="bottom start" offset={6} containerPadding={12} className="dan-ui product-ui dan-select-popover" aria-label={menu ? uiText("{label}选项",{label:menu.label}) : uiText("选项")} data-select-popup="true"><div onKeyDownCapture={leaveMenu} onClickCapture={event => {
+            <Popover isOpen={open} onOpenChange={next => { if (next) setOpen(true); else closeMenu(); }} triggerRef={selectRef} placement="bottom start" offset={6} containerPadding={12} className={cx("dan-ui product-ui dan-select-popover",popoverClassName)} aria-label={menu ? uiText("{label}选项",{label:menu.label}) : uiText("选项")} data-select-popup="true"><div onKeyDownCapture={leaveMenu} onClickCapture={event => {
                 if (props.multiple) return;
                 const item = (event.target as Element).closest('[role="option"]');
                 const key = item?.getAttribute("data-key");

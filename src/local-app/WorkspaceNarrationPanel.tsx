@@ -45,9 +45,11 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
  const saved=workspace.narration?.find(n=>(!selectedShotId||n.shotId===selectedShotId)&&n.selection);
  const template=workspace.templateInputs?.shots.find(shot=>shot.shotId===(selectedShotId??workspace.clips[0]?.shotId))?.narration??workspace.templateInputs?.narration;
  const shotSettings=saved?.selection?{selection:saved.selection,voice:saved.voice??'',languageCode:saved.languageCode??'zh-CN',speakingRate:saved.speakingRate??1}:null;
- const initial:Settings=managedVoice&&saved?.override&&shotSettings?shotSettings:persisted??shotSettings??{selection:legacy?.executor&&legacy.credential_ref?{capability:'speech',provider:legacy.executor.provider,adapter:legacy.executor.adapter,model:legacy.executor.model,connectionVersionId:legacy.credential_ref}:null,voice:template?.voice??defaultSettings?.voice??'',languageCode:template?.languageCode??defaultSettings?.languageCode??'zh-CN',speakingRate:template?.speakingRate??defaultSettings?.speakingRate??1};
- const key=`loop-speech-default-draft:${workspace.id}${managedVoice||template&&Object.keys(template).length?':'+(selectedShotId??workspace.clips[0]?.shotId):''}`,[defaultDraft,setDefaultDraft]=useState(()=>({baseline:workspaceSettingsFingerprint(initial),value:restoreWorkspaceSettingsDraft(key,initial)})),[busy,setBusy]=useState(false),[error,setError]=useState(''),[tab,setTab]=useState<'voice'|'captions'>(()=>{try{return sessionStorage.getItem(`loop-narration-tab:${workspace.id}`)==='captions'?'captions':'voice';}catch{return 'voice';}});
+ const initial:Settings=persisted??shotSettings??{selection:legacy?.executor&&legacy.credential_ref?{capability:'speech',provider:legacy.executor.provider,adapter:legacy.executor.adapter,model:legacy.executor.model,connectionVersionId:legacy.credential_ref}:null,voice:template?.voice??defaultSettings?.voice??'',languageCode:template?.languageCode??defaultSettings?.languageCode??'zh-CN',speakingRate:template?.speakingRate??defaultSettings?.speakingRate??1};
+ const key=`loop-speech-default-draft:${workspace.id}${managedVoice||template&&Object.keys(template).length?':'+(selectedShotId??workspace.clips[0]?.shotId):''}`,[defaultDraft,setDefaultDraft]=useState(()=>({baseline:workspaceSettingsFingerprint(initial),value:restoreWorkspaceSettingsDraft(key,initial)})),[busy,setBusy]=useState(false),[error,setError]=useState(''),[proposal,setProposal]=useState<{before:Settings;next:Settings}|null>(null),[tab,setTab]=useState<'voice'|'captions'>(()=>{try{return sessionStorage.getItem(`loop-narration-tab:${workspace.id}`)==='captions'?'captions':'voice';}catch{return 'voice';}});
  useEffect(()=>{if(tabRequest)setTab(tabRequest.tab);},[tabRequest?.id,tabRequest?.tab]);
+ const confirmation=useRef<((accepted:boolean)=>void)|null>(null),savingDefaults=useRef(false);
+ useEffect(()=>()=>{confirmation.current?.(false);confirmation.current=null;},[]);
  const settings=defaultDraft.value,defaultChanged=workspaceSettingsFingerprint(settings)!==workspaceSettingsFingerprint(managedVoice?persisted??initial:initial),defaultUpdated=defaultDraft.baseline!==workspaceSettingsFingerprint(initial);
  const setSettings=(value:Settings)=>setDefaultDraft({...defaultDraft,value});
  useEffect(()=>{storeWorkspaceSettingsDraft(key,JSON.parse(defaultDraft.baseline),settings);},[key,settings,defaultDraft.baseline]);
@@ -56,12 +58,34 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
  useEffect(()=>{try{sessionStorage.setItem(`loop-narration-tab:${workspace.id}`,tab);}catch{/* Optional tab preference. */}},[workspace.id,tab]);
  useEffect(()=>{if(defaultUpdated&&workspaceSettingsFingerprint(settings)===defaultDraft.baseline)setDefaultDraft({baseline:workspaceSettingsFingerprint(initial),value:initial});},[defaultUpdated,defaultDraft.baseline,JSON.stringify(initial),JSON.stringify(settings)]);
  async function persistSettings(w=workspace){
-  if(managedVoice){if(!compatible(settings,services))throw Error('请核对连接、模型、音色和语速。');return w;}
+  if(managedVoice){const updated=await commitManagedSettings(settings,w);if(!updated)throw Object.assign(Error('已取消配置修改。'),{name:'AbortError'});return updated;}
   if(persisted&&workspaceSettingsFingerprint(settings)===workspaceSettingsFingerprint(persisted))return w;
   if(!compatible(settings,services))throw Error('请核对连接、模型、音色和语速。');
   const updated=await command('saveWorkspaceNarrationDefaults',{episodeId,workspaceId:w.id,expectedRevision:w.revision,...settings}) as ProductionWorkspace;
   setDefaultDraft({baseline:workspaceSettingsFingerprint(settings),value:settings});return updated;
  }
+ // A selection becomes an order default, never an edit to an existing audio asset.
+ async function commitManagedSettings(next:Settings,w=workspace):Promise<ProductionWorkspace|null>{
+  if(!compatible(next,services))return null;
+  const before=w.narration?.find(n=>n.defaults)?.defaults;
+  if(before&&workspaceSettingsFingerprint(next)===workspaceSettingsFingerprint(before))return w;
+  if(savingDefaults.current)return null;
+  savingDefaults.current=true;setError('');
+  try{
+   if(before){
+    setProposal({before,next});
+    const accepted=await new Promise<boolean>(resolve=>{confirmation.current=resolve;});
+    confirmation.current=null;setProposal(null);
+    if(!accepted){setDefaultDraft({baseline:workspaceSettingsFingerprint(initial),value:initial});return null;}
+   }
+   setBusy(true);
+   const updated=await command('saveWorkspaceNarrationDefaults',{episodeId,workspaceId:w.id,expectedRevision:w.revision,...next}) as ProductionWorkspace;
+   setDefaultDraft({baseline:workspaceSettingsFingerprint(next),value:next});onChanged(updated);return updated;
+  }finally{savingDefaults.current=false;setBusy(false);}
+ }
+ function commitSelection(next:Settings){void commitManagedSettings(next).catch(cause=>setError(cause instanceof Error?cause.message:'口播配置未保存。'));}
+ const describeSettings=(value:Settings)=>[value.selection?.model??'—',services.find(service=>service.connectionVersionId===value.selection?.connectionVersionId)?.connectionName??value.selection?.connectionVersionId??'—',value.voice,value.languageCode,String(value.speakingRate)];
+ const differenceLabels=['模型','连接','音色','语言','语速'];
  async function saveDefaults(){
   setBusy(true);
   setError('');
@@ -77,13 +101,17 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
   {error&&<p role="alert">{uiText(error||'')}</p>}</>;
  return <section className="workspace-narration" aria-label={uiText(managedVoice?"镜头声音与字幕":"逐镜口播")}>
   {workspace.narration?.filter(n=>!managedVoice||selectedShotId===undefined||n.shotId===selectedShotId).map(n=><div key={n.clipId} hidden={selectedShotId!==undefined&&n.shotId!==selectedShotId}>
-   <NarrationRow episodeId={episodeId} workspace={workspace} narration={n} defaults={settings} services={services} onSettings={setSettings} persistSettings={persistSettings} settingsChanged={defaultChanged} saveSettings={()=>void saveDefaults()} settingsFeedback={settingsFeedback} tab={tab} onTab={setTab}
-    managedVoice={managedVoice} onImportAudio={onImportAudio} tracks={tracks} materials={materials} expanded={selectedShotId===n.shotId} pending={pending||busy} command={command} onChanged={onChanged}/>
+   <NarrationRow episodeId={episodeId} workspace={workspace} narration={n} defaults={settings} services={services} onSettings={setSettings} onCommitSettings={managedVoice?commitSelection:undefined} onRefreshModels={catalogReading.refresh} refreshingModels={catalogReading.pending} persistSettings={persistSettings} settingsChanged={defaultChanged} saveSettings={()=>void saveDefaults()} settingsFeedback={settingsFeedback} tab={tab} onTab={setTab}
+    managedVoice={managedVoice} onImportAudio={onImportAudio} tracks={tracks} materials={materials} expanded={selectedShotId===n.shotId} pending={pending||busy||!!proposal} command={command} onChanged={onChanged}/>
   </div>)}
+  {createPortal(<ConfirmationModalPresence>{proposal&&<ConfirmationModal title={uiText('修改本生产单口播配置')} confirmLabel={uiText('确认修改')} onCancel={()=>confirmation.current?.(false)} onConfirm={()=>confirmation.current?.(true)}>
+   <p>{uiText('新配置将用于本生产单后续镜头的口播生成，已生成和已采用的声音保持不变。')}</p>
+   <dl className="workspace-narration-default-diff">{describeSettings(proposal.next).map((value,index)=>value===describeSettings(proposal.before)[index]?null:<div key={index}><dt>{uiText(differenceLabels[index])}</dt><dd>{describeSettings(proposal.before)[index]} → {value}</dd></div>)}</dl>
+  </ConfirmationModal>}</ConfirmationModalPresence>,document.body)}
  </section>;
 }
 
-function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSettings,persistSettings,settingsChanged,saveSettings,settingsFeedback,tab,onTab,tracks,materials,pending,command,onChanged,expanded,onImportAudio,managedVoice}:{episodeId:string;workspace:ProductionWorkspace;narration:WorkspaceNarration;defaults:Settings|null|undefined;services:ProductionService[];onSettings:(settings:Settings)=>void;persistSettings:(w?:ProductionWorkspace)=>Promise<ProductionWorkspace>;settingsChanged:boolean;saveSettings:()=>void;settingsFeedback:ReactNode;tab:'voice'|'captions';onTab:(tab:'voice'|'captions')=>void;tracks:Track[];materials:NarrationMaterial[];pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChanged:(w:ProductionWorkspace)=>void;expanded:boolean;onImportAudio?:(files:File[])=>Promise<unknown>;managedVoice?:ManagedVoice}){
+function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSettings,onCommitSettings,onRefreshModels,refreshingModels,persistSettings,settingsChanged,saveSettings,settingsFeedback,tab,onTab,tracks,materials,pending,command,onChanged,expanded,onImportAudio,managedVoice}:{episodeId:string;workspace:ProductionWorkspace;narration:WorkspaceNarration;defaults:Settings|null|undefined;services:ProductionService[];onSettings:(settings:Settings)=>void;onCommitSettings?:(settings:Settings)=>void;onRefreshModels?:()=>void;refreshingModels?:boolean;persistSettings:(w?:ProductionWorkspace)=>Promise<ProductionWorkspace>;settingsChanged:boolean;saveSettings:()=>void;settingsFeedback:ReactNode;tab:'voice'|'captions';onTab:(tab:'voice'|'captions')=>void;tracks:Track[];materials:NarrationMaterial[];pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChanged:(w:ProductionWorkspace)=>void;expanded:boolean;onImportAudio?:(files:File[])=>Promise<unknown>;managedVoice?:ManagedVoice}){
  const tabId=useId(),textHeadingId=useId(),textInputId=useId(),draftStateId=useId(),audioInput=useRef<HTMLInputElement>(null);
  const adoptionTrigger=useRef<Element|null>(null);
  const key=`loop-speech-draft:${workspace.id}:${n.shotId}`;
@@ -191,7 +219,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    w=await command('confirmWorkspaceNarration',base(w)) as ProductionWorkspace;
    w=await command('generateWorkspaceNarration',{...base(w),retry:n.status==='failed',...(retryOfTaskId?{retryOfTaskId}:{})}) as ProductionWorkspace;
    onChanged(w);
-  }catch(e){setError(e instanceof Error?e.message:'口播准备未完成。');}finally{setBusy(false);}
+  }catch(e){if(!(e instanceof Error&&e.name==='AbortError'))setError(e instanceof Error?e.message:'口播准备未完成。');}finally{setBusy(false);}
  }
  async function confirmManualReview(){
   if(!manualReview)return;
@@ -279,7 +307,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
      <input ref={audioInput} aria-label={uiText("导入人工口播")} hidden type="file" multiple accept=".mp3,audio/mpeg" disabled={disabled} onChange={event=>{const files=Array.from(event.target.files??[]);event.target.value='';if(files.length)void importAudio(files);}}/>
     </div>:<><header className="workspace-caption-editor-heading"><h3 id={textHeadingId}><label htmlFor={textInputId}>{uiText("口播草稿")}</label></h3><span id={draftStateId} className="workspace-narration-draft-state">{uiText(draftState)}</span></header><textarea id={textInputId} aria-describedby={draftStateId} rows={4} maxLength={100000} disabled={disabled} value={text} onChange={e=>setText(e.target.value)}/>{used?.text!=null&&text!==used.text&&<details className="workspace-narration-adopted"><summary>{uiText("成片采用的口播")}</summary><p className="workspace-saved-caption">{used.text}</p></details>}</>}
     </div>
-    <WorkspaceNarrationToolbar defaultLabel={managedVoice?'设为本期默认':undefined} allowManual={!managedVoice} mode={mode==='manual'?'manual':'tts'} value={speechSettings} services={services} disabled={disabled} changed={settingsChanged} onMode={setMode} onChange={onSettings} onSave={saveSettings}>
+    <WorkspaceNarrationToolbar onCommit={onCommitSettings} onRefresh={onRefreshModels} refreshing={refreshingModels} allowManual={!managedVoice} mode={mode==='manual'?'manual':'tts'} value={speechSettings} services={services} disabled={disabled} changed={settingsChanged} onMode={setMode} onChange={onSettings} onSave={saveSettings}>
      {inlineReview&&!inlineCandidate&&<><span role="status">{reviewSummary}</span>{inlineActions}</>}
      {mode==='tts'&&<Button className="workspace-narration-primary" hidden={!!inlineReview&&!inlineCandidate} size="sm" color="primary" isDisabled={disabled||!canGenerate} onPress={event=>{adoptionTrigger.current=event.target;void prepare();}}>{busy?uiText("正在处理…"):uiText("生成口播")}</Button>}
      {mode==='manual'&&manualSession.running&&<span role="status">{uiText("正在加入口播候选…")}</span>}

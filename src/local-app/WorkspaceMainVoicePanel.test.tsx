@@ -36,8 +36,13 @@ it('offers one four-way main voice selector and keeps selecting an upload free o
  await screen.findByRole('button',{name:'拖入口播文件'});expect(f.command).toHaveBeenCalledExactlyOnceWith('setWorkspaceNarrationEnabled',expect.objectContaining({voiceMode:'manual',enabled:true}));
  fireEvent.click(screen.getByRole('tab',{name:'字幕'}));expect(screen.getByRole('textbox',{name:'字幕内容'})).toBeTruthy();
 });
-it('keeps local voice settings scoped to the shot and does not promote them when generating',async()=>{
- const f=fixture();const view=render(<Harness {...f} episodeId="e" selectedShotId="S01" pending={false}/>);
+it('keeps unconfirmed drafts local, then applies a confirmed default to later shots',async()=>{
+ const f=fixture();let current=f.workspace;
+ f.command.mockImplementation(async(name:string,data?:unknown)=>{
+  if(name==='saveWorkspaceNarrationDefaults'){const {selection,voice,languageCode,speakingRate}=data as typeof f.defaults;current={...current,narration:current.narration!.map(n=>({...n,defaults:{selection,voice,languageCode,speakingRate}}))};}
+  return current;
+ });
+ const view=render(<Harness {...f} episodeId="e" selectedShotId="S01" pending={false}/>);
  await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));
  fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'1.25'}});
  view.rerender(<Harness {...f} episodeId="e" selectedShotId="S02" pending={false}/>);
@@ -46,15 +51,24 @@ it('keeps local voice settings scoped to the shot and does not promote them when
  expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','1.25');
  await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));
  fireEvent.click(screen.getByRole('button',{name:'生成口播'}));
+ expect(await screen.findByRole('dialog',{name:'修改本生产单口播配置'})).toBeTruthy();expect(f.command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'确认修改'}));
  await waitFor(()=>expect(f.command).toHaveBeenCalledWith('saveWorkspaceNarration',expect.objectContaining({clipId:'c1',speakingRate:1.25})));
- expect(f.command.mock.calls.some(([name])=>name==='saveWorkspaceNarrationDefaults')).toBe(false);
+ await waitFor(()=>expect(f.command).toHaveBeenCalledWith('generateWorkspaceNarration',expect.anything()));
+ expect(f.command).toHaveBeenCalledWith('saveWorkspaceNarrationDefaults',expect.objectContaining({speakingRate:1.25}));
+ view.rerender(<Harness {...f} episodeId="e" selectedShotId="S02" pending={false}/>);
+ expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','1.25');
+ expect(current.narration![1].speakingRate).toBe(1); // Existing shot records/assets are retained.
 });
-it('promotes settings to episode defaults only through the explicit default action',async()=>{
+it('asks for confirmation on an intentional rate change and removes the manual default action',async()=>{
  const f=fixture();render(<Harness {...f} episodeId="e" selectedShotId="S01" pending={false}/>);
  await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));
  fireEvent.change(screen.getByRole('spinbutton',{name:'语速'}),{target:{value:'1.2'}});
- fireEvent.click(screen.getByRole('button',{name:'设为本期默认'}));
+ fireEvent.blur(screen.getByRole('spinbutton',{name:'语速'}));
+ expect(await screen.findByRole('dialog',{name:'修改本生产单口播配置'})).toHaveProperty('textContent',expect.stringContaining('1 → 1.2'));
+ expect(f.command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'确认修改'}));
  await waitFor(()=>expect(f.command).toHaveBeenCalledExactlyOnceWith('saveWorkspaceNarrationDefaults',expect.objectContaining({speakingRate:1.2})));
+ expect(screen.queryByRole('button',{name:'设为本期默认'})).toBeNull();
 });
 it('connects a ready extracted source after one explicit request without requesting paid narration',async()=>{
  const f=fixture(),prep={id:'p',kind:'source',shotId:'S01',sourceItemId:'video',description:'原片',status:'completed',taskId:'t',audioTrackId:'track',relativePath:'voice.mp3',sha256:'a'.repeat(64),generationTask:{taskId:'t',status:'completed'}};

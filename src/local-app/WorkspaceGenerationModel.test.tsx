@@ -1,5 +1,5 @@
 import {afterEach,expect,it,vi} from 'vitest';
-import {cleanup,render,screen} from '@testing-library/react';
+import {cleanup,fireEvent,render,screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {WorkspaceGenerationModel} from './WorkspaceGenerationModel';
 import {registeredAdapters} from '../worker/registeredAdapters';
@@ -35,4 +35,11 @@ it('distinguishes two connections within a provider instead of merging identical
  const options=screen.getAllByRole('menuitemradio',{name:/^MiniMax-H3-Lite/});expect(options).toHaveLength(2);
  expect(options[1].textContent).toContain('备用连接 · v1');
  await userEvent.click(options[1]);expect(change).toHaveBeenCalledWith('mini-b:MiniMax-H3-Lite');
+});
+it('refreshes the catalog without losing the open menu or keyboard focus',async()=>{
+ const refresh=vi.fn(),props={compact:true,kind:'视频' as const,services,selection,onChange:vi.fn(),onRefresh:refresh};
+ const view=render(<WorkspaceGenerationModel {...props}/>);fireEvent.click(screen.getByRole('button',{name:'视频连接与模型'}));
+ const button=screen.getByRole('button',{name:'刷新模型连接'});button.focus();fireEvent.click(button);expect(refresh).toHaveBeenCalledTimes(1);
+ view.rerender(<WorkspaceGenerationModel {...props} refreshing/>);expect(document.activeElement).toBe(button);expect(button).toHaveProperty('disabled',false);expect(button.getAttribute('aria-disabled')).toBe('true');fireEvent.click(button);expect(refresh).toHaveBeenCalledTimes(1);
+ expect(screen.getByRole('dialog',{name:'选择视频模型'})).toBeTruthy();view.rerender(<WorkspaceGenerationModel {...props} refreshing={false}/>);expect(document.activeElement).toBe(button);
 });

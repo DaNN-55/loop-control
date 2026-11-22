@@ -150,3 +150,14 @@ html[data-interface="impeccable"] .product-ui .workspace-audio-preparation[data-
 /* Match the main-voice selector; compact workflow defaults otherwise hide leading glyphs. */
 .workspace-audio-mode-picker .dan-select-leading{display:block!important;left:8px;width:14px;height:14px}
 html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workflow] .workspace-preparation .workspace-audio-mode-picker .dan-select-trigger{padding:5px 24px 5px 28px!important}
+
+html[data-interface="impeccable"] .product-ui .workspace-audio-withdraw:not(:disabled):is(:hover,[data-hovered],:focus-visible){color:var(--lc-danger,#bd4147)!important;background-color:var(--lc-danger-soft,#fff0f0)!important}
+.workspace-audio-off-explanation{margin:0;padding:16px 12px;color:var(--lc-muted);font-size:12px;line-height:1.6}
+.workspace-audio-settings-popover{width:min(384px,calc(100vw - 24px));padding:16px;border:1px solid var(--lc-line);border-radius:8px;background:var(--lc-surface);box-shadow:var(--lc-popover-shadow,0 8px 24px #18274420)}
+.workspace-audio-settings-popover h3{margin:0;font-size:12px;font-weight:600;overflow-wrap:anywhere}
+.workspace-audio-settings-popover.workspace-audio-preparation[data-compact-audio] .workspace-audio-instance-settings{margin:12px 0 0;padding:12px 0 0}
+.workspace-audio-settings-popover .workspace-audio-instance-settings input{min-width:0;width:100%;height:34px;padding:6px 8px;border:1px solid var(--lc-line);border-radius:6px;background:var(--lc-surface);color:var(--lc-ink)}
+.workspace-audio-settings-popover .workspace-audio-instance-submit{grid-column:1/-1;display:flex;justify-content:flex-end}
+.workspace-audio-settings-popover p[role=alert]{font-size:12px;color:var(--lc-danger)}
+
+html[data-interface="impeccable"] .product-ui.workspace-audio-settings-popover .workspace-audio-instance-settings>label:has(>.dan-select-field){display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:6px!important;font-size:12px!important;line-height:1.5!important}

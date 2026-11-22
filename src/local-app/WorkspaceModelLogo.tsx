@@ -3,7 +3,7 @@ import './workspace-model-picker.css';
 
 export function WorkspaceModelLogo({model='',provider}:{model?:string;provider?:string}){
  const name=model.toLowerCase();
- const brand=/claude/.test(name)?'claude-color':/gemini|veo/.test(name)?'gemini-color'
+ const brand=provider==='deepseek'?'deepseek-color':/claude/.test(name)?'claude-color':/gemini|veo/.test(name)?'gemini-color'
   :/^(wan|wanx)[-.\d]|万相/.test(name)?'wan':/qwen/.test(name)?'qwen-color':/hailuo/.test(name)?'hailuo-color':/minimax/.test(name)?'minimax-color'
   :/kling/.test(name)?'kling-color':/seedance|seedream|seed-tts|doubao/.test(name)?'doubao-color'
   :/^(gpt-|o[134](?:-|$)|dall-e|sora)/.test(name)?'openai'

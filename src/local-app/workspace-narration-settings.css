@@ -184,3 +184,9 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
 /* Voice draft labels occupy 18px plus their existing 8px top/bottom margins. */
 .workspace-caption-composer .workspace-caption-editor-heading{min-height:34px;box-sizing:border-box;padding-inline:12px}
 .workspace-caption-composer .workspace-caption-mode-badge{margin-inline-start:auto;flex:none}
+
+html[data-interface="impeccable"] .product-ui .workspace-narration-composer-toolbar>.workspace-narration-language{width:80px!important;flex:0 0 80px}
+html[data-interface="impeccable"] .product-ui.dan-select-popover.workspace-narration-language-menu{width:128px;min-width:128px}
+.workspace-narration-default-diff{display:grid;gap:10px;font-size:12px}
+.workspace-narration-default-diff>div{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px}
+.workspace-narration-default-diff dd{margin:0;overflow-wrap:anywhere}
