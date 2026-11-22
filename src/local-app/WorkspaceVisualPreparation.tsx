@@ -63,7 +63,7 @@ export interface VisualPreparationProps {
  onBusyChange?:(busy:boolean)=>void;
  workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;
  materials:Material[];selectedShotId?:string;selectedTargetItemId?:string;onTargetChange?:(id:string)=>void;
- project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;
+ project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;completedView?:boolean;preparationStatus?:ReactNode;
  onImported?:(material:Material&{storage_path:string})=>void;
 }
 interface Draft {defaultOverrides?:VisualDefaultOverrides;promptReferences?:PromptReferenceBinding[];pexelsSelection?:ProductionSelection|null;imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;videoResolution?:string;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;videoModeId?:string;videoInputs?:VideoInputDraft;videoInputIds?:string[];referenceVideoSources?:Record<string,string>;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
@@ -94,7 +94,7 @@ function restoreDraft(props:VisualPreparationProps,targetItemId:string,saved:unk
 export function WorkspaceVisualPreparation(props:VisualPreparationProps){
  const options=props.selectedShotId?props.workspace.clips.filter(c=>c.shotId===props.selectedShotId):props.workspace.clips;
  const target=options.find(c=>c.itemId===props.selectedTargetItemId)??options[0];
- if(props.readOnly&&target)return <WorkspaceVisualRecord workspace={props.workspace} targetItemId={target.itemId} options={options} onTargetChange={props.onTargetChange} materials={props.materials} currentVisualPath={props.currentVisualPath} currentVisualSha256={props.currentVisualSha256} preview={props.preview}/>;
+ if(props.readOnly&&target)return <WorkspaceVisualRecord workspace={props.workspace} targetItemId={target.itemId} options={options} onTargetChange={props.onTargetChange} materials={props.materials} currentVisualPath={props.currentVisualPath} currentVisualSha256={props.currentVisualSha256} preview={props.preview} completedView={props.completedView} preparationStatus={props.preparationStatus}/>;
  return target?<VisualPreparationTarget key={props.workspace.episodeId+':'+props.workspace.id+':'+target.itemId} {...props} targetItemId={target.itemId} options={options}/>:null;
 }
 function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:string;options:ProductionWorkspace['clips']}){

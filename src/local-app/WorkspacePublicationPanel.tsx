@@ -12,7 +12,7 @@ import {usePublicationAssistant} from './usePublicationAssistant';
 import {useWorkspacePublication} from './useWorkspacePublication';
 import './workspace-publication.css';
 
-export function WorkspacePublicationPanel({workspace:w,readOnly=false,children}:{workspace:ProductionWorkspace;readOnly?:boolean;children?:(publication:ReturnType<typeof useWorkspacePublication>,editing:boolean)=>ReactNode}){
+export function WorkspacePublicationPanel({workspace:w,readOnly=false,coverFirst=false,children}:{workspace:ProductionWorkspace;readOnly?:boolean;coverFirst?:boolean;children?:(publication:ReturnType<typeof useWorkspacePublication>,editing:boolean)=>ReactNode}){
  const [editing,setEditing]=useState(false),[toolsOpen,setToolsOpen]=useState(false);
  const p=useWorkspacePublication(w.episodeId,w.id,{autoSave:!editing}),id=useId(),ai=usePublicationAssistant(w.episodeId,p,readOnly);
  const [tags,setTags]=useState(''),[copied,setCopied]=useState(''),[copySequence,setCopySequence]=useState(0);
@@ -37,7 +37,8 @@ export function WorkspacePublicationPanel({workspace:w,readOnly=false,children}:
  function cancel(){if(p.discard()){setTags(p.state!.content.tags.join(', '));setEditing(false);}}
  const normalizedTags=normalizeDeliveryTags(p.content.tags),tagText=normalizedTags.map(tag=>`#${tag}`).join(' ');
  const copyAll=()=>void copy([p.content.title,p.content.description,tagText].filter(Boolean).join('\n\n'),'全部发布资料');
- return <>{children?.(p,editing)}<section className="workspace-publication" aria-label={uiText('发布资料（可选）')}>
+ const coverPicker=<PublicationCoverPicker workspace={w} publication={p} readOnly={readOnly||editing}/>;
+ return <>{children?.(p,editing)}{coverFirst&&coverPicker}<section className="workspace-publication" aria-label={uiText('发布资料（可选）')}>
   <header className="workspace-review-heading workspace-publication-heading"><h4>{uiText('发布资料')}</h4><div className="workspace-publication-actions">
    {p.saving&&<span role="status">{uiText('保存中…')}</span>}
    {!editing&&hasContent&&<Button size="xs" color="tertiary" iconLeading={Copy} onPress={copyAll}>{uiText('复制全部')}</Button>}
@@ -58,7 +59,7 @@ export function WorkspacePublicationPanel({workspace:w,readOnly=false,children}:
    <div className="workspace-publication-field"><div className="workspace-delivery-field-heading"><label htmlFor={`${id}-tags`}>{uiText('标签')}</label><Button type="button" size="xs" color="tertiary" iconLeading={Copy} aria-label={uiText('复制标签')} onPress={()=>void copy(tagText,'标签')}/></div><input id={`${id}-tags`} name="tags" value={tags} placeholder={uiText('用逗号分隔')} disabled={readOnly||p.saving} onChange={event=>{setTags(event.target.value);p.edit({...p.content,tags:event.target.value.split(/[,，]/).map(tag=>tag.trim()).filter(Boolean)});}}/></div>
    <footer><Button size="sm" color="secondary" isDisabled={p.saving} onPress={cancel}>{uiText('取消')}</Button><Button type="submit" size="sm" color="primary" isDisabled={!p.state||readOnly||p.saving}>{uiText(p.saving?'保存中…':'保存文案')}</Button></footer>
   </form>}
-  <PublicationCoverPicker workspace={w} publication={p} readOnly={readOnly||editing}/>
+  {!coverFirst&&coverPicker}
   {!readOnly&&p.state&&<details className="workspace-publication-ai-disclosure" hidden={editing&&!ai.busy&&!ai.unresolved&&!ai.error} open={toolsOpen||!hasContent||ai.busy||ai.unresolved||!!ai.error} onToggle={event=>{if(!ai.busy&&!ai.unresolved&&!ai.error)setToolsOpen(event.currentTarget.open);}}><summary><ChevronRight size={13} aria-hidden="true"/>{uiText(hasContent?'重新生成文案':'AI 生成文案')}</summary><div className="workspace-publication-ai">
    <div className="workspace-publication-model-field"><span>{uiText('文案模型')}</span><WorkspaceModelPicker label="选择文案模型" title="选择大语言模型" compact={false} isOpen={ai.choosing} onOpenChange={ai.setChoosing} options={ai.options.map(option=>({id:option.id,label:option.selection.model,provider:option.selection.provider,connection:option.connection}))} value={ai.choice?.id??''} disabled={ai.busy||editing} refreshing={ai.modelsLoading} onChange={ai.choose} onRefresh={()=>void ai.refresh()} onConfigure={()=>requestConnectionSetup({capability:'language_model',onUse:ai.useConfiguredConnection})} empty="暂无可用模型，请配置并验证大语言模型服务。"/></div>
    <label className="workspace-publication-instruction" htmlFor={`${id}-instruction`}>{uiText('补充要求（可选）')}<textarea id={`${id}-instruction`} name="instruction" rows={2} value={p.content.instruction} maxLength={4000} placeholder={uiText('例如：语气自然，标题控制在 20 字以内')} disabled={!p.state||editing||ai.busy} onChange={e=>p.edit({...p.content,instruction:e.target.value})}/></label>

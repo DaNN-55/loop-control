@@ -8,15 +8,16 @@ import {readWorkspaceShotWindow,type WorkspaceShotOperation} from '../workspaceS
 import {workspaceShotSource} from './WorkspaceShotPreview';
 import {workspaceShotPreparation,type WorkspacePreparationTarget} from './workspaceShotPreparation';
 import {WorkspaceShotPreparationStatus} from './WorkspaceShotPreparationStatus';
+import {CompletedShotThumbnail} from './CompletedShotThumbnail';
 
 interface Props {
  workspace:ProductionWorkspace;project:OpenChatCutProject|null;materials:Array<{storage_path:string;source_path:string}>;
- selectedShotId:string|undefined;disabled:boolean;readOnly?:boolean;
+ selectedShotId:string|undefined;disabled:boolean;readOnly?:boolean;completedView?:boolean;
  onPreparationNavigate?:(shotId:string,target:WorkspacePreparationTarget)=>void;
  onSelect:(shotId:string)=>void;onDelete:(clip:WorkspaceClip)=>void;onEdit:(operation:WorkspaceShotOperation)=>Promise<void>;
 }
 
-export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,onSelect,onDelete,onEdit,onPreparationNavigate}:Props){
+export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,completedView=false,onSelect,onDelete,onEdit,onPreparationNavigate}:Props){
  const locked=disabled||readOnly;
  const selectionDisabled=disabled&&!readOnly;
  const clips=workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index);
@@ -40,6 +41,23 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
   event.preventDefault();event.dataTransfer.dropEffect='move';const rect=event.currentTarget.getBoundingClientRect();
   setDrop({shotId,after:event.clientY>rect.top+rect.height/2});
  }
+ if(completedView)return <table className="completed-shot-index" aria-label={uiText('镜头')}>
+  <tbody>{clips.map((clip,index)=>{
+   const number=String(index+1).padStart(2,'0'),selected=clip.shotId===selectedShotId;
+   const window=project&&readWorkspaceShotWindow(project,clip.itemId);
+   const duration=window?window.durationInFrames/window.timeline.fps:clip.image?.durationSeconds;
+   const label=uiText('镜头 {number}',{number});
+   return <tr key={clip.shotId} aria-label={label} aria-selected={selected}><td>
+    <button type="button" aria-label={uiText('选择{value0}',{value0:label})} aria-pressed={selected} onClick={()=>onSelect(clip.shotId)}>
+     <CompletedShotThumbnail workspace={workspace} project={project} itemId={clip.itemId}/>
+     <span className="completed-shot-index-text">
+      <span><strong>{label}</strong><small>{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</small></span>
+      <span>{clip.text}</span>
+     </span>
+    </button>
+   </td></tr>;
+  })}</tbody>
+ </table>;
  return <>
   <div className="workspace-table-caption"><h3>{uiText("镜头 ")}{!readOnly&&!disabled&&<span id={helpId} >{uiText("拖动行调整顺序，或按 Alt + ↑/↓")}</span>}</h3></div>
   <div className="workspace-shot-table-scroll" role="region" aria-label={uiText("镜头清单")} tabIndex={0}>

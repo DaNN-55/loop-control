@@ -6,6 +6,7 @@ import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {BookOpen,Clock,CloudCheck,History,Info,LoaderCircle,PanelLeftOpen,Upload} from 'lucide-react';
 import {ScriptStudioIcon,ScriptStudioPopup} from './ScriptStudioTools';
+import {CompletedScriptReading} from './CompletedScriptReading';
 import {MarkdownPreview} from '../ui/MarkdownPreview';
 import {estimateScriptDuration,validateStudioDuration} from '../scriptStudio';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
@@ -23,7 +24,7 @@ import './script-studio.css';
 import './script-studio-chat.css';
 
 interface Props {
- episodeId:string;scriptRevisionId:string|null;script:string;stage:string;readOnly:boolean;pending:boolean;
+ episodeId:string;scriptRevisionId:string|null;script:string;stage:string;readOnly:boolean;pending:boolean;completedView?:boolean;
  command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;materials?:readonly ScriptStudioAttachmentMaterial[];onMaterialImported?:(material:ScriptStudioAttachmentMaterial)=>void;
 }
 type Basis={id:string|null;text:string;duration:string};
@@ -43,7 +44,7 @@ function WorkspaceScriptSource(props:Props){
  const retained=loaded.current?.revisionId===props.scriptRevisionId?loaded.current.value:null;
  return <WorkspaceScriptEditor {...props} retained={retained??source.value} sourceReady={!!retained} sourceLoading={source.loading} sourceError={source.error} retrySource={source.retry}/>;
 }
-function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,command,onConfirmed,history,errorPresented=false,materials=[],onMaterialImported,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
+function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,completedView=false,command,onConfirmed,history,errorPresented=false,materials=[],onMaterialImported,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
  const [flow,setFlow]=useState<ScriptConfirmationState>({phase:'idle'});
  const baseline:Basis='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:retained.sourceText,duration:retained.targetDuration===null?'':String(retained.targetDuration)};
  const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??'new',initial:{text:baseline.text,duration:baseline.duration,reason:'',filename:'script.md'},legacyInitial:baseline.id===scriptRevisionId?{text:script,reason:'',filename:'script.md'}:undefined,enabled:!readOnly&&(sourceReady||flow.phase!=='idle')});
@@ -122,11 +123,14 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly
  const continueLabel=flow.phase==='saving'?'正在保存…':flow.phase==='starting'?'正在启动…':flow.phase==='checking'?'正在核对…':canResume?'继续启动':'继续制作';
  const status=uiText(confirmationStatus[flow.phase]||(draft.dirty?'有未确认修改':basisId?'已确认基准':'待确认'));
  const historyContent=<div className="script-studio-history-panel">{scriptRevisionId?<div className="script-studio-history-version"><span>{uiText('已确认版本')}</span><code title={scriptRevisionId}>{scriptRevisionId.slice(0,8)}</code></div>:<p>{uiText('尚无已确认版本')}</p>}{retained.plan&&<ScriptStudioSavedPlan plan={retained.plan}/>} {history}{!readOnly&&basisId&&<><label className="script-studio-note">{uiText('修订备注（选填）')}<input name="reason" aria-label={uiText('修订备注（选填）')} value={reason} maxLength={4000} disabled={disabled} onChange={event=>setField('reason',event.target.value)}/></label>{draft.dirty&&<div className="script-studio-history-actions"><Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setHistoryOpen(false);setDiscardOpen(true);}}>{uiText('还原已确认脚本')}</Button></div>}</>}</div>;
- return <section className="production-workspace-section workspace-script workspace-script-compact script-studio script-studio-chat-layout" aria-label={uiText('脚本确认')}>
+ return <section className={`production-workspace-section workspace-script workspace-script-compact script-studio script-studio-chat-layout${readOnly&&completedView?' workspace-script-completed':''}`} aria-label={uiText('脚本确认')}>
   {draft.storageError&&<p role="alert" className="form-error">{uiText('本机草稿暂无法保存，请保持此页面打开。')}</p>}
   {sourceError?<div className="script-studio-read-error"><p role="alert" className="form-error">{uiText(sourceError)}</p><Button type="button" size="sm" color="secondary" onPress={retrySource}>{uiText('重新读取原文')}</Button></div>:sourceLoading&&<p role="status" className="script-studio-loading">{uiText('正在读取主脚本原文…')}</p>}
   <div className="script-studio-content">
-   {readOnly?<><header className="script-studio-pane-heading"><h3>{uiText('主脚本')}</h3><span>{status}{uiText(' · 只读')}</span></header><div className="workspace-script-preview" role="document" aria-label={uiText('主脚本预览')} tabIndex={0}><MarkdownPreview content={retained.sourceText}/></div><details className="script-studio-readonly-history"><summary>{uiText('历史')}</summary>{historyContent}</details><details className="script-studio-readonly-history"><summary>{uiText('使用帮助')}</summary><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></details></>:<>
+   {readOnly&&completedView?<CompletedScriptReading source={retained.sourceText} status={uiText(scriptRevisionId?'已确认':'待确认')} tools={<>
+    <ScriptStudioPopup label="脚本历史" open={historyOpen} onOpenChange={setHistoryOpen} nonModal trigger={<ScriptStudioIcon label="历史" icon={History}/>}>{historyContent}</ScriptStudioPopup>
+    <ScriptStudioPopup label="使用帮助" trigger={<ScriptStudioIcon label="使用帮助" icon={Info}/>}><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></ScriptStudioPopup>
+   </>}/>:readOnly?<><header className="script-studio-pane-heading"><h3>{uiText('主脚本')}</h3><span>{status}{uiText(' · 只读')}</span></header><div className="workspace-script-preview" role="document" aria-label={uiText('主脚本预览')} tabIndex={0}><MarkdownPreview content={retained.sourceText}/></div><details className="script-studio-readonly-history"><summary>{uiText('历史')}</summary>{historyContent}</details><details className="script-studio-readonly-history"><summary>{uiText('使用帮助')}</summary><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></details></>:<>
     {draft.restored&&<FeedbackNotice message="已恢复草稿，尚未确认。" onceKey={'script-draft:'+draft.scope} tone="info"/>}
     <div className="script-studio-toolbar" role="toolbar" aria-label={uiText('脚本工具')}>
      <strong>{uiText('脚本确认')}</strong>

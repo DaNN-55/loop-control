@@ -8,8 +8,8 @@ import {artifactPreviewKind,localArtifactUrl,localArtifactThumbnailUrl} from '..
 import type {EpisodeProductionSnapshot} from '../episodes/episodeSnapshot';
 import type {WorkspaceExport,WorkspaceExportArtifact} from '../workspaceExport';
 
-type Preview=Pick<EpisodeProductionSnapshot,'artifacts'|'materialRevisions'|'shotPreparationDrafts'|'reviewPackages'>&{exportedVideo?:WorkspaceExportArtifact|null;sourceText?:string;hasScript?:boolean;captions?:Array<{contract:{enabled:boolean}}>};
-export function useWorkbenchPreview(episodeId:string,revision:string,enabled:boolean){
+type Preview=Pick<EpisodeProductionSnapshot,'artifacts'|'materialRevisions'|'shotPreparationDrafts'|'reviewPackages'>&{exportedVideo?:WorkspaceExportArtifact|null;sourceText?:string;hasScript?:boolean;hasWorkspace?:boolean;captions?:Array<{contract:{enabled:boolean}}>};
+export function useWorkbenchPreview(episodeId:string,revision:string,enabled:boolean,completedView=false){
  const [result,setResult]=useState<{id:string;data:Partial<Preview>|null;error:boolean}>({id:'',data:null,error:false});
  useEffect(()=>{
   if(!enabled||!episodeId)return;
@@ -34,11 +34,11 @@ export function useWorkbenchPreview(episodeId:string,revision:string,enabled:boo
    .then(value=>{
     if(controller.signal.aborted)return;
     if(value.workspace?.scriptRevisionId)readScript(value.workspace.scriptRevisionId);
-    const exportedVideo=(value.workspace?.exports as WorkspaceExport[]|undefined)?.find(item=>item.status==='ready'&&item.artifact&&item.checks.every(check=>check.passed)&&artifactPreviewKind(item.artifact.relativePath)==='video')?.artifact??null;
-    setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),exportedVideo,captions:value.workspace?.captions},error:current.id===episodeId&&current.error}));
-   }).catch(()=>{});
+    const exportedVideo=(value.workspace?.exports as WorkspaceExport[]|undefined)?.find(item=>(!completedView||item.current)&&item.status==='ready'&&item.artifact&&item.checks.every(check=>check.passed)&&artifactPreviewKind(item.artifact.relativePath)==='video')?.artifact??null;
+    setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),exportedVideo,captions:value.workspace?.captions,hasWorkspace:!!value.workspace},error:current.id===episodeId&&current.error}));
+   }).catch(()=>{if(completedView&&!controller.signal.aborted)setResult(current=>({id:episodeId,data:{...(current.id===episodeId?current.data:null),exportedVideo:null},error:current.id===episodeId&&current.error}));});
   return()=>controller.abort();
- },[episodeId,revision,enabled]);
+ },[episodeId,revision,enabled,completedView]);
  return result.id===episodeId?result:{id:episodeId,data:null,error:false};
 }
 

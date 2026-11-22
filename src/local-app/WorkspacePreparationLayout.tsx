@@ -2,11 +2,17 @@ import {Children,useEffect,useRef,useState,type CSSProperties,type ReactNode} fr
 import {uiText} from '../i18n/ui';
 import './workspace-preparation-visual.css';
 
-const storageKey='loop.production.preparation.listWidth.v1';
-const defaultWidth=572,minWidth=572,rightMinWidth=360,dividerWidth=9;
+const preparationListWidth='loop.production.preparation.listWidth.v1';
+const rightMinWidth=360,dividerWidth=9;
 
 /** The pane preference is independent of the table's fixed column widths. */
-export function WorkspacePreparationLayout({children}:{children:ReactNode}){
+export function WorkspacePreparationLayout({children,completedView=false}:{children:ReactNode;completedView?:boolean}){
+ return <ResizablePreparationLayout key={String(completedView)} completedView={completedView}>{children}</ResizablePreparationLayout>;
+}
+
+function ResizablePreparationLayout({children,completedView}:{children:ReactNode;completedView:boolean}){
+ const storageKey=completedView?preparationListWidth+'.completed':preparationListWidth;
+ const defaultWidth=completedView?340:572,minWidth=completedView?220:572;
  const grid=useRef<HTMLDivElement>(null),pointer=useRef<number|null>(null);
  const [width,setWidth]=useState(()=>{
   try{
@@ -26,11 +32,11 @@ export function WorkspacePreparationLayout({children}:{children:ReactNode}){
   observer?.observe(element);window.addEventListener('resize',measure);
   return()=>{observer?.disconnect();window.removeEventListener('resize',measure);};
  },[]);
- useEffect(()=>{try{localStorage.setItem(storageKey,String(width));}catch{/* Optional local preference. */}},[width]);
+ useEffect(()=>{try{localStorage.setItem(storageKey,String(width));}catch{/* Optional local preference. */}},[storageKey,width]);
  const panes=Children.toArray(children);
  function resize(value:number){setWidth(Math.max(minWidth,Math.min(maximum,value)));}
  function stopDragging(){pointer.current=null;setDragging(false);}
- return <div ref={grid} className={'workspace-preparation-grid is-fixed is-resizable'+(dragging?' is-resizing':'')} style={{'--workspace-list-size':actualWidth+'px'} as CSSProperties}>
+ return <div ref={grid} className={'workspace-preparation-grid is-fixed is-resizable'+(completedView?' is-completed-board':'')+(dragging?' is-resizing':'')} style={{'--workspace-list-size':actualWidth+'px'} as CSSProperties}>
   {panes[0]}
   <div className="workspace-preparation-resizer" role="separator" tabIndex={0}
    aria-label={uiText('调整镜头列表宽度')} aria-orientation="vertical" aria-valuemin={minWidth} aria-valuemax={maximum} aria-valuenow={Math.round(actualWidth)}

@@ -1,16 +1,17 @@
 import {useEffect,useRef,useState,type ComponentProps,type ReactNode} from 'react';
 import {Play,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {uiText} from '../i18n/ui';
+import {getUiLocale,uiText} from '../i18n/ui';
 import {artifactPreviewKind} from '../reviews/localArtifactPreview';
 import {useWorkbenchPreview,WorkbenchArtwork} from '../operations/workbenchPreview';
+import {CompletedCatalogArtwork} from './CompletedCatalogArtwork';
 import {EpisodeWorkspace} from './WorkspaceViews';
 import {EpisodeStatus,episodeActionState,episodeNextAction,episodeWorkflowLabel} from './episodePresentation';
 import {productionCatalogParameters,type CatalogVideoMetadata} from './productionCatalogPreview';
 import '../operations/workbench.css';
 import './production-catalog.css';
 
-type Props=ComponentProps<typeof EpisodeWorkspace>;
+type Props=ComponentProps<typeof EpisodeWorkspace>&{onOpenCompleted?:(id:string)=>void};
 const previewPreference='loop-control.catalog.preview.v1';
 
 function MobilePreview({children,onClose}:{children:ReactNode;onClose:()=>void}){
@@ -41,9 +42,11 @@ export function ProductionCatalog({suspended=false,...props}:Props&{suspended?:b
  },[]);
  const episode=props.episodes.find(item=>item.id===selectedId)??props.episodes[0];
  const visible=!suspended&&!!episode&&!props.isPageLoading&&(small?mobileOpen:expanded);
- const preview=useWorkbenchPreview(episode?.id??'',episode?.updated_at??'',visible);
  const [videoMetadata,setVideoMetadata]=useState<{episodeId:string;revision:string;value:CatalogVideoMetadata}|null>(null);
  const summary=props.operationRows?.find(item=>item.episodeId===episode?.id);
+ const state=episode?episodeActionState(episode,summary):null;
+ const completed=state==='done';
+ const preview=useWorkbenchPreview(episode?.id??'',episode?.updated_at??'',visible,completed);
  function select(id:string){
   const row=Array.from(catalog.current?.querySelectorAll<HTMLElement>('[data-preview-id]')??[]).find(item=>item.dataset.previewId===id);
   origin.current=row??(document.activeElement instanceof HTMLElement?document.activeElement:null);
@@ -54,8 +57,8 @@ export function ProductionCatalog({suspended=false,...props}:Props&{suspended?:b
   else {setExpanded(false);localStorage.setItem(previewPreference,'hidden');}
  }
  let content:ReactNode=null;
- if(episode){
-  const state=episodeActionState(episode,summary),next=episodeNextAction(episode,state,summary);
+ if(episode&&state){
+  const next=episodeNextAction(episode,state,summary);
   const account=props.accountsById.get(episode.account_id);
   const collection=props.collections?.[episode.id],baseline=episode.series_version_id?props.seriesVersionsById.get(episode.series_version_id):null;
   const seriesId=collection?collection.seriesId:baseline?.series_id;
@@ -65,17 +68,32 @@ export function ProductionCatalog({suspended=false,...props}:Props&{suspended?:b
   const hasVideo=!!data?.exportedVideo||data?.artifacts?.some(item=>['final_render','render','review_render','review_render_video'].includes(item.artifact_type)&&artifactPreviewKind(item.relative_path)==='video');
   const metadata=videoMetadata?.episodeId===episode.id&&videoMetadata.revision===episode.updated_at?videoMetadata.value:undefined;
   const parameters=productionCatalogParameters(data?.sourceText??'',metadata,data?.captions);
+  const legacyArtifacts=completed&&data?.hasWorkspace===false?[...(data.artifacts??[])].sort((a,b)=>b.created_at.localeCompare(a.created_at)):[];
+  const legacyFinal=legacyArtifacts.find(item=>item.artifact_type==='final_render'&&artifactPreviewKind(item.relative_path)==='video');
+  const legacyCover=legacyArtifacts.find(item=>item.artifact_type==='cover'&&artifactPreviewKind(item.relative_path)==='image');
+  const completedVideo=data?.exportedVideo??(legacyFinal?{relativePath:legacyFinal.relative_path,sha256:legacyFinal.sha256}:null);
+  const title=episode.title||uiText('未命名生产单');
+  const context=[account?.name,series?.name].filter(Boolean).join(' · ')||uiText('未分系列');
+  const reportMetadata=(value:CatalogVideoMetadata)=>setVideoMetadata({episodeId:episode.id,revision:episode.updated_at,value});
+  const previewKey=episode.id+':'+episode.updated_at;
+  const updatedAt=completed?new Date(episode.updated_at):null;
   content=<section className="production-preview-content">
    <header><h2>{uiText('生产单预览')}</h2><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText('关闭生产单预览')} onPress={close}/></header>
-   <div className="production-preview-body">
-    <div className="production-preview-media">{hasMedia?<WorkbenchArtwork key={episode.id+episode.updated_at} episodeId={episode.id} title={episode.title||uiText('未命名生产单')} artifacts={data?.artifacts} exportedVideo={data?.exportedVideo} error={preview.error} onVideoMetadata={value=>setVideoMetadata({episodeId:episode.id,revision:episode.updated_at,value})}/>:<div className="production-preview-empty">{uiText(preview.error?'预览暂不可用':!data?'正在读取预览…':'尚无预览')}</div>}{hasVideo&&<p className="production-preview-source">{uiText(data?.exportedVideo?'已导出视频':'已保存视频预览')}</p>}</div>
-    <h3 className="production-preview-title">{episode.title||uiText('未命名生产单')}</h3>
-    <p className="production-preview-context">{[account?.name,series?.name].filter(Boolean).join(' · ')||uiText('未分系列')}</p>
+   {completed?<div className="production-preview-body">
+    <div className="production-completed-identity"><h3 className="production-preview-title">{title}</h3><EpisodeStatus state={state}/></div>
+    <p className="production-preview-context">{context}{updatedAt&&Number.isFinite(updatedAt.getTime())&&<time dateTime={episode.updated_at}> · {uiText('最近更新')} {updatedAt.toLocaleString(getUiLocale(),{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false})}</time>}</p>
+    <CompletedCatalogArtwork key={previewKey} episodeId={episode.id} video={completedVideo} legacyCover={legacyCover&&{relativePath:legacyCover.relative_path,sha256:legacyCover.sha256}} loading={data?.exportedVideo===undefined&&!preview.error} onVideoMetadata={reportMetadata}/>
+    <dl className="production-completed-parameters" aria-label={uiText('主要参数')}>{parameters.map(item=><div key={item.label}><dt>{uiText(item.label)}</dt><dd>{item.label==='时长'?(metadata?.duration&&Number.isFinite(metadata.duration)?uiText('{value0} 秒',{value0:metadata.duration.toFixed(2)}):'—'):uiText(item.value)}</dd></div>)}</dl>
+    <Button className="production-preview-open" size="sm" color="primary" iconLeading={Play} onPress={()=>(props.onOpenCompleted??props.onSelectEpisode)(episode.id)}>{uiText('查看成果')}</Button>
+   </div>:<div className="production-preview-body">
+    <div className="production-preview-media">{hasMedia?<WorkbenchArtwork key={episode.id+episode.updated_at} episodeId={episode.id} title={title} artifacts={data?.artifacts} exportedVideo={data?.exportedVideo} error={preview.error} onVideoMetadata={reportMetadata}/>:<div className="production-preview-empty">{uiText(preview.error?'预览暂不可用':!data?'正在读取预览…':'尚无预览')}</div>}{hasVideo&&<p className="production-preview-source">{uiText(data?.exportedVideo?'已导出视频':'已保存视频预览')}</p>}</div>
+    <h3 className="production-preview-title">{title}</h3>
+    <p className="production-preview-context">{context}</p>
     <div className="production-preview-state"><span className="production-preview-stage-label">{uiText('当前阶段')}</span><span>{episodeWorkflowLabel(summary)??uiText(next.label)}</span><EpisodeStatus state={state}/></div>
     {summary?.blocker&&<p className="production-preview-hint">{uiText(summary.blocker.detail)}</p>}
-    <Button className="production-preview-open" size="sm" color="primary" iconLeading={Play} onPress={()=>props.onSelectEpisode(episode.id)}>{uiText(state==='done'?'查看成果':state==='review'?'前往审核':'进入制作')}</Button>
+    <Button className="production-preview-open" size="sm" color="primary" iconLeading={Play} onPress={()=>props.onSelectEpisode(episode.id)}>{uiText(state==='review'?'前往审核':'进入制作')}</Button>
     <section className="production-preview-parameters" aria-label={uiText('主要参数')}><h3>{uiText('主要参数')}</h3><dl>{parameters.map(item=><div key={item.label}><dt>{uiText(item.label)}</dt><dd>{uiText(item.label==='时长'&&!hasVideo?'尚无视频':item.value)}</dd></div>)}</dl></section>
-   </div>
+   </div>}
   </section>;
  }
  return <div ref={catalog} className="production-catalog" data-preview={visible&&!small}>

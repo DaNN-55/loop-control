@@ -16,3 +16,21 @@ it('does not start rendering from merely viewing a page and prevents repeated ge
  render(<WorkspaceExportPanel workspace={{...w,exports:[]}} pending={false} command={command} onChange={()=>{}}/>);expect(command).not.toHaveBeenCalled();
  fireEvent.click(screen.getByRole('button',{name:'生成成片'}));fireEvent.click(screen.getByRole('button',{name:'正在生成成片…'}));expect(command).toHaveBeenCalledTimes(1);await act(async()=>done(w));
 });
+
+it('hides the current download when its file fails and keeps old versions behind history',()=>{
+ const current={...w.exports![0],confirmed:true};
+ const previous={...current,id:'older',projectContentVersion:2,current:false,artifact:{relativePath:'old.mp4',sha256:'older',fileSize:10}};
+ const workspace={...w,exports:[current,previous],deliveries:[{
+  id:'delivery',exportId:current.id,status:'completed',verified:true,
+  artifacts:[{artifactType:'final_render',...current.artifact}],
+ }]} as ProductionWorkspace;
+ render(<WorkspaceExportPanel workspace={workspace} pending={false} readOnly completedView command={vi.fn()} onChange={()=>{}}/>);
+ expect(screen.getByRole('link',{name:'下载视频'}).getAttribute('href')).toContain('path=final.mp4');
+ fireEvent.error(screen.getByLabelText('最终导出视频'));
+ expect(screen.queryByRole('link',{name:'下载视频'})).toBeNull();
+ expect(screen.getByText('当前成片文件无法读取。')).toBeTruthy();
+ const history=screen.getByLabelText('检查与导出记录');
+ expect(history.hasAttribute('open')).toBe(false);
+ fireEvent.click(screen.getByText('检查与导出记录'));
+ expect(screen.getByRole('link',{name:'下载工程版本 v2'}).getAttribute('href')).toContain('path=old.mp4');
+});
