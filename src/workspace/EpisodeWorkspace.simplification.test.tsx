@@ -1,4 +1,5 @@
 import {cleanup,fireEvent,render,screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import type {ComponentProps} from 'react';
 import {EpisodeWorkspace} from './WorkspaceViews';
@@ -17,11 +18,13 @@ it('previews row selection while the title opens the production directly',()=>{
  fireEvent.click(screen.getByRole('button',{name:'山间日出'}));
  expect(open).toHaveBeenCalledWith('one');expect(preview).toHaveBeenCalledTimes(1);
 });
-it('starts with a compact list and only exposes statistics and more filters on request',()=>{
+it('starts with a compact list and only exposes statistics and more filters on request',async()=>{
  const {unmount}=setup();
  expect(screen.queryByRole('columnheader',{name:/后台任务用时/})).toBeNull();
  expect(screen.queryByRole('combobox',{name:'归档范围'})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'显示统计'}));
+ await userEvent.click(screen.getByRole('button',{name:'显示'}));
+ await userEvent.click(screen.getByRole('menuitemcheckbox',{name:'显示统计'}));
+ await userEvent.keyboard('{Escape}');
  expect(screen.getByRole('columnheader',{name:'后台任务用时'})).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'筛选'}));
  expect(screen.getByRole('combobox',{name:'归档范围'})).toBeTruthy();

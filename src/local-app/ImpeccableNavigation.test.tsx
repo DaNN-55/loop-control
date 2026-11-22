@@ -91,7 +91,7 @@ it('选择作品更新下一步，打开及返回详情保留第二页上下文'
  fireEvent.click(within(screen.getByRole('region',{name:'生产单列表'})).getByRole('button',{name:'生产单 22'}).closest('tr')!);
  const current=screen.getByRole('complementary',{name:'生产单预览'});expect(within(current).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
  const before=lastQuery().toString(),beforeUrl=location.search,count=queries.length;
- fireEvent.click(within(current).getByRole('button',{name:'进入制作'}));
+ fireEvent.click(within(current).getByRole('button',{name:'前往审核'}));
  await screen.findByText('实际生产单 '+uuid(22));
  expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(true);
  fireEvent.click(screen.getByRole('button',{name:'返回工作区'}));
@@ -124,7 +124,7 @@ it('侧栏分组和底部工具保持已认可设计，Owner焦点与状态不�
 
 it('制作区Studio失败通知仍在可操作区域并保留CSRF',async()=>{
  const {posts}=setup({studioFails:true});const close=vi.fn();vi.spyOn(window,'open').mockReturnValue({close,location:{replace:vi.fn()}}as unknown as Window);await mount();
- fireEvent.click(within(screen.getByRole('complementary',{name:'生产单预览'})).getByRole('button',{name:'进入制作'}));await screen.findByText('实际生产单 '+uuid(1));
+ fireEvent.click(within(screen.getByRole('complementary',{name:'生产单预览'})).getByRole('button',{name:'前往审核'}));await screen.findByText('实际生产单 '+uuid(1));
  fireEvent.click(nav().getByRole('button',{name:'独立剪辑'}));const alert=await screen.findByRole('alert');expect(alert.textContent).toContain('Studio 工作区不可用');expect(alert.closest('[inert]')).toBeNull();expect(close).toHaveBeenCalledOnce();
  expect(posts[0].body).toMatchObject({command:'openStandaloneStudio',data:{}});expect(posts[0].headers.get('X-CSRF-Token')).toBe('navigation-fixture-csrf');
 });
