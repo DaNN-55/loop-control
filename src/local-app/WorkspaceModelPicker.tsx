@@ -9,8 +9,10 @@ import {WorkspaceModelLogo} from './WorkspaceModelLogo';
 import './workspace-generation-composer.css';
 
 export interface WorkspaceModelOption {id:string;label:string;provider?:string;connection?:string;disabled?:boolean;manual?:boolean}
-export function WorkspaceModelPicker({label,title,closeLabel='关闭模型选择',options,value,disabled,onChange,onConfigure,onRefresh,refreshing=false,empty,clear,clearLabel='清除模型选择',showConnections=false,compact=true}:{label:string;title:string;closeLabel?:string;options:WorkspaceModelOption[];value:string;disabled?:boolean;onChange:(id:string)=>void;onConfigure?:()=>void;onRefresh?:()=>void;refreshing?:boolean;empty?:string;clear?:boolean;clearLabel?:string;showConnections?:boolean;compact?:boolean}){
- const [open,setOpen]=useState(false);
+export function WorkspaceModelPicker({label,title,closeLabel='关闭模型选择',options,value,disabled,onChange,onConfigure,onRefresh,refreshing=false,empty,clear,clearLabel='清除模型选择',showConnections=false,compact=true,isOpen,onOpenChange}:{label:string;title:string;closeLabel?:string;options:WorkspaceModelOption[];value:string;disabled?:boolean;onChange:(id:string)=>void;onConfigure?:()=>void;onRefresh?:()=>void;refreshing?:boolean;empty?:string;clear?:boolean;clearLabel?:string;showConnections?:boolean;compact?:boolean;isOpen?:boolean;onOpenChange?:(open:boolean)=>void}){
+ const [internalOpen,setInternalOpen]=useState(false);
+ const open=isOpen??internalOpen;
+ const setOpen=(next:boolean)=>{setInternalOpen(next);onOpenChange?.(next);};
  const selected=options.find(option=>option.id===value),duplicates=new Set(options.filter((option,index)=>options.some((other,i)=>i!==index&&other.label===option.label)).map(option=>option.label));
 
  return <DialogTrigger isOpen={open} onOpenChange={setOpen}>

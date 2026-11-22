@@ -1,10 +1,11 @@
 import {requestConnectionSetup} from './connectionSetup';
 import {useEffect,useId,useRef,useState,type ReactNode} from 'react';
-import {Copy,Pencil,ChevronRight} from 'lucide-react';
+import {Copy,Pencil,ChevronRight,RefreshCw} from 'lucide-react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import {normalizeDeliveryTags} from '../publishing/deliveryMetadata';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import {WorkspaceModelPicker} from './WorkspaceModelPicker';
 import {PublicationCoverPicker} from './PublicationCoverPicker';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {usePublicationAssistant} from './usePublicationAssistant';
@@ -59,10 +60,9 @@ export function WorkspacePublicationPanel({workspace:w,readOnly=false,children}:
   </form>}
   <PublicationCoverPicker workspace={w} publication={p} readOnly={readOnly||editing}/>
   {!readOnly&&p.state&&<details className="workspace-publication-ai-disclosure" hidden={editing&&!ai.busy&&!ai.unresolved&&!ai.error} open={toolsOpen||!hasContent||ai.busy||ai.unresolved||!!ai.error} onToggle={event=>{if(!ai.busy&&!ai.unresolved&&!ai.error)setToolsOpen(event.currentTarget.open);}}><summary><ChevronRight size={13} aria-hidden="true"/>{uiText(hasContent?'重新生成文案':'AI 生成文案')}</summary><div className="workspace-publication-ai">
-   <Button size="sm" color="secondary" isDisabled={!p.state||ai.busy||ai.unresolved||editing} onPress={()=>void ai.generate()}>{uiText(ai.busy?'正在生成文案…':hasContent?'重新生成发布文案':'AI 生成发布文案')}</Button>
-   <small>{ai.choice?.label??uiText('选择大语言模型')} <button type="button" onClick={()=>ai.setChoosing(!ai.choosing)}>{uiText('更换')}</button></small>
-   {ai.choosing&&<label htmlFor={`${id}-model`}>{uiText('大语言模型')}<select id={`${id}-model`} value={ai.choice?.id??''} onChange={e=>ai.choose(e.target.value)}><option value="">{uiText('请选择')}</option>{ai.options.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}</select><button type="button" onClick={()=>void ai.refresh()}>{uiText('重新读取模型')}</button><button type="button" disabled={ai.busy} onClick={()=>requestConnectionSetup({capability:'language_model',onUse:ai.useConfiguredConnection})}>{uiText('配置制作服务')}</button></label>}
-   <details><summary>{uiText('补充要求（可选）')}</summary><label htmlFor={`${id}-instruction`}>{uiText('补充要求')}</label><textarea id={`${id}-instruction`} name="instruction" rows={2} value={p.content.instruction} maxLength={4000} disabled={!p.state||editing} onChange={e=>p.edit({...p.content,instruction:e.target.value})}/></details>
+   <div className="workspace-publication-model-field"><span>{uiText('文案模型')}</span><WorkspaceModelPicker label="选择文案模型" title="选择大语言模型" compact={false} isOpen={ai.choosing} onOpenChange={ai.setChoosing} options={ai.options.map(option=>({id:option.id,label:option.selection.model,provider:option.selection.provider,connection:option.connection}))} value={ai.choice?.id??''} disabled={ai.busy||editing} refreshing={ai.modelsLoading} onChange={ai.choose} onRefresh={()=>void ai.refresh()} onConfigure={()=>requestConnectionSetup({capability:'language_model',onUse:ai.useConfiguredConnection})} empty="暂无可用模型，请配置并验证大语言模型服务。"/></div>
+   <label className="workspace-publication-instruction" htmlFor={`${id}-instruction`}>{uiText('补充要求（可选）')}<textarea id={`${id}-instruction`} name="instruction" rows={2} value={p.content.instruction} maxLength={4000} placeholder={uiText('例如：语气自然，标题控制在 20 字以内')} disabled={!p.state||editing||ai.busy} onChange={e=>p.edit({...p.content,instruction:e.target.value})}/></label>
+   <div className="workspace-publication-generation-footer"><Button size="sm" color="primary" iconLeading={RefreshCw} aria-label={uiText(hasContent?'重新生成发布文案':'AI 生成发布文案')} isDisabled={!p.state||ai.busy||ai.unresolved||editing} onPress={()=>void ai.generate()}>{uiText(ai.busy?'正在生成文案…':'生成文案')}</Button></div>
    {ai.unresolved&&<div role="status"><p>{uiText(ai.latest?.message??'文案请求未完成，请先核对。')}</p><Button size="sm" color="secondary" onPress={()=>void ai.recover()}>{uiText('核对原请求')}</Button>{ai.latest?.status==='unknown'&&<details><summary>{uiText('已在供应商侧核对？')}</summary><Button size="sm" color="secondary" isDisabled={editing} onPress={()=>void ai.closeUnknown()}>{uiText('结束本次未知请求')}</Button></details>}</div>}
    {ai.error&&<p role="alert">{uiText(ai.error)}</p>}
   </div></details>}

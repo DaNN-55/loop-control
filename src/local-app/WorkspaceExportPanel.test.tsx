@@ -31,3 +31,10 @@ it('has no issue entry or artificial problem-resolution gate',()=>{
 it('requires new output after actual video content changes',()=>{
  const w={...base,exports:[{...base.exports![0],current:false}]};const command=vi.fn();render(<WorkspaceExportPanel workspace={w} pending={false} command={command} onChange={()=>{}}/>);expect(screen.getByText('视频需重新生成')).toBeTruthy();expect(screen.getByRole('button',{name:'重新生成成片'})).toBeTruthy();expect(screen.queryByRole('button',{name:'确认并完成'})).toBeNull();expect(command).not.toHaveBeenCalled();
 });
+
+it('previews the exact historical file without changing the latest export or issuing commands',async()=>{
+ const old={...base.exports![0],id:'old',current:false,projectContentVersion:2,createdAt:'2026-11-22T06:00:00Z',artifact:{relativePath:'history.mp4',sha256:'old-sha',fileSize:10}},command=vi.fn();
+ render(<WorkspaceExportPanel workspace={{...base,exports:[base.exports![0],old]}} pending={false} command={command} onChange={()=>{}}/>);
+ fireEvent.click(screen.getByLabelText('查看详情').querySelector('summary')!);fireEvent.click(screen.getByRole('button',{name:'预览工程版本 v2'}));
+ await waitFor(()=>expect(document.querySelectorAll('video')).toHaveLength(2));const videos=[...document.querySelectorAll('video')];expect(videos[1].getAttribute('src')).toContain('path=history.mp4&sha256=old-sha');expect(videos[0].getAttribute('src')).toContain('path=current.mp4');expect(command).not.toHaveBeenCalled();
+});

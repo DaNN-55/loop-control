@@ -10,11 +10,12 @@ type PublicationEditing=ReturnType<typeof useWorkspacePublication>;
 export function usePublicationAssistant(episodeId:string,p:PublicationEditing,readOnly:boolean){
  const owner=useWorkspaceOwnerId(),key=owner?'loop-control.script-studio-model:'+owner:'',path=`episodes/${episodeId}/publication-ai`;
  const visit=useMemo(()=>({active:false,busy:false}),[owner,episodeId]);
- const [catalog,setCatalog]=useState<ProductionServiceCatalog|null>(null),[selection,setSelection]=useState(''),[choosing,setChoosing]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[latest,setLatest]=useState<PublicationRequestResult|null>(null);
- const options=(catalog?.groups?.find(group=>group.capability==='language_model')?.services??[]).filter(s=>s.executable&&s.connectionVersionId).flatMap(s=>s.models.map(model=>({id:s.id+':'+model,label:(s.connectionName??s.label)+' · '+model,selection:{capability:'language_model' as const,provider:s.provider,adapter:s.adapter,model,connectionVersionId:s.connectionVersionId!}})));
+ const [modelsLoading,setModelsLoading]=useState(false),[catalog,setCatalog]=useState<ProductionServiceCatalog|null>(null),[selection,setSelection]=useState(''),[choosing,setChoosing]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[latest,setLatest]=useState<PublicationRequestResult|null>(null);
+ const options=(catalog?.groups?.find(group=>group.capability==='language_model')?.services??[]).filter(s=>s.executable&&s.connectionVersionId).flatMap(s=>s.models.map(model=>({id:s.id+':'+model,label:(s.connectionName??s.label)+' · '+model,connection:s.connectionName??s.label,selection:{capability:'language_model' as const,provider:s.provider,adapter:s.adapter,model,connectionVersionId:s.connectionVersionId!}})));
  const choice=options.find(option=>option.id===selection),unresolved=latest?.status==='dispatching'||latest?.status==='unknown';
  async function refresh(){
-  try{const data=await localRequest('connections');if(visit.active){setCatalog(data.serviceCatalog??null);setError('');}}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'模型连接读取失败。');}
+  setModelsLoading(true);
+  try{const data=await localRequest('connections');if(visit.active){setCatalog(data.serviceCatalog??null);setError('');}}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'模型连接读取失败。');}finally{if(visit.active)setModelsLoading(false);}
  }
  useEffect(()=>{
   visit.active=true;setBusy(false);setError('');setLatest(null);setCatalog(null);setSelection(key?localStorage.getItem(key)??'':'');
@@ -44,5 +45,5 @@ export function usePublicationAssistant(episodeId:string,p:PublicationEditing,re
  }
  async function undo(){if(readOnly||visit.busy)return;visit.busy=true;setBusy(true);setError('');try{await p.mutate('undo',{},path);if(visit.active)setLatest(null);}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'撤回未完成。');}finally{visit.busy=false;if(visit.active)setBusy(false);}}
  async function closeUnknown(){if(!latest||visit.busy)return;visit.busy=true;setBusy(true);try{const saved=await p.flush(),value=await localCommand<PublicationRequestResult>('closeUnknown',{expectedRevision:saved.revision,requestId:latest.requestId},undefined,path);if(visit.active){setLatest(value);setError('');}}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'请求尚未结束。');}finally{visit.busy=false;if(visit.active)setBusy(false);}}
- return{options,choice,choose,useConfiguredConnection,choosing,setChoosing,busy,error,latest,unresolved,generate,undo,recover,refresh,closeUnknown};
+ return{options,choice,modelsLoading,choose,useConfiguredConnection,choosing,setChoosing,busy,error,latest,unresolved,generate,undo,recover,refresh,closeUnknown};
 }

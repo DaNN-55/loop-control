@@ -1,6 +1,7 @@
 import {useMemo,useRef,useState,type CSSProperties} from 'react';
-import {Check,FileVideo,ArrowLeft} from 'lucide-react';
-import {uiText} from '../i18n/ui';
+import {Check,ChevronRight,FileVideo,ArrowLeft,X} from 'lucide-react';
+import {uiText,getUiLocale} from '../i18n/ui';
+import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
 import {VideoPreview} from '../ui/media/VideoPreview';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -14,7 +15,11 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
  const flight=useMemo(()=>({active:false}),[scope]);
  const [operation,setOperation]=useState<{scope:string;name:WorkspaceExportAction}|null>(null),[error,setError]=useState('');
  const [downloadTarget,setDownloadTarget]=useState<HTMLDivElement|null>(null),[mediaInfo,setMediaInfo]=useState({sha:'',width:0,height:0,duration:0});
- const player=useRef<HTMLVideoElement>(null);
+ const player=useRef<HTMLVideoElement>(null),[historyId,setHistoryId]=useState<string|null>(null);
+ const historyPreview=w.exports?.find(entry=>entry.id===historyId&&entry.status==='ready'&&entry.artifact);
+ const passedChecks=w.exports?.[0]?.checks.filter(check=>check.passed).length??0,totalChecks=w.exports?.[0]?.checks.length??0;
+ const versionLabel=(version:number|undefined)=>version===undefined?uiText('未记录'):`v${version}`;
+ function exportTime(value:string){const date=new Date(value);return Number.isFinite(date.getTime())?date.toLocaleString(getUiLocale(),{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}):uiText('未记录');}
  const action=operation?.scope===scope?operation.name:null;
  const {review}=workspaceExportDeliveryState(w,{readOnly,pending,action}),{latest,outdated}=review;
  const info=mediaInfo.sha===latest?.artifact?.sha256?mediaInfo:null,ratio=info&&info.height>0?info.width/info.height:9/16;
@@ -45,12 +50,18 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
     <WorkspaceDeliveryPanel actionsContainer={downloadTarget} workspace={w} pending={pending||readOnly||!!action} completedView={completedView} publicationReadOnly={publicationReadOnly} command={command} onChange={onChange}/>
    </div>
   </div>
-    {latest&&<details className="workspace-export-secondary" aria-label={uiText('查看详情')}><summary>{uiText('查看详情')}</summary>
-     <h4>{uiText('技术检查')}</h4><ul>{latest.checks.map((check,index)=><li key={index}><span className={check.passed?'is-confirmed':'is-failed'}>{uiText(check.passed?'通过':'未通过')}</span> {uiText(check.detail)}</li>)}</ul>
-     {latest.artifact&&<p>{uiText('文件大小')} · {(latest.artifact.fileSize/1024/1024).toFixed(2)} MB · MP4</p>}
-     <h4>{uiText('导出历史')}</h4>{w.exports?.map(entry=><p key={entry.id}>{uiText('工程版本')} {entry.projectContentVersion===undefined?uiText('未记录'):`v${entry.projectContentVersion}`} · {uiText(entry.status==='ready'?'检查通过':'未通过')}{entry.confirmedAt?uiText(' · 曾确认'):''}</p>)}
+    {latest&&<details className="workspace-export-secondary" aria-label={uiText('查看详情')}><summary><ChevronRight size={13} aria-hidden="true"/><span>{uiText('查看详情')}</span><small>{totalChecks?uiText('{passed}/{total} 项检查通过',{passed:String(passedChecks),total:String(totalChecks)}):uiText('未记录检查项')} · {uiText('{count} 个导出版本',{count:String(w.exports?.length??0)})}</small></summary>
+     <div className="workspace-delivery-details-grid">
+      <section aria-label={uiText('技术检查')}><header><h4>{uiText('技术检查')}</h4>{totalChecks>0&&<span className={passedChecks===totalChecks?'is-confirmed':'is-failed'}>{uiText(passedChecks===totalChecks?'全部通过':'存在未通过项')}</span>}</header>
+       {totalChecks?<ul className="workspace-delivery-check-list">{latest.checks.map((check,index)=><li key={index}><span className={check.passed?'is-confirmed':'is-failed'}>{check.passed?<Check size={14} aria-hidden="true"/>:<X size={14} aria-hidden="true"/>}<span className="sr-only">{uiText(check.passed?'通过':'未通过')}</span></span><span>{uiText(check.detail)}</span></li>)}</ul>:<p className="workspace-delivery-details-empty">{uiText('未记录技术检查项。')}</p>}
+      </section>
+      <section className="workspace-delivery-export-history" aria-label={uiText('导出历史')}><header><h4>{uiText('导出历史')}</h4></header>
+       <table className="workspace-delivery-history-table"><caption className="sr-only">{uiText('成片导出版本')}</caption><thead><tr><th scope="col">{uiText('工程版本')}</th><th scope="col">{uiText('生成时间')}</th><th scope="col">{uiText('状态')}</th><th scope="col">{uiText('操作')}</th></tr></thead><tbody>{w.exports?.map(entry=><tr key={entry.id}><th scope="row">{versionLabel(entry.projectContentVersion)}{entry.current&&<small>{uiText('当前成片')}</small>}</th><td>{entry.createdAt?<time dateTime={entry.createdAt}>{exportTime(entry.createdAt)}</time>:uiText('未记录')}</td><td><span className={entry.status!=='ready'?'is-failed':entry.confirmedAt||entry.confirmed?'is-confirmed':''}>{uiText(entry.status!=='ready'?'未通过':entry.confirmedAt||entry.confirmed?'已确认':'检查通过')}</span></td><td><Button size="xs" color="tertiary" aria-label={uiText('预览工程版本 {version}',{version:versionLabel(entry.projectContentVersion)})} isDisabled={entry.status!=='ready'||!entry.artifact} onPress={()=>setHistoryId(entry.id)}>{uiText('预览')}</Button></td></tr>)}</tbody></table>
+      </section>
+     </div>
      {!!w.deliveries?.slice(1).length&&<section aria-label={uiText('历史交付')}><h4>{uiText('历史交付')}</h4>{w.deliveries.slice(1).map((entry,index)=><div key={entry.id}><p>{uiText('历史交付')} {index+1} · {uiText(entry.status==='completed'?'已完成':'未完成')}{entry.error?` · ${entry.error}`:''}</p>{entry.status==='completed'&&entry.artifacts.filter(a=>a.artifactType==='final_render').map(a=><a key={a.relativePath} href={'/_local-artifact?'+new URLSearchParams({episode:w.episodeId,path:a.relativePath,sha256:a.sha256,download:'1'})} download>{uiText('下载历史视频')}</a>)}{entry.status==='completed'&&<a href={`/api/local/episodes/${w.episodeId}/delivery-download?delivery=${entry.id}`} download>{uiText('下载历史交付包（ZIP）')}</a>}</div>)}</section>}
      {review.exportAction.visible&&!review.exportAction.primary&&<Button size="sm" color="secondary" isDisabled={review.exportAction.disabledReason!==null} onPress={()=>void run('exportWorkspace')}>{uiText('重新生成成片')}</Button>}
     </details>}
+ {historyPreview?.artifact&&<ModalOverlay className="workspace-history-preview-overlay" isOpen isDismissable onOpenChange={open=>{if(!open)setHistoryId(null);}}><Modal className="workspace-history-preview-modal"><Dialog aria-label={uiText('历史成片预览')}><header><h4>{uiText('工程版本 {version}',{version:versionLabel(historyPreview.projectContentVersion)})}</h4><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText('关闭历史成片预览')} onPress={()=>setHistoryId(null)}/></header><VideoPreview title={uiText('历史成片')} src={'/_local-artifact?'+new URLSearchParams({episode:w.episodeId,path:historyPreview.artifact.relativePath,sha256:historyPreview.artifact.sha256})}/></Dialog></Modal></ModalOverlay>}
  </section>;
 }
