@@ -91,6 +91,8 @@ export const navigationMessages:Record<string,string>={
   "还没有生产单": "No production orders yet",
   "正在读取生产单…": "Loading production orders…",
   "每页": "Per page",
+  "生产单分页": "Production order pages",
+  " / 页": " / page",
   "每页生产单条数": "Production orders per page",
   " 条": " records",
   "密码用于本机身份验证，包括登录、查看和复制密钥。": "The password verifies your identity on this device for login, viewing, and copying secrets.",

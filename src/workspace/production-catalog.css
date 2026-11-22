@@ -6,7 +6,7 @@
 .episode-extra-filters>.dan-select-field{flex:1 1 150px}
 .episode-extra-filters[hidden]{display:none!important}
 .episode-table-scroll{max-inline-size:100%;overflow:auto;container-type:inline-size}
-html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table{display:table;table-layout:auto;border-collapse:separate;border-spacing:0;inline-size:100%;min-inline-size:560px;font-size:13px}
+html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table{display:table;table-layout:auto;border-collapse:separate;border-spacing:0;inline-size:100%;min-inline-size:560px;font-size:12px}
 html[data-interface=impeccable] .product-ui .episode-list-workspace[data-statistics=true] .episode-table{min-inline-size:920px}
 html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table .table-row{display:table-row;min-height:0;min-width:0;cursor:pointer}
 html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-table .table-row>*{display:table-cell!important;vertical-align:middle;text-align:start;padding:12px;border-bottom:1px solid var(--lc-line)}
@@ -53,15 +53,24 @@ html[data-interface=impeccable] .product-ui .production-catalog .episode-list-to
 html[data-interface=impeccable] .product-ui .production-catalog :is(.episode-list-toolbar,.episode-extra-filters,.episode-list-footer) :is(button[data-color],.dan-select-trigger){height:36px;min-height:36px;font-size:13px;box-shadow:none!important;border-radius:6px}
 html[data-interface=impeccable] .product-ui .production-catalog .episode-list-toolbar .dan-select-trigger{padding-block:6px;border-color:var(--lc-line)}
 .production-catalog .episode-list-tools{margin-inline-start:auto;border-inline-start:1px solid var(--lc-line);padding-inline-start:8px}
-html[data-interface=impeccable] .product-ui .production-catalog .episode-name .lc-table-title{font-size:15px;font-weight:500}
+html[data-interface=impeccable] .product-ui .production-catalog .episode-name .lc-table-title{font-size:13px;font-weight:600}
 /* The shared table-name rule stretches buttons; only the visible title opens production. */
 html[data-interface=impeccable] .product-ui .production-catalog .episode-name .lc-table-name{width:fit-content!important;max-width:100%}
 html[data-interface=impeccable] .product-ui .production-catalog .episode-name .lc-table-text{display:block;line-height:1.55;max-height:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-html[data-interface=impeccable] .product-ui .production-catalog .episode-name small{font-size:12px;margin-top:4px}
-html[data-interface=impeccable] .product-ui .production-catalog .episode-stage-name{font-size:13px}
+html[data-interface=impeccable] .product-ui .production-catalog .episode-name small{font-size:11px;margin-top:5px}
+html[data-interface=impeccable] .product-ui .production-catalog .episode-stage-name{font-size:12px}
 .production-preview-dialog{position:fixed;inset:0;margin:auto;box-sizing:border-box;width:min(420px,calc(100vw - 24px));max-height:calc(100dvh - 32px);padding:0;border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);color:var(--lc-ink);overflow:auto}
 .production-preview-dialog::backdrop{background:rgb(0 0 0/.35)}
 @container(max-width:620px){.episode-table .episode-stage-name{max-inline-size:100px}.episode-table time{white-space:normal!important}}
 @media(max-width:1000px){.production-catalog[data-preview=true]{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:640px){.episode-list-tools{margin-inline-start:auto}.production-preview-content .work-artwork{aspect-ratio:16/10}}
 @media(max-width:700px){html[data-interface=impeccable] .product-ui .production-catalog .episode-search{flex-basis:100%}html[data-interface=impeccable] .product-ui .production-catalog .episode-list-toolbar>label{flex:1 1 120px}}
+
+/* Numbered pagination is scoped to production; override the generated important button utilities. */
+html[data-interface=impeccable] .product-ui .production-catalog .episode-list-footer>.pagination-controls-numbered{flex:0 1 auto;flex-direction:row;justify-content:flex-end;gap:8px;margin-inline-start:auto;min-width:0}
+.production-catalog .pagination-controls-numbered>.pagination-total{white-space:nowrap;font-variant-numeric:tabular-nums}
+.production-catalog .pagination-controls-numbered>.pagination-pages{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-inline-start:0;max-width:100%;font-variant-numeric:tabular-nums}
+.production-catalog .pagination-controls-numbered .pagination-pages button{box-sizing:border-box;min-width:36px;height:36px!important;padding:0 8px!important;font-size:13px!important;font-weight:400!important}
+html[data-interface=impeccable] .product-ui .production-catalog .pagination-controls-numbered button[aria-current=page]{background:var(--lc-accent-soft);color:var(--lc-accent);border:1px solid var(--lc-accent);font-weight:600!important}
+.production-catalog .pagination-controls-numbered .episode-page-size>span{display:none}
+@media(max-width:700px){html[data-interface=impeccable] .product-ui .production-catalog .episode-list-footer>.pagination-controls-numbered{flex-basis:100%;justify-content:flex-start;margin-inline-start:0}.production-catalog .pagination-controls-numbered>.pagination-pages{gap:4px}}

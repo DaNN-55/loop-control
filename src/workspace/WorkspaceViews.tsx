@@ -283,11 +283,11 @@ export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewCont
     <footer className="episode-list-footer">
       {footerActions&&<div className="episode-footer-actions">{footerActions}</div>}
       {isPageLoading ? <p role="status">{uiText("正在读取生产单…")}</p> :
-        <PaginationControls page={safePage} pageSize={pageSize} total={total} onPageChange={serverPage?.onPageChange??setPage}
+        <PaginationControls numbered label="生产单分页" page={safePage} pageSize={pageSize} total={total} onPageChange={serverPage?.onPageChange??setPage}
           pageSizeControl={!reviewOnly&&(!serverPage||serverPage.onPageSizeChange) ? <label className="episode-page-size">
             <span>{uiText("每页")}</span>
             <NativeSelect icon={null} size="sm" aria-label={uiText("每页生产单条数")} value={String(pageSize)} onChange={event=>changePageSize(event.target.value)}>
-              {episodePageSizes.map(size=><option key={size} value={size}>{size}{uiText(" 条")}</option>)}
+              {episodePageSizes.map(size=><option key={size} value={size}>{size}{uiText(" 条")}{uiText(" / 页")}</option>)}
             </NativeSelect>
           </label> : undefined}/>}
     </footer>

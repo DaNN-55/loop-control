@@ -134,7 +134,8 @@ describe("approval console", () => {
 
     render(<EpisodeWorkspace accounts={[account]} accountsById={new Map([[account.id, account]])} artifacts={[]} blueprintsById={new Map([[blueprint.id, blueprint]])} episodeVisibility="active" episodes={[...episodes, archivedEpisode]} filter="全部账号" onEpisodeVisibilityChange={vi.fn()} onFilter={vi.fn()} onSeriesFilter={vi.fn()} onSelectEpisode={vi.fn()} series={[]} seriesById={new Map()} seriesFilter="全部系列" seriesVersionsById={new Map()} selectedEpisode={null} />);
 
-    expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
+    expect(screen.getByText("共 21 条")).toBeTruthy();
+    expect(screen.getByRole("button",{name:"第 1 页"}).getAttribute("aria-current")).toBe("page");
     expect(screen.queryByText("已归档生产单")).toBeNull();
     await user.click(screen.getByRole("button", { name: "下一页" }));
     expect(screen.getByText("生产单 21")).toBeTruthy();
