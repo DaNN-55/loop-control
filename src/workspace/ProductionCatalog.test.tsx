@@ -61,3 +61,37 @@ it('keeps statistics and the preview accessible from the display menu and persis
  await userEvent.click(screen.getByRole('menuitemcheckbox',{name:'生产单预览'}));
  expect(screen.getByRole('complementary',{name:'生产单预览'})).toBeTruthy();
 });
+
+function propsWithSeries():ComponentProps<typeof ProductionCatalog>{
+ const props=desktopProps();
+ const account={id:'a',name:'日照金山'} as typeof props.accounts[number];
+ const series={id:'series',name:'人情礼物'} as typeof props.series[number];
+ return {...props,accounts:[account],accountsById:new Map([['a',account]]),series:[series],seriesById:new Map([['series',series]]),collections:{one:{containerId:'container',seriesId:'series'}}};
+}
+
+it('shows only account context by default and omits it after choosing the account',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({sections:{artifacts:[],materialRevisions:[]},workspace:null})));
+ const props=propsWithSeries();
+ const app=render(<ProductionCatalog {...props}/>);
+ expect(app.container.querySelector('.episode-name small')?.textContent).toBe('日照金山');
+ app.rerender(<ProductionCatalog {...props} filter="a"/>);
+ expect(app.container.querySelector('.episode-name small')).toBeNull();
+ await act(async()=>{});
+});
+
+it('restores optional series information without showing empty series placeholders',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({sections:{artifacts:[],materialRevisions:[]},workspace:null})));
+ const props=propsWithSeries();
+ const app=render(<ProductionCatalog {...props}/>);
+ await userEvent.click(screen.getByRole('button',{name:'显示'}));
+ await userEvent.click(screen.getByRole('menuitemcheckbox',{name:'列表显示系列'}));
+ await userEvent.keyboard('{Escape}');
+ expect(app.container.querySelector('.episode-name small')?.textContent).toBe('日照金山 · 人情礼物');
+ expect(localStorage.getItem('loop-control.catalog.series.v1')).toBe('shown');
+ app.unmount();
+ const restored=render(<ProductionCatalog {...props} filter="a"/>);
+ expect(restored.container.querySelector('.episode-name small')?.textContent).toBe('人情礼物');
+ restored.rerender(<ProductionCatalog {...props} filter="a" collections={{one:{containerId:'container',seriesId:null}}}/>);
+ expect(restored.container.querySelector('.episode-name small')).toBeNull();
+ await act(async()=>{});
+});

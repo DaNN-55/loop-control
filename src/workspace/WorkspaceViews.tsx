@@ -178,6 +178,8 @@ export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewCont
   const [displayOpen,setDisplayOpen]=useState(false);
   const [showStatistics,setShowStatistics]=useState(()=>localStorage.getItem('loop-control.catalog.statistics.v1')==='shown');
   function toggleStatistics(){setShowStatistics(value=>{localStorage.setItem('loop-control.catalog.statistics.v1',value?'hidden':'shown');return !value;});}
+  const [showSeries,setShowSeries]=useState(()=>localStorage.getItem('loop-control.catalog.series.v1')==='shown');
+  function toggleSeries(){setShowSeries(value=>{localStorage.setItem('loop-control.catalog.series.v1',value?'hidden':'shown');return !value;});}
   const stage=catalogControls?.stage??'all';
   const [deletionEpisode,setDeletionEpisode]=useState<Episode|null>(null);
   const [page, setPage] = useState(1);
@@ -237,15 +239,17 @@ export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewCont
       <div className="episode-list-tools">
         {catalogControls&&actions}{tools}
         <Dropdown.Root isOpen={displayOpen} onOpenChange={setDisplayOpen}>
-          <Button size="sm" color="tertiary" iconLeading={SlidersHorizontal} iconTrailing={ChevronDown}>{uiText('显示')}</Button>
+          <Button size="sm" color="secondary" iconLeading={SlidersHorizontal} iconTrailing={ChevronDown}>{uiText('显示')}</Button>
           <Dropdown.Popover className="dan-ui product-ui episode-display-popover" placement="bottom end">
-            <Dropdown.Menu aria-label={uiText('显示选项')} selectionMode="multiple" selectedKeys={new Set([...(showStatistics?['statistics']:[]),...(previewControl?.visible?['preview']:[])])} shouldCloseOnSelect={false} onSelectionChange={keys=>{
+            <Dropdown.Menu aria-label={uiText('显示选项')} selectionMode="multiple" selectedKeys={new Set([...(showStatistics?['statistics']:[]),...(showSeries?['series']:[]),...(previewControl?.visible?['preview']:[])])} shouldCloseOnSelect={false} onSelectionChange={keys=>{
               if(keys==='all')return;
               if(keys.has('statistics')!==showStatistics)toggleStatistics();
+              if(keys.has('series')!==showSeries)toggleSeries();
               if(previewControl&&keys.has('preview')!==previewControl.visible){setDisplayOpen(false);previewControl.onToggle();}
             }}>
               {previewControl&&<Dropdown.Item id="preview" selectionIndicator="checkbox" isDisabled={previewControl.disabled}>{uiText('生产单预览')}</Dropdown.Item>}
               <Dropdown.Item id="statistics" selectionIndicator="checkbox">{uiText('显示统计')}</Dropdown.Item>
+              <Dropdown.Item id="series" selectionIndicator="checkbox">{uiText('列表显示系列')}</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown.Popover>
         </Dropdown.Root>
@@ -261,9 +265,11 @@ export function EpisodeWorkspace({ onPreviewEpisode,previewEpisodeId,previewCont
       </div>
     <AppliedFilters filters={activeFilters} onReset={resetFilters} restoreFocus={()=>searchInput.current?.focus()}/>
     <div className="episode-table-scroll" role="region" aria-label={uiText("生产单列表")} tabIndex={0}><table className="episode-table"><caption className="sr-only">{uiText("生产单")}</caption><thead><tr className="table-row table-header">{['生产单','当前阶段','状态','最近更新'].map(label=><th key={label} scope="col">{uiText(label)}</th>)}{showStatistics&&<><th scope="col"><MetricColumnHeader label={uiText("花费（元）")} description={uiText("实际为已记录费用；估算为尚无实际金额的调用，可按当前价格补算。预留单独追踪，不计入花费。按实际与估算之和排序；未知费用不按零计算。")}/></th><th scope="col"><MetricColumnHeader label={uiText("后台任务用时")} description={uiText("累计该生产单的后台任务运行时间。排队、人工操作和审核等待不计入，并行任务重叠时段只计一次。")}/></th><th scope="col"><MetricColumnHeader label={uiText("生成次数")} description={uiText("按已开始的生成尝试计数，含未采用候选和失败重试；不含排队、上传和本地编辑。")}/></th></>}<th scope="col">{uiText("操作")}</th></tr></thead><tbody>
-    {pageItems.map(episode=>{const seriesVersion=episode.series_version_id?seriesVersionsById.get(episode.series_version_id):null;const account=accountsById.get(episode.account_id);const count=artifactCounts?.[episode.id]??artifacts.filter(a=>a.episode_id===episode.id).length;const summary=operationRows?.find(row=>row.episodeId===episode.id);const state=episodeActionState(episode,summary);const collection=collections?.[episode.id];const context=[account?.name??'未知账号',collection?(collection.seriesId?seriesById.get(collection.seriesId)?.name??'系列不可用':'未分系列'):seriesVersion?`${seriesById.get(seriesVersion.series_id)?.name??'未知系列'} v${seriesVersion.version}`:'未关联系列'].join(' · ');
+    {pageItems.map(episode=>{const seriesVersion=episode.series_version_id?seriesVersionsById.get(episode.series_version_id):null;const account=accountsById.get(episode.account_id);const count=artifactCounts?.[episode.id]??artifacts.filter(a=>a.episode_id===episode.id).length;const summary=operationRows?.find(row=>row.episodeId===episode.id);const state=episodeActionState(episode,summary);const collection=collections?.[episode.id];
+      const seriesContext=collection?(collection.seriesId?seriesById.get(collection.seriesId)?.name??uiText('系列不可用'):''):seriesVersion?`${seriesById.get(seriesVersion.series_id)?.name??uiText('未知系列')} v${seriesVersion.version}`:'';
+      const context=[filter==='全部账号'?account?.name??uiText('未知账号'):'',showSeries?seriesContext:''].filter(Boolean).join(' · ');
       return <tr className={`table-row episode-row ${(previewEpisodeId??selectedEpisode?.id)===episode.id?'is-selected':''}`} key={episode.id} data-preview-id={episode.id} onClick={()=>onPreviewEpisode?onPreviewEpisode(episode.id):onSelectEpisode(episode.id)} onKeyDown={event=>{if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onPreviewEpisode?onPreviewEpisode(episode.id):onSelectEpisode(episode.id);}}} tabIndex={0}>
-        <td className="episode-name"><Tooltip title={episode.title||uiText("未命名生产单")} className="dan-ui dan-ui-tooltip"><TooltipTrigger onClick={event=>event.stopPropagation()} className="lc-table-name lc-table-title" data-episode-open={episode.id} onPress={()=>onSelectEpisode(episode.id)}><span className="lc-table-text">{episode.title||uiText("未命名生产单")}</span></TooltipTrigger></Tooltip><small title={context}>{context}</small></td>
+        <td className="episode-name"><Tooltip title={episode.title||uiText("未命名生产单")} className="dan-ui dan-ui-tooltip"><TooltipTrigger onClick={event=>event.stopPropagation()} className="lc-table-name lc-table-title" data-episode-open={episode.id} onPress={()=>onSelectEpisode(episode.id)}><span className="lc-table-text">{episode.title||uiText("未命名生产单")}</span></TooltipTrigger></Tooltip>{context&&<small title={context}>{context}</small>}</td>
         <td className="episode-stage-name">{episodeWorkflowLabel(summary)??uiText(stageLabels[episode.stage])}</td>
         <td><EpisodeStatus state={state}/>{state==='blocked'&&summary?.blocker&&<small className="episode-blocker-reason">{episodeBlockerLabel(summary.blocker)}</small>}</td>
         <td><time dateTime={episode.updated_at} title={formatDate(episode.updated_at)} aria-label={formatDate(episode.updated_at)}>{new Intl.DateTimeFormat(getUiLocale(),{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(episode.updated_at))}</time></td>
