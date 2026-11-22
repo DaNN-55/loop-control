@@ -1,0 +1,11 @@
+taskId,type,provider,model,status,attempt,reservedCny,createdAt,completedAt,actualSupplierCost
+90d120ba-6fd2-4bca-9801-cd8ca1342600,generate_static_visual,openai,gpt-image-2.6-flare,completed,1,10.00,2026-11-22T20:56:58.21019+08:00,2026-11-22T20:57:06.591047+08:00,unknown
+054b8db4-7b0e-41f8-b286-d18e34385fa2,generate_narration,volcengine_tts,seed-tts-2.0,completed,1,0.13,2026-11-22T20:57:31.543943+08:00,2026-11-22T20:57:36.053061+08:00,unknown
+ead20e3b-7eca-4d9e-b1aa-e90998a74b48,generate_narration,volcengine_tts,seed-tts-2.0,completed,1,0.12,2026-11-22T21:02:23.824618+08:00,2026-11-22T21:02:28.136762+08:00,unknown
+a36e43b9-66a1-45c8-8264-5845cfa8aec7,generate_static_visual,openai,gpt-image-2.6-flare,completed,1,10.00,2026-11-22T21:02:38.649588+08:00,2026-11-22T21:02:46.225682+08:00,unknown
+6dc397af-c7ff-42fd-b669-f37172a5a0e6,generate_static_visual,openai,gpt-image-2.6-sunburst,completed,1,15.00,2026-11-22T21:03:02.651681+08:00,2026-11-22T21:03:18.732097+08:00,unknown
+fe10959e-b444-4f61-ba16-f045d64895e3,generate_narration,volcengine_tts,seed-tts-2.0,completed,1,0.12,2026-11-22T21:03:32.263951+08:00,2026-11-22T21:03:36.109098+08:00,unknown
+bc52d18e-fb0a-4248-b739-19b136641b2c,generate_shot_video,minimax,MiniMax-H3-Lite,completed,1,1.39,2026-11-22T21:04:07.489776+08:00,2026-11-22T21:05:04.243688+08:00,unknown
+bb5e8c1e-32c7-4176-af6b-065580af975a,generate_shot_video,bailian,wan2.6-i2v,completed,1,2.88,2026-11-22T21:06:31.346755+08:00,2026-11-22T21:09:55.736385+08:00,unknown
+23060af2-e710-4fea-8d30-f5c14129cbcf,generate_shot_video,minimax,MiniMax-H3-Highspeed,completed,1,1.39,2026-11-22T21:10:22.708614+08:00,2026-11-22T21:10:49.758638+08:00,unknown
+82ecdb6d-fb00-4e4f-a031-3321d9383d24,generate_shot_video,minimax,MiniMax-H3,completed,1,4.50,2026-11-22T21:10:48.926125+08:00,2026-11-22T21:13:47.30255+08:00,unknown

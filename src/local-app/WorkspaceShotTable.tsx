@@ -18,6 +18,7 @@ interface Props {
 
 export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,onSelect,onDelete,onEdit,onPreparationNavigate}:Props){
  const locked=disabled||readOnly;
+ const selectionDisabled=disabled&&!readOnly;
  const clips=workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index);
  const [adding,setAdding]=useState(false),[text,setText]=useState(''),[drop,setDrop]=useState<{shotId:string;after:boolean}|null>(null),[announcement,setAnnouncement]=useState('');
  const helpId=useId(),inputId=useId(),dragged=useRef<string|null>(null),editing=useRef(false),input=useRef<HTMLTextAreaElement>(null),addButton=useRef<HTMLButtonElement>(null);
@@ -52,16 +53,16 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
      const sourceName=source?.source_path.split('/').pop()??currentSource?.relativePath.split('/').pop();
      return <tr key={clip.shotId} aria-label={shotLabel} aria-selected={selectedShotId===clip.shotId} aria-describedby={readOnly||disabled?undefined:helpId} tabIndex={0} draggable={!locked}
       data-drop={drop?.shotId===clip.shotId?(drop.after?'after':'before'):undefined}
-      onClick={()=>onSelect(clip.shotId)}
-      onKeyDown={event=>{if(event.altKey&&(event.key==='ArrowUp'||event.key==='ArrowDown')){event.preventDefault();if(event.key==='ArrowUp'&&index>0)void move(clip.shotId,clips[index-1].shotId);else if(event.key==='ArrowDown'&&index<clips.length-1)void move(clip.shotId,clips[index+2]?.shotId??null);}else if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelect(clip.shotId);}}}
+      onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}
+      onKeyDown={event=>{if(event.altKey&&(event.key==='ArrowUp'||event.key==='ArrowDown')){event.preventDefault();if(event.key==='ArrowUp'&&index>0)void move(clip.shotId,clips[index-1].shotId);else if(event.key==='ArrowDown'&&index<clips.length-1)void move(clip.shotId,clips[index+2]?.shotId??null);}else if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();if(!selectionDisabled)onSelect(clip.shotId);}}}
       onDragStart={event=>{if(locked){event.preventDefault();return;}dragged.current=clip.shotId;event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',clip.shotId);}}
       onDragOver={event=>dragOver(event,clip.shotId)}
       onDrop={event=>{event.preventDefault();const id=dragged.current;dragged.current=null;setDrop(null);if(locked||!id||id===clip.shotId)return;const rect=event.currentTarget.getBoundingClientRect(),after=event.clientY>rect.top+rect.height/2,remaining=clips.filter(c=>c.shotId!==id),target=remaining.findIndex(c=>c.shotId===clip.shotId);void move(id,after?remaining[target+1]?.shotId??null:clip.shotId);}}
       onDragEnd={()=>{dragged.current=null;setDrop(null);}}>
-      <td><button type="button" draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>onSelect(clip.shotId)}>{String(index+1).padStart(2,"0")}</button></td>
+      <td><button type="button" disabled={selectionDisabled} draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></td>
       <td><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div></td>
       <td>{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</td>
-      <td><WorkspaceShotPreparationStatus preparation={preparation} shotLabel={shotLabel} onNavigate={onPreparationNavigate?target=>onPreparationNavigate(clip.shotId,target):undefined}/></td>
+      <td><WorkspaceShotPreparationStatus preparation={preparation} shotLabel={shotLabel} onNavigate={onPreparationNavigate?target=>{if(!selectionDisabled)onPreparationNavigate(clip.shotId,target);}:undefined}/></td>
       {!readOnly&&<td className="workspace-shot-table-actions-cell" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}>
        <Button type="button" size="sm" color="tertiary" className="workspace-shot-menu-trigger" aria-label={uiText("删除{value0}",{value0:String(shotLabel)})} title={clips.length<=1?uiText("至少保留一个镜头"):uiText("删除镜头")} isDisabled={disabled||clips.length<=1} iconLeading={Trash2} onPress={()=>onDelete(clip)}/>
       </td>}

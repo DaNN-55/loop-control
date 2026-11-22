@@ -333,6 +333,7 @@ it('reveals the narration reference on demand without replacing independent capt
 it('automatically saves the first complete managed voice configuration for later shots',async()=>{
  const {workspace}=setup();cleanup();
  const initial={...workspace,narration:workspace.narration!.map(n=>({...n,defaults:null}))} as ProductionWorkspace;
+ const fetchFirst=vi.mocked(fetch),originalFirst=fetchFirst.getMockImplementation()!;fetchFirst.mockImplementation(async(path,...args)=>String(path).endsWith('/workspace')?Response.json({workspace:initial}):originalFirst(path,...args));
  const command=vi.fn(async(_name:string,data:unknown)=>{const {selection,voice,languageCode,speakingRate}=data as WorkspaceNarrationSettings;return {...initial,revision:2,narration:initial.narration!.map(n=>({...n,defaults:{selection,voice,languageCode,speakingRate}}))};});
  function Harness(){const [value,setValue]=useState(initial);return <WorkspaceNarrationPanel episodeId="e" workspace={value} selectedShotId="S01" pending={false} command={command} onChanged={setValue} managedVoice={{mode:'tts',onChange:vi.fn(),source:null}}/>;}
  render(<Harness/>);await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));
@@ -353,6 +354,7 @@ it('confirms subsequent managed voice changes and cancels without saving or gene
 it('uses order defaults in managed generation even when the shot has a historical override',async()=>{
  const {workspace}=setup();cleanup();const shot=workspace.narration![0],defaults={...shot.defaults!,speakingRate:.85};
  const current={...workspace,narration:[{...shot,override:true,speakingRate:1.5,defaults}]} as ProductionWorkspace;
+ const fetchCurrent=vi.mocked(fetch),originalCurrent=fetchCurrent.getMockImplementation()!;fetchCurrent.mockImplementation(async(path,...args)=>String(path).endsWith('/workspace')?Response.json({workspace:current}):originalCurrent(path,...args));
  const command=vi.fn(async()=>current);render(<WorkspaceNarrationPanel episodeId="e" workspace={current} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()} managedVoice={{mode:'tts',onChange:vi.fn(),source:null}}/>);
  await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','0.85');
  fireEvent.click(screen.getByRole('button',{name:'生成口播'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarration',expect.objectContaining({speakingRate:.85})));
@@ -372,4 +374,16 @@ it('retains the managed configuration draft and stops generation when saving the
  const command=vi.fn(async()=>{throw Error('配置保存失败');});render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()} managedVoice={{mode:'tts',onChange:vi.fn(),source:null}}/>);
  await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));fireEvent.click(screen.getByRole('button',{name:'生成口播'}));fireEvent.click(await screen.findByRole('button',{name:'确认修改'}));
  expect(await screen.findByRole('alert')).toHaveProperty('textContent','配置保存失败');expect(command).toHaveBeenCalledTimes(1);expect(command).toHaveBeenCalledWith('saveWorkspaceNarrationDefaults',expect.anything());expect(screen.getByRole('spinbutton',{name:'语速'})).toHaveProperty('value','1.1');
+});
+
+it('refreshes the revision after a configuration confirmation while retaining the confirmed settings',async()=>{
+ const {workspace}=setup();cleanup();let latest=workspace;const fetchMock=vi.mocked(fetch),original=fetchMock.getMockImplementation()!;
+ fetchMock.mockImplementation(async(path,...args)=>String(path).endsWith('/workspace')?Response.json({workspace:latest}):original(path,...args));
+ const command=vi.fn(async()=>latest);
+ render(<WorkspaceNarrationPanel episodeId="e" workspace={workspace} selectedShotId="S01" pending={false} command={command} onChanged={vi.fn()} managedVoice={{mode:'tts',onChange:vi.fn(),source:null}}/>);
+ await waitFor(()=>expect(screen.getByRole('button',{name:'生成口播'})).toHaveProperty('disabled',false));
+ fireEvent.click(screen.getByRole('button',{name:'语音模型'}));fireEvent.click(screen.getByRole('menuitemradio',{name:/seed-tts-2.0 B · v1/}));
+ await screen.findByRole('dialog',{name:'修改本生产单口播配置'});latest={...workspace,revision:5};
+ fireEvent.click(screen.getByRole('button',{name:'确认修改'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('saveWorkspaceNarrationDefaults',expect.objectContaining({expectedRevision:5,selection:{...selection,connectionVersionId:'b'}})));
 });

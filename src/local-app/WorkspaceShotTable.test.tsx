@@ -64,3 +64,15 @@ it('protects the last logical shot even when it contains multiple visual slots',
  render(<WorkspaceShotTable workspace={workspace} project={null} materials={[]} selectedShotId="S1" disabled={false} onSelect={vi.fn()} onDelete={onDelete} onEdit={vi.fn()}/>);
  expect((screen.getByRole('button',{name:'删除镜头 01'}) as HTMLButtonElement).disabled).toBe(true);expect(screen.queryByRole('button',{name:'删除镜头 02'})).toBeNull();expect(onDelete).not.toHaveBeenCalled();
 });
+
+it('keeps the current shot until a posted mutation finishes, then restores navigation',()=>{
+ const workspace=deletionWorkspace(),onSelect=vi.fn(),onNavigate=vi.fn();
+ const props={workspace,project:null,materials:[],selectedShotId:'S1',onSelect,onDelete:vi.fn(),onEdit:vi.fn(),onPreparationNavigate:onNavigate};
+ const view=render(<WorkspaceShotTable {...props} disabled/>);
+ const row=screen.getByRole('row',{name:'镜头 02'});
+ expect(screen.getByRole('button',{name:'选择镜头 02'})).toHaveProperty('disabled',true);
+ fireEvent.click(row);fireEvent.keyDown(row,{key:'Enter'});fireEvent.keyDown(row,{key:' '});
+ expect(onSelect).not.toHaveBeenCalled();
+ view.rerender(<WorkspaceShotTable {...props} disabled={false}/>);
+ fireEvent.click(screen.getByRole('button',{name:'选择镜头 02'}));expect(onSelect).toHaveBeenCalledWith('S2');
+});

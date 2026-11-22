@@ -1,0 +1,1613 @@
+{
+  "recordedAt": "2026-11-22T13:21:28.267Z",
+  "episode": {
+    "id": "f339edf0-8324-4201-8533-e6b08fef47b1",
+    "stage": "production_completed"
+  },
+  "workspace": {
+    "revision": 17,
+    "projectSha256": "4cbcd1be2eec92779320be0266bb9a23b31c08e96462b8d37fe4894311a11b4b",
+    "editorAuthority": "native"
+  },
+  "exports": [
+    {
+      "id": "dd1ab5c0-48c5-4413-8506-a512d96ed10c",
+      "checks": [
+        {
+          "name": "used_content",
+          "detail": "已核对 9 个实际来源。",
+          "passed": true,
+          "sources": [
+            {
+              "sha256": "0ac3c34dccced4dcee336e29051b9aa146f1511765084a821d476287f08577f9",
+              "fileSize": 422279,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/bc52d18e-fb0a-4248-b739-19b136641b2c/bc52d18e-fb0a-4248-b739-19b136641b2c.mp4"
+            },
+            {
+              "sha256": "e496812f0717176888f36f5287d967f79006d7a6afdd13f30ed00c4f24916615",
+              "fileSize": 1883254,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/bb5e8c1e-32c7-4176-af6b-065580af975a/bb5e8c1e-32c7-4176-af6b-065580af975a.mp4"
+            },
+            {
+              "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e",
+              "fileSize": 1691631,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/6dc397af-c7ff-42fd-b669-f37172a5a0e6/image.png"
+            },
+            {
+              "sha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8",
+              "fileSize": 21357,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/054b8db4-7b0e-41f8-b286-d18e34385fa2/narration-e3fccc8e-ac90-493b-99ad-4c5c2c01ee62.mp3"
+            },
+            {
+              "sha256": "322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83",
+              "fileSize": 25197,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/ead20e3b-7eca-4d9e-b1aa-e90998a74b48/narration-2b01492a-08d8-464e-82ff-5e496db31be0.mp3"
+            },
+            {
+              "sha256": "c120d26daa27d0e257e96123d9feb4418eddd46d70d3e27350fe0e7647ad6811",
+              "fileSize": 21549,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/fe10959e-b444-4f61-ba16-f045d64895e3/narration-aa2d7c91-e773-4d8b-b788-74766bb85922.mp3"
+            },
+            {
+              "sha256": "d5e3db57b787189e2b69da089aee47d64358a77abddb577fb5c766e2cad9b932",
+              "fileSize": 16526,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/materials/d5e3db57b787189e2b69da089aee47d64358a77abddb577fb5c766e2cad9b932-soft-chime.mp3"
+            },
+            {
+              "sha256": "900487f4900c0a3ee4d0a520a6d67f3bcc7d488e338923fa9b121500fbc46fed",
+              "fileSize": 68048,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/materials/900487f4900c0a3ee4d0a520a6d67f3bcc7d488e338923fa9b121500fbc46fed-视频原声-ff1192ea9aeb7310518496bad4541b8650d895383277edcff85113eb06571bb1.mp3"
+            },
+            {
+              "sha256": "aeafe1a93309b8f1b7d2264b9270b71e7aa18c497dbd273b2294a5742b1fc7db",
+              "fileSize": 71631,
+              "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/materials/aeafe1a93309b8f1b7d2264b9270b71e7aa18c497dbd273b2294a5742b1fc7db-视频原声-4c89396b36a0d765c2048e5ff96588fe4f49540c5d9eb91e7afd179994f15127.mp3"
+            }
+          ]
+        },
+        {
+          "gaps": [],
+          "name": "visual_coverage",
+          "detail": "按当前原生时间线导出，空档保留工程背景。",
+          "passed": true
+        },
+        {
+          "name": "captions",
+          "detail": "已核对 3 组字幕时序，正文随最终文件一次确认。",
+          "passed": true,
+          "evidence": []
+        },
+        {
+          "name": "technical",
+          "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+          "passed": true,
+          "inspection": {
+            "width": 1080,
+            "height": 1920,
+            "hasAudio": true,
+            "blackFrameCount": 0,
+            "durationSeconds": 18.048
+          },
+          "videoFrames": 540,
+          "audioExpected": true,
+          "videoDurationSeconds": 18,
+          "expectedDurationSeconds": 18,
+          "containerDurationSeconds": 18.048
+        },
+        {
+          "name": "representative_frame",
+          "detail": "已实际解码代表帧。",
+          "passed": true,
+          "artifact": {
+            "sha256": "3251d083a2d38d1c58aba174fd9fb6f32d74f68c9f4f98e1f8265f58fbc02632",
+            "fileSize": 91959,
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-exports/dd1ab5c0-48c5-4413-8506-a512d96ed10c/representative.jpg"
+          }
+        },
+        {
+          "name": "export_file",
+          "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+          "passed": true
+        }
+      ],
+      "status": "ready",
+      "artifact": {
+        "sha256": "913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b",
+        "fileSize": 10618490,
+        "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-exports/dd1ab5c0-48c5-4413-8506-a512d96ed10c/913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b.mp4"
+      },
+      "confirmedAt": "2026-11-22T21:18:56.417186+08:00"
+    }
+  ],
+  "publication": {
+    "cover": {
+      "file": {
+        "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e",
+        "fileSize": 1691631,
+        "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/publication/covers/cda2bd6d-c955-4361-b5d9-08c24bb7fbd8.png"
+      },
+      "name": "cover.png",
+      "source": {
+        "kind": "upload"
+      }
+    },
+    "content": {
+      "tags": [
+        "晨光",
+        "慢生活",
+        "咖啡",
+        "日常"
+      ],
+      "title": "光落在杯沿",
+      "description": "早晨，给自己一点安静。看光走过杯沿，慢慢呼吸，再开始新的一天。\n本地全流程验收短片：AI 图片、视频与口播，人工整理剪辑。",
+      "instruction": ""
+    },
+    "revision": 3
+  },
+  "tasks": [
+    {
+      "id": "90d120ba-6fd2-4bca-9801-cd8ca1342600",
+      "type": "generate_static_visual",
+      "media": {
+        "adapter": "openai_images",
+        "static_visual": {
+          "prompt": "暖色晨光照在木桌与白色陶瓷杯上，安静的窗边，写实摄影。无人物，无文字，无商标。\n\n账号创作规则：{}\n系列创作规则：null",
+          "settings": {
+            "size": "864x1536",
+            "count": 1,
+            "quality": "low"
+          },
+          "references": []
+        }
+      },
+      "model": "gpt-image-2.6-flare",
+      "result": {
+        "retry": {
+          "reason": "Completed",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "90d120ba-6fd2-4bca-9801-cd8ca1342600",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "等待手动选择图片。",
+        "artifacts": [
+          {
+            "sha256": "01e2af840d76e4a2accf57821939e6a6366fee1b8caeff8b26e1ccb25d2de3e0",
+            "fileSize": 1733681,
+            "artifactType": "static_visual",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/90d120ba-6fd2-4bca-9801-cd8ca1342600/image.png"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "static_visual_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "image_batch",
+              "detail": "图片数量、PNG 数据及冻结参考图已校验。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "在线执行路径。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "openai",
+      "costBasis": {
+        "kind": "owner-reservation",
+        "model": "gpt-image-2.6-flare",
+        "settings": {
+          "size": "864x1536",
+          "count": 1,
+          "quality": "low"
+        },
+        "reservationCents": 1000
+      },
+      "createdAt": "2026-11-22T20:56:58.21019+08:00",
+      "completedAt": "2026-11-22T20:57:06.591047+08:00",
+      "reservedCents": 1000
+    },
+    {
+      "id": "054b8db4-7b0e-41f8-b286-d18e34385fa2",
+      "type": "generate_narration",
+      "media": {
+        "adapter": "volcengine_tts",
+        "narration": {
+          "text": "早晨，先给自己留一点安静。",
+          "voice": {
+            "name": "zh_female_vv_uranus_bigtts",
+            "language_code": "zh-CN",
+            "speaking_rate": 1
+          }
+        }
+      },
+      "model": "seed-tts-2.0",
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "054b8db4-7b0e-41f8-b286-d18e34385fa2",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8",
+            "fileSize": 21357,
+            "artifactType": "narration_audio",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/054b8db4-7b0e-41f8-b286-d18e34385fa2/narration-e3fccc8e-ac90-493b-99ad-4c5c2c01ee62.mp3"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地口播执行模式：live。",
+              "status": "passed",
+              "capability": "narration_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_narration_mode",
+              "detail": "实际在线Provider执行。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "audioDurationSeconds": 2.664
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "volcengine_tts",
+      "costBasis": {
+        "kind": "owner_reservation",
+        "minimumCents": 13,
+        "reservationCents": 13
+      },
+      "createdAt": "2026-11-22T20:57:31.543943+08:00",
+      "completedAt": "2026-11-22T20:57:36.053061+08:00",
+      "reservedCents": 13
+    },
+    {
+      "id": "fdc0e0ac-28ab-4217-aeb7-6ee00d563a09",
+      "type": "align_shot_captions",
+      "media": null,
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "result": {
+        "retry": {
+          "reason": "Local alignment completed.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "fdc0e0ac-28ab-4217-aeb7-6ee00d563a09",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Owner reviews the current shot timing.",
+        "artifacts": [
+          {
+            "sha256": "c317d5bed95e98ea5f592811e747944fff845c8a568592d9e6490db960e78218",
+            "fileSize": 1110,
+            "artifactType": "acoustic_alignment_evidence",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/fdc0e0ac-28ab-4217-aeb7-6ee00d563a09/alignment.json"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "acoustic_alignment"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "local_whisperx",
+              "detail": "真实本地模型返回与冻结正文对应的时序。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "acousticAlignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "早晨，",
+              "endMs": 565,
+              "startMs": 81,
+              "confidence": 0.973
+            },
+            {
+              "id": "phrase-2",
+              "text": "先给自己留一点安静。",
+              "endMs": 2624,
+              "startMs": 1009,
+              "confidence": 0.9958888888888888
+            }
+          ],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "本地 WhisperX 对齐已完成。",
+          "method": "local_whisperx",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [
+            {
+              "detail": "本地 WhisperX 已生成短语 cues。",
+              "method": "local_whisperx",
+              "status": "completed"
+            }
+          ],
+          "provider": "whisperx",
+          "wordCount": 2,
+          "audioSha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8",
+          "generatedAt": "2026-11-22T13:00:28.693Z",
+          "granularity": "phrase",
+          "inputVersion": "d051993fb92e0fc48547327c905a4d8f66f31ac2407d46d51c3a16b8a3cdfe8f",
+          "reviewIssues": [],
+          "textFingerprint": "b9e6afc9ba7ce0575f51acb4cf00a69adff9ded67b3fdb75e55c15f722e401e0",
+          "connectionVersionId": null
+        }
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "whisperx",
+      "costBasis": null,
+      "createdAt": "2026-11-22T21:00:13.380462+08:00",
+      "completedAt": "2026-11-22T21:00:28.702805+08:00",
+      "reservedCents": 0
+    },
+    {
+      "id": "ead20e3b-7eca-4d9e-b1aa-e90998a74b48",
+      "type": "generate_narration",
+      "media": {
+        "adapter": "volcengine_tts",
+        "narration": {
+          "text": "看光走过杯沿，慢慢呼吸。",
+          "voice": {
+            "name": "zh_female_vv_uranus_bigtts",
+            "language_code": "zh-CN",
+            "speaking_rate": 0.9
+          }
+        }
+      },
+      "model": "seed-tts-2.0",
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "ead20e3b-7eca-4d9e-b1aa-e90998a74b48",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83",
+            "fileSize": 25197,
+            "artifactType": "narration_audio",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/ead20e3b-7eca-4d9e-b1aa-e90998a74b48/narration-2b01492a-08d8-464e-82ff-5e496db31be0.mp3"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地口播执行模式：live。",
+              "status": "passed",
+              "capability": "narration_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_narration_mode",
+              "detail": "实际在线Provider执行。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "audioDurationSeconds": 3.144
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "volcengine_tts",
+      "costBasis": {
+        "kind": "owner_reservation",
+        "minimumCents": 12,
+        "reservationCents": 12
+      },
+      "createdAt": "2026-11-22T21:02:23.824618+08:00",
+      "completedAt": "2026-11-22T21:02:28.136762+08:00",
+      "reservedCents": 12
+    },
+    {
+      "id": "a36e43b9-66a1-45c8-8264-5845cfa8aec7",
+      "type": "generate_static_visual",
+      "media": {
+        "adapter": "openai_images",
+        "static_visual": {
+          "prompt": "同样的白色陶瓷杯，窗边植物与柔和光斑，近景。无人物，无文字。\n\n账号创作规则：{}\n系列创作规则：null",
+          "settings": {
+            "size": "864x1536",
+            "count": 1,
+            "quality": "low"
+          },
+          "references": []
+        }
+      },
+      "model": "gpt-image-2.6-flare",
+      "result": {
+        "retry": {
+          "reason": "Completed",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "a36e43b9-66a1-45c8-8264-5845cfa8aec7",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "等待手动选择图片。",
+        "artifacts": [
+          {
+            "sha256": "7b2cbf28ccf562c94c58f29f33a30614700fd8bc5584bf7df2e3b475baf3c972",
+            "fileSize": 1756595,
+            "artifactType": "static_visual",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/a36e43b9-66a1-45c8-8264-5845cfa8aec7/image.png"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "static_visual_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "image_batch",
+              "detail": "图片数量、PNG 数据及冻结参考图已校验。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "在线执行路径。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "openai",
+      "costBasis": {
+        "kind": "owner-reservation",
+        "model": "gpt-image-2.6-flare",
+        "settings": {
+          "size": "864x1536",
+          "count": 1,
+          "quality": "low"
+        },
+        "reservationCents": 1000
+      },
+      "createdAt": "2026-11-22T21:02:38.649588+08:00",
+      "completedAt": "2026-11-22T21:02:46.225682+08:00",
+      "reservedCents": 1000
+    },
+    {
+      "id": "6dc397af-c7ff-42fd-b669-f37172a5a0e6",
+      "type": "generate_static_visual",
+      "media": {
+        "adapter": "openai_images",
+        "static_visual": {
+          "prompt": "白色陶瓷杯与窗边绿植的暖色静物，宽松构图，为底部字幕留白，无文字无人物。\n\n账号创作规则：{}\n系列创作规则：null",
+          "settings": {
+            "size": "864x1536",
+            "count": 1,
+            "quality": "medium"
+          },
+          "references": []
+        }
+      },
+      "model": "gpt-image-2.6-sunburst",
+      "result": {
+        "retry": {
+          "reason": "Completed",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "6dc397af-c7ff-42fd-b669-f37172a5a0e6",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "等待手动选择图片。",
+        "artifacts": [
+          {
+            "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e",
+            "fileSize": 1691631,
+            "artifactType": "static_visual",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/6dc397af-c7ff-42fd-b669-f37172a5a0e6/image.png"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "static_visual_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "image_batch",
+              "detail": "图片数量、PNG 数据及冻结参考图已校验。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "在线执行路径。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "openai",
+      "costBasis": {
+        "kind": "owner-reservation",
+        "model": "gpt-image-2.6-sunburst",
+        "settings": {
+          "size": "864x1536",
+          "count": 1,
+          "quality": "medium"
+        },
+        "reservationCents": 1500
+      },
+      "createdAt": "2026-11-22T21:03:02.651681+08:00",
+      "completedAt": "2026-11-22T21:03:18.732097+08:00",
+      "reservedCents": 1500
+    },
+    {
+      "id": "fe10959e-b444-4f61-ba16-f045d64895e3",
+      "type": "generate_narration",
+      "media": {
+        "adapter": "volcengine_tts",
+        "narration": {
+          "text": "新的一天，从这一刻开始。",
+          "voice": {
+            "name": "zh_female_vv_uranus_bigtts",
+            "language_code": "zh-CN",
+            "speaking_rate": 0.9
+          }
+        }
+      },
+      "model": "seed-tts-2.0",
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "fe10959e-b444-4f61-ba16-f045d64895e3",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "c120d26daa27d0e257e96123d9feb4418eddd46d70d3e27350fe0e7647ad6811",
+            "fileSize": 21549,
+            "artifactType": "narration_audio",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/fe10959e-b444-4f61-ba16-f045d64895e3/narration-aa2d7c91-e773-4d8b-b788-74766bb85922.mp3"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地口播执行模式：live。",
+              "status": "passed",
+              "capability": "narration_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_narration_mode",
+              "detail": "实际在线Provider执行。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "audioDurationSeconds": 2.688
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "volcengine_tts",
+      "costBasis": {
+        "kind": "owner_reservation",
+        "minimumCents": 12,
+        "reservationCents": 12
+      },
+      "createdAt": "2026-11-22T21:03:32.263951+08:00",
+      "completedAt": "2026-11-22T21:03:36.109098+08:00",
+      "reservedCents": 12
+    },
+    {
+      "id": "bc52d18e-fb0a-4248-b739-19b136641b2c",
+      "type": "generate_shot_video",
+      "media": {
+        "video": {
+          "audio": true,
+          "prompt": "晨光照在木桌上的白色陶瓷咖啡杯，镜头轻轻推进，细微热气升起，温暖安静，保持杯子形状，无人物无文字。\n\n账号创作规则：{}\n系列创作规则：null",
+          "settings": null,
+          "image_mime": "image/png",
+          "resolution": "768P",
+          "composition": {
+            "fit": "contain",
+            "width": 1080,
+            "height": 1920
+          },
+          "first_frame": {
+            "sha256": "01e2af840d76e4a2accf57821939e6a6366fee1b8caeff8b26e1ccb25d2de3e0",
+            "fileSize": 1733681,
+            "artifactType": "wan_first_frame",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/90d120ba-6fd2-4bca-9801-cd8ca1342600/image.png"
+          },
+          "candidate_only": true,
+          "duration_seconds": 4
+        },
+        "adapter": "minimax_video"
+      },
+      "model": "MiniMax-H3-Lite",
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "bc52d18e-fb0a-4248-b739-19b136641b2c",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "0ac3c34dccced4dcee336e29051b9aa146f1511765084a821d476287f08577f9",
+            "fileSize": 422279,
+            "artifactType": "shot_video",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/bc52d18e-fb0a-4248-b739-19b136641b2c/bc52d18e-fb0a-4248-b739-19b136641b2c.mp4"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "shot_video_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 minimax 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "在线执行路径。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "visual": {
+        "mode": "tts",
+        "source": {
+          "id": "6db8c64c-1847-47b5-9a01-120ab5954844",
+          "sha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8",
+          "coverage": "partial",
+          "fileSize": 21357,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/054b8db4-7b0e-41f8-b286-d18e34385fa2/narration-e3fccc8e-ac90-493b-99ad-4c5c2c01ee62.mp3"
+        },
+        "identity": "{\"mode\":\"tts\",\"id\":\"workspace-narration-shot-shot-01\",\"src\":\"未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/054b8db4-7b0e-41f8-b286-d18e34385fa2/narration-e3fccc8e-ac90-493b-99ad-4c5c2c01ee62.mp3\",\"sourceAssetId\":\"audio-track-6db8c64c-1847-47b5-9a01-120ab5954844\",\"sha256\":\"5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8\",\"startFrame\":0,\"durationInFrames\":80,\"srcInFrame\":0,\"playbackRate\":1,\"edits\":null,\"fps\":30}",
+        "windowDurationSeconds": 2.6666666666666665
+      },
+      "attempt": 1,
+      "provider": "minimax",
+      "costBasis": {
+        "kind": "owner-reservation",
+        "model": "MiniMax-H3-Lite",
+        "reservationCents": 139,
+        "providerDurationSeconds": 4
+      },
+      "createdAt": "2026-11-22T21:04:07.489776+08:00",
+      "completedAt": "2026-11-22T21:05:04.243688+08:00",
+      "reservedCents": 139
+    },
+    {
+      "id": "558b559a-c95d-49ac-b00f-824e9e1cfe1e",
+      "type": "align_shot_captions",
+      "media": null,
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "result": {
+        "retry": {
+          "reason": "Local alignment completed.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "558b559a-c95d-49ac-b00f-824e9e1cfe1e",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Owner reviews the current shot timing.",
+        "artifacts": [
+          {
+            "sha256": "2ab0c0cf3c89be39b93005d805ffe389aa70d05eaddfd3dbb29271f31843f5d3",
+            "fileSize": 1110,
+            "artifactType": "acoustic_alignment_evidence",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/558b559a-c95d-49ac-b00f-824e9e1cfe1e/alignment.json"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "acoustic_alignment"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "local_whisperx",
+              "detail": "真实本地模型返回与冻结正文对应的时序。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "acousticAlignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "看光走过杯沿，",
+              "endMs": 1632,
+              "startMs": 121,
+              "confidence": 0.9705
+            },
+            {
+              "id": "phrase-2",
+              "text": "慢慢呼吸。",
+              "endMs": 3124,
+              "startMs": 2056,
+              "confidence": 0.9937499999999999
+            }
+          ],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "本地 WhisperX 对齐已完成。",
+          "method": "local_whisperx",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [
+            {
+              "detail": "本地 WhisperX 已生成短语 cues。",
+              "method": "local_whisperx",
+              "status": "completed"
+            }
+          ],
+          "provider": "whisperx",
+          "wordCount": 2,
+          "audioSha256": "322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83",
+          "generatedAt": "2026-11-22T13:04:32.989Z",
+          "granularity": "phrase",
+          "inputVersion": "264d52c564777a3cdf9b7446180b393aa0d4be6bd791c51abda3929ff55093ba",
+          "reviewIssues": [],
+          "textFingerprint": "0c37571fe1199fb313ee557bfd1446c98ce82432edc5b552e58910bc1f24af33",
+          "connectionVersionId": null
+        }
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "whisperx",
+      "costBasis": null,
+      "createdAt": "2026-11-22T21:04:19.055109+08:00",
+      "completedAt": "2026-11-22T21:04:32.998722+08:00",
+      "reservedCents": 0
+    },
+    {
+      "id": "518d4678-3e67-4403-aa85-6c2cbe5649cb",
+      "type": "align_shot_captions",
+      "media": null,
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "result": {
+        "retry": {
+          "reason": "Local alignment completed.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "518d4678-3e67-4403-aa85-6c2cbe5649cb",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Owner reviews the current shot timing.",
+        "artifacts": [
+          {
+            "sha256": "179c07ed845aeb8a6f8d30709f6358a3564540a57e88218cad1cb25bca63c08d",
+            "fileSize": 1121,
+            "artifactType": "acoustic_alignment_evidence",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/518d4678-3e67-4403-aa85-6c2cbe5649cb/alignment.json"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "acoustic_alignment"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "local_whisperx",
+              "detail": "真实本地模型返回与冻结正文对应的时序。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "acousticAlignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "新的一天，",
+              "endMs": 802,
+              "startMs": 100,
+              "confidence": 0.9652499999999999
+            },
+            {
+              "id": "phrase-2",
+              "text": "从这一刻开始。",
+              "endMs": 2648,
+              "startMs": 1184,
+              "confidence": 0.9916666666666666
+            }
+          ],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "本地 WhisperX 对齐已完成。",
+          "method": "local_whisperx",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [
+            {
+              "detail": "本地 WhisperX 已生成短语 cues。",
+              "method": "local_whisperx",
+              "status": "completed"
+            }
+          ],
+          "provider": "whisperx",
+          "wordCount": 2,
+          "audioSha256": "c120d26daa27d0e257e96123d9feb4418eddd46d70d3e27350fe0e7647ad6811",
+          "generatedAt": "2026-11-22T13:04:46.385Z",
+          "granularity": "phrase",
+          "inputVersion": "cb327814431155c148ce15dbc3049f3b399ae4265e8a1cae414501086f535dfc",
+          "reviewIssues": [],
+          "textFingerprint": "0a5127a749c1112286abcecb1f89e9d8b52db662a78793f690cb44abdb790540",
+          "connectionVersionId": null
+        }
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "whisperx",
+      "costBasis": null,
+      "createdAt": "2026-11-22T21:04:35.239039+08:00",
+      "completedAt": "2026-11-22T21:04:46.394012+08:00",
+      "reservedCents": 0
+    },
+    {
+      "id": "bb5e8c1e-32c7-4176-af6b-065580af975a",
+      "type": "generate_shot_video",
+      "media": {
+        "video": {
+          "audio": false,
+          "prompt": "白色陶瓷杯放在窗边木桌上，叶片影子轻轻摇动，镜头缓慢横移，写实温暖，无人物无文字。\n\n账号创作规则：{}\n系列创作规则：null",
+          "settings": {
+            "audio": true,
+            "shotType": "single",
+            "watermark": false,
+            "resolution": "720P",
+            "promptExtend": false,
+            "negativePrompt": ""
+          },
+          "image_mime": "image/png",
+          "resolution": "720P",
+          "composition": {
+            "fit": "contain",
+            "width": 1080,
+            "height": 1920
+          },
+          "first_frame": {
+            "sha256": "7b2cbf28ccf562c94c58f29f33a30614700fd8bc5584bf7df2e3b475baf3c972",
+            "fileSize": 1756595,
+            "artifactType": "wan_first_frame",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/a36e43b9-66a1-45c8-8264-5845cfa8aec7/image.png"
+          },
+          "duration_seconds": 4
+        },
+        "adapter": "wan_video"
+      },
+      "model": "wan2.6-i2v",
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "bb5e8c1e-32c7-4176-af6b-065580af975a",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "e496812f0717176888f36f5287d967f79006d7a6afdd13f30ed00c4f24916615",
+            "fileSize": 1883254,
+            "artifactType": "shot_video",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/bb5e8c1e-32c7-4176-af6b-065580af975a/bb5e8c1e-32c7-4176-af6b-065580af975a.mp4"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "shot_video_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 bailian 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "在线执行路径。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "visual": {
+        "mode": "tts",
+        "source": {
+          "id": "ca3329e7-6f3f-4de6-b4a2-2a735c2acc0e",
+          "sha256": "322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83",
+          "coverage": "partial",
+          "fileSize": 25197,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/ead20e3b-7eca-4d9e-b1aa-e90998a74b48/narration-2b01492a-08d8-464e-82ff-5e496db31be0.mp3"
+        },
+        "identity": "{\"mode\":\"tts\",\"id\":\"workspace-narration-shot-shot-02\",\"src\":\"未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/ead20e3b-7eca-4d9e-b1aa-e90998a74b48/narration-2b01492a-08d8-464e-82ff-5e496db31be0.mp3\",\"sourceAssetId\":\"audio-track-ca3329e7-6f3f-4de6-b4a2-2a735c2acc0e\",\"sha256\":\"322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83\",\"startFrame\":180,\"durationInFrames\":95,\"srcInFrame\":0,\"playbackRate\":1,\"edits\":null,\"fps\":30}",
+        "windowDurationSeconds": 3.1666666666666665
+      },
+      "attempt": 1,
+      "provider": "bailian",
+      "costBasis": {
+        "kind": "owner-reservation",
+        "model": "wan2.6-i2v",
+        "reservationCents": 288,
+        "providerDurationSeconds": 4
+      },
+      "createdAt": "2026-11-22T21:06:31.346755+08:00",
+      "completedAt": "2026-11-22T21:09:55.736385+08:00",
+      "reservedCents": 288
+    },
+    {
+      "id": "82eb89ce-9a7c-46a8-b888-9af0084ff267",
+      "type": "align_shot_captions",
+      "media": null,
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "result": {
+        "retry": {
+          "reason": "Local alignment completed.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "82eb89ce-9a7c-46a8-b888-9af0084ff267",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Owner reviews the current shot timing.",
+        "artifacts": [
+          {
+            "sha256": "e3df50c48584b8d716c9f5cc7253bced2d3e9b4c94bcf71d884db61a3c44f5ec",
+            "fileSize": 1110,
+            "artifactType": "acoustic_alignment_evidence",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/82eb89ce-9a7c-46a8-b888-9af0084ff267/alignment.json"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "acoustic_alignment"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "local_whisperx",
+              "detail": "真实本地模型返回与冻结正文对应的时序。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "acousticAlignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "早晨，",
+              "endMs": 565,
+              "startMs": 81,
+              "confidence": 0.973
+            },
+            {
+              "id": "phrase-2",
+              "text": "先给自己留一点安静。",
+              "endMs": 2624,
+              "startMs": 1009,
+              "confidence": 0.9958888888888888
+            }
+          ],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "本地 WhisperX 对齐已完成。",
+          "method": "local_whisperx",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [
+            {
+              "detail": "本地 WhisperX 已生成短语 cues。",
+              "method": "local_whisperx",
+              "status": "completed"
+            }
+          ],
+          "provider": "whisperx",
+          "wordCount": 2,
+          "audioSha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8",
+          "generatedAt": "2026-11-22T13:09:51.540Z",
+          "granularity": "phrase",
+          "inputVersion": "d051993fb92e0fc48547327c905a4d8f66f31ac2407d46d51c3a16b8a3cdfe8f",
+          "reviewIssues": [],
+          "textFingerprint": "b9e6afc9ba7ce0575f51acb4cf00a69adff9ded67b3fdb75e55c15f722e401e0",
+          "connectionVersionId": null
+        }
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "whisperx",
+      "costBasis": null,
+      "createdAt": "2026-11-22T21:09:36.57787+08:00",
+      "completedAt": "2026-11-22T21:09:51.549132+08:00",
+      "reservedCents": 0
+    },
+    {
+      "id": "23060af2-e710-4fea-8d30-f5c14129cbcf",
+      "type": "generate_shot_video",
+      "media": {
+        "video": {
+          "audio": true,
+          "prompt": "白色陶瓷杯与窗边绿植的暖色静物，宽松构图，为底部字幕留白，无文字无人物。\n\n账号创作规则：{}\n系列创作规则：null",
+          "settings": null,
+          "image_mime": "image/png",
+          "resolution": "480P",
+          "composition": {
+            "fit": "contain",
+            "width": 1080,
+            "height": 1920
+          },
+          "first_frame": {
+            "sha256": "3c678b46a40416f298d90fbf0b3e75c801d2514be56998a814486619ef3eed5e",
+            "fileSize": 1691631,
+            "artifactType": "wan_first_frame",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/6dc397af-c7ff-42fd-b669-f37172a5a0e6/image.png"
+          },
+          "candidate_only": true,
+          "duration_seconds": 4
+        },
+        "adapter": "minimax_video"
+      },
+      "model": "MiniMax-H3-Highspeed",
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "23060af2-e710-4fea-8d30-f5c14129cbcf",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "f15fc5ec2b0c93155910239c56de1b5620443b172b02c47e00fdc5e1bfb7ac2c",
+            "fileSize": 792023,
+            "artifactType": "shot_video",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/23060af2-e710-4fea-8d30-f5c14129cbcf/23060af2-e710-4fea-8d30-f5c14129cbcf.mp4"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "shot_video_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 minimax 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "在线执行路径。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "visual": {
+        "mode": "tts",
+        "source": {
+          "id": "22f8cd41-39d9-4e7c-a9a0-49726bbc9b93",
+          "sha256": "c120d26daa27d0e257e96123d9feb4418eddd46d70d3e27350fe0e7647ad6811",
+          "coverage": "partial",
+          "fileSize": 21549,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/fe10959e-b444-4f61-ba16-f045d64895e3/narration-aa2d7c91-e773-4d8b-b788-74766bb85922.mp3"
+        },
+        "identity": "{\"mode\":\"tts\",\"id\":\"workspace-narration-shot-shot-03\",\"src\":\"未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/fe10959e-b444-4f61-ba16-f045d64895e3/narration-aa2d7c91-e773-4d8b-b788-74766bb85922.mp3\",\"sourceAssetId\":\"audio-track-22f8cd41-39d9-4e7c-a9a0-49726bbc9b93\",\"sha256\":\"c120d26daa27d0e257e96123d9feb4418eddd46d70d3e27350fe0e7647ad6811\",\"startFrame\":360,\"durationInFrames\":81,\"srcInFrame\":0,\"playbackRate\":1,\"edits\":null,\"fps\":30}",
+        "windowDurationSeconds": 2.7
+      },
+      "attempt": 1,
+      "provider": "minimax",
+      "costBasis": {
+        "kind": "owner-reservation",
+        "model": "MiniMax-H3-Highspeed",
+        "reservationCents": 139,
+        "providerDurationSeconds": 4
+      },
+      "createdAt": "2026-11-22T21:10:22.708614+08:00",
+      "completedAt": "2026-11-22T21:10:49.758638+08:00",
+      "reservedCents": 139
+    },
+    {
+      "id": "82ecdb6d-fb00-4e4f-a031-3321d9383d24",
+      "type": "generate_shot_video",
+      "media": {
+        "video": {
+          "audio": true,
+          "prompt": "晨光照在木桌上的白色陶瓷咖啡杯，镜头轻轻推进，细微热气升起，温暖安静，保持杯子形状，无人物无文字。\n\n账号创作规则：{}\n系列创作规则：null",
+          "settings": null,
+          "image_mime": "image/png",
+          "resolution": "2K",
+          "composition": {
+            "fit": "contain",
+            "width": 1080,
+            "height": 1920
+          },
+          "first_frame": {
+            "sha256": "01e2af840d76e4a2accf57821939e6a6366fee1b8caeff8b26e1ccb25d2de3e0",
+            "fileSize": 1733681,
+            "artifactType": "wan_first_frame",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/90d120ba-6fd2-4bca-9801-cd8ca1342600/image.png"
+          },
+          "candidate_only": true,
+          "duration_seconds": 4
+        },
+        "adapter": "minimax_video"
+      },
+      "model": "MiniMax-H3",
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "82ecdb6d-fb00-4e4f-a031-3321d9383d24",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "34f855650904f414734a6ed16c89f32a14969d9662b64a3f396486832657ec2b",
+            "fileSize": 1916256,
+            "artifactType": "shot_video",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/82ecdb6d-fb00-4e4f-a031-3321d9383d24/82ecdb6d-fb00-4e4f-a031-3321d9383d24.mp4"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "shot_video_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 minimax 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "在线执行路径。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "visual": {
+        "mode": "tts",
+        "source": {
+          "id": "6db8c64c-1847-47b5-9a01-120ab5954844",
+          "sha256": "5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8",
+          "coverage": "partial",
+          "fileSize": 21357,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/054b8db4-7b0e-41f8-b286-d18e34385fa2/narration-e3fccc8e-ac90-493b-99ad-4c5c2c01ee62.mp3"
+        },
+        "identity": "{\"mode\":\"tts\",\"id\":\"workspace-narration-shot-shot-01\",\"src\":\"未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/054b8db4-7b0e-41f8-b286-d18e34385fa2/narration-e3fccc8e-ac90-493b-99ad-4c5c2c01ee62.mp3\",\"sourceAssetId\":\"audio-track-6db8c64c-1847-47b5-9a01-120ab5954844\",\"sha256\":\"5f7008d21e0c29bf4788262b9493a74b423b6320cbfb2a0fff4f87042445a1d8\",\"startFrame\":0,\"durationInFrames\":80,\"srcInFrame\":0,\"playbackRate\":1,\"edits\":null,\"fps\":30}",
+        "windowDurationSeconds": 2.6666666666666665
+      },
+      "attempt": 1,
+      "provider": "minimax",
+      "costBasis": {
+        "kind": "owner-reservation",
+        "model": "MiniMax-H3",
+        "reservationCents": 450,
+        "providerDurationSeconds": 4
+      },
+      "createdAt": "2026-11-22T21:10:48.926125+08:00",
+      "completedAt": "2026-11-22T21:13:47.30255+08:00",
+      "reservedCents": 450
+    },
+    {
+      "id": "38db65de-07a9-4557-ac0f-f556e615e28d",
+      "type": "align_shot_captions",
+      "media": null,
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "result": {
+        "retry": {
+          "reason": "Local alignment completed.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "38db65de-07a9-4557-ac0f-f556e615e28d",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Owner reviews the current shot timing.",
+        "artifacts": [
+          {
+            "sha256": "0a8e6ac1c1db2f7f51942880962fd24eb9f349fb0796267f6f49f49e51b6a5fe",
+            "fileSize": 1110,
+            "artifactType": "acoustic_alignment_evidence",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/native-tasks/38db65de-07a9-4557-ac0f-f556e615e28d/alignment.json"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地已登记的媒体执行路径。",
+              "status": "passed",
+              "capability": "acoustic_alignment"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "local_whisperx",
+              "detail": "真实本地模型返回与冻结正文对应的时序。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "acousticAlignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "看光走过杯沿，",
+              "endMs": 1632,
+              "startMs": 121,
+              "confidence": 0.9705
+            },
+            {
+              "id": "phrase-2",
+              "text": "慢慢呼吸。",
+              "endMs": 3124,
+              "startMs": 2056,
+              "confidence": 0.9937499999999999
+            }
+          ],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "本地 WhisperX 对齐已完成。",
+          "method": "local_whisperx",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [
+            {
+              "detail": "本地 WhisperX 已生成短语 cues。",
+              "method": "local_whisperx",
+              "status": "completed"
+            }
+          ],
+          "provider": "whisperx",
+          "wordCount": 2,
+          "audioSha256": "322928c50b56468e3eba3b6f2113f321f6b2279bd192627050af6c053275bb83",
+          "generatedAt": "2026-11-22T13:11:31.717Z",
+          "granularity": "phrase",
+          "inputVersion": "264d52c564777a3cdf9b7446180b393aa0d4be6bd791c51abda3929ff55093ba",
+          "reviewIssues": [],
+          "textFingerprint": "0c37571fe1199fb313ee557bfd1446c98ce82432edc5b552e58910bc1f24af33",
+          "connectionVersionId": null
+        }
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "whisperx",
+      "costBasis": null,
+      "createdAt": "2026-11-22T21:11:17.874071+08:00",
+      "completedAt": "2026-11-22T21:11:31.726472+08:00",
+      "reservedCents": 0
+    },
+    {
+      "id": "bf651a98-ef2f-441e-825a-9a326b374851",
+      "type": "prepare_publish_package",
+      "media": null,
+      "model": "workspace-delivery/v2",
+      "result": {
+        "retry": {
+          "reason": "交付包已验证。",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "bf651a98-ef2f-441e-825a-9a326b374851",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "下载已验证交付文件。",
+        "artifacts": [
+          {
+            "sha256": "d7b2f0c5b37d05586e5f20e6e4bb5bf70f69965ccae1e310d506499032802840",
+            "fileSize": 5402,
+            "artifactType": "final_qc_report",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-deliveries/bf651a98-ef2f-441e-825a-9a326b374851/checks.json"
+          },
+          {
+            "sha256": "1f88e761f20f48245c927e69b237ec4fe291b0f588c33b66f209479ad91bea0c",
+            "fileSize": 2505,
+            "artifactType": "publish_package",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-deliveries/bf651a98-ef2f-441e-825a-9a326b374851/manifest.json"
+          }
+        ],
+        "validation": {
+          "checks": [
+            {
+              "name": "exact_workspace_package",
+              "detail": "已确认视频、完整工程及实际交付文件的归属、大小和 SHA-256 均通过。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0,
+        "deliveryIdentity": {
+          "video": {
+            "sha256": "913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b",
+            "fileSize": 10618490,
+            "artifactType": "final_render",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/workspace-exports/dd1ab5c0-48c5-4413-8506-a512d96ed10c/913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b.mp4"
+          },
+          "project": {
+            "sha256": "4cbcd1be2eec92779320be0266bb9a23b31c08e96462b8d37fe4894311a11b4b",
+            "fileSize": 30881,
+            "artifactType": "editable_project",
+            "relativePath": "未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/production-workspace/versions/4cbcd1be2eec92779320be0266bb9a23b31c08e96462b8d37fe4894311a11b4b.json"
+          },
+          "exportId": "dd1ab5c0-48c5-4413-8506-a512d96ed10c",
+          "workspaceId": "7c39d786-6b67-4dc6-86e8-1196996edbaa",
+          "contentSha256": "cf67a72b87a06b1b95d9c104c591f5b39f0f963076d635f4682e48b76a4f8324",
+          "projectContentVersion": 17
+        }
+      },
+      "status": "completed",
+      "visual": null,
+      "attempt": 1,
+      "provider": "ffmpeg",
+      "costBasis": null,
+      "createdAt": "2026-11-22T21:18:56.300672+08:00",
+      "completedAt": "2026-11-22T21:18:57.03122+08:00",
+      "reservedCents": 0
+    }
+  ],
+  "paidTaskCount": 10,
+  "reservedCents": 4553,
+  "actualSupplierCost": "unknown-not-returned",
+  "originalOrders": {
+    "count": 10,
+    "beforeSha256": "9cbd9ea2d4e4577a9b9d8bac1a659faf23a2faebd4bb94b9fc913fd6269b4a45",
+    "afterSha256": "9cbd9ea2d4e4577a9b9d8bac1a659faf23a2faebd4bb94b9fc913fd6269b4a45",
+    "unchanged": true
+  },
+  "deliverableDirectory": "/Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付"
+}

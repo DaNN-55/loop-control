@@ -1,0 +1,26 @@
+{
+  "packageId": "de310079-c64e-46cf-bdc1-823acda93b4b",
+  "zipHeaders": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/zip",
+      "Content-Disposition": "attachment; filename=\"delivery-f339edf0-8324-4201-8533-e6b08fef47b1.zip\"",
+      "Content-Length": 12350960,
+      "Cache-Control": "no-store"
+    }
+  },
+  "unzip": "Archive:  /Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付/完整交付包.zip\n    testing: final-video.mp4          OK\n    testing: editable-project.json    OK\n    testing: checks.json              OK\n    testing: cover.png                OK\n    testing: metadata.json            OK\n    testing: manifest.json            OK\nNo errors detected in compressed data of /Volumes/Ebuget 1T/Media/日照金山真实生产测试 20261115--d4d70b65-e742-43b5-9c51-c543f23b4eeb/未分系列--c6b0c447-94e9-4e97-a338-4c3d14e8b260/光落在杯沿｜全流程验收 20261122--f339edf0-8324-4201-8533-e6b08fef47b1/验收交付/完整交付包.zip.\n",
+  "rangeHeaders": {
+    "status": 206,
+    "headers": {
+      "Content-Type": "video/mp4",
+      "Content-Security-Policy": "default-src 'none'; media-src 'self'; sandbox allow-same-origin",
+      "Content-Disposition": "attachment; filename*=UTF-8''913b5d8f7fcbd56773e8959fadc8aec7f50063b92dba38f1837aad632025614b.mp4",
+      "Accept-Ranges": "bytes",
+      "Content-Length": "1024",
+      "Content-Range": "bytes 0-1023/10618490"
+    }
+  },
+  "rangeMatches": true,
+  "scope": "Production verified artifact/archive handlers executed against this order; browser download completion not observed."
+}

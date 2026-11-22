@@ -48,6 +48,7 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
  const initial:Settings=persisted??shotSettings??{selection:legacy?.executor&&legacy.credential_ref?{capability:'speech',provider:legacy.executor.provider,adapter:legacy.executor.adapter,model:legacy.executor.model,connectionVersionId:legacy.credential_ref}:null,voice:template?.voice??defaultSettings?.voice??'',languageCode:template?.languageCode??defaultSettings?.languageCode??'zh-CN',speakingRate:template?.speakingRate??defaultSettings?.speakingRate??1};
  const key=`loop-speech-default-draft:${workspace.id}${managedVoice||template&&Object.keys(template).length?':'+(selectedShotId??workspace.clips[0]?.shotId):''}`,[defaultDraft,setDefaultDraft]=useState(()=>({baseline:workspaceSettingsFingerprint(initial),value:restoreWorkspaceSettingsDraft(key,initial)})),[busy,setBusy]=useState(false),[error,setError]=useState(''),[proposal,setProposal]=useState<{before:Settings;next:Settings}|null>(null),[tab,setTab]=useState<'voice'|'captions'>(()=>{try{return sessionStorage.getItem(`loop-narration-tab:${workspace.id}`)==='captions'?'captions':'voice';}catch{return 'voice';}});
  useEffect(()=>{if(tabRequest)setTab(tabRequest.tab);},[tabRequest?.id,tabRequest?.tab]);
+ const settingsReader=useWorkspaceReading(workspace,onChanged,selectedShotId??'episode','无法读取当前口播配置。');
  const confirmation=useRef<((accepted:boolean)=>void)|null>(null),savingDefaults=useRef(false);
  useEffect(()=>()=>{confirmation.current?.(false);confirmation.current=null;},[]);
  const settings=defaultDraft.value,defaultChanged=workspaceSettingsFingerprint(settings)!==workspaceSettingsFingerprint(managedVoice?persisted??initial:initial),defaultUpdated=defaultDraft.baseline!==workspaceSettingsFingerprint(initial);
@@ -79,7 +80,9 @@ function EditableWorkspaceNarrationPanel({episodeId,workspace,pending,command,on
     if(!accepted){setDefaultDraft({baseline:workspaceSettingsFingerprint(initial),value:initial});return null;}
    }
    setBusy(true);
-   const updated=await command('saveWorkspaceNarrationDefaults',{episodeId,workspaceId:w.id,expectedRevision:w.revision,...next}) as ProductionWorkspace;
+   const latest=await settingsReader.read();
+   if(workspaceSettingsFingerprint(latest.narration?.find(n=>n.defaults)?.defaults)!==workspaceSettingsFingerprint(before))throw Error('口播配置已变化，请重新核对。');
+   const updated=await command('saveWorkspaceNarrationDefaults',{episodeId,workspaceId:latest.id,expectedRevision:latest.revision,...next}) as ProductionWorkspace;
    setDefaultDraft({baseline:workspaceSettingsFingerprint(next),value:next});onChanged(updated);return updated;
   }finally{savingDefaults.current=false;setBusy(false);}
  }
@@ -210,11 +213,11 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
   finally{manualSession.running=false;showManual();}
   if(ownsManual())await processManual();
  }
- async function prepare(retryOfTaskId?:string,current=workspace){
+ async function prepare(retryOfTaskId?:string,_current=workspace){
   if(mode!=='tts'||(!canGenerate&&!retryOfTaskId))return;
   setBusy(true);setError('');
   try{
-   let w=await persistSettings(current);
+   let w=await persistSettings(await reader.read());
    w=await command('saveWorkspaceNarration',{...base(w),mode:'tts',text,...speechSettings}) as ProductionWorkspace;
    w=await command('confirmWorkspaceNarration',base(w)) as ProductionWorkspace;
    w=await command('generateWorkspaceNarration',{...base(w),retry:n.status==='failed',...(retryOfTaskId?{retryOfTaskId}:{})}) as ProductionWorkspace;
