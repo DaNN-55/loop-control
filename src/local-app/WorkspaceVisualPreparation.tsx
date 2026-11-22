@@ -389,7 +389,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const targetSeconds=replacementScope==='shot'&&props.project?(()=>{const window=readWorkspaceShotWindow(props.project!,targetItemId);return window?window.durationInFrames/window.timeline.fps:candidate?.currentDurationSeconds;})():candidate?.currentDurationSeconds;
  const canAdopt=rangeValid&&!!candidate&&candidate.status==='available'&&(candidate.kind==='image'||(policy==='keep-target'?targetSeconds==null||(selectedVideoDuration??candidate.durationSeconds)+0.05>=targetSeconds:acceptImpact));
  const shortCandidate=candidate?.kind==='video'&&!current&&policy==='keep-target'&&targetSeconds!=null&&rangeValid&&(selectedVideoDuration??0)+.05<targetSeconds;
- const adoptionLabel=tab==='image'?'作为镜头画面':props.currentVisualPath?'替换当前画面':'用到这个镜头';
+ const adoptionLabel=tab==='image'?'作为镜头画面':props.currentVisualPath?'替换当前画面':'应用镜头';
  const adoptionAction=<Button ref={adoptTrigger} size="sm" color="primary" aria-label={adoptionLabel} aria-describedby={tab==='image'?adoptionDescriptionId:undefined} isDisabled={disabled||current||!canAdopt} onPress={()=>{if(candidate)void adopt(candidate);}}>{uiText(adoptionLabel)}</Button>;
  const selectedService=tab==='image'?imageService:videoService,selectedSelection=tab==='image'?draft.imageSelection:draft.videoSelection;
  const qualityLabels=imageQualityLabels;
@@ -497,7 +497,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
         <Button size="sm" color="primary" isDisabled={disabled} onPress={()=>void confirmAdoption()}>{uiText("确认采用")}</Button>
        </div>:<div className="workspace-result-actions">
         {current?<Button ref={adoptTrigger} className="workspace-candidate-withdraw" size="sm" color="tertiary" aria-label={current?uiText("撤回{value0}采用",{value0:uiText(kindName)}):uiText("撤回备用图片")} isDisabled={disabled} onPress={removeSelected}>{uiText("撤回")}</Button>:adoptionAction}
-        {tab==='image'&&(candidate?.materialRevisionId||current&&props.currentMaterialRevisionId)&&<Button className="workspace-candidate-tool-first-frame" size="sm" color="secondary" aria-label={uiText("用这张图生成视频")} isDisabled={disabled||!!review||candidate?.status==='stale'} onPress={linkFirstFrame}>{uiText("用这张图生成视频")}</Button>}
+        {tab==='image'&&(candidate?.materialRevisionId||current&&props.currentMaterialRevisionId)&&<Button className="workspace-candidate-tool-first-frame" size="sm" color="secondary" aria-label={uiText("生成视频")} isDisabled={disabled||!!review||candidate?.status==='stale'} onPress={linkFirstFrame}>{uiText("生成视频")}</Button>}
        </div>}
        {shortCandidate&&<div className="workspace-adoption-duration-warning" role="status"><p>{uiText("素材可用 ")}{selectedVideoDuration!.toFixed(2)}{uiText(" 秒，短于当前镜头 ")}{targetSeconds!.toFixed(2)}{uiText(" 秒，还差 ")}{(targetSeconds! - selectedVideoDuration!).toFixed(2)}{uiText(" 秒。可换素材，或进入剪辑工作台调整。")}</p><Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>setTrimOpen(true)}>{uiText("选用其他区间")}</Button></div>}
       </div>}

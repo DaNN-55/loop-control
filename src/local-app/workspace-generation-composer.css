@@ -163,3 +163,19 @@ html[data-interface="impeccable"] .product-ui .workspace-composer-duration-value
 .workspace-prompt-mentions button>strong{flex-shrink:0;font-weight:500;color:var(--lc-accent)}
 .workspace-prompt-mentions button>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .workspace-prompt-mentions p{margin:4px;font-size:12px;color:var(--lc-muted)}
+
+/* Match Script Studio's 320px model menu, 12px frame, 4px row gap and 48px rows. */
+html[data-interface="impeccable"] .product-ui.workspace-composer-model-popover.workspace-model-menu{width:min(320px,calc(100vw - 24px));border-radius:8px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu>.workspace-composer-settings{padding:12px;gap:10px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-composer-settings>header{gap:8px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-composer-settings h3{font-size:12px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-composer-model-list{display:grid;gap:4px;max-height:min(280px,calc(100dvh - 180px))}
+html[data-interface="impeccable"] .product-ui.workspace-composer-model-popover.workspace-model-menu .workspace-composer-model-option{display:grid;grid-template-columns:20px minmax(0,1fr) 16px;align-items:center;gap:10px;min-height:48px;padding:8px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-composer-model-option>:is(.workspace-model-logo,svg:first-child){grid-column:1;grid-row:1;margin:0;width:20px;height:20px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-model-menu-label{grid-column:2;min-width:0;display:grid;gap:2px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-model-menu-label strong{font-size:12px;font-weight:500;line-height:1.5;overflow-wrap:anywhere}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-model-menu-label small{max-width:none;font-size:11px;text-align:start;line-height:1.5;color:var(--lc-muted);overflow-wrap:anywhere}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-composer-model-option>svg:last-child:not(:first-child){grid-column:3;grid-row:1;margin:0}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-model-menu-footer{display:grid;gap:4px;margin:0;padding-top:8px;border-top:1px solid var(--lc-line)}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-model-menu-footer button{justify-content:flex-start;font-size:11px}
+html[data-interface="impeccable"] .product-ui.workspace-model-menu .workspace-model-menu-footer [data-text]{font-size:11px!important;font-weight:400}

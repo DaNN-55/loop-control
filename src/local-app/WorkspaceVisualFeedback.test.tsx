@@ -42,7 +42,7 @@ it.each([false,true])('only signals adoption after a successful response (failed
  const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?plan:new Promise<ProductionWorkspace>((resolve,no)=>{finish=resolve;reject=no;}));
  function App(){const [workspace,setWorkspace]=useState(base);return <WorkspaceVisualPreparation workspace={workspace} command={command} onChange={value=>{current=value;setWorkspace(value);}} materials={[]} currentVisualKind="image" currentVisualPath={workspace.visualCandidates?.find(c=>c.status==='adopted')?.relativePath}/>;}
  render(<App/>);
- fireEvent.click(screen.getByRole('button',{name:/作为镜头画面|用到这个镜头|替换当前画面/}));
+ fireEvent.click(screen.getByRole('button',{name:/作为镜头画面|应用镜头|替换当前画面/}));
  await waitFor(()=>expect(command).toHaveBeenCalledTimes(2));expect(document.querySelector('[data-adoption-feedback]')).toBeNull();
  await act(async()=>{if(failed)reject(Error('采用失败'));else finish({...base,revision:2,visualCandidates:[{...base.visualCandidates![0],status:'adopted'}]});});
  if(failed){expect(await screen.findByRole('alert')).toBeTruthy();expect(document.querySelector('[data-adoption-feedback]')).toBeNull();}

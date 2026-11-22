@@ -31,7 +31,7 @@ it('first model selection uses the chosen model defaults including its required 
 it('places image adoption outside more actions and keeps first-frame selection secondary',()=>{
  const c={id:'image',kind:'image',usage:'still',targetItemId:'visual',shotId:'shot-1',materialRevisionId:'m',relativePath:'image.png',sha256:'a'.repeat(64),status:'available',durationSeconds:5,currentDurationSeconds:5};
  render(<WorkspaceVisualPreparation workspace={{...workspace,visualCandidates:[c]} as unknown as ProductionWorkspace} materials={[]} command={vi.fn()} onChange={()=>{}}/>);
- const adopt=screen.getByRole('button',{name:/作为镜头画面|用到这个镜头|替换当前画面/});expect(adopt.closest('details')).toBeNull();expect(screen.getByRole('button',{name:'用这张图生成视频'}).closest('details')).toBeNull();
+ const adopt=screen.getByRole('button',{name:/作为镜头画面|应用镜头|替换当前画面/});expect(adopt.closest('details')).toBeNull();expect(screen.getByRole('button',{name:'生成视频'}).closest('details')).toBeNull();
 });
 it('offers local MP3 immediately without configuring search and prepares only a candidate after upload',async()=>{
  const command=vi.fn(async(name:string)=>name==='importMaterial'?{id:'music'}:workspace);

@@ -149,4 +149,4 @@ html[data-interface="impeccable"] .product-ui .workspace-audio-preparation[data-
 
 /* Match the main-voice selector; compact workflow defaults otherwise hide leading glyphs. */
 .workspace-audio-mode-picker .dan-select-leading{display:block!important;left:8px;width:14px;height:14px}
-html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-audio-mode-picker .dan-select-trigger{padding:5px 24px 5px 28px!important}
+html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workflow] .workspace-preparation .workspace-audio-mode-picker .dan-select-trigger{padding:5px 24px 5px 28px!important}

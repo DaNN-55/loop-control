@@ -13,7 +13,7 @@ it('automatically previews the only applicable image without adopting or replaci
 });
 function adoptImage(){
 
- fireEvent.click(screen.getByRole('button',{name:/作为镜头画面|用到这个镜头|替换当前画面/}));
+ fireEvent.click(screen.getByRole('button',{name:/作为镜头画面|应用镜头|替换当前画面/}));
 }
 const plan={adoptionId:'prepared',candidateId:'image',projectSha256:'original',edit:{},impact:{currentSeconds:2,sourceSeconds:3,appliedSeconds:3,deltaSeconds:1,startSeconds:0,endSeconds:3,fps:30,affectedFragments:[{itemId:'visual-2',label:'下一镜山谷',kind:'image',track:'visual',startSeconds:2,endSeconds:4,changedStartSeconds:2,changedEndSeconds:3}]}};
 it('shows the prepared native duration and affected fragment before a second explicit adoption action',async()=>{
@@ -72,7 +72,7 @@ it('preserves the saved video in-point by default and confirms subtitle impact b
  render(<WorkspaceVisualPreparation workspace={current} command={command} onChange={()=>{}} materials={[]} project={project} currentVisualKind="video" currentVisualPath="used.mp4"/>);
  fireEvent.click(screen.getByRole('tab',{name:'视频'}));
  fireEvent.click(screen.getByRole('button',{name:'预览视频候选 02'}));
- fireEvent.click(screen.getByRole('button',{name:/作为镜头画面|用到这个镜头|替换当前画面/}));
+ fireEvent.click(screen.getByRole('button',{name:/作为镜头画面|应用镜头|替换当前画面/}));
  expect(await screen.findByRole('dialog',{name:'采用前核对'})).toBeTruthy();
  expect(screen.getByText('采用后需要重新核对本镜头字幕时序。')).toBeTruthy();
  expect(command).toHaveBeenCalledExactlyOnceWith('prepareWorkspaceVisualCandidate',expect.objectContaining({durationPolicy:'keep-target',sourceInSeconds:1,sourceOutSeconds:5,motionPolicy:'preserve-target'}));

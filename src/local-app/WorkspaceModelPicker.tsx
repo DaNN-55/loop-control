@@ -16,17 +16,19 @@ export function WorkspaceModelPicker({label,title,closeLabel='关闭模型选择
   <Button size={compact?'xs':'sm'} color="tertiary" className="workspace-composer-chip workspace-model-picker-trigger" aria-label={uiText(label)} title={selected?.connection?`${selected.label} · ${selected.connection}`:undefined} isDisabled={disabled} iconTrailing={ChevronDown}>
    {selected&&(selected.manual?<Mic size={16} aria-hidden="true"/>:<WorkspaceModelLogo model={selected.label} provider={selected.provider}/>)}{selected?.label??title}
   </Button>
-  <Popover className="dan-ui product-ui workspace-composer-popover workspace-composer-model-popover" placement="top start" offset={8} containerPadding={12} shouldFlip>
+  <Popover className="dan-ui product-ui workspace-composer-popover workspace-composer-model-popover workspace-model-menu" placement="top start" offset={8} containerPadding={12} shouldFlip>
    <Dialog aria-label={uiText(title)} className="workspace-composer-settings">
     <header><h3>{uiText(title)}</h3><Button size="xs" color="tertiary" aria-label={uiText(closeLabel)} iconLeading={X} onPress={()=>setOpen(false)}/></header>
 
     <Menu aria-label={label.replace('连接与模型','可用模型')} className="workspace-composer-model-list" selectionMode="single" selectedKeys={value?[value]:[]} disabledKeys={options.filter(option=>option.disabled).map(option=>option.id)} onAction={key=>{setOpen(false);onChange(String(key));}} renderEmptyState={()=><p role="status">{empty??uiText("暂无可用模型。")}</p>}>
      {options.map(option=><MenuItem key={option.id} id={option.id} textValue={`${option.label}${showConnections||duplicates.has(option.label)?` ${option.connection??''}`:''}`} className="workspace-composer-model-option">
-      {option.manual?<Mic size={16} aria-hidden="true"/>:<WorkspaceModelLogo model={option.label} provider={option.provider}/>}<strong title={option.connection}>{option.label}</strong>{(showConnections||duplicates.has(option.label))&&<small>{option.connection}</small>}{option.id===value&&<Check size={14} aria-hidden="true"/>}
+      {option.manual?<Mic size={16} aria-hidden="true"/>:<WorkspaceModelLogo model={option.label} provider={option.provider}/>}<span className="workspace-model-menu-label"><strong title={option.connection}>{option.label}</strong>{(showConnections||duplicates.has(option.label))&&<small>{option.connection}</small>}</span>{option.id===value&&<Check size={14} aria-hidden="true"/>}
      </MenuItem>)}
     </Menu>
+    {(onConfigure||clear)&&<footer className="workspace-model-menu-footer">
     {onConfigure&&<Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setOpen(false);onConfigure();}}>{uiText("配置制作服务")}</Button>}
     {clear&&<Button size="xs" color="tertiary" isDisabled={disabled} onPress={()=>{setOpen(false);onChange('');}}>{uiText(clearLabel)}</Button>}
+    </footer>}
    </Dialog>
   </Popover>
  </DialogTrigger>;

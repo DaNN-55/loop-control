@@ -14,7 +14,7 @@ export function WorkspaceNarrationCaptions({storageKey,contract,followText,disab
  return <section className="workspace-narration-caption-editor" aria-labelledby={heading}>
   <div className="workspace-generation-composer workspace-caption-composer">
    <div className="workspace-narration-editor workspace-narration-input">
-   <header className="workspace-caption-editor-heading"><h3 id={heading}>{uiText("字幕内容")}</h3><Badge type="color" color="gray" size="sm">{dirty?uiText("未保存"):following?uiText("跟随口播"):uiText("已单独编辑")}</Badge></header>
+   <header className="workspace-caption-editor-heading"><h3 id={heading}>{uiText("字幕内容")}</h3><Badge className="workspace-caption-mode-badge" type="color" color={dirty?'warning':following?'brand':'purple'} size="sm">{dirty?uiText("未保存"):following?uiText("跟随口播"):uiText("已单独编辑")}</Badge></header>
    <textarea aria-label={uiText("字幕内容")} aria-describedby={hint} rows={5} maxLength={100000} disabled={disabled} value={text} onChange={event=>{setDraft(event.target.value);setNotice('');}}/>
    </div>
    <div className="workspace-narration-controls workspace-narration-actions">
