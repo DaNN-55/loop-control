@@ -124,7 +124,7 @@ it.skipIf(!enabled)('recycle schema applies forward without rewriting existing m
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);
  const context=runtimeContext();context.assertDatabase();
  const before=JSON.parse(context.sql("SELECT jsonb_object_agg(version,sha256) FROM local_identity.schema_migrations"));
- const f=await recycleFixture(['db/current/224-recycle-eligibility.sql']);try{
+ const f=await recycleFixture(['db/current/226-recycle-eligibility.sql']);try{
   const rows=(await f.c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows;
   const after=Object.fromEntries(rows.map(row=>[row.version,row.sha256]));
   for(const [version,sha] of Object.entries(before))expect(after[version]).toBe(sha);
@@ -132,7 +132,7 @@ it.skipIf(!enabled)('recycle schema applies forward without rewriting existing m
   expect(loadSchemaCatalog(process.cwd()).legacy.find(file=>file.version===migration)?.sha256).toBe(historicalHash);
   if((Object.hasOwn(before,'clean-v2.sql')||Object.hasOwn(before,'clean-v3.sql'))&&!Object.hasOwn(before,migration))expect(after[migration]).toBeUndefined();
   else expect(after[migration]).toBe(historicalHash);
-  expect(after['224-recycle-eligibility.sql']).toBe(createHash('sha256').update(await readFile('db/current/224-recycle-eligibility.sql')).digest('hex'));
+  expect(after['226-recycle-eligibility.sql']).toBe(createHash('sha256').update(await readFile('db/current/226-recycle-eligibility.sql')).digest('hex'));
   expect((await f.c.query("SELECT count(*)::int count FROM local_identity.episode_recycle_bin")).rows[0].count).toBe(0);
   expect((await f.c.query("SELECT local_identity.is_recycled_episode($1) recycled",[f.episode])).rows[0].recycled).toBe(false);
   const policies=(await f.c.query("SELECT policyname FROM pg_policies WHERE schemaname='local_identity' AND tablename IN ('episode_recycle_bin','recycle_bin_settings')")).rows;
@@ -141,7 +141,7 @@ it.skipIf(!enabled)('recycle schema applies forward without rewriting existing m
 },120000);
 
 it.skipIf(!enabled)('batch preview projects FIFO and protected bytes through Owner HTTP without changing files or membership',async()=>{
- const f=await recycleFixture(['db/current/224-recycle-eligibility.sql']);try{
+ const f=await recycleFixture(['db/current/226-recycle-eligibility.sql']);try{
   const settings=(await f.get()).body;
   expect((await f.recycle('saveRecycleLimit',{limitBytes:100_000_000,expectedRevision:settings.settingsRevision})).status).toBe(200);
   const protectedItem=await registeredEpisode(f,30_000_000);
@@ -184,7 +184,7 @@ it.skipIf(!enabled)('batch preview projects FIFO and protected bytes through Own
 },120000);
 
 it.skipIf(!enabled)('the confirmed batch cleans only previewed old entries, shields new moves and retries just failed items',async()=>{
- const f=await recycleFixture(['db/current/224-recycle-eligibility.sql']);try{
+ const f=await recycleFixture(['db/current/226-recycle-eligibility.sql']);try{
   const settings=(await f.get()).body;
   expect((await f.recycle('saveRecycleLimit',{limitBytes:100_000_000,expectedRevision:settings.settingsRevision})).status).toBe(200);
   const old=await registeredEpisode(f,30_000_000),first=await registeredEpisode(f,60_000_000),second=await registeredEpisode(f,60_000_000);
