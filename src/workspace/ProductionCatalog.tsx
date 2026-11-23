@@ -25,7 +25,7 @@ type Props=ComponentProps<typeof EpisodeWorkspace>&{
 const previewPreference='loop-control.catalog.preview.v1';
 const emptySelection=new Map<string,EpisodeBatchSelectionItem>();
 function selectionItem(episode:Props['episodes'][number],hints?:EpisodeBatchHints,collectionSeriesId?:string|null):EpisodeBatchSelectionItem{
- return {id:episode.id,title:episode.title||uiText('未命名生产单'),sourceTitle:episode.title,accountId:episode.account_id,archived:episodeIsArchived(episode),stage:episode.stage,hints,collectionSeriesId};
+ return {id:episode.id,title:episode.title||uiText('未命名生产单'),accountId:episode.account_id,archived:episodeIsArchived(episode),stage:episode.stage,hints,collectionSeriesId};
 }
 
 function MobilePreview({children,onClose}:{children:ReactNode;onClose:()=>void}){

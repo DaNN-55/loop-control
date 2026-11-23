@@ -75,17 +75,11 @@ export class LocalEpisodeLifecycle{
  }
 
 
- private async renameEpisode(c:PoolClient,data:Record<string,unknown>,batch=false){
+ private async renameEpisode(c:PoolClient,data:Record<string,unknown>){
   if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200)throw new ConfigurationError(400,'生产单标题无效。');
   const {e}=await this.episode(c,data.episodeId);
   const title=data.title.trim();
-  if(batch){
-   if((await c.query('SELECT local_identity.is_historical_episode($1) historical',[e.id])).rows[0].historical)throw new ConfigurationError(404,'生产单不存在、无管理权限或属于只读历史资料。');
-   if(e.title===title)return {episodeId:e.id,status:'skipped',reason:'生产单标题没有变化。'};
-   if(e.title!==data.expectedTitle)return {episodeId:e.id,status:'skipped',reason:'原名已变化，请重新选择后预览。'};
-  }
-  const updated=(await c.query('SELECT to_jsonb(public.update_episode_title($1,$2)) result',[e.id,title])).rows[0].result;
-  return batch?{episodeId:e.id,status:'success'}:updated;
+  return (await c.query('SELECT to_jsonb(public.update_episode_title($1,$2)) result',[e.id,title])).rows[0].result;
  }
 
  private async archiveEpisode(c:PoolClient,episodeId:unknown,archived:unknown,batch=false){
@@ -107,12 +101,9 @@ export class LocalEpisodeLifecycle{
  }
 
  private async applyBatchItem(c:PoolClient,data:Record<string,unknown>){
-  const {episodeId,action,expectedTitle,title}=data;
-  const rename=action==='rename'&&typeof expectedTitle==='string';
-  const archive=(action==='archive'||action==='unarchive')&&!('title' in data)&&!('expectedTitle' in data);
-  if(typeof episodeId!=='string'||!uuid.test(episodeId)||(!rename&&!archive))throw new ConfigurationError(400,'批量生产单操作无效。');
+  const {episodeId,action}=data;
+  if(typeof episodeId!=='string'||!uuid.test(episodeId)||(action!=='archive'&&action!=='unarchive'))throw new ConfigurationError(400,'批量生产单操作无效。');
   try{
-   if(rename)return await this.renameEpisode(c,{episodeId,expectedTitle,title},true);
    return await this.archiveEpisode(c,episodeId,action==='archive',true);
   }catch(error){
    if(error instanceof ConfigurationError&&error.status===404)return {episodeId,status:'skipped',reason:error.message};
@@ -156,7 +147,7 @@ export class LocalEpisodeLifecycle{
  }
  private async executeCommand(session:OwnerSession,body:Record<string,unknown>,connection?:PoolClient){
   const command=String(body.command),key=body.idempotencyKey,data=body.data as Record<string,unknown>;
-  const fields:Record<string,string[]>={renameEpisode:['episodeId','title'],[episodeBatchLifecycleCommand]:['episodeId','action','title','expectedTitle'],planDeletion:['episodeId'],archiveEpisode:['episodeId','archived'],deleteEpisode:['episodeId','confirmation','expectedPath','expectedPaths','expectedRevision'],retryDeletionCleanup:['deletionKey']};
+  const fields:Record<string,string[]>={renameEpisode:['episodeId','title'],[episodeBatchLifecycleCommand]:['episodeId','action'],planDeletion:['episodeId'],archiveEpisode:['episodeId','archived'],deleteEpisode:['episodeId','confirmation','expectedPath','expectedPaths','expectedRevision'],retryDeletionCleanup:['deletionKey']};
   if(!fields[command]||typeof key!=='string'||!uuid.test(key)||!data||typeof data!=='object'||Array.isArray(data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k))||Object.keys(data).some(k=>!fields[command].includes(k)))throw new ConfigurationError(400,'生命周期命令无效。');
   if(command==='retryDeletionCleanup'){if(typeof data.deletionKey!=='string'||!uuid.test(data.deletionKey))throw new ConfigurationError(400,'清理标识无效。');return this.retry(session,data.deletionKey);}
   const hash=fingerprint({endpoint:'episode-lifecycle',...body});const staged:EpisodeDeletionTarget[]=[];

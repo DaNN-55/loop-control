@@ -1,7 +1,8 @@
-.batch-collection-target{display:grid;gap:6px;justify-items:start}
-.batch-collection-target select{max-inline-size:100%;min-block-size:36px;padding-inline:8px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface);color:var(--lc-ink)}
+.batch-collection-target:not([hidden]){display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px}
+.batch-collection-target select{min-inline-size:0;max-inline-size:100%;min-block-size:36px;padding-inline:8px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface);color:var(--lc-ink)}
 .batch-collection-target{margin-block-end:8px}
-.episode-batch-items>.batch-collection-folder{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:start}
+.episode-batch-dialog .episode-batch-items>.batch-collection-folder{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center}
 .batch-collection-folder strong,.batch-collection-folder small{display:block;overflow-wrap:anywhere}
+.batch-collection-folder .episode-batch-disclosure{margin-block-start:0}
 .batch-collection-folder summary{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .batch-collection-full-path{display:block;overflow-wrap:anywhere;font-size:.8125rem;padding-block:2px 4px}

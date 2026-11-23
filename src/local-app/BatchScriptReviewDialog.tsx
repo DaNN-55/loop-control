@@ -1,3 +1,4 @@
+import {Clock3,FileText,Film,Info} from 'lucide-react';
 import {useEffect,useRef,useState} from 'react';
 import {uiText} from '../i18n/ui';
 import {ScriptStudioReviewShots} from './ScriptStudioReviewShots';
@@ -100,13 +101,25 @@ export function BatchScriptReviewDialog({selection,onClose,onChanged}:EpisodeBat
     </label>
     <details open={pending.length===1||undefined}><summary aria-label={uiText('核对 {title} 的脚本和分镜',{title})}>{title}</summary>
      <div className="episode-batch-script-content">
-      <h3>{uiText('脚本原文')}</h3><pre>{sourceText||'—'}</pre>
-      {sourceName&&<p><small>{sourceName}</small></p>}
-      {targetDuration!==null&&<p>{uiText('目标时长')} · {uiText('{value0} 秒',{value0:targetDuration})}</p>}
-      <h3>{uiText('分镜')} · {uiText('{value0} 秒',{value0:plan.durationSeconds})}</h3>
-      {plan.settings.length>0&&<dl>{plan.settings.map(setting=><div key={setting.field}><dt>{uiText(setting.field)}</dt><dd>{uiText(setting.value)}</dd></div>)}</dl>}
-      {plan.warnings.length>0&&<ul>{plan.warnings.map(warning=><li key={warning}>{uiText(warning)}</li>)}</ul>}
-      <ScriptStudioReviewShots plan={plan}/>
+      <section className="episode-batch-script-source">
+       <header>
+        <h3><FileText aria-hidden="true"/>{uiText('脚本原文')}</h3>
+        {sourceName&&<small>{sourceName}</small>}
+       </header>
+       <pre>{sourceText||'—'}</pre>
+      </section>
+      <section className="episode-batch-storyboard">
+       <header>
+        <h3><Film aria-hidden="true"/>{uiText('分镜')}</h3>
+        <span className="episode-batch-meta"><Clock3 aria-hidden="true"/>{uiText('{value0} 秒',{value0:plan.durationSeconds})}</span>
+        {targetDuration!==null&&<span className="episode-batch-meta">{uiText('目标时长')} {uiText('{value0} 秒',{value0:targetDuration})}</span>}
+       </header>
+       {plan.warnings.length>0&&<div className="episode-batch-script-note"><Info aria-hidden="true"/><ul>{plan.warnings.map(warning=><li key={warning}>{uiText(warning)}</li>)}</ul></div>}
+       <ScriptStudioReviewShots plan={plan} compact/>
+       {plan.settings.length>0&&<details className="episode-batch-disclosure"><summary>{uiText('分镜设置')}</summary>
+        <dl>{plan.settings.map(setting=><div key={setting.field}><dt>{uiText(setting.field)}</dt><dd>{uiText(setting.value)}</dd></div>)}</dl>
+       </details>}
+      </section>
      </div>
     </details>
    </section>;

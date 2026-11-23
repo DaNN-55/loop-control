@@ -1,3 +1,4 @@
+import {CircleAlert,CircleCheck,Minus,X} from 'lucide-react';
 import {useLayoutEffect,useId,useRef,type ReactNode} from 'react';
 import {uiText} from '../i18n/ui';
 import type {EpisodeBatchHints} from '../episodes/episodeCatalogTypes';
@@ -8,7 +9,6 @@ import './episode-batch.css';
 export interface EpisodeBatchSelectionItem {
  id:string;
  title:string;
- sourceTitle:string;
  accountId:string;
  collectionSeriesId?:string|null;
  archived:boolean;
@@ -42,13 +42,17 @@ export function EpisodeBatchDialog({title,busy,compact,onClose,children,footer}:
   return()=>element?.close();
  },[]);
  return <dialog ref={dialog} className="episode-batch-dialog dan-ui product-ui" data-compact={compact||undefined} aria-labelledby={titleId} onCancel={event=>{event.preventDefault();if(!busy)onClose();}}>
-  <header><h2 id={titleId}>{title}</h2><Button size="sm" color="tertiary" isDisabled={busy} onPress={onClose}>{uiText('关闭')}</Button></header>
+  <header><h2 id={titleId}>{title}</h2><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText('关闭')} title={uiText('关闭')} isDisabled={busy} onPress={onClose}/></header>
   <div className="episode-batch-body">{children}</div>
   {footer&&<footer>{footer}</footer>}
  </dialog>;
 }
 
-const resultsLabels={success:'成功',skipped:'跳过',failed:'失败'} as const;
+const resultDisplay={
+ success:{label:'成功',icon:CircleCheck},
+ skipped:{label:'跳过',icon:Minus},
+ failed:{label:'失败',icon:CircleAlert},
+} as const;
 export function EpisodeBatchImpact({affected,excluded}:{affected:readonly EpisodeBatchSelectionItem[];excluded:readonly {item:EpisodeBatchSelectionItem;reason:string}[]}){
  return <>
   <p className="episode-batch-summary"><strong>{uiText('预计影响 {count} 张',{count:affected.length})}</strong></p>
@@ -65,10 +69,13 @@ export function EpisodeBatchResults({selection,results,title=uiText('逐单结�
  const skipped=collapseSkipped?results.filter(item=>item.status==='skipped'):[];
  const visible=skipped.length?results.filter(item=>item.status!=='skipped'):results;
  function rows(items:readonly EpisodeBatchItemResult[]){
-  return <ul role="list" className="episode-batch-items">{items.map(result=><li key={result.episodeId} data-status={result.status}>
-   <strong>{labels.get(result.episodeId)??result.episodeId}</strong>
-   <span>{uiText(resultsLabels[result.status])}{result.reason?' · '+uiText(result.reason):''}</span>
-  </li>)}</ul>;
+  return <ul role="list" className="episode-batch-items">{items.map(result=>{
+   const {label,icon:StatusIcon}=resultDisplay[result.status];
+   return <li key={result.episodeId} data-status={result.status}>
+    <strong>{labels.get(result.episodeId)??result.episodeId}</strong>
+    <span className="episode-batch-result-state"><StatusIcon aria-hidden="true"/>{uiText(label)}{result.reason?' · '+uiText(result.reason):''}</span>
+   </li>;
+  })}</ul>;
  }
  return <section aria-label={title}>
   {visible.length>0&&<><h3>{title}</h3>{rows(visible)}</>}

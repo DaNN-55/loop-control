@@ -1,3 +1,4 @@
+import {FolderOpen,Folder,Layers} from 'lucide-react';
 import {useEffect,useId,useRef,useState} from 'react';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -70,13 +71,14 @@ function BatchMoveCollectionDialog({selection,onClose,onChanged,series,accountNa
    {uiText(results.size?'只重试失败项':'确认调整系列')}
   </Button>
  }>
-  <form id={formId} method="post" action="/api/local/account-commands" className="batch-collection-target" onSubmit={event=>{event.preventDefault();void move();}}>
+  <form hidden={results.size>0} id={formId} method="post" action="/api/local/account-commands" className="batch-collection-target" onSubmit={event=>{event.preventDefault();void move();}}>
    <label htmlFor={selectId}>{uiText('目标系列')}</label>
-   <select id={selectId} name="target" required value={targetId} disabled={Boolean(progress)||Boolean(results.size)} onChange={event=>setTargetId(event.target.value)}>
+   <select id={selectId} name="target" required value={targetId} disabled={Boolean(progress)} onChange={event=>setTargetId(event.target.value)}>
     <option value="">{uiText('请选择目标系列')}</option>
     {targets.map(item=><option key={item.id} value={item.id}>{accounts.size>1?(accountNames.get(item.accountId)??item.accountId)+' · ':''}{item.name}</option>)}
    </select>
   </form>
+  {results.size>0&&target&&<p className="episode-batch-meta"><Layers aria-hidden="true"/>{uiText('目标系列')} · {target.name}</p>}
   {!results.size&&target&&<>
    <EpisodeBatchImpact affected={affected} excluded={excluded}/>
    <p>{uiText('复制并校验通过后切换收纳位置，保留原文件和创作规则。')}</p>
@@ -152,7 +154,7 @@ function BatchFoldersDialog({selection,onClose}:EpisodeBatchActionContext){
 
  return <EpisodeBatchDialog compact title={uiText('查看文件夹')} busy={Boolean(busy)} onClose={onClose} footer={(unopened.length>0||failed.length>0)&&<>
   {failed.length>0&&<Button type="button" size="sm" color="secondary" isDisabled={Boolean(busy)} onPress={()=>void openOrRetry(failed,true)}>{uiText('只重试失败项')}</Button>}
-  {unopened.length>0&&<Button type="button" size="sm" color="primary" isDisabled={Boolean(busy)} onPress={()=>void openOrRetry(unopened)}>{uiText('打开可用文件夹')}</Button>}
+  {unopened.length>0&&<Button type="button" size="sm" color="primary" iconLeading={Folder} isDisabled={Boolean(busy)} onPress={()=>void openOrRetry(unopened)}>{uiText('打开可用文件夹')}</Button>}
  </>}>
   {busy&&<p role="status">{uiText(busy==='read'?'正在核对登记目录…':'正在处理文件夹…')}</p>}
   <ul role="list" className="episode-batch-items">{selection.map(item=>{
@@ -161,12 +163,13 @@ function BatchFoldersDialog({selection,onClose}:EpisodeBatchActionContext){
     <div>
      <strong>{title}</strong>
      {folder?.path&&<details className="episode-batch-disclosure">
-      <summary aria-label={uiText('查看完整路径 · {title}',{title})}><code>{folder.path.split('/').filter(Boolean).at(-1)??folder.path}</code></summary>
+      <summary aria-label={uiText('查看完整路径 · {title}',{title})}>{uiText('目录路径')}</summary>
       <code className="batch-collection-full-path">{folder.path}</code>
      </details>}
      {folder?.reason&&<small>{uiText(folder.reason)}</small>}
     </div>
-    {folder?.path&&!folder.reason&&<Button type="button" size="sm" color="secondary" isDisabled={Boolean(busy)} aria-label={uiText('打开文件夹 · {title}',{title})} onPress={()=>void openOrRetry([item])}>{uiText('打开文件夹')}</Button>}
+    {folder?.path&&!folder.reason&&<Button type="button" size="sm" color="tertiary" iconLeading={FolderOpen} isDisabled={Boolean(busy)}
+     title={uiText('打开文件夹')} aria-label={uiText('打开文件夹 · {title}',{title})} onPress={()=>void openOrRetry([item])}/>}
    </li>;
   })}</ul>
   {!!results.size&&<div className="episode-batch-results" aria-live="polite"><EpisodeBatchResults selection={selection} results={[...results.values()]}/></div>}

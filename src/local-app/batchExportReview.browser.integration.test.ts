@@ -125,7 +125,10 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from
   expect((await state(needsChange.episodeId)).exports[0].confirmed).toBe(false);
   await page.click('关闭');
   await page.wait("document.querySelectorAll('.episode-table tbody tr').length===1");
-  await page.click(needsChange.title);await page.click('确认并完成');
+  await page.click(needsChange.title);
+  await page.wait("document.querySelector('.workspace-final-media video')?.readyState>=1");
+  await page.cli('focus','.workspace-final-actions > button');
+  await page.cli('press','Enter');
   await expect.poll(()=>page.traffic.some(entry=>entry.command==='completeWorkspaceExport'&&entry.status===200)).toBe(true);
   expect((await state(needsChange.episodeId)).exports[0].confirmed).toBe(true);
  }catch(error){await browser?.capture('failed').catch(()=>{});throw error;}

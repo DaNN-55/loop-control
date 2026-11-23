@@ -8,7 +8,7 @@
  overflow:hidden;
  padding:0;
 }
-.product-ui dialog.episode-batch-import-history-dialog.modal-card {max-inline-size:min(34rem,calc(100vw - 32px))}
+.product-ui dialog.episode-batch-import-history-dialog.modal-card {max-inline-size:min(32rem,calc(100vw - 32px))}
 dialog.episode-batch-import:not([open]) {display:none}
 .episode-batch-import::backdrop {background:rgb(12 16 23 / 45%)}
 .episode-batch-form {display:flex;flex-direction:column;max-block-size:inherit;min-block-size:0}

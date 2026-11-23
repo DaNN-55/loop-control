@@ -1,4 +1,5 @@
-import {Fragment,useEffect,useRef,useState} from 'react';
+import {Film,Play,ChevronUp} from 'lucide-react';
+import {useEffect,useRef,useState} from 'react';
 import {uiText} from '../i18n/ui';
 import {localArtifactUrl} from '../reviews/localArtifactPreview';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -98,20 +99,22 @@ export function BatchExportReviewDialog({selection,onClose,onChanged}:EpisodeBat
   }
  }
 
- return <EpisodeBatchDialog title={uiText('批量确认成片')} busy={busy==='submit'} onClose={onClose} footer={<>
+ return <EpisodeBatchDialog compact title={uiText('批量确认成片')} busy={busy==='submit'} onClose={onClose} footer={<>
   {!!rereadable.length&&<Button size="sm" color="secondary" isDisabled={!!busy} onPress={()=>void readItems(rereadable.map(item=>item.episodeId),lifetime.current!.signal)}>{uiText('重新核对失败项')}</Button>}
   {!!retryable.length&&<Button size="sm" color="secondary" isDisabled={!!busy} onPress={()=>void submit(retryable,true)}>{uiText('只重试失败项')}</Button>}
   {!!pending.length&&<Button size="sm" color="primary" isDisabled={!!busy||!approved.length} onPress={()=>void submit(approved)}>{uiText('提交通过项')}</Button>}
  </>}>
   {busy&&<p role="status">{uiText(busy==='read'?'正在读取待确认成片…':'正在提交通过项…')}</p>}
   {refreshError&&<p role="alert">{uiText('操作结果已记录，列表读取失败。')} {uiText(refreshError)}</p>}
-  {!!pending.length&&<p>{uiText('逐张预览成片，再标记通过或待修改。')}</p>}
+  {!!pending.length&&<p className="episode-batch-review-intro"><Film aria-hidden="true"/>{uiText('逐张预览成片，再标记通过或待修改。')}</p>}
   {pending.map(item=>{
    const episodeId=item.episodeId,title=titles.get(episodeId)??episodeId;
    const review=item.review,previewing=previewId===episodeId;
-   return <Fragment key={episodeId}><fieldset className="episode-batch-export-item" disabled={!!busy}>
+   return <article key={episodeId} className="episode-batch-export-card">
+   <fieldset className="episode-batch-export-item" disabled={!!busy}>
     <legend>{title}</legend>
-    <Button size="sm" color={previewing?'secondary':'tertiary'} aria-pressed={previewing} aria-label={uiText('预览 {title}',{title})} onPress={()=>setPreviewId(episodeId)}>{uiText('预览')}</Button>
+    <Button size="sm" color="tertiary" iconLeading={previewing?ChevronUp:Play} aria-pressed={previewing}
+     aria-label={uiText('预览 {title}',{title})} onPress={()=>setPreviewId(previewing?'':episodeId)}>{uiText(previewing?'收起':'预览')}</Button>
     <label><input type="radio" name={'decision-'+episodeId} disabled={!item.playable} aria-label={uiText('通过 {title}',{title})} checked={item.decision==='approve'} onChange={()=>updateItem(episodeId,{decision:'approve'})}/>{uiText('通过')}</label>
     <label><input type="radio" name={'decision-'+episodeId} aria-label={uiText('待修改 {title}',{title})} checked={item.decision==='change'} onChange={()=>updateItem(episodeId,{decision:'change'})}/>{uiText('待修改')}</label>
    </fieldset>
@@ -121,7 +124,7 @@ export function BatchExportReviewDialog({selection,onClose,onChanged}:EpisodeBat
      onLoadedData={()=>updateItem(episodeId,{playable:true})}
      onError={()=>updateItem(episodeId,{decision:undefined,result:readFailure(episodeId,'当前成片无法播放，请重新核对。')})}/>
    </div>}
-   </Fragment>;
+   </article>;
   })}
   {!!results.length&&<div className="episode-batch-results" aria-live="polite"><EpisodeBatchResults selection={selection} results={results} collapseSkipped/></div>}
  </EpisodeBatchDialog>;
