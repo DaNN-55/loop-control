@@ -1,6 +1,7 @@
 import {LocalEpisodeBatchImport} from './episodeBatchImport.js';
 import {CompletedProductionCopies} from './completedProductionCopies.js';
 import {confirmScriptStudio} from './scriptStudioConfirmation.js';
+import {resolveScriptReview,saveScriptReviewDraft} from './batchScriptReview.js';
 import {CompletedStudioCopies,completedProjectSources} from './completedStudioCopies.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
@@ -73,7 +74,7 @@ export class LocalEpisodeCommands {
  }
  async execute(session:OwnerSession,body:Record<string,unknown>){return this.executeCommand(session,body,run=>sessionTransaction(this.pool,session,run));}
  private async executeCommand(session:{id:string},body:Record<string,unknown>,transaction:<T>(run:(c:PoolClient)=>Promise<T>)=>Promise<T>){
-  if(typeof body.command!=='string'||!retiredPlanningCommands.has(body.command)&&!retiredManualCommands.has(body.command)&&!['generateTts','repairConnection','repairConfiguration'].includes(body.command)&&!Object.hasOwn(productionWorkspaceFields,body.command)&&!['create','start','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','importMaterial','openDirectory','openStandaloneStudio'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
+  if(typeof body.command!=='string'||!retiredPlanningCommands.has(body.command)&&!retiredManualCommands.has(body.command)&&!['generateTts','repairConnection','repairConfiguration'].includes(body.command)&&!Object.hasOwn(productionWorkspaceFields,body.command)&&!['create','start','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','saveScriptReviewDraft','confirmReviewedScript','importMaterial','openDirectory','openStandaloneStudio'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
   const data=body.data as Record<string,unknown>,hash=canonicalFingerprint(body);
   const retiredNarration=body.command==='generateTts';
   const retiredManual=retiredManualCommands.has(body.command);
@@ -84,9 +85,13 @@ export class LocalEpisodeCommands {
   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
   allowed.confirmRecognizedScript=['episodeId','expectedScriptRevisionId','text','reason','recognitionRequestId'];
   allowed.confirmScriptStudio=['episodeId','expectedScriptRevisionId','text','targetDuration','reason','requestId'];
+  allowed.saveScriptReviewDraft=['episodeId','text','targetDuration','reason','requestId'];
+  allowed.confirmReviewedScript=['episodeId','reviewFingerprint'];
   allowed.openStandaloneStudio=[];
   Object.assign(allowed,productionWorkspaceFields);
   if(!retiredManual&&!retiredPlanning&&!retiredNarration&&!retiredExecution&&Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
+  if(['saveScriptReviewDraft','confirmReviewedScript'].includes(body.command)&&!uuid.test(String(data.episodeId)))throw new ConfigurationError(400,'生产单标识无效。');
+  if(body.command==='confirmReviewedScript'&&!/^[a-f0-9]{64}$/.test(String(data.reviewFingerprint)))throw new ConfigurationError(400,'脚本核对版本无效。');
   if(body.command==='importMaterial'&&Object.hasOwn(data,'scriptStudioAttachment')&&data.scriptStudioAttachment!==true)throw new ConfigurationError(400,'附件校验标记无效。');
   recordValidatedRequestLogContext({operation:'episode.'+body.command});
   if(body.command==='create'){
@@ -133,7 +138,7 @@ export class LocalEpisodeCommands {
    }else{
     // Older owned orders predate native execution registration. Enrol only at
     // an explicit four-step entry; failed commands roll this back with the rest.
-    if(['importLegacyDraftInputs','adoptLegacyWorkspace','adoptLegacyPlan','prepareWorkspace','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','importMaterial'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
+    if(['importLegacyDraftInputs','adoptLegacyWorkspace','adoptLegacyPlan','prepareWorkspace','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','saveScriptReviewDraft','confirmReviewedScript','importMaterial'].includes(String(body.command))&&!(await c.query('SELECT 1 FROM local_identity.input_episodes WHERE episode_id=$1',[data.episodeId])).rowCount){
      if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
      const legacy=(await c.query('SELECT stage,archived_at FROM public.episodes WHERE id=$1',[data.episodeId])).rows[0];
      if(legacy.archived_at||legacy.stage==='production_completed')throw new ConfigurationError(409,'历史或已完成生产单只读。');
@@ -143,7 +148,7 @@ export class LocalEpisodeCommands {
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
     recordValidatedRequestLogContext({accountId:e.account_id,episodeId:e.id});
-    const inputIo=['importMaterial','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','prepareWorkspace','adoptLegacyPlan','importLegacyDraftInputs'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
+    const inputIo=['importMaterial','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','confirmReviewedScript','prepareWorkspace','adoptLegacyPlan','importLegacyDraftInputs'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
     if(location)await requireEpisodeStorageDirectory(c,location);
     const root=location?.assetRoot??await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id);
     if(body.command!=='openDirectory'){
@@ -151,10 +156,24 @@ export class LocalEpisodeCommands {
      else{const legacy=location??await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id);if(legacy.layoutVersion!==1)throw new ConfigurationError(409,'账号目录未登记，请先恢复存储位置。');await requireEpisodeStorageDirectory(c,legacy);if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[e.account_id])).rowCount)throw new ConfigurationError(409,'账号正在纳管，请先恢复或回滚原操作。');}
     }
     const inputPolicy=[2,3].includes(e.script_template_version)?{...e.policy,asset_root:root,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:{...e.policy,asset_root:root};
-    if(['reconfirmScript','confirmRecognizedScript','confirmScriptStudio'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
+    if(['reconfirmScript','confirmRecognizedScript','confirmScriptStudio','confirmReviewedScript'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
     if(Object.hasOwn(productionWorkspaceFields,String(body.command))){value=await this.workspace.execute(c,e,root,this.runtime,String(body.command),data);
     }else if(body.command==='confirmScriptStudio'){
      value=await confirmScriptStudio(c,root,session.id,e,data,location!.relativePath);
+    }else if(body.command==='saveScriptReviewDraft'){
+     value=await saveScriptReviewDraft(c,session.id,e,data);
+    }else if(body.command==='confirmReviewedScript'){
+     const {review,draft}=await resolveScriptReview(c,this.mediaRoot,session.id,e);
+     if(review.status==='skipped'&&(e.archived_at||e.stage!=='waiting_input')){
+      value={episodeId:e.id,status:'skipped',reason:review.reason};
+     }else if(review.status!=='ready'||review.reviewFingerprint!==data.reviewFingerprint){
+      value={episodeId:e.id,status:'failed',reason:'待确认脚本已变化，请重新核对。',requiresReview:true};
+     }else{
+      const scriptId=draft?(await confirmScriptStudio(c,root,session.id,e,{expectedScriptRevisionId:null,text:draft.sourceText,targetDuration:draft.targetDuration,reason:draft.reason,requestId:draft.requestId},location!.relativePath)).id:e.main_script_revision_id;
+      const policy=draft?{...inputPolicy,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:inputPolicy;
+      await this.start(c,e.id,scriptId,root,policy);
+      value={episodeId:e.id,status:'success'};
+     }
     }else if(body.command==='confirmRecognizedScript'){
      value=await confirmRecognizedScript(c,root,session.id,e,data,location!.relativePath);
     }else if(body.command==='reconfirmScript'){
@@ -174,17 +193,21 @@ export class LocalEpisodeCommands {
      if(data.isMainScript)await c.query('UPDATE local_identity.input_episodes SET script_template_version=$2 WHERE episode_id=$1',[e.id,parseStoryboardScript((await verifyEpisodeFile(c,root,e.id,snapshot.storagePath,snapshot.sha256,snapshot.fileSize)).toString('utf8'))?.version??null]);
      if(!data.isMainScript)await this.scriptStore.alias(c,session.id,value.id,String(data.sourcePath));
     }else if(body.command==='start'){
-     await this.preflight(c,inputPolicy);
-     const materials=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1',[e.id])).rows;
-     if(!e.main_script_revision_id)throw new ConfigurationError(409,'请先上传并确认主脚本。');
-     for(const m of materials)await verifyEpisodeFile(c,root,e.id,m.storage_path,m.sha256,Number(m.file_size));
-     value=(await c.query('SELECT to_jsonb(public.start_episode_production($1)) result',[e.id])).rows[0].result;
-     await c.query('UPDATE local_identity.input_episodes SET enabled=false,visual_media_enabled=$2 WHERE episode_id=$1',[e.id,Boolean(inputPolicy.static_visual?.executor)]);
+     value=await this.start(c,e.id,e.main_script_revision_id,root,inputPolicy);
     }else throw new ConfigurationError(400,'不支持的制作操作。');
    }
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,idempotency_key) DO NOTHING',[session.id,body.idempotencyKey,hash,value]);return value;
   });
   if(['requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','completeWorkspaceExport','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage'].includes(body.command))this.runtime.wake(String(data.episodeId??result.id));return result;
+ }
+ private async start(c:PoolClient,episodeId:string,scriptId:string|null,root:string,policy:Record<string,unknown>&{static_visual?:{executor?:unknown}}){
+  await this.preflight(c,policy);
+  if(!scriptId)throw new ConfigurationError(409,'请先上传并确认主脚本。');
+  const materials=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1',[episodeId])).rows;
+  for(const m of materials)await verifyEpisodeFile(c,root,episodeId,m.storage_path,m.sha256,Number(m.file_size));
+  const episode=(await c.query('SELECT to_jsonb(public.start_episode_production($1)) result',[episodeId])).rows[0].result;
+  await c.query('UPDATE local_identity.input_episodes SET enabled=false,visual_media_enabled=$2 WHERE episode_id=$1',[episodeId,Boolean(policy.static_visual?.executor)]);
+  return episode;
  }
  private async preflight(c:PoolClient,policy:Record<string,unknown>){
   const failure=(reason:string,check:string,scope:WorkerPreflightCheck['scope'],action:WorkerPreflightCheck['action'],status=409)=>new ConfigurationError(status,reason,{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check,phase:'preflight',status:scope==='worker'?'unavailable':'blocked',reason,action,scope}]});

@@ -23,6 +23,10 @@
 
 基线已复核：类型检查、运行产物准备、387 个默认测试文件（2751 通过、1 既有跳过）、6 项隔离 Owner HTTP 集成通过。隔离浏览器已登录并打开正式生产单页面。
 
+工作树约定：此后 Loop-Control 的新工作树统一放在 `/Volumes/Ebuget 1T/codex-worktree`。Codex 托管工作树沿用现有 `git-worktree-root` 设置，手动用 `git worktree add` 时传入该目录下的绝对路径。创建前先核实外置盘实际挂载，未挂载时暂停创建并报告。
+
+`loop-control-batch-229`、`loop-control-batch-230`、`loop-control-batch-233` 已从内置盘迁到该目录，沿用原名。迁移时跨盘重命名失败，使用校验副本与 `git worktree repair`；三处前后分支、HEAD、暂存内容、工作区改动、未跟踪及忽略文件均一致。后续集成使用外置盘上的 `loop-control-batch-229`。
+
 后续实施验收：
 
 - [ ] 从生产单页下载模板。用一个 Excel 文件同时导入纯脚本单和多镜头单，核对原稿、镜头顺序及口播、字幕各字段。再用多份 TXT 和 Markdown 验证一份一单，修正或重试失败项后没有重复建单。
