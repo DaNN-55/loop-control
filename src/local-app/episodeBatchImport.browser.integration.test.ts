@@ -18,7 +18,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   expect(series.status,JSON.stringify(series.body)).toBe(200);
   const txt=join(f.root,'街角.txt'),md=join(f.root,'夜雨.md');
   const revised='路灯在街角亮起。';
-  await writeFile(txt,'');await writeFile(md,'# 夜雨\n\n窗外下起了雨。\n');
+  await writeFile(txt,'');await writeFile(md,'系列：街道故事\n# 夜雨\n\n窗外下起了雨。\n');
   browser=await storyBrowser(f,'batch-text','隔离 Studio153 验收');
   await browser.click('关闭生产单详情');
   await browser.click('批量新建');
@@ -27,10 +27,14 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   expect(await browser.evaluate('document.activeElement.textContent')).toBe('批量新建');
   await browser.click('批量新建');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
-  await browser.cli('select','dialog select[name=seriesVersionId]',series.body.id);
+  expect(await browser.evaluate("document.querySelector('.episode-batch-target select[name=seriesVersionId]')===null")).toBe(true);
   await browser.cli('upload','dialog input[type=file]',txt,md);
   await browser.cli('wait','--text','请填写脚本正文。');
   await browser.fill('脚本正文',revised);
+  await browser.click('检查重复');
+  await browser.cli('wait','--text','请在预览中逐条选择系列或「未分系列」。');
+  await browser.cli('select','dialog details:first-of-type select[name=seriesVersionId]','unassigned');
+  expect(await browser.evaluate("document.querySelector('dialog details:nth-of-type(2) summary').textContent")).toContain('系列：街道故事');
   await browser.click('检查重复');
   await browser.cli('wait','--text','重复检查完成，可提交创建。');
   await browser.cli('set','viewport','420','820');
@@ -59,9 +63,12 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   await browser.cli('wait','--text','成功 2');
   await browser.click('开始新批次');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
-  await browser.cli('select','dialog select[name=seriesVersionId]',series.body.id);
-  await writeFile(txt,revised);
+
+  await writeFile(txt,'系列：误写的系列\r\n'+revised);
   await browser.cli('upload','dialog input[type=file]',txt,md);
+  await browser.cli('wait','--text','当前账号下找不到此系列。');
+  await browser.cli('click','dialog details:first-of-type summary');
+  await browser.cli('select','dialog details:first-of-type select[name=seriesVersionId]','unassigned');
   await browser.click('检查重复');
   await browser.cli('wait','--text','重复检查完成，可提交创建。');
   expect(await browser.evaluate("document.querySelectorAll('dialog select[name=duplicate]').length")).toBe(2);

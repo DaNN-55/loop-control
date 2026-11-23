@@ -77,6 +77,33 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner import preserves s
   expect(otherHistory.status).toBe(200);
   expect(await otherHistory.json()).toEqual({batches:[],hasMore:false});
 
+  const alternative=await config('createSeries',{accountId:account.id,name:'另一种要求',rules:{extension:{alternative:true}}});
+  const otherAccount=await config('createAccount',{name:'另一账号',slug:'batch-foreign-'+randomUUID(),timezone:'Asia/Shanghai',policy:{}});
+  const foreign=await config('createSeries',{accountId:otherAccount.id,name:'另一种要求',rules:{}});
+  const mixedItems=[
+   {...first,seriesVersionId:series.id},
+   {...first,itemId:randomUUID(),seriesVersionId:alternative.id},
+   {...first,itemId:randomUUID(),seriesVersionId:null},
+   {...first,itemId:randomUUID(),seriesVersionId:alternative.id},
+  ];
+  const mixed={accountId:account.id,items:mixedItems};
+  expect((await send('episode-imports',{action:'preview',accountId:account.id,items:[first]})).status).toBe(400);
+  expect((await send('episode-imports',{action:'preview',accountId:account.id,items:[{...first,seriesVersionId:foreign.id}]})).status).toBe(400);
+  expect(await send('episode-imports',{action:'preview',...mixed})).toMatchObject({status:200,body:{items:[
+   {duplicateEpisodeId:result.body.items[0].episodeId,duplicateInBatch:false},
+   {duplicateEpisodeId:null,duplicateInBatch:false},{duplicateEpisodeId:null,duplicateInBatch:false},
+   {duplicateEpisodeId:null,duplicateInBatch:true},
+  ]}});
+  const mixedBatchId=randomUUID(),mixedSubmit={action:'submit',batchId:mixedBatchId,...mixed};
+  const created=await send('episode-imports',mixedSubmit);
+  expect(created).toMatchObject({status:200,body:{items:[{status:'skipped'},{status:'succeeded'},{status:'succeeded'},{status:'skipped'}]}});
+  for(const [index,version,seriesId] of [[1,alternative.id,alternative.series_id],[2,null,null]] as const){
+   const episodeId=created.body.items[index].episodeId;
+   expect((await readEpisode(episodeId)).episode.series_version_id).toBe(version);
+   expect((await f.c.query('SELECT storage_series_id FROM local_identity.episode_asset_locations WHERE episode_id=$1',[episodeId])).rows[0].storage_series_id).toBe(seriesId);
+  }
+  expect(await send('episode-imports',mixedSubmit)).toEqual(created);
+
   const firstId=result.body.items[0].episodeId,secondId=result.body.items[1].episodeId,otherId=repeated.body.items[1].episodeId;
   const manual=await send('episode-commands',{command:'create',idempotencyKey:randomUUID(),data:{accountId:account.id,seriesVersionId:series.id,title:'手工建单'}});
   expect(manual.status,JSON.stringify(manual.body)).toBe(200);

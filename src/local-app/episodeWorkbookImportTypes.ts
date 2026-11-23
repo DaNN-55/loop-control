@@ -10,6 +10,7 @@ export interface WorkbookOrder {
  title:string;
  sourceText:string;
  duration:string;
+ seriesName:string;
 }
 export interface WorkbookShot {
  row:number;

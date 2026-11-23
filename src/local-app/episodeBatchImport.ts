@@ -13,25 +13,28 @@ const contains=(value:object,keys:string[])=>Object.keys(value).some(key=>!keys.
 const textField=(value:unknown,maximum:number):value is string=>typeof value==='string'&&value.length<=maximum&&!value.includes('\0');
 const duration=(value:unknown)=>typeof value==='number'&&Number.isFinite(value)&&value>=0.1&&value<=3600&&Math.abs(value*100-Math.round(value*100))<=1e-6;
 
-type ImportInput={accountId:string;seriesVersionId:string|null;items:EpisodeImportItem[]};
-type ImportItemPayload=Required<EpisodeImportItem>&{sourceSha256:string};
+type ImportInput={accountId:string;seriesVersionId?:string|null;items:EpisodeImportItem[]};
+type ImportItemPayload=Required<Omit<EpisodeImportItem,'seriesVersionId'>>&Pick<EpisodeImportItem,'seriesVersionId'>&{sourceSha256:string};
 type PendingImport={payload:ImportItemPayload&{seriesVersionId:string|null}};
+
+const seriesChoice=(value:unknown):value is string|null=>value===null||typeof value==='string'&&uuid.test(value);
 
 function importInput(body:Record<string,unknown>):ImportInput{
  if(contains(body,['action','batchId','accountId','seriesVersionId','items'])||
     typeof body.accountId!=='string'||!uuid.test(body.accountId)||
-    body.seriesVersionId!==null&&(typeof body.seriesVersionId!=='string'||!uuid.test(body.seriesVersionId))||
+    body.seriesVersionId!==undefined&&!seriesChoice(body.seriesVersionId)||
     !Array.isArray(body.items)||!body.items.length||body.items.length>episodeImportLimits.items)throw new ConfigurationError(400,'请选择账号、系列和要导入的脚本。');
  const ids=new Set<string>();
  for(const item of body.items){
   if(!item||typeof item!=='object'||Array.isArray(item)||typeof item.itemId!=='string'||!uuid.test(item.itemId)||ids.has(item.itemId))throw new ConfigurationError(400,'导入项标识无效或重复。');
   const label=textField(item.sourceName,episodeImportLimits.sourceNameLength)&&item.sourceName.trim()?item.sourceName:'未知来源';
-  if(contains(item,['itemId','sourceName','title','sourceText','targetDuration','shots','duplicate'])||
+  if(contains(item,['itemId','sourceName','title','sourceText','targetDuration','shots','duplicate','seriesVersionId'])||
      !textField(item.sourceName,episodeImportLimits.sourceNameLength)||!item.sourceName.trim()||
      !textField(item.title,200)||!item.title.trim()||
      !textField(item.sourceText,episodeImportLimits.sourceLength)||
      item.targetDuration!=null&&!duration(item.targetDuration)||
      item.duplicate!==undefined&&!['skip','create'].includes(item.duplicate))throw new ConfigurationError(400,label+'：请检查标题、正文和时长。');
+  if(body.seriesVersionId===undefined?!seriesChoice(item.seriesVersionId):item.seriesVersionId!==undefined)throw new ConfigurationError(400,label+'：请确认生产单的系列。');
   const shots=item.shots??[];
   if(!Array.isArray(shots)||shots.length>100||shots.some((shot,index)=>!shot||typeof shot!=='object'||Array.isArray(shot)||
      contains(shot,['sequence','visual','videoPrompt','narration','caption','durationSeconds'])||
@@ -45,7 +48,7 @@ function importInput(body:Record<string,unknown>):ImportInput{
   }
   ids.add(item.itemId);
  }
- return {accountId:body.accountId,seriesVersionId:body.seriesVersionId,items:body.items};
+ return {accountId:body.accountId,...(body.seriesVersionId!==undefined&&{seriesVersionId:body.seriesVersionId}),items:body.items};
 }
 
 function itemPayload(item:EpisodeImportItem):ImportItemPayload{
@@ -53,14 +56,19 @@ function itemPayload(item:EpisodeImportItem):ImportItemPayload{
   sourceSha256:item.sourceText.trim()?fingerprint(item.sourceText):canonicalFingerprint(item.shots)};
 }
 
-async function ownedSeries(c:PoolClient,ownerId:string,input:ImportInput):Promise<string|null>{
+function selectedVersion(input:ImportInput,item:EpisodeImportItem){
+ return input.seriesVersionId!==undefined?input.seriesVersionId:item.seriesVersionId!;
+}
+
+async function ownedSeries(c:PoolClient,ownerId:string,input:ImportInput){
  const account=await c.query(`SELECT 1 FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id
   WHERE a.id=$1 AND m.user_id=$2 AND m.role='owner' AND a.archived_at IS NULL`,[input.accountId,ownerId]);
  if(!account.rowCount)throw new ConfigurationError(404,'账号不可见。');
- if(input.seriesVersionId===null)return null;
- const version=(await c.query('SELECT series_id FROM public.series_versions WHERE id=$1 AND account_id=$2',[input.seriesVersionId,input.accountId])).rows[0];
- if(!version)throw new ConfigurationError(400,'系列版本不属于此账号。');
- return version.series_id;
+ const ids=[...new Set(input.items.map(item=>selectedVersion(input,item)).filter(id=>id!==null))];
+ if(!ids.length)return new Map<string,string>();
+ const {rows}=await c.query<{id:string;series_id:string}>('SELECT id,series_id FROM public.series_versions WHERE id=ANY($1::uuid[]) AND account_id=$2',[ids,input.accountId]);
+ if(rows.length!==ids.length)throw new ConfigurationError(400,'系列版本不属于此账号。');
+ return new Map(rows.map(row=>[row.id,row.series_id]));
 }
 
 async function duplicateEpisode(c:PoolClient,accountId:string,seriesId:string|null,title:string,sha256:string):Promise<string|null>{
@@ -94,10 +102,11 @@ export class LocalEpisodeBatchImport {
  async preview(session:OwnerSession,body:Record<string,unknown>){
   const input=importInput(body);
   return sessionTransaction(this.pool,session,async c=>{
-   const seriesId=await ownedSeries(c,session.id,input),seen=new Set<string>();
+   const seriesByVersion=await ownedSeries(c,session.id,input),seen=new Set<string>();
    const items=[];
    for(const item of input.items.map(itemPayload)){
-    const identity=JSON.stringify([item.title,item.sourceSha256]);
+    const version=selectedVersion(input,item),seriesId=version===null?null:seriesByVersion.get(version)!;
+    const identity=JSON.stringify([seriesId,item.title,item.sourceSha256]);
     const episodeId=await duplicateEpisode(c,input.accountId,seriesId,item.title,item.sourceSha256);
     items.push({itemId:item.itemId,duplicateEpisodeId:episodeId,duplicateInBatch:seen.has(identity)});
     seen.add(identity);
@@ -174,7 +183,7 @@ export class LocalEpisodeBatchImport {
    await c.query('INSERT INTO local_identity.episode_import_batches(owner_id,id,account_id,payload_hash) VALUES($1,$2,$3,$4)',[session.id,batchId,input.accountId,hash]);
    for(const [position,item] of items.entries())await c.query(`INSERT INTO local_identity.episode_import_items
     (owner_id,batch_id,item_id,position,title,source_name,payload) VALUES($1,$2,$3,$4,$5,$6,$7)`,
-    [session.id,batchId,item.itemId,position,item.title,item.sourceName,{...item,seriesVersionId:input.seriesVersionId}]);
+    [session.id,batchId,item.itemId,position,item.title,item.sourceName,{...item,seriesVersionId:selectedVersion(input,item)}]);
   });
  }
 

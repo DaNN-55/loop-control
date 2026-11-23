@@ -23,6 +23,7 @@ export interface EpisodeImportItem {
  targetDuration?:number|null;
  shots?:ImportedShot[];
  duplicate?:'skip'|'create';
+ seriesVersionId?:string|null;
 }
 
 export interface EpisodeImportReceipt {

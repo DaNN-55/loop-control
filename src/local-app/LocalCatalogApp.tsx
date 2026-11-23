@@ -355,7 +355,7 @@ function LocalCatalogContent(){
   {ownerSettingsPage==='cleanup'&&<RecycleBinDialog revision={catalog} targetKey={panels.cleanup?.task} onStateChange={onOwnerStateChange} returnFocusRef={ownerPanelTrigger} onClose={closeOwnerPanels} onResolved={key=>setPanels(current=>current.cleanup?.task===key?{...current,cleanup:{...current.cleanup,task:''}}:current)} onChanged={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))}/>}
  <ConfirmationModalPresence>{ownerLeavePrompt&&<ConfirmationModal title={uiText("离开当前设置？")} confirmLabel={uiText("放弃修改并离开")} cancelLabel={uiText("继续编辑")} tone="danger" onCancel={()=>{setOwnerLeavePrompt(false);pendingOwnerLeave.current=null;}} onConfirm={()=>{const leave=pendingOwnerLeave.current;pendingOwnerLeave.current=null;setOwnerLeavePrompt(false);ownerPaneState.current={busy:false,dirty:false};leave?.();}}><p>{uiText("当前设置有未保存修改，离开后会丢失。")}</p></ConfirmationModal>}</ConfirmationModalPresence>
  {importHistoryOpen&&<EpisodeImportHistoryDialog onClose={()=>setImportHistoryOpen(false)} onViewBatch={showImportBatch}/>}
- {batchImportOpen&&<EpisodeBatchImportDialog key={ownerId} ownerId={ownerId} initialAccountId={creationAccountId} initialSeriesVersionId={creationSeriesVersion?.id}
+ {batchImportOpen&&<EpisodeBatchImportDialog key={ownerId} ownerId={ownerId} initialAccountId={creationAccountId}
   accounts={catalog.accounts.filter(account=>!account.archived_at)} series={catalog.series} seriesVersions={catalog.seriesVersions}
   onClose={()=>setBatchImportOpen(false)} onCreated={()=>refreshAfterWrite('已完成批量建单')}
   onViewBatch={showImportBatch} onOpenEpisode={id=>{setBatchImportOpen(false);openCatalogEpisode(id,'script');}}/>}

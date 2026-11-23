@@ -8,6 +8,8 @@ type Props={
  workbook:WorkbookPreview;
  assessment:ReturnType<typeof assessWorkbook>;
  duplicateFor:(itemId:string)=>ReactNode;
+ seriesFor:(itemId:string)=>ReactNode;
+ seriesSummary:(itemId:string)=>string;
  busy:boolean;
  onChange:(workbook:WorkbookPreview)=>void;
  onRemove:()=>void;
@@ -22,7 +24,7 @@ function PreviewRow({sheet,row,label,summary,problems,children}:{sheet:string;ro
  </details>;
 }
 
-export function EpisodeWorkbookPreview({workbook,assessment,duplicateFor,busy,onChange,onRemove}:Props){
+export function EpisodeWorkbookPreview({workbook,assessment,duplicateFor,seriesFor,seriesSummary,busy,onChange,onRemove}:Props){
  const {issues}=assessment;
  function editOrder(row:number,field:keyof Pick<WorkbookOrder,'orderNo'|'title'|'sourceText'|'duration'>,value:string){
   onChange({...workbook,orders:workbook.orders.map(order=>order.row===row?{...order,[field]:value}:order)});
@@ -35,8 +37,9 @@ export function EpisodeWorkbookPreview({workbook,assessment,duplicateFor,busy,on
   <h3>{uiText('生产单')} · {workbook.orders.length}</h3>
   {workbook.orders.map(order=>{
    const label=uiText('生产单第 {value0} 行',{value0:String(order.row)}),problems=issues.orders.get(order.row),duplicate=duplicateFor(order.itemId);
-   return <PreviewRow key={order.itemId} sheet="orders" row={order.row} label={label} summary={[order.orderNo,order.title,duplicate&&uiText('可能重复'),...(problems?[uiText('需要修正')]:[])].filter(Boolean).join(' · ')} problems={problems}>
+   return <PreviewRow key={order.itemId} sheet="orders" row={order.row} label={label} summary={[order.orderNo,order.title,seriesSummary(order.itemId),duplicate&&uiText('可能重复'),...(problems?[uiText('需要修正')]:[])].filter(Boolean).join(' · ')} problems={problems}>
     {()=> <>
+     {seriesFor(order.itemId)}
      {([['orderNo','生产单编号'],['title','标题'],['sourceText','脚本正文'],['duration','目标时长（秒）']] as const).map(([field,name])=><label key={field}>{uiText(name)}
       {field==='sourceText'?<textarea name={field} aria-label={label+uiText(name)} rows={4} value={order[field]} disabled={busy} onChange={event=>editOrder(order.row,field,event.target.value)}/>:<input name={field} aria-label={label+uiText(name)} inputMode={field==='duration'?'decimal':undefined} value={order[field]} disabled={busy} onChange={event=>editOrder(order.row,field,event.target.value)}/>}
      </label>)}

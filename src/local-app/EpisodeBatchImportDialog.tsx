@@ -9,16 +9,15 @@ import {assessWorkbook} from './assessEpisodeWorkbook';
 import {workbookLimit,type WorkbookPreview} from './episodeWorkbookImportTypes';
 import './episode-batch-import.css';
 
-type PreviewRow=EpisodeImportItem&{fileError?:string};
+type PreviewRow=EpisodeImportItem&{seriesName:string;fileError?:string};
 type DuplicateCheck={items:Array<{itemId:string;duplicateEpisodeId:string|null;duplicateInBatch:boolean}>};
-type ImportPayload={accountId:string;seriesVersionId:string|null;items:EpisodeImportItem[]};
+type ImportPayload={accountId:string;items:EpisodeImportItem[]};
 type Props={
  ownerId:string;
  accounts:Array<{id:string;name:string}>;
  series:Array<{id:string;account_id:string;name:string}>;
  seriesVersions:Array<{id:string;series_id:string;version:number}>;
  initialAccountId?:string;
- initialSeriesVersionId?:string;
  onClose:()=>void;
  onCreated:()=>void;
  onOpenEpisode:(episodeId:string)=>void;
@@ -30,14 +29,15 @@ function post(body:object){
 }
 
 async function readScriptFile(file:File):Promise<PreviewRow>{
- const row={itemId:crypto.randomUUID(),sourceName:file.name,title:file.name.replace(/\.(txt|md|markdown)$/i,''),sourceText:''};
+ const row={itemId:crypto.randomUUID(),sourceName:file.name,title:file.name.replace(/\.(txt|md|markdown)$/i,''),sourceText:'',seriesName:''};
  if(!/\.(txt|md|markdown)$/i.test(file.name))return {...row,fileError:'请选择 TXT 或 Markdown 文件。'};
  if(file.name.length>episodeImportLimits.sourceNameLength)return {...row,fileError:'文件名过长，请重命名后重新选择。'};
  if(file.size>4*episodeImportLimits.sourceLength+3)return {...row,fileError:'文件过大，请精简后重新选择。'};
  try{
   const sourceText=new TextDecoder('utf-8',{fatal:true}).decode(await file.arrayBuffer());
   if(sourceText.includes('\0'))return {...row,fileError:'文件含有无效字符，请另存为 UTF-8 文本后重新选择。'};
-  return {...row,sourceText};
+  const header=/^[ \t]*系列[ \t]*[:：]([^\r\n]*)(?:\r\n|\n|\r|$)/.exec(sourceText);
+  return header?{...row,seriesName:header[1].trim(),sourceText:sourceText.slice(header[0].length)}:{...row,sourceText};
  }catch{return {...row,fileError:'无法读取文件，请另存为 UTF-8 文本后重新选择。'};}
 }
 
@@ -58,10 +58,10 @@ function itemProblem(row:PreviewRow){
  return '';
 }
 
-export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions,initialAccountId,initialSeriesVersionId,onClose,onCreated,onOpenEpisode,onViewBatch}:Props){
+export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions,initialAccountId,onClose,onCreated,onOpenEpisode,onViewBatch}:Props){
  const heading=useId(),fileHelp=useId(),dialog=useRef<HTMLDialogElement>(null),errorFocus=useRef<HTMLDivElement>(null);
  const [accountId,setAccountId]=useState(accounts.find(account=>account.id===initialAccountId)?.id??accounts[0]?.id??'');
- const [seriesVersionId,setSeriesVersionId]=useState(initialSeriesVersionId??'');
+ const [seriesOverrides,setSeriesOverrides]=useState<Record<string,string>>({});
  const [rows,setRows]=useState<PreviewRow[]>([]),[duplicates,setDuplicates]=useState<DuplicateCheck|null>(null);
  const [workbook,setWorkbook]=useState<WorkbookPreview|null>(null);
  const assessment=useMemo(()=>workbook?assessWorkbook(workbook):null,[workbook]);
@@ -83,7 +83,32 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
   const current=seriesVersions.filter(version=>version.series_id===candidate.id).sort((a,b)=>b.version-a.version)[0];
   return current?[{id:current.id,name:candidate.name}]:[];
  });
- const validSeries=seriesChoices.some(choice=>choice.id===seriesVersionId)?seriesVersionId:'';
+ const importRows=workbook?.orders??rows;
+ const seriesByItem=new Map(importRows.map(row=>{
+  const matches=row.seriesName?seriesChoices.filter(choice=>choice.name.trim()===row.seriesName):[];
+  const override=seriesOverrides[row.itemId];
+  const selected=seriesChoices.find(choice=>choice.id===override)??(matches.length===1?matches[0]:undefined);
+  const value=override==='unassigned'?'unassigned':selected?.id??'';
+  const issue=!row.seriesName?'请选择系列。':matches.length>1?'系列重名，请手动选择。':'当前账号下找不到此系列。';
+  const message=!value?uiText(issue):'';
+  const label=value==='unassigned'?uiText('未分系列'):selected?.name;
+  const summary=label?uiText('系列：{value0}',{value0:label}):[row.seriesName,message].filter(Boolean).join(' · ');
+  return [row.itemId,{value,message,summary}];
+ }));
+
+ function seriesField(itemId:string){
+  const {value,message}=seriesByItem.get(itemId)!;
+  const errorId='import-series-'+itemId;
+  return <>
+   <label>{uiText('系列')}<select name="seriesVersionId" disabled={busy} value={value} aria-invalid={!!message} aria-describedby={message?errorId:undefined}
+    onChange={event=>{const value=event.target.value;setSeriesOverrides(current=>({...current,[itemId]:value}));clearPreview();}}>
+    <option value="" disabled>{uiText('选择系列或未分系列')}</option>
+    <option value="unassigned">{uiText('未分系列')}</option>
+    {seriesChoices.map(choice=><option key={choice.id} value={choice.id}>{choice.name}{seriesChoices.filter(other=>other.name.trim()===choice.name.trim()).length>1?' · '+choice.id.slice(0,8):''}</option>)}
+   </select></label>
+   {message&&<p id={errorId} className="form-error">{message}</p>}
+  </>;
+ }
 
  useEffect(()=>{const element=dialog.current;element?.showModal();return()=>element?.close();},[]);
  useEffect(()=>{
@@ -131,7 +156,10 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
 
  function payload():ImportPayload{
   const items=assessment?.items??rows.map(({itemId,sourceName,sourceText,title})=>({itemId,sourceName,sourceText,title}));
-  return {accountId,seriesVersionId:validSeries||null,items:items.map(item=>({...item,duplicate:choices[item.itemId]??'skip'}))};
+  return {accountId,items:items.map(item=>{
+   const {value}=seriesByItem.get(item.itemId)!;
+   return {...item,seriesVersionId:value==='unassigned'?null:value,duplicate:choices[item.itemId]??'skip'};
+  })};
  }
 
  function duplicateField(itemId:string){
@@ -152,6 +180,7 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
   if(assessment&&(assessment.issues.orders.size||assessment.issues.shots.size)){problem('请修正预览中标出的工作表行。');return;}
   const invalid=rows.find(row=>itemProblem(row));
   if(invalid){problem(invalid.sourceName+'：'+itemProblem(invalid));return;}
+  if([...seriesByItem.values()].some(series=>!series.value)){problem('请在预览中逐条选择系列或「未分系列」。');return;}
   running.current=true;setBusy(true);setError('');
   try{
    const submitted=payload();
@@ -187,7 +216,7 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
  }
 
  function nextBatch(){
-  sessionStorage.removeItem(savedBatchKey);setBatchId('');setReceipt(null);intent.current=null;setRows([]);setWorkbook(null);clearPreview();
+  sessionStorage.removeItem(savedBatchKey);setBatchId('');setReceipt(null);intent.current=null;setRows([]);setWorkbook(null);setSeriesOverrides({});clearPreview();
  }
 
  return <dialog ref={dialog} className="modal-card episode-batch-import" aria-labelledby={heading} onCancel={event=>{event.preventDefault();closeDialog();}}>
@@ -207,21 +236,22 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
       </li>)}</ul></>:<p>{uiText(busy?'正在读取导入结果…':'正在等待导入结果。')}</p>}
     </section>:<>
      <div className="episode-batch-target">
-      <label>{uiText('账号')}<select name="accountId" required disabled={busy} value={accountId} onChange={event=>{setAccountId(event.target.value);setSeriesVersionId('');clearPreview();}}>{accounts.map(account=><option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
-      <label>{uiText('系列')}<select name="seriesVersionId" disabled={busy} value={validSeries} onChange={event=>{setSeriesVersionId(event.target.value);clearPreview();}}><option value="">{uiText('不关联系列')}</option>{seriesChoices.map(choice=><option key={choice.id} value={choice.id}>{choice.name}</option>)}</select></label>
+      <label>{uiText('账号')}<select name="accountId" required disabled={busy} value={accountId} onChange={event=>{setAccountId(event.target.value);setSeriesOverrides({});clearPreview();}}>{accounts.map(account=><option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
      </div>
      <div className="episode-workbook-file">
       <label>{uiText('导入文件')}<input aria-describedby={fileHelp} name="scripts" type="file" multiple accept=".txt,.md,.markdown,.xlsx" disabled={busy} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/></label>
       <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
      </div>
      <p id={fileHelp} className="field-hint">{uiText('可选择多份 UTF-8 TXT、Markdown，或一份 .xlsx 工作簿。Excel 时长以秒填写。')}</p>
-     {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField} busy={busy} onChange={value=>{setWorkbook(value);clearPreview();}} onRemove={()=>{setWorkbook(null);clearPreview();}}/>}
+     <p className="field-hint">{uiText('Excel 填「系列」列。TXT 或 Markdown 在首行写「系列：名称」。也可在预览中逐条选择。')}</p>
+     {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField} seriesFor={seriesField} seriesSummary={itemId=>seriesByItem.get(itemId)!.summary} busy={busy} onChange={value=>{setWorkbook(value);clearPreview();}} onRemove={()=>{setWorkbook(null);clearPreview();}}/>}
      {rows.map(row=>{
       const duplicate=duplicates?.items.find(item=>item.itemId===row.itemId),invalid=itemProblem(row);
       const reviewDuplicate=duplicate?.duplicateEpisodeId||duplicate?.duplicateInBatch;
       return <details key={row.itemId} className="episode-batch-preview" ref={element=>{if(element)previews.current.set(row.itemId,element);else previews.current.delete(row.itemId);}}>
-       <summary><strong>{row.title||row.sourceName}</strong><span>{row.sourceName}{invalid?' · '+uiText('需要修正'):reviewDuplicate?' · '+uiText('可能重复'):''}</span></summary>
+       <summary><strong>{row.title||row.sourceName}</strong><span>{row.sourceName} · {seriesByItem.get(row.itemId)?.summary}{invalid?' · '+uiText('需要修正'):reviewDuplicate?' · '+uiText('可能重复'):''}</span></summary>
        <div className="episode-batch-fields">
+        {seriesField(row.itemId)}
         <label>{uiText('标题')}<input name="title" aria-invalid={!row.title.trim()||row.title.length>200||undefined} value={row.title} maxLength={200} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{title:event.target.value})}/></label>
         <label>{uiText('脚本正文')}<textarea name="sourceText" aria-invalid={!row.sourceText.trim()||row.sourceText.length>episodeImportLimits.sourceLength||undefined} rows={5} value={row.sourceText} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{sourceText:event.target.value})}/></label>
         {invalid&&<p className="form-error">{uiText(invalid)}</p>}
