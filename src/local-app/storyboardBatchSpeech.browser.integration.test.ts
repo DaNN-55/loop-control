@@ -15,9 +15,13 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   browser=await storyBrowser(f,'storyboard-batch-speech');
   await browser.cli('set','viewport','1440','900');
   await browser.cli('open',browser.url+'&step=preparation');
+  await browser.wait("!!document.querySelector('.workspace-table-caption')");
+  expect(await browser.evaluate("document.querySelector('.workspace-table-caption').innerText")).toContain('批量操作');
   const legacyDraft='旧版保存的口播草稿。';
   await browser.evaluate(`sessionStorage.setItem(${JSON.stringify('loop-speech-draft:'+w.id+':'+w.clips[0].shotId+':text')},${JSON.stringify(legacyDraft)})`);
   await browser.click('批量操作');
+  expect(await browser.evaluate("document.querySelector('.workspace-table-caption').innerText")).not.toContain('拖动行调整顺序');
+  expect(await browser.evaluate("document.querySelector('.workspace-table-caption').innerText")).toContain('退出批量操作');
   const check=async(label:string)=>browser!.cli('find','role','checkbox','check','--name',label,'--exact');
   await check('全选镜头');
   await browser.cli('wait','--text','已选择 2 个镜头');

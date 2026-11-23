@@ -76,3 +76,28 @@ it('keeps the current shot until a posted mutation finishes, then restores navig
  view.rerender(<WorkspaceShotTable {...props} disabled={false}/>);
  fireEvent.click(screen.getByRole('button',{name:'选择镜头 02'}));expect(onSelect).toHaveBeenCalledWith('S2');
 });
+
+it('locks drag and keyboard sorting during batch selection and unlocks them on exit',async()=>{
+ const onEdit=vi.fn(async()=>{}),onSelect=vi.fn();
+ const props={workspace:deletionWorkspace(),project:null,materials:[],selectedShotId:'S1',disabled:false,onSelect,onDelete:vi.fn(),onEdit};
+ const batch={selected:new Set(['S1']),eligible:new Set(['S1','S2']),disabled:false,onToggle:vi.fn(),onSelectAll:vi.fn()};
+ const view=render(<WorkspaceShotTable {...props} batch={batch}/>);
+ const row=screen.getByRole('row',{name:'镜头 01'});
+ const drag=new Event('dragstart',{bubbles:true,cancelable:true});
+ expect(screen.queryByText(/拖动行调整顺序/)).toBeNull();
+ expect(screen.getByText('已选择 1 个镜头')).toBeTruthy();
+ expect(row.draggable).toBe(false);
+ expect(screen.getByRole('button',{name:'选择镜头 01'}).draggable).toBe(false);
+ fireEvent(row,drag);
+ fireEvent.keyDown(row,{altKey:true,key:'ArrowDown'});
+ expect(drag.defaultPrevented).toBe(true);
+ expect(onEdit).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'选择镜头 02'}));
+ expect(onSelect).toHaveBeenCalledWith('S2');
+
+ view.rerender(<WorkspaceShotTable {...props}/>);
+ expect(screen.getByText(/拖动行调整顺序/)).toBeTruthy();
+ expect(row.draggable).toBe(true);
+ await act(async()=>{fireEvent.keyDown(row,{altKey:true,key:'ArrowDown'});});
+ expect(onEdit).toHaveBeenCalledExactlyOnceWith({kind:'move',shotId:'S1',beforeShotId:null});
+});

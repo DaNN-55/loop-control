@@ -1,5 +1,5 @@
 import {uiText} from '../i18n/ui';
-import {useId,useRef,useState,type DragEvent} from 'react';
+import {useId,useRef,useState,type DragEvent,type ReactNode} from 'react';
 import {Plus,Trash2} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import type {ProductionWorkspace,WorkspaceClip} from '../productionWorkspace';
@@ -15,14 +15,16 @@ import {workspaceStoryboardProgress} from './workspaceStoryboardProgress';
 interface Props {
  workspace:ProductionWorkspace;project:OpenChatCutProject|null;materials:Array<{storage_path:string;source_path:string}>;
  batch?:{selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(shotId:string)=>void;onSelectAll:(checked:boolean)=>void};
+ caption?:{actions?:ReactNode;feedback?:ReactNode};
  onGenerationNavigate?:(shotId:string,kind:StoryboardBatchKind,targetItemId?:string)=>void;
  selectedShotId:string|undefined;disabled:boolean;readOnly?:boolean;completedView?:boolean;
  onPreparationNavigate?:(shotId:string,target:WorkspacePreparationTarget)=>void;
  onSelect:(shotId:string)=>void;onDelete:(clip:WorkspaceClip)=>void;onEdit:(operation:WorkspaceShotOperation)=>Promise<void>;
 }
 
-export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,completedView=false,batch,onSelect,onDelete,onEdit,onPreparationNavigate,onGenerationNavigate}:Props){
+export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,completedView=false,batch,caption,onSelect,onDelete,onEdit,onPreparationNavigate,onGenerationNavigate}:Props){
  const locked=disabled||readOnly;
+ const reorderLocked=locked||!!batch;
  const selectionDisabled=disabled&&!readOnly;
  const allSelected=!!batch&&batch.eligible.size>0&&batch.eligible.size===batch.selected.size;
  const clips=workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index);
@@ -37,12 +39,12 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
  }
  async function move(shotId:string,beforeShotId:string|null){
   const index=clips.findIndex(c=>c.shotId===shotId);
-  if(locked||editing.current||index<0||beforeShotId===shotId||beforeShotId===(clips[index+1]?.shotId??null))return;
+  if(reorderLocked||editing.current||index<0||beforeShotId===shotId||beforeShotId===(clips[index+1]?.shotId??null))return;
   editing.current=true;
   try{await onEdit({kind:'move',shotId,beforeShotId});setAnnouncement(`${shotId} 顺序已更新。`);}catch{/* The workspace presents errors; keep the saved order. */}finally{editing.current=false;}
  }
  function dragOver(event:DragEvent<HTMLTableRowElement>,shotId:string){
-  if(locked||!dragged.current||dragged.current===shotId)return;
+  if(reorderLocked||!dragged.current||dragged.current===shotId)return;
   event.preventDefault();event.dataTransfer.dropEffect='move';const rect=event.currentTarget.getBoundingClientRect();
   setDrop({shotId,after:event.clientY>rect.top+rect.height/2});
  }
@@ -64,7 +66,12 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
   })}</tbody>
  </table>;
  return <>
-  <div className="workspace-table-caption"><h3>{uiText("镜头 ")}{!readOnly&&!disabled&&<span id={helpId} >{uiText("拖动行调整顺序，或按 Alt + ↑/↓")}</span>}</h3></div>
+  <div className="workspace-table-caption">
+   {batch?<p className="storyboard-batch-count" role="status">{uiText('已选择 {count} 个镜头',{count:batch.selected.size})}</p>:
+    <h3>{uiText("镜头 ")}{!reorderLocked&&<span id={helpId}>{uiText("拖动行调整顺序，或按 Alt + ↑/↓")}</span>}</h3>}
+   {caption?.actions}
+  </div>
+  {caption?.feedback}
   <div className="workspace-shot-table-scroll" role="region" aria-label={uiText("镜头清单")} tabIndex={0}>
    <table className={"workspace-shot-table"+(readOnly?" is-readonly":"")} aria-label={uiText("镜头")}>
     <colgroup>{[...(batch?[44,44]:[72]),'auto',72,84,...(readOnly?[]:[44])].map((width,index)=><col key={index} style={{width}}/>)}</colgroup>
@@ -84,16 +91,16 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
      const duration=shotWindow?shotWindow.durationInFrames/shotWindow.timeline.fps:clip.image?.durationSeconds;
      const currentSource=workspaceShotSource(clip,project),source=materials.find(m=>m.storage_path===currentSource?.relativePath);
      const sourceName=source?.source_path.split('/').pop()??currentSource?.relativePath.split('/').pop();
-     return <tr key={clip.shotId} aria-label={shotLabel} aria-selected={selectedShotId===clip.shotId} aria-describedby={readOnly||disabled?undefined:helpId} tabIndex={0} draggable={!locked}
-      data-drop={drop?.shotId===clip.shotId?(drop.after?'after':'before'):undefined}
+     return <tr key={clip.shotId} aria-label={shotLabel} aria-selected={selectedShotId===clip.shotId} aria-describedby={reorderLocked?undefined:helpId} tabIndex={0} draggable={!reorderLocked}
+      data-drop={!reorderLocked&&drop?.shotId===clip.shotId?(drop.after?'after':'before'):undefined}
       onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}
-      onKeyDown={event=>{if(event.altKey&&(event.key==='ArrowUp'||event.key==='ArrowDown')){event.preventDefault();if(event.key==='ArrowUp'&&index>0)void move(clip.shotId,clips[index-1].shotId);else if(event.key==='ArrowDown'&&index<clips.length-1)void move(clip.shotId,clips[index+2]?.shotId??null);}else if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();if(!selectionDisabled)onSelect(clip.shotId);}}}
-      onDragStart={event=>{if(locked){event.preventDefault();return;}dragged.current=clip.shotId;event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',clip.shotId);}}
+      onKeyDown={event=>{if(!reorderLocked&&event.altKey&&(event.key==='ArrowUp'||event.key==='ArrowDown')){event.preventDefault();if(event.key==='ArrowUp'&&index>0)void move(clip.shotId,clips[index-1].shotId);else if(event.key==='ArrowDown'&&index<clips.length-1)void move(clip.shotId,clips[index+2]?.shotId??null);}else if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();if(!selectionDisabled)onSelect(clip.shotId);}}}
+      onDragStart={event=>{if(reorderLocked){event.preventDefault();return;}dragged.current=clip.shotId;event.dataTransfer.effectAllowed='move';event.dataTransfer.setData('text/plain',clip.shotId);}}
       onDragOver={event=>dragOver(event,clip.shotId)}
-      onDrop={event=>{event.preventDefault();const id=dragged.current;dragged.current=null;setDrop(null);if(locked||!id||id===clip.shotId)return;const rect=event.currentTarget.getBoundingClientRect(),after=event.clientY>rect.top+rect.height/2,remaining=clips.filter(c=>c.shotId!==id),target=remaining.findIndex(c=>c.shotId===clip.shotId);void move(id,after?remaining[target+1]?.shotId??null:clip.shotId);}}
+      onDrop={event=>{event.preventDefault();const id=dragged.current;dragged.current=null;setDrop(null);if(reorderLocked||!id||id===clip.shotId)return;const rect=event.currentTarget.getBoundingClientRect(),after=event.clientY>rect.top+rect.height/2,remaining=clips.filter(c=>c.shotId!==id),target=remaining.findIndex(c=>c.shotId===clip.shotId);void move(id,after?remaining[target+1]?.shotId??null:clip.shotId);}}
       onDragEnd={()=>{dragged.current=null;setDrop(null);}}>
       {batch&&<td className="workspace-shot-selection-cell"><label className="storyboard-batch-check" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}><input type="checkbox" aria-label={uiText("勾选{value0}",{value0:shotLabel})} checked={batch.selected.has(clip.shotId)} disabled={locked||batch.disabled||!batch.eligible.has(clip.shotId)} onChange={()=>batch.onToggle(clip.shotId)}/></label></td>}
-      <td className="workspace-shot-number-cell"><button type="button" disabled={selectionDisabled} draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></td>
+      <td className="workspace-shot-number-cell"><button type="button" disabled={selectionDisabled} draggable={!reorderLocked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></td>
       <td className="workspace-shot-content-cell"><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div>
        {(['speech','video'] as const).map(kind=>{
         const state=generation[kind];

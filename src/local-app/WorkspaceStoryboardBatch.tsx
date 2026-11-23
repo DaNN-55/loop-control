@@ -18,7 +18,7 @@ import {workspaceStoryboardProgress} from './workspaceStoryboardProgress';
 import './storyboard-batch.css';
 
 type Selection={selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(id:string)=>void;onSelectAll:(checked:boolean)=>void};
-export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleInWorkspace,command,onSubmitted,children}:{workspace:ProductionWorkspace;materials:VideoInputMaterial[];disabled:boolean;visibleInWorkspace:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onSubmitted:()=>Promise<unknown>;children:(selection?:Selection)=>ReactNode}){
+export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleInWorkspace,command,onSubmitted,children}:{workspace:ProductionWorkspace;materials:VideoInputMaterial[];disabled:boolean;visibleInWorkspace:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onSubmitted:()=>Promise<unknown>;children:(selection:Selection|undefined,caption:{actions?:ReactNode;feedback?:ReactNode})=>ReactNode}){
  const [retryKind,setRetryKind]=useState<StoryboardBatchKind>();
  const [active,setActive]=useState(false),[selection,setSelection]=useState(new Set<string>()),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const [review,setReview]=useState<StoryboardBatchReview|null>(null),[visible,setVisible]=useState(false),[included,setIncluded]=useState(new Set<string>()),[regenerate,setRegenerate]=useState(new Set<string>()),[unknown,setUnknown]=useState(false);
@@ -124,14 +124,10 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
   }finally{working.current=false;setBusy(false);}
  }
 
- return <>
-  {visibleInWorkspace&&<div className="storyboard-batch-toolbar">
-   <div className="storyboard-batch-actions storyboard-batch-selection" role="group" aria-label={uiText('镜头选择')}>
-    <Button size="sm" color="tertiary" isDisabled={disabled||busy||unknown} aria-pressed={active} onPress={()=>begin(!active)}>{uiText(active?'退出批量操作':'批量操作')}</Button>
+ const actions=visibleInWorkspace&&<div className="storyboard-batch-actions storyboard-batch-caption-actions" role="group" aria-label={uiText('批量操作')}>
     {!active&&(['speech','video'] as const).map(kind=>failures[kind].size>0&&<Button key={kind} size="sm" color="secondary" isDisabled={disabled||busy||unknown} onPress={()=>begin(true,kind)}>{uiText(kind==='speech'?'重试失败口播':'重试失败视频')}</Button>)}
     {active&&<>
      {retryKind&&<span>{uiText(retryKind==='speech'?'重试失败口播':'重试失败视频')}</span>}
-     <span className="storyboard-batch-count" role="status">{uiText('已选择 {count} 个镜头',{count:selected.size})}</span>
      {unknown&&review?<Button size="sm" color="primary" onPress={()=>setVisible(true)} isDisabled={busy}>{uiText('核对原回执')}</Button>:
       <DialogTrigger isOpen={settingsOpen} onOpenChange={setSettingsOpen}>
        <Button size="sm" color="tertiary" iconTrailing={ChevronDown} isDisabled={disabled||busy}>{uiText('共用设置')}</Button>
@@ -157,11 +153,14 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
        </WorkspacePopover>
       </DialogTrigger>}
     </>}
-   </div>
-   {notice&&<p role="status">{notice}</p>}
-   {!visible&&error&&<p role="alert">{error}</p>}
-  </div>}
-  {children(visibleInWorkspace&&active?{selected,eligible,disabled:busy||unknown,onToggle:id=>{if(!busy&&!unknown&&eligible.has(id))toggle(id);},onSelectAll:checked=>{if(!disabled&&!busy&&!unknown)setSelection(new Set(checked?eligible:[]));}}:undefined)}
+   <Button size="sm" color="tertiary" isDisabled={disabled||busy||unknown} aria-pressed={active} onPress={()=>begin(!active)}>{uiText(active?'退出批量操作':'批量操作')}</Button>
+  </div>;
+ const feedback=visibleInWorkspace&&(notice||(!visible&&error))&&<div className="storyboard-batch-feedback">
+  {notice&&<p role="status">{notice}</p>}
+  {!visible&&error&&<p role="alert">{error}</p>}
+ </div>;
+ return <>
+  {children(visibleInWorkspace&&active?{selected,eligible,disabled:busy||unknown,onToggle:id=>{if(!busy&&!unknown&&eligible.has(id))toggle(id);},onSelectAll:checked=>{if(!disabled&&!busy&&!unknown)setSelection(new Set(checked?eligible:[]));}}:undefined,{actions,feedback})}
   {!visibleInWorkspace&&unknown&&review&&!visible&&<Button size="sm" color="primary" isDisabled={busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>}
   {visible&&review&&<StoryboardBatchReviewDialog review={review} labels={labels} selected={included} busy={busy} error={error} unknown={unknown} onToggle={toggleReview} onClose={()=>{setVisible(false);if(!unknown){setReview(null);setError('');}}} onConfirm={()=>void confirm()}/>}
  </>;
