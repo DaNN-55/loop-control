@@ -108,7 +108,8 @@ export function parseProductionScript(text: string): ProductionScript | null {
   let seen = new Set<string>(), hasSettings = false, hasBody = false;
   const checkSegment = (line: number) => {
     if (!segment) return;
-    for (const [field, value] of result.version===2?[['口播',segment.narration],['视频生成提示词',segment.videoPrompt]]:[['口播',segment.narration],['画面来源',segment.visualSource]]) if (!value) throw new ProductionScriptError(`段落 ${segment.paragraph} 缺少${field}`, line);
+    const silent = result.version===3 && seen.has('口播') && (segment.settings.narrationEnabled ?? result.settings.narrationEnabled)===false;
+    for (const [field, value] of result.version===2?[['口播',segment.narration],['视频生成提示词',segment.videoPrompt]]:[['口播',segment.narration||silent],['画面来源',segment.visualSource]]) if (!value) throw new ProductionScriptError(`段落 ${segment.paragraph} 缺少${field}`, line);
     if (result.version===2&&!seen.has('首帧素材') && !result.settings.firstFrame) throw new ProductionScriptError(`段落 ${segment.paragraph} 缺少首帧素材`, line);
     if ((segment.settings.captionMode ?? result.settings.captionMode) === 'independent' && !seen.has('字幕正文')) throw new ProductionScriptError('独立字幕需要填写字幕正文', line);
   };
@@ -142,7 +143,7 @@ export function parseProductionScript(text: string): ProductionScript | null {
     if(!segment&&section!=='制作设置') throw new ProductionScriptError('字段须位于制作设置或正文段落中',i+1);
     if(seen.has(name)) throw new ProductionScriptError('字段重复：'+name,i+1);seen.add(name);
     if(result.version===3&&['首帧素材','生成时长（秒）','视频生成提示词','镜头类型','视频模型'].includes(name))throw new ProductionScriptError('当前模板版本不支持字段：'+name,i+1);
-    if(!value){if(result.version===3&&Object.hasOwn(fields,name))continue;throw new ProductionScriptError('字段不能为空；继承时填写“默认”',i+1);}
+    if(!value&&!(result.version===3&&segment&&name==='口播')){if(result.version===3&&Object.hasOwn(fields,name))continue;throw new ProductionScriptError('字段不能为空；继承时填写“默认”',i+1);}
     try {
       if(result.version===2&&['素材名称','镜头时长（秒）','画面来源','视频提示词'].includes(name)||result.version===3&&['首帧素材','生成时长（秒）','视频生成提示词','镜头类型'].includes(name))throw Error('当前模板版本不支持字段：'+name);
       if(name==='模板版本'&&!segment) continue;

@@ -29,6 +29,7 @@
     "backend:build": "tsc -p tsconfig.local-app.json"
   },
   "dependencies": {
+    "@office-kit/xlsx": "0.28.0",
     "@videojs/react": "10.2.0",
     "lucide-react": "^1.31.0",
     "pg": "8.23.1",

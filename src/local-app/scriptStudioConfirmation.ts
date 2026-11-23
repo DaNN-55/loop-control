@@ -1,3 +1,5 @@
+import {readImportedScript} from './episodeBatchImport.js';
+import {buildImportedScriptStudioPlan,validateImportedScriptStudioPlan} from './episodeImportedScriptPlan.js';
 import {scriptStudioReceiptOptions} from '../scriptStudioLegacy.js';
 import {parseProductionScript} from '../reviews/productionScript.js';
 import {createHash,randomUUID} from 'node:crypto';
@@ -35,12 +37,21 @@ export async function scriptStudioReceiptPlan(c:PoolClient,ownerId:string,episod
  try{return validateScriptStudioPlan(request.result.plan,text,scriptStudioReceiptOptions(request.request_snapshot.data));}catch(error){throw new ConfigurationError(400,(error as Error).message);}
 }
 /** Confirmation only accepts an original and a receipt identity, never client-provided plan JSON. */
-export async function confirmScriptStudio(c:PoolClient,root:string,ownerId:string,e:{id:string;main_script_revision_id:string|null;stage:string;archived_at:string|null},data:Record<string,unknown>,directory:string){
+export async function confirmScriptStudio(c:PoolClient,root:string,ownerId:string,e:{id:string;title:string;main_script_revision_id:string|null;stage:string;archived_at:string|null},data:Record<string,unknown>,directory:string){
  if(data.expectedScriptRevisionId!==e.main_script_revision_id||e.archived_at||e.stage==='production_completed')throw new ConfigurationError(409,'脚本基准或生产单状态已变化。');
- if(typeof data.text!=='string'||!data.text.trim()||Array.from(data.text).length>scriptStudioMaxCharacters||typeof data.reason!=='string'||data.reason.length>4000||data.requestId!==undefined&&(typeof data.requestId!=='string'||!uuid.test(data.requestId)))throw new ConfigurationError(400,'请提供有效原文和当前方案，最多支持 20000 字符。');
+ if(typeof data.text!=='string'||Array.from(data.text).length>scriptStudioMaxCharacters||typeof data.reason!=='string'||data.reason.length>4000||data.requestId!==undefined&&(typeof data.requestId!=='string'||!uuid.test(data.requestId))||data.importedVersion!==undefined&&(typeof data.importedVersion!=='string'||!uuid.test(data.importedVersion)))throw new ConfigurationError(400,'请提供有效原文和当前方案，最多支持 20000 字符。');
  try{validateStudioDuration(data.targetDuration);}catch(error){throw new ConfigurationError(400,(error as Error).message);}
  const targetDuration=data.targetDuration as number|null;
- const plan=typeof data.requestId==='string'?await scriptStudioReceiptPlan(c,ownerId,e.id,e.main_script_revision_id,data.text,targetDuration,data.requestId):scriptStudioLocalConfirmationPlan(data.text,targetDuration);
+ const imports=!e.main_script_revision_id&&(await c.query("SELECT to_regclass('local_identity.episode_import_drafts') installed")).rows[0].installed;
+ const imported=imports?await readImportedScript(c,ownerId,e.id):null;
+ const structured=imported?.shots.length?imported:null;
+ if(data.importedVersion!==undefined||structured){
+  if(!structured||data.importedVersion!==structured.version||data.text!==structured.sourceText||targetDuration!==structured.targetDuration||data.requestId!==undefined){
+   throw new ConfigurationError(409,'导入内容已变化，请重新打开核对 Excel 分镜。');
+  }
+ }else if(!data.text.trim())throw new ConfigurationError(400,'请提供有效原文和当前方案，最多支持 20000 字符。');
+ const plan=structured?validateImportedScriptStudioPlan(buildImportedScriptStudioPlan(structured,e.title)):
+  typeof data.requestId==='string'?await scriptStudioReceiptPlan(c,ownerId,e.id,e.main_script_revision_id,data.text,targetDuration,data.requestId):scriptStudioLocalConfirmationPlan(data.text,targetDuration);
  if(!plan.canProceed)throw new ConfigurationError(409,'当前方案尚有待确认问题，请先补充原文或调整要求。');
  if((await c.query("SELECT 1 FROM public.tasks WHERE episode_id=$1 AND status='running' LIMIT 1",[e.id])).rowCount)throw new ConfigurationError(409,'制作任务正在运行，请完成或停止后确认脚本。');
  let notes:string[]=[];try{notes=parseProductionScript(data.text)?.notes??[];}catch{}
