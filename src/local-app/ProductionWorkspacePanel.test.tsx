@@ -272,12 +272,12 @@ it('opens read-only completed records from delivery even when legacy evidence ex
  await screen.findByRole('heading',{name:'成片预览'});
  expect(screen.queryByRole('navigation',{name:'作品查看'})).toBeNull();
  await userEvent.click(screen.getByText('更多操作'));
- await userEvent.click(screen.getByRole('button',{name:'查看脚本'}));
+ await userEvent.click(screen.getByRole('menuitem',{name:'查看脚本'}));
  expect(await screen.findByRole('dialog',{name:'确认脚本'})).toBeTruthy();
  await userEvent.click(screen.getByRole('button',{name:'关闭详情'}));
  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'确认脚本'})).toBeNull());
  await userEvent.click(screen.getByText('更多操作'));
- await userEvent.click(screen.getByRole('button',{name:'查看分镜'}));
+ await userEvent.click(screen.getByRole('menuitem',{name:'查看分镜'}));
  expect(within(await screen.findByRole('dialog',{name:'分镜记录'})).getByRole('table',{name:'镜头'})).toBeTruthy();
  expect(screen.queryByRole('button',{name:'保存字幕'})).toBeNull();expect(screen.queryByRole('combobox',{name:'字幕片段'})).toBeNull();
  expect(screen.queryByRole('button',{name:'新增镜头'})).toBeNull();expect(screen.queryByRole('button',{name:/^剪辑工作台/})).toBeNull();
@@ -383,7 +383,7 @@ it('keeps AudioSkin playback enabled in a completed order while narration and mu
  mockCompletedDialog();
  const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:completed})));
  render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByRole('heading',{name:'成片预览'});await userEvent.click(screen.getByText('更多操作'));await userEvent.click(screen.getByRole('button',{name:'查看分镜'}));const modal=await screen.findByRole('dialog',{name:'分镜记录'});
+ await screen.findByRole('heading',{name:'成片预览'});await userEvent.click(screen.getByText('更多操作'));await userEvent.click(screen.getByRole('menuitem',{name:'查看分镜'}));const modal=await screen.findByRole('dialog',{name:'分镜记录'});
  const media=await screen.findByLabelText('S01 已采用口播试听');expect(media.closest('fieldset')?.disabled).not.toBe(true);expect(modal.querySelector('.app-audio-player button')?.matches(':disabled')).toBe(false);expect(screen.queryByRole('textbox',{name:'口播正文'})).toBeNull();
  expect(screen.getByRole('heading',{name:'配乐与声音制作记录'})).toBeTruthy();expect(screen.queryByRole('combobox',{name:'来源'})).toBeNull();expect(screen.queryByRole('button',{name:'上传 MP3'})).toBeNull();expect(command).not.toHaveBeenCalled();
 });

@@ -4,6 +4,18 @@
  flex-wrap:wrap;
  gap:6px 10px;
 }
+[data-compact-workflow].is-completed > .production-workspace-title:not(:has(> nav)) > .production-workspace-heading {
+ grid-column:1;
+ min-inline-size:0;
+ flex-wrap:nowrap;
+}
+[data-compact-workflow].is-completed > .production-workspace-title:not(:has(> nav)) .production-workspace-heading h2 {
+ min-inline-size:0;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+[data-compact-workflow].is-completed > .production-workspace-title:not(:has(> nav)) .production-workspace-heading > span { flex:none; }
 [data-compact-workflow].is-completed > .production-workspace-title h2{margin:0}
 [data-compact-workflow].is-completed .production-workspace-heading > span {
  border-radius:5px;

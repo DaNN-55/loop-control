@@ -1,4 +1,5 @@
-import {cleanup,fireEvent,render,screen,within} from '@testing-library/react';
+import {cleanup,render,screen,waitFor,within} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {WorkspaceAdditionalDownloads} from './WorkspaceAdditionalDownloads';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -20,20 +21,21 @@ it('does not implicitly save an open publication editor when downloading',()=>{
  expect(publication.flush).not.toHaveBeenCalled();
 });
 
-it('groups one completed ZIP with the existing record and editor actions',()=>{
+it('groups one completed ZIP with the existing record and editor actions',async()=>{
  const publication={state:{revision:2},dirty:false,saving:false,flush:vi.fn()} as unknown as ReturnType<typeof useWorkspacePublication>;
  const delivery={id:'d',artifacts:[{artifactType:'editable_project',relativePath:'project.json',sha256:'project'}]} as unknown as WorkspaceDelivery;
  const completedActions={viewScript:vi.fn(),viewStoryboard:vi.fn(),openProject:vi.fn()};
  render(<WorkspaceAdditionalDownloads workspace={{id:'w',episodeId:'e'} as ProductionWorkspace} delivery={delivery} publication={publication} completedActions={completedActions}/>);
- const more=screen.getByText('更多操作');
- fireEvent.click(more);
+ const more=screen.getByRole('button',{name:'更多操作'});
+ await userEvent.click(more);
  const downloads=within(screen.getByRole('group',{name:'下载'}));
- expect(downloads.getByRole('button',{name:'下载交付包（ZIP）'})).toBeTruthy();
+ expect(downloads.getByRole('menuitem',{name:'下载交付包（ZIP）'})).toBeTruthy();
  expect(downloads.queryByRole('link')).toBeNull();
  const actions=within(screen.getByRole('group',{name:'查看与编辑'}));
- expect(actions.getAllByRole('button')).toHaveLength(3);
- fireEvent.click(actions.getByRole('button',{name:'打开剪辑工程'}));
+ expect(actions.getAllByRole('menuitem')).toHaveLength(3);
+ expect(actions.getAllByRole('menuitem').every(item=>!item.querySelector('svg'))).toBe(true);
+ await userEvent.click(actions.getByRole('menuitem',{name:'打开剪辑工程'}));
  expect(completedActions.openProject).toHaveBeenCalledOnce();
- expect(more.closest('details')?.open).toBe(false);
+ await waitFor(()=>expect(more.getAttribute('aria-expanded')).toBe('false'));
  expect(publication.flush).not.toHaveBeenCalled();
 });
