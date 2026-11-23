@@ -1,6 +1,7 @@
 import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import './account-rules.css';
 import {uiText} from '../i18n/ui';
+import {creativeAccountRules,hasCreativeRuleValue} from '../creativeAccountRules';
 import type {AccountDeletionStatus} from './accountDeletionStatus';
 import './account-deletion.css';
 import type {PanelNavigation} from '../local-app/catalogNavigation';
@@ -85,6 +86,9 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
   if (!account) return <div className="account-blueprint-workspace"><h1>{uiText("账号")}</h1><div className="empty-state">{uiText("没有可读取的账号。")}</div></div>;
 
   const policy = currentBlueprint?.policy ?? defaultBlueprintPolicy;
+  const startEditing = currentBlueprint?.version === 1 && !account.archived_at
+    && policy !== null && typeof policy === 'object' && !Array.isArray(policy)
+    && !Object.values(creativeAccountRules(policy)).some(hasCreativeRuleValue);
   const localAdapterReadiness: Record<string, boolean> = systemStatus?.dependencies.some((dependency) => dependency.name === "OpenChatCut" && dependency.state === "healthy") ? { "openchatcut:openchatcut_card_video": true } : {};
   function leaveConfiguration(action: () => void) {
     if(isPending==='blueprint'||isPending==='series'||isPending.startsWith('series-version-'))return;
@@ -105,7 +109,7 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
         <div><h2>{uiText("通用规则")}</h2><p className="account-rule-scope">{uiText("作为此账号下各系列的默认规则。")}</p></div>
         <span className="account-save-state" role="status">{dirty ? uiText("有未保存修改") : uiText("已保存")}</span>
       </header>
-      <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{dirty ? uiText("有未保存修改") : uiText("修改中")}</span>} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if(onUpdateBlueprint){const result=await onUpdateBlueprint(nextPolicy);if(result===null)throw new Error(uiText("规则未保存，请处理错误后重试。"));} }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
+      <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout startEditing={startEditing} saveState={<span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{dirty ? uiText("有未保存修改") : uiText("修改中")}</span>} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if(onUpdateBlueprint){const result=await onUpdateBlueprint(nextPolicy);if(result===null)throw new Error(uiText("规则未保存，请处理错误后重试。"));} }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
 
     </>} accountPolicy={policy} isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions}/>}
     {accountSettingsOpen && <AccountSettingsDialog account={account} episodeCount={accountEpisodeCount} returnFocusRef={accountSettingsRef}

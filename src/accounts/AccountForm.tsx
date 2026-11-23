@@ -5,7 +5,7 @@ import {useDialogFocus} from '../ui/useDialogFocus';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import type { Json } from "../lib/database.types";
 import { defaultBlueprintPolicy } from "../platform/blueprintPolicy";
@@ -31,7 +31,13 @@ export const timezoneOptions = [
 ] as const;
 
 export function TimezoneSelect({ value, onChange, isDisabled = false }: { value: string; onChange: (value: string) => void; isDisabled?: boolean }) {
-  return <label>{uiText("时区")}<NativeSelect size="sm" disabled={isDisabled} aria-label={uiText("时区")} onChange={(event) => onChange(event.target.value)} value={value}>{timezoneOptions.map(([timezone, label]) => <option key={timezone} value={timezone}>{uiText(label)} ({timezone})</option>)}</NativeSelect></label>;
+  const id = useId();
+  return <div className="account-identity-field">
+    <label className="field-label" htmlFor={id}>{uiText("时区")}</label>
+    <NativeSelect id={id} icon={null} size="sm" disabled={isDisabled} onChange={(event) => onChange(event.target.value)} value={value}>
+      {timezoneOptions.map(([timezone, label]) => <option key={timezone} value={timezone}>{uiText(label)} ({timezone})</option>)}
+    </NativeSelect>
+  </div>;
 }
 
 export function AccountForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json; assetRoot?:string }) => Promise<void> }) {
@@ -54,6 +60,6 @@ export function AccountForm({ isPending, onClose, onSubmit }: { isPending: boole
     catch (cause) { setError(cause instanceof Error ? cause.message : uiText("账号创建失败，请重试。")); }
   }
 
-  return <div className="modal-backdrop"  role="dialog" aria-modal="true" aria-label={uiText("新建账号")}><form ref={dialogRef} aria-label={uiText("新建账号")} className="modal-card account-identity-form" onSubmit={submit}><header><div><h2>{uiText("新建账号")}</h2></div><Button size="sm" color="tertiary" aria-label={uiText("关闭新建账号")} isDisabled={isPending} className="icon-button" onClick={onClose} type="button"><X aria-hidden="true" className="icon" strokeWidth={1.8} /></Button></header><label>{uiText("账号名称")}<InputBase size="sm" isDisabled={isPending} autoFocus onChange={(event) => setName(event.target.value)} placeholder={uiText("例如：内容工作室")} isRequired value={name} /></label><Disclosure label={uiText("高级资料")} onToggle={event=>setAdvancedOpen(event.currentTarget.open)}>{advancedOpen && <><label><span className="field-label">{uiText("账号标识")}<HelpTip label={uiText("账号标识")}>{uiText("使用小写英文、数字和连字符；创建后作为稳定标识。")}</HelpTip></span><InputBase size="sm" aria-label={uiText("账号标识")} isDisabled={isPending} aria-invalid={slugInvalid || undefined} aria-describedby={slugInvalid ? "account-slug-error" : undefined} onChange={(event) => {setSlug(event.target.value);setError("");}} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="content-studio" isRequired value={slug} /></label><TimezoneSelect isDisabled={isPending} onChange={setTimezone} value={timezone} /></>}</Disclosure>{slugInvalid ? <p id="account-slug-error" className="form-error" role="alert">{slugFeedback}</p> : null}{error && !slugInvalid ? <p className="form-error" role="alert">{uiText(error)}</p> : null}<div className="modal-actions"><Button size="sm" color="secondary" isDisabled={isPending} className="button button-secondary" onClick={onClose} type="button">{uiText("取消")}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending} type="submit">{isPending ? uiText("创建中…") : uiText("创建账号")}</Button></div></form></div>;
+  return <div className="modal-backdrop"  role="dialog" aria-modal="true" aria-label={uiText("新建账号")}><form ref={dialogRef} aria-label={uiText("新建账号")} className="modal-card account-identity-form" onSubmit={submit}><header><div><h2>{uiText("新建账号")}</h2></div><Button size="sm" color="tertiary" aria-label={uiText("关闭新建账号")} isDisabled={isPending} className="icon-button" onClick={onClose} type="button"><X aria-hidden="true" className="icon" strokeWidth={1.8} /></Button></header><label>{uiText("账号名称")}<InputBase size="sm" isDisabled={isPending} autoFocus onChange={(event) => setName(event.target.value)} placeholder={uiText("例如：内容工作室")} isRequired value={name} /></label><Disclosure className="account-advanced-details" label={uiText("高级资料")} onToggle={event=>setAdvancedOpen(event.currentTarget.open)}>{advancedOpen && <><label className="account-identity-field"><span className="field-label">{uiText("账号标识")}<HelpTip label={uiText("账号标识")}>{uiText("使用小写英文、数字和连字符；创建后作为稳定标识。")}</HelpTip></span><InputBase size="sm" aria-label={uiText("账号标识")} isDisabled={isPending} aria-invalid={slugInvalid || undefined} aria-describedby={slugInvalid ? "account-slug-error" : undefined} onChange={(event) => {setSlug(event.target.value);setError("");}} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="content-studio" isRequired value={slug} /></label><TimezoneSelect isDisabled={isPending} onChange={setTimezone} value={timezone} /></>}</Disclosure>{slugInvalid ? <p id="account-slug-error" className="form-error" role="alert">{slugFeedback}</p> : null}{error && !slugInvalid ? <p className="form-error" role="alert">{uiText(error)}</p> : null}<div className="modal-actions"><Button size="sm" color="secondary" isDisabled={isPending} className="button button-secondary" onClick={onClose} type="button">{uiText("取消")}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending} type="submit">{isPending ? uiText("创建中…") : uiText("创建账号")}</Button></div></form></div>;
 }
 

@@ -19,11 +19,11 @@ it('the blueprint page offers creative configuration without review switches or 
  await act(async()=>{render(<LocalCatalogApp/>);});const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号'}));await user.click(screen.getByRole('button',{name:'Native account'}));
  expect(screen.getByLabelText('内容定位')).toBeTruthy();
  expect(screen.queryByText('审核设置')).toBeNull();expect(screen.queryByLabelText('账号默认配置检查')).toBeNull();
- expect((screen.getByLabelText('内容定位') as HTMLTextAreaElement).readOnly).toBe(true);
- expect(screen.queryByRole('button',{name:'保存通用规则'})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'修改'}));
- expect((screen.getByLabelText('内容定位') as HTMLTextAreaElement).readOnly).toBe(false);
+ expect(screen.getByLabelText('内容定位')).toHaveProperty('readOnly',false);
  expect(screen.getByRole('button',{name:'保存通用规则'})).toBeTruthy();
+ await user.click(screen.getByRole('button',{name:'取消编辑'}));
+ expect(screen.getByLabelText('内容定位')).toHaveProperty('readOnly',true);
+ expect(screen.getByRole('button',{name:'修改'})).toBeTruthy();
  await user.click(screen.getByRole('button',{name:'更多操作'}));expect(screen.queryByRole('button',{name:'刷新账号'})).toBeNull();await user.click(screen.getByRole('button',{name:'关闭更多操作'}));
  expect(fetcher.mock.calls.some(([path,init])=>String(path).includes('/account-commands')&&JSON.parse(String(init?.body??'{}')).command==='checkBlueprint')).toBe(false);
 });

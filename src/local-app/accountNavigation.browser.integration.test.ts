@@ -107,7 +107,7 @@ it.skipIf(!enabled||process.env.LOOP_ACCOUNT_NAVIGATION_PHASE==='native')('forma
   const episode=(await h.f.c.query('SELECT id,blueprint_version_id FROM public.episodes WHERE account_id=$1',[account.id])).rows[0];
   expect(episode).toBeTruthy();await h.click('关闭生产单详情');h.check('创建账号后直接继续新建真实生产单');
   h.step('save four optional account rules without confirmation');
-  await h.click('账号');await h.click('导航验收账号');await h.browser('wait','--text','通用规则');await h.click('修改');
+  await h.click('账号');await h.click('导航验收账号');await h.browser('wait','--fn',"!!document.querySelector('.account-blueprint-form textarea:not([readonly]):not(:disabled)')");
   for(const[label,value]of [['内容定位','给初学者看的五秒生活片段'],['说话方式','平实简短'],['画面风格','自然光纪实'],['内容禁区','不使用未经授权的肖像']])await h.browser('find','label',label,'fill',value);
   await h.click('保存通用规则');await h.browser('wait','--fn',"!!document.querySelector('.account-blueprint-form.is-locked')");
   const saved=(await h.f.c.query('SELECT b.policy,a.current_blueprint_version_id FROM public.accounts a JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1',[account.id])).rows[0];
