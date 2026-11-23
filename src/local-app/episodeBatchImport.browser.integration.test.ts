@@ -18,6 +18,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   expect(series.status,JSON.stringify(series.body)).toBe(200);
   const txt=join(f.root,'街角.txt'),md=join(f.root,'夜雨.md');
   const revised='路灯在街角亮起。';
+  const firstFile='dialog :nth-child(1 of .episode-batch-file-preview)';
   await writeFile(md,'系列：街道故事\n# 夜雨\n\n窗外下起了雨。\n');
   browser=await storyBrowser(f,'batch-text','隔离 Studio153 验收');
   await browser.click('关闭生产单详情');
@@ -48,8 +49,8 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   await browser.fill('脚本正文',revised);
   await browser.click('检查重复');
   await browser.cli('wait','--text','请在预览中逐条选择系列或「未分系列」。');
-  await browser.cli('select','dialog details:first-of-type select[name=seriesVersionId]','unassigned');
-  expect(await browser.evaluate("document.querySelector('dialog details:nth-of-type(2) summary').textContent")).toContain('系列：街道故事');
+  await browser.cli('select',firstFile+' select[name=seriesVersionId]','unassigned');
+  expect(await browser.evaluate("document.querySelectorAll('dialog .episode-batch-file-preview summary')[1].textContent")).toContain('系列：街道故事');
   await browser.click('检查重复');
   await browser.cli('wait','--text','重复检查完成，可提交创建。');
   await browser.cli('set','viewport','420','820');
@@ -81,13 +82,14 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
 
   await writeFile(txt,'系列：误写的系列\r\n'+revised);
   await browser.cli('upload','dialog input[type=file]',txt,md);
-  await browser.cli('wait','--text','当前账号下找不到此系列。');
-  await browser.cli('click','dialog details:first-of-type summary');
-  await browser.cli('select','dialog details:first-of-type select[name=seriesVersionId]','unassigned');
+  await browser.cli('wait','--text','未找到系列');
+  await browser.cli('click',firstFile+' summary');
+  await browser.cli('select',firstFile+' select[name=seriesVersionId]','unassigned');
+  expect(await browser.evaluate("!!document.querySelector('button[aria-label=\"移除文件 街角.txt\"] svg')")).toBe(true);
   await browser.click('检查重复');
   await browser.cli('wait','--text','重复检查完成，可提交创建。');
   expect(await browser.evaluate("document.querySelectorAll('dialog select[name=duplicate]').length")).toBe(2);
-  await browser.cli('select','dialog details:nth-of-type(2) select[name=duplicate]','create');
+  await browser.cli('select','dialog .episode-batch-file-preview + .episode-batch-file-preview select[name=duplicate]','create');
   await browser.click('提交创建');
   await browser.cli('wait','--text','成功 1 · 跳过 1 · 失败 0');
   expect(browser.traffic.some(record=>['start','confirmScriptStudio'].includes(record.command))).toBe(false);

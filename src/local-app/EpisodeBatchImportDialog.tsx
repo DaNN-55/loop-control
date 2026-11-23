@@ -1,5 +1,6 @@
 import {useEffect,useId,useMemo,useRef,useState,type FormEvent} from 'react';
-import {Upload,X} from 'lucide-react';
+import {Trash2,Upload,X} from 'lucide-react';
+import {Badge} from '../ui/dan-ui/components/base/badges/badges';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {uiText} from '../i18n/ui';
 import {localRequest} from './client';
@@ -93,12 +94,18 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
   const issue=!row.seriesName?'请选择系列。':matches.length>1?'系列重名，请手动选择。':'当前账号下找不到此系列。';
   const message=!value?uiText(issue):'';
   const label=value==='unassigned'?uiText('未分系列'):selected?.name;
-  const summary=label?uiText('系列：{value0}',{value0:label}):[row.seriesName,message].filter(Boolean).join(' · ');
-  return [row.itemId,{value,message,summary}];
+  const summary=label?uiText('系列：{value0}',{value0:label}):'';
+  const tag=!value?(!row.seriesName?'待选系列':matches.length>1?'系列重名':'未找到系列'):'';
+  return [row.itemId,{value,message,summary,tag,sourceSeries:row.seriesName}];
  }));
 
+ function seriesTag(itemId:string){
+  const tag=seriesByItem.get(itemId)?.tag;
+  return tag&&<Badge type="color" size="sm" color="warning">{uiText(tag)}</Badge>;
+ }
+
  function seriesField(itemId:string){
-  const {value,message}=seriesByItem.get(itemId)!;
+  const {value,message,sourceSeries}=seriesByItem.get(itemId)!;
   const errorId='import-series-'+itemId;
   return <>
    <label>{uiText('系列')}<select name="seriesVersionId" disabled={busy} value={value} aria-invalid={!!message} aria-describedby={message?errorId:undefined}
@@ -107,7 +114,7 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
     <option value="unassigned">{uiText('未分系列')}</option>
     {seriesChoices.map(choice=><option key={choice.id} value={choice.id}>{choice.name}{seriesChoices.filter(other=>other.name.trim()===choice.name.trim()).length>1?' · '+choice.id.slice(0,8):''}</option>)}
    </select></label>
-   {message&&<p id={errorId} className="form-error">{message}</p>}
+   {message&&<p id={errorId} className="form-error">{[sourceSeries,message].filter(Boolean).join(' · ')}</p>}
   </>;
  }
 
@@ -266,21 +273,26 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
       <p className="field-hint">{uiText('Excel 的时长以秒填写。系列填在「系列」列，或在 TXT、Markdown 首行写「系列：名称」。')}</p>
       <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
      </div>
-     {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField} seriesFor={seriesField} seriesSummary={itemId=>seriesByItem.get(itemId)!.summary} busy={busy} onChange={value=>{setWorkbook(value);clearPreview();}} onRemove={()=>{setWorkbook(null);clearPreview();}}/>}
+     {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField} seriesFor={seriesField} seriesTag={seriesTag} seriesSummary={itemId=>seriesByItem.get(itemId)!.summary} busy={busy} onChange={value=>{setWorkbook(value);clearPreview();}} onRemove={()=>{setWorkbook(null);clearPreview();}}/>}
      {rows.map(row=>{
       const duplicate=duplicates?.items.find(item=>item.itemId===row.itemId),invalid=itemProblem(row);
       const reviewDuplicate=duplicate?.duplicateEpisodeId||duplicate?.duplicateInBatch;
-      return <details key={row.itemId} className="episode-batch-preview" ref={element=>{if(element)previews.current.set(row.itemId,element);else previews.current.delete(row.itemId);}}>
-       <summary><strong>{row.title||row.sourceName}</strong><span>{row.sourceName} · {seriesByItem.get(row.itemId)?.summary}{invalid?' · '+uiText('需要修正'):reviewDuplicate?' · '+uiText('可能重复'):''}</span></summary>
-       <div className="episode-batch-fields">
-        {seriesField(row.itemId)}
-        <label>{uiText('标题')}<input name="title" aria-invalid={!row.title.trim()||row.title.length>200||undefined} value={row.title} maxLength={200} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{title:event.target.value})}/></label>
-        <label>{uiText('脚本正文')}<textarea name="sourceText" aria-invalid={!row.sourceText.trim()||row.sourceText.length>episodeImportLimits.sourceLength||undefined} rows={5} value={row.sourceText} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{sourceText:event.target.value})}/></label>
-        {invalid&&<p className="form-error">{uiText(invalid)}</p>}
-        {duplicateField(row.itemId)}
-        <Button size="sm" color="tertiary" type="button" isDisabled={busy} onPress={()=>{setRows(current=>current.filter(entry=>entry.itemId!==row.itemId));clearPreview();}}>{uiText('移除文件')}</Button>
-       </div>
-      </details>;
+      return <div key={row.itemId} className="episode-batch-file-preview">
+       <details className="episode-batch-preview" ref={element=>{if(element)previews.current.set(row.itemId,element);else previews.current.delete(row.itemId);}}>
+        <summary>
+         <span className="episode-batch-preview-title"><strong>{row.title||row.sourceName}</strong>{seriesTag(row.itemId)}</span>
+         <small>{[row.sourceName,seriesByItem.get(row.itemId)?.summary,invalid?uiText('需要修正'):reviewDuplicate&&uiText('可能重复')].filter(Boolean).join(' · ')}</small>
+        </summary>
+        <div className="episode-batch-fields">
+         {seriesField(row.itemId)}
+         <label>{uiText('标题')}<input name="title" aria-invalid={!row.title.trim()||row.title.length>200||undefined} value={row.title} maxLength={200} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{title:event.target.value})}/></label>
+         <label>{uiText('脚本正文')}<textarea name="sourceText" aria-invalid={!row.sourceText.trim()||row.sourceText.length>episodeImportLimits.sourceLength||undefined} rows={5} value={row.sourceText} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{sourceText:event.target.value})}/></label>
+         {invalid&&<p className="form-error">{uiText(invalid)}</p>}
+         {duplicateField(row.itemId)}
+        </div>
+       </details>
+       <Button size="sm" color="tertiary-destructive" type="button" iconLeading={Trash2} aria-label={uiText('移除文件 {value0}',{value0:row.sourceName})} title={uiText('移除文件')} isDisabled={busy} onPress={()=>{setRows(current=>current.filter(entry=>entry.itemId!==row.itemId));clearPreview();}}/>
+      </div>;
      })}
      {duplicates&&<p role="status">{uiText('重复检查完成，可提交创建。')}</p>}
     </>}
