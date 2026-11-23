@@ -1,3 +1,4 @@
+import {episodeBatchLifecycleCommand} from './episodeBatchLifecycleTypes.js';
 import {resolveEpisodeAssetRoot,requireAccountAssetRoot} from './accountAssetRoots.js';
 import type{Pool,PoolClient}from'pg';
 import{canonicalFingerprint as fingerprint,ConfigurationError}from'./configurationCommands.js';
@@ -60,6 +61,51 @@ export class LocalEpisodeLifecycle{
  }
 
 
+ private async renameEpisode(c:PoolClient,data:Record<string,unknown>,batch=false){
+  if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200)throw new ConfigurationError(400,'生产单标题无效。');
+  const {e}=await this.episode(c,data.episodeId);
+  const title=data.title.trim();
+  if(batch){
+   if((await c.query('SELECT local_identity.is_historical_episode($1) historical',[e.id])).rows[0].historical)throw new ConfigurationError(404,'生产单不存在、无管理权限或属于只读历史资料。');
+   if(e.title===title)return {episodeId:e.id,status:'skipped',reason:'生产单标题没有变化。'};
+   if(e.title!==data.expectedTitle)return {episodeId:e.id,status:'skipped',reason:'原名已变化，请重新选择后预览。'};
+  }
+  const updated=(await c.query('SELECT to_jsonb(public.update_episode_title($1,$2)) result',[e.id,title])).rows[0].result;
+  return batch?{episodeId:e.id,status:'success'}:updated;
+ }
+
+ private async archiveEpisode(c:PoolClient,episodeId:unknown,archived:unknown,batch=false){
+  if(typeof archived!=='boolean')throw new ConfigurationError(400,'归档状态无效。');
+  if(typeof episodeId!=='string'||!uuid.test(episodeId))throw new ConfigurationError(400,'生产单标识无效。');
+  if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[episodeId])).rows[0]?.owned)throw new ConfigurationError(404,'生产单不存在、无管理权限或属于只读历史资料。');
+  if((await c.query('SELECT local_identity.is_recycled_episode($1) recycled',[episodeId])).rows[0].recycled){
+   const reason='生产单已移入回收站，请先恢复。';
+   if(batch)return {episodeId,status:'skipped',reason};
+   throw new ConfigurationError(409,reason);
+  }
+  if(batch){
+   const state=(await c.query('SELECT archived_at IS NOT NULL AS archived FROM public.episodes WHERE id=$1',[episodeId])).rows[0];
+   if(state.archived===archived)return {episodeId,status:'skipped',reason:archived?'生产单已经归档。':'生产单当前未归档。'};
+  }
+  if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations m JOIN public.episodes e ON e.account_id=m.account_id WHERE e.id=$1 AND m.status='copying'",[episodeId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
+  const updated=(await c.query('SELECT to_jsonb(local_identity.archive_owned_input_episode($1,$2)) result',[episodeId,archived])).rows[0].result;
+  return batch?{episodeId,status:'success'}:updated;
+ }
+
+ private async applyBatchItem(c:PoolClient,data:Record<string,unknown>){
+  const {episodeId,action,expectedTitle,title}=data;
+  const rename=action==='rename'&&typeof expectedTitle==='string';
+  const archive=(action==='archive'||action==='unarchive')&&!('title' in data)&&!('expectedTitle' in data);
+  if(typeof episodeId!=='string'||!uuid.test(episodeId)||(!rename&&!archive))throw new ConfigurationError(400,'批量生产单操作无效。');
+  try{
+   if(rename)return await this.renameEpisode(c,{episodeId,expectedTitle,title},true);
+   return await this.archiveEpisode(c,episodeId,action==='archive',true);
+  }catch(error){
+   if(error instanceof ConfigurationError&&error.status===404)return {episodeId,status:'skipped',reason:error.message};
+   throw error;
+  }
+ }
+
  async execute(session:OwnerSession,body:Record<string,unknown>){
   if(body.command!=='deleteEpisode')return this.executeCommand(session,body);
   const connection=await this.pool.connect(),lock='episode-delete:'+String((body.data as Record<string,unknown>|undefined)?.episodeId);
@@ -95,7 +141,7 @@ export class LocalEpisodeLifecycle{
  }
  private async executeCommand(session:OwnerSession,body:Record<string,unknown>,connection?:PoolClient){
   const command=String(body.command),key=body.idempotencyKey,data=body.data as Record<string,unknown>;
-  const fields:Record<string,string[]>={renameEpisode:['episodeId','title'],planDeletion:['episodeId'],archiveEpisode:['episodeId','archived'],deleteEpisode:['episodeId','confirmation','expectedPath','expectedPaths','expectedRevision'],retryDeletionCleanup:['deletionKey']};
+  const fields:Record<string,string[]>={renameEpisode:['episodeId','title'],[episodeBatchLifecycleCommand]:['episodeId','action','title','expectedTitle'],planDeletion:['episodeId'],archiveEpisode:['episodeId','archived'],deleteEpisode:['episodeId','confirmation','expectedPath','expectedPaths','expectedRevision'],retryDeletionCleanup:['deletionKey']};
   if(!fields[command]||typeof key!=='string'||!uuid.test(key)||!data||typeof data!=='object'||Array.isArray(data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k))||Object.keys(data).some(k=>!fields[command].includes(k)))throw new ConfigurationError(400,'生命周期命令无效。');
   if(command==='retryDeletionCleanup'){if(typeof data.deletionKey!=='string'||!uuid.test(data.deletionKey))throw new ConfigurationError(400,'清理标识无效。');return this.retry(session,data.deletionKey);}
   const hash=fingerprint({endpoint:'episode-lifecycle',...body});const staged:EpisodeDeletionTarget[]=[];
@@ -107,17 +153,9 @@ export class LocalEpisodeLifecycle{
    if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(command!=='planDeletion')return old.result;}
    if(command==='planDeletion')return(await this.plan(c,data.episodeId)).visible;
    let value;
-   if(command==='renameEpisode'){if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200)throw new ConfigurationError(400,'生产单标题无效。');await this.episode(c,data.episodeId);value=(await c.query('SELECT to_jsonb(public.update_episode_title($1,$2)) result',[data.episodeId,data.title.trim()])).rows[0].result;}
-   else if(command==='archiveEpisode'){
-    if(typeof data.archived!=='boolean')throw new ConfigurationError(400,'归档状态无效。');
-    if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId))throw new ConfigurationError(400,'生产单标识无效。');
-    if(!(await c.query('SELECT local_identity.lock_owned_episode_cleanup($1) owned',[data.episodeId])).rows[0]?.owned)throw new ConfigurationError(404,'生产单不存在、无管理权限或属于只读历史资料。');
-  if((await c.query('SELECT local_identity.is_recycled_episode($1) recycled',[data.episodeId])).rows[0].recycled)throw new ConfigurationError(409,'生产单已移入回收站，请先恢复。');
-
-    if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations m JOIN public.episodes e ON e.account_id=m.account_id WHERE e.id=$1 AND m.status='copying'",[data.episodeId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
-    value=(await c.query('SELECT to_jsonb(local_identity.archive_owned_input_episode($1,$2)) result',[data.episodeId,data.archived])).rows[0].result;
-   }
-
+   if(command==='renameEpisode')value=await this.renameEpisode(c,data);
+   else if(command===episodeBatchLifecycleCommand)value=await this.applyBatchItem(c,data);
+   else if(command==='archiveEpisode')value=await this.archiveEpisode(c,data.episodeId,data.archived);
    else{
     try{await c.query('SELECT local_identity.lock_history_deletion_inventory($1)',[tokenHash(session.token)]);}catch{throw new ConfigurationError(409,'当前有并发操作，请稍后重新检查删除范围。');}
     const p=await this.plan(c,data.episodeId);this.confirmDeletion(p,data);
