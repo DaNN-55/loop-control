@@ -52,3 +52,31 @@ export interface RecycleBinSummary {
  pendingBytes:number;
  overLimit:boolean;
 }
+
+export interface RecyclePurgePlan {
+ confirmation:string;
+ path:string;
+ paths:string[];
+ revision:string;
+ files:{path:string;bytes:number;authority:string}[];
+ preserved:{path:string;reason:string}[];
+}
+
+export interface RecyclePurgeConfirmation {
+ episodeId:string;
+ revision:string;
+ confirmation:string;
+ expectedPath:string;
+ expectedPaths:string[];
+ expectedRevision:string;
+ previewKey:string;
+}
+
+export type RecyclePurgeScope=Pick<RecyclePurgePlan,'files'|'preserved'>;
+
+export interface RecyclePurgePreview {
+ items:(
+  | {episodeId:string;status:'ready';scope:RecyclePurgeScope;confirmation:RecyclePurgeConfirmation}
+  | {episodeId:string;status:'skipped'|'failed';scope?:RecyclePurgeScope;reason:string}
+ )[];
+}

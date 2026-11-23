@@ -10,16 +10,15 @@ import {useDialogFocus} from '../ui/useDialogFocus';
 import {EpisodeDeletionScope} from '../workspace/EpisodeDeletionScope';
 import {localCommand,localRequest} from './client';
 import {LocalDeletionRecovery} from './LocalDeletionRecovery';
-import {BatchRestoreDialog} from './BatchRecycleDialog';
-import type {RecycleBinItem,RecycleBinSummary} from './recycleBatchTypes';
+import {BatchPurgeDialog,BatchRestoreDialog} from './BatchRecycleDialog';
+import type {RecycleBinItem,RecycleBinSummary,RecyclePurgePlan} from './recycleBatchTypes';
 import './recycle-bin.css';
-interface Plan{confirmation:string;path:string;paths:string[];revision:string;files:{path:string;bytes:number;authority:string}[];preserved:{path:string;reason:string}[];}
 interface Props{revision:unknown;targetKey?:string;onResolved?:(key:string)=>void;onChanged?:()=>void;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void;onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean;}
 const size=(bytes:number)=>new Intl.NumberFormat(getUiLocale(),{maximumFractionDigits:2}).format(bytes/1e9)+' GB';
 export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStateChange,onClose,returnFocusRef,embedded=false}:Props){
  const[summary,setSummary]=useState<RecycleBinSummary|null>(null),[draft,setDraft]=useState('5'),[busy,setBusy]=useState(false),[loading,setLoading]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[purge,setPurge]=useState<RecycleBinItem|null>(null),[recoveryBusy,setRecoveryBusy]=useState(false);
  const[policyOpen,setPolicyOpen]=useState(false);
- const [selected,setSelected]=useState<ReadonlySet<string>>(()=>new Set()),[batch,setBatch]=useState<{mode:'restore';items:RecycleBinItem[]}|null>(null);
+ const [selected,setSelected]=useState<ReadonlySet<string>>(()=>new Set()),[batch,setBatch]=useState<{mode:'restore'|'purge';items:RecycleBinItem[]}|null>(null);
  const selectedItems=summary?.items.filter(item=>selected.has(item.episodeId))??[];
  const dirty=!!summary&&Number(draft)*1e9!==summary.limitBytes;
  const selectionDisabled=busy||loading||recoveryBusy||dirty;
@@ -57,6 +56,7 @@ export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStat
      <label className="recycle-bin-select-all"><input name="selectAllRecycled" type="checkbox" checked={allSelected} disabled={selectionDisabled} ref={element=>{if(element)element.indeterminate=selectedItems.length>0&&!allSelected;}} onChange={event=>toggleItems(summary.items,event.target.checked)}/><span>{uiText('全选回收站')}</span></label>
      {selectedItems.length>0&&<><span role="status">{uiText('已选 {count} 张',{count:selectedItems.length})}</span>
       <Button size="sm" color="secondary" isDisabled={selectionDisabled} onPress={()=>setBatch({mode:'restore',items:selectedItems})}>{uiText('批量恢复')}</Button>
+      <Button size="sm" color="secondary-destructive" isDisabled={selectionDisabled} onPress={()=>setBatch({mode:'purge',items:selectedItems})}>{uiText('批量永久删除')}</Button>
       <Button size="sm" color="tertiary" isDisabled={selectionDisabled} onPress={()=>setSelected(new Set())}>{uiText('清空选择')}</Button>
      </>}
     </div>}
@@ -75,13 +75,14 @@ export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStat
    <details className="recycle-bin-recovery" open={targetKey?true:undefined}><summary>{uiText('文件恢复与清理')}</summary><LocalDeletionRecovery revision={summary??revision} targetKey={targetKey} onResolved={onResolved} onChanged={onChanged} onStateChange={recoveryState}/></details>
   </div><footer><span>{summary?uiText('共 {count} 张生产单',{count:summary.items.length}):''}</span><span>{uiText('删除的生产单可恢复；永久删除后无法恢复。')}</span></footer>
   {batch?.mode==='restore'&&<BatchRestoreDialog selection={batch.items} onClose={()=>setBatch(null)} onChanged={refreshAfterBatch}/>}
+  {batch?.mode==='purge'&&<BatchPurgeDialog selection={batch.items} onClose={()=>setBatch(null)} onChanged={refreshAfterBatch}/>}
   {purge&&<PurgeConfirm item={purge} onClose={()=>setPurge(null)} onComplete={()=>{setPurge(null);void refresh();onChanged?.();}}/>}
  </section>;
  return embedded?content:<div className="modal-backdrop">{content}</div>;
 }
 function PurgeConfirm({item,onClose,onComplete}:{item:RecycleBinItem;onClose:()=>void;onComplete:()=>void}){
- const[plan,setPlan]=useState<Plan|null>(null),[confirmation,setConfirmation]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[attempt,setAttempt]=useState(0);
- useEffect(()=>{let active=true;setError('');setPlan(null);void localCommand<Plan>('planRecyclePurge',{episodeId:item.episodeId,revision:item.revision},undefined,'recycle-bin').then(p=>{if(active)setPlan(p);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[item,attempt]);
+ const[plan,setPlan]=useState<RecyclePurgePlan|null>(null),[confirmation,setConfirmation]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[attempt,setAttempt]=useState(0);
+ useEffect(()=>{let active=true;setError('');setPlan(null);void localCommand<RecyclePurgePlan>('planRecyclePurge',{episodeId:item.episodeId,revision:item.revision},undefined,'recycle-bin').then(p=>{if(active)setPlan(p);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[item,attempt]);
  return <ConfirmationModal tone="danger" title={uiText('永久删除生产单')} confirmLabel={uiText('确认永久删除')} cancelLabel={uiText('取消')} pendingLabel={uiText('删除中…')} confirmDisabled={!plan||confirmation!==plan.confirmation} isPending={busy} onCancel={onClose} onConfirm={async()=>{if(!plan||busy)return;setBusy(true);setError('');try{await localCommand('purgeRecycledEpisode',{episodeId:item.episodeId,revision:item.revision,confirmation,expectedPath:plan.path,expectedPaths:plan.paths,expectedRevision:plan.revision},undefined,'recycle-bin');onComplete();}catch(reason){setError((reason as Error).message);setPlan(null);}finally{setBusy(false);}}}>
   <p>{item.title}{uiText(' 将无法恢复。只清理下方已确认的独占文件。')}</p>
   {plan?<><EpisodeDeletionScope files={plan.files} preserved={plan.preserved}/><details><summary>{uiText('已核查位置')}</summary>{plan.paths.map(path=><code className="recycle-bin-path" key={path}>{path}</code>)}</details><label className="recycle-bin-confirm-label">{uiText('输入“{title}”确认删除',{title:plan.confirmation})}<InputBase size="sm" aria-label={uiText('永久删除确认文本')} value={confirmation} onChange={event=>setConfirmation(event.target.value)} isDisabled={busy}/></label></>:!error?<p role="status">{uiText('正在检查删除范围…')}</p>:null}

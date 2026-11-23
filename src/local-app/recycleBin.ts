@@ -5,7 +5,7 @@ import type {Pool,PoolClient} from 'pg';
 import {canonicalFingerprint as digest,ConfigurationError} from './configurationCommands.js';
 import {ownerTransaction,sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
-import type {RecycleBatchItemResult,RecycleBatchPreview,RecycleBatchResult} from './recycleBatchTypes.js';
+import type {RecycleBatchItemResult,RecycleBatchPreview,RecycleBatchResult,RecyclePurgeConfirmation,RecyclePurgePreview,RecyclePurgeScope} from './recycleBatchTypes.js';
 import {LocalEpisodeLifecycle} from './episodeLifecycle.js';
 import {deletionFileFingerprint,verifyEpisodeDeletionTarget,type EpisodeDeletionTarget} from './episodeDeletionTargets.js';
 
@@ -43,6 +43,17 @@ function derivedKey(namespace:string,key:string,episodeId:string){
  return hex.slice(0,8)+'-'+hex.slice(8,12)+'-4'+hex.slice(13,16)+'-a'+hex.slice(17,20)+'-'+hex.slice(20,32);
 }
 const previewSecret=randomBytes(32);
+function signPurge(session:OwnerSession,reviewed:Omit<RecyclePurgeConfirmation,'previewKey'>){
+ return createHmac('sha256',previewSecret).update(digest({command:'purgeRecycledEpisode',ownerId:session.id,reviewed})).digest('hex');
+}
+function purgeConfirmations(input:unknown):RecyclePurgeConfirmation[]{
+ const hash=(value:unknown)=>typeof value==='string'&&/^[0-9a-f]{64}$/.test(value);
+ if(!Array.isArray(input)||!input.length||!input.every(item=>item&&typeof item==='object'&&Object.keys(item).length===7&&
+  isUuid(item.episodeId)&&isUuid(item.revision)&&typeof item.confirmation==='string'&&typeof item.expectedPath==='string'&&
+  Array.isArray(item.expectedPaths)&&item.expectedPaths.every((path:unknown)=>typeof path==='string')&&hash(item.expectedRevision)&&hash(item.previewKey)))throw new ConfigurationError(400,invalidBatch);
+ batchIds(input.map(item=>item.episodeId));
+ return input;
+}
 function signPreview(session:OwnerSession,episodeIds:string[],cleanup:RecycleRevision[]){
  return createHmac('sha256',previewSecret).update(digest({ownerId:session.id,episodeIds,cleanup})).digest('hex');
 }
@@ -192,6 +203,18 @@ export class LocalRecycleBin{
 
  async execute(session:OwnerSession,body:Record<string,unknown>){
   const {command}=body;
+  if(command==='previewBatchRecyclePurge'||command==='batchPurgeRecycledEpisodes'){
+   const data=body.data as Record<string,unknown>,key=body.idempotencyKey;
+   if(!data||typeof data!=='object'||Array.isArray(data)||Object.keys(body).some(field=>!['command','data','idempotencyKey'].includes(field)))throw new ConfigurationError(400,invalidBatch);
+   if(command==='previewBatchRecyclePurge'){
+    if(Object.keys(data).some(field=>field!=='items'))throw new ConfigurationError(400,invalidBatch);
+    const items=revisionList(data.items);
+    return this.withOwnerLock(session,connection=>this.previewPurge(session,items,connection));
+   }
+   if(!isUuid(key)||data.confirmed!==true||Object.keys(data).some(field=>!['items','confirmed'].includes(field)))throw new ConfigurationError(400,invalidBatch);
+   const items=purgeConfirmations(data.items);
+   return this.withOwnerLock(session,connection=>this.runPurge(session,body,key,items,connection));
+  }
   if(command==='previewBatchRecycle'||command==='batchRecycleEpisodes'){
    const data=body.data as Record<string,unknown>;
    const preview=command==='previewBatchRecycle';
@@ -212,6 +235,53 @@ export class LocalRecycleBin{
    return this.withOwnerLock(session,connection=>this.runBatch(session,body,key,items,connection));
   }
   return this.withOwnerLock(session,connection=>this.executeSingle(session,body,connection));
+ }
+
+ private async previewPurge(session:OwnerSession,selection:RecycleRevision[],connection:PoolClient):Promise<RecyclePurgePreview>{
+  const items:RecyclePurgePreview['items']=[];
+  for(const item of selection){
+   const {episodeId,revision}=item;
+   let scope:RecyclePurgeScope|undefined;
+   try{
+    const visible=await sessionTransaction(this.pool,session,async c=>{
+     const {visible}=await this.unchanged(c,await this.entry(c,episodeId,revision));
+     scope={files:visible.files,preserved:visible.preserved};
+     await this.lifecycle.assertRecyclePurgeReady(c,episodeId);
+     return visible;
+    },connection);
+    const {files,preserved,path,paths,confirmation}=visible;
+    const reviewed={episodeId,revision,confirmation,expectedPath:path,expectedPaths:paths,expectedRevision:visible.revision};
+    items.push({episodeId,status:'ready',scope:{files,preserved},confirmation:{...reviewed,previewKey:signPurge(session,reviewed)}});
+   }catch(error){
+    if(!(error instanceof ConfigurationError)||![404,409].includes(error.status))throw error;
+    items.push({episodeId,status:error.status===404?'skipped':'failed',reason:error.message,...(scope?{scope}:{})});
+   }
+  }
+  return {items};
+ }
+
+ private async runPurge(session:OwnerSession,body:Record<string,unknown>,key:string,selection:RecyclePurgeConfirmation[],connection:PoolClient):Promise<RecycleBatchResult>{
+  const hash=digest({endpoint:'recycle-bin',...body});
+  const prior=await this.commandReceipt(session,key,hash,connection);
+  if(prior)return prior.result;
+  const reviewed=selection.map(({previewKey,...data})=>{
+   if(!timingSafeEqual(Buffer.from(previewKey,'hex'),Buffer.from(signPurge(session,data),'hex')))throw new ConfigurationError(409,'删除预览已失效，请重新预览并确认。');
+   return data;
+  });
+  const command='purgeRecycledEpisode',items:RecycleBatchItemResult[]=[];
+  for(const data of reviewed){
+   const {episodeId}=data;
+   try{
+    const result=await this.executeSingle(session,{command,data,idempotencyKey:derivedKey(command,key,episodeId)},connection);
+    items.push({episodeId,status:'success',...(result.cleanupPending?{reason:'记录已清理，文件仍待释放。'}:{})});
+   }catch(error){
+    if(!(error instanceof ConfigurationError)||![404,409].includes(error.status))throw error;
+    items.push({episodeId,status:error.status===404?'skipped':'failed',reason:error.message});
+   }
+  }
+  const result={items};
+  await this.receipt(session,key,hash,result,connection);
+  return result;
  }
 
  private async runBatch(session:OwnerSession,body:Record<string,unknown>,key:string,selection:{episodeId:string;revision?:string}[],connection:PoolClient,cleanup?:{entries:RecycleRevision[];previewKey:string}):Promise<RecycleBatchResult>{
@@ -268,14 +338,9 @@ export class LocalRecycleBin{
     const deletionKey=createHash('sha256').update('recycle-purge:'+key).digest('hex');
     const stableKey=deletionKey.slice(0,8)+'-'+deletionKey.slice(8,12)+'-4'+deletionKey.slice(13,16)+'-a'+deletionKey.slice(17,20)+'-'+deletionKey.slice(20,32);
     const committed=await sessionTransaction(this.pool,session,async c=>(await c.query('SELECT result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,stableKey])).rows[0],connection);
-    if(committed){
-     const {revision:_revision,...deletion}=data;
-     const result=await this.lifecycle.execute(session,{command:'deleteEpisode',idempotencyKey:stableKey,data:deletion});
-     await this.receipt(session,key,hash,result,connection);return result;
-    }
-    await sessionTransaction(this.pool,session,async c=>{const entry=await this.entry(c,data.episodeId,data.revision);await this.unchanged(c,entry);},connection);
+    if(!committed)await sessionTransaction(this.pool,session,async c=>{const entry=await this.entry(c,data.episodeId,data.revision);await this.unchanged(c,entry);},connection);
     const {revision:_revision,...deletion}=data;
-    const result=await this.lifecycle.execute(session,{command:'deleteEpisode',idempotencyKey:stableKey,data:deletion});
+    const result=await this.lifecycle.execute(session,{command:'deleteEpisode',idempotencyKey:stableKey,data:deletion},connection);
     await this.receipt(session,key,hash,result,connection);return result;
    }
    const value=await sessionTransaction(this.pool,session,async c=>{

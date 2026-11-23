@@ -260,3 +260,104 @@ it.skipIf(!enabled)('batch restore preserves original catalog membership and sup
   expect((await f.get()).body.items).toEqual([]);
  }finally{await f.close();}
 },120000);
+
+it.skipIf(!enabled)('batch purge requires Owner confirmation and preserves shared and unregistered files',async()=>{
+ const f=await recycleFixture();try{
+  const safe=await registeredEpisode(f,1024),protectedItem=await registeredEpisode(f,1024);
+  const unknown=join(safe.directory,'notes.txt'),shared=join(f.root,'other-copy.bin');
+  await writeFile(unknown,'local notes');await link(protectedItem.path,shared);
+  const items=[];
+  for(const item of [safe,protectedItem]){
+   const recycled=await f.recycle('recycleEpisode',{episodeId:item.episode});
+   expect(recycled.status,JSON.stringify(recycled.body)).toBe(200);
+   items.push({episodeId:item.episode,revision:recycled.body.revision});
+  }
+  const preview=await f.keyed('previewBatchRecyclePurge',{items},randomUUID());
+  expect(preview.status,JSON.stringify(preview.body)).toBe(200);
+  expect(preview.body.items).toMatchObject([
+   {episodeId:safe.episode,status:'ready',scope:{files:[{path:safe.path}],preserved:[{path:unknown}]}},
+   {episodeId:protectedItem.episode,status:'ready',scope:{files:[],preserved:[{path:protectedItem.path}]}},
+  ]);
+  const foreign=await f.keyed('previewBatchRecyclePurge',{items},randomUUID(),f.otherToken);
+  expect(foreign.body.items).toEqual(items.map(({episodeId})=>({episodeId,status:'skipped',reason:'回收站记录不存在或无管理权限。'})));
+  const reviewed={items:preview.body.items.map((item:any)=>item.confirmation)};
+  expect((await f.keyed('batchPurgeRecycledEpisodes',reviewed,randomUUID())).status).toBe(400);
+  expect((await f.keyed('batchPurgeRecycledEpisodes',{...reviewed,confirmed:true},randomUUID(),f.otherToken)).status).toBe(409);
+  await access(safe.path);expect((await f.get()).body.items).toHaveLength(2);
+  const key=randomUUID(),payload={...reviewed,confirmed:true};
+  const [result,...duplicates]=await Promise.all(Array.from({length:4},()=>f.keyed('batchPurgeRecycledEpisodes',payload,key)));
+  expect(result.status,JSON.stringify(result.body)).toBe(200);
+  expect(result.body.items).toEqual(items.map(({episodeId})=>({episodeId,status:'success'})));
+  for(const duplicate of duplicates)expect(duplicate).toEqual(result);
+  await expect(access(safe.path)).rejects.toMatchObject({code:'ENOENT'});
+  expect(await readFile(unknown,'utf8')).toBe('local notes');
+  expect(await readFile(protectedItem.path)).toEqual(await readFile(shared));
+  expect((await f.get()).body.items).toEqual([]);
+  expect(await f.keyed('batchPurgeRecycledEpisodes',payload,key)).toEqual(result);
+ }finally{await f.close();}
+},120000);
+
+it.skipIf(!enabled)('batch purge reports blockers, rejects stale scope and identity per row, and confirms only reviewed retries',async()=>{
+ const f=await recycleFixture();try{
+  const safe=await registeredEpisode(f,1024),lateShared=await registeredEpisode(f,1024),replaced=await registeredEpisode(f,1024),reentered=await registeredEpisode(f,1024),blocked=await registeredEpisode(f,1024);
+  const items=[];
+  for(const item of [safe,lateShared,replaced,reentered,blocked]){
+   const recycled=await f.recycle('recycleEpisode',{episodeId:item.episode});
+   expect(recycled.status,JSON.stringify(recycled.body)).toBe(200);
+   items.push({episodeId:item.episode,revision:recycled.body.revision});
+  }
+  const pending=randomUUID();
+  await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_b_roll','running','{}')",[pending,blocked.episode]);
+  const preview=await f.keyed('previewBatchRecyclePurge',{items},randomUUID());
+  expect(preview.status,JSON.stringify(preview.body)).toBe(200);
+  expect(preview.body.items).toMatchObject([
+   {episodeId:safe.episode,status:'ready'},
+   {episodeId:lateShared.episode,status:'ready',scope:{files:[{path:lateShared.path}],preserved:[]}},
+   {episodeId:replaced.episode,status:'ready'},
+   {episodeId:reentered.episode,status:'ready'},
+   {episodeId:blocked.episode,status:'failed',reason:expect.stringContaining('运行任务'),scope:{files:[{path:blocked.path}]}}
+  ]);
+  expect(preview.body.items[4]).not.toHaveProperty('confirmation');
+  const alias=join(f.root,'late-shared.bin'),original=join(f.root,'original-inode.bin');
+  await link(lateShared.path,alias);
+  await rename(replaced.path,original);
+  await writeFile(replaced.path,await readFile(original));
+  expect((await f.recycle('restoreRecycledEpisode',items[3])).status).toBe(200);
+  const newMembership=await f.recycle('recycleEpisode',{episodeId:reentered.episode});
+  expect(newMembership.status).toBe(200);
+  expect(newMembership.body.revision).not.toBe(items[3].revision);
+  const reviewed=preview.body.items.slice(0,4).map((item:any)=>item.confirmation);
+  const tampered=reviewed.map((item:any)=>({...item,expectedRevision:'f'.repeat(64)}));
+  expect((await f.keyed('batchPurgeRecycledEpisodes',{items:tampered,confirmed:true},randomUUID())).status).toBe(409);
+  await access(safe.path);
+  const result=await f.keyed('batchPurgeRecycledEpisodes',{items:reviewed,confirmed:true},randomUUID());
+  expect(result.status,JSON.stringify(result.body)).toBe(200);
+  expect(result.body.items).toMatchObject([
+   {episodeId:safe.episode,status:'success'},
+   {episodeId:lateShared.episode,status:'failed',reason:expect.stringContaining('重新查看')},
+   {episodeId:replaced.episode,status:'failed',reason:expect.stringContaining('已变化')},
+   {episodeId:reentered.episode,status:'failed',reason:expect.stringContaining('回收站记录已变化')},
+  ]);
+  await expect(access(safe.path)).rejects.toMatchObject({code:'ENOENT'});
+  await access(lateShared.path);await access(replaced.path);await access(reentered.path);await access(blocked.path);
+  expect((await f.get()).body.items.map((item:any)=>item.episodeId)).toEqual([lateShared.episode,replaced.episode,blocked.episode,reentered.episode]);
+  await rename(original,replaced.path);
+  await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[pending]);
+  const retries=items.slice(1).map(item=>item.episodeId===reentered.episode?{...item,revision:newMembership.body.revision}:item);
+  const retry=await f.keyed('previewBatchRecyclePurge',{items:retries},randomUUID());
+  expect(retry.body.items).toMatchObject([
+   {episodeId:lateShared.episode,status:'ready',scope:{files:[],preserved:[{path:lateShared.path}]}},
+   {episodeId:replaced.episode,status:'ready'},
+   {episodeId:reentered.episode,status:'ready'},
+   {episodeId:blocked.episode,status:'ready'},
+  ]);
+  await access(replaced.path);await access(reentered.path);await access(blocked.path);
+  const confirmed=await f.keyed('batchPurgeRecycledEpisodes',{items:retry.body.items.map((item:any)=>item.confirmation),confirmed:true},randomUUID());
+  expect(confirmed.body.items).toEqual(items.slice(1).map(({episodeId})=>({episodeId,status:'success'})));
+  expect(await readFile(lateShared.path)).toEqual(await readFile(alias));
+  await expect(access(replaced.path)).rejects.toMatchObject({code:'ENOENT'});
+  await expect(access(reentered.path)).rejects.toMatchObject({code:'ENOENT'});
+  await expect(access(blocked.path)).rejects.toMatchObject({code:'ENOENT'});
+  expect((await f.get()).body.items).toEqual([]);
+ }finally{await f.close();}
+},120000);
