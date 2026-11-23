@@ -1,5 +1,7 @@
 # 架构决策
 
+- [ADR-0076：分镜台批量生成的确认边界](0076-storyboard-batch-generation-confirmation.md)
+
 - [ADR-0075：统一生产单入口与按需设置](0075-workspace-navigation-and-settings.md)
 
 - [ADR-0074：核心交付、独立发布资料与完整生产单副本](0074-core-delivery-and-production-copies.md)
