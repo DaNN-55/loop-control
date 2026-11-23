@@ -94,7 +94,7 @@ function LocalCatalogContent(){
  const[utilityPage,setUtilityPage]=useState<'storage'|'system'|null>(null),[logStorageOpen,setLogStorageOpen]=useState(false);
  const[setupRequest,setSetupRequest]=useState<ConnectionSetupRequest|null>(null);
  const setupRequestRef=useRef(setupRequest);setupRequestRef.current=setupRequest;
- const[createThenEpisode,setCreateThenEpisode]=useState(false);
+ const[createAfterAccount,setCreateAfterAccount]=useState<'single'|'batch'|null>(null);
  const[newAccountReady,setNewAccountReady]=useState(false),[firstUseError,setFirstUseError]=useState('');
  const[settings,setSettings]=useState(false);const[studioOpening,setStudioOpening]=useState(false);
  useEffect(()=>{let current=true;setPreferencesLoaded(false);setPreferencesSaving(false);setPreferencesError('');setOwnerPreferences(defaultOwnerPreferences);if(!ownerId){setPreferencesPage(null);return;}setPreferencesLoading(true);void localRequest('preferences').then(value=>{if(current){setOwnerPreferences(parseOwnerPreferences(value));setPreferencesLoaded(true);}}).catch(error=>{if(current)setPreferencesError(error instanceof Error?error.message:'偏好读取失败。');}).finally(()=>{if(current)setPreferencesLoading(false);});return()=>{current=false;};},[ownerId,preferencesRevision]);
@@ -108,7 +108,7 @@ function LocalCatalogContent(){
  const openOwnerPageRef=useRef<(page:OwnerSettingsPage,options?:{setup?:ConnectionSetupRequest|null})=>void>(()=>{});
  const ownerSettingsPage:OwnerSettingsPage|null=utilityPage??preferencesPage??(settings?'security':logsOpen?'logs':cleanupOpen?'cleanup':panels.connections.open?'connections':canManageSecrets&&secrets?'secrets':null);
  const onOwnerStateChange=useCallback((value:OwnerSettingsPaneState)=>{ownerPaneState.current=value;setOwnerSettingsBusy(previous=>previous===value.busy?previous:value.busy);},[]);
- useEffect(()=>{ownerPaneState.current={busy:false,dirty:false};setOwnerSettingsBusy(false);setOwnerLeavePrompt(false);pendingOwnerLeave.current=null;setSecretTarget(null);setUtilityPage(null);setSetupRequest(null);setNewAccountReady(false);setCreateThenEpisode(false);setFirstUseError('');},[ownerId]);
+ useEffect(()=>{ownerPaneState.current={busy:false,dirty:false};setOwnerSettingsBusy(false);setOwnerLeavePrompt(false);pendingOwnerLeave.current=null;setSecretTarget(null);setUtilityPage(null);setSetupRequest(null);setNewAccountReady(false);setCreateAfterAccount(null);setFirstUseError('');},[ownerId]);
  function requestOwnerLeave(action:()=>void,wholeWorkspace=false){
   if(ownerPaneState.current.busy)return false;
   const leave=()=>(wholeWorkspace?requestDraftLeave:requestSettingsDraftLeave)(action);
@@ -284,7 +284,7 @@ function LocalCatalogContent(){
  function setSidebarCollapsed(next:boolean){setCollapsed(next);localStorage.setItem('loop-control.sidebar.v1',next?'collapsed':'expanded');}
  async function openNewAccount(storageChecked=false){
   if(!storageChecked){
-   setCreateThenEpisode(false);
+   setCreateAfterAccount(null);
    if(!catalog?.accounts.length){
     const session=sessionGeneration.current;
     try{const root=await localRequest('media-root');if(session!==sessionGeneration.current||!authenticated.current)return;if(requiresStorageSetup(root)){setNewAccountReady(true);openOwnerPage('storage');return;}}
@@ -294,13 +294,14 @@ function LocalCatalogContent(){
   if(view==='accounts'&&(pending==='blueprint'||(accountDirty&&!window.confirm('当前配置有未保存修改，确定放弃吗？'))))return;
   requestDraftLeave(()=>setNewAccount(true));
  }
- async function beginProduction(){
+ async function beginProduction(mode:'single'|'batch'='single'){
   if(!catalog?.accounts.some(item=>!item.archived_at)){
-   setCreateThenEpisode(true);setFirstUseError('');
+   setCreateAfterAccount(mode);setFirstUseError('');
    try{const root=await localRequest('media-root');if(requiresStorageSetup(root)){setNewAccountReady(true);openOwnerPage('storage');return;}}catch{setNewAccountReady(true);setError('请先检查文件存储，再创建内容账号。');openOwnerPage('storage');return;}
    void openNewAccount(true);return;
   }
-  setNewEpisode(true);
+  if(mode==='batch')setBatchImportOpen(true);
+  else setNewEpisode(true);
  }
  const pageLabel=nativeNavigation.find(item=>item.id===view)?.label;
  const creationAccountId=view==='accounts'?selectedId:filters.accountId||selectedEpisode?.account_id||selectedId;
@@ -313,11 +314,11 @@ function LocalCatalogContent(){
   {view!=='episodes'&&view!=='accounts'&&view!=='operations'&&<Tooltip title={uiText("刷新")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" aria-label={uiText("刷新")} className="button button-secondary refresh-button" onClick={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} type="button"><Icon name="Refresh"/></Button></Tooltip>}
   {view==='episodes'&&<Dropdown.Root>
    <Button ref={creationTrigger} size="sm" color="primary" iconLeading={Plus} iconTrailing={ChevronDown}>{creationLabel}</Button>
-   <Dropdown.Popover className="dan-ui product-ui" placement="bottom end">
+   <Dropdown.Popover className="dan-ui product-ui episode-creation-popover" placement="bottom end">
     <Dropdown.Menu aria-label={creationLabel}>
      <Dropdown.Section>
       <Dropdown.Item id="create-production" onAction={()=>void beginProduction()}>{creationLabel}</Dropdown.Item>
-      {canCreateProduction&&<Dropdown.Item id="batch-import" onAction={()=>setBatchImportOpen(true)}>{uiText('批量新建')}</Dropdown.Item>}
+      <Dropdown.Item id="batch-import" onAction={()=>void beginProduction('batch')}>{uiText('批量上传')}</Dropdown.Item>
      </Dropdown.Section>
      <Dropdown.Separator/>
      <Dropdown.Item id="import-history" onAction={()=>setImportHistoryOpen(true)}>{uiText('导入记录')}</Dropdown.Item>
@@ -379,9 +380,14 @@ function LocalCatalogContent(){
   onClose={()=>{setBatchImportOpen(false);creationTrigger.current?.focus();}} onCreated={()=>refreshAfterWrite('已完成批量建单')}
   onViewBatch={showImportBatch} onOpenEpisode={id=>{setBatchImportOpen(false);openCatalogEpisode(id,'script');}}/>}
  {newEpisode&&<EpisodeForm returnFocusRef={view==='episodes'?creationTrigger:undefined} initialAccountId={creationAccountId} initialSeriesVersionId={creationSeriesVersion?.id} accounts={catalog.accounts.filter(a=>!a.archived_at)} series={catalog.series} seriesVersions={catalog.seriesVersions} isPending={pending==='episode'} onClose={()=>setNewEpisode(false)} onSubmit={async input=>{setPending('episode');setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const e=await localCommand<{id:string}>('create',input,undefined,'episode-commands');setEpisodeId(e.id);setNewEpisode(false);setView('episodes');filter({view:'episodes'});refreshAfterWrite('生产单已创建');}catch(e){setError(e instanceof Error?e.message:String(e));if(e&&typeof e==='object'&&'preflight'in e)return e.preflight as import('../worker/contracts').WorkerPreflightResult;throw e;}finally{setPending('');}return null;}}/>}
- {newAccount&&<AccountForm isPending={pending==='account'} onClose={()=>{setNewAccount(false);setCreateThenEpisode(false);}} onSubmit={async input=>{await command<LocalCatalog['accounts'][number]>('account','createAccount',input,undefined,created=>navigate('accounts',()=>{
+ {newAccount&&<AccountForm isPending={pending==='account'} onClose={()=>{setNewAccount(false);setCreateAfterAccount(null);}} onSubmit={async input=>{await command<LocalCatalog['accounts'][number]>('account','createAccount',input,undefined,created=>navigate('accounts',()=>{
    setCatalog(current=>current?{...current,accounts:[...current.accounts.filter(item=>item.id!==created.id),created]}:current);
    setAccountDirty(false);setSelectedId(created.id);setNewAccount(false);
-   setPanels(current=>({...current,rules:{series:'__common',q:'',page:1}}));if(createThenEpisode){setCreateThenEpisode(false);setView('episodes');filter({view:'episodes',accountId:created.id,seriesId:'all'});setNewEpisode(true);}
+   setPanels(current=>({...current,rules:{series:'__common',q:'',page:1}}));
+   if(createAfterAccount){
+    setCreateAfterAccount(null);setView('episodes');filter({view:'episodes',accountId:created.id,seriesId:'all'});
+    if(createAfterAccount==='batch')setBatchImportOpen(true);
+    else setNewEpisode(true);
+   }
   }));}}/>}</div></WorkspaceNavigationContext.Provider></CatalogPanelNavigationContext.Provider>;
 }

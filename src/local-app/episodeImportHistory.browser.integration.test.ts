@@ -9,7 +9,7 @@ import {storyBrowser} from './storyBrowser.fixture';
 
 it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner finds a previous import after refresh and follows each member’s current stage',async()=>{
  const volume=await workspaceAudioVolume();
- const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath},migrations:['db/current/220-episode-batch-import.sql']}).catch(async cause=>{await volume.close();throw cause;});
+ const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath},migrations:['db/current/220-episode-batch-import.sql','db/current/223-manual-script-review-drafts.sql','db/current/225-structured-import-script.sql']}).catch(async cause=>{await volume.close();throw cause;});
  let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
   const account=await f.post('configuration','createAccount',{name:'生产单批次历史验收',slug:'batch-'+randomUUID(),timezone:'Asia/Shanghai',policy:{}});
@@ -33,14 +33,14 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner finds a previous import after
    await page.click('检查重复');await page.cli('wait','--text','重复检查完成，可提交创建。');
   };
   await page.click('关闭生产单详情');
-  await page.click('新建生产单');await page.cli('find','role','menuitem','click','--name','批量新建','--exact');await checkFiles(lamp,rain);await page.click('提交创建');
+  await page.click('新建生产单');await page.cli('find','role','menuitem','click','--name','批量上传','--exact');await checkFiles(lamp,rain);await page.click('提交创建');
   await page.cli('wait','--text','成功 2');
   await page.click('查看本批');
   await waitForCount(2);
   expect(await titles()).toEqual(['夜雨','街灯']);
   await page.click('退出批次筛选');
 
-  await page.click('新建生产单');await page.cli('find','role','menuitem','click','--name','批量新建','--exact');await page.click('开始新批次');
+  await page.click('新建生产单');await page.cli('find','role','menuitem','click','--name','批量上传','--exact');await page.click('开始新批次');
   await checkFiles(lamp,rain);
   await page.cli('select','dialog .episode-batch-file-preview:last-of-type select[name=duplicate]','create');
   await page.click('提交创建');await page.cli('wait','--text','成功 1 · 跳过 1 · 失败 0');

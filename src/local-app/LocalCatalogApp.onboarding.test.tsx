@@ -1,12 +1,16 @@
 import userEvent from '@testing-library/user-event';
 import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
-import {afterEach,expect,it,vi} from 'vitest';
+import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {webcrypto} from 'node:crypto';
 import {LocalCatalogApp} from './LocalCatalogApp';
 import {draftCatalog,draftOwner} from './fixtures/workspaceDraftFixture';
 import {defaultOwnerPreferences} from '../preferences/preferences';
 
-afterEach(()=>{cleanup();vi.unstubAllGlobals();localStorage.clear();sessionStorage.clear();history.replaceState(null,'','/');});
+beforeEach(()=>{
+ Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(this:HTMLDialogElement){this.open=true;}});
+ Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;}});
+});
+afterEach(()=>{cleanup();Reflect.deleteProperty(HTMLDialogElement.prototype,'showModal');Reflect.deleteProperty(HTMLDialogElement.prototype,'close');vi.unstubAllGlobals();localStorage.clear();sessionStorage.clear();history.replaceState(null,'','/');});
 function fixture(needsStorage=false,delayCatalog=false){
  let created=false;
  const writes:Array<{command:string;data:Record<string,unknown>}>=[];
@@ -34,6 +38,18 @@ it('asks only for an account name and continues to production without configurin
  expect(writes).toHaveLength(1);expect(writes[0]).toMatchObject({command:'createAccount',data:{name:'初次创作',timezone:'Asia/Shanghai'}});
  expect(writes[0].data.slug).toMatch(/^account-[a-f0-9-]+$/);
  expect(screen.queryByRole('dialog',{name:'制作服务'})).toBeNull();
+});
+it('continues from the first account into batch upload before the catalog refresh finishes',async()=>{
+ const writes=fixture(false,true);render(<LocalCatalogApp/>);
+ await userEvent.click(await screen.findByRole('button',{name:'创建内容账号'}));
+ await userEvent.click(await screen.findByRole('menuitem',{name:'批量上传'}));
+ const form=within(await screen.findByRole('dialog',{name:'新建账号'}));
+ fireEvent.change(form.getByRole('textbox',{name:'账号名称'}),{target:{value:'初次创作'}});
+ fireEvent.click(form.getByRole('button',{name:'创建账号'}));
+ const upload=within(await screen.findByRole('dialog',{name:'批量新建生产单'}));
+ expect(upload.getByRole('combobox',{name:'账号'})).toHaveProperty('value','created-account');
+ expect(screen.queryByRole('dialog',{name:'新建生产单'})).toBeNull();
+ expect(writes).toHaveLength(1);
 });
 it('opens file storage before creating an account when the workspace has not initialized it',async()=>{
  const writes=fixture(true);render(<LocalCatalogApp/>);await userEvent.click(await screen.findByRole('button',{name:'创建内容账号'}));

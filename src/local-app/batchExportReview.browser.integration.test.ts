@@ -11,7 +11,7 @@ import {storyBrowser} from './storyBrowser.fixture';
 
 it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from an import batch, submits only approved orders and retries only failures',async()=>{
  const volume=await workspaceAudioVolume();
- const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/current/220-episode-batch-import.sql']}).catch(async cause=>{await volume.close();throw cause;});
+ const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/current/220-episode-batch-import.sql','db/current/223-manual-script-review-drafts.sql','db/current/225-structured-import-script.sql']}).catch(async cause=>{await volume.close();throw cause;});
  let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
   const account=await f.post('configuration','createAccount',{name:'批量审片验收',slug:'export-'+randomUUID(),timezone:'Asia/Shanghai',policy:{}});
@@ -20,7 +20,7 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from
   const files=orders.map(title=>join(f.root,title+'.txt'));
   for(const [index,file] of files.entries())await writeFile(file,`隔离成片 ${orders[index]} 的一张画面。`);
   const page=browser=await storyBrowser(f,'batch-export-review','隔离 Studio153 验收');
-  await page.click('关闭生产单详情');await page.click('新建生产单');await page.cli('find','role','menuitem','click','--name','批量新建','--exact');
+  await page.click('关闭生产单详情');await page.click('新建生产单');await page.cli('find','role','menuitem','click','--name','批量上传','--exact');
   await page.cli('select','dialog select[name=accountId]',account.body.id);
   await page.cli('upload','dialog input[name=scripts]',...files);
   for(const title of orders){

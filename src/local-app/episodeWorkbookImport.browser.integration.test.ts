@@ -24,7 +24,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   expect(otherSeries.status).toBe(200);
   browser=await storyBrowser(f,'batch-excel','隔离 Studio153 验收');
   await browser.click('关闭生产单详情');
-  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量上传','--exact');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
   const template=join(f.root,'template.xlsx'),upload=join(f.root,'三个街角.xlsx');
   await browser.cli('download','dialog a[download]',template);
@@ -143,7 +143,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
     break;
    }
    await browser.click('关闭生产单详情');
-   await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
+   await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量上传','--exact');
    await browser.cli('wait','--text','成功 3');
   }
  }catch(error){await browser?.capture('failed').catch(()=>{});throw error;}

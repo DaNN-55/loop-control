@@ -80,3 +80,14 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .maintenance-embedd
 .impeccable-app.product-ui .production-return-tools>.drawer-close{position:static;inset:auto;padding:0}
 .impeccable-app .sidebar-utilities{grid-template-columns:repeat(2,minmax(0,1fr))}.impeccable-app[data-sidebar="collapsed"] .sidebar-utilities{grid-template-columns:1fr}
 @media(max-width:850px){.impeccable-app.product-ui .lc-production-return>span{display:none}.production-return-tools{gap:6px}}
+
+html[data-interface="impeccable"] .dan-ui.product-ui.episode-creation-popover[data-lc-dropdown][role="dialog"]{
+ box-sizing:border-box;
+ width:180px;
+ min-width:0;
+ max-width:calc(100vw - 28px);
+ overflow-x:hidden;
+ overflow-y:auto;
+}
+html[data-interface="impeccable"] .episode-creation-popover [role="menu"]{overflow:visible!important}
+html[data-interface="impeccable"] .episode-creation-popover [role="separator"]{width:auto!important}

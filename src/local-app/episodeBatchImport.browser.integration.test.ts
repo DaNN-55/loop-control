@@ -9,7 +9,7 @@ import {storyBrowser} from './storyBrowser.fixture';
 
 it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script import, recovers a lost result and reopens the waiting source',async()=>{
  const volume=await workspaceAudioVolume();
- const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath},migrations:['db/current/220-episode-batch-import.sql']}).catch(async cause=>{await volume.close();throw cause;});
+ const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath},migrations:['db/current/220-episode-batch-import.sql','db/current/223-manual-script-review-drafts.sql','db/current/225-structured-import-script.sql']}).catch(async cause=>{await volume.close();throw cause;});
  let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
   const account=await f.post('configuration','createAccount',{name:'批量导入浏览器验收',slug:'batch-'+randomUUID(),timezone:'Asia/Shanghai',policy:{}});
@@ -22,11 +22,25 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   await writeFile(md,'系列：街道故事\n# 夜雨\n\n窗外下起了雨。\n');
   browser=await storyBrowser(f,'batch-text','隔离 Studio153 验收');
   await browser.click('关闭生产单详情');
-  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
+  for(const [width,height] of [[1357,946],[420,820]]){
+   await browser.cli('set','viewport',String(width),String(height));
+   await browser.click('新建生产单');
+   await browser.wait("document.querySelector('.episode-creation-popover [role=menu]')!==null");
+   const geometry=await browser.evaluate(`(()=>{
+    const menu=document.querySelector('.episode-creation-popover [role=menu]');
+    const popover=menu.closest('[data-lc-dropdown]');
+    const rect=popover.getBoundingClientRect();
+    return {width:rect.width,inViewport:rect.left>=0&&rect.right<=innerWidth,menuOverflow:menu.scrollWidth-menu.clientWidth,popoverOverflow:popover.scrollWidth-popover.clientWidth};
+   })()`);
+   expect(geometry).toEqual({width:180,inViewport:true,menuOverflow:0,popoverOverflow:0});
+   await browser.cli('press','Escape');
+  }
+  await browser.cli('set','viewport','1357','946');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量上传','--exact');
   await browser.cli('press','Escape');
   await browser.wait("!document.querySelector('dialog.episode-batch-import')");
   expect(await browser.evaluate('document.activeElement.textContent')).toBe('新建生产单');
-  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量上传','--exact');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
   expect(await browser.evaluate("document.querySelector('.episode-batch-target select[name=seriesVersionId]')===null")).toBe(true);
   await browser.evaluate("document.querySelector('dialog input[name=scripts]').addEventListener('click',event=>{event.preventDefault();event.target.dataset.activated='true';},{once:true})");
@@ -71,7 +85,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   await browser.click('重试此批');
   await browser.cli('wait','--text','成功 2');
   await browser.cli('reload');
-  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量上传','--exact');
   await browser.cli('wait','--text','成功 2');
   await browser.cli('set','viewport','1440','900');
   await browser.capture('recovered-result');
@@ -83,7 +97,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   expect(await browser.evaluate("document.querySelector('textarea[name=script]')?.value")).toBe(revised);
   await browser.capture('waiting-script');
   await browser.click('关闭生产单详情');
-  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量上传','--exact');
   await browser.cli('wait','--text','成功 2');
   await browser.click('开始新批次');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
