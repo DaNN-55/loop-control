@@ -44,7 +44,7 @@ it.skipIf(process.env.LOOP_BATCH_LIFECYCLE_BROWSER!=='1')('renames across pages 
   const requests=()=>page.traffic.filter(request=>request.command==='applyEpisodeBatchItem');
   await page.cli('open',listUrl);await row(first);await check(first);
   await page.click('下一页');await row(second);await check(second);
-  await page.click('批量改名');
+  await page.click('更多');await page.cli('find','role','menuitem','click','--name','改名','--exact');
   await page.fill('添加前缀','批-');await page.fill('添加后缀','-交付');
   await page.fill('查找文本','原');await page.fill('替换为','$&');
   await page.click('预览新标题');
@@ -70,7 +70,7 @@ it.skipIf(process.env.LOOP_BATCH_LIFECYCLE_BROWSER!=='1')('renames across pages 
   expect(archiveOne.status).toBe(200);
   await page.cli('open',listUrl+'&visibility=all');
   await row('手改/标题');await check('批-$&素材 10-交付');await check('手改/标题');
-  await page.click('批量归档');
+  await page.click('更多');await page.cli('find','role','menuitem','click','--name','归档','--exact');
   page.dropNextResponse('applyEpisodeBatchItem');
   await page.click('确认归档');
   await outcome('手改/标题','skipped');await outcome('批-$&素材 10-交付','success');
@@ -81,7 +81,7 @@ it.skipIf(process.env.LOOP_BATCH_LIFECYCLE_BROWSER!=='1')('renames across pages 
   await row('手改/标题');await row('批-$&素材 10-交付');
   await page.cli('open',listUrl+'&visibility=all');
   await row(other);await check(other);await check('手改/标题');await check('批-$&素材 10-交付');
-  await page.click('批量取消归档');await page.click('确认取消归档');
+  await page.click('更多');await page.cli('find','role','menuitem','click','--name','取消归档','--exact');await page.click('确认取消归档');
   await outcome(other,'skipped');await outcome('手改/标题','success');await outcome('批-$&素材 10-交付','success');
   await page.capture('unarchive-results');await page.click('关闭');
   await page.cli('open',listUrl);await row('手改/标题');await row('批-$&素材 10-交付');

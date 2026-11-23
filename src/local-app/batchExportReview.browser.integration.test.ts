@@ -23,6 +23,11 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from
   await page.click('关闭生产单详情');await page.click('批量新建');
   await page.cli('select','dialog select[name=accountId]',account.body.id);
   await page.cli('upload','dialog input[name=scripts]',...files);
+  for(const title of orders){
+   await page.click('编辑 '+title);
+   await page.cli('select','dialog .episode-import-editor select[name=seriesVersionId]','unassigned');
+   await page.click('保存');
+  }
   await page.click('检查重复');await page.cli('wait','--text','重复检查完成，可提交创建。');
   await page.click('提交创建');await page.cli('wait','--text','成功 4');
   await page.click('查看本批');
@@ -62,11 +67,20 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from
    expect(workspace.exports[0].status,JSON.stringify(workspace.exports[0].checks)).toBe('ready');
    return {title,episodeId,edit,imagePath:join(root,image.storage_path),imageBytes};
   };
-  const first=await setup(orders[0]),second=await setup(orders[1]),needsChange=await setup(orders[2]),retry=await setup(orders[3]);
+  const first=await setup(orders[0]),second=await setup(orders[1]),needsChange=await setup(orders[2]);
+  await page.cli('reload');
+  await page.wait("document.querySelectorAll('.episode-table tbody tr').length===4");
+  await page.cli('find','role','checkbox','click','--name','全选本页','--exact');
+  await page.click('审批');
+  const mixedReview=await page.snapshot();
+  expect(mixedReview).toContain('确认脚本');
+  expect(mixedReview).toContain('确认成片');
+  await page.cli('press','Escape');
+  const retry=await setup(orders[3]);
   await page.cli('select','select[name=batchStage]','export_review');
   await page.wait("document.querySelectorAll('.episode-table tbody tr').length===4");
   await page.cli('find','role','checkbox','click','--name','全选本页','--exact');
-  await page.click('批量确认成片');
+  await page.click('确认成片');
   const review=async(title:string,decision:'通过'|'待修改')=>{
    await page.click('预览 '+title);
    const player="document.querySelector('dialog video')";

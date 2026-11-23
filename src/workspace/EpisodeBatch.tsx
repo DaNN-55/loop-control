@@ -4,6 +4,8 @@ import type {EpisodeStage} from '../platform/types';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import './episode-batch.css';
 
+export type EpisodeBatchHints={script:boolean;export:boolean;zip:boolean};
+
 export interface EpisodeBatchSelectionItem {
  id:string;
  title:string;
@@ -11,6 +13,7 @@ export interface EpisodeBatchSelectionItem {
  accountId:string;
  archived:boolean;
  stage:EpisodeStage;
+ hints?:EpisodeBatchHints;
 }
 
 export interface EpisodeBatchActionContext {

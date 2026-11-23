@@ -26,3 +26,22 @@ html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-tab
 .episode-batch-export-item legend{font-weight:600;padding:0}
 .episode-batch-export-item label{display:inline-flex;align-items:center;gap:5px;min-block-size:44px;cursor:pointer}
 .episode-batch-export-item input{inline-size:1rem;block-size:1rem;accent-color:var(--lc-accent);margin:0}
+
+.episode-batch-selection-toolbar {
+ gap:4px 8px;
+ padding:4px 6px;
+ border-radius:7px;
+ background:var(--lc-accent-soft);
+}
+.episode-batch-selection-actions {display:flex;align-items:center;flex-wrap:wrap;gap:2px 4px}
+.episode-batch-selection-toolbar button {white-space:nowrap}
+.episode-batch-selection-toolbar .episode-batch-selection-count {color:var(--lc-accent)}
+.episode-batch-selection-toolbar .episode-batch-selection-clear {margin-inline-start:auto}
+.episode-batch-action-popover {min-inline-size:150px}
+@container (max-width:440px) {
+ .episode-batch-selection-toolbar {display:grid;grid-template-columns:minmax(0,1fr) auto}
+ .episode-batch-selection-toolbar .episode-batch-selection-count {justify-self:start;grid-area:1/1}
+ .episode-batch-selection-toolbar .episode-batch-selection-clear {grid-area:1/2}
+ .episode-batch-selection-actions {grid-area:2/1/auto/3}
+ .episode-batch-selection-actions > button {padding-inline:6px}
+}

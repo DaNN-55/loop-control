@@ -25,7 +25,7 @@ async function browserDownload(f:Fixture,expected:Buffer){
  });
  const session='batch-publication-'+randomUUID().slice(0,8);
  const browser=async(...args:string[])=>(await promisify(execFile)('agent-browser',['--session',session,...args],{timeout:30000})).stdout;
- const open=()=>browser('find','role','button','click','--name','批量下载发布 ZIP','--exact');
+ const open=()=>browser('find','role','button','click','--name','下载发布 ZIP','--exact');
  try{
   await ui.listen();
   await browser('open',`http://127.0.0.1:${(ui.httpServer!.address() as AddressInfo).port}/?view=episodes`);
@@ -40,7 +40,7 @@ async function browserDownload(f:Fixture,expected:Buffer){
   await browser('download','dialog a[download]',path);
   expect(await readFile(path)).toEqual(expected);
   await browser('press','Escape');
-  expect(await browser('eval',"document.activeElement.textContent.trim()")).toContain('批量下载发布 ZIP');
+  expect(await browser('eval',"document.activeElement.textContent.trim()")).toContain('下载发布 ZIP');
   await browser('set','viewport','390','844');
   await open();
   await browser('wait','--text','可下载 2 张，跳过 0 张');

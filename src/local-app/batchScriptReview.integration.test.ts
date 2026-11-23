@@ -97,14 +97,14 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    await browser.wait("document.querySelectorAll('.episode-table tbody tr').length===1");
    await browser.cli('find','role','checkbox','click','--name','全选本页','--exact');
    await browser.wait("document.body.innerText.includes('已选 11 张')");
-   await browser.click('查看选中清单');
+   await browser.click('查看选中的 11 张生产单');
    await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('核对单 B0')");
    const selected=String(await browser.evaluate("document.querySelector('dialog[open]').innerText"));
    expect(selected).toContain('核对单 A0');
    expect(selected).toContain('核对单 A9');
    await browser.click('关闭');
    await browser.wait("document.body.innerText.includes('已选 11 张')");
-   await browser.click('批量确认脚本');
+   await browser.click('确认脚本');
    await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('通过 核对单 A0')");
    await browser.cli('find','text','核对 核对单 A0 的脚本和分镜','click','--exact');
    await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('初稿是一个石头屋。')");
@@ -134,12 +134,12 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    await browser.fill('搜索标题或编号','B0');
    await browser.click('搜索');
    await browser.wait("document.querySelector('.episode-table tbody')?.innerText.includes('核对单 B0')");
-   expect(await browser.evaluate("!!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='查看选中清单')")).toBe(false);
+   expect(await browser.evaluate("!!document.querySelector('.episode-batch-selection-count')")).toBe(false);
    await browser.cli('find','role','checkbox','click','--name','选择 核对单 B0','--exact');
    await browser.wait("document.body.innerText.includes('已选 1 张')");
    await browser.cli('find','role','tab','click','--name','已完成','--exact');
    await browser.wait("document.body.innerText.includes('没有符合条件的生产单')");
-   expect(await browser.evaluate("!!Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='查看选中清单')")).toBe(false);
+   expect(await browser.evaluate("!!document.querySelector('.episode-batch-selection-count')")).toBe(false);
   }finally{await browser.close();}
  });
 },120000);

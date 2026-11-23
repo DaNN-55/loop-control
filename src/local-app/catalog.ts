@@ -5,6 +5,7 @@ import {batchStages,defaultEpisodePageSize,episodePageSizes,type EpisodeCatalog,
 import {ownerTransaction} from './ownerTransaction.js';
 import {readEpisodeMetrics} from './episodeMetrics.js';
 import {Pool, type PoolConfig} from 'pg';
+import type {EpisodeBatchHints} from '../workspace/EpisodeBatch.js';
 import type {Database} from '../lib/database.types.js';
 type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 export interface LocalCatalog extends EpisodeCatalog {
@@ -14,6 +15,7 @@ export interface LocalCatalog extends EpisodeCatalog {
  series: Row<'series'>[];
  seriesVersions: Row<'series_versions'>[];
  promptVersions: Row<'prompt_versions'>[];
+ batchActionHints?:Record<string,EpisodeBatchHints>;
  blueprintRevisions:Record<string,string>;
  importedAt: string|null;
  sourceCreatedAt: string|null;
@@ -57,6 +59,31 @@ export async function readLocalCatalog(pool:Pool,ownerId:string,query:CatalogQue
   const metrics=costSort?await readEpisodeMetrics(client,ownerId,batchMembers??undefined):{};
   const usage=query.view==='accounts'?{}:await readCatalogWorkspaceUsage(client,query,batchMembers);
   const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage,query.q??'',query.sort??'updated',query.status??'all',JSON.stringify(metrics),query.catalogStage??'all',query.pageSize??defaultEpisodePageSize,JSON.stringify(usage),batchMembers,query.batchStage??'all']);
+  if(query.view==='episodes'&&catalog.episodes.length){
+   // Catalog metadata only. Action dialogs still check draft, media and version freshness.
+   const {rows:hints}=await client.query<EpisodeBatchHints&{id:string}>(`
+    SELECT e.id,
+     e.archived_at IS NULL AND e.stage='waiting_input' AND (e.main_script_revision_id IS NOT NULL
+      OR EXISTS(SELECT 1 FROM local_identity.episode_import_drafts d WHERE d.episode_id=e.id AND d.owner_id=$2)
+      OR EXISTS(SELECT 1 FROM local_identity.manual_script_review_drafts d WHERE d.episode_id=e.id AND d.owner_id=$2)) AS script,
+     COALESCE(e.archived_at IS NULL AND e.stage<>'production_completed' AND NOT local_identity.is_historical_episode(e.id)
+      AND EXISTS(SELECT 1 FROM local_identity.input_episodes i WHERE i.episode_id=e.id AND i.owner_id=$2)
+      AND (w.editor_authority='native' OR (e.main_script_revision_id=w.script_revision_id AND local_identity.preparation_source_current(w.preparation_revision_id)))
+      AND x.confirmed_at IS NULL AND x.status='ready' AND x.project_content_version=w.revision AND x.content_sha256=w.content_sha256
+      AND x.artifact->>'relativePath' LIKE '%.mp4'
+      AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof(x.checks)='array' THEN x.checks ELSE '[]'::jsonb END) chk WHERE chk->>'passed' IS DISTINCT FROM 'true'),false) AS export,
+     COALESCE(x.confirmed_at IS NOT NULL AND x.status='ready' AND x.project_content_version=w.revision AND x.content_sha256=w.content_sha256
+      AND lower(x.artifact->>'relativePath') LIKE '%.mp4' AND jsonb_typeof(x.artifact->'fileSize')='number' AND x.artifact->'fileSize'>'0'::jsonb,false) AS zip
+    FROM public.episodes e
+    LEFT JOIN local_identity.production_workspaces w ON w.episode_id=e.id
+    LEFT JOIN LATERAL (
+     SELECT x.status,x.confirmed_at,x.project_content_version,x.content_sha256,x.artifact,x.checks
+     FROM local_identity.workspace_exports x WHERE x.workspace_id=w.id ORDER BY x.created_at DESC,x.id DESC LIMIT 1
+    ) x ON true
+    WHERE e.id=ANY($1::uuid[])
+   `,[catalog.episodes.map((episode:{id:string})=>episode.id),ownerId]);
+   catalog.batchActionHints=Object.fromEntries(hints.map(({id,...flags})=>[id,flags]));
+  }
   if(query.view==='episodes'&&!costSort)catalog.metrics=await readEpisodeMetrics(client,ownerId,catalog.episodes.map((episode:{id:string})=>episode.id));
   const series=(await client.query('SELECT * FROM public.series WHERE account_id=ANY($1::uuid[]) ORDER BY name,id',[ids])).rows;
   const seriesVersions=(await client.query('SELECT * FROM public.series_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;

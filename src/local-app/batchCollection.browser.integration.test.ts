@@ -36,7 +36,7 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   const outcome=(title:string,status:string)=>page.wait(`Array.from(document.querySelectorAll('dialog .episode-batch-results li')).some(row=>row.querySelector('strong')?.textContent===${JSON.stringify(title)}&&row.dataset.status===${JSON.stringify(status)})`);
   await page.cli('wait','--text','完好目录');
   for(const title of ['完好目录','缺失目录','已在目标'])await check(title);
-  await page.click('批量调整系列');
+  await page.click('更多');await page.cli('find','role','menuitem','click','--name','调整系列','--exact');
   const option=(await page.snapshot()).split('\n').find(line=>line.includes('combobox "目标系列"'))?.match(/ref=(e\d+)/)?.[1];
   expect(option).toBeTruthy();
   await page.cli('select','@'+option,target.series_id);
@@ -53,7 +53,7 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   const initialFolder=await read(initiallyMissing.id);
   await check('首次读取时缺失');
   await rename(initialFolder.directoryPath,initialFolder.directoryPath+'.offline');
-  await page.click('查看文件夹');
+  await page.click('更多');await page.cli('find','role','menuitem','click','--name','查看文件夹','--exact');
   const readyAfter=await read(ready.id),missingAfter=await read(missing.id),alreadyAfter=await read(already.id);
   await page.wait(`document.querySelector('dialog').textContent.includes(${JSON.stringify(readyAfter.directoryPath)})`);
   await page.cli('set','viewport','390','820');
@@ -76,7 +76,7 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   await page.cli('open',page.url.split('?')[0]);
   await page.cli('wait','--text','另一账号的单');
   for(const title of ['完好目录','缺失目录','另一账号的单'])await check(title);
-  await page.click('批量调整系列');
+  await page.click('更多');await page.cli('find','role','menuitem','click','--name','调整系列','--exact');
   const unassignedOptions=await page.evaluate("Array.from(document.querySelectorAll('dialog select option')).filter(option=>option.textContent.includes('未分系列')).map(option=>({name:option.textContent,value:option.value}))");
   expect(unassignedOptions.map((option:{name:string})=>option.name)).toEqual(expect.arrayContaining(['批量收纳账号 · 未分系列','另一收纳账号 · 未分系列']));
   const unassignedOption=unassignedOptions.find((option:{name:string})=>option.name==='批量收纳账号 · 未分系列');
