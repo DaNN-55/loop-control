@@ -21,6 +21,7 @@ it('shows an actual create command HTTP error inside the dialog and returns to i
  const user=userEvent.setup();render(<LocalCatalogApp/>);
  const opener=await screen.findByRole('button',{name:'新建生产单'});
  act(()=>opener.focus());await user.keyboard('{Enter}');
+ await user.keyboard('{Enter}');
  await user.type(screen.getByRole('textbox',{name:'工作标题（可留空）'}),'合成错误重试');
  await user.click(screen.getByRole('button',{name:'创建生产单'}));
  expect((await within(screen.getByRole('dialog',{name:'新建生产单'})).findByRole('alert')).textContent).toContain('生产目录不可写，请选择其他目录。');
@@ -55,6 +56,7 @@ it('inherits the filtered account into creation and resets every list scope with
  expect((within(search).getByRole('textbox') as HTMLInputElement).value).toBe('');
  await user.selectOptions(screen.getByRole('combobox',{name:'账号'}),'current');
  await user.click(screen.getByRole('button',{name:'新建生产单'}));
+ await user.click(await screen.findByRole('menuitem',{name:'新建生产单'}));
  expect((within(screen.getByRole('dialog',{name:'新建生产单'})).getByRole('combobox',{name:'账号'}) as HTMLSelectElement).value).toBe('current');
  await user.click(screen.getByRole('button',{name:'取消'}));
  await user.click(nav.getByRole('button',{name:'生产单'}));

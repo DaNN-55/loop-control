@@ -15,7 +15,7 @@ import {fixtureResources} from './fixtureResources';
 
 type Fixture=Awaited<ReturnType<typeof productionWorkspaceFixture>>;
 
-async function browserDownload(f:Fixture,expected:Buffer){
+async function browserDownload(f:Fixture,secondId:string,expected:Buffer){
  const {createServer}=await import('vite'),{default:react}=await import('@vitejs/plugin-react');
  const proxy={target:f.origin,changeOrigin:true,headers:{Origin:f.origin,Cookie:'loop_owner_session='+f.token}};
  const ui=await createServer({
@@ -31,8 +31,24 @@ async function browserDownload(f:Fixture,expected:Buffer){
   await browser('open',`http://127.0.0.1:${(ui.httpServer!.address() as AddressInfo).port}/?view=episodes`);
   await browser('set','viewport','1440','900');
   await browser('wait','--text','四步制作 T02 验收');
-  await browser('find','role','checkbox','check','--name','选择 四步制作 T02 验收','--exact');
-  await browser('find','role','checkbox','check','--name','选择 四步制作 Ｔ０２ 验收','--exact');
+  const first=()=>browser('find','role','checkbox','check','--name','选择 四步制作 T02 验收','--exact');
+  const second=()=>browser('find','role','checkbox','check','--name','选择 四步制作 Ｔ０２ 验收','--exact');
+  const zipVisible="Array.from(document.querySelectorAll('.episode-batch-selection-actions button')).some(button=>button.textContent.trim()==='下载发布 ZIP')";
+  await first();
+  expect(await browser('eval',zipVisible)).toContain('false');
+  await f.c.query("UPDATE public.episodes SET stage='production_completed' WHERE id=$1",[secondId]);
+  await browser('reload');
+  await browser('wait','--text','四步制作 Ｔ０２ 验收');
+  await first();
+  await second();
+  await open();
+  await browser('wait','--text','可下载 1 张，跳过 0 张');
+  await browser('press','Escape');
+  await f.c.query("UPDATE public.episodes SET stage='production_completed' WHERE id=$1",[f.episode]);
+  await browser('reload');
+  await browser('wait','--text','四步制作 Ｔ０２ 验收');
+  await first();
+  await second();
   await open();
   await browser('wait','--text','可下载 2 张，跳过 0 张');
   expect(await browser('snapshot')).toContain('没有已保存的发布文案。');
@@ -159,7 +175,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('previews and downloads t
    '四步制作 T02 验收/封面.png':createHash('sha256').update(coverBytes).digest('hex'),
    '四步制作 T02 验收 (2)/四步制作 T02 验收 (2).mp4':secondExport.artifact.sha256,
   });
-  if(process.env.LOOP_BATCH_PUBLICATION_BROWSER==='1')await browserDownload(f,bothBytes);
+  if(process.env.LOOP_BATCH_PUBLICATION_BROWSER==='1')await browserDownload(f,second.id,bothBytes);
   await unlink(join(f.assetRoot,savedCover.cover.file.relativePath));
   expect((await read(both.downloadUrl)).status).toBe(409);
   const degraded=await (await read(bothEndpoint)).json();

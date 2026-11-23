@@ -62,7 +62,7 @@ it.skipIf(!enabled)('story 1 browser: validates the new script, recovers committ
   await browser.wait("document.querySelector('[aria-label=素材镜头列表]')?.innerText.includes('伞柄的纸条写着：留给下一个人。') === true");
   expect((await f.c.query('SELECT count(*)::int n FROM public.production_material_revisions WHERE episode_id=$1 AND is_main_script',[f.episode])).rows[0].n).toBe(1);
   await f.restart();await browser.cli('reload');await browser.cli('wait','--text','末班车前的一把伞');
-  await browser.click('关闭生产单详情');await browser.click('新建生产单');
+  await browser.click('关闭生产单详情');await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','新建生产单','--exact');
   const title='末班车前的一把伞 · 纸条特写';await browser.fill('工作标题（可留空）',title);
   await browser.cli('select','[aria-label="系列版本"]',f.series.id);
   browser.dropNextResponse('create');await browser.doubleClick('创建生产单');

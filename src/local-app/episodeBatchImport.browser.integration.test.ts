@@ -22,11 +22,11 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   await writeFile(md,'系列：街道故事\n# 夜雨\n\n窗外下起了雨。\n');
   browser=await storyBrowser(f,'batch-text','隔离 Studio153 验收');
   await browser.click('关闭生产单详情');
-  await browser.click('批量新建');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
   await browser.cli('press','Escape');
   await browser.wait("!document.querySelector('dialog.episode-batch-import')");
-  expect(await browser.evaluate('document.activeElement.textContent')).toBe('批量新建');
-  await browser.click('批量新建');
+  expect(await browser.evaluate('document.activeElement.textContent')).toBe('新建生产单');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
   expect(await browser.evaluate("document.querySelector('.episode-batch-target select[name=seriesVersionId]')===null")).toBe(true);
   await browser.evaluate("document.querySelector('dialog input[name=scripts]').addEventListener('click',event=>{event.preventDefault();event.target.dataset.activated='true';},{once:true})");
@@ -71,7 +71,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   await browser.click('重试此批');
   await browser.cli('wait','--text','成功 2');
   await browser.cli('reload');
-  await browser.click('批量新建');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
   await browser.cli('wait','--text','成功 2');
   await browser.cli('set','viewport','1440','900');
   await browser.capture('recovered-result');
@@ -83,7 +83,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   expect(await browser.evaluate("document.querySelector('textarea[name=script]')?.value")).toBe(revised);
   await browser.capture('waiting-script');
   await browser.click('关闭生产单详情');
-  await browser.click('批量新建');
+  await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量新建','--exact');
   await browser.cli('wait','--text','成功 2');
   await browser.click('开始新批次');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);

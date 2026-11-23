@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event';
 import {cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import {webcrypto} from 'node:crypto';
@@ -24,7 +25,8 @@ function fixture(needsStorage=false,delayCatalog=false){
 }
 it('asks only for an account name and continues to production without configuring any service',async()=>{
  const writes=fixture(false,true);render(<LocalCatalogApp/>);
- fireEvent.click(await screen.findByRole('button',{name:'创建内容账号'}));
+ await userEvent.click(await screen.findByRole('button',{name:'创建内容账号'}));
+ await userEvent.click(await screen.findByRole('menuitem',{name:'创建内容账号'}));
  const form=within(await screen.findByRole('dialog',{name:'新建账号'}));
  expect(form.queryByRole('textbox',{name:'账号标识'})).toBeNull();
  fireEvent.change(form.getByRole('textbox',{name:'账号名称'}),{target:{value:'初次创作'}});fireEvent.click(form.getByRole('button',{name:'创建账号'}));
@@ -34,7 +36,8 @@ it('asks only for an account name and continues to production without configurin
  expect(screen.queryByRole('dialog',{name:'制作服务'})).toBeNull();
 });
 it('opens file storage before creating an account when the workspace has not initialized it',async()=>{
- const writes=fixture(true);render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'创建内容账号'}));
+ const writes=fixture(true);render(<LocalCatalogApp/>);await userEvent.click(await screen.findByRole('button',{name:'创建内容账号'}));
+ await userEvent.click(await screen.findByRole('menuitem',{name:'创建内容账号'}));
  await screen.findByRole('dialog',{name:'文件存储'});await screen.findByRole('button',{name:'初始化'});
  expect(screen.queryByRole('dialog',{name:'新建账号'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'继续创建内容账号'}));await waitFor(()=>expect(screen.getByText('请先完成存储位置设置。')).toBeTruthy());expect(writes).toEqual([]);

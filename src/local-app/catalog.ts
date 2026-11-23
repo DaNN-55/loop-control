@@ -1,11 +1,10 @@
 import{localCatalogSql}from'./catalogQuery.js';
 import{readCatalogWorkspaceUsage}from'./catalogWorkspaceUsage.js';
 import{ConfigurationError}from'./configurationCommands.js';
-import {batchStages,defaultEpisodePageSize,episodePageSizes,type EpisodeCatalog,type CatalogQuery} from '../episodes/episodeCatalogTypes.js';
+import {batchStages,defaultEpisodePageSize,episodePageSizes,type EpisodeBatchHints,type EpisodeCatalog,type CatalogQuery} from '../episodes/episodeCatalogTypes.js';
 import {ownerTransaction} from './ownerTransaction.js';
 import {readEpisodeMetrics} from './episodeMetrics.js';
 import {Pool, type PoolConfig} from 'pg';
-import type {EpisodeBatchHints} from '../workspace/EpisodeBatch.js';
 import type {Database} from '../lib/database.types.js';
 type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 export interface LocalCatalog extends EpisodeCatalog {

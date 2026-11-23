@@ -20,7 +20,7 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from
   const files=orders.map(title=>join(f.root,title+'.txt'));
   for(const [index,file] of files.entries())await writeFile(file,`隔离成片 ${orders[index]} 的一张画面。`);
   const page=browser=await storyBrowser(f,'batch-export-review','隔离 Studio153 验收');
-  await page.click('关闭生产单详情');await page.click('批量新建');
+  await page.click('关闭生产单详情');await page.click('新建生产单');await page.cli('find','role','menuitem','click','--name','批量新建','--exact');
   await page.cli('select','dialog select[name=accountId]',account.body.id);
   await page.cli('upload','dialog input[name=scripts]',...files);
   for(const title of orders){
@@ -71,7 +71,7 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from
   await page.cli('reload');
   await page.wait("document.querySelectorAll('.episode-table tbody tr').length===4");
   await page.cli('find','role','checkbox','click','--name','全选本页','--exact');
-  await page.click('审批');
+  await page.click('批量操作');
   const mixedReview=await page.snapshot();
   expect(mixedReview).toContain('确认脚本');
   expect(mixedReview).toContain('确认成片');
@@ -80,7 +80,8 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_BROWSER!=='1')('plays exported MP4s from
   await page.cli('select','select[name=batchStage]','export_review');
   await page.wait("document.querySelectorAll('.episode-table tbody tr').length===4");
   await page.cli('find','role','checkbox','click','--name','全选本页','--exact');
-  await page.click('确认成片');
+  await page.click('批量操作');
+  await page.cli('find','role','menuitem','click','--name','确认成片','--exact');
   const review=async(title:string,decision:'通过'|'待修改')=>{
    await page.click('预览 '+title);
    const player="document.querySelector('dialog video')";

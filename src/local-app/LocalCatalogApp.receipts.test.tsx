@@ -16,7 +16,8 @@ it.each(['retry','dismiss','stale'])('accepts the created order after refresh fa
   if(path.includes('?known='))return Response.json({hashes:{},sections:{...draftSnapshot(),episode:{...draftCatalog.episodes[0],id:'created-episode',title:'已确认创建'}}});
   return Response.json({connections:[],versions:[],serviceCatalog:{groups:[]}});
  }));
- render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建生产单'}));
+ render(<LocalCatalogApp/>);await userEvent.click(await screen.findByRole('button',{name:'新建生产单'}));
+ await userEvent.click(await screen.findByRole('menuitem',{name:'新建生产单'}));
  fireEvent.change(screen.getByRole('textbox',{name:'工作标题（可留空）'}),{target:{value:'已确认创建'}});fireEvent.click(screen.getByRole('button',{name:'创建生产单'}));
  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'})).toBeNull());
  expect((await screen.findByRole('alert')).textContent).toContain('生产单已创建');expect(posts).toBe(1);
@@ -49,7 +50,9 @@ it.each(['operations','episodes'])('from %s, closes creation on acknowledgement 
   if(path.endsWith('/workspace'))return Response.json({workspace:draftWorkspace('new-order')});
   return Response.json({connections:[],versions:[]});
  }));
- render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建生产单'}));fireEvent.click(screen.getByRole('button',{name:'创建生产单'}));
+ render(<LocalCatalogApp/>);await userEvent.click(await screen.findByRole('button',{name:'新建生产单'}));
+ const createItem=screen.queryByRole('menuitem',{name:'新建生产单'});
+ if(createItem)await userEvent.click(createItem);fireEvent.click(screen.getByRole('button',{name:'创建生产单'}));
  await waitFor(()=>expect(screen.queryByRole('dialog',{name:'新建生产单'})).toBeNull());await waitFor(()=>expect(waiting.length).toBeGreaterThan(0));
  // Changing views can start a newer read after an older one is released.
  // Fail both pending and subsequent reads, then await the authoritative notice.

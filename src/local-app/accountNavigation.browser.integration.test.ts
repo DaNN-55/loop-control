@@ -81,7 +81,7 @@ async function isolatedHarness(kind:Kind){
 
 async function initializeStorage(h:Awaited<ReturnType<typeof isolatedHarness>>){
  h.step('new-install storage initialization');
- await h.click('创建内容账号');await h.browser('wait','--text','初始化位置');
+ await h.click('创建内容账号');await h.browser('find','role','menuitem','click','--name','创建内容账号','--exact');await h.browser('wait','--text','初始化位置');
  await h.browser('find','label','素材保存目录','fill',h.fixture.target);await h.click('初始化');
  await h.browser('wait','--text','媒体根已初始化，服务已重新加载。');
  expect(JSON.parse(await readFile(h.fixture.configFile,'utf8')).mediaRoot).toBe(h.fixture.target);

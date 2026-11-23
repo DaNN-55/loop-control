@@ -1,10 +1,9 @@
 import {useLayoutEffect,useId,useRef,type ReactNode} from 'react';
 import {uiText} from '../i18n/ui';
+import type {EpisodeBatchHints} from '../episodes/episodeCatalogTypes';
 import type {EpisodeStage} from '../platform/types';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import './episode-batch.css';
-
-export type EpisodeBatchHints={script:boolean;export:boolean;zip:boolean};
 
 export interface EpisodeBatchSelectionItem {
  id:string;

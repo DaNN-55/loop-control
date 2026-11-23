@@ -14,11 +14,12 @@ import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationMod
 import {OwnerPreferencesDialog,type PreferencesPage} from './OwnerPreferencesDialog';
 import {defaultOwnerPreferences,parseOwnerPreferences,type OwnerPreferences} from '../preferences/preferences';
 import {WorkspaceTopbar} from "./WorkspaceTopbar";
-import {Video,Settings,Clapperboard,Users,Plus,ChevronRight,LogOut,Trash2,X} from 'lucide-react';
+import {Video,Settings,Clapperboard,Users,Plus,ChevronDown,ChevronRight,LogOut,Trash2,X} from 'lucide-react';
 import {LoopControlMark} from './LoopControlMark';
 import './brand-mark.css';
 import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import {Dropdown} from '../ui/dan-ui/components/base/dropdown/dropdown';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {LocalSecretAdministration} from './LocalSecretAdministration';
 import {PasswordForm,Icon,type NavigationItem,type EpisodeDeletionPlan} from '../workspace/WorkspaceViews';
@@ -148,6 +149,7 @@ function LocalCatalogContent(){
  const detailOrigin=useRef<{episodeId:string;trigger:HTMLElement|null}|null>(null);
  const closingDetail=useRef(false);
  const [newEpisode,setNewEpisode]=useState(false),[episodeId,applyEpisodeId]=useState(initialNavigation.episode);
+ const creationTrigger=useRef<HTMLButtonElement>(null);
  const [batchImportOpen,setBatchImportOpen]=useState(false),[importHistoryOpen,setImportHistoryOpen]=useState(false);
  function showImportBatch(importBatchId:string){
   setImportHistoryOpen(false);setBatchImportOpen(false);
@@ -305,8 +307,25 @@ function LocalCatalogContent(){
  const creationSeriesId=view==='accounts'?panels.rules.series:filters.seriesId;
  const creationSeriesVersion=catalog.seriesVersions.filter(version=>version.account_id===creationAccountId&&version.series_id===creationSeriesId).sort((left,right)=>right.version-left.version)[0];
  const topbar=<WorkspaceTopbar searchScope={JSON.stringify([view,episodeId,workspaceStep,workspaceTab,view==='accounts'?selectedId:null])} ownerId={ownerId} ownerMenu={<Button size="sm" color="tertiary" className="owner-menu-trigger workspace-topbar-icon" data-active={ownerSettingsPage!==null||undefined} iconLeading={Settings} aria-label={uiText('设置')} aria-haspopup="dialog" onPress={()=>{rememberOwnerFocus(document.activeElement as HTMLButtonElement);openOwnerPage('connections');}}/>} theme={theme} notificationPreferences={ownerPreferences.notifications} notificationEventsEnabled={preferencesLoaded} episodeTitles={new Map(catalog.episodes.map(episode=>[episode.id,episode.title||'未命名生产单']))} taskQueue={taskQueue} onOpenTaskQueue={openTaskQueue} onOpenConnections={()=>openConnectionsFromShortcut()} themeSaving={preferencesSaving} onToggleTheme={()=>{const next=theme==='light'?'dark':'light';if(preferencesLoaded){void savePreferences({...ownerPreferences,appearance:next},message=>setError(`外观偏好未保存。${message}`));}else{setTheme(next);localStorage.setItem('loop-control.theme.v1',next);}}} onOpenEpisode={(id,search)=>{navigate('episodes',()=>{if(search)setPanels(current=>({...current,search}));setEpisodeId(id);});}} onOpenAccount={selectAccount} onOpenCatalog={status=>{navigate('episodes',()=>filter({view:'episodes',visibility:'active',status,q:'',accountId:'',seriesId:'all',importBatchId:'',batchStage:'all'}));}}/>;
- const workspaceActions=<div className="workspace-actions">{view!=='episodes'&&view!=='accounts'&&view!=='operations'&&<Tooltip title={uiText("刷新")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" aria-label={uiText("刷新")} className="button button-secondary refresh-button" onClick={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))}  type="button"><Icon name="Refresh"/></Button></Tooltip>}{view==='episodes'&&<Button size="sm" color="tertiary" aria-haspopup="dialog" type="button" onPress={()=>setImportHistoryOpen(true)}>{uiText('导入记录')}</Button>}{view==='episodes'&&catalog.accounts.some(account=>!account.archived_at)&&
-  <Button size="sm" color="secondary" aria-haspopup="dialog" type="button" onPress={()=>setBatchImportOpen(true)}>{uiText('批量新建')}</Button>}{(view==='episodes'||view==='operations')&&<Button size="sm" color="primary" iconLeading={Plus} className="button button-primary" onClick={()=>void beginProduction()} type="button">{uiText(catalog.accounts.some(item=>!item.archived_at)?"新建生产单":"创建内容账号")}</Button>}</div>;
+ const canCreateProduction=catalog.accounts.some(account=>!account.archived_at);
+ const creationLabel=uiText(canCreateProduction?'新建生产单':'创建内容账号');
+ const workspaceActions=<div className="workspace-actions">
+  {view!=='episodes'&&view!=='accounts'&&view!=='operations'&&<Tooltip title={uiText("刷新")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" aria-label={uiText("刷新")} className="button button-secondary refresh-button" onClick={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} type="button"><Icon name="Refresh"/></Button></Tooltip>}
+  {view==='episodes'&&<Dropdown.Root>
+   <Button ref={creationTrigger} size="sm" color="primary" iconLeading={Plus} iconTrailing={ChevronDown}>{creationLabel}</Button>
+   <Dropdown.Popover className="dan-ui product-ui" placement="bottom end">
+    <Dropdown.Menu aria-label={creationLabel}>
+     <Dropdown.Section>
+      <Dropdown.Item id="create-production" onAction={()=>void beginProduction()}>{creationLabel}</Dropdown.Item>
+      {canCreateProduction&&<Dropdown.Item id="batch-import" onAction={()=>setBatchImportOpen(true)}>{uiText('批量新建')}</Dropdown.Item>}
+     </Dropdown.Section>
+     <Dropdown.Separator/>
+     <Dropdown.Item id="import-history" onAction={()=>setImportHistoryOpen(true)}>{uiText('导入记录')}</Dropdown.Item>
+    </Dropdown.Menu>
+   </Dropdown.Popover>
+  </Dropdown.Root>}
+  {view==='operations'&&<Button size="sm" color="primary" iconLeading={Plus} className="button button-primary" onPress={()=>void beginProduction()}>{creationLabel}</Button>}
+ </div>;
  return <CatalogPanelNavigationContext.Provider value={{openArchivedProductions:()=>{navigate('episodes',()=>filter({view:'episodes',visibility:'archived',status:'all',q:'',accountId:'',seriesId:'all',page:1,importBatchId:'',batchStage:'all'}));},value:panels,change:(key,patch)=>setPanels(current=>({...current,[key]:{...current[key],...patch}}))}}><WorkspaceNavigationContext.Provider value={{openEditorOnEntry:editingEntry===episodeId,consumeEditorEntry:()=>setEditingEntry(''),openCopy:id=>{setEpisodeId(id);setEditingEntry(id);setWorkspaceStep('editing');void refresh().catch(e=>setError(e.message));},episode:episodeId,step:workspaceStep,tab:workspaceTab,change:patch=>{if(patch.step)setWorkspaceStep(patch.step);if(patch.tab)setWorkspaceTab(patch.tab);}}}><div className="app-shell dan-ui product-ui impeccable-app" data-sidebar={collapsed?'collapsed':'expanded'} data-theme={theme}>
  <a className="skip-link" href="#main-content">{uiText("跳到主要内容")}</a><aside className="sidebar" aria-label={uiText("主导航")} inert={ownerSettingsPage!==null}>
  <div className="lc-brand" role="img" aria-label="Loop Control"><LoopControlMark/><span>Loop Control</span></div>
@@ -354,12 +373,12 @@ function LocalCatalogContent(){
  </OwnerSettingsDialog>}
   {ownerSettingsPage==='cleanup'&&<RecycleBinDialog revision={catalog} targetKey={panels.cleanup?.task} onStateChange={onOwnerStateChange} returnFocusRef={ownerPanelTrigger} onClose={closeOwnerPanels} onResolved={key=>setPanels(current=>current.cleanup?.task===key?{...current,cleanup:{...current.cleanup,task:''}}:current)} onChanged={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))}/>}
  <ConfirmationModalPresence>{ownerLeavePrompt&&<ConfirmationModal title={uiText("离开当前设置？")} confirmLabel={uiText("放弃修改并离开")} cancelLabel={uiText("继续编辑")} tone="danger" onCancel={()=>{setOwnerLeavePrompt(false);pendingOwnerLeave.current=null;}} onConfirm={()=>{const leave=pendingOwnerLeave.current;pendingOwnerLeave.current=null;setOwnerLeavePrompt(false);ownerPaneState.current={busy:false,dirty:false};leave?.();}}><p>{uiText("当前设置有未保存修改，离开后会丢失。")}</p></ConfirmationModal>}</ConfirmationModalPresence>
- {importHistoryOpen&&<EpisodeImportHistoryDialog onClose={()=>setImportHistoryOpen(false)} onViewBatch={showImportBatch}/>}
+ {importHistoryOpen&&<EpisodeImportHistoryDialog onClose={()=>{setImportHistoryOpen(false);creationTrigger.current?.focus();}} onViewBatch={showImportBatch}/>}
  {batchImportOpen&&<EpisodeBatchImportDialog key={ownerId} ownerId={ownerId} initialAccountId={creationAccountId}
   accounts={catalog.accounts.filter(account=>!account.archived_at)} series={catalog.series} seriesVersions={catalog.seriesVersions}
-  onClose={()=>setBatchImportOpen(false)} onCreated={()=>refreshAfterWrite('已完成批量建单')}
+  onClose={()=>{setBatchImportOpen(false);creationTrigger.current?.focus();}} onCreated={()=>refreshAfterWrite('已完成批量建单')}
   onViewBatch={showImportBatch} onOpenEpisode={id=>{setBatchImportOpen(false);openCatalogEpisode(id,'script');}}/>}
- {newEpisode&&<EpisodeForm initialAccountId={creationAccountId} initialSeriesVersionId={creationSeriesVersion?.id} accounts={catalog.accounts.filter(a=>!a.archived_at)} series={catalog.series} seriesVersions={catalog.seriesVersions} isPending={pending==='episode'} onClose={()=>setNewEpisode(false)} onSubmit={async input=>{setPending('episode');setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const e=await localCommand<{id:string}>('create',input,undefined,'episode-commands');setEpisodeId(e.id);setNewEpisode(false);setView('episodes');filter({view:'episodes'});refreshAfterWrite('生产单已创建');}catch(e){setError(e instanceof Error?e.message:String(e));if(e&&typeof e==='object'&&'preflight'in e)return e.preflight as import('../worker/contracts').WorkerPreflightResult;throw e;}finally{setPending('');}return null;}}/>}
+ {newEpisode&&<EpisodeForm returnFocusRef={view==='episodes'?creationTrigger:undefined} initialAccountId={creationAccountId} initialSeriesVersionId={creationSeriesVersion?.id} accounts={catalog.accounts.filter(a=>!a.archived_at)} series={catalog.series} seriesVersions={catalog.seriesVersions} isPending={pending==='episode'} onClose={()=>setNewEpisode(false)} onSubmit={async input=>{setPending('episode');setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const e=await localCommand<{id:string}>('create',input,undefined,'episode-commands');setEpisodeId(e.id);setNewEpisode(false);setView('episodes');filter({view:'episodes'});refreshAfterWrite('生产单已创建');}catch(e){setError(e instanceof Error?e.message:String(e));if(e&&typeof e==='object'&&'preflight'in e)return e.preflight as import('../worker/contracts').WorkerPreflightResult;throw e;}finally{setPending('');}return null;}}/>}
  {newAccount&&<AccountForm isPending={pending==='account'} onClose={()=>{setNewAccount(false);setCreateThenEpisode(false);}} onSubmit={async input=>{await command<LocalCatalog['accounts'][number]>('account','createAccount',input,undefined,created=>navigate('accounts',()=>{
    setCatalog(current=>current?{...current,accounts:[...current.accounts.filter(item=>item.id!==created.id),created]}:current);
    setAccountDirty(false);setSelectedId(created.id);setNewAccount(false);

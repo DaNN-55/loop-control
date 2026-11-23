@@ -8,7 +8,8 @@ import {CompletedCatalogArtwork} from './CompletedCatalogArtwork';
 import {EpisodeWorkspace} from './WorkspaceViews';
 import {EpisodeStatus,episodeActionState,episodeNextAction,episodeWorkflowLabel} from './episodePresentation';
 import {productionCatalogParameters,type CatalogVideoMetadata} from './productionCatalogPreview';
-import {EpisodeBatchDialog,type EpisodeBatchAction,type EpisodeBatchHints,type EpisodeBatchSelectionItem} from './EpisodeBatch';
+import {EpisodeBatchDialog,type EpisodeBatchAction,type EpisodeBatchSelectionItem} from './EpisodeBatch';
+import type {EpisodeBatchHints} from '../episodes/episodeCatalogTypes';
 import {EpisodeBatchToolbar} from './EpisodeBatchToolbar';
 import {episodeIsArchived} from './WorkspaceViews';
 import '../operations/workbench.css';
@@ -46,7 +47,9 @@ export function ProductionCatalog({suspended=false,batchActions,batchActionHints
   const episode=page.get(item.id);
   return episode?selectionItem(episode,batchActionHints?.[episode.id]??item.hints):item;
  });
- const openBatchDialog=(id:string)=>setBatchDialog({id,scope:batchSelectionScope,selection});
+ const openBatchDialog=(id:string)=>setBatchDialog({id,scope:batchSelectionScope,
+  selection:id==='publication-download'?selection.filter(item=>item.stage==='production_completed'):selection,
+ });
  const updateBatch=(episodes:Props['episodes'],checked:boolean)=>setBatch(previous=>{
   const items=new Map(previous.scope===batchSelectionScope?previous.items:emptySelection);
   for(const episode of episodes){

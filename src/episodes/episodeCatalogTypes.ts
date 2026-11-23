@@ -10,6 +10,7 @@ export interface WorkerSummary { running: number; blocked: number; failed: numbe
 export type CatalogStatus = "all" | "review" | "running" | "blocked" | "done";
 export const batchStages=['all','script_review','export_review','done'] as const;
 export type BatchStage=typeof batchStages[number];
+export type EpisodeBatchHints={script:boolean;export:boolean;zip:boolean};
 export type CatalogSort = "updated" | "oldest" | "title" | "cost_desc" | "cost_asc";
 export type ProductionStep = 'script' | 'preparation' | 'editing' | 'delivery';
 export interface EpisodeMetrics {

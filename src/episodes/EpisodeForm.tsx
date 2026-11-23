@@ -5,7 +5,7 @@ import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {useEffect,useId,useState,type FormEvent} from 'react';
+import {useEffect,useId,useState,type FormEvent,type RefObject} from 'react';
 import {X} from 'lucide-react';
 import type {Database} from '../lib/database.types';
 import {WorkerBlockerCard} from '../reviews/WorkerBlockerCard';
@@ -21,10 +21,10 @@ const episodeCreationSteps: Array<{ id: Exclude<EpisodeCreationStep, "idle">; la
   { id: "refresh", label: "打开生产单", note: "同步最新状态和待导入材料。" },
 ];
 
-export function EpisodeForm({ accounts, initialAccountId, initialSeriesVersionId, creationStartedAt = null, creationStep = "idle", isPending, onClose, onOpenBlueprint, onSubmit, preflight = null, series, seriesVersions }: { accounts: Account[]; initialAccountId?: string; initialSeriesVersionId?: string; creationStartedAt?: number | null; creationStep?: EpisodeCreationStep; isPending: boolean; onClose: () => void; onOpenBlueprint?: (accountId: string) => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<WorkerPreflightResult | null>; preflight?: WorkerPreflightResult | null; series: Series[]; seriesVersions: SeriesVersion[] }) {
+export function EpisodeForm({ accounts, initialAccountId, initialSeriesVersionId, creationStartedAt = null, creationStep = "idle", isPending, onClose, onOpenBlueprint, onSubmit, preflight = null, series, seriesVersions, returnFocusRef }: { accounts: Account[]; initialAccountId?: string; initialSeriesVersionId?: string; creationStartedAt?: number | null; creationStep?: EpisodeCreationStep; isPending: boolean; onClose: () => void; onOpenBlueprint?: (accountId: string) => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<WorkerPreflightResult | null>; preflight?: WorkerPreflightResult | null; series: Series[]; seriesVersions: SeriesVersion[]; returnFocusRef?: RefObject<HTMLElement | null> }) {
   const [submitting, setSubmitting] = useState(false);
   const busy = isPending || submitting;
-  const dialogRef = useDialogFocus<HTMLFormElement>(true, () => { if (!busy) onClose(); });
+  const dialogRef = useDialogFocus<HTMLFormElement>(true, () => { if (!busy) onClose(); }, returnFocusRef);
 
   const titleHintId = useId();
   const errorId = useId();

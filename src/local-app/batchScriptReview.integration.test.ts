@@ -104,7 +104,8 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    expect(selected).toContain('核对单 A9');
    await browser.click('关闭');
    await browser.wait("document.body.innerText.includes('已选 11 张')");
-   await browser.click('确认脚本');
+   await browser.click('批量操作');
+   await browser.cli('find','role','menuitem','click','--name','确认脚本','--exact');
    await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('通过 核对单 A0')");
    await browser.cli('find','text','核对 核对单 A0 的脚本和分镜','click','--exact');
    await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('初稿是一个石头屋。')");
