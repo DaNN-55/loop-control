@@ -52,7 +52,11 @@ export function CompletedStudioView({episodeId,title,initialShotId,onClose,onSav
    if(data.type==='loop-control:state'){writable.current=data.writable===true;if(writable.current){setError(current=>current==='编辑器连接已关闭，可保存已自动保存的修改。'?'':current);if(baseline.current!==null)setReady(true);else void initialize(Array.isArray(data.shots)?data.shots:undefined);}else setReady(false);}
    if(data.type==='loop-control:result'){const call=calls.current.get(data.requestId);if(call){calls.current.delete(data.requestId);clearTimeout(call.timer);if(data.ok)call.resolve(data.result);else call.reject(Error(typeof data.error==='string'?data.error:'编辑器操作未完成。'));}}
    if(data.type==='loop-control:leave')leaveRef.current();
-   if(data.type==='loop-control:closed'){writable.current=false;setReady(false);setError('编辑器连接已关闭，可保存已自动保存的修改。');}
+   if(data.type==='loop-control:closed'){
+    writable.current=false;setReady(false);
+    // The embed can tear down its initial bridge before it has opened a writable document.
+    if(baseline.current!==null)setError('编辑器连接已关闭，可保存已自动保存的修改。');
+   }
   }
   window.addEventListener('message',receive);return()=>{active=false;window.removeEventListener('message',receive);for(const call of calls.current.values()){clearTimeout(call.timer);call.reject(Error('查看副本已离开。'));}calls.current.clear();};
  },[origin,channel,session?.workspace.projectId]);

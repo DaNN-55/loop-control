@@ -140,8 +140,8 @@ html[data-interface="impeccable"] .dan-ui.product-ui:is(.episode-creation-popove
  overflow-x:hidden;
  overflow-y:auto;
 }
-html[data-interface="impeccable"] :is(.episode-creation-popover,.episode-batch-action-popover) [role="menu"]{overflow:visible!important}
-html[data-interface="impeccable"] :is(.episode-creation-popover,.episode-batch-action-popover) [role="separator"]{width:auto!important}
+html[data-interface="impeccable"] :is(.episode-creation-popover,.episode-batch-action-popover,.workspace-completed-actions-menu) [role="menu"]{overflow:visible!important}
+html[data-interface="impeccable"] :is(.episode-creation-popover,.episode-batch-action-popover,.workspace-completed-actions-menu) [role="separator"]{width:auto!important}
 html[data-interface="impeccable"] .workspace-composer-popover {
   border-radius: 10px;
   overflow-x: hidden;
