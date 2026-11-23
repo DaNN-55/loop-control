@@ -83,7 +83,7 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
   const browser=await storyBrowser({...f,episode:first},'batch-script-review','核对单 A0');
   try{
    await browser.wait("!!document.querySelector('.script-studio-editor textarea:not([disabled])')");
-   await browser.fill('脚本正文','初稿是一个石头屋。');
+   await browser.fill('脚本正文','初稿是一个石头屋。\n'+ '后续镜头说明。\n'.repeat(48));
    await browser.click('保存待确认脚本');
    await browser.wait("document.body.innerText.includes('已保存待确认')");
    await browser.cli('open',browser.url.replace(/\?.*/,'?view=episodes&pageSize=10'));
@@ -115,8 +115,25 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    }
    await browser.cli('find','role','menuitem','click','--name','确认脚本','--exact');
    await browser.wait("!!document.querySelector('dialog[open] input[aria-label=\"通过 核对单 A0\"]')");
-   await browser.cli('find','label','核对 核对单 A0 的脚本和分镜','click');
-   await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('初稿是一个石头屋。')");
+   const trigger='button[aria-label="查看 核对单 A0 的脚本"]';
+   const preview='.episode-batch-script-preview-panel:popover-open';
+   expect(await browser.evaluate("!document.querySelector('dialog[open] .episode-batch-script-item details,.episode-batch-storyboard')")).toBe(true);
+   await browser.cli('hover',trigger);
+   await browser.wait(`document.querySelector('${preview}')?.innerText.includes('初稿是一个石头屋。')===true`);
+   await browser.cli('hover',preview);
+   expect(await browser.evaluate(`(()=>{const panel=document.querySelector('${preview}');const box=panel.getBoundingClientRect();return panel.scrollHeight>panel.clientHeight&&box.left>=0&&box.right<=innerWidth;})()`)).toBe(true);
+   await browser.cli('press','Escape');
+   await browser.wait(`!document.querySelector('${preview}')&&!!document.querySelector('dialog[open]')`);
+   await browser.cli('set','viewport','420','820');
+   await browser.cli('focus',trigger);
+   await browser.cli('press','Enter');
+   await browser.wait(`document.activeElement.matches('${preview}')`);
+   await browser.cli('press','PageDown');
+   await browser.wait(`document.querySelector('${preview}')?.scrollTop>0`);
+   expect(await browser.evaluate(`(()=>{const box=document.querySelector('${preview}').getBoundingClientRect();return box.left>=0&&box.right<=innerWidth&&box.top>=0&&box.bottom<=innerHeight;})()`)).toBe(true);
+   await browser.cli('press','Escape');
+   await browser.wait(`!document.querySelector('${preview}')&&!!document.querySelector('dialog[open]')`);
+   await browser.cli('set','viewport','1357','946');
    await browser.cli('find','role','checkbox','click','--name','通过 核对单 A0','--exact');
    await browser.cli('find','role','checkbox','click','--name','通过 核对单 B0','--exact');
    await browser.cli('find','role','checkbox','click','--name','通过 核对单 A9','--exact');
@@ -131,7 +148,10 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    expect(outcome).toContain('核对单 A8\n跳过');
    await browser.capture('stale-and-success');
    await browser.click('重新核对失败项');
-   await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('改稿是一个木头屋。')");
+   await browser.wait(`!!document.querySelector('${trigger}')`);
+   await browser.click('查看 核对单 A0 的脚本');
+   await browser.wait(`document.querySelector('${preview}')?.innerText.includes('改稿是一个木头屋。')===true`);
+   await browser.cli('press','Escape');
    expect(await browser.evaluate("document.querySelector('dialog[open] input[type=checkbox]').checked")).toBe(false);
    await browser.cli('find','role','checkbox','click','--name','通过 核对单 A0','--exact');
    await browser.click('确认勾选脚本');

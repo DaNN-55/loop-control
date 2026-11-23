@@ -1,7 +1,6 @@
-import {Clock3,FileText,Film,Info} from 'lucide-react';
-import {useEffect,useRef,useState} from 'react';
+import {FileText} from 'lucide-react';
+import {useEffect,useId,useRef,useState} from 'react';
 import {uiText} from '../i18n/ui';
-import {ScriptStudioReviewShots} from './ScriptStudioReviewShots';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {EpisodeBatchDialog,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext,type EpisodeBatchItemResult} from '../workspace/EpisodeBatch';
 import {localCommand,localRequest} from './client';
@@ -16,6 +15,51 @@ async function reviewFor(item:Item,signal?:AbortSignal):Promise<Item>{
   const review=await localRequest('episodes/'+encodeURIComponent(item.episodeId)+'/batch-script-review',{signal}) as ScriptReview;
   return {episodeId:item.episodeId,review};
  }catch(error){return {episodeId:item.episodeId,readError:message(error)};}
+}
+
+function ScriptPreview({title,sourceText,sourceName}:{title:string;sourceText:string;sourceName?:string}){
+ const id=useId(),trigger=useRef<HTMLButtonElement>(null),preview=useRef<HTMLElement>(null);
+ const hideTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ const pinned=useRef(false);
+ const [open,setOpen]=useState(false);
+ useEffect(()=>()=>clearTimeout(hideTimer.current),[]);
+
+ function show(){
+  clearTimeout(hideTimer.current);
+  const panel=preview.current,button=trigger.current;
+  if(panel&&button&&!panel.matches(':popover-open')){
+   (panel as HTMLElement&{showPopover(options:{source:HTMLElement}):void}).showPopover({source:button});
+  }
+ }
+
+ function scheduleHide(){
+  clearTimeout(hideTimer.current);
+  hideTimer.current=setTimeout(()=>{
+   const panel=preview.current;
+   if(!pinned.current&&panel?.matches(':popover-open')&&!panel.contains(document.activeElement))panel.hidePopover();
+  },180);
+ }
+
+ return <div className="episode-batch-script-preview">
+  <div onPointerEnter={event=>{if(event.pointerType==='mouse')show();}} onPointerLeave={scheduleHide}>
+   <Button ref={trigger} size="sm" color="tertiary" iconLeading={FileText} aria-label={uiText('查看 {title} 的脚本',{title})}
+    aria-controls={id} aria-expanded={open} onPress={event=>{
+     pinned.current=true;
+     show();
+     if(event.pointerType==='keyboard')preview.current?.focus();
+    }}>{uiText('查看脚本')}</Button>
+  </div>
+  <section ref={preview} id={id} popover="auto" className="episode-batch-script-preview-panel" tabIndex={0}
+   aria-label={uiText('脚本原文')} onPointerEnter={()=>clearTimeout(hideTimer.current)} onPointerLeave={scheduleHide}
+   onToggle={event=>{
+    const visible=event.currentTarget.matches(':popover-open');
+    setOpen(visible);
+    if(!visible){clearTimeout(hideTimer.current);pinned.current=false;}
+   }}>
+   <header><strong>{uiText('脚本原文')}</strong>{sourceName&&<small>{sourceName}</small>}</header>
+   <pre>{sourceText.trim()?sourceText:uiText('此生产单暂无脚本原文。')}</pre>
+  </section>
+ </div>;
 }
 
 export function BatchScriptReviewDialog({selection,onClose,onChanged}:EpisodeBatchActionContext){
@@ -92,36 +136,14 @@ export function BatchScriptReviewDialog({selection,onClose,onChanged}:EpisodeBat
  </>}>
   {busy&&<p role="status">{uiText(busy==='read'?'正在读取待确认脚本…':'正在确认勾选脚本…')}</p>}
   {refreshError&&<p role="alert">{uiText('操作结果已记录，列表读取失败。')} {uiText(refreshError)}</p>}
-  {!!ready.length&&busy!=='read'&&<p>{uiText('展开核对原文和分镜，勾选通过的生产单后提交。')}</p>}
   {busy!=='read'&&ready.map(item=>{
    const title=titles.get(item.episodeId)??item.episodeId;
-   const {sourceText,targetDuration,plan,sourceName}=item.review;
+   const {sourceText,sourceName}=item.review;
    return <section key={item.episodeId} className="episode-batch-review-item episode-batch-script-item">
     <label className="episode-batch-review-check"><input type="checkbox" name="approved" aria-label={uiText('通过 {title}',{title})} checked={!!item.picked} disabled={!!busy} onChange={event=>{const picked=event.target.checked;setItems(current=>current.map(value=>value.episodeId===item.episodeId?{...value,picked}:value));}}/>
     </label>
-    <details open={pending.length===1||undefined}><summary aria-label={uiText('核对 {title} 的脚本和分镜',{title})}>{title}</summary>
-     <div className="episode-batch-script-content">
-      <section className="episode-batch-script-source">
-       <header>
-        <h3><FileText aria-hidden="true"/>{uiText('脚本原文')}</h3>
-        {sourceName&&<small>{sourceName}</small>}
-       </header>
-       <pre>{sourceText||'—'}</pre>
-      </section>
-      <section className="episode-batch-storyboard">
-       <header>
-        <h3><Film aria-hidden="true"/>{uiText('分镜')}</h3>
-        <span className="episode-batch-meta"><Clock3 aria-hidden="true"/>{uiText('{value0} 秒',{value0:plan.durationSeconds})}</span>
-        {targetDuration!==null&&<span className="episode-batch-meta">{uiText('目标时长')} {uiText('{value0} 秒',{value0:targetDuration})}</span>}
-       </header>
-       {plan.warnings.length>0&&<div className="episode-batch-script-note"><Info aria-hidden="true"/><ul>{plan.warnings.map(warning=><li key={warning}>{uiText(warning)}</li>)}</ul></div>}
-       <ScriptStudioReviewShots plan={plan} compact/>
-       {plan.settings.length>0&&<details className="episode-batch-disclosure"><summary>{uiText('分镜设置')}</summary>
-        <dl>{plan.settings.map(setting=><div key={setting.field}><dt>{uiText(setting.field)}</dt><dd>{uiText(setting.value)}</dd></div>)}</dl>
-       </details>}
-      </section>
-     </div>
-    </details>
+    <strong>{title}</strong>
+    <ScriptPreview title={title} sourceText={sourceText} sourceName={sourceName}/>
    </section>;
   })}
   {results.length>0&&<div className="episode-batch-results" aria-live="polite"><EpisodeBatchResults selection={selection} results={results} collapseSkipped/></div>}
