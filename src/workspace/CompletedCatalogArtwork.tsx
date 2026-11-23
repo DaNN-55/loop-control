@@ -68,8 +68,8 @@ export function CompletedCatalogArtwork({episodeId,video,legacyCover,loading=fal
   style={mediaAspect?{'--completed-media-ratio':mediaAspect} as CSSProperties:undefined} aria-label={uiText('封面与成片')}>
   <div className="production-completed-viewport">
   {source&&<div className="production-completed-arrows" role="group" aria-label={uiText('封面与成片')}>
-   <button type="button" aria-label={uiText('查看封面')} aria-disabled={active===0} onClick={()=>showSlide(0)}><ChevronLeft size={19} aria-hidden="true"/></button>
-   <button type="button" aria-label={uiText('查看视频')} aria-disabled={active===1} onClick={()=>showSlide(1)}><ChevronRight size={19} aria-hidden="true"/></button>
+   <button type="button" aria-label={uiText('查看封面')} aria-disabled={active===0} onClick={()=>showSlide(0)}><ChevronLeft aria-hidden="true"/></button>
+   <button type="button" aria-label={uiText('查看视频')} aria-disabled={active===1} onClick={()=>showSlide(1)}><ChevronRight aria-hidden="true"/></button>
   </div>}
   <div className="production-completed-track" ref={track} onScroll={settleSlide}>
   <div className="production-completed-stage" role="group" aria-label={coverLabel}>
