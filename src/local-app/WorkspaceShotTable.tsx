@@ -9,16 +9,19 @@ import {workspaceShotSource} from './WorkspaceShotPreview';
 import {workspaceShotPreparation,type WorkspacePreparationTarget} from './workspaceShotPreparation';
 import {WorkspaceShotPreparationStatus} from './WorkspaceShotPreparationStatus';
 import {CompletedShotThumbnail} from './CompletedShotThumbnail';
+import type {StoryboardBatchKind} from '../storyboardBatch';
+import {workspaceStoryboardProgress} from './workspaceStoryboardProgress';
 
 interface Props {
  workspace:ProductionWorkspace;project:OpenChatCutProject|null;materials:Array<{storage_path:string;source_path:string}>;
- batch?:{selected:ReadonlySet<string>;onToggle:(shotId:string)=>void};
+ batch?:{selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(shotId:string)=>void};
+ onGenerationNavigate?:(shotId:string,kind:StoryboardBatchKind,targetItemId?:string)=>void;
  selectedShotId:string|undefined;disabled:boolean;readOnly?:boolean;completedView?:boolean;
  onPreparationNavigate?:(shotId:string,target:WorkspacePreparationTarget)=>void;
  onSelect:(shotId:string)=>void;onDelete:(clip:WorkspaceClip)=>void;onEdit:(operation:WorkspaceShotOperation)=>Promise<void>;
 }
 
-export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,completedView=false,batch,onSelect,onDelete,onEdit,onPreparationNavigate}:Props){
+export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,completedView=false,batch,onSelect,onDelete,onEdit,onPreparationNavigate,onGenerationNavigate}:Props){
  const locked=disabled||readOnly;
  const selectionDisabled=disabled&&!readOnly;
  const clips=workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index);
@@ -66,6 +69,7 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
     <tbody>{clips.map((clip,index)=>{
      const shotLabel=`镜头 ${String(index+1).padStart(2,"0")}`;
      const preparation=workspaceShotPreparation(workspace,clip.shotId,project);
+     const generation=workspaceStoryboardProgress(workspace,clip.shotId);
      const shotWindow=project&&readWorkspaceShotWindow(project,clip.itemId);
      const duration=shotWindow?shotWindow.durationInFrames/shotWindow.timeline.fps:clip.image?.durationSeconds;
      const currentSource=workspaceShotSource(clip,project),source=materials.find(m=>m.storage_path===currentSource?.relativePath);
@@ -78,8 +82,19 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
       onDragOver={event=>dragOver(event,clip.shotId)}
       onDrop={event=>{event.preventDefault();const id=dragged.current;dragged.current=null;setDrop(null);if(locked||!id||id===clip.shotId)return;const rect=event.currentTarget.getBoundingClientRect(),after=event.clientY>rect.top+rect.height/2,remaining=clips.filter(c=>c.shotId!==id),target=remaining.findIndex(c=>c.shotId===clip.shotId);void move(id,after?remaining[target+1]?.shotId??null:clip.shotId);}}
       onDragEnd={()=>{dragged.current=null;setDrop(null);}}>
-      <td><div className={batch?'storyboard-batch-shot-cell':undefined}>{batch&&<label onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}><input type="checkbox" aria-label={uiText("勾选{value0}",{value0:shotLabel})} checked={batch.selected.has(clip.shotId)} disabled={locked} onChange={()=>batch.onToggle(clip.shotId)}/></label>}<button type="button" disabled={selectionDisabled} draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></div></td>
-      <td><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div></td>
+      <td><div className={batch?'storyboard-batch-shot-cell':undefined}>{batch&&<label onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}><input type="checkbox" aria-label={uiText("勾选{value0}",{value0:shotLabel})} checked={batch.selected.has(clip.shotId)} disabled={locked||batch.disabled||!batch.eligible.has(clip.shotId)} onChange={()=>batch.onToggle(clip.shotId)}/></label>}<button type="button" disabled={selectionDisabled} draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></div></td>
+      <td><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div>
+       {(['speech','video'] as const).map(kind=>{
+        const state=generation[kind];
+        if(!state)return null;
+        const labels={kind:uiText(kind==='speech'?'口播':'视频'),status:uiText(state.status)};
+        const text=uiText('{kind}：{status}',labels);
+        return <div className="storyboard-shot-generation" key={kind}>
+         <button type="button" disabled={selectionDisabled} aria-label={uiText('{shot}{kind}：{status}',{...labels,shot:uiText('镜头 {number}',{number:String(index+1).padStart(2,'0')})})} onClick={event=>{event.stopPropagation();if(onGenerationNavigate)onGenerationNavigate(clip.shotId,kind,state.targetItemId);else onSelect(clip.shotId);}}>{text}</button>
+         {'error' in state&&state.error&&<small>{uiText(state.error)}</small>}
+        </div>;
+       })}
+      </td>
       <td>{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</td>
       <td><WorkspaceShotPreparationStatus preparation={preparation} shotLabel={shotLabel} onNavigate={onPreparationNavigate?target=>{if(!selectionDisabled)onPreparationNavigate(clip.shotId,target);}:undefined}/></td>
       {!readOnly&&<td className="workspace-shot-table-actions-cell" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}>

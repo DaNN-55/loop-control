@@ -25,3 +25,6 @@
 .storyboard-batch-video-settings label{display:grid;gap:4px}
 .storyboard-batch-video-settings input[type="number"]{background:var(--lc-surface,#fff);color:inherit;border:1px solid var(--lc-line,#d8e1ee);border-radius:5px;padding:5px 7px;max-width:100%;width:9rem}
 .storyboard-batch-video-settings .storyboard-batch-video-sound{display:flex;align-items:center;min-height:30px}
+.workspace-shot-table .storyboard-shot-generation button{width:auto;padding:0;color:var(--lc-accent,#365fe0);font-weight:600}
+.workspace-shot-table tbody tr .storyboard-shot-generation button:enabled{cursor:pointer}
+.storyboard-shot-generation small{display:block;color:var(--lc-muted,#596b83);overflow-wrap:anywhere}

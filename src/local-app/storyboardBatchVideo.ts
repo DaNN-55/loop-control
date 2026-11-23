@@ -1,6 +1,6 @@
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
-import type {StoryboardBatchItem,StoryboardVideoDraft,StoryboardVideoSettings} from '../storyboardBatch.js';
+import {definiteStoryboardFailure,latestStoryboardTask,type StoryboardBatchFailure,type StoryboardBatchItem,type StoryboardVideoDraft,type StoryboardVideoSettings} from '../storyboardBatch.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {workspaceCandidateTarget} from '../workspaceCandidates.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
@@ -21,6 +21,7 @@ export interface StoryboardVideoRequest {
  common?:StoryboardVideoSettings;
  drafts:StoryboardVideoDraft[];
  regenerateShotIds:string[];
+ retryFailures?:StoryboardBatchFailure[];
 }
 export interface StoryboardVideoItem {
  review:StoryboardBatchItem;
@@ -52,8 +53,14 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
   const skip=(reason:string):StoryboardVideoItem=>({review:{...base,state:'skipped',reason}});
   if(!clip||!timeline||!item||!['video','image','text'].includes(String(item.kind)))return skip('镜头已移除');
   const shotTasks=tasks.filter(task=>task.shotId===shotId&&task.kind==='video');
-  if(shotTasks.some(task=>task.status==='running'||task.status==='ready'&&(!task.invalidated||!!task.requestState||!!task.publicationAttempt)))return skip('已有视频任务进行中');
-  if(shotTasks.some(task=>!task.retryTaskId&&(task.submissionUnknown||task.publicationAttempt||task.canResume||['started','received'].includes(task.submissionOutcome??'')&&task.status!=='completed')))return skip('视频回执未知，请先在右侧核对原任务');
+  const unknownReason='视频回执未知，请先在右侧核对原任务';
+  if(shotTasks.some(task=>!task.retryTaskId&&task.publicationAttempt!=null))return skip(unknownReason);
+  if(shotTasks.some(task=>task.status==='running'||task.status==='ready'&&(!task.invalidated||!!task.requestState)))return skip('已有视频任务进行中');
+  if(shotTasks.some(task=>!task.retryTaskId&&(task.submissionUnknown||task.canResume||['started','received'].includes(task.submissionOutcome??'')&&task.status!=='completed')))return skip(unknownReason);
+  const prior=request.retryFailures?latestStoryboardTask(shotTasks):undefined;
+  if(request.retryFailures&&(!definiteStoryboardFailure(prior)||prior?.taskId!==request.retryFailures.find(failure=>failure.shotId===shotId)?.taskId||
+   !prior?.targetItemId||!project.timelines.some(t=>t.items.some(item=>item.id===prior.targetItemId))))return skip('原任务已变化或无明确失败记录');
+  const previous=prior?.generation;
 
   const voice=narration.find(n=>n.shotId===shotId);
   const voiceMode=voice?.requestedMode??(voice?.enabled===false?'none':clip.voiceInput?.mode==='source'?'source':voice?.mode==='manual'?'manual':voice?.enabled||voice?.mode==='tts'?'tts':'none');
@@ -61,12 +68,13 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
   if((voiceMode==='tts'||voiceMode==='manual')&&(!activeVoice||activeVoice.id===`workspace-source-shot-${shotId}`))return skip('先采用口播');
   if(!prompt.trim())return skip('缺少视频提示词');
 
-  const sharedSelection=request.common&&Object.hasOwn(request.common,'selection')?request.common.selection:defaultSelection;
+  const sharedSelection=request.common&&Object.hasOwn(request.common,'selection')?request.common.selection:previous?.selection??defaultSelection;
   const selection=draft?.selection??sharedSelection;
   if(!selection)return skip('请先选择视频生成连接与模型');
   const provider=selection.provider;
   const sharedSettingsApply=!request.common?.selection||request.common.selection.provider===provider&&request.common.selection.model===selection.model;
-  const commonWan=sharedSettingsApply?request.common?.videoSettings:undefined;
+  const sameModel=previous?.selection?.provider===provider&&previous?.selection?.model===selection.model;
+  const commonWan=(sharedSettingsApply?request.common?.videoSettings:undefined)??(sameModel?previous?.videoSettings:undefined);
   const customWan=draft?.videoSettings;
   const wantWan=customWan!==undefined||provider==='bailian'&&commonWan!==undefined;
   if([customWan,...(provider==='bailian'?[commonWan]:[])].some(settings=>settings!==undefined&&(!settings||typeof settings!=='object'||Array.isArray(settings))))return skip('视频参数无效或不适用于当前模型。');
@@ -74,14 +82,15 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
   const advanced=draft?.videoMode&&draft.videoMode!=='first-frame';
   const materialId=draft?.firstFrameMaterialRevisionId??chosenImages.find(image=>image.target_item_id===item.id)?.material_revision_id??(clip.source?.kind==='image'?clip.source.materialRevisionId:clip.image?.materialRevisionId)??(template?.visual?.material?.type==='image'?template.visual.material.id:undefined);
   if(!advanced&&!materialId)return skip('缺少首帧图片');
+  const resolution=draft?.videoResolution??(sharedSettingsApply?request.common?.videoResolution:undefined)??(sameModel?previous?.videoResolution:undefined);
   const data={
    targetItemId:item.id,prompt,selection,
    ...(draft?.promptReferences!==undefined?{promptReferences:draft.promptReferences}:{}),
    ...(advanced?{videoMode:draft.videoMode,visualInputs:draft.visualInputs??[]}:{firstFrameMaterialRevisionId:materialId}),
    ...(draft?.firstFrameFit!==undefined?{firstFrameFit:draft.firstFrameFit}:{}),
-   durationSeconds:draft?.durationSeconds??request.common?.durationSeconds??Number(item.durationInFrames)/timeline.fps,
+   durationSeconds:draft?.durationSeconds??request.common?.durationSeconds??(sameModel?previous?.durationSeconds:undefined)??Number(item.durationInFrames)/timeline.fps,
    ...(videoSettings!==undefined?{videoSettings}:{}),
-   ...(draft?.videoResolution!==undefined||provider==='minimax'&&sharedSettingsApply&&request.common?.videoResolution!==undefined?{videoResolution:draft?.videoResolution??request.common?.videoResolution}:{}),
+   ...(draft?.videoResolution!==undefined||provider==='minimax'&&resolution!==undefined?{videoResolution:resolution}:{}),
    reservationCents:draft?.reservationCents??template?.videoReservationCents??request.common?.reservationCents,
   };
   if(typeof data.durationSeconds!=='number'||!Number.isFinite(data.durationSeconds))return skip('视频生成时长无效。');
@@ -94,7 +103,7 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
    const existing=item.kind==='video'&&typeof item.src==='string'||row.bindings.some(b=>b.shotId===shotId&&b.source?.kind==='video');
    const pending=candidates.some(candidate=>candidate.shotId===shotId&&candidate.kind==='video'&&candidate.status==='available');
    const reason=existing?'已有可用视频':pending?'已有未采用视频候选':undefined;
-   const state=reason&&!request.regenerateShotIds.includes(shotId)?'regenerate':'ready';
+   const state=reason&&!request.retryFailures&&!request.regenerateShotIds.includes(shotId)?'regenerate':'ready';
    const {selection,connection,choice}=resolved.resolved;
    const parameters=[`镜头 ${Number(targetSeconds.toFixed(2))} 秒`,`服务请求 ${providerSeconds} 秒`,visual.mode.label];
    if(videoResolution)parameters.push(videoResolution);

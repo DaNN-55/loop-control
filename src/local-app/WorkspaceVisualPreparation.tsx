@@ -62,6 +62,8 @@ interface UploadEntry extends WorkspaceUploadEntry {kind:Kind;asReference:boolea
 const uploadSession=workspaceUploadSessions<UploadEntry>();
 export interface VisualPreparationProps {
  onBusyChange?:(busy:boolean)=>void;
+ workspacePolling?:boolean;
+ tabRequest?:{targetItemId:string;id:number};
  workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;
  materials:Material[];selectedShotId?:string;selectedTargetItemId?:string;onTargetChange?:(id:string)=>void;
  project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;completedView?:boolean;preparationStatus?:ReactNode;
@@ -122,6 +124,9 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   }catch{setError('默认设置未能保存，请检查浏览器存储空间。');}
   if(changed)window.dispatchEvent(new CustomEvent('loop-visual-defaults',{detail:workspace.id}));
  }
+ useEffect(()=>{
+  if(props.tabRequest?.targetItemId===targetItemId&&draftRef.current.tab!=='video')setDraft(value=>({...value,tab:'video'}));
+ },[props.tabRequest,targetItemId]);
  useEffect(()=>{
   const refresh=()=>{
    const previous=draftRef.current,next=restoreDraft(props,targetItemId,previous);
@@ -300,7 +305,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   if(uploading||!uploadRows.some(row=>row.status==='succeeded'&&!row.asReference&&!workspace.visualCandidates?.some(candidate=>candidate.targetItemId===targetItemId&&candidate.materialRevisionId===row.material?.id&&candidate.status!=='rejected')))return;
   void fresh().catch(cause=>{if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError('素材已导入，候选列表暂未更新，请刷新重试。');});
  },[uploading,uploadRows,fresh]);
- const pollingError=useWorkspacePolling(reader,{enabled:!!taskKey&&!busy&&!candidateReview.pending&&!uploading,interval:2000});
+ const pollingError=useWorkspacePolling(reader,{enabled:!props.workspacePolling&&!!taskKey&&!busy&&!candidateReview.pending&&!uploading,interval:2000});
  function base(w:ProductionWorkspace){return {episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision};}
  async function run<T>(action:()=>Promise<T>){if(working.current)return;working.current=true;setBusy(true);busyListener.current?.(true);setError('');setNotice('');try{return await action();}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}finally{working.current=false;if(mounted.current){setBusy(false);busyListener.current?.(false);}}}
 
