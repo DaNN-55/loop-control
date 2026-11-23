@@ -12,8 +12,9 @@ import {CompletedDeliveryMedia} from './CompletedDeliveryMedia';
 import {WorkspaceDeliveryPanel} from './WorkspaceDeliveryPanel';
 import './workspace-compact-panels.css';
 
-interface Props {workspace:ProductionWorkspace;pending:boolean;readOnly?:boolean;completedView?:boolean;publicationReadOnly?:boolean;errorPresented?:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;onEdit?:()=>void}
-export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readOnly=false,completedView=false,publicationReadOnly=false,errorPresented=false,onEdit}:Props){
+import type {CompletedWorkspaceActions} from './WorkspaceAdditionalDownloads';
+interface Props {workspace:ProductionWorkspace;pending:boolean;readOnly?:boolean;completedView?:boolean;publicationReadOnly?:boolean;errorPresented?:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;onEdit?:()=>void;completedActions?:CompletedWorkspaceActions}
+export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readOnly=false,completedView=false,publicationReadOnly=false,errorPresented=false,onEdit,completedActions}:Props){
  const scope=`${w.episodeId}:${w.id}`,currentScope=useRef(scope);currentScope.current=scope;
  const flight=useMemo(()=>({active:false}),[scope]);
  const [operation,setOperation]=useState<{scope:string;name:WorkspaceExportAction}|null>(null),[error,setError]=useState('');
@@ -32,7 +33,7 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
   latest?.checks.find(check=>check.name==='export_file'&&!check.passed)?.detail
   ??(!source||!latest?.current||source===failedSource?'当前成片文件无法读取。':undefined)
  ):undefined;
- const downloadToolbar=<div ref={setDownloadTarget} className="workspace-download-toolbar" aria-label={uiText('成片下载')}/>;
+ const downloadToolbar=<div ref={setDownloadTarget} className="workspace-download-toolbar" aria-label={uiText(completedActions?'交付操作':'成片下载')}/>;
  const checkSummary=totalChecks?uiText('{passed}/{total} 项检查通过',{passed:String(passedChecks),total:String(totalChecks)}):uiText('未记录检查项');
  const info=mediaInfo.sha===latest?.artifact?.sha256?mediaInfo:null,ratio=info&&info.height>0?info.width/info.height:9/16;
  const mediaStyle={'--final-preview-ratio':ratio,'--final-preview-max':ratio<1?'280px':'100%'} as CSSProperties;
@@ -86,7 +87,7 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
     {!errorPresented&&error&&<p role="alert" className="form-error">{uiText(error)}</p>}
    </div>
    <div className="workspace-export-review">
-    <WorkspaceDeliveryPanel actionsContainer={downloadTarget} workspace={w} pending={pending||readOnly||!!action} completedView={completedView} publicationReadOnly={publicationReadOnly} currentFileProblem={currentFileProblem} command={command} onChange={onChange} onRecheck={()=>{setFailedSource(null);setPreviewAttempt(count=>count+1);}}
+    <WorkspaceDeliveryPanel completedActions={completedActions} actionsContainer={downloadTarget} workspace={w} pending={pending||readOnly||!!action} completedView={completedView} publicationReadOnly={publicationReadOnly} currentFileProblem={currentFileProblem} command={command} onChange={onChange} onRecheck={()=>{setFailedSource(null);setPreviewAttempt(count=>count+1);}}
      renderCompletedPreview={completedView&&previewTarget?cover=>createPortal(<CompletedDeliveryMedia
       coverUrl={cover?localArtifactUrl(w.episodeId,cover.file.relativePath,cover.file.sha256):null} video={finalPreview}
       player={player} canPlay={!!source&&!currentFileProblem} mediaStyle={mediaStyle}/>,previewTarget):undefined}/>

@@ -10,7 +10,7 @@ import {completedCopyDocumentKey,type CompletedStudioCopy} from './completedStud
 import type {OpenChatCutProject} from '../worker/openchatcutProject';
 import './completed-studio-view.css';
 
-export function CompletedStudioView({episodeId,title,initialShotId,onClose,onSaved}:{episodeId:string;title:string;initialShotId?:string;onClose:(saved?:boolean)=>void;onSaved?:(copy:ProductionCopyResult)=>void}){
+export function CompletedStudioView({episodeId,title,initialShotId,onClose,onSaved,returnLabel='返回分镜台'}:{episodeId:string;title:string;initialShotId?:string;onClose:(saved?:boolean)=>void;onSaved?:(copy:ProductionCopyResult)=>void;returnLabel?:string}){
  const mounted=useRef(true),kept=useRef(false),savedCopy=useRef<ProductionCopyResult|null>(null),owner=useWorkspaceOwnerId(),navigation=useWorkspaceNavigation(episodeId);
  const pendingKey=owner?'loop-control.production-copy-save:'+JSON.stringify([owner,episodeId]):'';
  const [recoveryId,setRecoveryId]=useState(''),[notice,setNotice]=useState('');
@@ -86,7 +86,7 @@ export function CompletedStudioView({episodeId,title,initialShotId,onClose,onSav
  leaveRef.current=action=>{void leave(action);};
  useWorkspaceLeaveEntry({dirty:()=>!!live.current&&!closed.current,keep:()=>false,discard:()=>{},beforeUnload:()=>{},requestLeave:action=>{void leave(action);}});
  return <section className="completed-studio-view" aria-label={uiText('OpenChatCut 查看副本')}>
-  <header><Button size="sm" color="secondary" onPress={()=>void leave()} isDisabled={pending}>{uiText('返回分镜台')}</Button><div><h3>{title}</h3><p>{uiText('查看副本，修改不会影响已完成生产单。')}</p></div><Button size="sm" color="secondary" isDisabled={(baseline.current===null&&!ready)||pending} onPress={()=>{destination.current=onClose;void finish(true);}}>{uiText(pending?'处理中…':'保存为新生产单')}</Button></header>
+  <header><Button size="sm" color="secondary" onPress={()=>void leave()} isDisabled={pending}>{uiText(returnLabel)}</Button><div><h3>{title}</h3><p>{uiText('查看副本，修改不会影响已完成生产单。')}</p></div><Button size="sm" color="secondary" isDisabled={(baseline.current===null&&!ready)||pending} onPress={()=>{destination.current=onClose;void finish(true);}}>{uiText(pending?'处理中…':'保存为新生产单')}</Button></header>
   {notice&&<p role="status">{uiText(notice)}</p>}
   {recoveryId&&<p role="status">{uiText('上次保存尚未确认。')}<Button size="sm" color="secondary" isDisabled={pending} onPress={()=>void finish(true)}>{uiText('继续保存副本')}</Button></p>}
   {error&&<p role="alert" className="form-error">{uiText(error)}{!session&&<Button size="sm" color="secondary" onPress={()=>setAttempt(n=>n+1)}>{uiText('重新打开')}</Button>}</p>}

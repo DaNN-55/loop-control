@@ -251,8 +251,14 @@ html[data-interface="impeccable"] .product-ui .workspace-script-compact .confirm
 .workspace-download-toolbar .workspace-more-downloads[open]>summary{background:var(--lc-accent-soft,#edf1ff);color:var(--lc-accent,#365fe0)}
 .workspace-download-toolbar .workspace-more-download-options{position:absolute;z-index:20;right:0;top:calc(100% + 6px);width:min(260px,calc(100vw - 40px));padding:9px;background:var(--lc-surface,#fff);border:1px solid var(--lc-line-strong,#bdcadd);border-radius:7px;box-shadow:0 8px 24px rgb(23 38 62 / .12);font-size:12px}
 .workspace-more-download-options{display:grid;gap:5px}
+.workspace-action-group-label{padding:3px 5px;color:var(--lc-muted,#596b83);font-size:11px}
+.workspace-download-options-group,.workspace-record-actions{display:grid;gap:4px}
+.workspace-more-download-options>:not(:first-child).workspace-record-actions{border-block-start:1px solid var(--lc-line,#d8e1ee);padding-block-start:5px}
+
 .workspace-download-toolbar .workspace-more-download-options :is(a,button){justify-content:flex-start;text-align:left}
-.workspace-download-toolbar .workspace-more-download-options>p{padding:4px;margin:0!important;font-size:11px;line-height:1.6}
+.workspace-download-toolbar .workspace-completed-actions .workspace-more-download-options :is(a,button){display:flex;justify-content:flex-start;gap:8px;padding:6px 8px;min-height:32px;font-size:12px;font-weight:500}
+.workspace-download-toolbar .workspace-completed-actions .workspace-more-download-options :is(a,button) svg{inline-size:15px;block-size:15px}
+.workspace-download-toolbar .workspace-download-options-group>p{padding:4px;margin:0!important;font-size:11px;line-height:1.6}
 @container workspace-review (max-width:830px){
  .workspace-export.workspace-review-flow .workspace-export-layout{grid-template-columns:minmax(250px,.8fr) minmax(0,1.2fr)}
  .workspace-review-flow .workspace-final-preview,.workspace-review-flow .workspace-export-review{padding:16px}
@@ -263,7 +269,9 @@ html[data-interface="impeccable"] .product-ui .workspace-script-compact .confirm
  .workspace-export.workspace-review-flow .workspace-export-layout{grid-template-columns:minmax(0,1fr)}
  .workspace-review-flow .workspace-final-preview{border-right:0;border-bottom:1px solid var(--lc-line,#d8e1ee)}
  .workspace-review-flow .workspace-final-media{inline-size:min(248px,100%)}
- .workspace-export.workspace-review-flow>header{flex-wrap:wrap;gap:12px}
+ .workspace-export.workspace-review-flow>header{position:relative;flex-wrap:wrap;gap:12px}
+ .workspace-download-toolbar .workspace-completed-actions{position:static}
+ .workspace-download-toolbar .workspace-completed-actions .workspace-more-download-options{right:12px}
  .workspace-final-header-actions{margin-inline-start:auto;justify-content:flex-end}
  .workspace-review-flow>.workspace-export-secondary{margin-inline:16px}
 }

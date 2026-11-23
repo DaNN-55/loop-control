@@ -260,16 +260,28 @@ it('preserves image and video prompt drafts when switching the unified tabs',asy
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="工程" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
  await screen.findByRole('tab',{name:'图片'});fireEvent.change(screen.getByLabelText('图片提示词'),{target:{value:'保留图片草稿'}});fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.change(screen.getByLabelText('画面动作'),{target:{value:'保留视频动作'}});fireEvent.click(screen.getByRole('tab',{name:'图片'}));expect((screen.getByLabelText('图片提示词') as HTMLTextAreaElement).value).toBe('保留图片草稿');fireEvent.click(screen.getByRole('tab',{name:'视频'}));expect((screen.getByLabelText('画面动作') as HTMLTextAreaElement).value).toBe('保留视频动作');expect(command).not.toHaveBeenCalled();
 });
-it('keeps completed orders read-only with three sections even when legacy evidence exists',async()=>{
+function mockCompletedDialog(){
+ Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(this:HTMLDialogElement){this.open=true;}});
+ Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;fireEvent(this,new Event('close'));}});
+}
+it('opens read-only completed records from delivery even when legacy evidence exists',async()=>{
+ mockCompletedDialog();
  const legacy={episode:{id:'e'},reviewPackages:[],artifacts:[{id:'old-final',episode_id:'e',artifact_type:'final_render',relative_path:'episodes/e/old-final.mp4',sha256:'f'.repeat(64),created_at:'2026-10-30'}],materialRevisions:[],audioTracks:[]} as unknown as import('../episodes/episodeSnapshot').EpisodeProductionSnapshot;
  const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
  render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}} legacySnapshot={legacy}/>);
- await screen.findByRole('region',{name:'已完成作品查看'});fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'成片预览'});
- expect(screen.getByRole('navigation',{name:'作品查看'}).querySelectorAll('button')).toHaveLength(3);
- fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));expect(screen.getByRole('table',{name:'镜头'})).toBeTruthy();
+ await screen.findByRole('heading',{name:'成片预览'});
+ expect(screen.queryByRole('navigation',{name:'作品查看'})).toBeNull();
+ await userEvent.click(screen.getByText('更多操作'));
+ await userEvent.click(screen.getByRole('button',{name:'查看脚本'}));
+ expect(await screen.findByRole('dialog',{name:'确认脚本'})).toBeTruthy();
+ await userEvent.click(screen.getByRole('button',{name:'关闭详情'}));
+ await waitFor(()=>expect(screen.queryByRole('dialog',{name:'确认脚本'})).toBeNull());
+ await userEvent.click(screen.getByText('更多操作'));
+ await userEvent.click(screen.getByRole('button',{name:'查看分镜'}));
+ expect(within(await screen.findByRole('dialog',{name:'分镜记录'})).getByRole('table',{name:'镜头'})).toBeTruthy();
  expect(screen.queryByRole('button',{name:'保存字幕'})).toBeNull();expect(screen.queryByRole('combobox',{name:'字幕片段'})).toBeNull();
  expect(screen.queryByRole('button',{name:'新增镜头'})).toBeNull();expect(screen.queryByRole('button',{name:/^剪辑工作台/})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));expect(screen.queryByRole('button',{name:'正在导出与检查…'})).toBeNull();expect(command).not.toHaveBeenCalled();
+ await userEvent.click(screen.getByRole('button',{name:'关闭详情'}));await screen.findByRole('heading',{name:'成片预览'});expect(screen.queryByRole('button',{name:'正在导出与检查…'})).toBeNull();expect(command).not.toHaveBeenCalled();
 });
 it('keeps another shot’s video generation draft when adopting an image advances the project',async()=>{
  const second={id:'clip2',itemId:'shot-S02-clip',shotId:'S02',text:'第二镜',source:null};
@@ -368,12 +380,11 @@ it('returns from budget settings to the original preparation target without auto
 });
 it('keeps AudioSkin playback enabled in a completed order while narration and music show read-only facts',async()=>{
  const completed={...workspace,narration:[{shotId:'S01',clipId:'clip',mode:'manual',status:'completed',text:'已有口播',durationSeconds:6}],usedNarration:[{shotId:'S01',taskId:'task',audioTrackId:'voice',sha256:'voice-sha',text:'已有口播',sourceInFrame:0,durationInFrames:180,fps:30}],candidates:[{id:'voice',kind:'audio',shotId:'S01',taskId:'task',audioTrackId:'voice',sha256:'voice-sha',status:'adopted',relativePath:'voice.mp3',text:'已有口播',durationSeconds:6}]};
- Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(this:HTMLDialogElement){this.open=true;}});
- Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;}});
+ mockCompletedDialog();
  const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:completed})));
- const {container}=render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByRole('region',{name:'已完成作品查看'});fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'成片预览'});fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));await screen.findByRole('table',{name:'镜头'});
- const media=await screen.findByLabelText('S01 已采用口播试听');expect(media.closest('fieldset')?.disabled).not.toBe(true);expect(container.querySelector('.app-audio-player button')?.matches(':disabled')).toBe(false);expect(screen.queryByRole('textbox',{name:'口播正文'})).toBeNull();
+ render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
+ await screen.findByRole('heading',{name:'成片预览'});await userEvent.click(screen.getByText('更多操作'));await userEvent.click(screen.getByRole('button',{name:'查看分镜'}));const modal=await screen.findByRole('dialog',{name:'分镜记录'});
+ const media=await screen.findByLabelText('S01 已采用口播试听');expect(media.closest('fieldset')?.disabled).not.toBe(true);expect(modal.querySelector('.app-audio-player button')?.matches(':disabled')).toBe(false);expect(screen.queryByRole('textbox',{name:'口播正文'})).toBeNull();
  expect(screen.getByRole('heading',{name:'配乐与声音制作记录'})).toBeTruthy();expect(screen.queryByRole('combobox',{name:'来源'})).toBeNull();expect(screen.queryByRole('button',{name:'上传 MP3'})).toBeNull();expect(command).not.toHaveBeenCalled();
 });
 

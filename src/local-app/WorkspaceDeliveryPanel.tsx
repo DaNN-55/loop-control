@@ -8,12 +8,12 @@ import type {ProductionWorkspace} from '../productionWorkspace';
 import type {ArtifactManifest} from '../worker/contracts';
 import {workspaceExportDeliveryState} from '../workspaceExportDelivery';
 import {useWorkspaceReading,useWorkspacePolling} from './useWorkspaceReading';
-import {WorkspaceAdditionalDownloads} from './WorkspaceAdditionalDownloads';
+import {WorkspaceAdditionalDownloads,type CompletedWorkspaceActions} from './WorkspaceAdditionalDownloads';
 import {WorkspacePublicationPanel} from './WorkspacePublicationPanel';
 import './workspace-compact-panels.css';
 
-interface Props {workspace:ProductionWorkspace;pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;completedView?:boolean;publicationReadOnly?:boolean;actionsContainer?:HTMLElement|null;currentFileProblem?:string;onRecheck?:()=>void;renderCompletedPreview?:(cover:PublicationCover|null)=>ReactNode}
-export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,completedView=false,publicationReadOnly=false,actionsContainer,currentFileProblem,onRecheck,renderCompletedPreview}:Props){
+interface Props {completedActions?:CompletedWorkspaceActions;workspace:ProductionWorkspace;pending:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;completedView?:boolean;publicationReadOnly?:boolean;actionsContainer?:HTMLElement|null;currentFileProblem?:string;onRecheck?:()=>void;renderCompletedPreview?:(cover:PublicationCover|null)=>ReactNode}
+export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,completedView=false,publicationReadOnly=false,actionsContainer,currentFileProblem,onRecheck,renderCompletedPreview,completedActions}:Props){
  const {review,delivery}=workspaceExportDeliveryState(w),{latest,running,retryTarget,unavailable}=delivery;
  const [error,setError]=useState(''),[retrying,setRetrying]=useState(false),[rechecking,setRechecking]=useState(false);
  const reading=useWorkspaceReading(w,onChange,JSON.stringify([latest?.id,!!running]),'交付状态暂不可用，请刷新重试。');
@@ -43,6 +43,6 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,com
   {retryTarget&&<div className="workspace-completion-retry"><p role="alert">{uiText(retryTarget.error||'交付文件校验未完成，请重试。')}</p><Button size="sm" color="primary" iconLeading={RefreshCw} isDisabled={pending||retrying} onPress={()=>void retry()}>{uiText(retrying?'正在完成…':'重试完成')}</Button></div>}
   {completedView&&actionsContainer?createPortal(fileNotice,actionsContainer):fileNotice}
   {(error||pollingError)&&<p role="alert">{uiText(error||pollingError?.message||'')}</p>}
-  <WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly} completedView={completedView}>{(p,editing)=><>{renderCompletedPreview?.(p.state?.cover??null)}{verified?(actionsContainer?createPortal(<WorkspaceAdditionalDownloads workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>,actionsContainer):<WorkspaceAdditionalDownloads workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>):null}</>}</WorkspacePublicationPanel>
+  <WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly} completedView={completedView}>{(p,editing)=><>{renderCompletedPreview?.(p.state?.cover??null)}{verified||completedActions?(actionsContainer?createPortal(<WorkspaceAdditionalDownloads completedActions={completedActions} workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>,actionsContainer):<WorkspaceAdditionalDownloads completedActions={completedActions} workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>):null}</>}</WorkspacePublicationPanel>
  </section>;
 }
