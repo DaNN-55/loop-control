@@ -141,6 +141,16 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   await browser.capture('corrected-preview');
   await browser.click('提交创建');
   await browser.cli('wait','--text','成功 3');
+  for(const [width,height] of [[1357,946],[420,820]]){
+   await browser.cli('set','viewport',String(width),String(height));
+   expect(await browser.evaluate(`Array.from(document.querySelectorAll('.episode-batch-results > li'), card=>{
+    const button=card.querySelector('button').getBoundingClientRect();
+    const copy=card.querySelector('.episode-batch-result-copy').getBoundingClientRect();
+    const style=getComputedStyle(card);
+    const edge=card.getBoundingClientRect().right-parseFloat(style.paddingRight)-parseFloat(style.borderRightWidth);
+    return Math.abs(button.right-edge)<1&&button.left>=copy.right&&button.top<copy.bottom&&button.bottom>copy.top;
+   })`)).toEqual([true,true,true]);
+  }
   expect(browser.traffic.some(record=>['start','confirmScriptStudio'].includes(record.command))).toBe(false);
   for(const [index,title] of ['雨前','雨中','雨后'].entries()){
    await browser.cli('click','.episode-batch-results li:nth-child('+(index+1)+') button');

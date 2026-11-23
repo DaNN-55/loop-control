@@ -244,8 +244,10 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
     {batchId?<section aria-label={uiText('导入结果')}>
      {receipt?<><p role="status">{uiText('成功')} {receipt.items.filter(item=>item.status==='succeeded').length} · {uiText('跳过')} {receipt.items.filter(item=>item.status==='skipped').length} · {uiText('失败')} {receipt.items.filter(item=>item.status==='failed').length}</p>
       <ul className="episode-batch-results">{receipt.items.map(item=><li key={item.itemId}>
-       <strong>{item.title}</strong><span>{item.sourceName} · {uiText({succeeded:'成功',skipped:'跳过',failed:'失败',pending:'待处理'}[item.status])}</span>
-       {item.reason&&<p>{uiText(item.reason)}</p>}
+       <div className="episode-batch-result-copy">
+        <strong>{item.title}</strong><span>{item.sourceName} · {uiText({succeeded:'成功',skipped:'跳过',failed:'失败',pending:'待处理'}[item.status])}</span>
+        {item.reason&&<p>{uiText(item.reason)}</p>}
+       </div>
        {item.episodeId&&<Button size="sm" color="secondary" type="button" onPress={()=>{dialog.current?.close();onOpenEpisode(item.episodeId!);}}>{uiText('打开生产单')}</Button>}
       </li>)}</ul></>:<p>{uiText(busy?'正在读取导入结果…':'正在等待导入结果。')}</p>}
     </section>:<>

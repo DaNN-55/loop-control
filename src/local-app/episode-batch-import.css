@@ -53,7 +53,7 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-import-disclosure[aria-expanded="true"] > svg {transform:rotate(90deg)}
 .episode-import-heading {display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
 .episode-import-title {display:inline-flex;min-inline-size:0;flex-wrap:wrap;align-items:center;gap:4px 6px}
-.episode-import-meta,.episode-batch-results > li > span {color:var(--color-text-secondary);font-size:.8125rem}
+.episode-import-meta,.episode-batch-result-copy > span {color:var(--color-text-secondary);font-size:.8125rem}
 .episode-import-duration {margin-inline-start:auto;white-space:nowrap;font-variant-numeric:tabular-nums}
 .episode-import-summary,.episode-import-row-body {grid-column:1/-1;margin-inline-start:21px;min-inline-size:0}
 .episode-import-summary {margin-block-start:-2px}
@@ -93,9 +93,11 @@ dl.episode-import-shot-copy:not(:empty) {background:var(--color-bg-secondary);bo
  .episode-import-shot-copy {grid-template-columns:1fr 1fr}
  .episode-import-shot-copy > :first-child {grid-column:1/-1}
 }
-.episode-batch-results button {justify-self:start}
+.episode-batch-results > li > button {flex:none;margin-inline-start:auto}
 .episode-batch-results {display:grid;gap:8px;list-style:none;padding:0}
-.episode-batch-results > li {display:grid;gap:4px}
+.episode-batch-results > li {display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
+.episode-batch-result-copy {display:grid;flex:1;min-inline-size:0;gap:4px}
+.episode-batch-result-copy > p {margin:0}
 .episode-workbook-file {display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;min-width:0}
 .episode-workbook-file strong {overflow-wrap:anywhere}
 .episode-workbook-template {color:var(--link-primary,currentColor);text-decoration:underline;text-underline-offset:.2em}
