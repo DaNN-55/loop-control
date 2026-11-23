@@ -1,3 +1,4 @@
+import type {ImportedScript} from './episodeBatchImportTypes';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {useScriptStudioSessions} from './useScriptStudioSessions';
 import type {ScriptStudioAttachmentMaterial} from '../scriptStudioAttachments';
@@ -24,7 +25,7 @@ import './script-studio.css';
 import './script-studio-chat.css';
 
 interface Props {
- episodeId:string;scriptRevisionId:string|null;script:string;stage:string;readOnly:boolean;pending:boolean;completedView?:boolean;
+ episodeId:string;scriptRevisionId:string|null;script:string;importedScript?:ImportedScript|null;stage:string;readOnly:boolean;pending:boolean;completedView?:boolean;
  command:(name:string,data:unknown)=>Promise<unknown>;onConfirmed:(scriptRevisionId?:string,revisionReason?:string)=>void;history?:ReactNode;errorPresented?:boolean;materials?:readonly ScriptStudioAttachmentMaterial[];onMaterialImported?:(material:ScriptStudioAttachmentMaterial)=>void;
 }
 type Basis={id:string|null;text:string;duration:string};
@@ -38,16 +39,17 @@ const confirmationStatus:Record<ScriptConfirmationState['phase'],string>={idle:'
 export function WorkspaceScriptPanel(props:Props){const owner=useWorkspaceOwnerId();return <WorkspaceScriptSource key={owner+':'+props.episodeId} {...props}/>;}
 function WorkspaceScriptSource(props:Props){
  const source=useScriptStudioSource(props.episodeId,props.scriptRevisionId,props.script);
+ const imported=props.scriptRevisionId===null?props.importedScript:null;
  const loaded=useRef<{revisionId:string|null;value:ScriptStudioSource}|null>(null);
  if(!source.loading)loaded.current={revisionId:props.scriptRevisionId,value:source.value};
  // Keep an initialized draft's baseline stable while refreshing the same immutable revision.
  const retained=loaded.current?.revisionId===props.scriptRevisionId?loaded.current.value:null;
- return <WorkspaceScriptEditor {...props} retained={retained??source.value} sourceReady={!!retained} sourceLoading={source.loading} sourceError={source.error} retrySource={source.retry}/>;
+ return <WorkspaceScriptEditor {...props} retained={imported??retained??source.value} sourceReady={!!imported||!!retained} sourceLoading={!imported&&source.loading} sourceError={source.error} retrySource={source.retry}/>;
 }
-function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,stage,readOnly,pending,completedView=false,command,onConfirmed,history,errorPresented=false,materials=[],onMaterialImported,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
+function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript,stage,readOnly,pending,completedView=false,command,onConfirmed,history,errorPresented=false,materials=[],onMaterialImported,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
  const [flow,setFlow]=useState<ScriptConfirmationState>({phase:'idle'});
  const baseline:Basis='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:retained.sourceText,duration:retained.targetDuration===null?'':String(retained.targetDuration)};
- const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??'new',initial:{text:baseline.text,duration:baseline.duration,reason:'',filename:'script.md'},legacyInitial:baseline.id===scriptRevisionId?{text:script,reason:'',filename:'script.md'}:undefined,enabled:!readOnly&&(sourceReady||flow.phase!=='idle')});
+ const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??importedScript?.version??'new',initial:{text:baseline.text,duration:baseline.duration,reason:'',filename:importedScript?.sourceName??'script.md'},legacyInitial:baseline.id===scriptRevisionId?{text:script,reason:'',filename:'script.md'}:undefined,enabled:!readOnly&&(sourceReady||flow.phase!=='idle')});
  const {text,duration,reason,filename}=draft.value;
  const [error,setError]=useState(''),[invalid,setInvalid]=useState<'script'|'duration'|null>(null),[discardOpen,setDiscardOpen]=useState(false),[examplesOpen,setExamplesOpen]=useState(false),[historyOpen,setHistoryOpen]=useState(false),[middleCollapsed,setMiddleCollapsed]=useState(false),[modelOpen,setModelOpen]=useState(false),[editingShot,setEditingShot]=useState(false),[chatCollapsed,setChatCollapsed]=useState(false);
  const formId=useId(),errorId=useId(),textId=useId(),durationId=useId(),textInput=useRef<HTMLTextAreaElement>(null),durationInput=useRef<HTMLInputElement>(null),input=useRef<HTMLInputElement>(null);

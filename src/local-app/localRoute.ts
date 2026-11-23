@@ -1,3 +1,5 @@
+import {StringDecoder} from 'node:string_decoder';
+import {episodeImportLimits} from './episodeBatchImportTypes.js';
 import {readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
 import {LocalPublicationPackages} from './workspacePublicationPackages.js';
 import {readScriptStudio} from './scriptStudioConfirmation.js';
@@ -45,7 +47,10 @@ interface LocalOptions {log?:(event:RuntimeRequestLogEvent)=>void;logs?:{read:()
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
- let text='';for await(const chunk of request){text+=chunk;if(Buffer.byteLength(text)>limit)throw Error('Body too large');}
+ const decoder=new StringDecoder('utf8');
+ let text='',bytes=0;
+ for await(const chunk of request){bytes+=chunk.length;if(bytes>limit)throw Error('Body too large');text+=decoder.write(chunk);}
+ text+=decoder.end();
  const parsed:unknown=JSON.parse(text);if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))throw Error('Object required');return parsed as Record<string,unknown>;
 }
 export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}){
@@ -174,6 +179,17 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(!options.episodes)throw new ConfigurationError(503,'本地 Studio 尚未配置。');
     let body;try{body=await readBody(request);}catch{throw new ConfigurationError(400,'查看副本请求格式无效。');}
     send(200,await options.episodes.completedStudioCopy(session,studioCopy[1],body));return;
+   }
+   if(url.pathname==='/api/local/episode-imports'&&request.method==='POST'&&!url.search){
+    if(!options.episodes)throw new ConfigurationError(503,'本地建单服务尚未配置。');
+    let body;try{body=await readBody(request,episodeImportLimits.requestBytes);}catch{throw new ConfigurationError(400,'导入请求无效或超过大小上限。');}
+    const batches=options.episodes.batchImport;
+    send(200,await (body.action==='preview'?batches.preview(session,body):batches.run(session,body)));return;
+   }
+   const batchImport=url.pathname.match(/^\/api\/local\/episode-imports\/([0-9a-f-]{36})$/);
+   if(batchImport&&request.method==='GET'&&!url.search){
+    if(!options.episodes)throw new ConfigurationError(503,'本地建单服务尚未配置。');
+    send(200,await options.episodes.batchImport.read(session,batchImport[1]));return;
    }
    if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
     if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}

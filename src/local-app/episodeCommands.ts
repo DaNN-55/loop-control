@@ -1,3 +1,4 @@
+import {LocalEpisodeBatchImport} from './episodeBatchImport.js';
 import {CompletedProductionCopies} from './completedProductionCopies.js';
 import {confirmScriptStudio} from './scriptStudioConfirmation.js';
 import {CompletedStudioCopies,completedProjectSources} from './completedStudioCopies.js';
@@ -44,9 +45,11 @@ export class LocalEpisodeCommands {
  private completedCopies:CompletedStudioCopies;
  private productionCopies:CompletedProductionCopies;
  private scriptStore:ScriptProductionStore;
+ readonly batchImport:LocalEpisodeBatchImport;
  closeStudio(episodeId:string){return this.workspace.closeEpisode(episodeId);}
  async close(){await Promise.all([this.workspace.close(),this.completedCopies.close(),...[...this.standaloneStudios].map(root=>closeStandaloneOpenChatCutStudio(root))]);this.standaloneStudios.clear();}
  constructor(private pool:Pool,private mediaRoot:string,private runtime:InputRuntime){this.runtime={...runtime,localExportActivity:this.exports};this.scriptStore=new ScriptProductionStore();
+  this.batchImport=new LocalEpisodeBatchImport(pool,mediaRoot,(c,_account,policy)=>this.preflight(c,policy));
   this.productionCopies=new CompletedProductionCopies(pool,mediaRoot,async()=>{if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');return this.runtime.studioRuntime();});
   this.completedCopies=new CompletedStudioCopies(mediaRoot,async()=>{if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');return this.runtime.studioRuntime();},(ownerId,episodeId)=>ownerTransaction(pool,ownerId,true,async c=>{
    const episode=(await c.query("SELECT e.id,e.title,e.stage FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner' AND NOT EXISTS(SELECT 1 FROM local_identity.episode_recycle_bin r WHERE r.episode_id=e.id)",[episodeId,ownerId])).rows[0];
