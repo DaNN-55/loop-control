@@ -6,7 +6,7 @@ import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import type {CatalogQuery} from '../episodes/episodeCatalogTypes.js';
 
 /** Verified native content is the authority; this read-only catalog projection is never persisted. */
-export async function readCatalogWorkspaceUsage(c:PoolClient,query:CatalogQuery){
+export async function readCatalogWorkspaceUsage(c:PoolClient,query:CatalogQuery,batchMembers:string[]|null){
  const workspaces=(await c.query(`SELECT w.*,local_identity.storage_physical_root(location.asset_root) asset_root
  FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id
  CROSS JOIN LATERAL local_identity.episode_storage_location(e.id) location
@@ -18,7 +18,8 @@ export async function readCatalogWorkspaceUsage(c:PoolClient,query:CatalogQuery)
  AND ($3::text='all' OR $3::text='unassigned' AND (collection.container_id IS NOT NULL AND collection.series_id IS NULL OR collection.container_id IS NULL AND e.series_version_id IS NULL)
   OR $3::text='unavailable' AND collection.container_id IS NULL AND e.series_version_id IS NOT NULL AND series.id IS NULL
   OR CASE WHEN collection.container_id IS NOT NULL THEN collection.series_id ELSE series.id END::text=$3)
- AND EXISTS(SELECT 1 FROM public.tasks t WHERE t.episode_id=e.id AND t.status IN ('ready','running','failed','blocked') AND t.invalidated_at IS NULL AND NOT local_identity.is_historical_task(t.id))`,[query.accountId||null,query.q??'',query.seriesId])).rows;
+ AND ($4::uuid[] IS NULL OR e.id=ANY($4))
+ AND EXISTS(SELECT 1 FROM public.tasks t WHERE t.episode_id=e.id AND t.status IN ('ready','running','failed','blocked') AND t.invalidated_at IS NULL AND NOT local_identity.is_historical_task(t.id))`,[query.accountId||null,query.q??'',query.seriesId,batchMembers])).rows;
  const usage:Record<string,unknown>={};
  for(const w of workspaces){
   try{

@@ -19,6 +19,7 @@ type Props={
  onClose:()=>void;
  onCreated:()=>void;
  onOpenEpisode:(episodeId:string)=>void;
+ onViewBatch:(batchId:string)=>void;
 };
 
 function post(body:object){
@@ -45,7 +46,7 @@ function itemProblem(row:PreviewRow){
  return '';
 }
 
-export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions,initialAccountId,initialSeriesVersionId,onClose,onCreated,onOpenEpisode}:Props){
+export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions,initialAccountId,initialSeriesVersionId,onClose,onCreated,onOpenEpisode,onViewBatch}:Props){
  const heading=useId(),fileHelp=useId(),dialog=useRef<HTMLDialogElement>(null),errorFocus=useRef<HTMLDivElement>(null);
  const [accountId,setAccountId]=useState(accounts.find(account=>account.id===initialAccountId)?.id??accounts[0]?.id??'');
  const [seriesVersionId,setSeriesVersionId]=useState(initialSeriesVersionId??'');
@@ -197,6 +198,7 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
    </div>
    <div className="modal-actions">
     {batchId?<><Button size="sm" color="secondary" type="button" isDisabled={busy||!receipt} onPress={nextBatch}>{uiText('开始新批次')}</Button>
+     {receipt?.items.some(item=>item.status==='succeeded'&&item.episodeId)&&<Button size="sm" color="secondary" type="button" isDisabled={busy} onPress={()=>{dialog.current?.close();onViewBatch(receipt.batchId);}}>{uiText('查看本批')}</Button>}
      {(!receipt||receipt.items.some(item=>item.status==='pending'||item.status==='failed'))&&<Button size="sm" color="primary" type="button" isDisabled={busy} onPress={()=>void retry()}>{uiText('重试此批')}</Button>}</>
      :<Button size="sm" color="primary" type="submit" isDisabled={busy}>{uiText(busy?'正在处理…':duplicates?'提交创建':'检查重复')}</Button>}
    </div>

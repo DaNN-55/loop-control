@@ -37,4 +37,16 @@ export interface EpisodeImportReceipt {
  }>;
 }
 
+export interface EpisodeImportHistory {
+ batches:Array<{
+  batchId:string;
+  accountName:string;
+  firstTitle:string;
+  createdAt:string;
+  itemCount:number;
+  createdCount:number;
+ }>;
+ hasMore:boolean;
+}
+
 export const episodeImportLimits={items:100,sourceLength:20000,sourceNameLength:255,requestBytes:16*1024*1024};

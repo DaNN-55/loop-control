@@ -180,6 +180,12 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     let body;try{body=await readBody(request);}catch{throw new ConfigurationError(400,'查看副本请求格式无效。');}
     send(200,await options.episodes.completedStudioCopy(session,studioCopy[1],body));return;
    }
+   if(url.pathname==='/api/local/episode-imports'&&request.method==='GET'){
+    const page=url.searchParams.get('page')??'1';
+    if(!/^[1-9][0-9]{0,5}$/.test(page)||[...url.searchParams.keys()].some(key=>key!=='page')||url.searchParams.size>1)throw new ConfigurationError(400,'导入记录页码无效。');
+    if(!options.episodes)throw new ConfigurationError(503,'本地建单服务尚未配置。');
+    send(200,await options.episodes.batchImport.history(session,Number(page)));return;
+   }
    if(url.pathname==='/api/local/episode-imports'&&request.method==='POST'&&!url.search){
     if(!options.episodes)throw new ConfigurationError(503,'本地建单服务尚未配置。');
     let body;try{body=await readBody(request,episodeImportLimits.requestBytes);}catch{throw new ConfigurationError(400,'导入请求无效或超过大小上限。');}

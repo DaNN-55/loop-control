@@ -8,6 +8,8 @@ export type EpisodePageSize = typeof episodePageSizes[number];
 export interface ServerPage { page: number; total: number; pageSize: number; onPageChange: (page: number) => void; onPageSizeChange?: (size: EpisodePageSize) => void }
 export interface WorkerSummary { running: number; blocked: number; failed: number; latestCompleted: boolean; latest?: { task_type: string; at: string } | null }
 export type CatalogStatus = "all" | "review" | "running" | "blocked" | "done";
+export const batchStages=['all','script_review','export_review','done'] as const;
+export type BatchStage=typeof batchStages[number];
 export type CatalogSort = "updated" | "oldest" | "title" | "cost_desc" | "cost_asc";
 export type ProductionStep = 'script' | 'preparation' | 'editing' | 'delivery';
 export interface EpisodeMetrics {
@@ -37,4 +39,5 @@ export interface CatalogQuery {
   accountId: string; seriesId: string; visibility: "active" | "archived" | "all";
   pendingPage: number; blockedPage: number;
   q?: string; sort?: CatalogSort; status?: CatalogStatus; catalogStage?: ProductionStep | "all";
+ importBatchId?:string; batchStage?:BatchStage;
 }

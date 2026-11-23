@@ -1,7 +1,7 @@
 import{localCatalogSql}from'./catalogQuery.js';
 import{readCatalogWorkspaceUsage}from'./catalogWorkspaceUsage.js';
 import{ConfigurationError}from'./configurationCommands.js';
-import {defaultEpisodePageSize,episodePageSizes,type EpisodeCatalog,type CatalogQuery} from '../episodes/episodeCatalogTypes.js';
+import {batchStages,defaultEpisodePageSize,episodePageSizes,type EpisodeCatalog,type CatalogQuery} from '../episodes/episodeCatalogTypes.js';
 import {ownerTransaction} from './ownerTransaction.js';
 import {readEpisodeMetrics} from './episodeMetrics.js';
 import {Pool, type PoolConfig} from 'pg';
@@ -36,19 +36,27 @@ export function parseCatalogQuery(search:URLSearchParams):CatalogQuery{
  const pageSize=episodePageSizes.find(size=>String(size)===value('pageSize',String(defaultEpisodePageSize)));
  if(pageSize===undefined)throw new ConfigurationError(400,'每页条数无效。');
  const rawQuery=value('q',''),q=rawQuery.trim(),sort=value('sort','updated'),status=value('status','all'),catalogStage=value('catalogStage','all');
+ const importBatchId=value('importBatchId',''),batchStage=batchStages.find(stage=>stage===value('batchStage','all'));
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
- if(rawQuery.length>200||/[\u0000-\u001f\u007f]/.test(rawQuery)||!['updated','oldest','title','cost_desc','cost_asc'].includes(sort)||!['all','review','running','blocked','done'].includes(status)||!['all','script','preparation','editing','delivery'].includes(catalogStage)||!['accounts','episodes','reviews','operations'].includes(view)||!['active','archived','all'].includes(visibility)||accountId&&!uuid.test(accountId)||!['all','unassigned','unavailable'].includes(seriesId)&&!uuid.test(seriesId)||[...search.keys()].some(k=>!['view','page','pageSize','accountId','seriesId','visibility','pendingPage','blockedPage','q','sort','status','catalogStage'].includes(k))||[...search.keys()].some(k=>search.getAll(k).length!==1))throw new ConfigurationError(400,'目录筛选无效。');
- return {view:view as CatalogQuery['view'],visibility:visibility as CatalogQuery['visibility'],accountId,seriesId,page:page('page'),pageSize,pendingPage:page('pendingPage'),blockedPage:page('blockedPage'),q,sort:sort as CatalogQuery['sort'],status:status as CatalogQuery['status'],catalogStage:catalogStage as CatalogQuery['catalogStage']};
+ if(!batchStage||(importBatchId?view!=='episodes'||!uuid.test(importBatchId):batchStage!=='all'))throw new ConfigurationError(400,'目录筛选无效。');
+ if(rawQuery.length>200||/[\u0000-\u001f\u007f]/.test(rawQuery)||!['updated','oldest','title','cost_desc','cost_asc'].includes(sort)||!['all','review','running','blocked','done'].includes(status)||!['all','script','preparation','editing','delivery'].includes(catalogStage)||!['accounts','episodes','reviews','operations'].includes(view)||!['active','archived','all'].includes(visibility)||accountId&&!uuid.test(accountId)||!['all','unassigned','unavailable'].includes(seriesId)&&!uuid.test(seriesId)||[...search.keys()].some(k=>!['view','page','pageSize','accountId','seriesId','visibility','pendingPage','blockedPage','q','sort','status','catalogStage','importBatchId','batchStage'].includes(k))||[...search.keys()].some(k=>search.getAll(k).length!==1))throw new ConfigurationError(400,'目录筛选无效。');
+ return {view:view as CatalogQuery['view'],visibility:visibility as CatalogQuery['visibility'],accountId,seriesId,page:page('page'),pageSize,pendingPage:page('pendingPage'),blockedPage:page('blockedPage'),q,sort:sort as CatalogQuery['sort'],status:status as CatalogQuery['status'],catalogStage:catalogStage as CatalogQuery['catalogStage'],importBatchId,batchStage};
 }
 export async function readLocalCatalog(pool:Pool,ownerId:string,query:CatalogQuery=parseCatalogQuery(new URLSearchParams())):Promise<LocalCatalog>{
  return ownerTransaction(pool,ownerId,true,async client=>{
   const accounts=(await client.query(`SELECT a.* FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id WHERE m.user_id=$1 AND m.role='owner' ORDER BY EXISTS(SELECT 1 FROM local_identity.history_projection_results h WHERE h.table_name='public.accounts' AND h.status='inserted' AND h.row_key->>'id'=a.id::text),a.created_at,a.id`,[ownerId])).rows;
   const ids=accounts.map(a=>a.id);
   const blueprints=(await client.query('SELECT * FROM public.account_blueprint_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
+  const batchMembers=query.importBatchId?(await client.query<{episode_id:string}>(`
+   SELECT i.episode_id FROM local_identity.episode_import_items i
+   JOIN local_identity.episode_import_batches b ON b.owner_id=i.owner_id AND b.id=i.batch_id
+   JOIN public.account_memberships m ON m.account_id=b.account_id AND m.user_id=b.owner_id AND m.role='owner'
+   WHERE i.owner_id=$1 AND i.batch_id=$2 AND i.status='succeeded' AND i.episode_id IS NOT NULL
+  `,[ownerId,query.importBatchId])).rows.map(row=>row.episode_id):null;
   const costSort=query.sort?.startsWith('cost_');
-  const metrics=costSort?await readEpisodeMetrics(client,ownerId):{};
-  const usage=query.view==='accounts'?{}:await readCatalogWorkspaceUsage(client,query);
-  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage,query.q??'',query.sort??'updated',query.status??'all',JSON.stringify(metrics),query.catalogStage??'all',query.pageSize??defaultEpisodePageSize,JSON.stringify(usage)]);
+  const metrics=costSort?await readEpisodeMetrics(client,ownerId,batchMembers??undefined):{};
+  const usage=query.view==='accounts'?{}:await readCatalogWorkspaceUsage(client,query,batchMembers);
+  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage,query.q??'',query.sort??'updated',query.status??'all',JSON.stringify(metrics),query.catalogStage??'all',query.pageSize??defaultEpisodePageSize,JSON.stringify(usage),batchMembers,query.batchStage??'all']);
   if(query.view==='episodes'&&!costSort)catalog.metrics=await readEpisodeMetrics(client,ownerId,catalog.episodes.map((episode:{id:string})=>episode.id));
   const series=(await client.query('SELECT * FROM public.series WHERE account_id=ANY($1::uuid[]) ORDER BY name,id',[ids])).rows;
   const seriesVersions=(await client.query('SELECT * FROM public.series_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
