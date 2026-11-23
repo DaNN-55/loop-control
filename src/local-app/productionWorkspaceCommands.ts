@@ -1,3 +1,4 @@
+import {resolveExportReview} from './batchExportReview.js';
 import {workspaceExecutionProject} from '../workspaceExecution.js';
 import {readWorkspaceTemplateInputs} from './workspaceTemplateInputs.js';
 import {validateWorkspaceVoiceInput} from '../workspaceVoiceInput.js';
@@ -109,11 +110,23 @@ export class ProductionWorkspaceCommands{
 
  async execute(c:PoolClient,e:Episode,root:string,runtime:InputRuntime,command:string,data:Record<string,unknown>,confirmedCall=false,initialInputs?:WorkspaceInitialInputs):Promise<unknown>{
   if(['saveWorkspacePlanningSelection','retryWorkspacePlanning'].includes(command)||command==='replanWorkspace'&&Object.hasOwn(data,'planningTaskId'))throw new ConfigurationError(410,'旧视觉与分镜规划已退役，请使用当前制作流程。');
-  if(e.archived_at||e.stage==='production_completed'||(await c.query('SELECT local_identity.is_historical_episode($1) historical',[e.id])).rows[0].historical)throw new ConfigurationError(409,'历史或已完成生产单只读。');
+  const batchConfirmation=command==='confirmReviewedExport';
+  if(e.archived_at||e.stage==='production_completed'||(await c.query('SELECT local_identity.is_historical_episode($1) historical',[e.id])).rows[0].historical){
+   if(batchConfirmation)return {episodeId:e.id,status:'skipped',reason:'历史或已完成生产单只读。'};
+   throw new ConfigurationError(409,'历史或已完成生产单只读。');
+  }
   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[e.id+':studio']);
   if(command==='authorizeWorkspacePreparation')throw new ConfigurationError(409,'请在生成时确认本次调用，不再开启整期在线制作。');
   if(requiresWorkspaceCall(command,data)&&!confirmedCall)throw new ConfigurationError(409,'请先确认本次调用与费用预留。');
   let row=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE episode_id=$1 FOR UPDATE',[e.id])).rows[0] as ProductionWorkspaceRecord|undefined;
+  if(batchConfirmation){
+   const {review,confirmation}=await resolveExportReview(c,root,row);
+   if(review.status==='skipped')return {episodeId:e.id,status:'skipped',reason:review.reason};
+   if(review.status!=='ready'||review.reviewFingerprint!==data.reviewFingerprint||!confirmation){
+    return {episodeId:e.id,status:'failed',requiresReview:true,reason:'待确认成片已变化，请重新核对。'};
+   }
+   data={...data,...confirmation};
+  }
   if(command==='importLegacyDraftInputs'){
    if(row)throw new ConfigurationError(409,'已有当前工程，不能覆盖现有编辑。');
    if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId)throw new ConfigurationError(409,'主脚本基准已变化。');
@@ -294,8 +307,10 @@ export class ProductionWorkspaceCommands{
   if(Object.hasOwn(workspaceAudioFields,command)){const prepared=await executeWorkspaceAudio(c,root,row,project,runtime,command,data);return command==='prepareWorkspaceAudioAdoption'?prepared:readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceDeliveryFields,command)){await executeWorkspaceDelivery(c,root,row,project,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceExportFields,command)){
-   await executeWorkspaceExport(c,root,row,project,runtime,command==='completeWorkspaceExport'?'confirmWorkspaceExport':command,data);
-   if(command==='completeWorkspaceExport')await queueWorkspaceCoreDelivery(c,root,row,project);
+   const complete=command==='completeWorkspaceExport'||batchConfirmation;
+   await executeWorkspaceExport(c,root,row,project,runtime,complete?'confirmWorkspaceExport':command,data);
+   if(complete)await queueWorkspaceCoreDelivery(c,root,row,project);
+   if(batchConfirmation)return {episodeId:e.id,status:'success'};
    return readProductionWorkspace(c,e.id,root);
   }
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);

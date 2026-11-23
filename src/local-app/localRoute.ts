@@ -1,5 +1,6 @@
 import {serveBatchPublicationDownload} from './batchPublicationDownload.js';
 import {batchPublicationDownloadPath} from './batchPublicationDownloadTypes.js';
+import {readBatchExportReview} from './batchExportReview.js';
 import {episodeWorkbookTemplate,readEpisodeWorkbook} from './episodeWorkbookImport.js';
 import {workbookMime} from './episodeWorkbookImportTypes.js';
 import {StringDecoder} from 'node:string_decoder';
@@ -223,7 +224,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     send(200,await options.episodes.execute(session,body));return;
    }
    if(url.pathname==='/api/local/episode-lifecycle'&&request.method==='POST'){let body;try{body=await readBody(request,16384);}catch{send(400,{error:'生命周期请求格式无效。'});return;}send(200,await lifecycle.execute(session,body));return;}
-   if(url.pathname==='/api/local/recycle-bin'){if(request.method==='GET'){send(200,await recycleBin.read(session));return;}if(request.method==='POST'){send(200,await recycleBin.execute(session,await readBody(request,16384)));return;}throw new ConfigurationError(405,'回收站请求方法无效。');}
+   if(url.pathname==='/api/local/recycle-bin'){if(request.method==='GET'){send(200,await recycleBin.read(session));return;}if(request.method==='POST'){send(200,await recycleBin.execute(session,await readBody(request,256*1024)));return;}throw new ConfigurationError(405,'回收站请求方法无效。');}
    if(url.pathname==='/api/local/deletion-cleanups'&&request.method==='GET'){send(200,await lifecycle.pending(session));return;}
    if(url.pathname==='/api/local/account-deletion-status'){
     if(request.method!=='GET'){send(405,{error:'只支持读取账号删除条件。'});return;}
@@ -316,6 +317,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    if(batchScriptReview){
     if(!uuid.test(batchScriptReview[1])||url.search)throw new ConfigurationError(400,'生产单引用无效。');
     send(200,await readBatchScriptReview(options.pool,options.mediaRoot,session.id,batchScriptReview[1]));return;
+   }
+   const batchExportReview=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/batch-export-review$/);
+   if(batchExportReview){
+    if(!uuid.test(batchExportReview[1])||url.search)throw new ConfigurationError(400,'生产单引用无效。');
+    send(200,await readBatchExportReview(options.pool,options.mediaRoot,session.id,batchExportReview[1]));return;
    }
    const savedPlan=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/saved-plan$/);
    if(savedPlan){

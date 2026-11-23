@@ -6,12 +6,12 @@ import {createHash,randomUUID} from 'node:crypto';
 import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {csrfFor} from './sessions';
-import {loadSchemaCatalog} from './schemaMigrations';
+import {loadSchemaCatalog,migrationTransaction,schemaMigrationPlan,verifySchemaLedger} from './schemaMigrations';
 const enabled=process.env.LOOP_RECYCLE_ACCEPTANCE==='1';
 const migration='160-episode-recycle-bin.sql';
 
-export async function recycleFixture(){
- const f=await productionWorkspaceFixture({migrations:['db/local/'+migration]});
+export async function recycleFixture(migrations:string[]=[]){
+ const f=await productionWorkspaceFixture({migrations:['db/local/'+migration,...migrations]});
  const recycle=(command:string,data:Record<string,unknown>={},options:Parameters<typeof f.post>[3]={})=>f.post('recycle-bin',command,command==='saveRecycleLimit'?data:{episodeId:f.episode,...data},options);
  const get=async(path='recycle-bin',token=f.token)=>{const r=await fetch(f.origin+'/api/local/'+path,{headers:{Cookie:'loop_owner_session='+token}});return{status:r.status,body:await r.json()};};
  const keyed=async(command:string,data:Record<string,unknown>,key:string,token=f.token)=>{const r=await fetch(f.origin+'/api/local/recycle-bin',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+token,'X-CSRF-Token':csrfFor(token)},body:JSON.stringify({command,data,idempotencyKey:key})});return{status:r.status,body:await r.json()};};
@@ -124,17 +124,139 @@ it.skipIf(!enabled)('recycle schema applies forward without rewriting existing m
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);
  const context=runtimeContext();context.assertDatabase();
  const before=JSON.parse(context.sql("SELECT jsonb_object_agg(version,sha256) FROM local_identity.schema_migrations"));
- const f=await recycleFixture();try{
-  const rows=(await f.c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows;
-  const after=Object.fromEntries(rows.map(row=>[row.version,row.sha256]));
-  for(const [version,sha] of Object.entries(before))expect(after[version]).toBe(sha);
+ const catalog=loadSchemaCatalog(process.cwd()),recycleVersion='226-recycle-eligibility.sql';
+ const installedThroughExcel=schemaMigrationPlan(before,catalog).filter(file=>file.version<recycleVersion).map(file=>'db/current/'+file.version);
+ const f=await recycleFixture(installedThroughExcel);try{
+  const ledger=async()=>Object.fromEntries((await f.c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows.map(row=>[row.version,row.sha256]));
+  const beforeRecycle=await ledger();
+  const priorGeneration=verifySchemaLedger(beforeRecycle,catalog);
+  expect(beforeRecycle['225-structured-import-script.sql']).toBe(catalog.current.find(file=>file.version==='225-structured-import-script.sql')?.sha256);
+  if(!Object.hasOwn(beforeRecycle,recycleVersion)){
+   const [next]=schemaMigrationPlan(beforeRecycle,catalog);
+   expect(next.version).toBe(recycleVersion);
+   await f.c.query(migrationTransaction([next]));
+  }
+  const after=await ledger();
+  expect(verifySchemaLedger(after,catalog)).toBe(priorGeneration);
+  for(const [version,sha] of Object.entries(beforeRecycle))expect(after[version]).toBe(sha);
   const historicalHash=createHash('sha256').update(await readFile('db/archive/legacy-v1/'+migration)).digest('hex');
-  expect(loadSchemaCatalog(process.cwd()).legacy.find(file=>file.version===migration)?.sha256).toBe(historicalHash);
-  if(Object.hasOwn(before,'clean-v2.sql')&&!Object.hasOwn(before,migration))expect(after[migration]).toBeUndefined();
+  expect(catalog.legacy.find(file=>file.version===migration)?.sha256).toBe(historicalHash);
+  if((Object.hasOwn(before,'clean-v2.sql')||Object.hasOwn(before,'clean-v3.sql'))&&!Object.hasOwn(before,migration))expect(after[migration]).toBeUndefined();
   else expect(after[migration]).toBe(historicalHash);
+  expect(after[recycleVersion]).toBe(createHash('sha256').update(await readFile('db/current/'+recycleVersion)).digest('hex'));
   expect((await f.c.query("SELECT count(*)::int count FROM local_identity.episode_recycle_bin")).rows[0].count).toBe(0);
   expect((await f.c.query("SELECT local_identity.is_recycled_episode($1) recycled",[f.episode])).rows[0].recycled).toBe(false);
   const policies=(await f.c.query("SELECT policyname FROM pg_policies WHERE schemaname='local_identity' AND tablename IN ('episode_recycle_bin','recycle_bin_settings')")).rows;
   expect(policies).toHaveLength(2);
+ }finally{await f.close();}
+},120000);
+
+it.skipIf(!enabled)('batch preview projects FIFO and protected bytes through Owner HTTP without changing files or membership',async()=>{
+ const f=await recycleFixture(['db/current/226-recycle-eligibility.sql']);try{
+  const settings=(await f.get()).body;
+  expect((await f.recycle('saveRecycleLimit',{limitBytes:100_000_000,expectedRevision:settings.settingsRevision})).status).toBe(200);
+  const protectedItem=await registeredEpisode(f,30_000_000);
+  const manual=join(protectedItem.directory,'manual.txt');
+  await writeFile(manual,'unregistered original');
+  const newlyShared=await registeredEpisode(f,5_000_000),oldestSafe=await registeredEpisode(f,35_000_000),first=await registeredEpisode(f,30_000_000),second=await registeredEpisode(f,30_000_000);
+  for(const item of[protectedItem,newlyShared,oldestSafe])expect((await f.recycle('recycleEpisode',{episodeId:item.episode})).status).toBe(200);
+  const sharedLink=join(f.root,'shared-owner-file.bin');
+  await link(newlyShared.path,sharedLink);
+  const before=(await f.get()).body;
+  const items=[first.episode,second.episode];
+  const preview=await f.keyed('previewBatchRecycle',{episodeIds:items},randomUUID());
+  expect(preview.status,JSON.stringify(preview.body)).toBe(200);
+  expect(preview.body).toMatchObject({
+   currentBytes:70_000_021,afterMoveBytes:130_000_021,projectedBytes:95_000_021,limitBytes:100_000_000,
+   candidates:[{episodeId:oldestSafe.episode,sizeBytes:35_000_000}],
+   retained:[{episodeId:protectedItem.episode,reason:expect.any(String)},{episodeId:newlyShared.episode,reason:expect.any(String)}],
+   items:items.map(episodeId=>({episodeId,status:'ready',sizeBytes:30_000_000})),
+  });
+  expect(JSON.stringify(preview.body)).not.toContain(f.assetRoot);
+  expect((await f.get()).body).toEqual(before);
+  for(const item of[protectedItem,newlyShared,oldestSafe,first,second])expect((await lstat(item.path)).size).toBe(item.bytes);
+  expect(await readFile(manual,'utf8')).toBe('unregistered original');
+  expect((await lstat(sharedLink)).size).toBe(newlyShared.bytes);
+  const foreign=await f.keyed('previewBatchRecycle',{episodeIds:items},randomUUID(),f.otherToken);
+  expect(foreign.status,JSON.stringify(foreign.body)).toBe(200);
+  expect(foreign.body.items).toEqual(items.map(episodeId=>({episodeId,status:'skipped',reason:'生产单不存在或无管理权限。'})));
+  expect(foreign.body.candidates).toEqual([]);
+  const lateLink=join(f.root,'became-shared-after-preview.bin');
+  await link(oldestSafe.path,lateLink);
+  const command={episodeIds:items,cleanup:preview.body.candidates.map(({episodeId,revision}:any)=>({episodeId,revision})),previewKey:preview.body.previewKey};
+  const confirmed=await f.keyed('batchRecycleEpisodes',command,randomUUID());
+  expect(confirmed.status,JSON.stringify(confirmed.body)).toBe(200);
+  expect(confirmed.body).toMatchObject({items:items.map(episodeId=>({episodeId,status:'success'})),cleanup:{items:[{episodeId:oldestSafe.episode,status:'failed',reason:expect.any(String)}],usedBytes:130_000_021}});
+  expect((await f.get()).body.items).toHaveLength(5);
+  for(const item of[protectedItem,newlyShared,oldestSafe,first,second])await access(item.path);
+  expect((await lstat(lateLink)).size).toBe(oldestSafe.bytes);
+
+ }finally{await f.close();}
+},120000);
+
+it.skipIf(!enabled)('the confirmed batch cleans only previewed old entries, shields new moves and retries just failed items',async()=>{
+ const f=await recycleFixture(['db/current/226-recycle-eligibility.sql']);try{
+  const settings=(await f.get()).body;
+  expect((await f.recycle('saveRecycleLimit',{limitBytes:100_000_000,expectedRevision:settings.settingsRevision})).status).toBe(200);
+  const old=await registeredEpisode(f,30_000_000),first=await registeredEpisode(f,60_000_000),second=await registeredEpisode(f,60_000_000);
+  expect((await f.recycle('recycleEpisode',{episodeId:old.episode})).status).toBe(200);
+  const episodeIds=[first.episode,second.episode];
+  const plan=await f.keyed('previewBatchRecycle',{episodeIds},randomUUID());
+  expect(plan.status,JSON.stringify(plan.body)).toBe(200);
+  expect(plan.body).toMatchObject({afterMoveBytes:150_000_000,projectedBytes:120_000_000,candidates:[{episodeId:old.episode}]});
+  const command={episodeIds,cleanup:plan.body.candidates.map(({episodeId,revision}:any)=>({episodeId,revision})),previewKey:plan.body.previewKey};
+  expect((await f.keyed('batchRecycleEpisodes',{...command,cleanup:[]},randomUUID())).status).toBe(409);
+  const pending=randomUUID();
+  await f.c.query("INSERT INTO public.tasks(id,episode_id,task_type,status,input_snapshot) VALUES($1,$2,'generate_b_roll','running','{}')",[pending,first.episode]);
+  const key=randomUUID(),result=await f.keyed('batchRecycleEpisodes',command,key);
+  expect(result.status,JSON.stringify(result.body)).toBe(200);
+  expect(result.body).toMatchObject({items:[{episodeId:first.episode,status:'failed',reason:expect.any(String)},{episodeId:second.episode,status:'success'}],cleanup:{items:[],usedBytes:90_000_000,limitBytes:100_000_000}});
+  for(const item of[old,first,second])await access(item.path);
+  await f.c.query("UPDATE public.tasks SET status='failed' WHERE id=$1",[pending]);
+  expect(await f.keyed('batchRecycleEpisodes',command,key)).toEqual(result);
+  const retryPlan=await f.keyed('previewBatchRecycle',{episodeIds:[first.episode],retainEpisodeIds:[second.episode]},randomUUID());
+  expect(retryPlan.body.candidates.map(({episodeId}:any)=>episodeId)).toEqual([old.episode]);
+  const retry=await f.keyed('batchRecycleEpisodes',{episodeIds:[first.episode],cleanup:retryPlan.body.candidates.map(({episodeId,revision}:any)=>({episodeId,revision})),previewKey:retryPlan.body.previewKey},randomUUID());
+  expect(retry.status,JSON.stringify(retry.body)).toBe(200);
+  expect(retry.body).toMatchObject({items:[{episodeId:first.episode,status:'success'}],cleanup:{items:[{episodeId:old.episode,status:'success'}],usedBytes:120_000_000,limitBytes:100_000_000}});
+  await expect(access(old.path)).rejects.toMatchObject({code:'ENOENT'});await access(first.path);await access(second.path);
+  expect((await f.get()).body.items.map((item:any)=>item.episodeId)).toEqual([second.episode,first.episode]);
+ }finally{await f.close();}
+},120000);
+
+it.skipIf(!enabled)('batch restore preserves original catalog membership and supports retrying changed files only',async()=>{
+ const f=await recycleFixture();try{
+  const completed=await registeredEpisode(f,150_000),draft=await registeredEpisode(f,150_000);
+  const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[completed.episode])).rows[0].account_id;
+  const series=randomUUID(),version=randomUUID();
+  await f.c.query("INSERT INTO public.series(id,account_id,name) VALUES($1,$2,'恢复验收系列')",[series,account]);
+  await f.c.query("INSERT INTO public.series_versions(id,account_id,series_id,version,rules,created_by) VALUES($1,$2,$3,1,'{}',$4)",[version,account,series,f.owner]);
+  await f.c.query("UPDATE public.episodes SET archived_at='2026-01-01T00:00:00Z',stage='production_completed',series_version_id=$2 WHERE id=$1",[completed.episode,version]);
+  await f.c.query("UPDATE public.episodes SET series_version_id=$2 WHERE id=$1",[draft.episode,version]);
+  const entries=[];
+  for(const item of[completed,draft]){
+   const result=await f.recycle('recycleEpisode',{episodeId:item.episode});
+   expect(result.status,JSON.stringify(result.body)).toBe(200);
+   entries.push({episodeId:item.episode,revision:result.body.revision});
+  }
+  const original=await readFile(draft.path);
+  await writeFile(draft.path,Buffer.concat([original,Buffer.from('changed')]));
+  const key=randomUUID(),payload={items:entries};
+  const result=await f.keyed('batchRestoreRecycledEpisodes',payload,key);
+  expect(result.status,JSON.stringify(result.body)).toBe(200);
+  expect(result.body.items).toMatchObject([{episodeId:completed.episode,status:'success'},{episodeId:draft.episode,status:'failed',reason:expect.any(String)}]);
+  const catalog=(await f.get('catalog?view=episodes&visibility=archived&accountId='+account+'&seriesId='+series)).body;
+  expect(catalog.episodes).toContainEqual(expect.objectContaining({id:completed.episode,account_id:account,series_version_id:version,stage:'production_completed',archived_at:expect.any(String)}));
+  expect((await f.get()).body.items.map((entry:any)=>entry.episodeId)).toEqual([draft.episode]);
+  const foreign=await f.keyed('batchRestoreRecycledEpisodes',{items:[entries[1]]},randomUUID(),f.otherToken);
+  expect(foreign.body.items).toEqual([{episodeId:draft.episode,status:'skipped',reason:'生产单不存在或无管理权限。'}]);
+  await writeFile(draft.path,original);
+  expect(await f.keyed('batchRestoreRecycledEpisodes',payload,key)).toEqual(result);
+  const retried=await f.keyed('batchRestoreRecycledEpisodes',{items:[entries[1]]},randomUUID());
+  expect(retried.body.items).toEqual([{episodeId:draft.episode,status:'success'}]);
+  const active=(await f.get('catalog?view=episodes&visibility=active&accountId='+account+'&seriesId='+series)).body;
+  expect(active.episodes).toContainEqual(expect.objectContaining({id:draft.episode,account_id:account,series_version_id:version,stage:'storyboard_approved',archived_at:null}));
+  expect(await readFile(draft.path)).toEqual(original);
+  expect((await f.get()).body.items).toEqual([]);
  }finally{await f.close();}
 },120000);

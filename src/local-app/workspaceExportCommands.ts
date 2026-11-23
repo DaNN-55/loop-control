@@ -62,9 +62,9 @@ export async function workspaceExportReadiness(c:PoolClient,root:string,row:Prod
   const captions=nativeAuthority?[]:await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>used?.ids.has(b.itemId))},project);const required=captions.filter(x=>used?.ids.has(x.itemId)&&x.contract.enabled);if(required.some(x=>x.timing!=='current'||!x.contract.cues.length||x.contract.cues.some(q=>q.startMs<0||q.endMs<=q.startMs||q.endMs>x.durationMs+1)))throw Error('必要字幕缺少当前时序，请在剪辑器校时或使用字幕对齐。');checks.push({name:'captions',passed:true,detail:`已核对 ${nativeAuthority?nativeCaptionLanes:required.length} 组字幕时序，正文随最终文件一次确认。`,evidence:required});}catch(error){checks.push({name:'captions',passed:false,detail:error instanceof Error?error.message:'字幕不可用。'});}
  return{checks,sources,used,dependencies};
 }
-export async function readWorkspaceExports(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<{exports:WorkspaceExport[]}>{
+export async function readWorkspaceExports(c:PoolClient,root:string,row:ProductionWorkspaceRecord,latestOnly=false):Promise<{exports:WorkspaceExport[]}>{
  if(!(await c.query("SELECT to_regclass('local_identity.workspace_exports') present")).rows[0].present)return{exports:[]};
- const rows=(await c.query('SELECT * FROM local_identity.workspace_exports WHERE workspace_id=$1 ORDER BY created_at DESC,id DESC',[row.id])).rows;
+ const rows=(await c.query('SELECT * FROM local_identity.workspace_exports WHERE workspace_id=$1 ORDER BY created_at DESC,id DESC'+(latestOnly?' LIMIT 1':''),[row.id])).rows;
  const exports:WorkspaceExport[]=[];
  for(const [index,e] of rows.entries()){
   const current=index===0&&e.content_sha256===row.content_sha256&&Number(e.project_content_version)===Number(row.revision);let available=true;
@@ -78,7 +78,7 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再检查最终文件。');
  if(command==='confirmWorkspaceExport'){
   if(typeof data.exportId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.exportId)||typeof data.expectedExportSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.expectedExportSha256)||typeof data.expectedContentSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.expectedContentSha256))throw new ConfigurationError(400,'最终文件确认身份无效。');
-  const {exports}=await readWorkspaceExports(c,root,row),e=exports[0];
+  const {exports}=await readWorkspaceExports(c,root,row,true),e=exports[0];
   if(!e||!e.current||e.id!==data.exportId||e.status!=='ready'||e.contentSha256!==data.expectedContentSha256||e.artifact?.sha256!==data.expectedExportSha256||e.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前工程、最终文件或检查已变化，请重新检查这份文件。');
   const readiness=await workspaceExportReadiness(c,root,row,project);if(readiness.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前已用内容或字幕检查未通过。');
   await verifyEpisodeFile(c,root,row.episode_id,e.project.relativePath,e.project.sha256,e.project.fileSize);
@@ -113,7 +113,7 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
 }
 /** T12 consumes this exact identity; it must never re-render approved media. */
 export async function requireConfirmedWorkspaceExport(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
- const {exports}=await readWorkspaceExports(c,root,row),current=exports[0];if(!current?.confirmed||!current.artifact)throw new ConfigurationError(409,'请先确认当前最终文件。');
+ const {exports}=await readWorkspaceExports(c,root,row,true),current=exports[0];if(!current?.confirmed||!current.artifact)throw new ConfigurationError(409,'请先确认当前最终文件。');
  const readiness=await workspaceExportReadiness(c,root,row,project);if(readiness.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前实际使用内容检查未通过。');
  await verifyEpisodeFile(c,root,row.episode_id,current.project.relativePath,current.project.sha256,current.project.fileSize);return current as WorkspaceExport&{artifact:NonNullable<WorkspaceExport['artifact']>};
 }
