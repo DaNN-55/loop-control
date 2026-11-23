@@ -39,8 +39,9 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-batch-upload[data-dragging] .episode-batch-upload-slot {background:var(--color-bg-secondary_hover);border-color:var(--color-border-brand)}
 .episode-batch-upload-slot:focus-visible {outline:2px solid var(--color-border-brand);outline-offset:2px}
 .episode-batch-upload-slot:disabled {cursor:default;opacity:.6}
-.episode-batch-upload-help {align-items:baseline;display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:space-between}
-.episode-batch-upload-help p {margin:0}
+.episode-batch-upload-help {align-items:baseline;display:flex;flex-wrap:wrap;gap:4px 12px;min-inline-size:0;margin-inline-end:auto;font-size:.8125rem}
+.episode-batch-upload-help p {margin:4px 0 0}
+.episode-batch-series-summary {margin:0;color:var(--color-text-secondary);font-size:.8125rem}
 .episode-import-row,.episode-batch-file-preview,.episode-batch-results > li {border:1px solid var(--color-border-secondary);border-radius:8px;padding:8px 12px;overflow-wrap:anywhere}
 .episode-import-row {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;column-gap:4px}
 .episode-import-disclosure {
@@ -64,8 +65,9 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-import-shot-fields {grid-template-columns:minmax(4.2rem,.65fr) minmax(0,2fr) minmax(5.3rem,.7fr)}
 .episode-import-file-fields {grid-template-columns:minmax(0,2fr) minmax(7rem,1fr)}
 .episode-import-shot-copy {grid-template-columns:1.35fr 1fr 1fr;margin:0}
-.episode-import-shot-copy dt {color:var(--color-text-secondary);font-size:.8125rem}
-.episode-import-shot-copy dd {margin:2px 0 0;white-space:pre-wrap}
+dl.episode-import-shot-copy:not(:empty) {background:var(--color-bg-secondary);border-radius:6px;padding:8px 10px;gap:8px 12px}
+.episode-import-shot-copy dt {color:var(--color-text-tertiary);font-size:.75rem;font-weight:600}
+.episode-import-shot-copy dd {color:var(--color-text-primary);font-size:.875rem;line-height:1.55;margin:4px 0 0;white-space:pre-wrap}
 .episode-import-shot-link {max-inline-size:12rem}
 .episode-import-editor textarea {
  background:var(--color-bg-primary);border:1px solid var(--color-border-secondary);border-radius:5px;
@@ -101,6 +103,5 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-batch-import-controls{display:grid;gap:10px}
 .episode-batch-import-controls[data-compact]{grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:8px}
 .episode-batch-import-controls[data-compact] .episode-batch-upload-slot{display:flex;min-block-size:36px;padding:4px 10px;gap:6px;white-space:nowrap}
-.episode-batch-import-controls[data-compact] .episode-batch-upload-help{grid-column:1/-1;justify-content:start;gap:4px 12px;font-size:.8125rem}
 .episode-batch-upload-format>summary{cursor:pointer}
 .episode-batch-upload-format[open]{flex-basis:100%}

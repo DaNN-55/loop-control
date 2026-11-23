@@ -30,7 +30,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   await browser.cli('download','dialog a[download]',template);
   const workbook=await loadWorkbook(fromBuffer(await readFile(template)));
   const orders=getSheet(workbook,'生产单')!,shots=getSheet(workbook,'分镜')!;
-  expect(getRangeValues(orders,'A1:E1')).toEqual([['生产单编号','标题','脚本正文','目标时长','系列']]);
+  expect(getRangeValues(orders,'A1:E1')).toEqual([['系列','生产单编号','标题','脚本正文','目标时长']]);
   expect(getRangeValues(shots,'A1:G1')).toEqual([['生产单编号','镜头序号','画面描述','视频提示词','口播','字幕','镜头时长']]);
   expect(getCell(shots,2,1)?.value).toBe(getCell(shots,3,1)?.value);
   const oldTemplate=createWorkbook(),oldUpload=join(f.root,'旧版四列.xlsx');
@@ -51,7 +51,14 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
    return background===expected;
   })()`);
   await browser.click('移除文件');
-  writeRange(orders,'A2',[['001','雨前','最早落下的一滴雨。',8,'三个街角'],['002','雨中','原稿中的尾声还在。',11,'第二个系列'],['002','雨后','',null,'未知系列']]);
+  const legacyWorkbook=createWorkbook(),legacyUpload=join(f.root,'旧版五列.xlsx');
+  writeRange(addWorksheet(legacyWorkbook,'生产单'),'A1',[['生产单编号','标题','脚本正文','目标时长','系列'],['旧-02','旧版系列模板','旧模板脚本。',8,'三个街角']]);
+  addWorksheet(legacyWorkbook,'分镜');
+  await writeFile(legacyUpload,await workbookToBytes(legacyWorkbook));
+  await browser.cli('upload','dialog input[name=scripts]',legacyUpload);
+  await browser.cli('wait','--text','系列：三个街角');
+  await browser.click('移除文件');
+  writeRange(orders,'A2',[['三个街角','001','雨前','最早落下的一滴雨。',8],['第二个系列','002','雨中','原稿中的尾声还在。',11],['未知系列','002','雨后','',null]]);
   writeRange(shots,'A2',[['002',2,'车驶入雨幕','从街尾跟拍','车来了。','第二班车',5],['002',2,'玻璃上有雨滴','固定特写','','第一滴雨',6],['写错',1,'倒映的路灯','缓慢横移','','',7]]);
   await writeFile(upload,await workbookToBytes(workbook));
   await browser.cli('upload','dialog input[name=scripts]',upload);
@@ -63,6 +70,11 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   expect(await browser.evaluate("document.querySelector('dialog [data-sheet=orders][data-row=\"4\"] .episode-import-title').textContent")).toContain('未找到系列');
   expect(await browser.evaluate("document.querySelectorAll('.episode-workbook-unmatched [data-sheet=shots]').length")).toBe(3);
   expect(await browser.evaluate("document.querySelectorAll('dialog .episode-import-editor').length")).toBe(0);
+  expect(await browser.evaluate("document.querySelector('dialog footer .episode-batch-upload-help')?.textContent")).toContain('格式说明');
+  expect(await browser.evaluate("document.querySelector('dialog .episode-batch-series-summary')?.textContent")).toContain('1 张生产单待确认系列');
+  await browser.cli('click',orders4+' > .episode-import-disclosure');
+  expect(await browser.evaluate(`document.querySelector('${orders4} .episode-import-row-body .form-error')===null`)).toBe(true);
+
 
   await browser.click('编辑 雨前');
   expect(await browser.evaluate(`(()=>{
@@ -105,6 +117,12 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   await browser.wait("document.querySelectorAll('dialog [data-sheet=orders][data-row=\"3\"] [data-sheet=shots]').length===2");
   expect(await browser.evaluate("document.querySelector('dialog [data-sheet=orders][data-row=\"3\"] .episode-import-row-body').lastElementChild.classList.contains('episode-workbook-shots')")).toBe(true);
   await browser.cli('wait','--text','镜头序号重复');
+  await browser.cli('click',orders3+' [data-sheet=shots][data-row="3"] > .episode-import-disclosure');
+  expect(await browser.evaluate(`(()=>{
+   const copy=document.querySelector('dl.episode-import-shot-copy:not(:empty)');
+   return parseFloat(getComputedStyle(copy.querySelector('dt')).fontSize)<parseFloat(getComputedStyle(copy.querySelector('dd')).fontSize)
+    &&getComputedStyle(copy).backgroundColor!=='rgba(0, 0, 0, 0)';
+  })()`)).toBe(true);
   const shots3='dialog [data-sheet=shots][data-row="3"]';
   await browser.cli('click',shots3+' .episode-import-edit');
   await browser.cli('fill',shots3+' input[name=sequence]','1');
@@ -136,7 +154,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
     expect(await browser.evaluate("document.querySelector('[aria-label=分镜预览]')?.innerText")).toContain('倒映的路灯');
     await browser.click('继续制作');
     await browser.cli('wait','--text','分镜台');
-    await browser.wait("!document.querySelector('.script-studio-imported') || document.querySelector('.script-studio-imported').closest('[hidden]')");
+    await browser.wait("!document.querySelector('.script-studio-imported') || !!document.querySelector('.script-studio-imported').closest('[hidden]')");
     expect(browser.traffic).toContainEqual({command:'confirmScriptStudio',status:200,dropped:false});
     expect(browser.traffic).toContainEqual({command:'start',status:200,dropped:false});
     await browser.capture('shot-only-started');

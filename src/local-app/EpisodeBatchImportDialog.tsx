@@ -94,6 +94,8 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
   return [row.itemId,{value,message,summary,tag,sourceSeries:row.seriesName}];
  }));
 
+ const unresolvedSeriesCount=[...seriesByItem.values()].filter(series=>!series.value).length;
+
  function seriesTag(itemId:string){
   const tag=seriesByItem.get(itemId)?.tag;
   return tag&&<Badge type="color" size="sm" color="warning">{uiText(tag)}</Badge>;
@@ -190,7 +192,7 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
   if(assessment&&(assessment.issues.orders.size||assessment.issues.shots.size)){problem('请修正预览中标出的工作表行。');return;}
   const invalid=rows.find(row=>itemProblem(row));
   if(invalid){problem(invalid.sourceName+'：'+itemProblem(invalid));return;}
-  if([...seriesByItem.values()].some(series=>!series.value)){problem('请在预览中逐条选择系列或「未分系列」。');return;}
+  if(unresolvedSeriesCount){problem('请在预览中逐条选择系列或「未分系列」。');return;}
   running.current=true;setBusy(true);setError('');
   try{
    const submitted=payload();
@@ -274,14 +276,11 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
        </button>
        <input ref={fileInput} hidden name="scripts" type="file" multiple accept=".txt,.md,.markdown,.xlsx" disabled={busy||editingId!==null} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/>
       </div>
-      <div className="episode-batch-upload-help">
-       {hasUploads?<details className="episode-batch-upload-format"><summary>{uiText('格式说明')}</summary><p className="field-hint">{formatHint}</p></details>:<p className="field-hint">{formatHint}</p>}
-       <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
-      </div>
      </div>
+     {unresolvedSeriesCount>0&&<p className="episode-batch-series-summary" role="status">{uiText('{value0} 张生产单待确认系列。点击对应行的「编辑」选择系列，或选「未分系列」。',{value0:String(unresolvedSeriesCount)})}</p>}
      {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField}
       seriesFor={seriesField} seriesValue={itemId=>seriesByItem.get(itemId)!.value} seriesTag={seriesTag}
-      seriesSummary={itemId=>seriesByItem.get(itemId)!.summary} seriesIssue={seriesIssue} onSeriesSave={saveSeries}
+      seriesSummary={itemId=>seriesByItem.get(itemId)!.summary} onSeriesSave={saveSeries}
       editSession={editSession} busy={busy} onChange={value=>{setWorkbook(value);clearPreview();}} onRemove={()=>{setWorkbook(null);clearPreview();}}/>}
      {rows.map(row=>{
       const duplicate=duplicateField(row.itemId),invalid=itemProblem(row),series=seriesByItem.get(row.itemId)!;
@@ -291,7 +290,6 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
        <EpisodeImportPreviewRow id={row.itemId} name={row.title||row.sourceName} tag={seriesTag(row.itemId)} summary={summary}
         initial={initial} editSession={editSession} busy={busy} allowEdit={!row.fileError} reveal={!!(invalid||duplicate)}
         preview={<>
-         {seriesIssue(row.itemId)&&<p className="form-error">{seriesIssue(row.itemId)}</p>}
          {invalid&&<p className="form-error">{uiText(invalid)}</p>}
          {row.sourceText.trim()&&<p className="episode-import-read-text">{row.sourceText}</p>}
          {duplicate}
@@ -314,12 +312,16 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
      {duplicates&&<p role="status">{uiText('重复检查完成，可提交创建。')}</p>}
     </>}
    </div>
-   <div className="modal-actions">
+   <footer className="modal-actions">
+    {!batchId&&<div className="episode-batch-upload-help">
+     <details className="episode-batch-upload-format"><summary>{uiText('格式说明')}</summary><p className="field-hint">{formatHint}</p></details>
+     <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
+    </div>}
     {batchId?<><Button size="sm" color="secondary" type="button" isDisabled={busy||!receipt} onPress={nextBatch}>{uiText('开始新批次')}</Button>
      {receipt?.items.some(item=>item.status==='succeeded'&&item.episodeId)&&<Button size="sm" color="secondary" type="button" isDisabled={busy} onPress={()=>{dialog.current?.close();onViewBatch(receipt.batchId);}}>{uiText('查看本批')}</Button>}
      {(!receipt||receipt.items.some(item=>item.status==='pending'||item.status==='failed'))&&<Button size="sm" color="primary" type="button" isDisabled={busy} onPress={()=>void retry()}>{uiText('重试此批')}</Button>}</>
      :<Button size="sm" color="primary" type="submit" isDisabled={busy}>{uiText(busy?'正在处理…':duplicates?'提交创建':'检查重复')}</Button>}
-   </div>
+   </footer>
   </form>
  </dialog>;
 }

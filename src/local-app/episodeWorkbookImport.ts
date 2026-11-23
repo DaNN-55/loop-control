@@ -12,15 +12,16 @@ const maxShots=episodeImportLimits.items*100;
 const maxCellLength=32767,maxPreviewBytes=10*1024*1024;
 const workbookSheets={orders:'生产单',shots:'分镜'};
 const seriesColumn='系列';
+const templateOrderColumns=[seriesColumn,...orderColumns];
 
 export async function episodeWorkbookTemplate(){
  const workbook=createWorkbook();
  const orders=addWorksheet(workbook,workbookSheets.orders),shots=addWorksheet(workbook,workbookSheets.shots);
- appendRows(orders,[[...orderColumns,seriesColumn],['示例-01','第一场雨','雨下起来，街角的灯也亮了。',12,'']]);
+ appendRows(orders,[templateOrderColumns,['','示例-01','第一场雨','雨下起来，街角的灯也亮了。',12]]);
  appendRows(shots,[[...shotColumns],
   ['示例-01',1,'雨滴落在玻璃上','用固定特写捕捉聚拢的雨滴','雨下起来了。','雨下起来了',5],
   ['示例-01',2,'街角的灯亮起来','缓慢推向暖色灯光','','街角的灯',7]]);
- setColumnWidths(orders,[20,25,50,15,22]);setColumnWidths(shots,[20,12,36,36,32,32,15]);
+ setColumnWidths(orders,[22,20,25,50,15]);setColumnWidths(shots,[20,12,36,36,32,32,15]);
  setFreezePanes(orders,'A2');setFreezePanes(shots,'A2');
  return workbookToBytes(workbook);
 }
@@ -63,11 +64,18 @@ export async function readEpisodeWorkbook(name:unknown,encoded:unknown):Promise<
  const orders=getSheet(workbook,workbookSheets.orders),shots=getSheet(workbook,workbookSheets.shots);
  if(!orders||!shots||sheetNames(workbook).length!==2)throw new ConfigurationError(400,'请保留模板中的「生产单」和「分镜」两个工作表。');
  const budget={bytes:0};
- const hasSeries=cellValueAsString(getCell(orders,1,orderColumns.length+1)?.value??null).trim()===seriesColumn;
- const orderRows=readRows(orders,hasSeries?[...orderColumns,seriesColumn]:orderColumns,episodeImportLimits.items,budget);
+ const orderHeader=(column:number)=>cellValueAsString(getCell(orders,1,column)?.value??null).trim();
+ const seriesFirst=orderHeader(1)===seriesColumn;
+ const orderHeaders=seriesFirst?templateOrderColumns
+  :orderHeader(orderColumns.length+1)===seriesColumn?[...orderColumns,seriesColumn]:orderColumns;
+ const orderRows=readRows(orders,orderHeaders,episodeImportLimits.items,budget);
  if(!orderRows.length)throw new ConfigurationError(400,'请在「生产单」工作表填写至少一张生产单。');
  return {name,
-  orders:orderRows.map(({row,fields:[orderNo,title,sourceText,duration,seriesName='']})=>({row,itemId:randomUUID(),orderNo,title,sourceText,duration,seriesName:seriesName.trim()})),
+  orders:orderRows.map(({row,fields})=>{
+   const [orderNo,title,sourceText,duration]=seriesFirst?fields.slice(1):fields;
+   const seriesName=fields[seriesFirst?0:orderColumns.length]?.trim()??'';
+   return {row,itemId:randomUUID(),orderNo,title,sourceText,duration,seriesName};
+  }),
   shots:readRows(shots,shotColumns,maxShots,budget).map(({row,fields:[orderNo,sequence,visual,videoPrompt,narration,caption,duration]})=>({row,orderNo,sequence,visual,videoPrompt,narration,caption,duration})),
  };
 }

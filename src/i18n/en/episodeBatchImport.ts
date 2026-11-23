@@ -1,5 +1,6 @@
 export const episodeBatchImportMessages={
  '格式说明':'Format guide',
+ '{value0} 张生产单待确认系列。点击对应行的「编辑」选择系列，或选「未分系列」。':'{value0} production orders need a series choice. Open Edit on each flagged row and choose a series or No series.',
  '选择文件':'Choose files',
  '批量上传':'Upload files in bulk',
  '导入记录':'Import history',

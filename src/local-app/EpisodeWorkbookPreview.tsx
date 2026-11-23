@@ -14,7 +14,6 @@ type Props={
  seriesValue:(itemId:string)=>string;
  seriesTag:(itemId:string)=>ReactNode;
  seriesSummary:(itemId:string)=>string;
- seriesIssue:(itemId:string)=>string;
  onSeriesSave:(itemId:string,value:string)=>void;
  editSession:EpisodeImportEditSession;
  busy:boolean;
@@ -32,7 +31,7 @@ function problemsText(problems:string[]|undefined){
 }
 
 export function EpisodeWorkbookPreview({
- workbook,assessment,duplicateFor,seriesFor,seriesValue,seriesTag,seriesSummary,seriesIssue,onSeriesSave,editSession,busy,onChange,onRemove,
+ workbook,assessment,duplicateFor,seriesFor,seriesValue,seriesTag,seriesSummary,onSeriesSave,editSession,busy,onChange,onRemove,
 }:Props){
  const {issues,shotsByOrder,unmatchedShots}=assessment;
 
@@ -77,7 +76,6 @@ export function EpisodeWorkbookPreview({
     tag={seriesTag(order.itemId)} summary={summary} sheet="orders" row={order.row} initial={initial} editSession={editSession} busy={busy}
     initiallyExpanded={index===0} editingChild={shots.some(shot=>editSession.active===shotKey(shot.row))}
     preview={<>
-     {seriesIssue(order.itemId)&&<p className="form-error">{seriesIssue(order.itemId)}</p>}
      {order.sourceText.trim()&&<p className="episode-import-read-text">{order.sourceText}</p>}
      {duplicate}
     </>}
