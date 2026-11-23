@@ -10,9 +10,10 @@ import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
 import {verifyEpisodeFile} from './episodeFiles.js';
 
 export interface PublicationWorkspace {id:string;episode_id:string;content_sha256:string;archived_at:string|null}
+interface OwnedPublicationWorkspace extends PublicationWorkspace {revision:string;title:string}
 interface PublicationRow {workspace_id:string;revision:string;content:PublicationContent;cover:WorkspacePublication['cover'];basis_content_sha256:string;previous_text:WorkspacePublication['previousText'];updated_at:Date}
-export async function ownedPublicationWorkspace(c:PoolClient,episodeId:string,write=false):Promise<PublicationWorkspace>{
- const w=(await c.query(`SELECT w.id,w.episode_id,w.content_sha256,e.archived_at FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=local_identity.owner_id() AND m.role='owner' AND NOT EXISTS(SELECT 1 FROM local_identity.episode_recycle_bin r WHERE r.episode_id=e.id) ${write?'FOR UPDATE OF w':''}`,[episodeId])).rows[0];
+export async function ownedPublicationWorkspace(c:PoolClient,episodeId:string,write=false):Promise<OwnedPublicationWorkspace>{
+ const w=(await c.query(`SELECT w.id,w.episode_id,w.content_sha256,w.revision,e.title,e.archived_at FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND m.user_id=local_identity.owner_id() AND m.role='owner' AND NOT EXISTS(SELECT 1 FROM local_identity.episode_recycle_bin r WHERE r.episode_id=e.id) ${write?'FOR UPDATE OF w':''}`,[episodeId])).rows[0];
  if(!w)throw new ConfigurationError(404,'生产单不可见。');
  if(write&&w.archived_at)throw new ConfigurationError(409,'生产单已归档，请先恢复后修改发布资料。');
  return w;

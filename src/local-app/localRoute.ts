@@ -1,3 +1,5 @@
+import {serveBatchPublicationDownload} from './batchPublicationDownload.js';
+import {batchPublicationDownloadPath} from './batchPublicationDownloadTypes.js';
 import {episodeWorkbookTemplate,readEpisodeWorkbook} from './episodeWorkbookImport.js';
 import {workbookMime} from './episodeWorkbookImportTypes.js';
 import {StringDecoder} from 'node:string_decoder';
@@ -102,6 +104,12 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     const digest=await hashPassword(body.password);
     const changed=(await options.pool.query('SELECT local_identity.change_owner_password($1,$2,$3) changed',[session.id,tokenHash(session.token),JSON.stringify(digest)])).rows[0]?.changed;
     if(!changed){send(401,{error:'会话已失效，请重新登录。'});return;}send(200,{changed:true});return;
+   }
+   if(url.pathname==='/api/local/'+batchPublicationDownloadPath){
+    if(request.method!=='GET')throw new ConfigurationError(405,'发布 ZIP 仅支持读取。');
+    const preview=await serveBatchPublicationDownload(options.pool,session.id,options.mediaRoot,url.searchParams,response);
+    if(preview&&!response.destroyed)send(200,preview);
+    return;
    }
    const recycleRead=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})(?:\/|$)/);
    if(recycleRead&&request.method==='GET'&&uuid.test(recycleRead[1])&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[recycleRead[1]])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请恢复后再打开。');
