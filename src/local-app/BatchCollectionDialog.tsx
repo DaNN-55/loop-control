@@ -1,17 +1,15 @@
-import {FolderOpen,Folder,Layers} from 'lucide-react';
+import {Layers} from 'lucide-react';
 import {useEffect,useId,useRef,useState} from 'react';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
-import {EpisodeBatchDialog,EpisodeBatchImpact,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext,type EpisodeBatchItemResult} from '../workspace/EpisodeBatch';
+import {EpisodeBatchDialog,EpisodeBatchImpact,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext} from '../workspace/EpisodeBatch';
 import {localCommand} from './client';
-import type {moveEpisodeCollectionCommand,readEpisodeDirectory} from './episodeCollection';
+import type {moveEpisodeCollectionCommand} from './episodeCollection';
 import './batch-collection.css';
 
 type MoveResult=Awaited<ReturnType<typeof moveEpisodeCollectionCommand>>;
-type FolderPreview={path?:string;reason?:string};
 type Target={id:string;account_id:string;name:string};
 const reasonFor=(error:unknown)=>error instanceof Error?error.message:'操作未完成，请重试。';
-const orderTitle=(title:string)=>title||uiText('未命名生产单');
 
 function BatchMoveCollectionDialog({selection,onClose,onChanged,series,accountNames}:EpisodeBatchActionContext&{series:readonly Target[];accountNames:ReadonlyMap<string,string>}){
  const selectId=useId(),formId=useId();
@@ -89,97 +87,6 @@ function BatchMoveCollectionDialog({selection,onClose,onChanged,series,accountNa
  </EpisodeBatchDialog>;
 }
 
-async function previewFolder(episodeId:string):Promise<FolderPreview>{
- try{
-  return await localCommand<Awaited<ReturnType<typeof readEpisodeDirectory>>>('readEpisodeDirectory',{episodeId},undefined,'account-commands');
- }catch(error){return{reason:reasonFor(error)};}
-}
-
-function BatchFoldersDialog({selection,onClose}:EpisodeBatchActionContext){
- const [folders,setFolders]=useState(new Map<string,FolderPreview>());
- const [results,setResults]=useState(new Map<string,EpisodeBatchItemResult>());
- const [busy,setBusy]=useState<'read'|'open'|null>('read');
- const active=useRef(false),running=useRef(false);
- useEffect(()=>{
-  let current=true;
-  active.current=true;
-  async function load(){
-   const next=new Map<string,FolderPreview>();
-   for(const {id} of selection){
-    if(!current)return;
-    next.set(id,await previewFolder(id));
-   }
-   if(current){setFolders(next);setBusy(null);}
-  }
-  void load();
-  return()=>{current=false;active.current=false;};
- },[selection]);
- const failed=selection.filter(item=>folders.get(item.id)?.reason||results.get(item.id)?.status==='failed');
- const unopened=selection.filter(item=>{
-  const folder=folders.get(item.id);
-  return folder?.path&&!folder.reason&&!results.has(item.id);
- });
-
- async function openOrRetry(targets:readonly {id:string}[],retry=false){
-  if(running.current||busy)return;
-  running.current=true;
-  setBusy('open');
-  const nextFolders=new Map(folders),nextResults=new Map(results);
-  try{
-   for(const {id} of targets){
-    if(!active.current)return;
-    if(retry&&nextFolders.get(id)?.reason){
-     const refreshed=await previewFolder(id);
-     if(!active.current)return;
-     nextFolders.set(id,refreshed);
-     if(refreshed.reason){
-      nextResults.set(id,{episodeId:id,status:'failed',reason:refreshed.reason});
-      continue;
-     }
-    }
-    try{
-     const {path}=await localCommand<{opened:true;path:string}>('openDirectory',{episodeId:id},undefined,'episode-commands');
-     nextFolders.set(id,{path});
-     nextResults.set(id,{episodeId:id,status:'success'});
-    }catch(error){
-     nextResults.set(id,{episodeId:id,status:'failed',reason:reasonFor(error)});
-    }
-   }
-   if(active.current){setFolders(nextFolders);setResults(nextResults);}
-  }finally{
-   running.current=false;
-   if(active.current)setBusy(null);
-  }
- }
-
- return <EpisodeBatchDialog compact title={uiText('查看文件夹')} busy={Boolean(busy)} onClose={onClose} footer={(unopened.length>0||failed.length>0)&&<>
-  {failed.length>0&&<Button type="button" size="sm" color="secondary" isDisabled={Boolean(busy)} onPress={()=>void openOrRetry(failed,true)}>{uiText('只重试失败项')}</Button>}
-  {unopened.length>0&&<Button type="button" size="sm" color="primary" iconLeading={Folder} isDisabled={Boolean(busy)} onPress={()=>void openOrRetry(unopened)}>{uiText('打开可用文件夹')}</Button>}
- </>}>
-  {busy&&<p role="status">{uiText(busy==='read'?'正在核对登记目录…':'正在处理文件夹…')}</p>}
-  <ul role="list" className="episode-batch-items">{selection.map(item=>{
-   const folder=folders.get(item.id),title=orderTitle(item.title);
-   return <li className="batch-collection-folder" key={item.id}>
-    <div>
-     <strong>{title}</strong>
-     {folder?.path&&<details className="episode-batch-disclosure">
-      <summary aria-label={uiText('查看完整路径 · {title}',{title})}>{uiText('目录路径')}</summary>
-      <code className="batch-collection-full-path">{folder.path}</code>
-     </details>}
-     {folder?.reason&&<small>{uiText(folder.reason)}</small>}
-    </div>
-    {folder?.path&&!folder.reason&&<Button type="button" size="sm" color="tertiary" iconLeading={FolderOpen} isDisabled={Boolean(busy)}
-     title={uiText('打开文件夹')} aria-label={uiText('打开文件夹 · {title}',{title})} onPress={()=>void openOrRetry([item])}/>}
-   </li>;
-  })}</ul>
-  {!!results.size&&<div className="episode-batch-results" aria-live="polite"><EpisodeBatchResults selection={selection} results={[...results.values()]}/></div>}
- </EpisodeBatchDialog>;
-}
-
 export function moveCollectionBatchAction(series:readonly Target[],accountNames:ReadonlyMap<string,string>):EpisodeBatchAction{
  return{id:'move-collection',get label(){return uiText('批量调整系列');},render:context=><BatchMoveCollectionDialog {...context} series={series} accountNames={accountNames}/>};
 }
-
-export const foldersBatchAction:EpisodeBatchAction={
- id:'folders',get label(){return uiText('查看文件夹');},render:context=><BatchFoldersDialog {...context}/>,
-};

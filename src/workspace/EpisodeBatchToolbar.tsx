@@ -8,7 +8,7 @@ const reviewActions=[
  {id:'script-review',hint:'script',label:'确认脚本'},
  {id:'export-review',hint:'export',label:'确认成片'},
 ] as const;
-const managementLabels:Record<string,string>={'move-collection':'调整系列',folders:'查看文件夹'};
+const managementLabels:Record<string,string>={'move-collection':'调整系列'};
 
 export function EpisodeBatchToolbar({selection,actions,onOpen,onClear}:{
  selection:readonly EpisodeBatchSelectionItem[];

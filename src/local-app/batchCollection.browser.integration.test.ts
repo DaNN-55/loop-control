@@ -1,15 +1,15 @@
 // @vitest-environment node
 import {expect,it} from 'vitest';
-import {lstat,realpath,rename,writeFile} from 'node:fs/promises';
+import {rename,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
 import {storyBrowser} from './storyBrowser.fixture';
 import {workspaceAudioVolume} from './workspaceAudioVolume.fixture';
 
-it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a selected batch and retries only failed moves and folder opens',async()=>{
+it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a selected batch and retries only failed moves',async()=>{
  if(!process.env.LOOP_TEST_CONTEXT_MODULE||!process.env.LOOP_STORY_EVIDENCE)throw Error('Explicit isolated test context and evidence directory required');
- const volume=await workspaceAudioVolume(),opened:string[]=[];
- const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,async openDirectory(path){opened.push(await realpath(path));}}}).catch(async error=>{await volume.close();throw error;});
+ const volume=await workspaceAudioVolume();
+ const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath},migrations:['db/current/220-episode-batch-import.sql','db/current/223-manual-script-review-drafts.sql','db/current/225-structured-import-script.sql']}).catch(async error=>{await volume.close();throw error;});
  let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
  try{
   const send=async(endpoint:string,command:string,data:Record<string,unknown>)=>{
@@ -24,8 +24,7 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   const outside=await send('episode-commands','create',{accountId:other.id,title:'另一账号的单'});
   const ready=await send('episode-commands','create',{accountId:account.id,title:'完好目录',seriesVersionId:source.id});
   const missing=await send('episode-commands','create',{accountId:account.id,title:'缺失目录',seriesVersionId:source.id});
-  const already=await send('episode-commands','create',{accountId:account.id,title:'已在目标',seriesVersionId:target.id});
-  const initiallyMissing=await send('episode-commands','create',{accountId:account.id,title:'首次读取时缺失',seriesVersionId:source.id});
+  await send('episode-commands','create',{accountId:account.id,title:'已在目标',seriesVersionId:target.id});
   const read=(episodeId:string)=>send('account-commands','readEpisodeCollection',{episodeId});
   const readyBefore=await read(ready.id),missingBefore=await read(missing.id);
   await writeFile(join(readyBefore.directoryPath,'文件.txt'),'隔离验收文件');
@@ -36,7 +35,7 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   const outcome=(title:string,status:string)=>page.wait(`Array.from(document.querySelectorAll('dialog .episode-batch-results li')).some(row=>row.querySelector('strong')?.textContent===${JSON.stringify(title)}&&row.dataset.status===${JSON.stringify(status)})`);
   await page.cli('wait','--text','完好目录');
   for(const title of ['完好目录','缺失目录','已在目标'])await check(title);
-  await page.click('批量操作');await page.cli('find','role','menuitem','click','--name','调整系列','--exact');
+  await page.click('批量操作');expect(await page.snapshot()).not.toContain('menuitem "查看文件夹"');await page.cli('find','role','menuitem','click','--name','调整系列','--exact');
   const option=(await page.snapshot()).split('\n').find(line=>line.includes('combobox "目标系列"'))?.match(/ref=(e\d+)/)?.[1];
   expect(option).toBeTruthy();
   await page.cli('select','@'+option,target.series_id);
@@ -52,32 +51,6 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   await page.click('只重试失败项');await outcome('缺失目录','success');
   expect(moves()).toHaveLength(4);
   await page.capture('moves');await page.click('关闭');
-  const initialFolder=await read(initiallyMissing.id);
-  await check('首次读取时缺失');
-  await rename(initialFolder.directoryPath,initialFolder.directoryPath+'.offline');
-  await page.click('批量操作');await page.cli('find','role','menuitem','click','--name','查看文件夹','--exact');
-  const readyAfter=await read(ready.id),missingAfter=await read(missing.id),alreadyAfter=await read(already.id);
-  await page.wait(`document.querySelector('dialog').textContent.includes(${JSON.stringify(readyAfter.directoryPath)})`);
-  expect(await page.evaluate("document.querySelector('dialog .batch-collection-folder details').open")).toBe(false);
-  await page.cli('find','label','查看完整路径 · 完好目录','click');
-  expect(await page.evaluate(`document.querySelector('dialog').innerText.includes(${JSON.stringify(readyAfter.directoryPath)})`)).toBe(true);
-  await page.cli('set','viewport','390','820');
-  expect(await page.evaluate("(()=>{const dialog=document.querySelector('dialog[open]');const bounds=dialog.getBoundingClientRect();return bounds.left>=0&&bounds.right<=innerWidth&&dialog.scrollWidth<=dialog.clientWidth;})()")).toBe(true);
-  expect(await page.evaluate("Array.from(document.querySelectorAll('dialog .batch-collection-folder')).find(row=>row.querySelector('strong')?.textContent==='首次读取时缺失')?.textContent")).toContain('目录缺失');
-  const open=(title:string)=>page.click('打开文件夹 · '+title);
-  await open('完好目录');await outcome('完好目录','success');
-  await rename(missingAfter.directoryPath,missingAfter.directoryPath+'.offline');
-  await page.click('打开可用文件夹');await outcome('缺失目录','failed');await outcome('已在目标','success');
-  expect(opened).toEqual([readyAfter.directoryPath,alreadyAfter.directoryPath]);
-  await expect(lstat(missingAfter.directoryPath)).rejects.toMatchObject({code:'ENOENT'});
-  await rename(missingAfter.directoryPath+'.offline',missingAfter.directoryPath);
-  await rename(initialFolder.directoryPath+'.offline',initialFolder.directoryPath);
-  await page.click('只重试失败项');await outcome('缺失目录','success');
-  expect(opened).toHaveLength(4);
-  expect(new Set(opened.slice(2))).toEqual(new Set([missingAfter.directoryPath,initialFolder.directoryPath]));
-  await outcome('首次读取时缺失','success');
-  await page.capture('folders');await page.click('关闭');
-
   await page.cli('open',page.url.split('?')[0]);
   await page.cli('wait','--text','另一账号的单');
   for(const title of ['完好目录','缺失目录','另一账号的单'])await check(title);
