@@ -1,4 +1,4 @@
-import {useEffect,useId,useRef,type ReactNode} from 'react';
+import {useLayoutEffect,useId,useRef,type ReactNode} from 'react';
 import {uiText} from '../i18n/ui';
 import type {EpisodeStage} from '../platform/types';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
@@ -32,7 +32,7 @@ export interface EpisodeBatchItemResult {
 
 export function EpisodeBatchDialog({title,busy,onClose,children,footer}:{title:string;busy?:boolean;onClose:()=>void;children:ReactNode;footer?:ReactNode}){
  const titleId=useId(),dialog=useRef<HTMLDialogElement>(null);
- useEffect(()=>{
+ useLayoutEffect(()=>{
   const element=dialog.current;
   element?.showModal();
   return()=>element?.close();
@@ -45,10 +45,10 @@ export function EpisodeBatchDialog({title,busy,onClose,children,footer}:{title:s
 }
 
 const resultsLabels={success:'成功',skipped:'跳过',failed:'失败'} as const;
-export function EpisodeBatchResults({selection,results}:{selection:readonly EpisodeBatchSelectionItem[];results:readonly EpisodeBatchItemResult[]}){
+export function EpisodeBatchResults({selection,results,title=uiText('逐单结果')}:{selection:readonly Pick<EpisodeBatchSelectionItem,'id'|'title'>[];results:readonly EpisodeBatchItemResult[];title?:string}){
  const labels=new Map(selection.map(item=>[item.id,item.title]));
- return <section aria-label={uiText('逐单结果')}>
-  <h3>{uiText('逐单结果')}</h3>
+ return <section aria-label={title}>
+  <h3>{title}</h3>
   <ul role="list" className="episode-batch-items">{results.map(result=><li key={result.episodeId} data-status={result.status}>
    <strong>{labels.get(result.episodeId)??result.episodeId}</strong>
    <span>{uiText(resultsLabels[result.status])}{result.reason?' · '+uiText(result.reason):''}</span>

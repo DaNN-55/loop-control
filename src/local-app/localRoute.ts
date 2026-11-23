@@ -215,7 +215,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     send(200,await options.episodes.execute(session,body));return;
    }
    if(url.pathname==='/api/local/episode-lifecycle'&&request.method==='POST'){let body;try{body=await readBody(request,16384);}catch{send(400,{error:'生命周期请求格式无效。'});return;}send(200,await lifecycle.execute(session,body));return;}
-   if(url.pathname==='/api/local/recycle-bin'){if(request.method==='GET'){send(200,await recycleBin.read(session));return;}if(request.method==='POST'){send(200,await recycleBin.execute(session,await readBody(request,16384)));return;}throw new ConfigurationError(405,'回收站请求方法无效。');}
+   if(url.pathname==='/api/local/recycle-bin'){if(request.method==='GET'){send(200,await recycleBin.read(session));return;}if(request.method==='POST'){send(200,await recycleBin.execute(session,await readBody(request,256*1024)));return;}throw new ConfigurationError(405,'回收站请求方法无效。');}
    if(url.pathname==='/api/local/deletion-cleanups'&&request.method==='GET'){send(200,await lifecycle.pending(session));return;}
    if(url.pathname==='/api/local/account-deletion-status'){
     if(request.method!=='GET'){send(405,{error:'只支持读取账号删除条件。'});return;}
