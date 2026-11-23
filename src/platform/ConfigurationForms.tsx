@@ -138,7 +138,7 @@ export function SeriesConfigurationForm({ headingContent, onCreateEpisode, onRen
     return hasCreativeRuleValue(resolvedRules.account[field]) ? uiText("沿用账号通用规则") : uiText("未设置");
   };
   const creativeRuleFields = (
-    <fieldset><legend>{uiText("创作规则")}</legend><p className="series-inheritance-note">{uiText("定位和视觉风格优先使用系列值，留空时沿用账号通用规则。两处填写的限制同时生效。")}</p>
+    <fieldset><legend>{uiText("创作规则")}</legend>
       <label><FieldLabel>{uiText("系列定位")}{locked && !form.positioning && <small className="series-rule-source">{uiText("沿用账号规则")}</small>}</FieldLabel><TextAreaBase readOnly={locked} disabled={busy} size="sm" aria-label={uiText("系列定位")} onChange={(event) => setForm((current) => ({ ...current, positioning: event.target.value }))} placeholder={locked?undefined:inheritedPlaceholder("positioning") ?? uiText("受众、主题与内容方向")} rows={2} value={form.positioning} /></label>
       <label><FieldLabel>{uiText("内容格式")}{locked&&<small className="series-rule-source">{form.format?uiText("来自系列规则"):accountDefaults.format?uiText("来自账号通用规则"):uiText("未设置")}</small>}</FieldLabel><InputBase readOnly={locked} isDisabled={busy} size="sm" aria-label={uiText("内容格式")} onChange={(event) => setForm((current) => ({ ...current, format: event.target.value }))} placeholder={locked?undefined:inheritedPlaceholder("format") ?? uiText("例如：9:16 竖屏，中文旁白")} value={form.format} /></label>
     <div className="series-baseline-grid">{([

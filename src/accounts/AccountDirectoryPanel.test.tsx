@@ -50,13 +50,3 @@ it('series path appears once with open and copy actions, without a duplicate exp
  expect(screen.getByRole('button',{name:'打开系列目录'})).toHaveProperty('disabled',false);
  expect(screen.getByRole('button',{name:'复制系列目录路径'})).toHaveProperty('disabled',false);
 });
-
-it('opens the same account directory from compact more actions and reveals the path only on request',async()=>{
- command.mockResolvedValue({assetRoot:'/media/account',status:'ready'});
- const view=render(<AccountDirectoryPanel accountId="account" compact/>);
- await waitFor(()=>expect(screen.getByRole('button',{name:'打开文件夹'})).toHaveProperty('disabled',false));
- expect(screen.queryByText('/media/account')).toBeNull();fireEvent.click(screen.getByRole('button',{name:'打开文件夹'}));
- await waitFor(()=>expect(command).toHaveBeenLastCalledWith('openAssetDirectory',{accountId:'account'},undefined,'account-commands'));
- view.rerender(<AccountDirectoryPanel accountId="account"/>);expect(screen.getByText('/media/account')).toBeTruthy();
- expect(command.mock.calls.filter(([name])=>name==='readAssetDirectory')).toHaveLength(1);
-});

@@ -1,4 +1,3 @@
-import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
 import './account-rules.css';
 import {uiText} from '../i18n/ui';
 import {creativeAccountRules,hasCreativeRuleValue} from '../creativeAccountRules';
@@ -8,7 +7,7 @@ import type {PanelNavigation} from '../local-app/catalogNavigation';
 import {SeriesDirectoryPanel} from './SeriesDirectoryPanel';
 import {AccountDirectoryPanel} from './AccountDirectoryPanel';
 import {useDialogFocus} from '../ui/useDialogFocus';
-import {Archive,Pencil,Trash2,MoreHorizontal,Search,Plus,X} from 'lucide-react';
+import {Archive,Pencil,Trash2,Search,Plus,X} from 'lucide-react';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {PaginationControls} from '../ui/PaginationControls';
@@ -100,7 +99,7 @@ export function AccountWorkspace({ navigation, account, accountEpisodeCount = 0,
   return <section className="impeccable-config-workspace account-blueprint-workspace" aria-label={uiText("账号工作区")}>
     <header className="account-page-heading">
       <div><h1>{account.name}</h1>{account.archived_at && <span className="account-archived-badge">{uiText("已归档")}</span>}</div>
-      <Button size="sm" color="secondary" iconLeading={MoreHorizontal} ref={accountSettingsRef} type="button"
+      <Button size="sm" color="secondary" ref={accountSettingsRef} type="button"
         aria-haspopup="dialog" onClick={() => setAccountSettingsOpen(true)}>{uiText("更多操作")}</Button>
     </header>
     {account.archived_at ? <p className="account-archived-note" role="status">{uiText("此账号已归档，不会出现在新建生产单的账号列表中；恢复后可继续生产。")}</p> : null}
@@ -133,17 +132,16 @@ function AccountSettingsDialog({account, episodeCount, returnFocusRef, onClose, 
   onDelete: () => void;
 }) {
   const dialogRef = useDialogFocus<HTMLElement>(true, onClose, returnFocusRef);
-  const [detailsOpen, setDetailsOpen] = useState(false);
   return <div className="modal-backdrop">
     <section className="modal-card account-settings-dialog" role="dialog" aria-modal="true" aria-label={uiText("更多操作")} ref={dialogRef}>
       <header><h2>{uiText("更多操作")}</h2><Button size="sm" color="tertiary" aria-label={uiText("关闭更多操作")} type="button" iconLeading={X} onClick={onClose} /></header>
-      <Disclosure label={uiText("查看资料")} onToggle={event=>setDetailsOpen(event.currentTarget.open)}>{detailsOpen && <dl className="account-settings-facts">
+      <dl className="account-settings-facts">
         <div><dt>{uiText("账号名称")}</dt><dd>{account.name}</dd></div>
         <div><dt>{uiText("标识")}</dt><dd>{account.slug}</dd></div>
         <div><dt>{uiText("时区")}</dt><dd>{account.timezone}</dd></div>
         <div><dt>{uiText("生产单")}</dt><dd>{episodeCount} {uiText("个")}</dd></div>
-      </dl>}</Disclosure>
-      <AccountDirectoryPanel accountId={account.id} compact={!detailsOpen} />
+      </dl>
+      <AccountDirectoryPanel accountId={account.id} />
       <footer className="account-settings-actions">
         <Button size="sm" color="secondary" iconLeading={Pencil} onClick={onRename}>{uiText("重命名")}</Button>
         <Button size="sm" color="secondary" iconLeading={Archive} onClick={onArchive}>{account.archived_at ? uiText("恢复账号") : uiText("归档账号")}</Button>

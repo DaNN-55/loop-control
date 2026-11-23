@@ -48,9 +48,8 @@ describe("账号配置工作区", () => {
     expect(screen.queryByText("账号目录")).toBeNull();
     await user.click(screen.getByRole("button", {name:"更多操作"}));
     const settings = screen.getByRole("dialog", {name:"更多操作"});
-    expect(within(settings).getByRole("button",{name:"打开文件夹"})).toBeTruthy();
-    expect(within(settings).queryByText("dao-studio")).toBeNull();
-    await user.click(within(settings).getByText("查看资料"));
+    expect(within(settings).getByRole("button",{name:"打开"})).toBeTruthy();
+    expect(within(settings).getByRole("button",{name:"复制账号目录路径"})).toBeTruthy();
     expect(within(settings).getByText("账号目录")).toBeTruthy();
     await user.click(within(settings).getByRole("button", {name:"关闭更多操作"}));
     await user.click(screen.getByRole("tab", {name:"系列规则（选填）"}));
@@ -138,9 +137,8 @@ describe("账号配置工作区", () => {
 
     await user.click(screen.getByRole("button", { name: "更多操作" }));
     const menu = screen.getByRole("dialog", { name: "更多操作" });
-    expect(within(menu).queryByText("dao-studio")).toBeNull();
     expect(within(menu).queryByRole("button",{name:"刷新账号"})).toBeNull();
-    await user.click(within(menu).getByText("查看资料"));
+    expect(within(menu).queryByText("查看资料")).toBeNull();
     expect(within(menu).getByText("dao-studio")).toBeTruthy();
     expect(within(menu).getByText("Asia/Shanghai")).toBeTruthy();
     expect(within(menu).getByText("7 个")).toBeTruthy();
