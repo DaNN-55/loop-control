@@ -141,6 +141,21 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   await browser.capture('corrected-preview');
   await browser.click('提交创建');
   await browser.cli('wait','--text','成功 3');
+  await browser.cli('focus','dialog header button');
+  await browser.cli('press','Tab');
+  await browser.wait(`document.activeElement.getAttribute('aria-label')==='导入结果说明'`);
+  await browser.wait(`document.querySelector('dialog [role=tooltip]')?.innerText.includes('失败：该条生产单未能创建')===true`);
+  await browser.cli('press','Escape');
+  await browser.wait(`!document.querySelector('dialog [role=tooltip]')&&!!document.querySelector('dialog.episode-batch-import[open]')`);
+  await browser.cli('hover','dialog [aria-label=导入结果说明]');
+  await browser.wait(`document.querySelector('dialog [role=tooltip]')?.innerText.includes('跳过：同一账号和系列')===true`);
+  expect(await browser.evaluate(`(()=>{
+   const dialog=document.querySelector('dialog.episode-batch-import');
+   const box=dialog.getBoundingClientRect(),tip=dialog.querySelector('[role=tooltip]').getBoundingClientRect();
+   return tip.left>=box.left&&tip.right<=box.right&&tip.top>=box.top&&tip.bottom<=box.bottom;
+  })()`)).toBe(true);
+  await browser.cli('press','Escape');
+  await browser.wait(`!document.querySelector('dialog [role=tooltip]')&&!!document.querySelector('dialog.episode-batch-import[open]')`);
   for(const [width,height] of [[1357,946],[420,820]]){
    await browser.cli('set','viewport',String(width),String(height));
    expect(await browser.evaluate(`Array.from(document.querySelectorAll('.episode-batch-results > li'), card=>{

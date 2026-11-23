@@ -3,6 +3,7 @@ import {Trash2,Upload,X} from 'lucide-react';
 import {Badge} from '../ui/dan-ui/components/base/badges/badges';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {uiText} from '../i18n/ui';
+import {HelpTip} from '../ui/HelpTip';
 import {localRequest} from './client';
 import {episodeImportLimits,type EpisodeImportItem,type EpisodeImportReceipt} from './episodeBatchImportTypes';
 import {EpisodeWorkbookPreview} from './EpisodeWorkbookPreview';
@@ -242,7 +243,15 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
    <div className="episode-batch-content">
     <div ref={errorFocus} tabIndex={-1} role="alert">{error&&<p className="form-error">{uiText(error)}</p>}</div>
     {batchId?<section aria-label={uiText('导入结果')}>
-     {receipt?<><p role="status">{uiText('成功')} {receipt.items.filter(item=>item.status==='succeeded').length} · {uiText('跳过')} {receipt.items.filter(item=>item.status==='skipped').length} · {uiText('失败')} {receipt.items.filter(item=>item.status==='failed').length}</p>
+     {receipt?<><div className="episode-batch-result-summary">
+      <p role="status">{uiText('成功')} {receipt.items.filter(item=>item.status==='succeeded').length} · {uiText('跳过')} {receipt.items.filter(item=>item.status==='skipped').length} · {uiText('失败')} {receipt.items.filter(item=>item.status==='failed').length}</p>
+      <HelpTip label={uiText('导入结果')} placement="bottom" portalContainer={dialog.current??undefined}>
+       <span className="episode-batch-result-help">
+        <span>{uiText('跳过：同一账号和系列下已有同标题、同脚本的生产单，且选择了跳过重复项。')}</span>
+        <span>{uiText('失败：该条生产单未能创建。查看该条原因，处理后可重试此批。')}</span>
+       </span>
+      </HelpTip>
+     </div>
       <ul className="episode-batch-results">{receipt.items.map(item=><li key={item.itemId}>
        <div className="episode-batch-result-copy">
         <strong>{item.title}</strong><span>{item.sourceName} · {uiText({succeeded:'成功',skipped:'跳过',failed:'失败',pending:'待处理'}[item.status])}</span>

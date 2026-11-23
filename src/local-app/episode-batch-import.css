@@ -93,6 +93,9 @@ dl.episode-import-shot-copy:not(:empty) {background:var(--color-bg-secondary);bo
  .episode-import-shot-copy {grid-template-columns:1fr 1fr}
  .episode-import-shot-copy > :first-child {grid-column:1/-1}
 }
+.episode-batch-result-summary {display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.episode-batch-result-summary > p {margin:0}
+.episode-batch-result-help {display:grid;gap:4px}
 .episode-batch-results > li > button {flex:none;margin-inline-start:auto}
 .episode-batch-results {display:grid;gap:8px;list-style:none;padding:0}
 .episode-batch-results > li {display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}

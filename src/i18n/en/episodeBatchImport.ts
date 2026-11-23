@@ -19,6 +19,8 @@ export const episodeBatchImportMessages={
  '批量新建生产单':'Create production orders in bulk',
  '关闭批量新建':'Close batch creation',
  '导入结果':'Import results',
+ '跳过：同一账号和系列下已有同标题、同脚本的生产单，且选择了跳过重复项。':'Skipped: An order with the same title and script already exists in this account and series, and duplicates were set to skip.',
+ '失败：该条生产单未能创建。查看该条原因，处理后可重试此批。':'Failed: This order could not be created. Check the reason on that item, then retry the batch after resolving it.',
  '待处理':'Pending',
  '开始新批次':'Start a new batch',
  '重试此批':'Retry this batch',
