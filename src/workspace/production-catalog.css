@@ -1,7 +1,7 @@
 .production-catalog{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start;min-width:0}
 .production-catalog[data-preview=true]{grid-template-columns:minmax(0,1fr) 320px}
 .episode-list-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.episode-extra-filters:not([hidden]){display:flex;gap:12px;flex-wrap:wrap;padding:0 0 16px}
+.episode-extra-filters:not([hidden]){display:flex;gap:12px;flex-wrap:wrap;padding:0 0 8px}
 .episode-extra-filters label{display:grid;gap:5px;flex:1 1 130px;min-width:0}
 .episode-extra-filters>.dan-select-field{flex:1 1 150px}
 .episode-extra-filters[hidden]{display:none!important}
