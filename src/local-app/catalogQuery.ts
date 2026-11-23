@@ -6,6 +6,7 @@ import {operationsEpisodePageSize} from '../episodes/episodeCatalogTypes.js';
 export const localCatalogSql=` with owned_base as materialized (
   select e.* from public.episodes e where exists (
    select 1 from public.account_memberships m where m.account_id=e.account_id and m.user_id=$1::uuid and m.role='owner') and not local_identity.is_recycled_episode(e.id)
+   and ($16::uuid[] is null or e.id=any($16))
  ), owned as materialized (
   select e.*,greatest(e.updated_at,
    (select max(w.updated_at) from local_identity.production_workspaces w where w.episode_id=e.id),
@@ -118,6 +119,10 @@ export const localCatalogSql=` with owned_base as materialized (
     when e.stage in ('script_approved','visual_draft','visual_review','visual_approved','storyboard_draft','storyboard_review','storyboard_approved') then 'preparation'
     when e.stage in ('production_ready','render_ready') then 'editing' else 'delivery' end workflow_step
   from scoped e left join workspace_facts w on w.episode_id=e.id
+  where ($17::text='all'
+   or $17::text='script_review' and e.archived_at is null and e.stage='waiting_input'
+   or $17::text='export_review' and exists(select 1 from pending p where p.episode_id=e.id and p.stage='workspace_export')
+   or $17::text='done' and e.stage='production_completed')
  ), filtered as materialized (
   select e.* from scoped e join episode_states state on state.episode_id=e.id
   where ($11::text='all' or $11::text='review' and exists(select 1 from pending p where p.episode_id=e.id) or $11::text<>'review' and state.action_status=$11::text)

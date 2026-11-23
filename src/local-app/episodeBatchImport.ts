@@ -4,7 +4,7 @@ import {ConfigurationError,canonicalFingerprint} from './configurationCommands.j
 import {createEpisodeDirectory,EpisodeCreationSkipped} from './episodeCreation.js';
 import {ownerTransaction,sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
-import {episodeImportLimits,type EpisodeImportItem,type EpisodeImportReceipt,type ImportedScript} from './episodeBatchImportTypes.js';
+import {episodeImportLimits,type EpisodeImportHistory,type EpisodeImportItem,type EpisodeImportReceipt,type ImportedScript} from './episodeBatchImportTypes.js';
 
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const fingerprint=(text:string)=>createHash('sha256').update(text).digest('hex');
@@ -98,6 +98,27 @@ export class LocalEpisodeBatchImport {
     seen.add(identity);
    }
    return {items};
+  });
+ }
+
+ async history(session:OwnerSession,page:number):Promise<EpisodeImportHistory>{
+  const pageSize=20;
+  return ownerTransaction(this.pool,session.id,true,async c=>{
+   const {rows}=await c.query<EpisodeImportHistory['batches'][number]>(`
+    SELECT b.id AS "batchId",b.created_at AS "createdAt",b.name AS "accountName",
+     i.first_title AS "firstTitle",i.item_count AS "itemCount",i.created_count AS "createdCount"
+    FROM (
+     SELECT b.id,b.created_at,a.name FROM local_identity.episode_import_batches b
+     JOIN public.account_memberships m ON m.account_id=b.account_id AND m.user_id=b.owner_id AND m.role='owner'
+     JOIN public.accounts a ON a.id=b.account_id
+     WHERE b.owner_id=$1 ORDER BY b.created_at DESC,b.id DESC LIMIT $2 OFFSET $3
+    ) b
+    CROSS JOIN LATERAL (
+     SELECT max(title) FILTER (WHERE position=0) first_title,count(*)::int item_count,
+      count(*) FILTER (WHERE status='succeeded')::int created_count
+     FROM local_identity.episode_import_items WHERE owner_id=$1 AND batch_id=b.id
+    ) i ORDER BY b.created_at DESC,b.id DESC`,[session.id,pageSize+1,(page-1)*pageSize]);
+   return {batches:rows.slice(0,pageSize),hasMore:rows.length>pageSize};
   });
  }
 
