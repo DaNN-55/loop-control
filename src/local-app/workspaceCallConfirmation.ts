@@ -4,6 +4,7 @@ import {resolveWorkspaceImageRequest,resolveWorkspaceVideoRequest} from './works
 import {imageQualityLabels} from '../imageGeneration.js';
 import {soundIntentQuery} from '../soundIntent.js';
 import {videoVisualInputLabels} from '../videoVisualInputs.js';
+import {estimateWorkspaceVideoCall} from './workspaceVideoCallEstimate.js';
 import {estimateWorkspaceCall} from './workspaceCallEstimate.js';
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
@@ -62,11 +63,7 @@ async function describe(c:PoolClient,root:string,row:ProductionWorkspaceRecord,p
   narration=voice;
  }
  const materials=imageRequest?.materials??[],requestPrompt=imageRequest?.actualPrompt??videoRequest?.actualPrompt??prompt;
- // MiniMax's actual endpoint is selected by the credential region. The version's
- // legacy endpoint may still be international; use the same non-secret intent
- // metadata as the connection catalogue, without opening the credential.
- const region=resolved.selection.provider==='minimax'&&resolved.connection?(await c.query("SELECT metadata->>'region' region FROM local_identity.connection_intents WHERE version_id=$1 AND owner_id=local_identity.owner_id() AND applied_at IS NOT NULL AND metadata->>'provider'='minimax' AND metadata->>'command' IN ('create','rotate') ORDER BY created_at DESC LIMIT 1",[resolved.connection.id])).rows[0]?.region??'international':undefined;
- const estimate=estimateWorkspaceCall({kind:image?'image':speech?'speech':sound?'sound':'video',provider:resolved.selection.provider,model:resolved.selection.model,seconds:providerDuration,videoResolution:videoRequest?.videoResolution,referenceVideoSeconds:videoInputs?.referenceVideoSeconds,referenceVideoDurations:videoInputs?.referenceVideoDurations,videoImageCount:videoInputs?.frozen.filter(input=>input.role!=='referenceVideos').length,text:requestPrompt,settings:payload.settings as {size:string;quality:string;count:number}|undefined,referenceImages:image?materials.map(m=>({width:m.width,height:m.height})):undefined,videoSettings:payload.videoSettings as Parameters<typeof estimateWorkspaceCall>[0]['videoSettings'],region});
+ const {region,estimate}=videoRequest?await estimateWorkspaceVideoCall(c,videoRequest):{region:undefined,estimate:estimateWorkspaceCall({kind:image?'image':speech?'speech':'sound',provider:resolved.selection.provider,model:resolved.selection.model,text:requestPrompt,settings:payload.settings as {size:string;quality:string;count:number}|undefined,referenceImages:image?materials.map(m=>({width:m.width,height:m.height})):undefined})};
  const templateReservation=videoRequest?(await readWorkspaceTemplateInputs(c,root,row))?.shots.find(shot=>shot.shotId===target)?.videoReservationCents:undefined;
  const reservationPrefilled=templateReservation!==undefined&&(amount===undefined||amount===templateReservation);
  amount??=templateReservation??estimate.suggestedCents;

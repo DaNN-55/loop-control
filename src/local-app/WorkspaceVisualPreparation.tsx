@@ -1,4 +1,5 @@
-import {restoreVisualDraft,recordVisualDefaultEdits,updatedVisualDefaults,type VisualDefaultOverrides} from './workspaceVisualDefaults';
+import type {StoryboardVideoDraft} from '../storyboardBatch';
+import {episodeVisualDefaults,restoreVisualDraft,recordVisualDefaultEdits,updatedVisualDefaults,type VisualDefaultOverrides} from './workspaceVisualDefaults';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {MediaRangeEditor} from '../ui/media/MediaRangeEditor';
 import {uiText} from '../i18n/ui';
@@ -66,7 +67,7 @@ export interface VisualPreparationProps {
  project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;completedView?:boolean;preparationStatus?:ReactNode;
  onImported?:(material:Material&{storage_path:string})=>void;
 }
-interface Draft {defaultOverrides?:VisualDefaultOverrides;promptReferences?:PromptReferenceBinding[];pexelsSelection?:ProductionSelection|null;imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;videoResolution?:string;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;videoModeId?:string;videoInputs?:VideoInputDraft;videoInputIds?:string[];referenceVideoSources?:Record<string,string>;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
+interface Draft {durationOverride?:boolean;defaultOverrides?:VisualDefaultOverrides;promptReferences?:PromptReferenceBinding[];pexelsSelection?:ProductionSelection|null;imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;videoResolution?:string;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;videoModeId?:string;videoInputs?:VideoInputDraft;videoInputIds?:string[];referenceVideoSources?:Record<string,string>;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
 function videoDraftIds(draft:Draft){
  return draft.videoInputIds??[draft.firstFrame,...draft.videoInputs?.lastFrame??[],...draft.videoInputs?.referenceImages??[],...draft.videoInputs?.referenceVideos??[]].filter(Boolean);
 }
@@ -82,9 +83,6 @@ function initialDraft(props:VisualPreparationProps,targetItemId:string):Draft {
  const seconds=sizeTarget?.durationSeconds??(window?window.durationInFrames/window.timeline.fps:Math.max(3,sizeTarget?.minimumSeconds??2));
  return {pexelsSelection,imageBrief:{...emptyImageBrief,references:[]},videoSelection:sizeTarget?.defaultSelection,imageSelection:props.workspace.visualConfiguration?.imageSelection,videoSettings:sizeTarget?.defaultSelection?.provider==='bailian'?defaultWanModelSettings(sizeTarget.defaultSelection.model??''):{...defaultWanSettings},firstFrameFit:'contain',tab:props.currentVisualKind==='video'?'video':'image',origin:{image:'material',video:'material'},imagePrompt:template?.imagePrompt??'',videoPrompt:template?.videoPrompt??'',references:[],firstFrame:selected??(props.currentVisualKind==='image'?props.currentMaterialRevisionId??'':''),settings:{size,quality:'auto',count:1},duration:String(seconds),usage:'still',selected:{image:'',video:''}};
 }
-function episodeVisualDefaults(workspaceId:string,kind:Kind):unknown{
- try{const value=JSON.parse(localStorage.getItem(`loop-${kind}-default:${workspaceId}`)??sessionStorage.getItem(`loop-${kind}-default:${workspaceId}`)??'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{};}catch{return {};}
-}
 function restoreDraft(props:VisualPreparationProps,targetItemId:string,saved:unknown):Draft{
  const base=initialDraft(props,targetItemId),videoDefaults=episodeVisualDefaults(props.workspace.id,'video') as Partial<Draft>;
  const selected=Object.hasOwn(videoDefaults,'videoSelection')?videoDefaults.videoSelection:base.videoSelection;
@@ -95,7 +93,7 @@ export function WorkspaceVisualPreparation(props:VisualPreparationProps){
  const options=props.selectedShotId?props.workspace.clips.filter(c=>c.shotId===props.selectedShotId):props.workspace.clips;
  const target=options.find(c=>c.itemId===props.selectedTargetItemId)??options[0];
  if(props.readOnly&&target)return <WorkspaceVisualRecord workspace={props.workspace} targetItemId={target.itemId} options={options} onTargetChange={props.onTargetChange} materials={props.materials} currentVisualPath={props.currentVisualPath} currentVisualSha256={props.currentVisualSha256} preview={props.preview} completedView={props.completedView} preparationStatus={props.preparationStatus}/>;
- return target?<VisualPreparationTarget key={props.workspace.episodeId+':'+props.workspace.id+':'+target.itemId} {...props} targetItemId={target.itemId} options={options}/>:null;
+ return target?<VisualPreparationTarget key={props.workspace.episodeId+':'+props.workspace.id+':'+target.itemId+':'+props.workspace.preparationRevisionId} {...props} targetItemId={target.itemId} options={options}/>:null;
 }
 function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:string;options:ProductionWorkspace['clips']}){
  const {workspace,command,onChange:updated,targetItemId,options}=props,storageKey=`loop-visual-draft:${workspace.id}:${targetItemId}`;
@@ -107,7 +105,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const canSplitVideo=timeline&&visual?.kind==='video'&&!hasSeparatedVideoSound(timeline,visual);
  const shelf=useWorkspaceMaterialSelection();
  const adoptionDescriptionId=useId();
- const [draft,setDraftState]=useState<Draft>(()=>{let saved:unknown=null;try{const value=JSON.parse(sessionStorage.getItem(storageKey)??'null');if(value?.settings&&['image','video'].includes(value.tab))saved=value;}catch{/* A missing browser draft is an empty form. */}return restoreDraft(props,targetItemId,saved);});
+ const [draft,setDraftState]=useState<Draft>(()=>{let saved:unknown=null;try{const value=JSON.parse(sessionStorage.getItem(storageKey)??'null');if(value?.settings&&['image','video'].includes(value.tab)&&(!value.preparationRevisionId||value.preparationRevisionId===workspace.preparationRevisionId))saved=value;}catch{/* A missing browser draft is an empty form. */}return restoreDraft(props,targetItemId,saved);});
  const draftRef=useRef(draft);draftRef.current=draft;
  function setDraft(action:SetStateAction<Draft>){
   const previous=draftRef.current,next=recordVisualDefaultEdits(previous,typeof action==='function'?action(previous):action);
@@ -169,7 +167,6 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const formRef=useRef<HTMLDivElement>(null);
  const working=useRef(false),fileInput=useRef<HTMLInputElement>(null),referenceInput=useRef<HTMLInputElement>(null),mounted=useRef(true),zoomTrigger=useRef<HTMLButtonElement>(null),videoPreviewRef=useRef<HTMLVideoElement>(null),adoptTrigger=useRef<HTMLButtonElement>(null),thumbnailRail=useRef<HTMLDivElement>(null);
  useEffect(()=>{mounted.current=true;return()=>{mounted.current=false;};},[]);
- useEffect(()=>{try{sessionStorage.setItem(storageKey,JSON.stringify(draft));}catch{/* Storage is optional. */}},[storageKey,draft]);
  useEffect(()=>{if(!zoom)return;return()=>zoomTrigger.current?.focus();},[zoom]);
  const candidates=(workspace.visualCandidates??[]).filter(c=>c.targetItemId===targetItemId&&c.status!=='rejected');
  const allMaterials=[...props.materials,...retainedMaterials,...uploadRows.flatMap(row=>row.material?[row.material]:[]),...(workspace.visualCandidates??[]).filter(c=>c.kind==='image'&&c.materialRevisionId).map(c=>({id:c.materialRevisionId!,material_type:'image',source_path:c.relativePath.split('/').pop()??'生成图片',storage_path:c.relativePath}))].filter((m,i,a)=>a.findIndex(x=>x.id===m.id)===i);
@@ -244,6 +241,27 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  } satisfies VideoVisualInputSelection]:[]);
  const mentionOptions=promptReferenceOptions(tab==='image'?draft.references.flatMap(id=>{const m=allMaterials.find(m=>m.id===id);return m?[{materialRevisionId:id,kind:'image' as const,name:m.source_path.split('/').pop()??m.source_path}]:[];}):videoInputs.flatMap(entry=>entry.reason||!entry.material||!entry.role?[]:[{materialRevisionId:entry.id,kind:entry.role==='referenceVideos'?'video' as const:'image' as const,name:entry.material.source_path.split('/').pop()??entry.material.source_path,role:entry.role}]),draft.promptReferences);
  const advancedVideo=videoMode.id!=='first-frame';
+ const videoTokens=new Set(draft.videoPrompt.match(/@(图片|视频)[1-9]\d*/g)??[]);
+ const videoReferences=(draft.promptReferences??[]).filter(binding=>videoTokens.has(binding.token));
+ const overrides=draft.defaultOverrides?.fields??[];
+ const hasOwnVideoInputs=draft.videoInputIds!==undefined||draft.videoInputs!==undefined||overrides.includes('videoModeId');
+ const [initialDuration]=useState(()=>initialDraft(props,targetItemId).duration);
+ const settingsOverrides=Object.fromEntries(Object.entries(videoSettings).filter(([key,value])=>key==='negativePrompt'?!!value:overrides.some(field=>field===`videoSettings.${key}`)));
+ const batchInputs:StoryboardVideoDraft['inputs']={
+  ...(draft.videoPrompt.trim()&&draft.videoPrompt!==(template?.videoPrompt??'')?{prompt:draft.videoPrompt}:{}),
+  ...(videoReferences.length?{promptReferences:videoReferences}:{}),
+  ...(overrides.includes('videoSelection')?{selection:draft.videoSelection}:{}),
+  ...(draft.durationOverride??draft.duration!==initialDuration?{durationSeconds:Number(draft.duration)}:{}),
+  ...(hasOwnVideoInputs?(advancedVideo?{videoMode:videoMode.id,visualInputs:submittedVideoInputs}:{firstFrameMaterialRevisionId:videoInputIds[0]??''}):{}),
+  ...(overrides.includes('firstFrameFit')&&(!advancedVideo||submitFirstFrame)?{firstFrameFit:draft.firstFrameFit}:{}),
+  ...(videoProvider==='bailian'&&Object.keys(settingsOverrides).length?{videoSettings:settingsOverrides}:{}),
+  ...(videoProvider==='minimax'&&overrides.includes('videoResolution')?{videoResolution:draft.videoResolution}:{}),
+ };
+ const batchVideoDraft=targetShotId&&workspace.preparationRevisionId&&Object.keys(batchInputs).length?{
+  shotId:targetShotId,targetItemId,preparationRevisionId:workspace.preparationRevisionId,inputs:batchInputs,
+ }:undefined;
+ const storedDraft=JSON.stringify({...draft,preparationRevisionId:workspace.preparationRevisionId,batchVideoDraft});
+ useEffect(()=>{try{sessionStorage.setItem(storageKey,storedDraft);}catch{/* Storage is optional. */}},[storageKey,storedDraft]);
  const canSubmitVideoMode=!!videoService&&!!videoModel;
  const videoInputProblem=videoVisualInputProblem(videoMode,submittedVideoInputs)
   ??(videoMode.allowInlineMp4&&videoInputs.some(entry=>entry.role==='referenceVideos'&&!entry.reason&&entry.material?.mime_type!=='video/mp4'&&!videoSources[entry.id]?.trim())?'本地参考视频须为 MP4，其他格式需要 HTTPS 地址。':null);
@@ -263,7 +281,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const candidateMeta=[current?'当前镜头画面':candidate?.materialRevisionId&&videoDraftIds(draft).includes(candidate.materialRevisionId)?'已选视频参考图':candidate?.generation?.selection?.model,candidate?.status==='stale'?'输入已变化':null].filter(Boolean).join(' · ');
  const target=workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),voiceDriven=!!target&&target.voiceMode!=='none';
  const minimumSeconds=wanProfile?.durations[0]??videoService?.constraints.durationSeconds?.min??2,maximumSeconds=wanProfile?.durations.at(-1)??videoService?.constraints.durationSeconds?.max??15,actualDuration=voiceDriven?target.durationSeconds:Number(draft.duration),providerDuration=actualDuration===null?null:wanProfile?wanProviderDuration(videoModel!,actualDuration,voiceDriven):voiceDriven?Math.max(minimumSeconds,Math.ceil(actualDuration)):actualDuration,invalidDuration=!actualDuration||actualDuration<(voiceDriven?0.1:minimumSeconds)||actualDuration>maximumSeconds||!voiceDriven&&!Number.isInteger(actualDuration)||!!wanProfile&&providerDuration===undefined;
- function change<K extends keyof Draft>(key:K,value:Draft[K]){setDraft(d=>({...d,[key]:value}));}
+ function change<K extends keyof Draft>(key:K,value:Draft[K]){setDraft(d=>({...d,[key]:value,...(key==='duration'?{durationOverride:true}:{})}));}
  function useConfiguredVideo(selection:ProductionSelection){
   if(selection.adapter==='pexels_video')setDraft(d=>({...d,pexelsSelection:selection,origin:{...d.origin,video:'search'}}));
   else setDraft(d=>({...d,videoSelection:selection,...(!d.videoSelection&&selection.provider==='bailian'&&JSON.stringify(d.videoSettings)===JSON.stringify(defaultWanSettings)?{videoSettings:defaultWanModelSettings(selection.model!)}:{}),...(selection.provider==='minimax'&&!minimaxVideoModels[selection.model??'']?.resolutions.includes(d.videoResolution??'768P')?{videoResolution:'768P'}:{}),origin:{...d.origin,video:'generate'}}));
