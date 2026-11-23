@@ -1,4 +1,4 @@
-import type { HistoricalDatabaseV1 as Database } from "../lib/history/databaseV1.types";
+import type { HistoricalDatabaseV1 as Database } from "../lib/history/databaseV1.types.js";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
@@ -19,6 +19,14 @@ type TaskRun = Pick<Database["public"]["Tables"]["task_runs"]["Row"], "attempt" 
 type Transition = Database["public"]["Tables"]["state_transitions"]["Row"];
 type ExternalConnectionVersion = Database["public"]["Functions"]["list_external_connection_versions"]["Returns"][number];
 
+export interface ManualScriptReviewDraft {
+ sourceText:string;
+ targetDuration:number|null;
+ reason:string;
+ version:string;
+ requestId?:string;
+}
+
 export interface EpisodeProductionSnapshot {
   artifacts: Artifact[];
   audioTrackAnnotations: AudioTrackAnnotation[];
@@ -26,6 +34,7 @@ export interface EpisodeProductionSnapshot {
   blueprint: Blueprint | null;
   connectionVersions: ExternalConnectionVersion[];
   episode: Episode;
+  manualScriptReviewDraft?: ManualScriptReviewDraft|null;
   materialRevisions: MaterialRevision[];
   preRenderReviewMemberDecisions: PreRenderMemberDecision[];
   preRenderReviewMembers: PreRenderReviewMember[];

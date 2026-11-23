@@ -8,11 +8,22 @@ import {CompletedCatalogArtwork} from './CompletedCatalogArtwork';
 import {EpisodeWorkspace} from './WorkspaceViews';
 import {EpisodeStatus,episodeActionState,episodeNextAction,episodeWorkflowLabel} from './episodePresentation';
 import {productionCatalogParameters,type CatalogVideoMetadata} from './productionCatalogPreview';
+import {EpisodeBatchDialog,type EpisodeBatchAction,type EpisodeBatchSelectionItem} from './EpisodeBatch';
+import {episodeIsArchived} from './WorkspaceViews';
 import '../operations/workbench.css';
 import './production-catalog.css';
 
-type Props=ComponentProps<typeof EpisodeWorkspace>&{onOpenCompleted?:(id:string)=>void};
+type Props=ComponentProps<typeof EpisodeWorkspace>&{
+ onOpenCompleted?:(id:string)=>void;
+ batchActions?:readonly EpisodeBatchAction[];
+ batchSelectionScope?:string;
+ onBatchChanged?:()=>Promise<void>;
+};
 const previewPreference='loop-control.catalog.preview.v1';
+const emptySelection=new Map<string,EpisodeBatchSelectionItem>();
+function selectionItem(episode:Props['episodes'][number]):EpisodeBatchSelectionItem{
+ return {id:episode.id,title:episode.title||uiText('未命名生产单'),accountId:episode.account_id,archived:episodeIsArchived(episode),stage:episode.stage};
+}
 
 function MobilePreview({children,onClose}:{children:ReactNode;onClose:()=>void}){
  const dialog=useRef<HTMLDialogElement>(null);
@@ -21,8 +32,30 @@ function MobilePreview({children,onClose}:{children:ReactNode;onClose:()=>void})
  return <dialog ref={dialog} className="production-preview-dialog dan-ui product-ui" aria-label={uiText('生产单预览')} onCancel={onClose} onClose={()=>{if(!dialog.current?.open)onClose();}}>{children}</dialog>;
 }
 
-export function ProductionCatalog({suspended=false,...props}:Props&{suspended?:boolean}){
+export function ProductionCatalog({suspended=false,batchActions,batchSelectionScope,onBatchChanged,...props}:Props&{suspended?:boolean}){
  const [selectedId,setSelectedId]=useState('');
+ const [batch,setBatch]=useState(()=>({scope:batchSelectionScope,items:emptySelection}));
+ const [batchDialog,setBatchDialog]=useState<{id:string;scope:string|undefined;selection:EpisodeBatchSelectionItem[]}|null>(null);
+ const batchItems=batch.scope===batchSelectionScope?batch.items:emptySelection;
+ const activeBatchDialog=batchDialog?.scope===batchSelectionScope?batchDialog:null;
+ const closeBatchDialog=()=>setBatchDialog(null);
+ const openBatchDialog=(id:string)=>{
+  const page=props.isPageLoading?new Map():new Map(props.episodes.map(episode=>[episode.id,episode]));
+  const selection=[...batchItems.values()].map(item=>{const episode=page.get(item.id);return episode?selectionItem(episode):item;});
+  setBatchDialog({id,scope:batchSelectionScope,selection});
+ };
+ const updateBatch=(episodes:Props['episodes'],checked:boolean)=>setBatch(previous=>{
+  const items=new Map(previous.scope===batchSelectionScope?previous.items:emptySelection);
+  for(const episode of episodes){
+   if(checked)items.set(episode.id,selectionItem(episode));
+   else items.delete(episode.id);
+  }
+  return {scope:batchSelectionScope,items};
+ });
+ useEffect(()=>{
+  if(batch.scope!==batchSelectionScope)setBatch({scope:batchSelectionScope,items:emptySelection});
+  if(batchDialog&&batchDialog.scope!==batchSelectionScope)setBatchDialog(null);
+ },[batch.scope,batchDialog?.scope,batchSelectionScope]);
  const [expanded,setExpanded]=useState(()=>localStorage.getItem(previewPreference)!=='hidden');
  const [small,setSmall]=useState(()=>typeof matchMedia==='function'&&matchMedia('(max-width: 1000px)').matches);
  const [mobileOpen,setMobileOpen]=useState(false);
@@ -97,7 +130,19 @@ export function ProductionCatalog({suspended=false,...props}:Props&{suspended?:b
   </section>;
  }
  return <div ref={catalog} className="production-catalog" data-preview={visible&&!small}>
-  <EpisodeWorkspace {...props} previewEpisodeId={episode?.id} onPreviewEpisode={select} previewControl={{visible,disabled:!episode,onToggle:()=>{if(visible)close();else if(episode)select(episode.id);}}}/>
+  <EpisodeWorkspace {...props} batchSelection={batchActions&&{selected:batchItems,onToggle:updateBatch,toolbar:batchItems.size>0&&<div className="episode-batch-toolbar" role="group" aria-label={uiText('批量操作')}>
+   <span role="status">{uiText('已选 {count} 张',{count:batchItems.size})}</span>
+   <Button size="sm" color="secondary" onPress={()=>openBatchDialog('selection')}>{uiText('查看选中清单')}</Button>
+   {batchActions.map(action=><Button key={action.id} size="sm" color="secondary" onPress={()=>openBatchDialog(action.id)}>{action.label}</Button>)}
+   <Button size="sm" color="tertiary" onPress={()=>setBatch({scope:batchSelectionScope,items:emptySelection})}>{uiText('清空选择')}</Button>
+  </div>}} previewEpisodeId={episode?.id} onPreviewEpisode={select} previewControl={{visible,disabled:!episode,onToggle:()=>{if(visible)close();else if(episode)select(episode.id);}}}/>
   {visible&&(small?<MobilePreview onClose={close}>{content}</MobilePreview>:<aside className="production-preview" aria-label={uiText('生产单预览')}>{content}</aside>)}
+  {activeBatchDialog?.id==='selection'?<EpisodeBatchDialog title={uiText('选中生产单')} onClose={closeBatchDialog}>
+   <ul role="list" className="episode-batch-items">{activeBatchDialog.selection.map(item=><li key={item.id}>
+    <strong>{item.title}</strong><span>{props.accountsById.get(item.accountId)?.name} · <code title={item.id}>{item.id.slice(0,8)}</code></span>
+   </li>)}</ul>
+  </EpisodeBatchDialog>:activeBatchDialog&&batchActions?.find(action=>action.id===activeBatchDialog.id)?.render({
+   selection:activeBatchDialog.selection,onClose:closeBatchDialog,onChanged:onBatchChanged??(async()=>{}),
+  })}
  </div>;
 }
