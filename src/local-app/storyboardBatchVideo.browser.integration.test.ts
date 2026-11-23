@@ -23,9 +23,11 @@ it.skipIf(!enabled)('adopts a voice, reviews a video draft, adopts the generated
   const reviewText=()=>browser!.evaluate("document.querySelector('dialog[open]').innerText");
   await browser.click('批量操作');
   await check('勾选镜头 01');
+  await browser.click('共用设置');
   await browser.click('批量生成视频');
   await browser.cli('wait','--text','先采用口播');
   await browser.cli('press','Escape');
+  await browser.click('共用设置');
   await browser.click('批量生成口播');
   await browser.click('确认并提交');
   await browser.cli('wait','--text','已提交 1 个镜头');
@@ -56,6 +58,7 @@ it.skipIf(!enabled)('adopts a voice, reviews a video draft, adopts the generated
   await browser.wait("!document.querySelector('dialog[open]')");
   expect(await browser.evaluate("document.querySelector('textarea[aria-label=画面动作]').value")).toBe(draft);
   expect((await f.read()).visualTasks).toHaveLength(0);
+  await browser.click('共用设置');
   await browser.click('批量生成视频');
   await browser.click('确认并提交');
   await browser.cli('wait','--text','已提交 1 个镜头');
@@ -103,7 +106,7 @@ it.skipIf(!enabled)('reviews an unopened legacy video draft and inherits the cur
   const defaults=(videoModeId:string)=>JSON.stringify(JSON.stringify({videoSelection:f.selections.video,firstFrameFit:'cover',videoModeId}));
   await browser.evaluate(`localStorage.setItem(${modeKey},${defaults('references')})`);
   await browser.click('批量操作');
-  await browser.click('全选本单');
+  await browser.cli('find','role','checkbox','check','--name','全选镜头','--exact');
   await browser.click('共用设置');
   await browser.cli('fill','input[name=durationSeconds]','4');
   await browser.click('批量生成视频');
@@ -115,7 +118,7 @@ it.skipIf(!enabled)('reviews an unopened legacy video draft and inherits the cur
   await browser.click('退出批量操作');
   await browser.evaluate(`localStorage.setItem(${modeKey},${defaults('first-frame')})`);
   await browser.click('批量操作');
-  await browser.click('全选本单');
+  await browser.cli('find','role','checkbox','check','--name','全选镜头','--exact');
   await browser.click('共用设置');
   await browser.cli('fill','input[name=durationSeconds]','4');
   await browser.click('批量生成视频');

@@ -14,7 +14,7 @@ import {workspaceStoryboardProgress} from './workspaceStoryboardProgress';
 
 interface Props {
  workspace:ProductionWorkspace;project:OpenChatCutProject|null;materials:Array<{storage_path:string;source_path:string}>;
- batch?:{selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(shotId:string)=>void};
+ batch?:{selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(shotId:string)=>void;onSelectAll:(checked:boolean)=>void};
  onGenerationNavigate?:(shotId:string,kind:StoryboardBatchKind,targetItemId?:string)=>void;
  selectedShotId:string|undefined;disabled:boolean;readOnly?:boolean;completedView?:boolean;
  onPreparationNavigate?:(shotId:string,target:WorkspacePreparationTarget)=>void;
@@ -24,6 +24,7 @@ interface Props {
 export function WorkspaceShotTable({workspace,project,materials,selectedShotId,disabled,readOnly=false,completedView=false,batch,onSelect,onDelete,onEdit,onPreparationNavigate,onGenerationNavigate}:Props){
  const locked=disabled||readOnly;
  const selectionDisabled=disabled&&!readOnly;
+ const allSelected=!!batch&&batch.eligible.size>0&&batch.eligible.size===batch.selected.size;
  const clips=workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index);
  const [adding,setAdding]=useState(false),[text,setText]=useState(''),[drop,setDrop]=useState<{shotId:string;after:boolean}|null>(null),[announcement,setAnnouncement]=useState('');
  const helpId=useId(),inputId=useId(),dragged=useRef<string|null>(null),editing=useRef(false),input=useRef<HTMLTextAreaElement>(null),addButton=useRef<HTMLButtonElement>(null);
@@ -65,7 +66,16 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
  return <>
   <div className="workspace-table-caption"><h3>{uiText("镜头 ")}{!readOnly&&!disabled&&<span id={helpId} >{uiText("拖动行调整顺序，或按 Alt + ↑/↓")}</span>}</h3></div>
   <div className="workspace-shot-table-scroll" role="region" aria-label={uiText("镜头清单")} tabIndex={0}>
-   <table className={"workspace-shot-table"+(readOnly?" is-readonly":"")} aria-label={uiText("镜头")}><colgroup>{[72,'auto',72,84,...(readOnly?[]:[44])].map((width,index)=><col key={index} style={{width}}/>)}</colgroup><thead><tr><th scope="col">{batch?<span className="storyboard-batch-shot-cell"><span>{uiText("镜头")}</span></span>:uiText("镜头")}</th><th scope="col">{uiText("脚本与素材")}</th><th scope="col">{uiText("时长")}</th><th scope="col">{uiText("准备情况")}</th>{!readOnly&&<th scope="col">{uiText("操作")}</th>}</tr></thead>
+   <table className={"workspace-shot-table"+(readOnly?" is-readonly":"")} aria-label={uiText("镜头")}>
+    <colgroup>{[...(batch?[44,44]:[72]),'auto',72,84,...(readOnly?[]:[44])].map((width,index)=><col key={index} style={{width}}/>)}</colgroup>
+    <thead><tr>
+     {batch&&<th scope="col" className="workspace-shot-selection-cell"><label className="storyboard-batch-check"><input type="checkbox" aria-label={uiText('全选镜头')} checked={allSelected} disabled={locked||batch.disabled||!batch.eligible.size} ref={element=>{if(element)element.indeterminate=batch.selected.size>0&&!allSelected;}} onChange={event=>batch.onSelectAll(event.target.checked)}/></label></th>}
+     <th scope="col" className="workspace-shot-number-cell">{uiText("镜头")}</th>
+     <th scope="col" className="workspace-shot-content-cell">{uiText("脚本与素材")}</th>
+     <th scope="col" className="workspace-shot-duration-cell">{uiText("时长")}</th>
+     <th scope="col" className="workspace-shot-status-cell">{uiText("准备情况")}</th>
+     {!readOnly&&<th scope="col" className="workspace-shot-table-actions-cell">{uiText("操作")}</th>}
+    </tr></thead>
     <tbody>{clips.map((clip,index)=>{
      const shotLabel=`镜头 ${String(index+1).padStart(2,"0")}`;
      const preparation=workspaceShotPreparation(workspace,clip.shotId,project);
@@ -82,8 +92,9 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
       onDragOver={event=>dragOver(event,clip.shotId)}
       onDrop={event=>{event.preventDefault();const id=dragged.current;dragged.current=null;setDrop(null);if(locked||!id||id===clip.shotId)return;const rect=event.currentTarget.getBoundingClientRect(),after=event.clientY>rect.top+rect.height/2,remaining=clips.filter(c=>c.shotId!==id),target=remaining.findIndex(c=>c.shotId===clip.shotId);void move(id,after?remaining[target+1]?.shotId??null:clip.shotId);}}
       onDragEnd={()=>{dragged.current=null;setDrop(null);}}>
-      <td><div className={batch?'storyboard-batch-shot-cell':undefined}>{batch&&<label onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}><input type="checkbox" aria-label={uiText("勾选{value0}",{value0:shotLabel})} checked={batch.selected.has(clip.shotId)} disabled={locked||batch.disabled||!batch.eligible.has(clip.shotId)} onChange={()=>batch.onToggle(clip.shotId)}/></label>}<button type="button" disabled={selectionDisabled} draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></div></td>
-      <td><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div>
+      {batch&&<td className="workspace-shot-selection-cell"><label className="storyboard-batch-check" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}><input type="checkbox" aria-label={uiText("勾选{value0}",{value0:shotLabel})} checked={batch.selected.has(clip.shotId)} disabled={locked||batch.disabled||!batch.eligible.has(clip.shotId)} onChange={()=>batch.onToggle(clip.shotId)}/></label></td>}
+      <td className="workspace-shot-number-cell"><button type="button" disabled={selectionDisabled} draggable={!locked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></td>
+      <td className="workspace-shot-content-cell"><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div>
        {(['speech','video'] as const).map(kind=>{
         const state=generation[kind];
         if(!state)return null;
@@ -95,14 +106,14 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
         </div>;
        })}
       </td>
-      <td>{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</td>
-      <td><WorkspaceShotPreparationStatus preparation={preparation} shotLabel={shotLabel} onNavigate={onPreparationNavigate?target=>{if(!selectionDisabled)onPreparationNavigate(clip.shotId,target);}:undefined}/></td>
+      <td className="workspace-shot-duration-cell">{Number.isFinite(duration)?`${duration!.toFixed(1)} s`:'—'}</td>
+      <td className="workspace-shot-status-cell"><WorkspaceShotPreparationStatus preparation={preparation} shotLabel={shotLabel} onNavigate={onPreparationNavigate?target=>{if(!selectionDisabled)onPreparationNavigate(clip.shotId,target);}:undefined}/></td>
       {!readOnly&&<td className="workspace-shot-table-actions-cell" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}>
        <Button type="button" size="sm" color="tertiary" className="workspace-shot-menu-trigger" aria-label={uiText("删除{value0}",{value0:String(shotLabel)})} title={clips.length<=1?uiText("至少保留一个镜头"):uiText("删除镜头")} isDisabled={disabled||clips.length<=1} iconLeading={Trash2} onPress={()=>onDelete(clip)}/>
       </td>}
      </tr>;
     })}</tbody>
-    {!readOnly&&<tfoot><tr><td colSpan={5} className="workspace-shot-insert-cell"><Button ref={addButton} size="sm" color="tertiary" className="workspace-shot-add" aria-label={uiText("新增镜头")} title={uiText("新增镜头")} isDisabled={disabled||adding} onPress={()=>{setAdding(true);requestAnimationFrame(()=>input.current?.focus());}}><Plus size={18} aria-hidden="true"/></Button>
+    {!readOnly&&<tfoot><tr><td colSpan={batch?6:5} className="workspace-shot-insert-cell"><Button ref={addButton} size="sm" color="tertiary" className="workspace-shot-add" aria-label={uiText("新增镜头")} title={uiText("新增镜头")} isDisabled={disabled||adding} onPress={()=>{setAdding(true);requestAnimationFrame(()=>input.current?.focus());}}><Plus size={18} aria-hidden="true"/></Button>
      {adding&&<form className="workspace-shot-insert-form" onSubmit={event=>{event.preventDefault();void insert();}}><label htmlFor={inputId}>{uiText("新镜头文案")}</label><textarea id={inputId} ref={input} value={text} required maxLength={100000} rows={2} disabled={disabled} onChange={event=>setText(event.target.value)}/><div><Button size="sm" color="secondary" isDisabled={disabled} onPress={cancelAdd}>{uiText("取消")}</Button><Button size="sm" color="primary" type="submit" isDisabled={disabled||!text.trim()}>{uiText("新增镜头")}</Button></div></form>}
     </td></tr></tfoot>}
    </table>

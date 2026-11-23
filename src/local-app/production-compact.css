@@ -33,14 +33,14 @@
 .workspace-shot-table-scroll{overflow:auto;min-height:0;flex:1}
 .workspace-shot-table{width:100%;min-width:430px;border-collapse:collapse;table-layout:fixed;font-size:12px}
 .workspace-shot-table th{position:sticky;top:0;z-index:1;background:var(--lc-surface-2,#f7f9fc);color:var(--lc-muted,#596b83);font-size:11px;font-weight:500;text-align:left;padding:7px 6px}
-.workspace-shot-table th:first-child{width:70px}.workspace-shot-table th:nth-child(3){width:65px}.workspace-shot-table th:nth-child(4){width:95px}.workspace-shot-table th:nth-child(5){width:44px}
+.workspace-shot-table th.workspace-shot-number-cell{width:70px}.workspace-shot-table th.workspace-shot-duration-cell{width:65px}.workspace-shot-table th.workspace-shot-status-cell{width:95px}.workspace-shot-table th.workspace-shot-table-actions-cell{width:44px}
 .workspace-shot-table td{padding:7px 6px;border-bottom:1px solid var(--lc-line,#d8e1ee);vertical-align:middle;font-variant-numeric:tabular-nums}
-.workspace-shot-table :is(thead,tbody) :is(th,td):not(:nth-child(2)){white-space:nowrap}
-.workspace-shot-table :is(th,td):nth-child(4){padding-inline:5px}
+.workspace-shot-table :is(thead,tbody) :is(th,td):not(.workspace-shot-content-cell){white-space:nowrap}
+.workspace-shot-table :is(th,td).workspace-shot-status-cell{padding-inline:5px}
 .workspace-shot-table tr[aria-selected=true]{background:var(--lc-accent-soft,#eaf0ff)}
 .workspace-shot-table button{display:block;text-align:left;background:transparent;border:0;color:inherit;cursor:pointer;padding:3px 0;min-height:28px;width:100%;font:inherit}
-.workspace-shot-table td:first-child button{font-weight:600}
-.workspace-shot-table tr[aria-selected=true] td:first-child{color:var(--lc-accent,#365fe0)}
+.workspace-shot-table td.workspace-shot-number-cell button{font-weight:600}
+.workspace-shot-table tr[aria-selected=true] td.workspace-shot-number-cell{color:var(--lc-accent,#365fe0)}
 .workspace-shot-text span{display:block;line-height:1.6;overflow-wrap:anywhere}
 .workspace-shot-text small{display:block;color:var(--lc-muted,#596b83);font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .workspace-shot-table .is-ready{color:var(--lc-success,#167556)}.workspace-shot-table .is-pending{color:var(--lc-warning,#94600c)}
@@ -112,7 +112,7 @@
 [data-compact-workflow] .embedded-studio.is-focused{position:fixed;inset:8px;z-index:90;background:var(--lc-bg,#eef2f8);padding:0;min-height:0}
 [data-compact-workflow] .embedded-studio.is-focused>.embedded-studio-body{min-height:0}
 @media(min-width:1600px){[data-compact-workflow]{--workflow-detail-width:410px}}
-@media(max-width:1150px){[data-compact-workflow]{--workflow-detail-width:330px}.workspace-shot-table th:nth-child(4),.workspace-shot-table th:nth-child(5){width:66px}[data-compact-workflow]>.production-workspace-title>nav>button{font-size:12px;margin-right:6px;padding-right:10px;gap:6px}[data-compact-workflow]>.production-workspace-title>nav small{font-size:10px}}
+@media(max-width:1150px){[data-compact-workflow]{--workflow-detail-width:330px}.workspace-shot-table th.workspace-shot-status-cell,.workspace-shot-table th.workspace-shot-table-actions-cell{width:66px}[data-compact-workflow]>.production-workspace-title>nav>button{font-size:12px;margin-right:6px;padding-right:10px;gap:6px}[data-compact-workflow]>.production-workspace-title>nav small{font-size:10px}}
 @media(max-width:900px){[data-compact-workflow]{display:block}[data-compact-workflow]>.production-workspace-body{display:block}[data-compact-workflow]>.production-workspace-body>div:not([hidden]){display:block}.workspace-preparation-grid{grid-template-columns:1fr}.workspace-shot-table-scroll{max-height:480px}.workspace-preparation-detail{border-left:0;border-top:1px solid var(--lc-line,#d8e1ee)}.workspace-preparation-detail>[role=tabpanel]{max-height:none;overflow:visible}.workspace-editing-panels{grid-template-columns:1fr}[data-compact-workflow]>.production-workspace-title{margin-bottom:12px}[data-compact-workflow]>.production-workspace-title>nav>button{font-size:11px;padding-right:12px}[data-compact-workflow]>.production-workspace-title>nav small{display:none}[data-compact-workflow] .embedded-studio-body{height:650px;min-height:650px;flex:none}[data-compact-workflow] .embedded-studio.is-focused{display:flex}[data-compact-workflow] .embedded-studio.is-focused .embedded-studio-body{flex:1;min-height:0;height:auto}}
 @media(max-width:600px){.workspace-shot-table{min-width:430px}[data-compact-workflow]>.production-workspace-title h2{font-size:16px}[data-compact-workflow] .workspace-preparation>header{align-items:flex-start}[data-compact-workflow] .workspace-preparation>header>div{flex-wrap:wrap}.workspace-table-caption span{font-size:10px}[data-compact-workflow] .embedded-studio>header [role=status]{width:100%;margin-bottom:4px}}
 [data-compact-workflow] .workspace-visual-kind{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;margin:0;font-size:12px;color:var(--lc-muted,#596b83)}
@@ -130,7 +130,7 @@ html[data-interface="impeccable"] .impeccable-app.product-ui [data-compact-workf
 [data-compact-workflow] .workspace-image-generation-fields>label{display:grid;gap:5px;margin:0;font-size:12px;min-width:0}
 .workspace-image-generation-fields>label:first-child{grid-column:1/-1}
 [data-compact-workflow] .workspace-image-generation-fields input{width:100%}
-.workspace-shot-table td:first-child button{overflow-wrap:normal;white-space:nowrap;font-size:11px;overflow:hidden;text-overflow:ellipsis}
+.workspace-shot-table td.workspace-shot-number-cell button{overflow-wrap:normal;white-space:nowrap;font-size:11px;overflow:hidden;text-overflow:ellipsis}
 .workspace-table-caption h3>span{font-weight:400;margin-left:8px}
 .workspace-shot-table th:last-child{width:40px;padding-inline:4px;text-align:center}
 .workspace-shot-table .workspace-shot-table-actions-cell{padding-inline:4px;text-align:center}
@@ -159,10 +159,10 @@ html[data-interface="impeccable"] .workspace-shot-menu [role="menuitem"].menu-it
 html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace:has(.embedded-studio.is-focused){z-index:60}
 /* Round two: the selected shot owns preparation, preview and versions. */
 [data-compact-workflow] .workspace-preparation-grid{grid-template-columns:minmax(330px,.82fr) minmax(470px,1.18fr)}
-[data-compact-workflow] .workspace-shot-table th:first-child{width:64px}
-[data-compact-workflow] .workspace-shot-table th:nth-child(3){width:54px}
-[data-compact-workflow] .workspace-shot-table th:nth-child(4){width:65px}
-[data-compact-workflow] .workspace-shot-table th:nth-child(5){width:40px}
+[data-compact-workflow] .workspace-shot-table th.workspace-shot-number-cell{width:64px}
+[data-compact-workflow] .workspace-shot-table th.workspace-shot-duration-cell{width:54px}
+[data-compact-workflow] .workspace-shot-table th.workspace-shot-status-cell{width:65px}
+[data-compact-workflow] .workspace-shot-table th.workspace-shot-table-actions-cell{width:40px}
 [data-compact-workflow] .workspace-shot-text span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 [data-compact-workflow] .workspace-preparation-detail>[role=tabpanel]{padding:16px}
 .workspace-shot-preview{margin:0 0 16px;min-width:0}
@@ -195,7 +195,7 @@ html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-work
 .workspace-editing-readonly-right{min-width:0}
 .workspace-visual-replacement input[type=file][hidden]{display:none}
 @media(min-width:1500px){[data-compact-workflow] .workspace-preparation-grid{grid-template-columns:minmax(400px,.82fr) minmax(560px,1.18fr)}}
-@media(max-width:1150px){[data-compact-workflow] .workspace-preparation-grid{grid-template-columns:minmax(300px,.9fr) minmax(440px,1.1fr)}[data-compact-workflow] .workspace-shot-table th:first-child{width:70px}[data-compact-workflow] .workspace-shot-table th:nth-child(3){width:50px}[data-compact-workflow] .workspace-shot-table th:nth-child(4){width:55px}[data-compact-workflow] .workspace-shot-table th:nth-child(5){width:40px}}
+@media(max-width:1150px){[data-compact-workflow] .workspace-preparation-grid{grid-template-columns:minmax(300px,.9fr) minmax(440px,1.1fr)}[data-compact-workflow] .workspace-shot-table th.workspace-shot-number-cell{width:70px}[data-compact-workflow] .workspace-shot-table th.workspace-shot-duration-cell{width:50px}[data-compact-workflow] .workspace-shot-table th.workspace-shot-status-cell{width:55px}[data-compact-workflow] .workspace-shot-table th.workspace-shot-table-actions-cell{width:40px}}
 @media(max-width:900px){[data-compact-workflow] .workspace-preparation-grid{grid-template-columns:minmax(0,1fr)}.workspace-online-authorization[open]{max-width:100%}.workspace-version-history[open]{max-height:300px}}
 
 /* The material shelf retains its independent height grip. */
@@ -422,9 +422,9 @@ html[data-interface="impeccable"] .product-ui .workspace-call-reservation input 
 
 /* Keep narrow-window navigation and shot actions reachable. */
 @media(max-width:900px){
- .workspace-shot-table :is(th,td):nth-child(n+3){padding-inline:6px;white-space:nowrap}
+ .workspace-shot-table :is(th,td):is(.workspace-shot-duration-cell,.workspace-shot-status-cell,.workspace-shot-table-actions-cell){padding-inline:6px;white-space:nowrap}
  .workspace-shot-table :is(.is-ready,.is-pending){white-space:nowrap;word-break:keep-all}
- .workspace-shot-table :is(th,td):nth-child(4){padding-inline:5px}
+ .workspace-shot-table :is(th,td).workspace-shot-status-cell{padding-inline:5px}
  .workspace-shot-table td.workspace-shot-table-actions-cell{padding-inline:4px}
 }
 @media(max-width:600px){
@@ -432,10 +432,10 @@ html[data-interface="impeccable"] .product-ui .workspace-call-reservation input 
  [data-compact-workflow]>.production-workspace-title .production-workspace-title-actions{grid-column:2;grid-row:1}
  [data-compact-workflow]>.production-workspace-title>nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;overflow:visible}
  [data-compact-workflow]>.production-workspace-title>nav>button{min-width:0;margin:0;padding:4px 8px;justify-content:flex-start}
- .workspace-shot-table th:first-child,.workspace-shot-table tbody td:first-child,.workspace-shot-table .workspace-shot-table-actions-cell,.workspace-shot-table th:nth-child(5){position:sticky;z-index:1;background:var(--lc-surface)}
+ .workspace-shot-table th:first-child,.workspace-shot-table tbody td:first-child,.workspace-shot-table .workspace-shot-table-actions-cell{position:sticky;z-index:1;background:var(--lc-surface)}
  .workspace-shot-table th:first-child,.workspace-shot-table tbody td:first-child{left:0}
- .workspace-shot-table th:nth-child(5),.workspace-shot-table .workspace-shot-table-actions-cell{right:0}
- .workspace-shot-table th:first-child,.workspace-shot-table th:nth-child(5){z-index:3;background:var(--lc-surface-2)}
+ .workspace-shot-table .workspace-shot-table-actions-cell{right:0}
+ .workspace-shot-table th:first-child,.workspace-shot-table th.workspace-shot-table-actions-cell{z-index:3;background:var(--lc-surface-2)}
  .workspace-shot-table tr[aria-selected=true] :is(td:first-child,.workspace-shot-table-actions-cell){background:var(--lc-accent-soft)}
  .workspace-shot-table tbody tr:hover :is(td:first-child,.workspace-shot-table-actions-cell){background:var(--lc-surface-2)}
  .workspace-shot-table-scroll{container-type:inline-size}
@@ -450,7 +450,7 @@ html[data-interface="impeccable"] .product-ui .workspace-call-reservation input 
 /* The shared detail skin adds roomy table padding; keep this compact table local. */
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-table-caption{padding:8px 10px}
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table :is(th,td){padding:7px 6px}
-html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table :is(th,td):nth-child(4){padding-inline:5px}
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table :is(th,td).workspace-shot-status-cell{padding-inline:5px}
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table td.workspace-shot-table-actions-cell{padding-inline:4px}
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table tfoot td.workspace-shot-insert-cell{padding:0;line-height:0}
 

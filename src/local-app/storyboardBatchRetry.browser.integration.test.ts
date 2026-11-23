@@ -54,9 +54,10 @@ it.skipIf(!enabled).each<StoryboardBatchKind>(['speech','video'])('%s keeps mixe
   await browser.click('确认采用');
   await expect.poll(async()=>{const w=await f.read();return speech?w.usedNarration?.some(c=>c.taskId===good.taskId):w.visualCandidates?.some(c=>c.taskId===good.taskId&&c.status==='adopted');}).toBe(true);
   await browser.click('重试失败'+media);
-  const eligibility=await browser.evaluate(`Array.from(document.querySelectorAll('.workspace-shot-table input[type=checkbox]')).map(input=>input.disabled)`);
+  const eligibility=await browser.evaluate(`Array.from(document.querySelectorAll('.workspace-shot-table tbody input[type=checkbox]')).map(input=>input.disabled)`);
   expect(eligibility).toEqual([true,false]);
-  await browser.cli('find','role','checkbox','check','--name','勾选镜头 02','--exact');
+  await browser.cli('find','role','checkbox','check','--name','全选镜头','--exact');
+  await browser.click('共用设置');
   await browser.click('核对重试');
   await browser.cli('wait','--text','核对失败'+media+'重试');
   const review=String(await browser.evaluate("document.querySelector('dialog[open]').innerText"));

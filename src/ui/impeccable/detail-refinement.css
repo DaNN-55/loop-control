@@ -13,11 +13,11 @@ html[data-interface="impeccable"] .product-ui .workspace-preparation-heading > s
 html[data-interface="impeccable"] .product-ui .workspace-preparation-detail > #preparation-panel-visual { padding: 16px; }
 html[data-interface="impeccable"] .product-ui .workspace-table-caption { padding: 14px 16px; }
 html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td) { padding: 12px 10px; vertical-align: middle; }
-html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td):first-child { padding-left: 16px; }
-html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td):nth-child(3) {
+html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td).workspace-shot-number-cell { padding-left: 16px; }
+html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(th,td).workspace-shot-duration-cell {
   text-align: right; white-space: nowrap; padding-right: 16px; font-variant-numeric: tabular-nums lining-nums;
 }
-html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(td,td:first-child button) { font-size: 12px; line-height: 1.6; }
+html[data-interface="impeccable"] .product-ui .workspace-shot-table :is(td,td.workspace-shot-number-cell button) { font-size: 12px; line-height: 1.6; }
 html[data-interface="impeccable"] .product-ui .workspace-shot-table th { font-size: 12px; font-weight: 500; line-height: 1.5; }
 html[data-interface="impeccable"] .product-ui .workspace-shot-text > span { font-size: 13px; line-height: 1.6; }
 html[data-interface="impeccable"] .product-ui .workspace-shot-text > small { margin-top: 4px; font-size: 12px; line-height: 1.5; }

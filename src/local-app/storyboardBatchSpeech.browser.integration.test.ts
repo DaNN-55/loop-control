@@ -19,11 +19,13 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   await browser.evaluate(`sessionStorage.setItem(${JSON.stringify('loop-speech-draft:'+w.id+':'+w.clips[0].shotId+':text')},${JSON.stringify(legacyDraft)})`);
   await browser.click('批量操作');
   const check=async(label:string)=>browser!.cli('find','role','checkbox','check','--name',label,'--exact');
-  await browser.click('全选本单');
+  await check('全选镜头');
   await browser.cli('wait','--text','已选择 2 个镜头');
-  await browser.click('清空选择');
+  await browser.cli('find','role','checkbox','click','--name','全选镜头','--exact');
   await browser.cli('wait','--text','已选择 0 个镜头');
   await check('勾选镜头 02');
+  await browser.wait("document.querySelector('.workspace-shot-table thead input[type=checkbox]').indeterminate");
+  expect(await browser.evaluate("document.querySelector('thead th.workspace-shot-selection-cell').nextElementSibling.textContent.trim()")).toBe('镜头');
   expect(await browser.evaluate("document.querySelector('button[aria-label=\"选择镜头 01\"]').getAttribute('aria-pressed')")).toBe('true');
   await browser.click('选择镜头 02');
   await browser.wait("document.querySelector('button[aria-label=\"选择镜头 02\"]').getAttribute('aria-pressed')==='true'");
@@ -31,6 +33,7 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   await browser.cli('find','role','tab','click','--name','字幕与口播','--exact');
   expect(await browser.evaluate("Array.from(document.querySelectorAll('textarea')).find(el=>el.labels?.[0]?.textContent.trim()==='口播草稿')?.value")).toBe(legacyDraft);
   await check('勾选镜头 01');
+  await browser.click('共用设置');
   await browser.click('批量生成口播');
   await browser.cli('wait','--text','核对批量口播');
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).not.toContain(legacyDraft);
@@ -38,6 +41,7 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   await browser.wait("!document.querySelector('dialog[open]')");
   const draft='这是在浏览器写下的草稿。';
   await browser.fill('口播草稿',draft);
+  await browser.click('共用设置');
   await browser.click('批量生成口播');
   await browser.cli('wait','--text','核对批量口播');
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain(draft);
@@ -50,6 +54,8 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   expect(await browser.evaluate("Array.from(document.querySelectorAll('textarea')).find(el=>el.value.includes('浏览器'))?.value")).toBe(draft);
   expect((await f.read()).narration!.some(n=>n.generationTask)).toBe(false);
   await browser.cli('set','viewport','390','844');
+  await browser.click('共用设置');
+  expect(await browser.evaluate("document.querySelector('.storyboard-batch-settings-popover').getBoundingClientRect().width <= window.innerWidth")).toBe(true);
   await browser.click('批量生成口播');
   await browser.cli('wait','--text','核对批量口播');
   expect(await browser.evaluate("document.querySelector('dialog[open]').getBoundingClientRect().width <= window.innerWidth")).toBe(true);

@@ -75,10 +75,10 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
 }
 
 /* Old compact rules gave the status column a separate 5px gutter. */
-html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table :is(th, td):nth-child(4) {
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table :is(th, td).workspace-shot-status-cell {
  padding-inline: var(--preparation-gutter);
 }
-html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table th:nth-child(5) {
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table th.workspace-shot-table-actions-cell {
  padding-inline: 15px 7px;
 }
 html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-menu-trigger:not(:disabled):is(:hover, [data-hovered], :focus-visible) svg {
@@ -137,6 +137,6 @@ html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace
 }
 
 /* Numeric/status/action columns share a centered axis; script copy stays left aligned. */
-html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table :is(th,td):is(:first-child,:nth-child(3),:nth-child(4),:nth-child(5)){text-align:center;padding-inline:7px}
-html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table :is(td:first-child,td:nth-child(4),td:nth-child(5)) button{margin-inline:auto}
-html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table tbody td:first-child>button{display:flex!important;align-items:center;justify-content:center!important;text-align:center!important;padding-inline:0!important;width:100%!important}
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-preparation-grid .workspace-shot-table :is(th,td):is(.workspace-shot-number-cell,.workspace-shot-duration-cell,.workspace-shot-status-cell,.workspace-shot-table-actions-cell){text-align:center;padding-inline:7px}
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table :is(td.workspace-shot-number-cell,td.workspace-shot-status-cell,td.workspace-shot-table-actions-cell) button{margin-inline:auto}
+html[data-interface="impeccable"] .product-ui [data-compact-workflow] .workspace-preparation .workspace-shot-table tbody td.workspace-shot-number-cell>button{display:flex!important;align-items:center;justify-content:center!important;text-align:center!important;padding-inline:0!important;width:100%!important}

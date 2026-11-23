@@ -1,5 +1,7 @@
-import {useId,useRef,useState,type ReactNode} from 'react';
-import {ChevronDown,ChevronUp} from 'lucide-react';
+import {useRef,useState,type ReactNode} from 'react';
+import {ChevronDown} from 'lucide-react';
+import {Dialog,DialogTrigger} from 'react-aria-components';
+import {WorkspacePopover} from './WorkspacePopover';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {StoryboardBatchFailure,StoryboardBatchKind,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechSettings,StoryboardVideoSettings} from '../storyboardBatch';
 import {uiText} from '../i18n/ui';
@@ -15,14 +17,13 @@ import {StoryboardBatchReviewDialog} from './StoryboardBatchReviewDialog';
 import {workspaceStoryboardProgress} from './workspaceStoryboardProgress';
 import './storyboard-batch.css';
 
-type Selection={selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(id:string)=>void};
+type Selection={selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(id:string)=>void;onSelectAll:(checked:boolean)=>void};
 export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleInWorkspace,command,onSubmitted,children}:{workspace:ProductionWorkspace;materials:VideoInputMaterial[];disabled:boolean;visibleInWorkspace:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onSubmitted:()=>Promise<unknown>;children:(selection?:Selection)=>ReactNode}){
  const [retryKind,setRetryKind]=useState<StoryboardBatchKind>();
  const [active,setActive]=useState(false),[selection,setSelection]=useState(new Set<string>()),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const [review,setReview]=useState<StoryboardBatchReview|null>(null),[visible,setVisible]=useState(false),[included,setIncluded]=useState(new Set<string>()),[regenerate,setRegenerate]=useState(new Set<string>()),[unknown,setUnknown]=useState(false);
  const [draftCommon,setCommon]=useState<StoryboardSpeechSettings>(),[draftVideo,setVideo]=useState<StoryboardVideoSettings>();
  const [settingsOpen,setSettingsOpen]=useState(false);
- const settingsId=useId();
  const working=useRef(false);
  const shotIds=[...new Set(workspace.clips.map(clip=>clip.shotId))],labels=new Map(shotIds.map((id,index)=>[id,`镜头 ${String(index+1).padStart(2,'0')}`]));
  const failures:Record<StoryboardBatchKind,Map<string,string>>={speech:new Map(),video:new Map()};
@@ -131,35 +132,36 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
     {active&&<>
      {retryKind&&<span>{uiText(retryKind==='speech'?'重试失败口播':'重试失败视频')}</span>}
      <span className="storyboard-batch-count" role="status">{uiText('已选择 {count} 个镜头',{count:selected.size})}</span>
-     <Button size="sm" color="tertiary" isDisabled={disabled||busy||unknown||selected.size===eligible.size} onPress={()=>setSelection(new Set(eligible))}>{uiText(retryKind?'全选失败镜头':'全选本单')}</Button>
-     <Button size="sm" color="tertiary" isDisabled={disabled||busy||unknown||!selected.size} onPress={()=>setSelection(new Set())}>{uiText('清空选择')}</Button>
+     {unknown&&review?<Button size="sm" color="primary" onPress={()=>setVisible(true)} isDisabled={busy}>{uiText('核对原回执')}</Button>:
+      <DialogTrigger isOpen={settingsOpen} onOpenChange={setSettingsOpen}>
+       <Button size="sm" color="tertiary" iconTrailing={ChevronDown} isDisabled={disabled||busy}>{uiText('共用设置')}</Button>
+       <WorkspacePopover className="dan-ui product-ui storyboard-batch-settings-popover" placement="bottom end" offset={6} containerPadding={12} shouldFlip>
+        <Dialog aria-label={uiText('共用设置')} className="storyboard-batch-settings">
+         {retryKind!=='video'&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用口播设置')}>
+          <div className="storyboard-batch-settings-fields">
+           <h4>{uiText('口播')}</h4>
+           <WorkspaceNarrationToolbar mode="tts" value={common} services={services} disabled={disabled||busy||unknown} changed={false} allowManual={false} showSample={false} onMode={()=>{}} onChange={setCommon} onSave={()=>{}} onRefresh={catalog.refresh} refreshing={catalog.pending}>{null}</WorkspaceNarrationToolbar>
+           {catalog.error&&<p role="alert">{uiText('无法读取语音连接。')}</p>}
+          </div>
+          <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare('speech',[...selected],[]);}}>{uiText(retryKind?'核对重试':'批量生成口播')}</Button>
+         </div>}
+         {retryKind!=='speech'&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用视频设置')}>
+          <div className="storyboard-batch-settings-fields">
+           <h4>{uiText('视频')}</h4>
+           <StoryboardVideoBatchSettings value={videoCommon} services={videoServices} disabled={disabled||busy||unknown} onChange={setVideo} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
+           {catalog.error&&<p role="alert">{uiText('无法读取视频连接。')}</p>}
+          </div>
+          <Button size="sm" color={retryKind?'primary':'secondary'} isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare('video',[...selected],[]);}}>{uiText(retryKind?'核对重试':'批量生成视频')}</Button>
+         </div>}
+        </Dialog>
+       </WorkspacePopover>
+      </DialogTrigger>}
     </>}
    </div>
-   {active&&<>
-    <div className="storyboard-batch-actions storyboard-batch-generation" role="group" aria-label={uiText('批量操作')}>
-     {unknown&&review?<Button size="sm" color="primary" isDisabled={busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>:retryKind?<Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare(retryKind,[...selected],[])}>{uiText('核对重试')}</Button>:<>
-      <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('speech',[...selected],[])}>{uiText('批量生成口播')}</Button>
-      <Button size="sm" color="secondary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('video',[...selected],[])}>{uiText('批量生成视频')}</Button>
-     </>}
-     <Button size="sm" color="tertiary" className="storyboard-batch-settings-toggle" iconTrailing={settingsOpen?ChevronUp:ChevronDown} aria-expanded={settingsOpen} aria-controls={settingsId} onPress={()=>setSettingsOpen(open=>!open)}>{uiText('共用设置')}</Button>
-    </div>
-    <div id={settingsId} className="storyboard-batch-settings" hidden={!settingsOpen}>
-     {retryKind!=='video'&&<div role="group" aria-label={uiText('本次共用口播设置')}>
-      <h4>{uiText('本次共用口播设置')}</h4>
-      <WorkspaceNarrationToolbar mode="tts" value={common} services={services} disabled={disabled||busy||unknown} changed={false} allowManual={false} showSample={false} onMode={()=>{}} onChange={setCommon} onSave={()=>{}} onRefresh={catalog.refresh} refreshing={catalog.pending}>{null}</WorkspaceNarrationToolbar>
-      {catalog.error&&<p role="alert">{uiText('无法读取语音连接。')}</p>}
-     </div>}
-     {retryKind!=='speech'&&<div role="group" aria-label={uiText('本次共用视频设置')}>
-      <h4>{uiText('本次共用视频设置')}</h4>
-      <StoryboardVideoBatchSettings value={videoCommon} services={videoServices} disabled={disabled||busy||unknown} onChange={setVideo} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
-      {catalog.error&&<p role="alert">{uiText('无法读取视频连接。')}</p>}
-     </div>}
-    </div>
-   </>}
    {notice&&<p role="status">{notice}</p>}
    {!visible&&error&&<p role="alert">{error}</p>}
   </div>}
-  {children(visibleInWorkspace&&active?{selected,eligible,disabled:busy||unknown,onToggle:id=>{if(!busy&&!unknown&&eligible.has(id))toggle(id);}}:undefined)}
+  {children(visibleInWorkspace&&active?{selected,eligible,disabled:busy||unknown,onToggle:id=>{if(!busy&&!unknown&&eligible.has(id))toggle(id);},onSelectAll:checked=>{if(!disabled&&!busy&&!unknown)setSelection(new Set(checked?eligible:[]));}}:undefined)}
   {!visibleInWorkspace&&unknown&&review&&!visible&&<Button size="sm" color="primary" isDisabled={busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>}
   {visible&&review&&<StoryboardBatchReviewDialog review={review} labels={labels} selected={included} busy={busy} error={error} unknown={unknown} onToggle={toggleReview} onClose={()=>{setVisible(false);if(!unknown){setReview(null);setError('');}}} onConfirm={()=>void confirm()}/>}
  </>;
