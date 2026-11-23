@@ -20,3 +20,9 @@ html[data-interface=impeccable] .product-ui .episode-list-workspace .episode-tab
 .episode-batch-review-item dl{margin:0}
 .episode-batch-review-item dl>div{display:grid;grid-template-columns:minmax(75px,max-content) 1fr;gap:8px;margin-block:4px}
 .episode-batch-review-item dd{white-space:pre-wrap;margin:0}
+.episode-batch-export-player{display:grid;gap:6px;justify-items:start;margin-block:8px 16px;overflow-wrap:anywhere}
+.episode-batch-export-player video{display:block;inline-size:100%;max-block-size:min(48dvh,360px);background:#000;object-fit:contain}
+.episode-batch-export-item{min-inline-size:0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border:0;border-block-end:1px solid var(--lc-line);margin:8px 0;padding:0 0 6px;overflow-wrap:anywhere}
+.episode-batch-export-item legend{font-weight:600;padding:0}
+.episode-batch-export-item label{display:inline-flex;align-items:center;gap:5px;min-block-size:44px;cursor:pointer}
+.episode-batch-export-item input{inline-size:1rem;block-size:1rem;accent-color:var(--lc-accent);margin:0}

@@ -1,3 +1,4 @@
+import {readBatchExportReview} from './batchExportReview.js';
 import {episodeWorkbookTemplate,readEpisodeWorkbook} from './episodeWorkbookImport.js';
 import {workbookMime} from './episodeWorkbookImportTypes.js';
 import {StringDecoder} from 'node:string_decoder';
@@ -308,6 +309,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    if(batchScriptReview){
     if(!uuid.test(batchScriptReview[1])||url.search)throw new ConfigurationError(400,'生产单引用无效。');
     send(200,await readBatchScriptReview(options.pool,options.mediaRoot,session.id,batchScriptReview[1]));return;
+   }
+   const batchExportReview=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/batch-export-review$/);
+   if(batchExportReview){
+    if(!uuid.test(batchExportReview[1])||url.search)throw new ConfigurationError(400,'生产单引用无效。');
+    send(200,await readBatchExportReview(options.pool,options.mediaRoot,session.id,batchExportReview[1]));return;
    }
    const savedPlan=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/saved-plan$/);
    if(savedPlan){
