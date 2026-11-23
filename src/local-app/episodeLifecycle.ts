@@ -51,6 +51,20 @@ export class LocalEpisodeLifecycle{
   return{e,root,targets,visible:{episodeId:e.id,title:e.title,path,stagingPath,paths,stagingPaths,files,preserved,confirmation:e.title.trim()||'DELETE',archived:Boolean(e.archived_at),isTest:e.is_test,revision:fingerprint({id:e.id,title:e.title,archivedAt:e.archived_at?new Date(e.archived_at).toISOString():null,updatedAt:new Date(e.updated_at).toISOString(),stage:e.stage,targets})}};
  }
  async recycleSnapshot(c:PoolClient,id:string){const p=await this.plan(c,id);await this.assertNativeClosed(p.targets,id);return p;}
+ async assertRecyclePurgeReady(c:PoolClient,episodeId:string){
+  await this.assertNoPendingDeletion(c,episodeId);
+  await this.assertDeletionReady(c,episodeId);
+ }
+ private async assertNoPendingDeletion(c:PoolClient,episodeId:unknown,key?:string){
+  const reserved=(await c.query("SELECT idempotency_key FROM local_identity.episode_deletion_intents WHERE episode_id=$1 AND state='prepared'",[episodeId])).rows[0];
+  if(reserved&&reserved.idempotency_key!==key)throw new ConfigurationError(409,'生产单已有未完成的删除操作，请重试原操作。');
+ }
+ private async assertDeletionReady(c:PoolClient,episodeId:string){
+  if((await c.query('SELECT local_identity.episode_deletion_has_dependencies($1) busy',[episodeId])).rows[0].busy)throw new ConfigurationError(409,'其他生产单仍引用本单素材、任务或审核记录，请先解除依赖。');
+  if((await c.query('SELECT local_identity.episode_deletion_submission_unknown($1) busy',[episodeId])).rows[0].busy)throw new ConfigurationError(409,'供应商提交结果尚未确认，请先恢复或核对已有请求。');
+  try{if(!(await c.query('SELECT local_identity.lock_owned_episode_deletion($1) owned',[episodeId])).rows[0]?.owned)throw Error();}catch{throw new ConfigurationError(409,'生产单有运行任务、资产锁或并发操作，暂时不能删除。');}
+ }
+
  private async verifyStorageRoot(c:PoolClient,accountId:string,root:string){
     if((await c.query("SELECT 1 FROM local_identity.account_directory_migrations WHERE account_id=$1 AND status='copying'",[accountId])).rowCount)throw new ConfigurationError(409,'账号资料正在迁移，请先完成、恢复或回滚原操作。');
   const binding=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding;if(binding){if(binding.path!==this.mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启本机服务。');await verifyMediaRootBinding(binding);}
@@ -106,11 +120,14 @@ export class LocalEpisodeLifecycle{
   }
  }
 
- async execute(session:OwnerSession,body:Record<string,unknown>){
-  if(body.command!=='deleteEpisode')return this.executeCommand(session,body);
-  const connection=await this.pool.connect(),lock='episode-delete:'+String((body.data as Record<string,unknown>|undefined)?.episodeId);
+ async execute(session:OwnerSession,body:Record<string,unknown>,heldConnection?:PoolClient){
+  if(body.command!=='deleteEpisode')return this.executeCommand(session,body,heldConnection);
+  const connection=heldConnection??await this.pool.connect(),lock='episode-delete:'+String((body.data as Record<string,unknown>|undefined)?.episodeId);
   try{await connection.query('SELECT pg_advisory_lock(hashtextextended($1,0))',[lock]);return await this.executeCommand(session,body,connection);}
-  finally{await connection.query('SELECT pg_advisory_unlock(hashtextextended($1,0))',[lock]);connection.release();}
+  finally{
+   try{await connection.query('SELECT pg_advisory_unlock(hashtextextended($1,0))',[lock]);}
+   finally{if(!heldConnection)connection.release();}
+  }
  }
  private async prepareDeletion(session:OwnerSession,key:string,hash:string,data:Record<string,unknown>,connection?:PoolClient){
   const prior=await sessionTransaction(this.pool,session,async c=>{
@@ -124,12 +141,10 @@ export class LocalEpisodeLifecycle{
    await sessionTransaction(this.pool,session,c=>c.query('SELECT local_identity.reserve_episode_deletion_intent($1,false)',[key]),connection);
   }
   await sessionTransaction(this.pool,session,async c=>{
-   const reserved=(await c.query("SELECT idempotency_key FROM local_identity.episode_deletion_intents WHERE episode_id=$1 AND state='prepared'",[data.episodeId])).rows[0];if(reserved&&reserved.idempotency_key!==key)throw new ConfigurationError(409,'生产单已有未完成的删除操作，请重试原操作。');
+   await this.assertNoPendingDeletion(c,data.episodeId,key);
    let targets:EpisodeDeletionTarget[],revision:string;
     const p=await this.plan(c,data.episodeId);this.confirmDeletion(p,data);
-    if((await c.query('SELECT local_identity.episode_deletion_has_dependencies($1) busy',[p.e.id])).rows[0].busy)throw new ConfigurationError(409,'其他生产单仍引用本单素材、任务或审核记录，请先解除依赖。');
-    if((await c.query('SELECT local_identity.episode_deletion_submission_unknown($1) busy',[p.e.id])).rows[0].busy)throw new ConfigurationError(409,'供应商提交结果尚未确认，请先恢复或核对已有请求。');
-    try{if(!(await c.query('SELECT local_identity.lock_owned_episode_deletion($1) owned',[p.e.id])).rows[0]?.owned)throw Error();}catch{throw new ConfigurationError(409,'生产单有运行任务、资产锁或并发操作，暂时不能删除。');}
+    await this.assertDeletionReady(c,p.e.id);
     await this.beforeDelete(p.e.id);await this.assertNativeClosed(p.targets,p.e.id);targets=p.targets;revision=p.visible.revision;
    if(!prior)await c.query('INSERT INTO local_identity.episode_deletion_intents(owner_id,idempotency_key,payload_hash,episode_id,manifest) VALUES($1,$2,$3,$4,$5)',[session.id,key,hash,data.episodeId,{targets,revision,title:data.confirmation,path:data.expectedPath,accountId:(await c.query('SELECT account_id FROM public.episodes WHERE id=$1',[data.episodeId])).rows[0]?.account_id??null}]);
    else await c.query('SELECT local_identity.reserve_episode_deletion_intent($1,true)',[key]);
@@ -159,9 +174,7 @@ export class LocalEpisodeLifecycle{
    else{
     try{await c.query('SELECT local_identity.lock_history_deletion_inventory($1)',[tokenHash(session.token)]);}catch{throw new ConfigurationError(409,'当前有并发操作，请稍后重新检查删除范围。');}
     const p=await this.plan(c,data.episodeId);this.confirmDeletion(p,data);
-    if((await c.query('SELECT local_identity.episode_deletion_has_dependencies($1) busy',[p.e.id])).rows[0].busy)throw new ConfigurationError(409,'其他生产单仍引用本单素材、任务或审核记录，请先解除依赖。');
-    if((await c.query('SELECT local_identity.episode_deletion_submission_unknown($1) busy',[p.e.id])).rows[0].busy)throw new ConfigurationError(409,'供应商提交结果尚未确认，请先恢复或核对已有请求。');
-    try{if(!(await c.query('SELECT local_identity.lock_owned_episode_deletion($1) owned',[p.e.id])).rows[0]?.owned)throw Error();}catch{throw new ConfigurationError(409,'生产单有运行任务、资产锁或并发操作，暂时不能删除。');}
+    await this.assertDeletionReady(c,p.e.id);
     await this.beforeDelete(p.e.id);
     await this.assertNativeClosed(p.targets,p.e.id);
     try{for(const target of p.targets){staged.push(target);await stageConfirmedEpisodeFiles(target);}}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'删除目录边界校验失败。');}

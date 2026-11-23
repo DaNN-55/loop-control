@@ -2,8 +2,9 @@ import {useEffect,useRef,useState} from 'react';
 import {getUiLocale,uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {EpisodeBatchDialog,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext} from '../workspace/EpisodeBatch';
+import {EpisodeDeletionScope} from '../workspace/EpisodeDeletionScope';
 import {localCommand,localRequest} from './client';
-import type {RecycleBatchItemResult,RecycleBatchPreview,RecycleBatchResult,RecycleBinItem,RecycleBinSummary} from './recycleBatchTypes';
+import type {RecycleBatchItemResult,RecycleBatchPreview,RecycleBatchResult,RecycleBinItem,RecycleBinSummary,RecyclePurgePreview} from './recycleBatchTypes';
 
 const titleFor=(title:string)=>title||uiText('未命名生产单');
 const errorMessage=(error:unknown)=>error instanceof Error?error.message:'操作未完成，请重试。';
@@ -122,7 +123,7 @@ export const recycleBatchAction:EpisodeBatchAction={
  render:context=><BatchRecycleDialog {...context}/>,
 };
 
-export function BatchRestoreDialog({selection,onClose,onChanged}:{selection:readonly RecycleBinItem[];onClose:()=>void;onChanged:()=>Promise<void>}){
+export function BatchRestoreDialog({selection,onClose,onChanged}:RecycleBinBatchProps){
  const [busy,setBusy]=useState(false),[error,setError]=useState(''),[results,setResults]=useState<RecycleBatchItemResult[]>([]);
  const running=useRef(false);
  const attempt=useRef<{items:{episodeId:string;revision:string}[];missing:RecycleBatchItemResult[]}|null>(null);
@@ -164,5 +165,99 @@ export function BatchRestoreDialog({selection,onClose,onChanged}:{selection:read
    <p>{uiText('生产单将恢复到原账号、系列和归档状态。')}</p>
    <ul role="list" className="episode-batch-items">{selection.map(item=><li key={item.episodeId}><strong>{titleFor(item.title)}</strong><span>{item.accountName}{item.archivedBefore?uiText(' · 原已归档'):''}</span></li>)}</ul>
   </>}
+ </EpisodeBatchDialog>;
+}
+
+type RecycleBinBatchProps={selection:readonly RecycleBinItem[];onClose:()=>void;onChanged:()=>Promise<void>};
+type ReviewRequest={ids:string[];refresh:boolean};
+
+export function BatchPurgeDialog({selection,onClose,onChanged}:RecycleBinBatchProps){
+ const [request,setRequest]=useState<ReviewRequest>(()=>({ids:selection.map(item=>item.episodeId),refresh:false}));
+ const [preview,setPreview]=useState<RecyclePurgePreview|null>(null);
+ const [results,setResults]=useState<RecycleBatchItemResult[]>([]);
+ const [busy,setBusy]=useState<'preview'|'submit'|null>('preview'),[error,setError]=useState('');
+ const running=useRef(false);
+ const titles=selection.map(item=>({id:item.episodeId,title:titleFor(item.title)}));
+ const ready=preview?.items.filter(item=>item.status==='ready')??[];
+ const failed=(preview?.items??results).filter(item=>item.status==='failed').map(item=>item.episodeId);
+
+ useEffect(()=>{
+  const controller=new AbortController(),{signal}=controller;
+  async function load(){
+   try{
+    const bin:RecycleBinSummary|undefined=request.refresh?await localRequest('recycle-bin',{signal}):undefined;
+    const revisions=new Map((bin?.items??selection).map(item=>[item.episodeId,item.revision]));
+    const items=[],missing:RecyclePurgePreview['items']=[];
+    for(const episodeId of request.ids){
+     const revision=revisions.get(episodeId);
+     if(revision)items.push({episodeId,revision});
+     else missing.push({episodeId,status:'skipped',reason:'回收站记录不存在或无管理权限。'});
+    }
+    const report:RecyclePurgePreview=items.length?await localRequest('recycle-bin',{
+     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'previewBatchRecyclePurge',data:{items}}),signal,
+    }):{items:[]};
+    if(!signal.aborted)setPreview({items:[...report.items,...missing]});
+   }catch(error){
+    if(!signal.aborted)setError(errorMessage(error));
+   }finally{
+    if(!signal.aborted)setBusy(null);
+   }
+  }
+  void load();
+  return()=>controller.abort();
+ },[request,selection]);
+
+ function review(ids:string[]){
+  if(!ids.length)return;
+  if(preview)setResults(current=>replaceResults(current,preview.items.filter(item=>item.status!=='ready')));
+  setPreview(null);
+  setError('');
+  setBusy('preview');
+  setRequest({ids,refresh:true});
+ }
+
+ async function confirm(){
+  if(running.current||!preview||!ready.length)return;
+  running.current=true;
+  setBusy('submit');
+  setError('');
+  try{
+   const result=await localCommand<RecycleBatchResult>('batchPurgeRecycledEpisodes',{items:ready.map(item=>item.confirmation),confirmed:true},undefined,'recycle-bin');
+   setResults(current=>replaceResults(current,[...preview.items.filter(item=>item.status!=='ready'),...result.items]));
+   setPreview(null);
+   if(result.items.some(item=>item.status==='success'))await onChanged();
+  }catch(error){
+   const reason=errorMessage(error);
+   if((error as {status?:number})?.status===409){
+    const failedReview=preview.items.map((item):RecycleBatchItemResult=>item.status==='ready'?{episodeId:item.episodeId,status:'failed',reason}:item);
+    setResults(current=>replaceResults(current,failedReview));
+    setPreview(null);
+   }else setError(reason);
+  }finally{running.current=false;setBusy(null);}
+ }
+
+ const previous=results.filter(item=>!preview?.items.some(row=>row.episodeId===item.episodeId));
+ const titlesById=new Map(titles.map(item=>[item.id,item.title]));
+ return <EpisodeBatchDialog title={uiText('批量永久删除')} busy={busy==='submit'} onClose={onClose} footer={<>
+  {!busy&&!preview&&!!error&&<Button size="sm" color="secondary" onPress={()=>review(request.ids)}>{uiText('重新预览')}</Button>}
+  {!busy&&!error&&!!failed.length&&!ready.length&&<Button size="sm" color="secondary" onPress={()=>review(failed)}>{uiText('只重试失败项')}</Button>}
+  {!!ready.length&&<Button size="sm" color="primary-destructive" isDisabled={!!busy} onPress={()=>void confirm()}>{uiText('确认永久删除 {count} 张',{count:ready.length})}</Button>}
+ </>}>
+  {busy&&<p role="status">{uiText(busy==='preview'?'正在检查删除范围…':'删除中…')}</p>}
+  {error&&<p role="alert">{uiText(error)}</p>}
+  {preview&&<>
+   {!!ready.length&&<p>{uiText('可删除的生产单永久删除后无法恢复。请核对逐单文件范围。')}</p>}
+   <ul role="list" className="recycle-batch-purge-preview">{preview.items.map(item=><li className="episode-batch-review-item" key={item.episodeId}>
+    <h3>{titlesById.get(item.episodeId)??item.episodeId}</h3>
+    {item.status!=='ready'&&<p>{uiText(item.status==='skipped'?'跳过':'阻塞')} · {uiText(item.reason)}</p>}
+    {item.scope&&<>
+     {item.status==='failed'&&<p>{uiText('解除阻塞后，请重新预览并确认文件范围。')}</p>}
+     <EpisodeDeletionScope {...item.scope} showPaths/>
+    </>}
+   </li>)}</ul>
+  </>}
+  {!!previous.length&&<div className="episode-batch-results" aria-live="polite">
+   <EpisodeBatchResults selection={titles} results={previous}/>
+  </div>}
  </EpisodeBatchDialog>;
 }
