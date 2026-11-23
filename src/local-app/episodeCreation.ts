@@ -12,16 +12,18 @@ import {resolveStorageContainer,requireStorageContainer,createStorageContainer} 
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 interface Intent{owner_id:string;idempotency_key:string;payload_hash:string;payload:{title:string;isTest:boolean};episode_id:string;account_id:string;blueprint_version_id:string;series_version_id:string|null;container_id:string;storage_series_id:string|null;directory_relative_path:string;account_root:string;account_device_id:string;account_inode_id:string;container_relative_path:string;container_device_id:string;container_inode_id:string;root_binding:MediaRootBinding;marker:string;device_id:string|null;inode_id:string|null;marker_device_id:string|null;marker_inode_id:string|null;cleanup_owned:boolean;result:Record<string,unknown>|null}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+export class EpisodeCreationSkipped extends Error {}
+
 /** Same Owner create command; durable reservation precedes filesystem mutation. */
-export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:string,hash:string,data:Record<string,unknown>,mediaRoot:string,preflight:(c:PoolClient,account:string,policy:Record<string,unknown>)=>Promise<void>,copy?:{sourceEpisodeId:string;initialize:(c:PoolClient,episode:Record<string,unknown>)=>Promise<void>}){
+export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:string,hash:string,data:Record<string,unknown>,mediaRoot:string,preflight:(c:PoolClient,account:string,policy:Record<string,unknown>)=>Promise<void>,options?:{sourceEpisodeId?:string;beforeReserve?:(c:PoolClient,seriesId:string|null)=>Promise<boolean>;initialize?:(c:PoolClient,episode:Record<string,unknown>)=>Promise<void>}){
  if(data.isTest!==undefined&&typeof data.isTest!=='boolean')throw new ConfigurationError(400,'测试生产单标记无效。');
  if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||typeof data.title!=='string'||data.title.length>200||data.seriesVersionId!=null&&(typeof data.seriesVersionId!=='string'||!uuid.test(data.seriesVersionId)))throw new ConfigurationError(400,'生产单账号、标题或系列版本无效。');
  const title=data.title.trim();
  const select=async(c:PoolClient)=>{
   if(!(await c.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId])).rows[0]?.owned)throw new ConfigurationError(404,'账号不可见。');
   const a=(await c.query("SELECT a.*,b.policy FROM public.accounts a JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id AND b.account_id=a.id AND b.is_active AND b.archived_at IS NULL WHERE a.id=$1 AND a.archived_at IS NULL",[data.accountId])).rows[0];if(!a)throw new ConfigurationError(404,'账号不可见。');
-  if(copy){
-   const original=(await c.query("SELECT e.blueprint_version_id,e.series_version_id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND e.account_id=$2 AND e.stage='production_completed' AND m.user_id=local_identity.owner_id() AND m.role='owner'",[copy.sourceEpisodeId,a.id])).rows[0];
+  if(options?.sourceEpisodeId){
+   const original=(await c.query("SELECT e.blueprint_version_id,e.series_version_id FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id WHERE e.id=$1 AND e.account_id=$2 AND e.stage='production_completed' AND m.user_id=local_identity.owner_id() AND m.role='owner'",[options.sourceEpisodeId,a.id])).rows[0];
    if(!original||original.series_version_id!==(data.seriesVersionId??null))throw new ConfigurationError(409,'原生产单或创作基准已变化，未建立副本。');
    a.current_blueprint_version_id=original.blueprint_version_id;
   }
@@ -51,12 +53,15 @@ export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:
    if(receipt){if(receipt.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');await requireEpisodeStorageDirectory(c,await resolveEpisodeStorageLocation(c,mediaRoot,String(receipt.result.id)));return{receipt:receipt.result};}
    const existing=(await c.query('SELECT * FROM local_identity.episode_creation_intents WHERE owner_id=$1 AND idempotency_key=$2',[session.id,key])).rows[0] as Intent|undefined;if(existing){if(existing.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return existing;}
    await c.query("SELECT pg_advisory_xact_lock(hashtextextended('global-media-root',0))");
-   const {a,root,seriesId}=await select(c),container=await resolveStorageContainer(c,mediaRoot,a.id,seriesId);await requireStorageContainer(c,mediaRoot,container,true);
+   const {a,root,seriesId}=await select(c);
+   if(options?.beforeReserve&&!await options.beforeReserve(c,seriesId))return{skipped:true};
+   const container=await resolveStorageContainer(c,mediaRoot,a.id,seriesId);await requireStorageContainer(c,mediaRoot,container,true);
    const binding=(await c.query('SELECT local_identity.media_root_binding() binding')).rows[0].binding as MediaRootBinding;if(!binding||binding.path!==mediaRoot)throw new ConfigurationError(409,'服务媒体根与登记位置不一致，请重启服务。');await verifyMediaRootBinding(binding,1024*1024);
    const actual=await inspectMediaRoot(root),id=randomUUID(),relativePath=container.relativePath+'/'+directoryName(title,id,'生产单');
    return(await c.query('INSERT INTO local_identity.episode_creation_intents(owner_id,idempotency_key,payload_hash,payload,episode_id,account_id,blueprint_version_id,series_version_id,container_id,storage_series_id,directory_relative_path,account_root,account_device_id,account_inode_id,container_relative_path,container_device_id,container_inode_id,root_binding,marker) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING *',[session.id,key,hash,data,id,a.id,a.current_blueprint_version_id,data.seriesVersionId??null,container.containerId,seriesId,relativePath,root,actual.deviceId,actual.inodeId,container.relativePath,container.deviceId,container.inodeId,binding,randomUUID()])).rows[0] as Intent;
   });
   if('receipt'in intent)return intent.receipt;
+  if('skipped'in intent)throw new EpisodeCreationSkipped();
   if(intent.result){await transaction(async c=>{await requireEpisodeStorageDirectory(c,await resolveEpisodeStorageLocation(c,mediaRoot,intent.episode_id));});return intent.result;}
   const path=join(intent.account_root,intent.directory_relative_path),marker=JSON.stringify({episodeId:intent.episode_id,token:intent.marker});
   const update=(c:PoolClient,sql:string,values:unknown[]=[])=>c.query(sql,[session.id,key,...values]);
@@ -78,7 +83,7 @@ export async function createEpisodeDirectory(pool:Pool,session:OwnerSession,key:
     await c.query("SELECT pg_advisory_xact_lock(hashtextextended('global-media-root',0))");await c.query("SELECT pg_advisory_xact_lock(hashtextextended('account-asset-root-ownership',0))");
     await validateParent(c);await verifyChild();
     const created=(await c.query('SELECT to_jsonb(local_identity.create_episode_from_intent($1)) result',[key])).rows[0].result;
-    await copy?.initialize(c,created);
+    await options?.initialize?.(c,created);
     await validateParent(c);await verifyChild();
     await update(c,'UPDATE local_identity.episode_creation_intents SET result=$3 WHERE owner_id=$1 AND idempotency_key=$2',[created]);
     await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,key,hash,created]);

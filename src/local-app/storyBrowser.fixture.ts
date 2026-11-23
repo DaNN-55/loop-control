@@ -48,7 +48,8 @@ export async function storyBrowser(f:Pick<Story,'origin'|'root'|'episode'|'email
       const kind:ReadKind|undefined=req.method!=='GET'?undefined:req.url?.startsWith('/local/session')?'session':req.url?.startsWith('/local/catalog')?'catalog':/\/local\/episodes\/[^/]+\/workspace(?:\?|$)/.test(req.url??'')?'workspace':undefined;
       if(kind){await readGates.get(kind);if(readFailures.has(kind)){res.statusCode=503;res.setHeader('Content-Type','application/json');res.end(JSON.stringify({code:'local_service_unavailable',error:'测试网关：暂时无法读取，请稍后重试。'}));return;}}
       const chunks:Buffer[]=[];for await(const chunk of req)chunks.push(Buffer.from(chunk));
-      const body=Buffer.concat(chunks),command=body.length?JSON.parse(body.toString()).command??'login':'read';
+      const body=Buffer.concat(chunks),message=body.length?JSON.parse(body.toString()):null;
+      const command=message?(req.url==='/local/episode-imports'?'episode-imports:'+message.action:message.command??'login'):'read';
       if(drop&&drop.command===command&&drop.before){drop=undefined;traffic.push({command,status:0,dropped:true});res.statusCode=503;res.end(JSON.stringify({error:'测试网关中断：本次确认尚未提交，请保留当前工程并恢复。'}));return;}
       const headers=new Headers();for(const [key,value]of Object.entries(req.headers))if(value&&!['host','connection','content-length','accept-encoding'].includes(key))headers.set(key,Array.isArray(value)?value.join(','):value);
       if(req.method!=='GET')headers.set('Origin',f.origin);

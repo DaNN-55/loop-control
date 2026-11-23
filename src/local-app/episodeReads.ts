@@ -1,3 +1,4 @@
+import {readImportedScript} from './episodeBatchImport.js';
 import {resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import{createHash}from'node:crypto';
@@ -6,8 +7,11 @@ import type {Pool} from 'pg';
 export async function readLocalEpisode(pool:Pool,ownerId:string,episodeId:string,known:Record<string,string>={},mediaRoot?:string){
  return ownerTransaction(pool,ownerId,true,async client=>{
   const {rows:[row]}=await client.query('SELECT public.read_episode_production($1,$2) AS result',[episodeId,known]);if(!row.result||!mediaRoot)return row.result;
-  const b=(await client.query('SELECT local_identity.is_historical_episode($1) historical',[episodeId])).rows[0];let localAssetRoot='',localDirectoryPath='';try{const location=await resolveEpisodeStorageLocation(client,mediaRoot,episodeId);localAssetRoot=location.assetRoot;localDirectoryPath=location.directoryPath;}catch{/* An unauthorized/missing deployment never grants a fallback source root. */}
-  const hash=createHash('sha256').update(localAssetRoot+localDirectoryPath+String(Boolean(b?.historical))).digest('hex');return{...row.result,hashes:{...row.result.hashes,localAssetRoot:hash},sections:{...row.result.sections,...(known.localAssetRoot===hash?{}:{localAssetRoot,localDirectoryPath,historicalReadOnly:Boolean(b?.historical)})}};
+  const b=(await client.query("SELECT local_identity.is_historical_episode($1) historical,to_regclass('local_identity.episode_import_drafts') imports",[episodeId])).rows[0];let localAssetRoot='',localDirectoryPath='';try{const location=await resolveEpisodeStorageLocation(client,mediaRoot,episodeId);localAssetRoot=location.assetRoot;localDirectoryPath=location.directoryPath;}catch{/* An unauthorized/missing deployment never grants a fallback source root. */}
+  const importedScript=b?.imports?await readImportedScript(client,ownerId,episodeId):null;
+  const importHash=importedScript?.version??'';
+  const hash=createHash('sha256').update(localAssetRoot+localDirectoryPath+String(Boolean(b?.historical))).digest('hex');
+  return{...row.result,hashes:{...row.result.hashes,localAssetRoot:hash,importedScript:importHash},sections:{...row.result.sections,...(known.localAssetRoot===hash?{}:{localAssetRoot,localDirectoryPath,historicalReadOnly:Boolean(b?.historical)}),...(known.importedScript===importHash?{}:{importedScript})}};
  });
 }
 export async function findOwnedArtifact(pool:Pool,ownerId:string,id:string,mediaRoot?:string){

@@ -11,7 +11,7 @@ export function planFixtureMigrations(applied:Record<string,string>,available:Mi
  const files=new Map(available.map(file=>[file.version,file]));
  for(const[version,sha256]of Object.entries(applied))if(!(migrationName.test(version)||/^clean-v[23]\.sql$/.test(version))||!files.has(version)||files.get(version)!.sha256!==sha256)throw Error('Applied fixture migration changed: '+version);
  const coveredThrough=Math.max(...available.map((f,i)=>/^clean-v[23]\.sql$/.test(f.version)&&Object.hasOwn(applied,f.version)?i:-1));
- const names=[...new Set(requested.map(path=>{if(!/^db\/(?:local|archive\/legacy-v1)\/[0-9]{3}-[a-z0-9-]+\.sql$/.test(path))throw Error('Invalid fixture migration path');return path.slice(path.lastIndexOf('/')+1);} ))].sort();
+ const names=[...new Set(requested.map(path=>{if(!/^db\/(?:local|current|archive\/legacy-v1)\/[0-9]{3}-[a-z0-9-]+\.sql$/.test(path))throw Error('Invalid fixture migration path');return path.slice(path.lastIndexOf('/')+1);} ))].sort();
  return names.flatMap(version=>{const file=files.get(version);if(!file)throw Error('Missing fixture migration: '+version);return Object.hasOwn(applied,version)||available.findIndex(f=>f.version===version)<coveredThrough?[]:[file];});
 }
 
