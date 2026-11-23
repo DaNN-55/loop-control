@@ -1,4 +1,5 @@
-import {useRef,useState,type ReactNode} from 'react';
+import {useId,useRef,useState,type ReactNode} from 'react';
+import {ChevronDown,ChevronUp} from 'lucide-react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {StoryboardBatchFailure,StoryboardBatchKind,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechSettings,StoryboardVideoSettings} from '../storyboardBatch';
 import {uiText} from '../i18n/ui';
@@ -20,6 +21,8 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
  const [active,setActive]=useState(false),[selection,setSelection]=useState(new Set<string>()),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const [review,setReview]=useState<StoryboardBatchReview|null>(null),[visible,setVisible]=useState(false),[included,setIncluded]=useState(new Set<string>()),[regenerate,setRegenerate]=useState(new Set<string>()),[unknown,setUnknown]=useState(false);
  const [draftCommon,setCommon]=useState<StoryboardSpeechSettings>(),[draftVideo,setVideo]=useState<StoryboardVideoSettings>();
+ const [settingsOpen,setSettingsOpen]=useState(false);
+ const settingsId=useId();
  const working=useRef(false);
  const shotIds=[...new Set(workspace.clips.map(clip=>clip.shotId))],labels=new Map(shotIds.map((id,index)=>[id,`镜头 ${String(index+1).padStart(2,'0')}`]));
  const failures:Record<StoryboardBatchKind,Map<string,string>>={speech:new Map(),video:new Map()};
@@ -48,6 +51,7 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
  const base={episodeId:workspace.episodeId,workspaceId:workspace.id};
 
  function begin(nextActive:boolean,nextRetryKind?:StoryboardBatchKind){
+  setSettingsOpen(false);
   setActive(nextActive);setRetryKind(nextRetryKind);setSelection(new Set());setCommon(undefined);setVideo(undefined);setReview(null);setError('');setNotice('');
  }
 
@@ -121,31 +125,36 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
 
  return <>
   {visibleInWorkspace&&<div className="storyboard-batch-toolbar">
-   <div className="storyboard-batch-actions">
+   <div className="storyboard-batch-actions storyboard-batch-selection" role="group" aria-label={uiText('镜头选择')}>
     <Button size="sm" color="tertiary" isDisabled={disabled||busy||unknown} aria-pressed={active} onPress={()=>begin(!active)}>{uiText(active?'退出批量操作':'批量操作')}</Button>
     {!active&&(['speech','video'] as const).map(kind=>failures[kind].size>0&&<Button key={kind} size="sm" color="secondary" isDisabled={disabled||busy||unknown} onPress={()=>begin(true,kind)}>{uiText(kind==='speech'?'重试失败口播':'重试失败视频')}</Button>)}
     {active&&<>
+     {retryKind&&<span>{uiText(retryKind==='speech'?'重试失败口播':'重试失败视频')}</span>}
+     <span className="storyboard-batch-count" role="status">{uiText('已选择 {count} 个镜头',{count:selected.size})}</span>
      <Button size="sm" color="tertiary" isDisabled={disabled||busy||unknown||selected.size===eligible.size} onPress={()=>setSelection(new Set(eligible))}>{uiText(retryKind?'全选失败镜头':'全选本单')}</Button>
      <Button size="sm" color="tertiary" isDisabled={disabled||busy||unknown||!selected.size} onPress={()=>setSelection(new Set())}>{uiText('清空选择')}</Button>
-     {retryKind&&<span>{uiText(retryKind==='speech'?'重试失败口播':'重试失败视频')}</span>}
-     <span role="status">{uiText('已选择 {count} 个镜头',{count:selected.size})}</span>
     </>}
    </div>
    {active&&<>
-    {unknown&&review?<Button size="sm" color="primary" isDisabled={busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>:retryKind?<Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare(retryKind,[...selected],[])}>{uiText('核对重试')}</Button>:<>
-     <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('speech',[...selected],[])}>{uiText('批量生成口播')}</Button>
-     <Button size="sm" color="secondary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('video',[...selected],[])}>{uiText('批量生成视频')}</Button>
-    </>}
-    {retryKind!=='video'&&<details>
-     <summary>{uiText('本次共用口播设置')}</summary>
-     <WorkspaceNarrationToolbar mode="tts" value={common} services={services} disabled={disabled||busy||unknown} changed={false} allowManual={false} showSample={false} onMode={()=>{}} onChange={setCommon} onSave={()=>{}} onRefresh={catalog.refresh} refreshing={catalog.pending}>{null}</WorkspaceNarrationToolbar>
-     {catalog.error&&<p role="alert">{uiText('无法读取语音连接。')}</p>}
-    </details>}
-    {retryKind!=='speech'&&<details>
-     <summary>{uiText('本次共用视频设置')}</summary>
-     <StoryboardVideoBatchSettings value={videoCommon} services={videoServices} disabled={disabled||busy||unknown} onChange={setVideo} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
-     {catalog.error&&<p role="alert">{uiText('无法读取视频连接。')}</p>}
-    </details>}
+    <div className="storyboard-batch-actions storyboard-batch-generation" role="group" aria-label={uiText('批量操作')}>
+     {unknown&&review?<Button size="sm" color="primary" isDisabled={busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>:retryKind?<Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare(retryKind,[...selected],[])}>{uiText('核对重试')}</Button>:<>
+      <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('speech',[...selected],[])}>{uiText('批量生成口播')}</Button>
+      <Button size="sm" color="secondary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('video',[...selected],[])}>{uiText('批量生成视频')}</Button>
+     </>}
+     <Button size="sm" color="tertiary" className="storyboard-batch-settings-toggle" iconTrailing={settingsOpen?ChevronUp:ChevronDown} aria-expanded={settingsOpen} aria-controls={settingsId} onPress={()=>setSettingsOpen(open=>!open)}>{uiText('共用设置')}</Button>
+    </div>
+    <div id={settingsId} className="storyboard-batch-settings" hidden={!settingsOpen}>
+     {retryKind!=='video'&&<div role="group" aria-label={uiText('本次共用口播设置')}>
+      <h4>{uiText('本次共用口播设置')}</h4>
+      <WorkspaceNarrationToolbar mode="tts" value={common} services={services} disabled={disabled||busy||unknown} changed={false} allowManual={false} showSample={false} onMode={()=>{}} onChange={setCommon} onSave={()=>{}} onRefresh={catalog.refresh} refreshing={catalog.pending}>{null}</WorkspaceNarrationToolbar>
+      {catalog.error&&<p role="alert">{uiText('无法读取语音连接。')}</p>}
+     </div>}
+     {retryKind!=='speech'&&<div role="group" aria-label={uiText('本次共用视频设置')}>
+      <h4>{uiText('本次共用视频设置')}</h4>
+      <StoryboardVideoBatchSettings value={videoCommon} services={videoServices} disabled={disabled||busy||unknown} onChange={setVideo} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
+      {catalog.error&&<p role="alert">{uiText('无法读取视频连接。')}</p>}
+     </div>}
+    </div>
    </>}
    {notice&&<p role="status">{notice}</p>}
    {!visible&&error&&<p role="alert">{error}</p>}

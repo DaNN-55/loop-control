@@ -1,11 +1,15 @@
-.storyboard-batch-toolbar{padding:8px 10px;border-bottom:1px solid var(--lc-line);display:flex;align-items:center;flex-wrap:wrap;gap:7px;font-size:12px}
-.storyboard-batch-toolbar details{max-width:100%;min-width:0}
-.storyboard-batch-toolbar details[open]{flex-basis:100%}
-.storyboard-batch-toolbar summary{cursor:pointer;min-height:24px}
+.storyboard-batch-toolbar{padding:6px 10px;border-bottom:1px solid var(--lc-line);display:grid;gap:4px;font-size:12px}
 .storyboard-batch-actions{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.storyboard-batch-count{margin-inline-end:auto;color:var(--lc-muted,#596b83);font-variant-numeric:tabular-nums}
+.storyboard-batch-generation{padding-block-start:4px;border-block-start:1px solid var(--lc-line)}
+.storyboard-batch-settings-toggle{margin-inline-start:auto}
+.storyboard-batch-settings:not([hidden]){display:grid;gap:8px;padding:8px 10px;margin-block-start:3px;background:var(--lc-surface-2,#f7f9fc);border-radius:6px}
+.storyboard-batch-settings h4{margin:0 0 4px;font-size:12px;font-weight:600;color:var(--lc-muted,#596b83)}
 .storyboard-batch-toolbar [role="alert"],.storyboard-batch-dialog [role="alert"]{color:var(--lc-danger,#bd4147)}
-.storyboard-batch-shot-cell{display:flex;align-items:center;gap:5px}
-.storyboard-batch-shot-cell label{display:grid;place-items:center;flex:0 0 25px;min-height:28px;cursor:pointer}
+.storyboard-batch-shot-cell{display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;column-gap:3px;text-align:center}
+.storyboard-batch-shot-cell :is(span,button){grid-column:2}
+.storyboard-batch-shot-cell label{display:grid;place-items:center;min-height:28px;cursor:pointer}
+.storyboard-batch-shot-cell label input{margin:0}
 .storyboard-batch-dialog{width:min(43rem,calc(100% - 24px));max-height:calc(100% - 24px);padding:0;margin:auto;background:var(--lc-surface,#fff);color:var(--lc-text,#14283f);border:1px solid var(--lc-line,#d8e1ee);border-radius:14px;box-shadow:0 18px 48px rgb(12 29 57 / .2);overflow:auto}
 .storyboard-batch-dialog:modal{overscroll-behavior:contain}
 .storyboard-batch-dialog::backdrop{background:#10182873;overflow:hidden;overscroll-behavior:contain}

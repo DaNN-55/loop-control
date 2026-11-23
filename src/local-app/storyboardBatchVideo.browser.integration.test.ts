@@ -46,7 +46,7 @@ it.skipIf(!enabled)('adopts a voice, reviews a video draft, adopts the generated
   await browser.fill('画面动作',draft);
   await browser.click('批量操作');
   await check('勾选镜头 01');
-  await browser.cli('find','text','本次共用视频设置','click','--exact');
+  await browser.click('共用设置');
   await browser.click('本次视频连接与模型');
   await browser.cli('find','text',f.selections.video.model,'click','--exact');
   await browser.click('批量生成视频');
@@ -104,7 +104,7 @@ it.skipIf(!enabled)('reviews an unopened legacy video draft and inherits the cur
   await browser.evaluate(`localStorage.setItem(${modeKey},${defaults('references')})`);
   await browser.click('批量操作');
   await browser.click('全选本单');
-  await browser.cli('find','text','本次共用视频设置','click','--exact');
+  await browser.click('共用设置');
   await browser.cli('fill','input[name=durationSeconds]','4');
   await browser.click('批量生成视频');
   await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('参考素材生成')");
@@ -116,7 +116,7 @@ it.skipIf(!enabled)('reviews an unopened legacy video draft and inherits the cur
   await browser.evaluate(`localStorage.setItem(${modeKey},${defaults('first-frame')})`);
   await browser.click('批量操作');
   await browser.click('全选本单');
-  await browser.cli('find','text','本次共用视频设置','click','--exact');
+  await browser.click('共用设置');
   await browser.cli('fill','input[name=durationSeconds]','4');
   await browser.click('批量生成视频');
   await browser.cli('wait','--text',draft);
