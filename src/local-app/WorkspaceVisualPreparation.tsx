@@ -302,7 +302,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  },[uploading,uploadRows,fresh]);
  const pollingError=useWorkspacePolling(reader,{enabled:!!taskKey&&!busy&&!candidateReview.pending&&!uploading,interval:2000});
  function base(w:ProductionWorkspace){return {episodeId:w.episodeId,workspaceId:w.id,expectedRevision:w.revision};}
- async function run(action:()=>Promise<void>){if(working.current)return;working.current=true;setBusy(true);busyListener.current?.(true);setError('');setNotice('');try{await action();}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}finally{working.current=false;if(mounted.current){setBusy(false);busyListener.current?.(false);}}}
+ async function run<T>(action:()=>Promise<T>){if(working.current)return;working.current=true;setBusy(true);busyListener.current?.(true);setError('');setNotice('');try{return await action();}catch(cause){if(mounted.current&&!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}finally{working.current=false;if(mounted.current){setBusy(false);busyListener.current?.(false);}}}
 
  async function register(materialId:string,kind:Kind,usage=draft.usage){const w=await fresh(),existing=w.visualCandidates?.find(c=>c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected');const next=existing?w:await command('registerWorkspaceVisualCandidate',{...base(w),targetItemId,materialRevisionId:materialId,usage:kind==='video'?'video':usage,durationSeconds:3}) as ProductionWorkspace;if(mounted.current)reader.publish(next);const added=next.visualCandidates?.find(c=>c.targetItemId===targetItemId&&c.materialRevisionId===materialId&&c.status!=='rejected');if(mounted.current&&added)setDraft(d=>({...d,tab:kind,selected:{...d.selected,[kind]:added.id}}));}
  function reportUpload(message:string,failed=true){uploadState.report(message,failed);}
@@ -444,9 +444,21 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const dropCandidate=<WorkspaceMaterialDrop label={uiText("拖入{value0}加入候选",{value0:uiText(kindName)})} kind={tab} disabled={disabled} surface="preview" persistent={showEmptyCandidateDrop}
   onSelect={id=>void run(async()=>{await register(id,tab);})}/>;
  const activeGenerationTasks=tasks.filter(t=>t.targetItemId===targetItemId&&(t.kind??'video')===tab&&workspaceTaskPresentation(t).active&&!workspaceTaskPresentation(t).hidden);
- const taskStatus=(t:WorkspaceVisualTask)=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?uiText("图片"):uiText("视频")} disabled={disabled} onRetryUnknown={t===unknownImageTask?()=>{if(origin==='generate'&&canGenerate)void generate(t.taskId);else{setDraft(d=>({...d,origin:{...d.origin,image:'generate'}}));requestAnimationFrame(()=>formRef.current?.scrollIntoView({block:'nearest'}));}}:undefined} onRefresh={()=>void run(async()=>{await fresh();setCatalogReload(value=>value+1);})} onResume={()=>void run(async()=>{const w=await fresh();onChange(await command('retryWorkspaceVisualCandidate',{...base(w),candidateId:t.id}) as ProductionWorkspace);})} onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);onChange(await fresh());})}/>;
- const generationBlocker=pending.some(t=>(t.kind??'video')===tab)?'正在生成，请等待结果。'
-  :tasks.some(t=>t.targetItemId===targetItemId&&(t.publicationAttempt!=null||t.submissionUnknown&&!t.retryTaskId&&t!==unknownImageTask))?'请先核对上一条生成任务。'
+ const taskStatus=(t:WorkspaceVisualTask)=><WorkspaceVisualTaskStatus key={t.id} task={t} label={(t.kind??'video')==='image'?uiText("图片"):uiText("视频")} disabled={disabled}
+  resumeLabel={(t.kind??'video')==='video'?uiText("查询原视频任务"):undefined}
+  onRetryUnknown={t===unknownImageTask?()=>{if(origin==='generate'&&canGenerate)void generate(t.taskId);else{setDraft(d=>({...d,origin:{...d.origin,image:'generate'}}));requestAnimationFrame(()=>formRef.current?.scrollIntoView({block:'nearest'}));}}:undefined}
+  onRefresh={()=>run(async()=>{
+   const latest=await fresh();
+   setCatalogReload(value=>value+1);
+   return latest.visualTasks?.find(task=>task.taskId===t.taskId);
+  })}
+  onResume={()=>void run(async()=>{
+   const latest=await fresh(),original=latest.visualTasks?.find(task=>task.taskId===t.taskId);
+   if(original&&workspaceTaskPresentation(original).canResume)onChange(await command('retryWorkspaceVisualCandidate',{...base(latest),candidateId:original.id}) as ProductionWorkspace);
+  })}
+  onReconcile={()=>void run(async()=>{await reconcileWorkspaceOutput(workspace.episodeId,t);await fresh();})}/>;
+ const generationBlocker=pending.some(t=>(t.kind??'video')===tab&&workspaceTaskPresentation(t).active)?'正在生成，请等待结果。'
+  :tasks.some(t=>t.targetItemId===targetItemId&&(t.publicationAttempt!=null||(t.kind??'video')===tab&&t.canResume||t.submissionUnknown&&!t.retryTaskId&&t!==unknownImageTask))?'请先核对上一条生成任务。'
   :workspace.stale?'脚本已更新，请先核对当前素材。'
   :tab==='image'&&!imageCompatible?'请选择可用的图片模型和规格。'
   :tab==='video'&&!videoCompatible?'请选择可用的视频模型。'
@@ -457,7 +469,7 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   :!prompt.trim()?'请填写提示词。':prompt.length>promptLimit?`提示词最多 ${promptLimit} 字。`:'';
  const canGenerate=!generationBlocker;
  const imagePreviewFailed=candidate?.id===imagePreviewError;
- const thumbnailTasks=pending.filter(t=>(t.kind??'video')===tab&&(!t.targetItemId||t.targetItemId===targetItemId)&&!t.submissionUnknown&&!t.retryTaskId);
+ const thumbnailTasks=pending.filter(t=>(t.kind??'video')===tab&&(!t.targetItemId||t.targetItemId===targetItemId)&&workspaceTaskPresentation(t).active);
  return <section className="workspace-visual-candidates workspace-visual-unified" aria-label={uiText("镜头图片与视频")}>
   <header><div className="workspace-visual-preview-tabs" role="tablist" aria-label={uiText("画面类型")}>{(['image','video'] as const).map(kind=><button key={kind} id={`visual-kind-${targetItemId}-${kind}`} type="button" role="tab" aria-selected={tab===kind} aria-controls={`visual-content-${targetItemId}`} tabIndex={tab===kind?0:-1} onClick={()=>change('tab',kind)} onKeyDown={e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const next=e.key==='Home'?'image':e.key==='End'?'video':tab==='image'?'video':'image';change('tab',next);document.getElementById(`visual-kind-${targetItemId}-${next}`)?.focus();}}}>{kind==='image'?uiText("图片"):uiText("视频")}</button>)}</div></header>
   <WorkspaceUploadFeedback rows={uploadRows} running={uploading} disabled={disabled} notice={uploadNotice} onDismiss={id=>uploadState.update(value=>value.notice?.id===id?{...value,notice:undefined}:value)} onAbandon={()=>{if(!disabled)uploadState.abandon();}} onRetry={()=>void processUploads(uploadRows.filter(row=>row.status==='failed'||row.status==='pending'))}/>

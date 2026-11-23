@@ -27,16 +27,22 @@ export function WorkspaceVisualTaskProgress({task,label,thumbnail=false}:{task:W
   <div className="workspace-visual-progress-heading"><span>{thumbnail?(stage===0?uiText("排队中"):stage===2?uiText("保存中"):uiText("生成中")):uiText(detail)}</span>{elapsed&&<span>{thumbnail?elapsed:uiText("已等待 {value0}",{value0:String(elapsed)})}</span>}</div>
  </div>;
 }
-export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefresh,onReconcile,onRetryUnknown,taskNoun='视觉任务',resumeLabel='恢复画面任务'}:{task:WorkspaceVisualTask;label:string;taskNoun?:string;resumeLabel?:string;disabled?:boolean;onResume:()=>void;onRefresh:()=>void;onReconcile:()=>void;onRetryUnknown?:()=>void}){
- const [open,setOpen]=useState(false);
+export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefresh,onReconcile,onRetryUnknown,taskNoun='视觉任务',resumeLabel='恢复画面任务'}:{task:WorkspaceVisualTask;label:string;taskNoun?:string;resumeLabel?:string;disabled?:boolean;onResume:()=>void;onRefresh:()=>void|Promise<WorkspaceVisualTask|undefined>;onReconcile:()=>void;onRetryUnknown?:()=>void}){
+ const [open,setOpen]=useState(false),[verifiedTaskId,setVerifiedTaskId]=useState<string>();
  const presentation=workspaceTaskPresentation(task),{held,unknown}=presentation,state=uiText(presentation.label);
  if(presentation.hidden)return null;
  const taskLabel=getUiLocale()==='en-US'?`${label} · ${state}`:label+state;
+ async function refresh(){
+  setVerifiedTaskId(undefined);
+  const latest=await onRefresh();
+  setVerifiedTaskId(latest?.taskId===task.taskId&&latest.submissionUnknown?task.taskId:undefined);
+ }
+ const verification=unknown&&!held&&verifiedTaskId===task.taskId?uiText("原任务的结果仍未知。"):'';
  const actions=<>
-  {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>{uiText("重新生成") }</Button>}
   {presentation.canResume&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onResume}>{uiText(resumeLabel)}</Button>}
   {held&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onReconcile}>{uiText("核对并恢复产物")}</Button>}
-  {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRefresh}>{uiText("刷新核对结果")}</Button>}
+  {(unknown||held)&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>void refresh()}>{uiText("刷新核对结果")}</Button>}
+  {onRetryUnknown&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={onRetryUnknown}>{uiText("重新生成")}</Button>}
  </>;
  return <>
   <div className="workspace-visual-task" inert={open} aria-hidden={open||undefined}>
@@ -44,6 +50,7 @@ export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefres
     <p role={task.error||held?'alert':'status'} aria-label={uiText(taskNoun)+' '+task.taskId} title={task.error??undefined}>{taskLabel}{task.error?' · '+task.error:''}</p>
     <div className="workspace-task-actions">{actions}<Button size="sm" color="tertiary" aria-label={uiText("查看{value0}任务详情",{value0:String(label)})} onPress={()=>setOpen(true)}>{uiText("详情")}</Button></div>
    </div>
+   {!open&&unknown&&!held&&<div role="status">{verification}</div>}
    {presentation.active&&<WorkspaceVisualTaskProgress task={task} label={label}/>}
   </div>
   <ConfirmationModalPresence>{open&&createPortal(<TaskDetails title={uiText("{value0}任务详情",{value0:String(label)})} onClose={()=>setOpen(false)}>
@@ -66,6 +73,7 @@ export function WorkspaceVisualTaskStatus({task,label,disabled,onResume,onRefres
     {task.providerTaskId&&<><dt>{uiText("供应商任务")}</dt><dd>{task.providerTaskId}</dd></>}
    </dl>
    {unknown&&!task.providerTaskId&&<p>{uiText("本机未保存供应商任务编号，请按连接、模型和提交时间核对供应商调用记录。")}</p>}
+   {unknown&&!held&&<div role="status">{verification}</div>}
    <div className="modal-actions">{actions}{(unknown||task.submissionOutcome==='rejected'||task.submissionOutcome==='not_sent')&&<Button size="sm" color="secondary" isDisabled={disabled} onPress={()=>{setOpen(false);window.dispatchEvent(new Event('open-external-connections'));}}>{uiText("打开连接配置")}</Button>}</div>
   </TaskDetails>,document.body)}</ConfirmationModalPresence>
  </>;
