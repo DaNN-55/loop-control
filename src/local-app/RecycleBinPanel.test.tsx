@@ -9,11 +9,44 @@ const item={episodeId:'episode',revision:'revision',title:'咖啡测试',account
 const summary={items:[item],limitBytes:5e9,settingsRevision:3,usedBytes:2000000,pendingBytes:0,overLimit:false};
 const props={revision:1,onClose:vi.fn(),returnFocusRef:{current:null},embedded:true};
 function reads(){vi.mocked(localRequest).mockImplementation(async path=>path==='recycle-bin'?summary:[]);}
-it('opens without mutating, preserves legacy recovery and saves an explicit versioned quota',async()=>{
- reads();vi.mocked(localCommand).mockResolvedValue({});render(<RecycleBinDialog {...props}/>);
+it('opens without mutating and saves a valid versioned quota when editing finishes',async()=>{
+ reads();vi.mocked(localCommand).mockImplementation(async()=>{
+  const saved={limitBytes:6.1e9,settingsRevision:4};
+  vi.mocked(localRequest).mockImplementation(async path=>path==='recycle-bin'?{...summary,...saved}:[]);
+  return saved;
+ });
+ render(<RecycleBinDialog {...props}/>);
  await screen.findByText(item.title);expect(localCommand).not.toHaveBeenCalled();expect(screen.getByText('文件恢复与清理')).toBeTruthy();
- fireEvent.change(screen.getByRole('spinbutton',{name:'容量上限'}),{target:{value:'4'}});expect(screen.getByRole('button',{name:'恢复'})).toHaveProperty('disabled',true);expect(screen.getByRole('button',{name:'永久删除 咖啡测试'})).toHaveProperty('disabled',true);fireEvent.click(screen.getByRole('button',{name:'保存上限'}));
- await waitFor(()=>expect(localCommand).toHaveBeenCalledWith('saveRecycleLimit',{limitBytes:4e9,expectedRevision:3},undefined,'recycle-bin'));
+ const limit=screen.getByRole('spinbutton',{name:/^容量上限/});
+ fireEvent.change(limit,{target:{value:'6'}});
+ fireEvent.change(limit,{target:{value:'6.1'}});
+ expect(localCommand).not.toHaveBeenCalled();
+ expect(screen.queryByRole('button',{name:'保存上限'})).toBeNull();
+ expect(screen.getByRole('button',{name:'恢复'})).toHaveProperty('disabled',true);
+ fireEvent.blur(limit);
+ await screen.findByText('容量上限已保存。');
+ expect(localCommand).toHaveBeenCalledExactlyOnceWith('saveRecycleLimit',{limitBytes:6.1e9,expectedRevision:3},undefined,'recycle-bin');
+ expect(limit).toHaveProperty('value','6.1');
+ expect(screen.getByRole('button',{name:'恢复'})).toHaveProperty('disabled',false);
+ fireEvent.blur(limit);
+ expect(localCommand).toHaveBeenCalledTimes(1);
+});
+it('keeps an invalid quota local and leaves the corrected draft available after a save failure',async()=>{
+ reads();vi.mocked(localCommand).mockRejectedValue(new Error('存储位置离线。'));render(<RecycleBinDialog {...props}/>);
+ const limit=await screen.findByRole('spinbutton',{name:/^容量上限/});
+ fireEvent.change(limit,{target:{value:''}});
+ fireEvent.blur(limit);
+ expect(await screen.findByText('回收站上限须为 0.1 至 1000 GB。')).toBeTruthy();
+ expect(localCommand).not.toHaveBeenCalled();
+ fireEvent.change(limit,{target:{value:'6.15'}});
+ fireEvent.blur(limit);
+ expect(await screen.findByText('容量上限须以 0.1 GB 为单位。')).toBeTruthy();
+ expect(localCommand).not.toHaveBeenCalled();
+ fireEvent.change(limit,{target:{value:'6.2'}});
+ fireEvent.keyDown(limit,{key:'Enter'});
+ await screen.findByText('存储位置离线。');
+ expect(limit).toHaveProperty('value','6.2');
+ expect(localCommand).toHaveBeenCalledExactlyOnceWith('saveRecycleLimit',{limitBytes:6.2e9,expectedRevision:3},undefined,'recycle-bin');
 });
 it('binds restore to membership revision and keeps a failed entry visible',async()=>{
  reads();vi.mocked(localCommand).mockRejectedValue(new Error('存储位置离线。'));render(<RecycleBinDialog {...props}/>);fireEvent.click(await screen.findByRole('button',{name:'恢复'}));
@@ -38,7 +71,7 @@ it('locks parent navigation while permanent confirmation is open and requires it
 });
 
 it('retains an unsaved quota draft when the catalog revision refreshes',async()=>{
- reads();const view=render(<RecycleBinDialog {...props}/>);await screen.findByText(item.title);fireEvent.change(screen.getByRole('spinbutton',{name:'容量上限'}),{target:{value:'4'}});view.rerender(<RecycleBinDialog {...props} revision={2}/>);await waitFor(()=>expect(localRequest).toHaveBeenCalledTimes(4));expect(screen.getByRole('spinbutton',{name:'容量上限'})).toHaveProperty('value','4');
+ reads();const view=render(<RecycleBinDialog {...props}/>);await screen.findByText(item.title);fireEvent.change(screen.getByRole('spinbutton',{name:/^容量上限/}),{target:{value:'4'}});view.rerender(<RecycleBinDialog {...props} revision={2}/>);await waitFor(()=>expect(localRequest).toHaveBeenCalledTimes(4));expect(screen.getByRole('spinbutton',{name:/^容量上限/})).toHaveProperty('value','4');
 });
 
 it('dismisses cleanup help with Escape while retaining the parent settings and keyboard focus',async()=>{

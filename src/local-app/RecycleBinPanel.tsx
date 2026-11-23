@@ -1,7 +1,7 @@
 import {formatStorageSize} from '../fileSize';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
-import {useState,useEffect,useCallback,useRef,type RefObject} from 'react';
-import {ArchiveRestore,Check,Info,RefreshCw,Trash2,X} from 'lucide-react';
+import {useState,useEffect,useCallback,useId,useRef,type RefObject} from 'react';
+import {Info,RefreshCw,Trash2,X} from 'lucide-react';
 import {uiText,getUiLocale} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
@@ -22,9 +22,11 @@ interface Props{revision:unknown;targetKey?:string;onResolved?:(key:string)=>voi
 export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStateChange,onClose,returnFocusRef,embedded=false}:Props){
  const[summary,setSummary]=useState<RecycleBinSummary|null>(null),[draft,setDraft]=useState('5'),[busy,setBusy]=useState(false),[loading,setLoading]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[purge,setPurge]=useState<RecycleBinItem|null>(null),[recoveryBusy,setRecoveryBusy]=useState(false);
  const[policyOpen,setPolicyOpen]=useState(false);
+ const [limitError,setLimitError]=useState('');
+ const limitHintId=useId(),limitErrorId=useId();
  const [selected,setSelected]=useState<ReadonlySet<string>>(()=>new Set()),[batch,setBatch]=useState<{mode:'restore'|'purge';items:RecycleBinItem[]}|null>(null);
  const selectedItems=summary?.items.filter(item=>selected.has(item.episodeId))??[];
- const dirty=!!summary&&Number(draft)*1e9!==summary.limitBytes;
+ const dirty=!!summary&&Math.round(Number(draft)*1e9)!==summary.limitBytes;
  const selectionDisabled=busy||loading||recoveryBusy||dirty;
  const allSelected=!!summary?.items.length&&selectedItems.length===summary.items.length;
  function toggleItems(items:RecycleBinItem[],checked:boolean){
@@ -44,35 +46,67 @@ export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStat
  useEffect(()=>{onStateChange?.({busy:busy||recoveryBusy||!!purge||!!batch,dirty});return()=>onStateChange?.({busy:false,dirty:false});},[busy,recoveryBusy,purge,batch,dirty,onStateChange]);
  const refresh=useCallback(async(saved=false)=>{const g=++generation.current;setLoading(true);setError('');try{const value:RecycleBinSummary=await localRequest('recycle-bin');if(mounted.current&&g===generation.current){setSummary(value);setSelected(previous=>new Set(value.items.filter(item=>previous.has(item.episodeId)).map(item=>item.episodeId)));if(!draftDirty.current)setDraft(String(value.limitBytes/1e9));}}catch(reason){if(mounted.current&&g===generation.current)setError(saved?'操作已保存；回收站刷新失败，请重新读取。':(reason as Error).message);}finally{if(mounted.current&&g===generation.current)setLoading(false);}},[]);
  useEffect(()=>{void refresh();},[revision,refresh]);
- async function run(command:string,data:Record<string,unknown>,message:string){if(running.current)return;running.current=true;setBusy(true);setError('');setNotice('');try{await localCommand(command,data,undefined,'recycle-bin');if(mounted.current){setNotice(message);void refresh(true);try{onChanged?.();}catch{setError('操作已保存；目录刷新失败，请重新读取。');}}}catch(reason){if(mounted.current)setError((reason as Error).message);}finally{running.current=false;if(mounted.current)setBusy(false);}}
+ async function run<T>(command:string,data:Record<string,unknown>,message:string,onSaved?:(result:T)=>void){
+  if(running.current)return;
+  running.current=true;setBusy(true);setError('');setNotice('');
+  try{
+   const result=await localCommand<T>(command,data,undefined,'recycle-bin');
+   if(!mounted.current)return;
+   onSaved?.(result);
+   setNotice(message);
+   void refresh(true);
+   try{onChanged?.();}catch{setError('操作已保存；目录刷新失败，请重新读取。');}
+  }catch(reason){if(mounted.current)setError((reason as Error).message);}
+  finally{running.current=false;if(mounted.current)setBusy(false);}
+ }
+ function saveLimit(input:HTMLInputElement){
+  if(!summary||!dirty||busy||recoveryBusy)return;
+  if(!input.validity.valid){
+   setLimitError(input.validity.stepMismatch?'容量上限须以 0.1 GB 为单位。':'回收站上限须为 0.1 至 1000 GB。');
+   return;
+  }
+  setLimitError('');
+  void run<Pick<RecycleBinSummary,'limitBytes'|'settingsRevision'>>(
+   'saveRecycleLimit',{limitBytes:Math.round(input.valueAsNumber*1e9),expectedRevision:summary.settingsRevision},uiText('容量上限已保存。'),
+   saved=>setSummary(current=>current&&{...current,limitBytes:saved.limitBytes,settingsRevision:saved.settingsRevision,overLimit:current.usedBytes>saved.limitBytes}),
+  );
+ }
  const content=<section ref={embedded?undefined:dialog} className={`modal-card recycle-bin-dialog${embedded?' owner-settings-pane':''}`} role={embedded?undefined:'dialog'} aria-modal={embedded?undefined:true} aria-label={embedded?undefined:uiText('回收站')}>
-  <header><h2>{uiText('回收站')}</h2><div><Tooltip title={uiText('刷新')} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label={uiText('刷新')} isDisabled={busy||loading||dirty} onPress={()=>void refresh()}/></Tooltip><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText('关闭回收站')} isDisabled={busy||recoveryBusy} onPress={onClose}/></div></header>
+  <header><h2>{uiText('回收站')}</h2><div><Tooltip title={uiText('刷新')} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" iconLeading={RefreshCw} aria-label={uiText('刷新')} isDisabled={busy||loading} onPress={()=>void refresh()}/></Tooltip><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText('关闭回收站')} isDisabled={busy||recoveryBusy} onPress={onClose}/></div></header>
   <div className="recycle-bin-body">
    {error&&<p role="alert" className="recycle-bin-error">{uiText(error)}</p>}<FeedbackNotice message={notice} onDismiss={()=>setNotice('')}/>
    {summary&&<>
     <section className="recycle-bin-settings" aria-label={uiText('回收站设置')}>
      <div className="recycle-bin-capacity"><span className="recycle-bin-capacity-label">{uiText('已用')}<Tooltip title={uiText('移入或保存上限时检查容量，超限按最早安全项清理。刚移入、单项超限、共享、未登记、离线及变化文件保留。')} isOpen={policyOpen} onOpenChange={setPolicyOpen} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" className="recycle-bin-policy-button" iconLeading={Info} aria-label={uiText('清理规则说明')} onPress={()=>setPolicyOpen(true)} onKeyDown={event=>{if(event.key==='Escape'&&policyOpen){event.preventDefault();setPolicyOpen(false);}}}/></Tooltip></span><strong>{size(summary.usedBytes)} <span>/ {new Intl.NumberFormat(getUiLocale(),{maximumFractionDigits:2}).format(summary.limitBytes/1e9)} GB</span></strong><meter aria-label={uiText('回收站已用容量')} value={summary.usedBytes} min={0} max={Math.max(summary.usedBytes,summary.limitBytes)} high={summary.limitBytes*.85} optimum={0}/></div>
-     <form onSubmit={event=>{event.preventDefault();if(summary)void run('saveRecycleLimit',{limitBytes:Math.round(Number(draft)*1e9),expectedRevision:summary.settingsRevision},uiText('容量上限已保存。'));}}><label>{uiText('上限')}<span><input type="number" min="0.1" max="1000" step="0.1" required aria-label={uiText('容量上限')} value={draft} disabled={busy||loading} onChange={event=>setDraft(event.target.value)}/> GB</span></label><Tooltip title={uiText('保存上限')} className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" iconLeading={Check} aria-label={uiText('保存上限')} type="submit" isDisabled={busy||loading||!dirty}/></Tooltip></form>
+     <div className="recycle-bin-limit">
+      <label>{uiText('容量上限')}<span><input name="limitGb" type="number" inputMode="decimal" min="0.1" max="1000" step="0.1" required value={draft}
+       readOnly={busy||recoveryBusy} aria-invalid={limitError?true:undefined} aria-describedby={limitError?`${limitHintId} ${limitErrorId}`:limitHintId}
+       onChange={event=>{setDraft(event.target.value);setLimitError('');setError('');setNotice('');}}
+       onBlur={event=>saveLimit(event.currentTarget)}
+       onKeyDown={event=>{if(event.key==='Enter'&&!event.nativeEvent.isComposing){event.preventDefault();saveLimit(event.currentTarget);}}}/> GB</span></label>
+      <small id={limitHintId}>{uiText('离开输入框时自动保存。低于已用容量时，可能永久清理最早的符合条件的生产单。')}</small>
+      {limitError&&<small id={limitErrorId} role="alert" className="recycle-bin-error">{uiText(limitError)}</small>}
+     </div>
     </section>
     {summary.overLimit&&<p className="recycle-bin-error" role="status">{uiText('已超限，受保护项目保留。可调高上限或手动清理。')}</p>}
     {!!summary.pendingBytes&&<p role="status">{uiText('待释放 {size}，请继续文件清理。',{size:size(summary.pendingBytes)})}</p>}
-    {!!summary.items.length&&<div className="episode-batch-toolbar" role="group" aria-label={uiText('回收站批量操作')}>
-     <label className="recycle-bin-select-all"><input name="selectAllRecycled" type="checkbox" checked={allSelected} disabled={selectionDisabled} ref={element=>{if(element)element.indeterminate=selectedItems.length>0&&!allSelected;}} onChange={event=>toggleItems(summary.items,event.target.checked)}/><span>{uiText('全选回收站')}</span></label>
-     {selectedItems.length>0&&<><span role="status">{uiText('已选 {count} 张',{count:selectedItems.length})}</span>
-      <Button size="sm" color="secondary" isDisabled={selectionDisabled} onPress={()=>setBatch({mode:'restore',items:selectedItems})}>{uiText('批量恢复')}</Button>
-      <Button size="sm" color="secondary-destructive" isDisabled={selectionDisabled} onPress={()=>setBatch({mode:'purge',items:selectedItems})}>{uiText('批量永久删除')}</Button>
-      <Button size="sm" color="tertiary" isDisabled={selectionDisabled} onPress={()=>setSelected(new Set())}>{uiText('清空选择')}</Button>
-     </>}
+    {selectedItems.length>0&&<div className="episode-batch-toolbar episode-batch-selection-toolbar" role="group" aria-label={uiText('回收站批量操作')}>
+     <Button size="sm" color="secondary" isDisabled={selectionDisabled} onPress={()=>setBatch({mode:'restore',items:selectedItems})}>{uiText('批量恢复')}</Button>
+     <Button size="sm" color="secondary-destructive" isDisabled={selectionDisabled} onPress={()=>setBatch({mode:'purge',items:selectedItems})}>{uiText('批量永久删除')}</Button>
+     <div className="episode-batch-selection-status"><span className="episode-batch-selection-count" role="status">{uiText('已选 {count} 张',{count:selectedItems.length})}</span><Button size="sm" color="tertiary" isDisabled={selectionDisabled} onPress={()=>setSelected(new Set())}>{uiText('清空选择')}</Button></div>
     </div>}
-    <div className="recycle-bin-columns" aria-hidden="true"><span>{uiText('生产单 / 状态')}</span><span>{uiText('占用 / 移入时间')}</span><span>{uiText('操作')}</span></div>
-    <div className="recycle-bin-list">{summary.items.map(item=><div className="recycle-bin-row" key={item.episodeId}>
-     <div className="recycle-bin-name">
-      <label className="episode-batch-check"><input name="selectedRecycled" type="checkbox" checked={selected.has(item.episodeId)} disabled={selectionDisabled} onChange={event=>toggleItems([item],event.target.checked)}/><span className="sr-only">{uiText('选择 {title}',{title:item.title||uiText('未命名生产单')})}</span></label>
-      <div><strong>{item.title||uiText('未命名生产单')}</strong><small>{item.accountName}{item.archivedBefore?uiText(' · 原已归档'):''}</small>{item.protection&&<small className="recycle-bin-protection">{uiText(item.protection)}</small>}</div>
-     </div>
-     <div><span>{size(item.sizeBytes)}</span><small>{new Intl.DateTimeFormat(getUiLocale(),{dateStyle:'short',timeStyle:'short'}).format(new Date(item.recycledAt))}</small></div>
-     <div className="recycle-bin-actions"><Button size="sm" color="tertiary" iconLeading={ArchiveRestore} isDisabled={busy||loading||recoveryBusy||dirty} onPress={()=>void run('restoreRecycledEpisode',{episodeId:item.episodeId,revision:item.revision},uiText('生产单已恢复到原账号与系列。'))}>{uiText('恢复')}</Button><Button size="sm" color="tertiary" iconLeading={Trash2} aria-label={uiText('永久删除 {title}',{title:item.title})} isDisabled={busy||loading||recoveryBusy||dirty} onPress={()=>setPurge(item)}/></div>
-    </div>)}</div>
+    {!!summary.items.length&&<table className="recycle-bin-table" aria-label={uiText('回收站生产单')}>
+     <thead><tr>
+      <th scope="col" className="recycle-bin-selection"><label className="episode-batch-check"><input name="selectAllRecycled" type="checkbox" checked={allSelected} disabled={selectionDisabled} ref={element=>{if(element)element.indeterminate=selectedItems.length>0&&!allSelected;}} onChange={event=>toggleItems(summary.items,event.target.checked)}/><span className="sr-only">{uiText('全选回收站')}</span></label></th>
+      <th scope="col">{uiText('生产单 / 状态')}</th><th scope="col" className="recycle-bin-item-capacity">{uiText('占用 / 移入时间')}</th><th scope="col" className="recycle-bin-item-actions">{uiText('操作')}</th>
+     </tr></thead>
+     <tbody>{summary.items.map(item=><tr key={item.episodeId}>
+      <td className="recycle-bin-selection"><label className="episode-batch-check"><input name="selectedRecycled" type="checkbox" checked={selected.has(item.episodeId)} disabled={selectionDisabled} onChange={event=>toggleItems([item],event.target.checked)}/><span className="sr-only">{uiText('选择 {title}',{title:item.title||uiText('未命名生产单')})}</span></label></td>
+      <th scope="row"><strong>{item.title||uiText('未命名生产单')}</strong><small>{item.accountName}{item.archivedBefore?uiText(' · 原已归档'):''}</small>{item.protection&&<small className="recycle-bin-protection">{uiText(item.protection)}</small>}</th>
+      <td className="recycle-bin-item-capacity"><span>{size(item.sizeBytes)}</span><small>{new Intl.DateTimeFormat(getUiLocale(),{dateStyle:'short',timeStyle:'short'}).format(new Date(item.recycledAt))}</small></td>
+      <td className="recycle-bin-item-actions"><div><Button size="sm" color="tertiary" isDisabled={selectionDisabled} onPress={()=>void run('restoreRecycledEpisode',{episodeId:item.episodeId,revision:item.revision},uiText('生产单已恢复到原账号与系列。'))}>{uiText('恢复')}</Button><Button size="sm" color="tertiary" iconLeading={Trash2} aria-label={uiText('永久删除 {title}',{title:item.title})} isDisabled={selectionDisabled} onPress={()=>setPurge(item)}/></div></td>
+     </tr>)}</tbody>
+    </table>}
     {!summary.items.length&&<p className="recycle-bin-empty">{uiText('回收站为空。')}</p>}
    </>}
    {!summary&&loading&&<p role="status">{uiText('正在读取回收站…')}</p>}
@@ -82,7 +116,7 @@ export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStat
   {batch?.mode==='purge'&&<BatchPurgeDialog selection={batch.items} onClose={()=>setBatch(null)} onChanged={refreshAfterBatch}/>}
   {purge&&<PurgeConfirm item={purge} onClose={()=>setPurge(null)} onComplete={()=>{setPurge(null);void refresh();onChanged?.();}}/>}
  </section>;
- return embedded?content:<div className="modal-backdrop">{content}</div>;
+ return embedded?content:<div className="modal-backdrop recycle-bin-backdrop">{content}</div>;
 }
 function PurgeConfirm({item,onClose,onComplete}:{item:RecycleBinItem;onClose:()=>void;onComplete:()=>void}){
  const[plan,setPlan]=useState<RecyclePurgePlan|null>(null),[confirmation,setConfirmation]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[attempt,setAttempt]=useState(0);
