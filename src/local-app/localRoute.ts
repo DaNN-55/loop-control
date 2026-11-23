@@ -3,6 +3,7 @@ import {episodeImportLimits} from './episodeBatchImportTypes.js';
 import {readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
 import {LocalPublicationPackages} from './workspacePublicationPackages.js';
 import {readScriptStudio} from './scriptStudioConfirmation.js';
+import {readBatchScriptReview} from './batchScriptReview.js';
 import {LocalWorkspacePublications} from './workspacePublicationStore.js';
 import {LocalRecycleBin} from './recycleBin.js';
 import {ProductionScriptError} from '../reviews/productionScript.js';
@@ -287,6 +288,11 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/workspace-search'){send(200,await readWorkspaceSearch(options.pool,session.id,url.searchParams));return;}
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id,parseCatalogQuery(url.searchParams)));return;}
+   const batchScriptReview=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/batch-script-review$/);
+   if(batchScriptReview){
+    if(!uuid.test(batchScriptReview[1])||url.search)throw new ConfigurationError(400,'生产单引用无效。');
+    send(200,await readBatchScriptReview(options.pool,options.mediaRoot,session.id,batchScriptReview[1]));return;
+   }
    const savedPlan=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/saved-plan$/);
    if(savedPlan){
     const id=savedPlan[1];
