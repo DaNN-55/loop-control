@@ -18,7 +18,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   expect(series.status,JSON.stringify(series.body)).toBe(200);
   const txt=join(f.root,'街角.txt'),md=join(f.root,'夜雨.md');
   const revised='路灯在街角亮起。';
-  await writeFile(txt,'');await writeFile(md,'系列：街道故事\n# 夜雨\n\n窗外下起了雨。\n');
+  await writeFile(md,'系列：街道故事\n# 夜雨\n\n窗外下起了雨。\n');
   browser=await storyBrowser(f,'batch-text','隔离 Studio153 验收');
   await browser.click('关闭生产单详情');
   await browser.click('批量新建');
@@ -28,7 +28,22 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner browser edits a mixed-script 
   await browser.click('批量新建');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
   expect(await browser.evaluate("document.querySelector('.episode-batch-target select[name=seriesVersionId]')===null")).toBe(true);
-  await browser.cli('upload','dialog input[type=file]',txt,md);
+  await browser.evaluate("document.querySelector('dialog input[name=scripts]').addEventListener('click',event=>{event.preventDefault();event.target.dataset.activated='true';},{once:true})");
+  await browser.cli('focus','dialog .episode-batch-upload-slot');
+  await browser.cli('press','Enter');
+  expect(await browser.evaluate("document.querySelector('dialog input[name=scripts]').dataset.activated")).toBe('true');
+  const dropped=[
+   {name:'街角.txt',content:''},
+   {name:'夜雨.md',content:'系列：街道故事\n# 夜雨\n\n窗外下起了雨。\n'},
+  ];
+  expect(await browser.evaluate(`(()=>{
+   const slot=document.querySelector('dialog .episode-batch-upload-slot');
+   const dataTransfer=new DataTransfer();
+   for(const {name,content} of ${JSON.stringify(dropped)})dataTransfer.items.add(new File([content],name));
+   const accepted=!slot.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer}));
+   const handled=!slot.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer}));
+   return accepted&&handled;
+  })()`)).toBe(true);
   await browser.cli('wait','--text','请填写脚本正文。');
   await browser.fill('脚本正文',revised);
   await browser.click('检查重复');

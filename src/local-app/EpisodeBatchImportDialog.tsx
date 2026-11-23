@@ -1,5 +1,5 @@
 import {useEffect,useId,useMemo,useRef,useState,type FormEvent} from 'react';
-import {X} from 'lucide-react';
+import {Upload,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {uiText} from '../i18n/ui';
 import {localRequest} from './client';
@@ -59,7 +59,8 @@ function itemProblem(row:PreviewRow){
 }
 
 export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions,initialAccountId,onClose,onCreated,onOpenEpisode,onViewBatch}:Props){
- const heading=useId(),fileHelp=useId(),dialog=useRef<HTMLDialogElement>(null),errorFocus=useRef<HTMLDivElement>(null);
+ const heading=useId(),fileLabel=useId(),fileHelp=useId(),dialog=useRef<HTMLDialogElement>(null),errorFocus=useRef<HTMLDivElement>(null);
+ const fileInput=useRef<HTMLInputElement>(null),[dragging,setDragging]=useState(false);
  const [accountId,setAccountId]=useState(accounts.find(account=>account.id===initialAccountId)?.id??accounts[0]?.id??'');
  const [seriesOverrides,setSeriesOverrides]=useState<Record<string,string>>({});
  const [rows,setRows]=useState<PreviewRow[]>([]),[duplicates,setDuplicates]=useState<DuplicateCheck|null>(null);
@@ -238,12 +239,33 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
      <div className="episode-batch-target">
       <label>{uiText('账号')}<select name="accountId" required disabled={busy} value={accountId} onChange={event=>{setAccountId(event.target.value);setSeriesOverrides({});clearPreview();}}>{accounts.map(account=><option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
      </div>
-     <div className="episode-workbook-file">
-      <label>{uiText('导入文件')}<input aria-describedby={fileHelp} name="scripts" type="file" multiple accept=".txt,.md,.markdown,.xlsx" disabled={busy} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/></label>
+     <div className="episode-batch-upload" data-dragging={dragging||undefined}
+      onDragOver={event=>{
+       if(!event.dataTransfer.types.includes('Files'))return;
+       event.preventDefault();
+       event.dataTransfer.dropEffect=busy?'none':'copy';
+       if(!busy)setDragging(true);
+      }}
+      onDragLeave={event=>{
+       if(!(event.relatedTarget instanceof Node&&event.currentTarget.contains(event.relatedTarget)))setDragging(false);
+      }}
+      onDrop={event=>{
+       if(!event.dataTransfer.types.includes('Files'))return;
+       event.preventDefault();
+       setDragging(false);
+       if(!busy)void addFiles(Array.from(event.dataTransfer.files));
+      }}>
+      <button className="episode-batch-upload-slot" type="button" disabled={busy} aria-labelledby={fileLabel} aria-describedby={fileHelp} onClick={()=>fileInput.current?.click()}>
+       <Upload size={20} aria-hidden="true"/>
+       <strong id={fileLabel}>{uiText('点击选择或拖入文件')}</strong>
+       <small id={fileHelp}>{uiText('多份 UTF-8 TXT、Markdown，或一份 Excel（.xlsx）')}</small>
+      </button>
+      <input ref={fileInput} hidden name="scripts" type="file" multiple accept=".txt,.md,.markdown,.xlsx" disabled={busy} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/>
+     </div>
+     <div className="episode-batch-upload-help">
+      <p className="field-hint">{uiText('Excel 的时长以秒填写。系列填在「系列」列，或在 TXT、Markdown 首行写「系列：名称」。')}</p>
       <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
      </div>
-     <p id={fileHelp} className="field-hint">{uiText('可选择多份 UTF-8 TXT、Markdown，或一份 .xlsx 工作簿。Excel 时长以秒填写。')}</p>
-     <p className="field-hint">{uiText('Excel 填「系列」列。TXT 或 Markdown 在首行写「系列：名称」。也可在预览中逐条选择。')}</p>
      {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField} seriesFor={seriesField} seriesSummary={itemId=>seriesByItem.get(itemId)!.summary} busy={busy} onChange={value=>{setWorkbook(value);clearPreview();}} onRemove={()=>{setWorkbook(null);clearPreview();}}/>}
      {rows.map(row=>{
       const duplicate=duplicates?.items.find(item=>item.itemId===row.itemId),invalid=itemProblem(row);
