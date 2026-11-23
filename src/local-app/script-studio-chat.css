@@ -8,10 +8,13 @@
 html[data-interface="impeccable"] .product-ui .script-studio-chat-layout .script-studio-upload{display:flex;flex-direction:row;gap:6px;min-height:32px;min-block-size:32px;inline-size:auto;padding:5px 9px;border-radius:5px;font-size:12px}
 .script-studio-chat-layout .script-studio-upload>small{font-size:11px}
 .script-studio-chat-layout .script-studio-filename{margin:5px 14px}
-.script-studio-chat-layout .script-studio-grid,.script-studio-chat-layout .script-studio-grid:is(.is-middle-collapsed,.is-chat-collapsed){--script-shot-column:minmax(0,1.06fr);--script-chat-column:minmax(300px,.85fr);grid-template-columns:minmax(0,1fr) var(--script-shot-column) var(--script-chat-column);grid-template-rows:minmax(0,1fr)}
+.script-studio-chat-layout .script-studio-grid,.script-studio-chat-layout .script-studio-grid:is(.is-middle-collapsed,.is-chat-collapsed){--script-chat-column:minmax(300px,.85fr);grid-template-columns:minmax(0,1fr) var(--script-shot-column,) var(--script-chat-column);grid-template-rows:minmax(0,1fr)}
+.script-studio-chat-layout .script-studio-grid:has(> .script-studio-middle):not(.is-middle-collapsed){--script-shot-column:minmax(0,1.06fr)}
+@supports not selector(:has(*)){
+ .script-studio-chat-layout .script-studio-grid.has-middle:not(.is-middle-collapsed){--script-shot-column:minmax(0,1.06fr)}
+}
 .script-studio-chat-layout .script-studio-grid.is-middle-collapsed{--script-shot-column:40px}
 .script-studio-chat-layout .script-studio-grid.is-chat-collapsed{--script-chat-column:42px}
-.script-studio-chat-layout .script-studio-middle-empty{margin:8px 14px;color:var(--lc-muted);font-size:12px}
 .script-studio-chat-layout .script-studio-next{display:flex;flex:none;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:0;padding:10px 14px}
 .script-studio-chat-layout .script-studio-next-status{font-size:12px;color:var(--lc-muted)}
 .script-studio-chat-layout .script-studio-next>.script-studio-actions{margin-inline-start:auto}
@@ -51,7 +54,7 @@ html[data-interface="impeccable"] .product-ui .script-studio-chat .script-studio
 .script-studio-popover .script-studio-chat-mode>button[aria-pressed]:is(:active,[data-pressed]):not(:disabled){background:color-mix(in srgb,var(--lc-accent) 28%,var(--lc-surface))!important}
 .script-studio-chat .form-error{margin:0;font-size:12px}
 @container script-studio (inline-size < 1060px){
- .script-studio-chat-layout .script-studio-grid,.script-studio-chat-layout .script-studio-grid:is(.is-middle-collapsed,.is-chat-collapsed){grid-template-columns:minmax(0,1fr) var(--script-shot-column);grid-template-rows:minmax(360px,1fr) auto}
+ .script-studio-chat-layout .script-studio-grid,.script-studio-chat-layout .script-studio-grid:is(.is-middle-collapsed,.is-chat-collapsed){grid-template-columns:minmax(0,1fr) var(--script-shot-column,);grid-template-rows:minmax(360px,1fr) auto}
  .script-studio-chat-layout .script-studio-grid .script-studio-editor{grid-row:auto}
  .script-studio-chat-layout .script-studio-chat{grid-column:1/-1;border-inline-start:0;border-block-start:1px solid var(--lc-line)}
  .script-studio-chat .script-studio-chat-body{min-block-size:330px;max-block-size:600px}

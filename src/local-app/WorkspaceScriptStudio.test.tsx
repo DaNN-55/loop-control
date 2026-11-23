@@ -30,7 +30,7 @@ it('shows required input and duration errors at the field before dispatching',as
  const{command}=panel({script:''});fireEvent.click(screen.getByRole('button',{name:'继续制作'}));expect(screen.getByRole('alert').textContent).toContain('请填写');expect(document.activeElement).toBe(screen.getByRole('textbox',{name:'脚本正文'}));fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:source}});fireEvent.change(screen.getByLabelText('目标时长'),{target:{value:'-5'}});fireEvent.click(screen.getByRole('button',{name:'继续制作'}));expect(document.activeElement).toBe(screen.getByLabelText('目标时长'));expect(command).not.toHaveBeenCalled();expect(modelCommand).not.toHaveBeenCalled();
 });
 it('ignores a model result received after editing the original source',async()=>{
- request.mockResolvedValue(catalog);let finish!:(value:unknown)=>void;modelCommand.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));panel();fireEvent.click(screen.getByRole('button',{name:'优化拍法'}));await waitFor(()=>expect(modelCommand).toHaveBeenCalledOnce());fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:'另一份原文'}});await act(async()=>finish({requestId:'late',status:'completed',plan}));expect(screen.queryByRole('button',{name:'采用并继续'})).toBeNull();expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','另一份原文');
+ request.mockResolvedValue(catalog);let finish!:(value:unknown)=>void;modelCommand.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));panel();fireEvent.click(screen.getByRole('button',{name:'优化拍法'}));await waitFor(()=>expect(modelCommand).toHaveBeenCalledOnce());fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:'另一份原文'}});await act(async()=>finish({requestId:'late',status:'completed',plan}));expect(screen.queryByRole('button',{name:'采用并继续'})).toBeNull();expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','另一份原文');expect(screen.queryByRole('complementary',{name:'分镜预览'})).toBeNull();
 });
 it('restores unsent original text and target duration only for the same Owner and revision',()=>{
  const props={episodeId:'draft-e',scriptRevisionId:null,script:'',stage:'waiting_input',readOnly:false,pending:false,command:vi.fn(),onConfirmed:vi.fn()};const view=render(<WorkspaceDraftProvider ownerId="owner-a"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>);fireEvent.change(screen.getByRole('textbox',{name:'脚本正文'}),{target:{value:source}});fireEvent.change(screen.getByLabelText('目标时长'),{target:{value:'15'}});view.unmount();const restored=render(<WorkspaceDraftProvider ownerId="owner-a"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>);expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value',source);expect(screen.getByLabelText('目标时长')).toHaveProperty('value','15');expect(document.querySelector('.workspace-script-restored')).toBeNull();expect(screen.getByRole('region',{name:'通知'}).textContent).toContain('已恢复草稿');restored.unmount();render(<WorkspaceDraftProvider ownerId="owner-b"><WorkspaceScriptPanel {...props}/></WorkspaceDraftProvider>);expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','');
@@ -55,8 +55,24 @@ it('keeps both example presets in the source header without submitting or callin
  fireEvent.click(examples);fireEvent.click(await screen.findByRole('button',{name:'普通文本'}));expect(screen.getByLabelText('目标时长')).toHaveProperty('value','15');
  fireEvent.click(examples);fireEvent.click(await screen.findByRole('button',{name:'完整分镜'}));expect(screen.getByRole('textbox',{name:'脚本正文'}).textContent).toContain('# ');expect(screen.getByLabelText('目标时长')).toHaveProperty('value','15');expect(command).not.toHaveBeenCalled();expect(modelCommand).not.toHaveBeenCalled();
 });
+it('keeps the preview hidden during text-only discussion',async()=>{
+ request.mockResolvedValue(catalog);
+ let finish!:(result:unknown)=>void;
+ modelCommand.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));
+ panel();
+ fireEvent.click(screen.getByRole('button',{name:'交流方式：调整拍法'}));
+ fireEvent.click(await screen.findByRole('button',{name:'自由交流'}));
+ fireEvent.click(screen.getByRole('button',{name:'关闭',exact:true}));
+ fireEvent.change(await screen.findByRole('textbox',{name:'修改要求'}),{target:{value:'这个故事适合什么风格？'}});
+ fireEvent.click(screen.getByRole('button',{name:'发送'}));
+ await waitFor(()=>expect(modelCommand).toHaveBeenCalledWith('optimize',expect.objectContaining({mode:'discuss'}),undefined,'script-studio'));
+ expect(screen.queryByRole('complementary',{name:'分镜预览'})).toBeNull();
+ await act(async()=>finish({requestId:'discussion',status:'completed',message:'可以尝试纪实风格。'}));
+ expect(screen.queryByRole('complementary',{name:'分镜预览'})).toBeNull();
+});
+
 it('reveals loading only after optimization and keeps collapse controls with the shots',async()=>{
- request.mockResolvedValue(catalog);let finish!:(value:unknown)=>void;modelCommand.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));const{container,command}=panel();expect(screen.queryByRole('region',{name:'推荐拍法'})).toBeNull();
+ request.mockResolvedValue(catalog);let finish!:(value:unknown)=>void;modelCommand.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));const{container,command}=panel();expect(screen.queryByRole('complementary',{name:'分镜预览'})).toBeNull();
  fireEvent.click(screen.getByRole('button',{name:'优化拍法'}));await waitFor(()=>expect(modelCommand).toHaveBeenCalledOnce());expect(screen.getByRole('status',{name:'拍法生成进度'})).toBeTruthy();
  await act(async()=>finish({requestId:'plan-request',status:'completed',plan}));const collapse=screen.getByRole('button',{name:'收起分镜'});expect(container.querySelector('.script-studio-middle')?.contains(collapse)).toBe(true);expect(container.querySelector('.script-studio-chat')?.contains(collapse)).toBe(false);
  fireEvent.click(collapse);expect(screen.queryByRole('region',{name:'推荐拍法'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'展开分镜'}));expect(screen.getByRole('region',{name:'推荐拍法'})).toBeTruthy();expect(command).not.toHaveBeenCalled();

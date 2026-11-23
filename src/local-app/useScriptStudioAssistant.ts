@@ -12,7 +12,7 @@ export function useScriptStudioAssistant({episodeId,scriptRevisionId,source,targ
  const owner=useWorkspaceOwnerId(),choiceKey=owner?'loop-control.script-studio-model:'+owner:'';
  const [catalog,setCatalog]=useState<ProductionServiceCatalog|null>(null),[selected,setSelected]=useState(()=>{try{return choiceKey?localStorage.getItem(choiceKey)??'':'';}catch{return '';}}),[needsChoice,setNeedsChoice]=useState(false),[modelsLoading,setModelsLoading]=useState(false),[modelError,setModelError]=useState('');
  const [attachments,setAttachments]=useState<ScriptStudioAttachmentRef[]>([]);
- const [result,setResult]=useState<ScriptStudioResult|null>(null),[busy,setBusy]=useState(false),[opened,setOpened]=useState(false),[error,setError]=useState(''),[activity,setActivity]=useState<'model'|'discuss'|'edit'|null>(null);
+ const [result,setResult]=useState<ScriptStudioResult|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[activity,setActivity]=useState<'model'|'discuss'|'edit'|null>(null);
  const scope=JSON.stringify([owner,episodeId,scriptRevisionId,source,targetDuration,conversationId??null]),visit=useRef({active:true,scope,disabled,sequence:0,locked:false});visit.current.scope=scope;visit.current.disabled=disabled;
  const attempt=useRef<{scope:string;mode:ScriptStudioChatMode;instruction:string;previousRequestId?:string;reasoningEffort?:ScriptStudioReasoningEffort;attachments?:ScriptStudioAttachmentRef[];knownRequestIds:string[]}|null>(null);
  const [turns,setTurns]=useState<ScriptStudioTurn[]>([]),[latestRequestId,setLatestRequestId]=useState<string>(),[latest,setLatest]=useState<ScriptStudioResult|null>(null),[restoring,setConversationLoading]=useState(false),[resolvedRestoreScope,setResolvedRestoreScope]=useState(''),[conversationError,setConversationError]=useState(''),[restoredMode,setRestoredMode]=useState<ScriptStudioMode>('optimize'),[recoveryRequired,setRecoveryRequired]=useState(false);
@@ -31,14 +31,14 @@ export function useScriptStudioAssistant({episodeId,scriptRevisionId,source,targ
  const catalogInitialized=useRef(false),catalogSequence=useRef(0),catalogRead=useRef<Promise<ProductionServiceCatalog>|null>(null);
  const current=(sequence:number,captured:string)=>visit.current.active&&visit.current.scope===captured&&visit.current.sequence===sequence;
  useEffect(()=>{visit.current.active=true;return()=>{visit.current.active=false;visit.current.sequence++;};},[]);
- useEffect(()=>{visit.current.sequence++;visit.current.locked=false;attempt.current=null;setResult(null);setBusy(false);setActivity(null);setError('');setOpened(false);setNeedsChoice(false);setTurns([]);setAttachments([]);setLatestRequestId(undefined);setLatest(null);setRestoredMode('optimize');setRecoveryRequired(false);setConversationError('');},[scope]);
+ useEffect(()=>{visit.current.sequence++;visit.current.locked=false;attempt.current=null;setResult(null);setBusy(false);setActivity(null);setError('');setNeedsChoice(false);setTurns([]);setAttachments([]);setLatestRequestId(undefined);setLatest(null);setRestoredMode('optimize');setRecoveryRequired(false);setConversationError('');},[scope]);
  async function restoreConversation(){
   if(!owner||visit.current.disabled||!source.trim()||Array.from(source).length>scriptStudioMaxCharacters)return;
   const captured=scope,sequence=++visit.current.sequence;setConversationLoading(true);setConversationError('');
   try{const value=await localRequest('script-studio',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({command:'conversation',data:{episodeId,expectedScriptRevisionId:scriptRevisionId,text:source,targetDuration,...(conversationId?{conversationId}:{})}})}) as ScriptStudioConversation;
    if(!current(sequence,captured)||visit.current.disabled)return;
    if(!Array.isArray(value.turns))throw Error('对话记录读取失败，请重新核对。');
-   setResolvedRestoreScope(captured);setTurns(value.turns);setAttachments(value.attachments??[]);setResult(value.result);setLatest(value.latest??null);setLatestRequestId(value.latest?.status==='failed'?value.turns.filter(t=>t.status==='completed').at(-1)?.requestId:value.latestRequestId);setRestoredMode(value.mode);setRecoveryRequired(false);if(value.result)setOpened(true);
+   setResolvedRestoreScope(captured);setTurns(value.turns);setAttachments(value.attachments??[]);setResult(value.result);setLatest(value.latest??null);setLatestRequestId(value.latest?.status==='failed'?value.turns.filter(t=>t.status==='completed').at(-1)?.requestId:value.latestRequestId);setRestoredMode(value.mode);setRecoveryRequired(false);
    const pending=attempt.current,last=value.turns.at(-1);
    if(pending?.scope===captured&&last?.status==='completed'&&value.latest?.requestId===last.requestId&&!pending.knownRequestIds.includes(last.requestId)&&last.mode===pending.mode&&last.instruction===(pending.instruction||(pending.attachments?.length?'参考附件':'优化拍法'))&&sameScriptStudioAttachments(last.attachments??[],pending.attachments??[])){attempt.current=null;return value.latest;}
   }catch(cause){if(current(sequence,captured)){setResolvedRestoreScope(captured);setConversationError(cause instanceof Error?cause.message:'对话记录读取失败。');}}
@@ -56,7 +56,7 @@ export function useScriptStudioAssistant({episodeId,scriptRevisionId,source,targ
  async function send(mode:ScriptStudioChatMode='optimize',instruction='',previousRequestId?:string,newAttachments:readonly ScriptStudioAttachmentRef[]=[]){
   if(disabled||visit.current.locked||conversationLoading||conversationError)return;
   if(unresolved&&owner)return restoreConversation();
-  setOpened(true);setError('');
+  setError('');
   if(Array.from(source).length>scriptStudioMaxCharacters){setError('AI 拍法最多支持 20000 字符，请缩短原文后再试；原文仍可保留。');return;}
   const captured=scope,sequence=++visit.current.sequence;visit.current.locked=true;setBusy(true);setActivity(mode==='discuss'?'discuss':'model');
   try{
@@ -92,5 +92,5 @@ export function useScriptStudioAssistant({episodeId,scriptRevisionId,source,targ
   finally{if(current(sequence,captured)){visit.current.locked=false;setBusy(false);setActivity(null);}}
  }
  const saveShot=(index:number,fields:Partial<ScriptStudioShotText>)=>changeShot(index,fields),deleteShot=(index:number)=>changeShot(index);
- return {scope,attachments,result,busy,opened,error,turns,latestRequestId,unresolved,conversationLoading,conversationError,restoreConversation,options,choice,choose,useConfiguredConnection,reasoningOptions,reasoningEffort,chooseReasoning,refresh,send,saveShot,deleteShot,needsChoice,modelsLoading,modelError,activity,mode:restoredMode};
+ return {scope,attachments,result,busy,error,turns,latestRequestId,unresolved,conversationLoading,conversationError,restoreConversation,options,choice,choose,useConfiguredConnection,reasoningOptions,reasoningEffort,chooseReasoning,refresh,send,saveShot,deleteShot,needsChoice,modelsLoading,modelError,activity,mode:restoredMode};
 }
