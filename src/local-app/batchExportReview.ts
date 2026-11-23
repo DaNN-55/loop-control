@@ -19,8 +19,10 @@ export async function resolveExportReview(c:PoolClient,root:string,workspace:Pro
     FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id WHERE w.id=$1`,[workspace.id]);
  if(!latest.current||!basis.rows[0]?.current)return {review:{status:'unavailable',reason:'成片对应的工程已变化，请在生产单中重新导出。'} as const};
  if(latest.confirmedAt)return {review:{status:'skipped',reason:'当前成片已确认。'} as const};
- if(latest.status!=='ready'||latest.checks.some(check=>!check.passed)||!latest.artifact||!latest.artifact.relativePath.endsWith('.mp4')){
-  return {review:{status:'unavailable',reason:'当前成片文件不可用或检查未通过。'} as const};
+ const failedCheck=latest.checks.find(check=>!check.passed);
+ if(latest.status!=='ready'||failedCheck||!latest.artifact||!latest.artifact.relativePath.endsWith('.mp4')){
+  const reason=failedCheck?.name==='native_export'?'本机导出失败，可重试。':failedCheck?.detail||'当前成片文件不可用或检查未通过。';
+  return {review:{status:'unavailable',reason} as const};
  }
  const confirmation={workspaceId:workspace.id,expectedRevision:Number(workspace.revision),exportId:latest.id,expectedExportSha256:latest.artifact.sha256,expectedContentSha256:latest.contentSha256};
  const review:BatchExportReview={status:'ready',artifact:latest.artifact,reviewFingerprint:canonicalFingerprint({episodeId:workspace.episode_id,confirmation,artifact:latest.artifact,project:latest.project})};

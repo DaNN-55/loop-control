@@ -5,6 +5,29 @@ import {storyE2eFixture} from './storyE2e.fixture';
 
 const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1'&&!!process.env.LOOP_TEST_CONTEXT_MODULE;
 
+it.skipIf(!enabled)('keeps queued images through a voice edit and uses their adopted or explicitly selected outputs as batch video first frames',async()=>{
+ const f=await storyE2eFixture({scriptOnly:true,migrations:[
+  'db/current/228-storyboard-batch-video.sql','db/current/229-storyboard-batch-queued-reservations.sql',
+  'db/current/230-storyboard-batch-images.sql','db/current/231-storyboard-batch-image-dispatch-target.sql',
+ ]});
+ try{
+  const workspace=await f.read(),[first,second]=workspace.clips,shotIds=[first.shotId,second.shotId];
+  const review=await f.ok(f.send('prepareStoryboardBatch',{kind:'image',shotIds,common:{selection:f.selections.image}}));
+  const receipt=await f.ok(f.post('episode-commands','confirmStoryboardBatch',{episodeId:f.episode,workspaceId:workspace.id,confirmationId:review.confirmationId,shotIds}));
+  for(const clip of [first,second])await f.ok(f.send('setWorkspaceNarrationEnabled',{clipId:clip.id,enabled:false,voiceMode:'none'}));
+  expect((await f.read()).project.sha256).not.toBe(workspace.project.sha256);
+  for(const {taskId} of receipt.items)expect((await f.execute(taskId)).status).toBe('completed');
+  const generated=(await f.read()).visualCandidates!;
+  const image=generated.find(candidate=>candidate.shotId===first.shotId)!;
+  const prep=await f.ok(f.send('prepareWorkspaceVisualCandidate',{candidateId:image.id,durationPolicy:'keep-target',motionPolicy:'preserve-target'}));
+  await f.ok(f.send('adoptWorkspaceVisualCandidate',{candidateId:image.id,adoptionId:prep.adoptionId}));
+  const selected=generated.find(candidate=>candidate.shotId===second.shotId)!;
+  await f.ok(f.send('retainWorkspaceImageCandidate',{candidateId:selected.id}));
+  const video=await f.ok(f.send('prepareStoryboardBatch',{kind:'video',shotIds,common:{selection:f.selections.video,durationSeconds:5}}));
+  expect(video.items).toMatchObject([{shotId:first.shotId,state:'ready'},{shotId:second.shotId,state:'ready'}]);
+ }finally{await f.close();}
+},120000);
+
 it.skipIf(!enabled)('waits for an adopted main voice, then reserves and submits the video at its model duration',async()=>{
  const f=await storyE2eFixture({migrations:['db/current/228-storyboard-batch-video.sql']});
  try{

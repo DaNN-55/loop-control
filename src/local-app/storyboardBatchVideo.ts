@@ -40,8 +40,8 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
  const tasks=await readWorkspaceVisualTasks(c,row);
  const candidates=await readWorkspaceVisualCandidates(c,row,project,root);
  const templates=await readWorkspaceTemplateInputs(c,root,row);
- const chosenImages=(await c.query(`SELECT s.target_item_id,v.material_revision_id FROM local_identity.workspace_visual_image_choices s
-  JOIN local_identity.workspace_visual_candidates v ON v.id=s.candidate_id WHERE s.workspace_id=$1`,[row.id])).rows;
+ const chosenImages=(await c.query<{target_item_id:string;candidate_id:string}>(
+  'SELECT target_item_id,candidate_id FROM local_identity.workspace_visual_image_choices WHERE workspace_id=$1',[row.id])).rows;
  const {policy}=(await c.query(`SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1`,[row.episode_id])).rows[0];
  const legacy=legacyVideoDefault(policy);
  const defaultSelection=legacy?.credential_ref&&legacy.executor?{capability:'video',provider:legacy.executor.provider,adapter:legacy.executor.adapter,model:legacy.executor.model,connectionVersionId:legacy.credential_ref}:undefined;
@@ -87,7 +87,11 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
   const modes=registeredAdapters.productionChoices().find(choice=>choice.capability==='video'&&choice.provider===selection.provider&&choice.adapter===selection.adapter)?.videoGenerationModes?.[selection.model??''];
   const mode=draft?.videoMode??(draft?.firstFrameMaterialRevisionId===undefined?modes?.find(mode=>mode.id===request.common?.videoMode)?.id:undefined);
   const advanced=mode!==undefined&&mode!=='first-frame';
-  const materialId=draft?.firstFrameMaterialRevisionId??chosenImages.find(image=>image.target_item_id===item.id)?.material_revision_id??(clip.source?.kind==='image'?clip.source.materialRevisionId:clip.image?.materialRevisionId)??(template?.visual?.material?.type==='image'?template.visual.material.id:undefined);
+  const chosenId=chosenImages.find(image=>image.target_item_id===item.id)?.candidate_id;
+  const shotImages=candidates.filter(candidate=>candidate.targetItemId===item.id&&candidate.kind==='image');
+  const chosenImage=shotImages.find(candidate=>candidate.id===chosenId&&['available','adopted'].includes(candidate.status));
+  const adoptedImage=shotImages.find(candidate=>candidate.status==='adopted'&&candidate.relativePath===item.src);
+  const materialId=draft?.firstFrameMaterialRevisionId??chosenImage?.materialRevisionId??adoptedImage?.materialRevisionId??(clip.source?.kind==='image'?clip.source.materialRevisionId:clip.image?.materialRevisionId)??(template?.visual?.material?.type==='image'?template.visual.material.id:undefined);
   if(!advanced&&!materialId)return skip('缺少首帧图片');
   const visualInputs=draft?.visualInputs??(materialId?[{role:mode==='references'?'referenceImages':'firstFrame',materialRevisionId:materialId}]:[]);
   const fit=!advanced||visualInputs.some(input=>input.role==='firstFrame')?draft?.firstFrameFit??request.common?.firstFrameFit:undefined;

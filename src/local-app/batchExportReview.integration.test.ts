@@ -17,13 +17,17 @@ it.skipIf(process.env.LOOP_BATCH_EXPORT_ACCEPTANCE!=='1')('only confirms the exa
    expect(response.status,JSON.stringify(response.body)).toBe(200);
    workspace=response.body;
   };
+  const reviewPath='/api/local/episodes/'+f.episode+'/batch-export-review';
+  const get=async(path:string,token=f.token,range?:string)=>fetch(f.origin+path,{headers:{Cookie:'loop_owner_session='+token,...(range?{Range:range}:{})}});
+  await edit('exportWorkspace');
+  expect(workspace.exports[0].status).toBe('failed');
+  expect(await (await get(reviewPath)).json()).toMatchObject({status:'unavailable',reason:expect.stringMatching(/已用画面占位/)});
+
   workspace=await f.fillVisuals(workspace);
   for(const clip of workspace.clips)await edit('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)});
   await edit('exportWorkspace');
   const original=workspace.exports[0];
   expect(original.status,JSON.stringify(original.checks)).toBe('ready');
-  const get=async(path:string,token=f.token,range?:string)=>fetch(f.origin+path,{headers:{Cookie:'loop_owner_session='+token,...(range?{Range:range}:{})}});
-  const reviewPath='/api/local/episodes/'+f.episode+'/batch-export-review';
   const readReview=async()=>{
    const response=await get(reviewPath);
    expect(response.status).toBe(200);
