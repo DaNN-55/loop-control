@@ -32,7 +32,7 @@ it('keeps the media path read-only until changing location',async()=>{
 it('uses a navigation trigger and embeds full runtime content without an extra dialog',async()=>{
  request.mockResolvedValue({observedAt:'2026-11-19T01:00:00Z',automation:{stopped:false,lastError:null,lastScanAt:null},plans:[],jobs:[],operations:{}});
  const open=vi.fn(),app=render(<LocalSystemStatus onOpenSettings={open}/>);await waitFor(()=>expect(request).toHaveBeenCalled());fireEvent.click(screen.getByRole('button',{name:/系统状态：/}));expect(open).toHaveBeenCalledOnce();expect(screen.queryByRole('dialog')).toBeNull();
- app.rerender(<LocalSystemStatus embedded/>);await waitFor(()=>expect(screen.getByRole('button',{name:'刷新系统状态'})).toHaveProperty('disabled',false));expect(screen.getByRole('heading',{name:'任务与最近活动'})).toBeTruthy();expect(screen.getByRole('heading',{name:'运行版本'})).toBeTruthy();expect(screen.queryByRole('dialog')).toBeNull();expect(document.querySelector('.status-drawer-layer')).toBeNull();
+ app.rerender(<LocalSystemStatus embedded/>);await waitFor(()=>expect(screen.getByRole('button',{name:'刷新'})).toHaveProperty('disabled',false));expect(screen.getByRole('heading',{name:'任务与最近活动'})).toBeTruthy();expect(screen.getByRole('heading',{name:'运行版本'})).toBeTruthy();expect(screen.queryByRole('dialog')).toBeNull();expect(document.querySelector('.status-drawer-layer')).toBeNull();
 });
 
 it('plans a move for an initialized but empty workspace instead of initializing it again',async()=>{

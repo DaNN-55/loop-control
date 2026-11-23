@@ -17,10 +17,10 @@ it('系统整页直接展示同源实际证据，保留已关闭/未启用语义
   expect(within(table).getAllByText('未启用',{exact:true}).length).toBeGreaterThan(0);
   expect(screen.queryByRole('button',{name:/系统状态：/})).toBeNull();
   vi.mocked(localRequest).mockRejectedValueOnce(new Error('状态读取失败。'));
-  await user.click(screen.getByRole('button',{name:'刷新系统状态'}));
+  await user.click(screen.getByRole('button',{name:'刷新'}));
   expect((await screen.findByRole('alert')).textContent).toBe('状态读取失败。');
   expect(within(table).queryByText('事件投递失败')).toBeNull();
-  await user.click(screen.getByRole('button',{name:'刷新系统状态'}));
+  await user.click(screen.getByRole('button',{name:'刷新'}));
   await waitFor(()=>expect(screen.queryByRole('alert')).toBeNull());
   expect(await within(table).findByText('事件投递失败')).toBeTruthy();
 });

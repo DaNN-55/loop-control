@@ -87,4 +87,3 @@ html[data-interface="impeccable"] .status-drawer-layer { background: transparent
 .status-drawer-embedded .status-drawer-warning{color:var(--lc-warning)}
 .status-drawer-embedded :focus-visible{outline:2px solid var(--lc-accent);outline-offset:3px}
 .status-drawer-embedded .status-drawer-heading{border-bottom:1px solid var(--lc-line)}
-.status-drawer-embedded .status-drawer-footer{flex-wrap:wrap}

@@ -1,4 +1,4 @@
-import {OwnerSettingsMaintenance} from './OwnerSettingsDialog';
+import {OwnerSettingsMaintenance,SettingsRefreshButton} from './OwnerSettingsDialog';
 import {uiText,getUiLocale} from '../i18n/ui';
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
@@ -132,7 +132,7 @@ export function SystemStatusDrawer({embedded=false,triggerOnly=false,open,onOpen
           {maintenanceEntries}
         </Section>}
       </div>
-      <footer className="status-drawer-footer"><span>{uiText("最近读取 ")}{date(observedAt)}</span><Button size="sm" color="secondary" isDisabled={pending} onClick={onRefresh}>{pending?uiText("读取中…"):uiText("刷新系统状态")}</Button></footer>
+      <footer className={embedded?"settings-refresh-footer":"status-drawer-footer"}><span>{uiText("最近读取 ")}{date(observedAt)}</span>{embedded?<SettingsRefreshButton refreshing={pending} onRefresh={onRefresh}/>:<Button size="sm" color="secondary" isDisabled={pending} onClick={onRefresh}>{pending?uiText("读取中…"):uiText("刷新系统状态")}</Button>}</footer>
     </section>;
   if(embedded)return content;
   return <div className="system-status">

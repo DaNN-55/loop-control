@@ -28,7 +28,6 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .runtime-logs-dialog .rl-col-name{width:100px}
 .owner-settings-dialog .owner-password-form{display:flex;flex-direction:column;min-height:0;height:100%;overflow:auto;padding:0;margin:0;gap:12px}
 .owner-settings-dialog .owner-password-form>header{padding-bottom:0}
-.owner-settings-dialog .owner-password-form>header p{font-size:12px;color:var(--lc-muted);margin:6px 0 0}
 .owner-settings-dialog .owner-password-form>:is(label,section,p){margin-inline:20px;flex:none;max-width:none}
 .owner-settings-dialog .owner-password-form .owner-identity{padding:0 0 20px;border:0;border-bottom:1px solid var(--lc-line);border-radius:0;background:none}
 .owner-settings-dialog .owner-password-form .owner-identity h3{font-size:13px;margin:0 0 12px}
@@ -38,10 +37,9 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .secret-table-toolbar{padding-inline:20px}
 .owner-settings-dialog .secret-table-notices{padding-inline:20px}
 .owner-settings-dialog .secret-table-scroll{padding-inline:20px}
-.owner-settings-dialog .secret-table-footer{padding:12px 20px;border-top:1px solid var(--lc-line)}
 .owner-settings-dialog .secret-inline-detail{border:0;border-radius:0;background:var(--lc-surface-2)}
 @media(max-width:1000px){.owner-settings-dialog{grid-template-columns:164px minmax(0,1fr)}.owner-settings-dialog .runtime-logs-dialog :is(.rl-col-id,.rl-col-source){width:70px}.owner-settings-dialog .runtime-logs-dialog .rl-col-time{width:105px}.owner-settings-dialog .runtime-logs-dialog :is(th,td){padding-inline:8px}}
-@media(max-width:580px){html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop.owner-settings-backdrop{padding:12px}.owner-settings-dialog{display:flex;flex-direction:column;height:calc(100dvh - 24px)}.owner-settings-nav{padding:8px;border-right:0;border-bottom:1px solid var(--lc-line);flex:none;max-height:35dvh;overflow:auto}.owner-settings-nav>h2,.owner-settings-identity{display:none}.owner-settings-pages{display:flex;flex-wrap:wrap;gap:4px;overflow:visible}.owner-settings-pages>button{min-height:34px;padding:7px 8px;gap:6px;font-size:12px}.owner-settings-pages svg{width:14px;height:14px}.owner-settings-main{flex:1}.owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{padding:10px 16px;min-height:54px}.owner-settings-dialog .owner-settings-pane>header h2{font-size:18px}.owner-settings-dialog :is(.runtime-logs-body,.deletion-cleanup-body){padding:0 16px 16px}.owner-settings-dialog .owner-password-form>:is(label,section,p){margin-inline:16px}.owner-settings-dialog .owner-password-form .modal-actions{padding-inline:16px}.owner-settings-dialog :is(.secret-table-toolbar,.secret-table-notices,.secret-table-scroll){padding-inline:20px}.owner-settings-dialog .secret-table-footer{padding-inline:20px}.owner-settings-dialog .runtime-logs-dialog .rl-filters{gap:8px}.owner-settings-dialog .runtime-logs-dialog .rl-filter{flex-basis:140px}.owner-settings-dialog .owner-password-form{gap:16px}}
+@media(max-width:580px){html[data-interface="impeccable"] .impeccable-app.product-ui .modal-backdrop.owner-settings-backdrop{padding:12px}.owner-settings-dialog{display:flex;flex-direction:column;height:calc(100dvh - 24px)}.owner-settings-nav{padding:8px;border-right:0;border-bottom:1px solid var(--lc-line);flex:none;max-height:35dvh;overflow:auto}.owner-settings-nav>h2,.owner-settings-identity{display:none}.owner-settings-pages{display:flex;flex-wrap:wrap;gap:4px;overflow:visible}.owner-settings-pages>button{min-height:34px;padding:7px 8px;gap:6px;font-size:12px}.owner-settings-pages svg{width:14px;height:14px}.owner-settings-main{flex:1}.owner-settings-dialog .owner-settings-pane>header,.owner-settings-dialog .owner-password-form>header{padding:10px 16px;min-height:54px}.owner-settings-dialog .owner-settings-pane>header h2{font-size:18px}.owner-settings-dialog :is(.runtime-logs-body,.deletion-cleanup-body){padding:0 16px 16px}.owner-settings-dialog .owner-password-form>:is(label,section,p){margin-inline:16px}.owner-settings-dialog .owner-password-form .modal-actions{padding-inline:16px}.owner-settings-dialog :is(.secret-table-toolbar,.secret-table-notices,.secret-table-scroll){padding-inline:20px}.owner-settings-dialog .runtime-logs-dialog .rl-filters{gap:8px}.owner-settings-dialog .runtime-logs-dialog .rl-filter{flex-basis:140px}.owner-settings-dialog .owner-password-form{gap:16px}}
 @media(prefers-reduced-motion:no-preference){.owner-settings-dialog{animation:owner-settings-enter 160ms cubic-bezier(.16,1,.3,1)}@keyframes owner-settings-enter{from{transform:translateY(8px);opacity:.6}to{transform:translateY(0);opacity:1}}}
 .owner-settings-maintenance{display:flex;flex-wrap:wrap;flex:none;gap:4px;margin:0 20px 12px;padding:0 0 10px;border-bottom:1px solid var(--lc-line)}
 .owner-settings-maintenance>button{display:flex;align-items:center;gap:8px;min-height:34px;text-align:left;padding:7px 10px;border:0;border-radius:6px;background:none;color:var(--lc-muted);font:inherit;font-size:12px;cursor:pointer}
@@ -136,7 +134,6 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .owner-settings-main .owner-password-form .modal-actions{min-height:58px}
 .owner-settings-dialog .owner-settings-main .media-root-content{padding-top:14px}
 .owner-settings-dialog .owner-settings-main .media-root-content>h3{font-size:12px;color:var(--lc-muted);margin:0 0 10px}
-.owner-settings-dialog .owner-settings-main .media-root-current{padding-bottom:0;border-bottom:0}
 .owner-settings-dialog .owner-settings-main .media-root-location-form>label{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:12px;font-size:12px}
 .owner-settings-dialog .owner-settings-main .media-root-location-form .media-root-help{margin:8px 0;font-size:12px}
 .owner-settings-dialog .owner-settings-main .status-drawer-body{padding:0 20px}
@@ -145,7 +142,6 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .owner-settings-main .status-drawer-facts{gap:10px}
 .owner-settings-dialog .owner-settings-main .status-drawer-resource-readings{gap:12px;margin-bottom:16px}
 .owner-settings-dialog .owner-settings-main .status-drawer-resource-ring{width:38px;height:38px;flex-basis:38px}
-.owner-settings-dialog .owner-settings-main .status-drawer-footer{min-height:58px;padding:10px 20px}
 .owner-settings-dialog .owner-settings-main .secret-table-toolbar{padding-bottom:10px;gap:8px}
 .owner-settings-dialog .owner-settings-main .secret-group-row,.owner-settings-dialog .owner-settings-main .secret-entry-row{min-height:54px;padding-block:9px}
 .owner-settings-dialog .owner-settings-main .secret-group-heading{padding:0 20px 10px}
@@ -168,7 +164,6 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
  .owner-settings-dialog .owner-settings-main .owner-identity>button{justify-self:start}
  .owner-settings-dialog .owner-settings-main .status-drawer-body{padding-inline:16px}
  .owner-settings-dialog .owner-settings-main .status-drawer-section>summary{flex-wrap:wrap;gap:6px}
- .owner-settings-dialog .owner-settings-main .status-drawer-footer{padding-inline:16px}
  .owner-settings-dialog :is(.secret-group-heading,.secret-table-help){padding-inline:16px}
  .owner-maintenance-logs>details{padding-inline:16px}
 }
@@ -187,13 +182,13 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .owner-storage-body .media-root-content{padding:0;overflow:visible}
 .owner-settings-dialog .owner-storage-body .media-root-section-heading{font-size:13px;color:var(--lc-ink);margin:0 0 5px}
 .media-root-description{font-size:12px;color:var(--lc-muted);margin:0 0 15px}
-.owner-settings-dialog .media-root-current{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:0}
-.owner-settings-dialog .media-root-current>.media-root-location{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface-2);min-width:0;flex-shrink:1}
+.owner-settings-dialog .media-root-content .media-root-current{flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px;margin:0;padding:16px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface-2)}
+.owner-settings-dialog .media-root-current>.media-root-location{flex:1 1 220px;flex-wrap:nowrap;gap:12px}
 .media-root-location>svg{flex:none;color:var(--lc-muted)}
 .media-root-location>div{min-width:0}
 .media-root-location strong{display:block;font-size:13px;font-weight:600}
 .owner-settings-dialog .media-root-current .media-root-path{display:block;white-space:normal;overflow-wrap:anywhere;color:var(--lc-muted);font-size:12px;margin-top:3px}
-.owner-settings-dialog .media-root-current>.media-root-current-actions{justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.owner-settings-dialog .media-root-current>.media-root-current-actions{max-width:100%;margin-inline-start:auto;justify-content:flex-end;flex-wrap:wrap;gap:8px}
 .owner-settings-dialog .owner-storage-body .owner-storage-other{margin:24px 0 0;padding:20px 0 0}
 .owner-storage-other>h3{font-size:13px;font-weight:600;margin:0 0 6px}
 .owner-settings-dialog .owner-storage-other>div{min-height:60px}
@@ -208,13 +203,11 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .owner-settings-main .owner-password-form>label>.form-hint{grid-column:1}
 .owner-settings-dialog .owner-password-form>:is(section,p){margin-inline:24px}
 .owner-settings-dialog .owner-settings-main .owner-password-form .modal-actions{padding:12px 24px;min-height:62px}
-.owner-settings-dialog .owner-password-form>header p{font-size:11px}
 .owner-settings-dialog .runtime-logs-body{padding:20px 24px;scrollbar-gutter:stable}
 .owner-settings-dialog .runtime-logs-dialog .rl-filters{padding:0;border:0;background:none}
 .owner-settings-dialog .runtime-logs-dialog .rl-search{flex:1 1 100%}
 .owner-settings-dialog .runtime-logs-dialog .rl-filter:not(.rl-search){flex:1 1 160px;min-width:0}
 .owner-settings-dialog .runtime-logs-dialog .rl-note{font-size:11px}
-.owner-settings-dialog .runtime-logs-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;min-height:62px;padding:12px 24px;border-top:1px solid var(--lc-line);flex:none;font-size:11px;color:var(--lc-muted)}
 .owner-log-storage{margin-top:22px;padding-top:12px;border-top:1px solid var(--lc-line)}
 .owner-log-storage>summary{font-size:11px;color:var(--lc-muted);cursor:pointer;min-height:28px}
 .log-storage-location{display:flex;align-items:center;flex-wrap:wrap;gap:10px;min-width:0;padding-block:12px}
@@ -227,7 +220,6 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
 .owner-settings-dialog .secret-table-toolbar>:first-child{flex:1;min-width:0}
 .owner-settings-dialog .secret-table-toolbar>.dan-select-field{width:136px;min-width:0;flex:0 1 136px}
 .owner-settings-dialog .secret-table-scroll{padding:0 24px;overscroll-behavior:contain}
-.owner-settings-dialog .secret-table-footer{min-height:62px;padding:12px 24px;font-size:11px}
 .owner-settings-dialog .secret-usage-groups>details>summary{color:var(--lc-ink);font-weight:550}
 .owner-settings-dialog .secret-detail-pane{display:flex;flex:1;flex-direction:column;min-height:0;min-width:0;border:0;border-radius:0;background:var(--lc-surface)}
 .owner-settings-dialog .secret-detail-heading{padding:16px 24px}
@@ -246,7 +238,7 @@ html[data-interface="impeccable"] .product-ui .owner-settings-dialog .owner-sett
  .owner-settings-main .owner-settings-maintenance{padding-inline:14px;gap:18px}
  .owner-settings-dialog .owner-storage-body,.owner-settings-dialog .runtime-logs-body{padding:16px 14px}
  .owner-settings-dialog .owner-settings-main .owner-preferences-embedded .owner-preferences-card{padding-inline:14px}
- .owner-settings-dialog .owner-settings-main .owner-preferences-embedded form>footer,.owner-settings-dialog .runtime-logs-footer,.owner-settings-dialog .secret-table-footer,.owner-settings-dialog .secret-detail-footer{padding-inline:14px;min-height:58px}
+ .owner-settings-dialog .owner-settings-main .owner-preferences-embedded form>footer,.owner-settings-dialog .secret-detail-footer{padding-inline:14px;min-height:58px}
  .owner-settings-dialog .owner-settings-main .secret-table-toolbar{padding:16px 14px 12px}
  .owner-settings-dialog :is(.secret-table-scroll,.secret-detail-heading,.secret-detail-body){padding-inline:14px}
  .owner-settings-dialog .owner-password-form>:is(label,section,p),.owner-settings-dialog .owner-settings-main .owner-password-form>label{margin-inline:14px}
@@ -268,5 +260,6 @@ html[data-interface="impeccable"] .product-ui .owner-appearance-segmented>label{
 
 .owner-settings-dialog .owner-settings-main .owner-storage-body .media-root-content>h3{font-size:13px;color:var(--lc-ink)}
 .owner-settings-dialog .owner-storage-other>h3{font-size:13px}
-.owner-storage-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none;min-height:62px;padding:12px 24px;border-top:1px solid var(--lc-line);color:var(--lc-muted);font-size:11px}
-@media(max-width:580px){.owner-storage-footer{min-height:58px;padding-inline:14px}}
+.owner-settings-dialog .settings-refresh-footer{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;flex:none;min-height:62px;padding:12px 24px;border-top:1px solid var(--lc-line);color:var(--lc-muted);font-size:11px}
+.settings-refresh-footer>button{margin-inline-start:auto}
+@media(max-width:580px){.owner-settings-dialog .settings-refresh-footer{min-height:58px;padding-inline:14px}}

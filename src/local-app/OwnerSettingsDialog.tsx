@@ -1,6 +1,7 @@
 import {uiText} from '../i18n/ui';
-import {Activity,FolderOpen,KeyRound,Plug,ScrollText,ShieldCheck,SlidersHorizontal,UserRound,Wrench} from 'lucide-react';
+import {Activity,FolderOpen,KeyRound,Plug,RefreshCw,ScrollText,ShieldCheck,SlidersHorizontal,UserRound,Wrench} from 'lucide-react';
 import {createContext,useContext,useLayoutEffect,type ReactNode,type RefObject} from 'react';
+import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {useDialogFocus} from '../ui/useDialogFocus';
 import './owner-settings.css';
 
@@ -20,6 +21,12 @@ export type OwnerSettingsPage=typeof ownerSettingsPages[number]['id']|'notificat
 export interface OwnerSettingsPaneState{busy:boolean;dirty:boolean}
 const MaintenanceNavigation=createContext<ReactNode>(null);
 export function OwnerSettingsMaintenance(){return useContext(MaintenanceNavigation);}
+
+export function SettingsRefreshButton({refreshing,disabled,onRefresh}:{
+ refreshing:boolean;disabled?:boolean;onRefresh:()=>void;
+}){
+ return <Button size="sm" color="secondary" type="button" iconLeading={RefreshCw} isDisabled={refreshing||disabled} onPress={onRefresh}>{uiText(refreshing?'读取中…':'刷新')}</Button>;
+}
 
 export function OwnerSettingsDialog({page,onNavigate,onClose,returnFocusRef,canManageSecrets,busy,email,children}:{page:OwnerSettingsPage;onNavigate:(page:OwnerSettingsPage)=>void;onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;canManageSecrets:boolean;busy:boolean;displayName?:string;email:string;children:ReactNode}){
  const activePage=page==='notifications'?'personal':page==='logs'||page==='secrets'?'system':page;

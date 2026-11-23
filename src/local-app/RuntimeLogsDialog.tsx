@@ -1,4 +1,4 @@
-import {OwnerSettingsMaintenance} from './OwnerSettingsDialog';
+import {OwnerSettingsMaintenance,SettingsRefreshButton} from './OwnerSettingsDialog';
 import {uiText,getUiLocale} from '../i18n/ui';
 import {Fragment,useEffect,useRef,useState,type RefObject,type ReactNode} from 'react';
 import {ArrowLeft,CalendarClock,ChevronDown,ChevronRight,FileText,RefreshCw,X} from 'lucide-react';
@@ -59,7 +59,7 @@ export function RuntimeLogsDialog({onClose,returnFocusRef,embedded=false,storage
    <footer className="rl-note">{uiText("打开或刷新时读取 · ")}{report?uiText("最近读取 {value0}",{value0:displayDate(report.observedAt)}):uiText("尚未读取")}{uiText("。缺失信息保持未知；日志不代表当前服务状态。")}</footer>
    {storage}
   </div>
-  {embedded&&<footer className="runtime-logs-footer"><span role="status">{pending&&!report?uiText("正在读取日志…"):uiText("显示 {value0} 条记录{value1}",{value0:filtered.length,value1:anchor?uiText(' · 同次操作'):''})}{report?.truncated?uiText(" · 当前为最近 {value0} 条以内的摘录",{value0:report.maxEntries}):''}</span><Button size="sm" color="secondary" iconLeading={RefreshCw} isDisabled={pending} onPress={()=>void refresh()}>{pending?uiText('读取中…'):uiText('刷新日志')}</Button></footer>}
+  {embedded&&<footer className="settings-refresh-footer"><span role="status">{pending&&!report?uiText("正在读取日志…"):uiText("显示 {value0} 条记录{value1}",{value0:filtered.length,value1:anchor?uiText(' · 同次操作'):''})}{report?.truncated?uiText(" · 当前为最近 {value0} 条以内的摘录",{value0:report.maxEntries}):''}</span><SettingsRefreshButton refreshing={pending} onRefresh={()=>void refresh()}/></footer>}
  </section>;
  return embedded?content:<div className="modal-backdrop runtime-logs-backdrop">{content}</div>;
 }

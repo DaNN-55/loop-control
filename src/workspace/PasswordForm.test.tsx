@@ -2,11 +2,11 @@ import {act,cleanup,fireEvent,render,screen} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import {PasswordForm} from './WorkspaceViews';
 afterEach(cleanup);
-it('shows the password rule and local identity uses before typing, associates errors and focuses the invalid field',async()=>{
+it('shows the password rule before typing, associates errors and focuses the invalid field',async()=>{
  const save=vi.fn(async()=>{});render(<PasswordForm isPending={false} onClose={()=>{}} onSubmit={save}/>);
  const password=screen.getByLabelText('新密码'),confirmation=screen.getByLabelText('确认密码');
  const rule=screen.getByText('至少 12 位，最多 1024 位。');expect(password.getAttribute('aria-describedby')?.split(' ')).toContain(rule.id);
- expect(screen.getByText(/本机身份验证.*登录.*查看和复制密钥/)).toBeTruthy();
+ expect(screen.queryByText(/本机身份验证.*登录.*查看和复制密钥/)).toBeNull();
  fireEvent.change(password,{target:{value:'short'}});fireEvent.submit(screen.getByRole('form',{name:'登录与安全'}));
  let error=await screen.findByRole('alert');expect(error.textContent).toContain('至少 12 位');expect(password.getAttribute('aria-describedby')?.split(' ')).toContain(error.id);expect(password.getAttribute('aria-invalid')).toBe('true');expect(document.activeElement).toBe(password);expect(save).not.toHaveBeenCalled();
  fireEvent.change(password,{target:{value:'synthetic-new-password'}});fireEvent.change(confirmation,{target:{value:'different-password'}});fireEvent.submit(screen.getByRole('form',{name:'登录与安全'}));

@@ -1,11 +1,12 @@
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {getUiLocale,uiText} from '../i18n/ui';
 import {useEffect,useRef,useState,type ReactNode} from 'react';
-import {FolderOpen,FolderSearch,LoaderCircle,RefreshCw,X} from 'lucide-react';
+import {FolderOpen,FolderSearch,LoaderCircle,X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
 import {useDialogFocus} from '../ui/useDialogFocus';
 import {localRequest} from './client';
+import {SettingsRefreshButton} from './OwnerSettingsDialog';
 import './media-root-settings.css';
 interface RootPlan{id:string;status:'planned'|'copying'|'failed'|'committed'|'completed'|'rolled_back';manifestSha256:string;progress?:{copiedFiles:number;copiedBytes:number;activeFile?:string;activeFileBytes?:number};error?:string;manifest:{sourceBinding:{path:string};targetBinding:{path:string};accounts:{id:string;name:string}[];episodes:{id:string;title:string}[];files:{episodeId:string;targetRelativePath:string;fileSize:number}[];references:unknown[];fileCount:number;directoryCount:number;totalBytes:number;target:{existingFileCount:number;existingBytes:number};space:{freeBytes:number;reserveBytes:number;requiredBytes:number};incompleteCopies:{path:string;bytes:number;verified:boolean}[];retained:{path?:string;kind:string;reason:string}[];canExecute:boolean;conflicts:string[];blockers:{reason:string}[]}}
 interface RootState{executing?:boolean;path:string;initialized?:boolean;canInitialize:boolean;status:'ready'|'unavailable';reason?:string;migration:RootPlan|null}
@@ -67,10 +68,14 @@ export function MediaRootSettingsDialog({csrf,onClose,embedded=false,onStateChan
  const content=<section className="media-root-content" aria-label={uiText("存储位置")}>
   <h3 className="media-root-section-heading"><span>{uiText(embedded?"制作文件":"存储位置")}</span>{embedded&&root&&<span role="status" className={root.status==='ready'?"is-ready":"is-unavailable"}>{uiText(root.status==='ready'?"可用":"不可用")}</span>}</h3>
   {root?<>
-   {embedded&&<p className="media-root-description">{uiText("素材、生成结果和交付文件保存在这里。")}</p>}<div className="media-root-current"><div className="media-root-location">{embedded&&<FolderOpen size={22} aria-hidden="true"/>}<div>{embedded&&<strong>{root.path.split('/').filter(Boolean).at(-1)||root.path}</strong>}<span className="media-root-path" title={root.path}>{root.path}</span></div></div><div className="media-root-current-actions">
-    <Button size="sm" color={embedded?"secondary":"tertiary"} iconLeading={FolderOpen} aria-label={uiText("打开存储文件夹")} title={uiText("打开文件夹")} type="button" isDisabled={busy||root.status!=='ready'} onClick={()=>void command('open')}>{uiText("打开文件夹")}</Button>
-    <Button size="sm" color={embedded?"secondary":"tertiary"} iconLeading={FolderSearch} aria-label={uiText("更换存储位置")} title={uiText("更换存储位置")} type="button" isDisabled={busy||active} onClick={()=>setEditing(true)}>{uiText("更换位置")}</Button>
-   </div></div>
+   {embedded&&<p className="media-root-description">{uiText("素材、生成结果和交付文件保存在这里。")}</p>}
+   <article className="media-root-current">
+    <div className="media-root-location">{embedded&&<FolderOpen size={22} aria-hidden="true"/>}<div>{embedded&&<strong>{root.path.split('/').filter(Boolean).at(-1)||root.path}</strong>}<span className="media-root-path" title={root.path}>{root.path}</span></div></div>
+    <footer className="media-root-current-actions">
+     <Button size="sm" color={embedded?"secondary":"tertiary"} iconLeading={FolderOpen} aria-label={uiText("打开存储文件夹")} title={uiText("打开文件夹")} type="button" isDisabled={busy||root.status!=='ready'} onClick={()=>void command('open')}>{uiText("打开文件夹")}</Button>
+     <Button size="sm" color={embedded?"secondary":"tertiary"} iconLeading={FolderSearch} aria-label={uiText("更换存储位置")} title={uiText("更换存储位置")} type="button" isDisabled={busy||active} onClick={()=>setEditing(true)}>{uiText("更换位置")}</Button>
+    </footer>
+   </article>
    {!active&&(editing||firstInitialization||root.migration?.status==='planned'||path!==root.path)&&<div className="media-root-location-form"><label>{firstInitialization?uiText("初始化位置"):uiText("新位置")}<InputBase size="sm" aria-label={embedded?uiText("素材保存目录"):firstInitialization?uiText("初始化位置"):uiText("新位置")} value={path} disabled={busy} onChange={event=>setPath(event.target.value)} onKeyDown={event=>{if(event.key==='Enter'){event.preventDefault();if(path.trim())void command(firstInitialization?'initialize':'planMigration');}}}/></label><div className="media-root-actions">{editing&&!firstInitialization&&(!plan||['completed','rolled_back'].includes(plan.status))&&<Button size="sm" color="secondary" isDisabled={busy} onPress={()=>{setPath(root.path);setEditing(false);setError('');}}>{uiText('取消')}</Button>}<Button size="sm" color="secondary" type="button" iconLeading={FolderSearch} aria-label={embedded?uiText("选择素材文件夹"):uiText("选择文件夹")} title={uiText("选择文件夹")} isDisabled={busy} onClick={()=>void command('choose')}>{uiText("选择文件夹")}</Button><Button size="sm" color="primary" type="button" isDisabled={busy||!path.trim()||!firstInitialization&&path===root.path} onClick={()=>void command(firstInitialization?'initialize':'planMigration')}>{pending==='planMigration'?uiText("检查中…"):firstInitialization?uiText("初始化"):uiText("检查迁移计划")}</Button></div><p className="media-root-help">{uiText(firstInitialization?"制作文件会保存在所选位置。":"先检查迁移范围，再确认搬迁。")}</p></div>}
   </>:<p role="status">{busy?uiText("正在读取存储位置…"):uiText("存储位置未读取。")}</p>}
   {storageReadFeedback&&<div className="media-root-read-error"><p role="alert" className="form-error">{uiText(storageReadFeedback)}</p><Button size="sm" color="secondary" type="button" isDisabled={reading||!!pending&&pending!=='executeMigration'} onClick={()=>void reload()}>{uiText("重新读取存储位置")}</Button></div>}
@@ -88,6 +93,6 @@ export function MediaRootSettingsDialog({csrf,onClose,embedded=false,onStateChan
    {!observing&&<div className="media-root-actions">{plan.status!=='committed'&&<Button size="sm" color="secondary" type="button" isDisabled={busy||root?.executing} onClick={()=>void command('rollbackMigration')}>{plan.status==='planned'?uiText("取消"):uiText("回滚未完成迁移")}</Button>}<Button size="sm" color="primary" type="button" isDisabled={busy||root?.executing||plan.status==='planned'&&(!m.canExecute||targetChanged||!confirmed)} onClick={()=>void command('executeMigration')}>{plan.status==='committed'?uiText("继续恢复"):plan.status==='planned'?uiText("开始迁移"):uiText("继续迁移")}</Button></div>}
   </div>}
  </section>;
- if(embedded)return <><div className="owner-storage-body">{content}{children}</div><footer className="owner-storage-footer"><span role="status">{reading?uiText('正在读取存储位置…'):root?uiText(root.status==='ready'?'可用':'不可用'):uiText('存储位置未读取。')}</span><Button size="sm" color="secondary" iconLeading={RefreshCw} isDisabled={busy||pathDirty} onPress={()=>void reload()}>{uiText('刷新状态')}</Button></footer></>;
+ if(embedded)return <><div className="owner-storage-body">{content}{children}</div><footer className="settings-refresh-footer"><span role="status">{reading?uiText('正在读取存储位置…'):root?uiText(root.status==='ready'?'可用':'不可用'):uiText('存储位置未读取。')}</span><SettingsRefreshButton refreshing={reading} disabled={busy||pathDirty} onRefresh={()=>void reload()}/></footer></>;
  return <div className="modal-backdrop owner-preferences-backdrop"><div className="owner-preferences-dialog media-root-dialog" role="dialog" aria-modal="true" aria-label={uiText("存储位置")} ref={ref}><header><h2>{uiText("存储位置")}</h2><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText("关闭存储位置")} isDisabled={busy&&pending!=='executeMigration'} onClick={onClose}/></header>{content}</div></div>;
 }

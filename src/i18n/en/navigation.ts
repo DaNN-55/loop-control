@@ -95,7 +95,6 @@ export const navigationMessages:Record<string,string>={
   " / 页": " / page",
   "每页生产单条数": "Production orders per page",
   " 条": " records",
-  "密码用于本机身份验证，包括登录、查看和复制密钥。": "The password verifies your identity on this device for login, viewing, and copying secrets.",
   "关闭登录与安全": "Close login & security",
   "新密码": "New password",
   "至少 12 位，最多 1024 位。": "12 to 1024 characters.",
