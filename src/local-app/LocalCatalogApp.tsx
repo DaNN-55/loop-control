@@ -296,8 +296,16 @@ function LocalCatalogContent(){
  }
  async function beginProduction(mode:'single'|'batch'='single'){
   if(!catalog?.accounts.some(item=>!item.archived_at)){
+   const session=sessionGeneration.current;
    setCreateAfterAccount(mode);setFirstUseError('');
-   try{const root=await localRequest('media-root');if(requiresStorageSetup(root)){setNewAccountReady(true);openOwnerPage('storage');return;}}catch{setNewAccountReady(true);setError('请先检查文件存储，再创建内容账号。');openOwnerPage('storage');return;}
+   try{
+    const root=await localRequest('media-root');
+    if(session!==sessionGeneration.current||!authenticated.current)return;
+    if(requiresStorageSetup(root)){setNewAccountReady(true);openOwnerPage('storage');return;}
+   }catch{
+    if(session!==sessionGeneration.current||!authenticated.current)return;
+    setNewAccountReady(true);setError('请先检查文件存储，再创建内容账号。');openOwnerPage('storage');return;
+   }
    void openNewAccount(true);return;
   }
   if(mode==='batch')setBatchImportOpen(true);
@@ -308,8 +316,7 @@ function LocalCatalogContent(){
  const creationSeriesId=view==='accounts'?panels.rules.series:filters.seriesId;
  const creationSeriesVersion=catalog.seriesVersions.filter(version=>version.account_id===creationAccountId&&version.series_id===creationSeriesId).sort((left,right)=>right.version-left.version)[0];
  const topbar=<WorkspaceTopbar searchScope={JSON.stringify([view,episodeId,workspaceStep,workspaceTab,view==='accounts'?selectedId:null])} ownerId={ownerId} ownerMenu={<Button size="sm" color="tertiary" className="owner-menu-trigger workspace-topbar-icon" data-active={ownerSettingsPage!==null||undefined} iconLeading={Settings} aria-label={uiText('设置')} aria-haspopup="dialog" onPress={()=>{rememberOwnerFocus(document.activeElement as HTMLButtonElement);openOwnerPage('connections');}}/>} theme={theme} notificationPreferences={ownerPreferences.notifications} notificationEventsEnabled={preferencesLoaded} episodeTitles={new Map(catalog.episodes.map(episode=>[episode.id,episode.title||'未命名生产单']))} taskQueue={taskQueue} onOpenTaskQueue={openTaskQueue} onOpenConnections={()=>openConnectionsFromShortcut()} themeSaving={preferencesSaving} onToggleTheme={()=>{const next=theme==='light'?'dark':'light';if(preferencesLoaded){void savePreferences({...ownerPreferences,appearance:next},message=>setError(`外观偏好未保存。${message}`));}else{setTheme(next);localStorage.setItem('loop-control.theme.v1',next);}}} onOpenEpisode={(id,search)=>{navigate('episodes',()=>{if(search)setPanels(current=>({...current,search}));setEpisodeId(id);});}} onOpenAccount={selectAccount} onOpenCatalog={status=>{navigate('episodes',()=>filter({view:'episodes',visibility:'active',status,q:'',accountId:'',seriesId:'all',importBatchId:'',batchStage:'all'}));}}/>;
- const canCreateProduction=catalog.accounts.some(account=>!account.archived_at);
- const creationLabel=uiText(canCreateProduction?'新建生产单':'创建内容账号');
+ const creationLabel=uiText('新建生产单');
  const workspaceActions=<div className="workspace-actions">
   {view!=='episodes'&&view!=='accounts'&&view!=='operations'&&<Tooltip title={uiText("刷新")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" aria-label={uiText("刷新")} className="button button-secondary refresh-button" onClick={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} type="button"><Icon name="Refresh"/></Button></Tooltip>}
   {view==='episodes'&&<Dropdown.Root>
@@ -344,7 +351,7 @@ function LocalCatalogContent(){
  <section inert={Boolean(episodeId)||ownerSettingsPage!==null} className={`content-pane${view === 'accounts' ? ' account-workspace-page' : ''}`} id="main-content" aria-label={uiText("平台工作台")} tabIndex={-1}><header className="page-header"><nav className="workspace-breadcrumbs" aria-label={uiText("当前位置")}><span>{uiText("个人工作区")}</span><ChevronRight size={14} aria-hidden="true"/><strong aria-current="page">{pageLabel}</strong></nav><div className="page-header-actions">{!episodeId&&topbar}</div></header>{view!=='operations'&&view!=='accounts'&&<div className="workspace-page-heading"><h1>{pageLabel}</h1>{view==='episodes'&&workspaceActions}</div>}
 
  {view==='accounts'?<>
-<AccountWorkspace readDeletionStatus={readDeletionStatus} onViewDeletionCleanup={openCleanup} onViewAccountEpisodes={id=>navigate('episodes',()=>{filter({accountId:id,seriesId:'all',visibility:'all',q:'',status:'all',sort:'updated',page:1});})} onCreateEpisode={()=>setNewEpisode(true)} navigation={{value:panels.rules,change:patch=>setPanels(current=>({...current,rules:{...current.rules,...patch}}))}} onDirtyChange={setAccountDirty} externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} blueprints={catalog.blueprints} isPending={connectionActions.pending?'connection':pending} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
+<AccountWorkspace readDeletionStatus={readDeletionStatus} onViewDeletionCleanup={openCleanup} onViewAccountEpisodes={id=>navigate('episodes',()=>{filter({accountId:id,seriesId:'all',visibility:'all',q:'',status:'all',sort:'updated',page:1});})} onCreateEpisode={()=>void beginProduction()} navigation={{value:panels.rules,change:patch=>setPanels(current=>({...current,rules:{...current.rules,...patch}}))}} onDirtyChange={setAccountDirty} externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} blueprints={catalog.blueprints} isPending={connectionActions.pending?'connection':pending} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
  onCreateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('create',input)).connection;}catch{return null;}}}
  onRotateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('rotate',input)).connection;}catch{return null;}}}
  onTestConnection={connectionId=>connectionActions.command('verify',{connectionId})}
@@ -380,7 +387,7 @@ function LocalCatalogContent(){
   onClose={()=>{setBatchImportOpen(false);creationTrigger.current?.focus();}} onCreated={()=>refreshAfterWrite('已完成批量建单')}
   onViewBatch={showImportBatch} onOpenEpisode={id=>{setBatchImportOpen(false);openCatalogEpisode(id,'script');}}/>}
  {newEpisode&&<EpisodeForm returnFocusRef={view==='episodes'?creationTrigger:undefined} initialAccountId={creationAccountId} initialSeriesVersionId={creationSeriesVersion?.id} accounts={catalog.accounts.filter(a=>!a.archived_at)} series={catalog.series} seriesVersions={catalog.seriesVersions} isPending={pending==='episode'} onClose={()=>setNewEpisode(false)} onSubmit={async input=>{setPending('episode');setError('');setSavedRefreshNotice('');savedWrite.current=null;try{const e=await localCommand<{id:string}>('create',input,undefined,'episode-commands');setEpisodeId(e.id);setNewEpisode(false);setView('episodes');filter({view:'episodes'});refreshAfterWrite('生产单已创建');}catch(e){setError(e instanceof Error?e.message:String(e));if(e&&typeof e==='object'&&'preflight'in e)return e.preflight as import('../worker/contracts').WorkerPreflightResult;throw e;}finally{setPending('');}return null;}}/>}
- {newAccount&&<AccountForm isPending={pending==='account'} onClose={()=>{setNewAccount(false);setCreateAfterAccount(null);}} onSubmit={async input=>{await command<LocalCatalog['accounts'][number]>('account','createAccount',input,undefined,created=>navigate('accounts',()=>{
+ {newAccount&&<AccountForm forProduction={createAfterAccount!==null} isPending={pending==='account'} onClose={()=>{setNewAccount(false);setCreateAfterAccount(null);}} onSubmit={async input=>{await command<LocalCatalog['accounts'][number]>('account','createAccount',input,undefined,created=>navigate('accounts',()=>{
    setCatalog(current=>current?{...current,accounts:[...current.accounts.filter(item=>item.id!==created.id),created]}:current);
    setAccountDirty(false);setSelectedId(created.id);setNewAccount(false);
    setPanels(current=>({...current,rules:{series:'__common',q:'',page:1}}));

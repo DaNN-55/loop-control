@@ -94,7 +94,7 @@ it('does not navigate or publish an earlier Owner account acknowledgement after 
  }));
  render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'新建账号'}));const dialog=within(screen.getByRole('dialog',{name:'新建账号'}));
  fireEvent.change(dialog.getByRole('textbox',{name:'账号名称'}),{target:{value:'旧身份新账号'}});fireEvent.click(dialog.getByRole('button',{name:'创建账号'}));await waitFor(()=>expect(finish).toBeTypeOf('function'));
- fireEvent(window,new Event('loop-local-session-expired'));await screen.findByRole('heading',{name:'登录控制台'});fireEvent.change(screen.getByLabelText('邮箱'),{target:{value:'next@example.invalid'}});fireEvent.change(screen.getByLabelText('密码'),{target:{value:'next-owner-password'}});fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));await screen.findByRole('button',{name:'创建内容账号'});
+ fireEvent(window,new Event('loop-local-session-expired'));await screen.findByRole('heading',{name:'登录控制台'});fireEvent.change(screen.getByLabelText('邮箱'),{target:{value:'next@example.invalid'}});fireEvent.change(screen.getByLabelText('密码'),{target:{value:'next-owner-password'}});fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));await screen.findByRole('button',{name:'新建生产单'});
  // Settle the new Owner's catalog/history updates before sampling the old response's effect.
  await act(async()=>{});
  const before=reads,notice=screen.queryByRole('alert')?.textContent;

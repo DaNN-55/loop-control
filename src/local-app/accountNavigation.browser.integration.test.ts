@@ -74,14 +74,14 @@ async function isolatedHarness(kind:Kind){
   await browser('open',appUrl);await browser('set','viewport','1440','1000');
   await browser('wait','--text','登录控制台');
   await browser('find','label','邮箱','fill',f.email);await browser('find','label','密码','fill',f.password);await click('使用密码登录');
-  await browser('wait','--text','创建内容账号');
+  await browser('wait','--text','新建生产单');
   return {fixture,f,output,session,browser,evaluate,click,step,check,report,close,checks,appUrl};
  }catch(error){await report(false,error);await close();throw error;}
 }
 
 async function initializeStorage(h:Awaited<ReturnType<typeof isolatedHarness>>){
  h.step('new-install storage initialization');
- await h.click('创建内容账号');await h.browser('find','role','menuitem','click','--name','创建内容账号','--exact');await h.browser('wait','--text','初始化位置');
+ await h.click('新建生产单');await h.browser('find','role','menuitem','click','--name','新建生产单','--exact');await h.browser('wait','--text','初始化位置');
  await h.browser('find','label','素材保存目录','fill',h.fixture.target);await h.click('初始化');
  await h.browser('wait','--text','媒体根已初始化，服务已重新加载。');
  expect(JSON.parse(await readFile(h.fixture.configFile,'utf8')).mediaRoot).toBe(h.fixture.target);
