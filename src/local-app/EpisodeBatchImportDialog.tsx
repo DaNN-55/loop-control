@@ -313,10 +313,11 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
     </>}
    </div>
    <footer className="modal-actions">
-    {!batchId&&<div className="episode-batch-upload-help">
-     <details className="episode-batch-upload-format"><summary>{uiText('格式说明')}</summary><p className="field-hint">{formatHint}</p></details>
-     <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
-    </div>}
+    {!batchId&&<details className="episode-batch-upload-format">
+     <summary>{uiText('格式说明')}</summary>
+     <p className="field-hint">{formatHint}</p>
+     <p><a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a></p>
+    </details>}
     {batchId?<><Button size="sm" color="secondary" type="button" isDisabled={busy||!receipt} onPress={nextBatch}>{uiText('开始新批次')}</Button>
      {receipt?.items.some(item=>item.status==='succeeded'&&item.episodeId)&&<Button size="sm" color="secondary" type="button" isDisabled={busy} onPress={()=>{dialog.current?.close();onViewBatch(receipt.batchId);}}>{uiText('查看本批')}</Button>}
      {(!receipt||receipt.items.some(item=>item.status==='pending'||item.status==='failed'))&&<Button size="sm" color="primary" type="button" isDisabled={busy} onPress={()=>void retry()}>{uiText('重试此批')}</Button>}</>

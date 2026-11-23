@@ -27,7 +27,14 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   await browser.click('新建生产单');await browser.cli('find','role','menuitem','click','--name','批量上传','--exact');
   await browser.cli('select','dialog select[name=accountId]',account.body.id);
   const template=join(f.root,'template.xlsx'),upload=join(f.root,'三个街角.xlsx');
-  await browser.cli('download','dialog a[download]',template);
+  const format='dialog footer .episode-batch-upload-format';
+  const templateLink=format+' a[download]';
+  expect(await browser.snapshot()).not.toContain('link "下载 Excel 模板"');
+  await browser.cli('focus',format+' summary');
+  await browser.cli('press','Enter');
+  await browser.cli('download',templateLink,template);
+  await browser.cli('focus',format+' summary');
+  await browser.cli('press','Enter');
   const workbook=await loadWorkbook(fromBuffer(await readFile(template)));
   const orders=getSheet(workbook,'生产单')!,shots=getSheet(workbook,'分镜')!;
   expect(getRangeValues(orders,'A1:E1')).toEqual([['系列','生产单编号','标题','脚本正文','目标时长']]);
@@ -70,7 +77,7 @@ it.skipIf(process.env.LOOP_STORY_E2E!=='1')('Owner downloads and corrects an Exc
   expect(await browser.evaluate("document.querySelector('dialog [data-sheet=orders][data-row=\"4\"] .episode-import-title').textContent")).toContain('未找到系列');
   expect(await browser.evaluate("document.querySelectorAll('.episode-workbook-unmatched [data-sheet=shots]').length")).toBe(3);
   expect(await browser.evaluate("document.querySelectorAll('dialog .episode-import-editor').length")).toBe(0);
-  expect(await browser.evaluate("document.querySelector('dialog footer .episode-batch-upload-help')?.textContent")).toContain('格式说明');
+  expect(await browser.evaluate("document.querySelector('dialog footer .episode-batch-upload-format')?.textContent")).toContain('格式说明');
   expect(await browser.evaluate("document.querySelector('dialog .episode-batch-series-summary')?.textContent")).toContain('1 张生产单待确认系列');
   await browser.cli('click',orders4+' > .episode-import-disclosure');
   expect(await browser.evaluate(`document.querySelector('${orders4} .episode-import-row-body .form-error')===null`)).toBe(true);
