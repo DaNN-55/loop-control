@@ -12,7 +12,6 @@ import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
 import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
 import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
 import {restoreWorkspaceSettingsDraft,storeWorkspaceSettingsDraft,workspaceSettingsFingerprint} from './workspaceSettingsDraft';
-import {localRequest} from './client';
 import {readStoryboardSpeechDraft,storeStoryboardSpeechDraft} from './storyboardSpeechDraft';
 import {WorkspaceAudioAudition} from './WorkspaceAudioAudition';
 import {WorkspaceNarrationToolbar,type WorkspaceNarrationSettings} from './WorkspaceNarrationToolbar';
@@ -141,7 +140,9 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  const ownsManual=()=>manualVisit.active&&currentManual.current.session===manualSession&&currentManual.current.visit===manualVisit;
  const showManual=()=>manualSession.changed();
  const speechSettings:Settings=defaults??{selection:null,voice:'',languageCode:'zh-CN',speakingRate:1};
- const task=workspaceTaskPresentation(n.generationTask??{status:n.status});
+ const generationTask=n.generationTask,task=workspaceTaskPresentation(generationTask??{status:n.status});
+ const speechEnabled=voiceEnabled&&mode==='tts';
+ const retryUnknownAllowed=speechEnabled&&generationTask&&(generationTask.unknownRetryAllowed??(task.unknown&&!task.held&&!generationTask.retryTaskId&&generationTask.submissionOutcome!=='received'&&!generationTask.invalidated));
  const canGenerate=compatible(speechSettings,services)&&!!text.trim()&&!task.unknown&&!task.held;
  const reader=useWorkspaceReading(workspace,onChanged,JSON.stringify([manualKey,expanded,mode]),'无法读取当前工程版本。');
  const review=useWorkspaceCandidateReview({workspace,scope:JSON.stringify([n.shotId,expanded,mode]),reader,command});
@@ -237,7 +238,17 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
    setManualReview(null);
   }catch(e){setError(e instanceof Error?e.message:'采用未完成。');}finally{setBusy(false);}
  }
- async function reconcile(recover=false){setBusy(true);setError('');try{if(recover&&n.generationTask)await reconcileWorkspaceOutput(episodeId,n.generationTask);onChanged((await localRequest(`episodes/${encodeURIComponent(episodeId)}/workspace`)).workspace);}catch(e){setError(e instanceof Error?e.message:'口播状态未能核对，请重试。');}finally{setBusy(false);}}
+ async function reconcile(recover=false){
+  if(!generationTask)return;
+  setBusy(true);setError('');
+  try{
+   if(recover)await reconcileWorkspaceOutput(episodeId,generationTask);
+   const latest=await reader.read();
+   return latest.narration?.find(value=>value.shotId===n.shotId)?.generationTask;
+  }catch(cause){
+   if(!(cause instanceof Error&&cause.name==='AbortError'))setError(cause instanceof Error?cause.message:'口播状态未能核对，请重试。');
+  }finally{setBusy(false);}
+ }
  async function retryUnknown(){
   setError('');
   try{
@@ -372,9 +383,11 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
     {error&&<p role="alert">{uiText(error||'')}</p>}
    </ConfirmationModal>
   </div>,document.querySelector('.app-shell')??document.body)}</ConfirmationModalPresence>
-  {mode==='tts'&&n.generationTask&&<WorkspaceVisualTaskStatus task={n.generationTask} label={uiText("口播")} taskNoun={uiText("口播任务")} resumeLabel={uiText("恢复口播任务")} disabled={disabled} onRefresh={()=>void reconcile()} onReconcile={()=>void reconcile(true)} onResume={()=>{}} onRetryUnknown={(n.generationTask.unknownRetryAllowed??(task.unknown&&!task.held&&!n.generationTask.retryTaskId&&n.generationTask.submissionOutcome!=='received'&&!n.generationTask.invalidated))?()=>void retryUnknown():undefined}/>}
-
-  </div></div>
+  </div>
+  {generationTask&&(speechEnabled||task.unknown||task.held)&&<WorkspaceVisualTaskStatus key={generationTask.taskId} task={generationTask}
+   label={uiText("口播")} taskNoun={uiText("口播任务")} disabled={disabled} onRefresh={()=>reconcile()} onReconcile={()=>void reconcile(true)} onResume={()=>{}}
+   onRetryUnknown={retryUnknownAllowed?()=>void retryUnknown():undefined}/>}
+  </div>
  {(error||n.error&&!n.generationTask)&&<p role="alert">{error||n.error}</p>}
  </div>;
  return expanded?fields:<details className="workspace-narration-row">
