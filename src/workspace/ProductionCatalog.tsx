@@ -22,7 +22,7 @@ type Props=ComponentProps<typeof EpisodeWorkspace>&{
 const previewPreference='loop-control.catalog.preview.v1';
 const emptySelection=new Map<string,EpisodeBatchSelectionItem>();
 function selectionItem(episode:Props['episodes'][number]):EpisodeBatchSelectionItem{
- return {id:episode.id,title:episode.title||uiText('未命名生产单'),accountId:episode.account_id,archived:episodeIsArchived(episode),stage:episode.stage};
+ return {id:episode.id,title:episode.title||uiText('未命名生产单'),sourceTitle:episode.title,accountId:episode.account_id,archived:episodeIsArchived(episode),stage:episode.stage};
 }
 
 function MobilePreview({children,onClose}:{children:ReactNode;onClose:()=>void}){

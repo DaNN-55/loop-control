@@ -1,3 +1,5 @@
+import {episodeBatchLifecycleCommand} from './episodeBatchLifecycleTypes';
+
 const inFlight=new Map<string,Promise<unknown>>();
 let csrf='',ownerScope='',sessionGeneration=0;
 function requestNotSent(cause:unknown){return Object.assign(new Error(cause instanceof Error?cause.message:'会话确认失败，请重试。',{cause}),cause instanceof Error?cause:{},{requestSent:false});}
@@ -41,18 +43,21 @@ export async function localCommand<T>(command:string,data:unknown,expectedRevisi
  let idempotencyKey=sessionStorage.getItem(key);if(!idempotencyKey){idempotencyKey=crypto.randomUUID();sessionStorage.setItem(key,idempotencyKey);}
  const operation={...body,idempotencyKey},recoverable=['configuration','episode-commands','episode-lifecycle','recycle-bin'].includes(endpoint)&&!['planRecyclePurge','retryDeletionCleanup','openDirectory','openStandaloneStudio','openWorkspaceStudio'].includes(command);
  const pending=legacy||sessionStorage.getItem(key+'.uncertain')==='1';
+ // Each batch item changes only local metadata and commits its receipt in the
+ // same locked transaction. An explicit retry can submit the exact same key.
+ const replayable=endpoint==='episode-lifecycle'&&command===episodeBatchLifecycleCommand;
  const readback=async()=>{
   const receipt=await localRequest('command-receipt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint,operation}),signal:AbortSignal.timeout(10000)});
   if(receipt.status!=='committed')throw unknown();return receipt.result;
  };
  const request=(async()=>{
   try{
-   if(legacy||(recoverable&&pending)){try{return await readback();}catch{throw unknown();}}
+   if(legacy||(recoverable&&pending&&!replayable)){try{return await readback();}catch{throw unknown();}}
    try{return await localRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(operation)});}
    catch(error){
     if((error as {requestSent?:boolean}).requestSent===false){sessionStorage.removeItem(key);throw error;}
     const status=(error as {status?:number}).status;
-    if(status&&status<500){sessionStorage.removeItem(key);throw error;}
+    if(status&&status<500){sessionStorage.removeItem(key);sessionStorage.removeItem(key+'.uncertain');throw error;}
     if(!recoverable)throw error;
     sessionStorage.setItem(key+'.uncertain','1');
     try{return await readback();}catch{throw unknown(status&&error instanceof Error?error.message:undefined);}

@@ -7,6 +7,7 @@ import './episode-batch.css';
 export interface EpisodeBatchSelectionItem {
  id:string;
  title:string;
+ sourceTitle:string;
  accountId:string;
  archived:boolean;
  stage:EpisodeStage;
