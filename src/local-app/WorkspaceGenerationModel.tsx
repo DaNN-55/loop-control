@@ -5,7 +5,7 @@ import type {ProductionSelection} from '../productionSelection';
 import {WorkspaceModelPicker} from './WorkspaceModelPicker';
 import './workspace-generation-form.css';
 
-export function WorkspaceGenerationModel({kind,services,selection,disabled,onChange,onSetupSelection,onRefresh,refreshing,compact=false}:{kind:'图片'|'视频';services:ProductionService[];selection?:ProductionSelection|null;disabled?:boolean;onChange:(value:string)=>void;onSetupSelection?:(selection:ProductionSelection)=>void;onRefresh?:()=>void;refreshing?:boolean;compact?:boolean}){
+export function WorkspaceGenerationModel({kind,services,selection,disabled,onChange,onSetupSelection,onRefresh,refreshing,compact=false,label}:{label?:string;kind:'图片'|'视频';services:ProductionService[];selection?:ProductionSelection|null;disabled?:boolean;onChange:(value:string)=>void;onSetupSelection?:(selection:ProductionSelection)=>void;onRefresh?:()=>void;refreshing?:boolean;compact?:boolean}){
  const availableServices=services.filter(service=>service.executable&&(service.mode==='search'&&service.provider==='pexels'&&service.adapter==='pexels_video'||service.models.length>0));
  const selectedModel=selection?.model;
  const selectedService=availableServices.find(service=>
@@ -20,7 +20,7 @@ export function WorkspaceGenerationModel({kind,services,selection,disabled,onCha
  const unavailable=kind==='图片'&&!availableServices.length
   ?(services.find(service=>service.connectionVersionId===selection?.connectionVersionId)||services.find(service=>service.connectionVersionId&&service.status==='verified'))?.unavailableReason
   :null;
- const picker=<WorkspaceModelPicker onRefresh={onRefresh} refreshing={refreshing} label={uiText("{value0}连接与模型",{value0:uiText(kind)})} title={uiText("选择{value0}模型",{value0:uiText(kind)})} compact={compact} options={modelOptions.map(({service,id,label})=>({id,label,provider:service.provider,connection:connectionLabel(service)}))} value={value} disabled={disabled} onChange={onChange} onConfigure={onSetupSelection?()=>requestConnectionSetup({capability:kind==='图片'?'image':'video',onUse:async choice=>{const configured=await readConfiguredService(kind==='图片'?'image':'video',choice);onSetupSelection(configured.selection);}}):undefined} empty={unavailable??uiText("暂无可用{value0}模型。",{value0:uiText(kind)})} clear={!!selection}/>;
+ const picker=<WorkspaceModelPicker onRefresh={onRefresh} refreshing={refreshing} label={label??uiText("{value0}连接与模型",{value0:uiText(kind)})} title={uiText("选择{value0}模型",{value0:uiText(kind)})} compact={compact} options={modelOptions.map(({service,id,label})=>({id,label,provider:service.provider,connection:connectionLabel(service)}))} value={value} disabled={disabled} onChange={onChange} onConfigure={onSetupSelection?()=>requestConnectionSetup({capability:kind==='图片'?'image':'video',onUse:async choice=>{const configured=await readConfiguredService(kind==='图片'?'image':'video',choice);onSetupSelection(configured.selection);}}):undefined} empty={unavailable??uiText("暂无可用{value0}模型。",{value0:uiText(kind)})} clear={!!selection}/>;
  if(compact)return picker;
  return <div className="workspace-generation-model">
   <div className="workspace-generation-field-row"><span>{uiText("模型")}</span>{picker}</div>

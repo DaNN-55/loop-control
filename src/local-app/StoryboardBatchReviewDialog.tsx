@@ -15,7 +15,7 @@ export function StoryboardBatchReviewDialog({review,labels,selected,busy,error,u
  const count=review.items.filter(item=>item.state==='ready'&&selected.has(item.shotId)).length;
  const cents=review.items.reduce((sum,item)=>sum+(item.state==='ready'&&selected.has(item.shotId)?item.summary?.reservationCents??0:0),0);
  return <dialog ref={ref} aria-labelledby={titleId} className="storyboard-batch-dialog" onClose={event=>{if(!event.currentTarget.open)onClose();}} onCancel={event=>{if(busy)event.preventDefault();}}>
-  <header><h3 id={titleId}>{uiText('核对批量口播')}</h3></header>
+  <header><h3 id={titleId}>{uiText(review.kind==='speech'?'核对批量口播':'核对批量视频')}</h3></header>
   <div className="storyboard-batch-dialog-items">
    {review.changed&&<p role="status">{uiText('待提交内容已变化，本组未入队。请重新核对。')}</p>}
    {review.items.map(item=>{
@@ -24,6 +24,7 @@ export function StoryboardBatchReviewDialog({review,labels,selected,busy,error,u
      <label><input type="checkbox" checked={item.state==='ready'&&selected.has(item.shotId)} disabled={busy||unknown||item.state==='skipped'} onChange={()=>onToggle(item.shotId)}/><strong>{label}</strong></label>
      {item.text&&<><span className="storyboard-batch-text-source">{uiText(item.source==='draft'?'来自草稿':'来自已确认分镜')}</span><p>{item.text}</p></>}
      {item.summary?<p className="storyboard-batch-parameters">{[item.summary.connection,item.summary.model,...item.summary.parameters,`¥${(item.summary.reservationCents/100).toFixed(2)}`].join(' · ')}</p>:item.characters!==undefined&&<p className="storyboard-batch-parameters">{uiText('{count} 字',{count:item.characters})}</p>}
+     {!!item.summary?.inputs.length&&<p className="storyboard-batch-parameters">{item.summary.inputs.join(' · ')}</p>}
      {item.reason&&<p>{uiText(item.reason)}</p>}
      {item.change&&item.change!==item.reason&&<p role="status">{uiText(item.change)}</p>}
     </section>;

@@ -70,13 +70,13 @@ export async function workspaceVisualMainVoice(c:PoolClient,root:string,row:Prod
  return{mode:item.id===`workspace-source-shot-${shotId}`?'source':'tts',windowDurationSeconds:duration,identity:workspaceVisualVoiceIdentity(project,shotId),source:{id:source.id,relativePath:item.src,sha256:source.sha256,fileSize:Number(source.file_size),srcInFrame:Number(item.srcInFrame??0),playbackRate:Number(item.playbackRate??1),coverage:route.coverage}};
 }
 
-export async function resolveWorkspaceVideoRequest(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,phase:Phase){
+export async function resolveWorkspaceVideoRequest(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,phase:Phase|'batch'){
  const {context,creativeContext}=await visualContext(c,row.episode_id),resolved=await resolveProductionSelection(c,data.selection,'video');
  if(resolved.choice.mode!=='generation')throw new ConfigurationError(400,phase==='confirmation'?'请选择生成服务。':'请选择视频生成服务；素材检索请使用检索入口。');
- if(phase==='queue'&&(typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500))throw new ConfigurationError(400,'首帧或动作描述无效。');
+ if(phase!=='confirmation'&&(typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500))throw new ConfigurationError(400,'首帧或动作描述无效。');
  const prompt=String(data.prompt??'');if(!prompt.trim())throw new ConfigurationError(400,'请填写本次调用内容。');
  const provider=resolved.selection.provider,videoSettings=provider==='bailian'?(data.videoSettings??defaultWanModelSettings(resolved.selection.model!)):undefined;
- if(phase==='queue'){
+ if(phase!=='confirmation'){
   const config=resolved.execution;
   if(!config.credential_ref||!(provider==='bailian'&&config.executor.adapter==='wan_video'||isVideoProvider(provider)&&config.executor.adapter===videoProviders[provider].adapter))throw new ConfigurationError(409,'请为当前镜头选择既有视频连接。');
   if(data.videoSettings!==undefined&&(provider!=='bailian'||!isWanGenerationSettings(data.videoSettings)||Object.keys(data.videoSettings).some(key=>!['resolution','audio','promptExtend','shotType','watermark','negativePrompt','seed'].includes(key))))throw new ConfigurationError(400,'视频参数无效或不适用于当前模型。');
@@ -89,14 +89,15 @@ export async function resolveWorkspaceVideoRequest(c:PoolClient,root:string,row:
  const mainVoice=await workspaceVisualMainVoice(c,root,row,project,clip.shotId),targetSeconds=mainVoice.windowDurationSeconds??Number(data.durationSeconds),bounds=resolved.choice.constraints.durationSeconds!,min=bounds?.min??2;
  const providerSeconds=provider==='bailian'?wanProviderDuration(resolved.selection.model!,targetSeconds,mainVoice.windowDurationSeconds!==null)??NaN:mainVoice.windowDurationSeconds!==null?Math.max(min,Math.ceil(targetSeconds)):targetSeconds;
  if(phase==='confirmation'&&(!providerSeconds||!Number.isFinite(targetSeconds)||targetSeconds<=0))throw new ConfigurationError(400,'视频生成时长无效。');
- if(phase==='queue'){
+ if(phase!=='confirmation'){
   if(mainVoice.windowDurationSeconds!==null&&targetSeconds>bounds.max)throw new ConfigurationError(409,`当前实际主声时长超过所选服务上限 ${bounds.max} 秒，请明确拆分镜头；不会截断口播。`);
   if(!Number.isInteger(providerSeconds)||providerSeconds<bounds.min||providerSeconds>bounds.max)throw new ConfigurationError(409,`当前画面时长不在所选服务 ${bounds.min}～${bounds.max} 秒范围，请明确拆分或调整；不会变速或循环。`);
-  if(!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000)throw new ConfigurationError(400,'请填写本次费用预留。');
+  if(phase==='queue'&&(!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000))throw new ConfigurationError(400,'请填写本次费用预留。');
  }
  const visual=await resolveWorkspaceVideoInputs(c,root,row.episode_id,data,resolved);
+ if(phase!=='confirmation'&&data.firstFrameFit!==undefined&&!visual.frozen.some(input=>input.role==='firstFrame'))throw new ConfigurationError(400,'当前生成模式不使用首帧构图。');
  let referencePrompt:string;try{referencePrompt=resolvePromptReferences(prompt,data.promptReferences,visual.frozen.map(input=>({materialRevisionId:input.materialRevisionId,kind:input.role==='referenceVideos'?'video':'image',name:input.name,role:input.role})),{provider,characterOrder:visual.mode.characterOrder,referenceMode:visual.mode.id==='references'});}catch(error){throw new ConfigurationError(400,(error as Error).message);}
  const actualPrompt=creativeMediaPrompt(referencePrompt,creativeContext.accountRules,creativeContext.seriesRules);
- if(phase==='queue'&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1500))throw new ConfigurationError(400,'动作描述与账号、系列规则合并后过长，请精简后提交。');
+ if(phase!=='confirmation'&&actualPrompt.length>(resolved.choice.constraints.prompt?.maxLength??1500))throw new ConfigurationError(400,'动作描述与账号、系列规则合并后过长，请精简后提交。');
  return{context,creativeContext,resolved,visual,mainVoice,targetSeconds,providerSeconds,actualPrompt,videoSettings,videoResolution,prompt};
 }

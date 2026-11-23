@@ -1,20 +1,25 @@
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
-import type {StoryboardBatchReceipt,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechDraft,StoryboardSpeechSettings} from '../storyboardBatch.js';
+import type {StoryboardBatchReceipt,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechDraft,StoryboardSpeechSettings,StoryboardVideoDraft,StoryboardVideoSettings} from '../storyboardBatch.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
 import {requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {assertLegacyExternalRequestsResolved} from './legacyDraftInputs.js';
 import type {InputRuntime} from './episodeCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+import {queueStoryboardVideo,resolveStoryboardVideo,type StoryboardVideoItem,type StoryboardVideoRequest} from './storyboardBatchVideo.js';
 import {resolveStoryboardSpeech,type StoryboardSpeechItem,type StoryboardSpeechRequest} from './storyboardBatchSpeech.js';
 
 const batchCommand='confirmStoryboardBatch',speechCommand='generateWorkspaceNarration';
 const uuid=/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 const digest=canonicalFingerprint;
-const itemHash=(item:StoryboardSpeechItem)=>{const {change:_,...review}=item.review;return digest({review,frozen:item.frozen});};
-type BatchRequest=StoryboardSpeechRequest&{kind:'speech'};
+const itemHash=(item:BatchItem)=>{const {change:_,...review}=item.review;return digest({review,frozen:item.frozen});};
+type BatchRequest=(StoryboardSpeechRequest&{kind:'speech'})|(StoryboardVideoRequest&{kind:'video'});
+type BatchItem=StoryboardSpeechItem|StoryboardVideoItem;
+function resolveBatch(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,request:BatchRequest){
+ return request.kind==='speech'?resolveStoryboardSpeech(c,root,row,project,request):resolveStoryboardVideo(c,root,row,project,request);
+}
 interface StoredBatch {
  request:BatchRequest;
  preparationRevisionId:string;
@@ -29,10 +34,12 @@ interface Approval {
  consumed_at:Date|null;
  script_revision_id:string;
 }
-function describeChange(previous:StoryboardBatchReview['items'][number],current:StoryboardBatchReview['items'][number]){
+function describeChange(kind:BatchRequest['kind'],previous:StoryboardBatchReview['items'][number],current:StoryboardBatchReview['items'][number]){
  if(current.reason)return current.reason;
  const changes:string[]=[];
- if(previous.text!==current.text||previous.source!==current.source)changes.push('口播文案已变化');
+ if(previous.text!==current.text||previous.source!==current.source)changes.push(kind==='speech'?'口播文案已变化':'视频提示词已变化');
+ if(previous.targetSeconds!==current.targetSeconds||previous.providerSeconds!==current.providerSeconds)changes.push('主声或视频请求时长已变化');
+ if(previous.summary?.inputs.join('|')!==current.summary?.inputs.join('|'))changes.push('视觉输入已变化');
  if(previous.summary?.connection!==current.summary?.connection||previous.summary?.provider!==current.summary?.provider||previous.summary?.model!==current.summary?.model)changes.push('连接或模型已变化');
  if(previous.summary?.parameters.slice(1).join('|')!==current.summary?.parameters.slice(1).join('|'))changes.push('制作设置已变化');
  if(previous.summary?.reservationCents!==current.summary?.reservationCents)changes.push('费用预留已变化');
@@ -43,13 +50,28 @@ function idList(input:unknown):string[]{
  if(!Array.isArray(input)||input.some(id=>typeof id!=='string'||!id||id.length>200)||new Set(input).size!==input.length)invalid();
  return input;
 }
+function hasOnlyKeys(value:unknown,keys:string[]):value is Record<string,unknown>{
+ return !!value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(key=>keys.includes(key));
+}
 function requestData(data:Record<string,unknown>):BatchRequest{
- if(data.kind!=='speech')return invalid();
+ if(data.kind!=='speech'&&data.kind!=='video')return invalid();
  const shotIds=idList(data.shotIds),regenerateShotIds=data.regenerateShotIds===undefined?[]:idList(data.regenerateShotIds);
  if(!shotIds.length||regenerateShotIds.some(id=>!shotIds.includes(id)))return invalid();
  const drafts=data.drafts??[];
  if(!Array.isArray(drafts))return invalid();
  const seen=new Set<string>();
+ if(data.kind==='video'){
+  const settings=['selection','durationSeconds','videoSettings','videoResolution','reservationCents'];
+  const keys=[...settings,'prompt','promptReferences','firstFrameMaterialRevisionId','firstFrameFit','videoMode','visualInputs'];
+  if(data.common!==undefined&&!hasOnlyKeys(data.common,settings))return invalid();
+  for(const d of drafts){
+   if(!hasOnlyKeys(d,['shotId','targetItemId','preparationRevisionId','inputs'])||typeof d.shotId!=='string'||!shotIds.includes(d.shotId)||seen.has(d.shotId)||
+    typeof d.targetItemId!=='string'||d.targetItemId.length>200||typeof d.preparationRevisionId!=='string'||!uuid.test(d.preparationRevisionId)||
+    !hasOnlyKeys(d.inputs,keys)||d.inputs.prompt!==undefined&&(typeof d.inputs.prompt!=='string'||d.inputs.prompt.length>10000))return invalid();
+   seen.add(d.shotId);
+  }
+  return {kind:'video',shotIds,regenerateShotIds,drafts:drafts as StoryboardVideoDraft[],common:data.common as StoryboardVideoSettings|undefined};
+ }
  for(const d of drafts){
   if(!d||typeof d!=='object'||Array.isArray(d)||Object.keys(d).some(key=>!['shotId','preparationRevisionId','inputFingerprint','text'].includes(key))||!shotIds.includes(d.shotId)||seen.has(d.shotId)||typeof d.preparationRevisionId!=='string'||typeof d.inputFingerprint!=='string'||!(/^[a-f0-9]{64}$/).test(d.inputFingerprint)||typeof d.text!=='string'||d.text.length>100000)return invalid();
   seen.add(d.shotId);
@@ -59,7 +81,7 @@ function requestData(data:Record<string,unknown>):BatchRequest{
  return {kind:'speech',shotIds,regenerateShotIds,drafts:drafts as StoryboardSpeechDraft[],common};
 }
 
-async function saveReview(c:PoolClient,row:ProductionWorkspaceRecord,request:BatchRequest,items:StoryboardSpeechItem[],changed=false):Promise<StoryboardBatchReview>{
+async function saveReview(c:PoolClient,row:ProductionWorkspaceRecord,request:BatchRequest,items:BatchItem[],changed=false):Promise<StoryboardBatchReview>{
  const id=randomUUID();
  const payload:StoredBatch={request,preparationRevisionId:row.preparation_revision_id,frozenHashes:Object.fromEntries(items.flatMap(item=>item.frozen?[[item.review.shotId,itemHash(item)]]:[]))};
  const expires=(await c.query("SELECT clock_timestamp()+interval '10 minutes' expires")).rows[0].expires as Date;
@@ -80,7 +102,7 @@ async function queueSpeech(c:PoolClient,row:ProductionWorkspaceRecord,batchId:st
 }
 
 /** Owner command owns the episode and workspace locks and commits the complete receipt with all task writes. */
-export async function executeStoryboardBatch(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:Pick<InputRuntime,'narrationReady'|'checkReferences'>,command:string,data:Record<string,unknown>):Promise<StoryboardBatchResult>{
+export async function executeStoryboardBatch(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>):Promise<StoryboardBatchResult>{
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先返回分镜台，使用当前制作基准进行批量生成。');
  const currentBasis=(await c.query('SELECT e.main_script_revision_id=$2 AND local_identity.preparation_source_current($3) current FROM public.episodes e WHERE e.id=$1',[row.episode_id,row.script_revision_id,row.preparation_revision_id])).rows[0]?.current;
  if(!currentBasis)throw new ConfigurationError(409,'制作基准已变化，请重新核对当前分镜。');
@@ -89,7 +111,7 @@ export async function executeStoryboardBatch(c:PoolClient,root:string,row:Produc
  if(command==='prepareStoryboardBatch'){
   const request=requestData(data);
   if(request.shotIds.some(shotId=>!row.bindings.some(clip=>clip.shotId===shotId)))return invalid();
-  return saveReview(c,row,request,await resolveStoryboardSpeech(c,root,row,project,request));
+  return saveReview(c,row,request,await resolveBatch(c,root,row,project,request));
  }
  const id=data.confirmationId,selected=idList(data.shotIds);
  if(typeof id!=='string'||!uuid.test(id)||!selected.length)return invalid();
@@ -102,7 +124,8 @@ export async function executeStoryboardBatch(c:PoolClient,root:string,row:Produc
   return approval.summary;
  }
  if(new Date(approval.expires_at).getTime()<=Date.now())throw new ConfigurationError(409,'批量核对已过期，请重新核对。');
- const current=await resolveStoryboardSpeech(c,root,row,project,{...approval.payload.request,shotIds});
+ const kind=approval.payload.request.kind;
+ const current=await resolveBatch(c,root,row,project,{...approval.payload.request,shotIds});
  const basisChanged=approval.payload.preparationRevisionId!==row.preparation_revision_id||approval.script_revision_id!==row.script_revision_id;
  const changed=current.some(item=>!item.frozen||itemHash(item)!==approval.payload.frozenHashes[item.review.shotId])||basisChanged;
  let result:StoryboardBatchResult;
@@ -112,17 +135,22 @@ export async function executeStoryboardBatch(c:PoolClient,root:string,row:Produc
    const next=current.find(candidate=>candidate.review.shotId===item.shotId);
    if(!next)return {review:item.state==='ready'?{...item,state:'skipped' as const,reason:'本次已取消选择'}:item};
    if(!basisChanged&&itemHash(next)===approval.payload.frozenHashes[item.shotId])return next;
-   return {...next,review:{...next.review,change:basisChanged?'制作基准已变化':describeChange(item,next.review)}};
+   return {...next,review:{...next.review,change:basisChanged?'制作基准已变化':describeChange(kind,item,next.review)}};
   });
   // The presentation annotation is excluded from the frozen input digest.
   result=await saveReview(c,row,{...approval.payload.request,shotIds:previous.items.map(item=>item.shotId)},items,true);
  }else{
-  if(!runtime.narrationReady)throw new ConfigurationError(503,'本地口播执行器未就绪。');
-  await runtime.narrationReady();
-  await runtime.checkReferences(c,[...new Set(current.map(item=>item.frozen!.selection.connectionVersionId!))],{purpose:'workspace-generation'});
   const items:StoryboardBatchReceipt['items']=[];
-  for(const item of current)items.push(await queueSpeech(c,row,id,item));
-  result={status:'submitted',kind:approval.payload.request.kind,confirmationId:id,episodeId:row.episode_id,items};
+  if(kind==='speech'){
+   const speechItems=current as StoryboardSpeechItem[];
+   if(!runtime.narrationReady)throw new ConfigurationError(503,'本地口播执行器未就绪。');
+   await runtime.narrationReady();
+   await runtime.checkReferences(c,[...new Set(speechItems.map(item=>item.frozen!.selection.connectionVersionId!))],{purpose:'workspace-generation'});
+   for(const item of speechItems)items.push(await queueSpeech(c,row,id,item));
+  }else{
+   for(const item of current as StoryboardVideoItem[])items.push(await queueStoryboardVideo(c,root,row,project,runtime,id,item));
+  }
+  result={status:'submitted',kind,confirmationId:id,episodeId:row.episode_id,items};
  }
  await c.query('UPDATE local_identity.workspace_call_confirmations SET payload=$2,summary=$3,consumed_at=clock_timestamp(),consumed_transaction=txid_current() WHERE id=$1',[id,JSON.stringify({...approval.payload,submittedShotIds:shotIds}),JSON.stringify(result)]);
  return result;

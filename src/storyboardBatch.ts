@@ -1,5 +1,31 @@
 import type {WorkspaceCallSummary} from './workspaceCall.js';
 import type {ProductionSelection} from './productionSelection.js';
+import type {PromptReferenceBinding} from './promptReferences.js';
+import type {VideoVisualInputSelection} from './videoVisualInputs.js';
+import type {WanGenerationSettings} from './videoGenerationSettings.js';
+
+export type StoryboardBatchKind='speech'|'video';
+export interface StoryboardVideoSettings {
+ selection?:ProductionSelection|null;
+ durationSeconds?:number;
+ videoSettings?:WanGenerationSettings;
+ videoResolution?:string;
+ reservationCents?:number;
+}
+export interface StoryboardVideoDraft {
+ shotId:string;
+ targetItemId:string;
+ preparationRevisionId:string;
+ inputs:Omit<StoryboardVideoSettings,'videoSettings'>&{
+  videoSettings?:Partial<WanGenerationSettings>;
+  prompt?:string;
+  promptReferences?:PromptReferenceBinding[];
+  firstFrameMaterialRevisionId?:string;
+  firstFrameFit?:'contain'|'cover';
+  videoMode?:string;
+  visualInputs?:VideoVisualInputSelection[];
+ };
+}
 
 /** Scope a browser draft to the exact saved shot inputs it was edited from. */
 export interface StoryboardSpeechDraft {
@@ -22,11 +48,13 @@ export interface StoryboardBatchItem {
  source:'draft'|'confirmed';
  text:string;
  characters?:number;
+ targetSeconds?:number;
+ providerSeconds?:number;
  summary?:WorkspaceCallSummary;
 }
 export interface StoryboardBatchReview {
  status:'review';
- kind:'speech';
+ kind:StoryboardBatchKind;
  confirmationId:string;
  expiresAt:string;
  items:StoryboardBatchItem[];
@@ -34,7 +62,7 @@ export interface StoryboardBatchReview {
 }
 export interface StoryboardBatchReceipt {
  status:'submitted';
- kind:'speech';
+ kind:StoryboardBatchKind;
  episodeId:string;
  confirmationId:string;
  items:Array<{shotId:string;taskId:string;reservationCents:number}>;

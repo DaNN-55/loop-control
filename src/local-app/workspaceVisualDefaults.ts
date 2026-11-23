@@ -40,3 +40,11 @@ export function recordVisualDefaultEdits<T extends object>(previous:T,next:T):T&
  const prior=fields((previous as ObjectValue).defaultOverrides)??[];
  return {...next,defaultOverrides:{version:1,fields:paths.filter(path=>prior.includes(path)||!same(get(previous,path),get(next,path)))}};
 }
+
+export function episodeVisualDefaults(workspaceId:string,kind:'image'|'video'):unknown{
+ try{
+  const key=`loop-${kind}-default:${workspaceId}`;
+  const value=JSON.parse(localStorage.getItem(key)??sessionStorage.getItem(key)??'{}');
+  return object(value)?value:{};
+ }catch{return {};}
+}
