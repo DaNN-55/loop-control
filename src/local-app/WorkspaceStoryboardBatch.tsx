@@ -1,11 +1,12 @@
 import {useRef,useState,type ReactNode} from 'react';
-import {ChevronDown} from 'lucide-react';
+import {ChevronDown,Image,Mic,Video,X} from 'lucide-react';
 import {Dialog,DialogTrigger} from 'react-aria-components';
 import {WorkspacePopover} from './WorkspacePopover';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {StoryboardImageSettings,StoryboardBatchFailure,StoryboardBatchKind,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechSettings,StoryboardVideoSettings} from '../storyboardBatch';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import {speechVoiceName} from './WorkspaceVoicePicker';
 import {WorkspaceNarrationToolbar} from './WorkspaceNarrationToolbar';
 import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import {readStoryboardSpeechDraft} from './storyboardSpeechDraft';
@@ -27,6 +28,7 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
  const [draftCommon,setCommon]=useState<StoryboardSpeechSettings>(),[draftVideo,setVideo]=useState<StoryboardVideoSettings>();
  const [draftImage,setImage]=useState<StoryboardImageSettings>();
  const [settingsOpen,setSettingsOpen]=useState(false);
+ const [expanded,setExpanded]=useState<Set<StoryboardBatchKind>>(()=>new Set(['image']));
  const working=useRef(false);
  const shotIds=[...new Set(workspace.clips.map(clip=>clip.shotId))],labels=new Map(shotIds.map((id,index)=>[id,`镜头 ${String(index+1).padStart(2,'0')}`]));
  const failures:Record<StoryboardBatchKind,Map<string,string>>={speech:new Map(),image:new Map(),video:new Map()};
@@ -59,6 +61,7 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
 
  function begin(nextActive:boolean,nextRetryKind?:StoryboardBatchKind){
   setSettingsOpen(false);
+  setExpanded(new Set([nextRetryKind??'image']));
   setActive(nextActive);setRetryKind(nextRetryKind);setSelection(new Set());setCommon(undefined);setVideo(undefined);setImage(undefined);setReview(null);setError('');setNotice('');
  }
 
@@ -131,6 +134,32 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
   }finally{working.current=false;setBusy(false);}
  }
 
+ function settingsSection(kind:StoryboardBatchKind,title:string,Icon:typeof Mic,summary:string[],fields:ReactNode,catalogError:string,action:string){
+  const caption=summary.filter(Boolean).join(' · ');
+  return <details data-kind={kind} className="storyboard-batch-settings-section" open={expanded.has(kind)} onToggle={event=>{
+   const open=event.currentTarget.open;
+   setExpanded(current=>{
+    if(current.has(kind)===open)return current;
+    const next=new Set(current);
+    if(open)next.add(kind);else next.delete(kind);
+    return next;
+   });
+  }}>
+   <summary>
+    <Icon size={16} aria-hidden="true"/><strong>{title}</strong>
+    <span className="storyboard-batch-settings-summary" title={caption}>{caption}</span>
+    <ChevronDown className="storyboard-batch-settings-chevron" size={16} aria-hidden="true"/>
+   </summary>
+   <div className="storyboard-batch-settings-fields">
+    {fields}
+    {catalog.error&&<p role="alert">{catalogError}</p>}
+    <div className="storyboard-batch-settings-action">
+     <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare(kind,[...selected],[]);}}>{retryKind?uiText('核对重试'):action}</Button>
+    </div>
+   </div>
+  </details>;
+ }
+
  const actions=visibleInWorkspace&&<div className="storyboard-batch-actions storyboard-batch-caption-actions" role="group" aria-label={uiText('批量操作')}>
     {!active&&(['speech','image','video'] as const).map(kind=>failures[kind].size>0&&<Button key={kind} size="sm" color="secondary" isDisabled={disabled||busy||unknown} onPress={()=>begin(true,kind)}>{uiText(kind==='speech'?'重试失败口播':kind==='image'?'重试失败图片':'重试失败视频')}</Button>)}
     {active&&<>
@@ -140,30 +169,24 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
        <Button size="sm" color="tertiary" iconTrailing={ChevronDown} isDisabled={disabled||busy}>{uiText('共用设置')}</Button>
        <WorkspacePopover className="dan-ui product-ui storyboard-batch-settings-popover" placement="bottom start" offset={6} containerPadding={12} shouldFlip>
         <Dialog aria-label={uiText('共用设置')} className="storyboard-batch-settings">
-         {(!retryKind||retryKind==='speech')&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用口播设置')}>
-          <h4>{uiText('口播')}</h4>
-          <div className="storyboard-batch-settings-fields">
-           <WorkspaceNarrationToolbar mode="tts" value={common} services={services} disabled={disabled||busy||unknown} changed={false} allowManual={false} showSample={false} onMode={()=>{}} onChange={setCommon} onSave={()=>{}} onRefresh={catalog.refresh} refreshing={catalog.pending}>{null}</WorkspaceNarrationToolbar>
-           {catalog.error&&<p role="alert">{uiText('无法读取语音连接。')}</p>}
-          </div>
-          <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare('speech',[...selected],[]);}}>{uiText(retryKind?'核对重试':'批量生成口播')}</Button>
-         </div>}
-         {(!retryKind||retryKind==='image')&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用图片设置')}>
-          <h4>{uiText('图片')}</h4>
-          <div className="storyboard-batch-settings-fields">
-           <StoryboardImageBatchSettings value={imageCommon} services={imageServices} disabled={disabled||busy||unknown} onChange={setImage} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
-           {catalog.error&&<p role="alert">{uiText('无法读取图片连接。')}</p>}
-          </div>
-          <Button size="sm" color={retryKind?'primary':'secondary'} isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare('image',[...selected],[]);}}>{uiText(retryKind?'核对重试':'批量生成图片')}</Button>
-         </div>}
-         {(!retryKind||retryKind==='video')&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用视频设置')}>
-          <h4>{uiText('视频')}</h4>
-          <div className="storyboard-batch-settings-fields">
-           <StoryboardVideoBatchSettings value={videoCommon} services={videoServices} disabled={disabled||busy||unknown} onChange={setVideo} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
-           {catalog.error&&<p role="alert">{uiText('无法读取视频连接。')}</p>}
-          </div>
-          <Button size="sm" color={retryKind?'primary':'secondary'} isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare('video',[...selected],[]);}}>{uiText(retryKind?'核对重试':'批量生成视频')}</Button>
-         </div>}
+         <header className="storyboard-batch-settings-header">
+          <div><h3>{uiText('共用设置')}</h3><p>{uiText('已选择 {count} 个镜头',{count:selected.size})}</p></div>
+          <Button size="xs" color="tertiary" iconLeading={X} aria-label={uiText('关闭')} onPress={()=>setSettingsOpen(false)}/>
+         </header>
+         <div className="storyboard-batch-settings-sections">
+          {(!retryKind||retryKind==='speech')&&settingsSection('speech',uiText('口播'),Mic,
+           common.selection?.model?[common.selection.model,speechVoiceName(common.selection.provider,common.voice),`${common.speakingRate}×`]:[uiText('选择语音模型')],
+           <WorkspaceNarrationToolbar mode="tts" value={common} services={services} disabled={disabled||busy||unknown} changed={false} allowManual={false} showSample={false} onMode={()=>{}} onChange={setCommon} onSave={()=>{}} onRefresh={catalog.refresh} refreshing={catalog.pending}>{null}</WorkspaceNarrationToolbar>,
+           uiText('无法读取语音连接。'),uiText('核对口播生成'))}
+          {(!retryKind||retryKind==='image')&&settingsSection('image',uiText('图片'),Image,
+           imageCommon.selection?.model?[imageCommon.selection.model,imageCommon.settings?.size?.replace('x',' × ')??uiText('跟随工程尺寸'),uiText('每镜 {count} 张',{count:imageCommon.settings?.count??1})]:[uiText('选择{value0}模型',{value0:uiText('图片')})],
+           <StoryboardImageBatchSettings value={imageCommon} services={imageServices} disabled={disabled||busy||unknown} onChange={setImage} onRefresh={catalog.refresh} refreshing={catalog.pending}/>,
+           uiText('无法读取图片连接。'),uiText('核对图片生成'))}
+          {(!retryKind||retryKind==='video')&&settingsSection('video',uiText('视频'),Video,
+           videoCommon.selection?.model?[videoCommon.selection.model,videoCommon.durationSeconds?uiText('{value0} 秒',{value0:videoCommon.durationSeconds}):'']:[uiText('选择{value0}模型',{value0:uiText('视频')})],
+           <StoryboardVideoBatchSettings value={videoCommon} services={videoServices} disabled={disabled||busy||unknown} onChange={setVideo} onRefresh={catalog.refresh} refreshing={catalog.pending}/>,
+           uiText('无法读取视频连接。'),uiText('核对视频生成'))}
+         </div>
         </Dialog>
        </WorkspacePopover>
       </DialogTrigger>}

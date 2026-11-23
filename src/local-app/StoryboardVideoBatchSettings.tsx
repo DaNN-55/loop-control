@@ -17,7 +17,10 @@ export function StoryboardVideoBatchSettings({value,services,disabled,onChange,o
  }
  return <fieldset className="storyboard-batch-video-settings" disabled={disabled}>
   <legend className="sr-only">{uiText('本次共用视频设置')}</legend>
-  <WorkspaceGenerationModel label={uiText('本次视频连接与模型')} kind="视频" services={services} selection={selection} disabled={disabled} onChange={id=>select(productionModelSelection(services,id,'video'))} onSetupSelection={select} onRefresh={onRefresh} refreshing={refreshing} compact/>
+  <div className="storyboard-batch-model-field">
+   <span>{uiText('模型')}</span>
+   <WorkspaceGenerationModel label={uiText('本次视频连接与模型')} kind="视频" services={services} selection={selection} disabled={disabled} onChange={id=>select(productionModelSelection(services,id,'video'))} onSetupSelection={select} onRefresh={onRefresh} refreshing={refreshing} compact/>
+  </div>
   <label>{uiText('生成时长（秒，选填）')}<input name="durationSeconds" type="number" min="1" max="3600" step="1" value={value.durationSeconds??''} onChange={event=>onChange({...value,durationSeconds:event.target.value===''?undefined:event.target.valueAsNumber})}/></label>
   <label>{uiText('每镜费用预留（分，选填）')}<input name="reservationCents" type="number" min="1" max="100000" step="1" value={value.reservationCents??''} onChange={event=>onChange({...value,reservationCents:event.target.value===''?undefined:event.target.valueAsNumber})}/></label>
   {wan&&wanSettings&&<>

@@ -38,7 +38,8 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   expect(await browser.evaluate("Array.from(document.querySelectorAll('textarea')).find(el=>el.labels?.[0]?.textContent.trim()==='口播草稿')?.value")).toBe(legacyDraft);
   await check('勾选镜头 01');
   await browser.click('共用设置');
-  await browser.click('批量生成口播');
+  await browser.cli('click','.storyboard-batch-settings-section[data-kind=speech] > summary');
+  await browser.click('核对口播生成');
   await browser.cli('wait','--text','核对批量口播');
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).not.toContain(legacyDraft);
   await browser.cli('press','Escape');
@@ -46,7 +47,7 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   const draft='这是在浏览器写下的草稿。';
   await browser.fill('口播草稿',draft);
   await browser.click('共用设置');
-  await browser.click('批量生成口播');
+  await browser.click('核对口播生成');
   await browser.cli('wait','--text','核对批量口播');
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain(draft);
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain('来自草稿');
@@ -60,7 +61,7 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   await browser.cli('set','viewport','390','844');
   await browser.click('共用设置');
   expect(await browser.evaluate("document.querySelector('.storyboard-batch-settings-popover').getBoundingClientRect().width <= window.innerWidth")).toBe(true);
-  await browser.click('批量生成口播');
+  await browser.click('核对口播生成');
   await browser.cli('wait','--text','核对批量口播');
   expect(await browser.evaluate("document.querySelector('dialog[open]').getBoundingClientRect().width <= window.innerWidth")).toBe(true);
   await browser.capture('narrow-review');

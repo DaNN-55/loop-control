@@ -24,11 +24,13 @@ it.skipIf(!enabled)('adopts a voice, reviews a video draft, adopts the generated
   await browser.click('批量操作');
   await check('勾选镜头 01');
   await browser.click('共用设置');
-  await browser.click('批量生成视频');
+  await browser.cli('click','.storyboard-batch-settings-section[data-kind=video] > summary');
+  await browser.click('核对视频生成');
   await browser.cli('wait','--text','先采用口播');
   await browser.cli('press','Escape');
   await browser.click('共用设置');
-  await browser.click('批量生成口播');
+  await browser.cli('click','.storyboard-batch-settings-section[data-kind=speech] > summary');
+  await browser.click('核对口播生成');
   await browser.click('确认并提交');
   await browser.cli('wait','--text','已提交 1 个镜头');
   const voiceTask=(await f.read()).narration!.find(n=>n.shotId===first.shotId)!.generationTask!;
@@ -49,9 +51,10 @@ it.skipIf(!enabled)('adopts a voice, reviews a video draft, adopts the generated
   await browser.click('批量操作');
   await check('勾选镜头 01');
   await browser.click('共用设置');
+  await browser.cli('click','.storyboard-batch-settings-section[data-kind=video] > summary');
   await browser.click('本次视频连接与模型');
   await browser.cli('find','text',f.selections.video.model,'click','--exact');
-  await browser.click('批量生成视频');
+  await browser.click('核对视频生成');
   await browser.cli('wait','--text','核对批量视频');
   for(const visible of [draft,'来自草稿','站台黄伞.png','雨伞故事受控video','镜头 2.5 秒','服务请求 4 秒','费用预留'])expect(await reviewText()).toContain(visible);
   await browser.cli('press','Escape');
@@ -59,7 +62,7 @@ it.skipIf(!enabled)('adopts a voice, reviews a video draft, adopts the generated
   expect(await browser.evaluate("document.querySelector('textarea[aria-label=画面动作]').value")).toBe(draft);
   expect((await f.read()).visualTasks).toHaveLength(0);
   await browser.click('共用设置');
-  await browser.click('批量生成视频');
+  await browser.click('核对视频生成');
   await browser.click('确认并提交');
   await browser.cli('wait','--text','已提交 1 个镜头');
   const task=(await f.read()).visualTasks![0];
@@ -108,8 +111,9 @@ it.skipIf(!enabled)('reviews an unopened legacy video draft and inherits the cur
   await browser.click('批量操作');
   await browser.cli('find','role','checkbox','check','--name','全选镜头','--exact');
   await browser.click('共用设置');
+  await browser.cli('click','.storyboard-batch-settings-section[data-kind=video] > summary');
   await browser.cli('fill','input[name=durationSeconds]','4');
-  await browser.click('批量生成视频');
+  await browser.click('核对视频生成');
   await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('参考素材生成')");
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain('参考图');
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).not.toContain('首帧居中裁切');
@@ -120,8 +124,9 @@ it.skipIf(!enabled)('reviews an unopened legacy video draft and inherits the cur
   await browser.click('批量操作');
   await browser.cli('find','role','checkbox','check','--name','全选镜头','--exact');
   await browser.click('共用设置');
+  await browser.cli('click','.storyboard-batch-settings-section[data-kind=video] > summary');
   await browser.cli('fill','input[name=durationSeconds]','4');
-  await browser.click('批量生成视频');
+  await browser.click('核对视频生成');
   await browser.cli('wait','--text',draft);
   const review=await browser.evaluate("Array.from(document.querySelectorAll('dialog[open] .storyboard-batch-review-item')).map(item=>item.innerText).join('\\n')");
   expect(review).toContain('来自草稿');
