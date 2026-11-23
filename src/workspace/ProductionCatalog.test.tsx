@@ -32,13 +32,18 @@ function desktopProps():ComponentProps<typeof ProductionCatalog>{
  return {accounts:[],accountsById:new Map(),artifacts:[],blueprintsById:new Map(),episodeVisibility:'active',episodes:[episode],filter:'全部账号',onEpisodeVisibilityChange:vi.fn(),onFilter:vi.fn(),onSeriesFilter:vi.fn(),onSelectEpisode:vi.fn(),series:[],seriesById:new Map(),seriesFilter:'全部系列',seriesVersionsById:new Map(),selectedEpisode:null};
 }
 
-it('puts media before the stage, removes the excerpt and keeps only major parameters',async()=>{
+it('shows the current stage and recorded metrics before media',async()=>{
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>Response.json(path.includes('script-studio?')?{sourceText:'# 标题\n## 制作设置\n- 画幅：9:16\n- 字幕：开启\n## 正文\n清晨的光落在窗边。'}:path.endsWith('/workspace')?{workspace:{scriptRevisionId:'script',captions:[{contract:{enabled:false}}]}}:{sections:{artifacts:[{id:'cover',artifact_type:'cover',relative_path:'cover.png',sha256:'a'.repeat(64),created_at:'2026-11-22'}],materialRevisions:[]}})));
- const props=desktopProps(),app=render(<ProductionCatalog {...props}/>);
+ const props=desktopProps();
+ const metrics={one:{cost:{actualCents:null,estimatedCents:null,reservedCents:0,unpricedCount:0,recalculated:false},workerRunSeconds:27.5,generations:{image:2,video:1,narration:1,sound:0,failed:1}}};
+ const app=render(<ProductionCatalog {...props} metrics={metrics}/>);
  const preview=screen.getByRole('complementary',{name:'生产单预览'});
  await within(preview).findByText('9:16（原稿）');
  const media=within(preview).getByRole('img');
- expect(media.compareDocumentPosition(within(preview).getByText('当前阶段'))&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+ expect(within(preview).getByText('当前阶段').compareDocumentPosition(media)&Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+ expect(within(preview).getByText('28 秒')).toBeTruthy();
+ expect(within(preview).getByText('图 2 · 视频 1 · 口播 1')).toBeTruthy();
+ expect(within(preview).getByText('1 次')).toBeTruthy();
  expect(within(preview).queryByText('脚本摘要')).toBeNull();
  expect(within(preview).queryByText('清晨的光落在窗边。')).toBeNull();
  expect(app.container.querySelectorAll('.production-preview-parameters dt')).toHaveLength(3);
