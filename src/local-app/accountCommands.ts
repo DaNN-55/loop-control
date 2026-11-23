@@ -1,4 +1,4 @@
-import {readEpisodeCollection,planEpisodeCollectionCommand} from './episodeCollection.js';
+import {readEpisodeCollection,planEpisodeCollectionCommand,moveEpisodeCollectionCommand,readEpisodeDirectory} from './episodeCollection.js';
 import {recordValidatedRequestLogContext} from './runtimeRequestLog.js';
 import {createStorageContainer,ownedContainerAccount,readStorageContainer,resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
 import {planLegacyStorageAdoption,planAccountDirectoryMigration,readAccountDirectoryMigrations,executeAccountDirectoryMigration} from './accountDirectoryMigration.js';
@@ -35,16 +35,23 @@ export class LocalAccountCommands{
  }
  async execute(session:OwnerSession,body:Record<string,unknown>,signal?:AbortSignal){
   if(this.closed)throw new ConfigurationError(503,'本机服务正在退出。');
-  if(!['readEpisodeCollection','planEpisodeCollectionMove','planLegacyStorageAdoption','readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory','chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
+  if(!['readEpisodeCollection','readEpisodeDirectory','planEpisodeCollectionMove','moveEpisodeCollection','planLegacyStorageAdoption','readSeriesDirectory','openSeriesDirectory','readUnassignedDirectory','openUnassignedDirectory','createUnassignedDirectory','chooseAssetDirectory','openAssetDirectory','setAssetDirectory','readAssetDirectory','planAssetDirectoryMigration','readAssetDirectoryMigrations','executeAssetDirectoryMigration','rollbackAssetDirectoryMigration'].includes(String(body.command))||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data))throw new ConfigurationError(400,'账号本机操作无效。');
   const data=body.data as Record<string,unknown>,choose=body.command==='chooseAssetDirectory';
   recordValidatedRequestLogContext({operation:'account.'+body.command});
-  if(body.command==='readEpisodeCollection'){
-   if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||Object.keys(data).some(k=>k!=='episodeId'))throw new ConfigurationError(400,'系列读取只接受生产单身份。');
-   return sessionTransaction(this.pool,session,c=>readEpisodeCollection(c,this.mediaRoot,String(data.episodeId)));
+  if(body.command==='readEpisodeCollection'||body.command==='readEpisodeDirectory'){
+   const {episodeId}=data;
+   if(typeof episodeId!=='string'||!uuid.test(episodeId)||Object.keys(data).some(k=>k!=='episodeId'))throw new ConfigurationError(400,'目录读取只接受生产单身份。');
+   const read=body.command==='readEpisodeDirectory'?readEpisodeDirectory:readEpisodeCollection;
+   return sessionTransaction(this.pool,session,async c=>await read(c,this.mediaRoot,episodeId));
   }
   if(body.command==='planEpisodeCollectionMove'){
    if(typeof data.episodeId!=='string'||!uuid.test(data.episodeId)||data.seriesId!==null&&(typeof data.seriesId!=='string'||!uuid.test(data.seriesId))||Object.keys(data).some(k=>!['episodeId','seriesId'].includes(k)))throw new ConfigurationError(400,'系列调整只接受生产单与目标系列身份。');
    return planEpisodeCollectionCommand(this.pool,session,this.mediaRoot,body,String(data.episodeId),data.seriesId as string|null);
+  }
+  if(body.command==='moveEpisodeCollection'){
+   const {episodeId,seriesId,migrationId}=data;
+   if(typeof episodeId!=='string'||!uuid.test(episodeId)||typeof seriesId!=='string'||!uuid.test(seriesId)||migrationId!==undefined&&(typeof migrationId!=='string'||!uuid.test(migrationId))||Object.keys(data).some(k=>!['episodeId','seriesId','migrationId'].includes(k)))throw new ConfigurationError(400,'批量调整只接受生产单、目标系列及迁移计划身份。');
+   return moveEpisodeCollectionCommand(this.pool,session,this.mediaRoot,body,{episodeId,seriesId,migrationId},signal);
   }
   if(body.command==='planLegacyStorageAdoption'){
    if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>k!=='accountId'))throw new ConfigurationError(400,'纳管计划只接受账号身份。');

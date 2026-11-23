@@ -1,0 +1,4 @@
+.batch-collection-target{display:grid;gap:6px;justify-items:start}
+.batch-collection-target select{max-inline-size:100%;min-block-size:36px;padding-inline:8px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface);color:var(--lc-ink)}
+.episode-batch-items>.batch-collection-folder{display:grid;justify-content:stretch;justify-items:start;min-inline-size:0}
+.batch-collection-folder code{overflow-wrap:anywhere}
