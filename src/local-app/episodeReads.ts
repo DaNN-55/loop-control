@@ -4,7 +4,7 @@ import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './ep
 import{createHash}from'node:crypto';
 import {ownerTransaction} from './ownerTransaction.js';
 import {readManualScriptReviewDraft} from './batchScriptReview.js';
-import type {Pool} from 'pg';
+import type {Pool,PoolClient} from 'pg';
 export async function readLocalEpisode(pool:Pool,ownerId:string,episodeId:string,known:Record<string,string>={},mediaRoot?:string){
  return ownerTransaction(pool,ownerId,true,async client=>{
   const {rows:[row]}=await client.query('SELECT public.read_episode_production($1,$2) AS result',[episodeId,known]);if(!row.result||!mediaRoot)return row.result;
@@ -30,7 +30,10 @@ export async function findOwnedArtifact(pool:Pool,ownerId:string,id:string,media
  });
 }
 export async function findOwnedInputFile(pool:Pool,ownerId:string,episodeId:string,path:string,mediaRoot?:string){
- return ownerTransaction(pool,ownerId,true,async c=>{
+ return ownerTransaction(pool,ownerId,true,c=>findOwnedInputFileInTransaction(c,ownerId,episodeId,path,mediaRoot));
+}
+
+export async function findOwnedInputFileInTransaction(c:PoolClient,ownerId:string,episodeId:string,path:string,mediaRoot?:string){
   const existing=(await c.query(`SELECT f.relative_path,f.sha256,f.file_size,local_identity.episode_asset_root(e.id) source_asset_root,coalesce(r.source_media_root,local_identity.media_deployment()->>'targetRoot') source_media_root,local_identity.media_deployment()->'sourceRoots' AS source_media_roots,local_identity.media_deployment()->>'targetRoot' AS expected_media_root FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN local_identity.import_record r ON true JOIN LATERAL(SELECT relative_path,sha256,file_size FROM public.artifacts WHERE episode_id=e.id UNION ALL SELECT storage_path,sha256,file_size FROM public.production_material_revisions WHERE episode_id=e.id)f ON true WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner' AND f.relative_path=$3 LIMIT 1`,[episodeId,ownerId,path])).rows[0];
   const withLocation=async(file:typeof existing)=>{if(!file)return null;const location=await resolveEpisodeStorageLocation(c,mediaRoot??file.expected_media_root??file.source_media_root,episodeId);await requireEpisodeStorageDirectory(c,location);return{...file,storage_location:location,resolved_file_path:await resolveEpisodeFileReference(c,location,file.relative_path)};};
   if(existing)return withLocation(existing);
@@ -38,5 +41,4 @@ export async function findOwnedInputFile(pool:Pool,ownerId:string,episodeId:stri
   return withLocation((await c.query(`SELECT f->>'relativePath' relative_path,f->>'sha256' sha256,f->>'fileSize' file_size,local_identity.episode_asset_root(e.id) source_asset_root,coalesce(r.source_media_root,local_identity.media_deployment()->>'targetRoot') source_media_root,local_identity.media_deployment()->'sourceRoots' AS source_media_roots,local_identity.media_deployment()->>'targetRoot' AS expected_media_root
    FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN local_identity.import_record r ON true CROSS JOIN LATERAL(SELECT f FROM local_identity.workspace_exports x CROSS JOIN LATERAL jsonb_array_elements(jsonb_build_array(x.artifact,x.project)) f WHERE x.episode_id=e.id ${storage.preparations?'UNION ALL SELECT p.file_reference FROM local_identity.production_preparation_revisions p WHERE p.episode_id=e.id':''} ${storage.publications?"UNION ALL SELECT jsonb_build_object('relativePath',p.relative_path,'sha256',p.sha256,'fileSize',p.file_size) FROM local_identity.workspace_publication_files p WHERE p.episode_id=e.id":''}) files(f)
    WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner' AND f->>'relativePath'=$3 LIMIT 1`,[episodeId,ownerId,path])).rows[0]??null);
- });
 }

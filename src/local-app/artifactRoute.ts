@@ -9,7 +9,7 @@ import type {ServerResponse} from 'node:http';
 import type {FileHandle} from 'node:fs/promises';
 import {basename} from 'node:path';
 export interface ArtifactFile {storage_location?:EpisodeStorageLocation;resolved_file_path?:string;relative_path:string;sha256:string;file_size:string|number;source_asset_root:string;source_media_root:string;source_media_roots?:string[];expected_media_root?:string|null}
-export async function openOwnedArtifact(root:string,artifact:ArtifactFile):Promise<{file:FileHandle;path:string;size:number}>{
+export async function openOwnedArtifact(root:string,artifact:ArtifactFile,signal?:AbortSignal):Promise<{file:FileHandle;path:string;size:number}>{
  if(!artifact.source_media_root||!isAbsolute(artifact.source_asset_root))throw Error('Missing deployment mapping');
  if(artifact.expected_media_root&&artifact.expected_media_root!==root)throw Error('Restored media deployment mismatch');
  const location=artifact.storage_location;
@@ -17,10 +17,11 @@ export async function openOwnedArtifact(root:string,artifact:ArtifactFile):Promi
  if(location){const directory=await lstat(location.directoryPath,{bigint:true});if(location.assetRoot!==accountRoot||!directory.isDirectory()||directory.isSymbolicLink()||await realpath(location.directoryPath)!==location.directoryPath||location.deviceId!==null&&(String(directory.dev)!==location.deviceId||String(directory.ino)!==location.inodeId))throw Error('Production directory identity differs');}
  const path=artifact.resolved_file_path??resolve(accountRoot,artifact.relative_path),rel=relative(accountRoot,path);
  if(!rel||isAbsolute(artifact.relative_path)||(rel==='..'||rel.startsWith('../'))||await realpath(path)!==path)throw Error('Unsafe artifact path');
+ signal?.throwIfAborted();
  const file=await open(path,constants.O_RDONLY|constants.O_NOFOLLOW);
  try{
   const before=await file.stat();if(!before.isFile()||before.nlink!==1||before.size!==Number(artifact.file_size))throw Error('Artifact metadata differs');
-  const hash=createHash('sha256');for await(const chunk of file.createReadStream({autoClose:false,start:0}))hash.update(chunk);
+  const hash=createHash('sha256');for await(const chunk of file.createReadStream({autoClose:false,start:0,signal}))hash.update(chunk);
   const after=await file.stat();if(hash.digest('hex')!==artifact.sha256||before.mtimeMs!==after.mtimeMs||before.size!==after.size)throw Error('Artifact fingerprint differs');
   return {file,path,size:after.size};
  }catch(error){await file.close();throw error;}
