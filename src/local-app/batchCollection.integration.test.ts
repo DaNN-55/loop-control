@@ -78,5 +78,27 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner changes physical c
   expect(await readFile(file,'utf8')).toBe('盘点后被外部改动');
   await send('account-commands','rollbackAssetDirectoryMigration',{accountId:account.id,migrationId:pending.id});
   expect(await move(blocked.id)).toMatchObject({status:'success'});
+
+  const unassigned={seriesId:null,targetAccountId:account.id};
+  expect(firstBefore.targets).toContainEqual({seriesId:null,name:'未分系列',containerId:null});
+  expect(await f.post('account-commands','moveEpisodeCollection',{episodeId:first.id,seriesId:null})).toMatchObject({status:400});
+  expect(await send('account-commands','moveEpisodeCollection',{episodeId:outside.id,...unassigned})).toMatchObject({status:'failed',reason:expect.stringContaining('同一账号')});
+  expect((await read(first.id)).targets).toContainEqual({seriesId:null,name:'未分系列',containerId:null});
+  const unassignedKey=randomUUID();
+  const moveToUnassigned=async()=>{
+   const response=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token),'Content-Type':'application/json'},body:JSON.stringify({command:'moveEpisodeCollection',idempotencyKey:unassignedKey,data:{episodeId:first.id,...unassigned}})});
+   expect(response.status).toBe(200);
+   return response.json();
+  };
+  const movedToUnassigned=await moveToUnassigned();
+  expect(movedToUnassigned).toMatchObject({episodeId:first.id,status:'success',migrationId:expect.any(String)});
+  expect(await moveToUnassigned()).toEqual(movedToUnassigned);
+  expect(await send('account-commands','moveEpisodeCollection',{episodeId:second.id,...unassigned})).toMatchObject({status:'success'});
+  expect(await send('account-commands','moveEpisodeCollection',{episodeId:first.id,...unassigned})).toMatchObject({status:'skipped'});
+  const unassignedAfter=await read(first.id);
+  expect(unassignedAfter).toMatchObject({collection:{status:'registered',seriesId:null,name:'未分系列'},creative:firstBefore.creative});
+  expect(unassignedAfter.targets.filter((target:{seriesId:string|null})=>target.seriesId)).toEqual(firstBefore.targets.filter((target:{seriesId:string|null})=>target.seriesId));
+  expect(unassignedAfter.directoryPath).not.toBe(after.directoryPath);
+  expect(await readFile(join(unassignedAfter.directoryPath,'snapshot.txt'),'utf8')).toBe('原始文件');
  }finally{await f.close();await volume.close();}
 },120000);

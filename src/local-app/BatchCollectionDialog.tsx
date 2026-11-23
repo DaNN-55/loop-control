@@ -14,29 +14,34 @@ const orderTitle=(title:string)=>title||uiText('未命名生产单');
 
 function BatchMoveCollectionDialog({selection,onClose,onChanged,series,accountNames}:EpisodeBatchActionContext&{series:readonly Target[];accountNames:ReadonlyMap<string,string>}){
  const selectId=useId(),formId=useId();
- const [seriesId,setSeriesId]=useState('');
+ const [targetId,setTargetId]=useState('');
  const [results,setResults]=useState(new Map<string,MoveResult>());
  const [progress,setProgress]=useState<{processed:number;total:number}|null>(null);
  const [refreshFailed,setRefreshFailed]=useState(false);
  const active=useRef(false),running=useRef(false);
  useEffect(()=>{active.current=true;return()=>{active.current=false;};},[]);
  const accounts=new Set(selection.map(item=>item.accountId));
- const targets=series.filter(item=>accounts.has(item.account_id));
+ const targets=[
+  ...series.filter(item=>accounts.has(item.account_id)).map(item=>({id:item.id,seriesId:item.id,accountId:item.account_id,name:item.name})),
+  ...[...accounts].map(accountId=>({id:'unassigned-'+accountId,seriesId:null,accountId,name:uiText('未分系列')})),
+ ];
+ const target=targets.find(item=>item.id===targetId);
  const items=results.size?selection.filter(item=>results.get(item.id)?.status==='failed'):selection;
 
  async function move(){
-  if(running.current||!seriesId||!items.length)return;
+  if(running.current||!target||!items.length)return;
   running.current=true;
   setProgress({processed:0,total:items.length});
   setRefreshFailed(false);
   const next=new Map(results);
+  const destination={seriesId:target.seriesId,...(target.seriesId===null?{targetAccountId:target.accountId}:{})};
   let changed=false;
   try{
    for(const [index,item] of items.entries()){
     if(!active.current)return;
     const previous=next.get(item.id),migrationId=previous&&'migrationId' in previous?previous.migrationId:undefined;
     try{
-     const result=await localCommand<MoveResult>('moveEpisodeCollection',{episodeId:item.id,seriesId,...(migrationId?{migrationId}:{})},undefined,'account-commands');
+     const result=await localCommand<MoveResult>('moveEpisodeCollection',{episodeId:item.id,...destination,...(migrationId?{migrationId}:{})},undefined,'account-commands');
      next.set(item.id,result);
      changed ||= result.status==='success'||result.status==='skipped';
     }catch(error){
@@ -54,20 +59,19 @@ function BatchMoveCollectionDialog({selection,onClose,onChanged,series,accountNa
  }
 
  return <EpisodeBatchDialog title={uiText('批量调整系列')} busy={Boolean(progress)} onClose={onClose} footer={items.length>0&&
-  <Button type="submit" form={formId} size="sm" color="primary" isDisabled={Boolean(progress)||!seriesId}>
+  <Button type="submit" form={formId} size="sm" color="primary" isDisabled={Boolean(progress)||!target}>
    {uiText(results.size?'只重试失败项':'确认调整系列')}
   </Button>
  }>
   <form id={formId} method="post" action="/api/local/account-commands" className="batch-collection-target" onSubmit={event=>{event.preventDefault();void move();}}>
    <label htmlFor={selectId}>{uiText('目标系列')}</label>
-   <select id={selectId} name="seriesId" required value={seriesId} disabled={Boolean(progress)||Boolean(results.size)} onChange={event=>setSeriesId(event.target.value)}>
+   <select id={selectId} name="target" required value={targetId} disabled={Boolean(progress)||Boolean(results.size)} onChange={event=>setTargetId(event.target.value)}>
     <option value="">{uiText('请选择目标系列')}</option>
-    {targets.map(item=><option key={item.id} value={item.id}>{accounts.size>1?(accountNames.get(item.account_id)??item.account_id)+' · ':''}{item.name}</option>)}
+    {targets.map(item=><option key={item.id} value={item.id}>{accounts.size>1?(accountNames.get(item.accountId)??item.accountId)+' · ':''}{item.name}</option>)}
    </select>
   </form>
   {!results.size&&<>
    <p>{uiText('复制并校验通过后切换收纳位置，保留原文件和创作规则。')}</p>
-   {!targets.length&&<p role="status">{uiText('所选生产单的账号暂无可选系列。')}</p>}
    <ul role="list" className="episode-batch-items">{selection.map(item=><li key={item.id}><strong>{orderTitle(item.title)}</strong><span>{accountNames.get(item.accountId)}</span></li>)}</ul>
   </>}
   {progress&&<p role="status">{uiText('已处理 {count} / {total} 张',{count:progress.processed,total:progress.total})}</p>}
@@ -115,10 +119,14 @@ function BatchFoldersDialog({selection,onClose}:EpisodeBatchActionContext){
   try{
    for(const {id} of targets){
     if(!active.current)return;
-    const previous=nextFolders.get(id);
-    if(retry&&previous?.reason){
-     nextFolders.set(id,await previewFolder(id));
-     continue;
+    if(retry&&nextFolders.get(id)?.reason){
+     const refreshed=await previewFolder(id);
+     if(!active.current)return;
+     nextFolders.set(id,refreshed);
+     if(refreshed.reason){
+      nextResults.set(id,{episodeId:id,status:'failed',reason:refreshed.reason});
+      continue;
+     }
     }
     try{
      const {path}=await localCommand<{opened:true;path:string}>('openDirectory',{episodeId:id},undefined,'episode-commands');

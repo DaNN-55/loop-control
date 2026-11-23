@@ -20,9 +20,12 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   const account=await send('configuration','createAccount',{name:'批量收纳账号',slug:'browser-collection',timezone:'Asia/Shanghai',policy:{}});
   const source=await send('configuration','createSeries',{accountId:account.id,name:'出发系列',rules:{positioning:'冻结规则'}});
   const target=await send('configuration','createSeries',{accountId:account.id,name:'目标系列',rules:{positioning:'目标规则'}});
+  const other=await send('configuration','createAccount',{name:'另一收纳账号',slug:'other-browser-collection',timezone:'Asia/Shanghai',policy:{}});
+  const outside=await send('episode-commands','create',{accountId:other.id,title:'另一账号的单'});
   const ready=await send('episode-commands','create',{accountId:account.id,title:'完好目录',seriesVersionId:source.id});
   const missing=await send('episode-commands','create',{accountId:account.id,title:'缺失目录',seriesVersionId:source.id});
   const already=await send('episode-commands','create',{accountId:account.id,title:'已在目标',seriesVersionId:target.id});
+  const initiallyMissing=await send('episode-commands','create',{accountId:account.id,title:'首次读取时缺失',seriesVersionId:source.id});
   const read=(episodeId:string)=>send('account-commands','readEpisodeCollection',{episodeId});
   const readyBefore=await read(ready.id),missingBefore=await read(missing.id);
   await writeFile(join(readyBefore.directoryPath,'文件.txt'),'隔离验收文件');
@@ -47,11 +50,15 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   await page.click('只重试失败项');await outcome('缺失目录','success');
   expect(moves()).toHaveLength(4);
   await page.capture('moves');await page.click('关闭');
+  const initialFolder=await read(initiallyMissing.id);
+  await check('首次读取时缺失');
+  await rename(initialFolder.directoryPath,initialFolder.directoryPath+'.offline');
   await page.click('查看文件夹');
   const readyAfter=await read(ready.id),missingAfter=await read(missing.id),alreadyAfter=await read(already.id);
   await page.wait(`document.querySelector('dialog').textContent.includes(${JSON.stringify(readyAfter.directoryPath)})`);
   await page.cli('set','viewport','390','820');
   expect(await page.evaluate("(()=>{const dialog=document.querySelector('dialog[open]');const bounds=dialog.getBoundingClientRect();return bounds.left>=0&&bounds.right<=innerWidth&&dialog.scrollWidth<=dialog.clientWidth;})()")).toBe(true);
+  expect(await page.evaluate("Array.from(document.querySelectorAll('dialog .batch-collection-folder')).find(row=>row.querySelector('strong')?.textContent==='首次读取时缺失')?.textContent")).toContain('目录缺失');
   const open=(title:string)=>page.click('打开文件夹 · '+title);
   await open('完好目录');await outcome('完好目录','success');
   await rename(missingAfter.directoryPath,missingAfter.directoryPath+'.offline');
@@ -59,9 +66,29 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   expect(opened).toEqual([readyAfter.directoryPath,alreadyAfter.directoryPath]);
   await expect(lstat(missingAfter.directoryPath)).rejects.toMatchObject({code:'ENOENT'});
   await rename(missingAfter.directoryPath+'.offline',missingAfter.directoryPath);
+  await rename(initialFolder.directoryPath+'.offline',initialFolder.directoryPath);
   await page.click('只重试失败项');await outcome('缺失目录','success');
-  expect(opened).toEqual([readyAfter.directoryPath,alreadyAfter.directoryPath,missingAfter.directoryPath]);
+  expect(opened).toHaveLength(4);
+  expect(new Set(opened.slice(2))).toEqual(new Set([missingAfter.directoryPath,initialFolder.directoryPath]));
+  await outcome('首次读取时缺失','success');
   await page.capture('folders');await page.click('关闭');
+
+  await page.cli('open',page.url.split('?')[0]);
+  await page.cli('wait','--text','另一账号的单');
+  for(const title of ['完好目录','缺失目录','另一账号的单'])await check(title);
+  await page.click('批量调整系列');
+  const unassignedOptions=await page.evaluate("Array.from(document.querySelectorAll('dialog select option')).filter(option=>option.textContent.includes('未分系列')).map(option=>({name:option.textContent,value:option.value}))");
+  expect(unassignedOptions.map((option:{name:string})=>option.name)).toEqual(expect.arrayContaining(['批量收纳账号 · 未分系列','另一收纳账号 · 未分系列']));
+  const unassignedOption=unassignedOptions.find((option:{name:string})=>option.name==='批量收纳账号 · 未分系列');
+  const targetSelect=(await page.snapshot()).split('\n').find(line=>line.includes('combobox "目标系列"'))?.match(/ref=(e\d+)/)?.[1];
+  expect(targetSelect).toBeTruthy();
+  await page.cli('select','@'+targetSelect,unassignedOption.value);
+  await page.click('确认调整系列');
+  await outcome('完好目录','success');await outcome('缺失目录','success');await outcome('另一账号的单','failed');
+  expect(await read(ready.id)).toMatchObject({collection:{seriesId:null},creative:readyBefore.creative});
+  expect(await read(missing.id)).toMatchObject({collection:{seriesId:null},creative:missingBefore.creative});
+  expect((await read(outside.id)).plans).toEqual([]);
+  await page.capture('unassigned');await page.click('关闭');
  }catch(error){await browser?.capture('failed').catch(()=>{});throw error;}
  finally{await browser?.close();await f.close();await volume.close();}
 },180000);
