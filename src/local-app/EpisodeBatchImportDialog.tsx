@@ -1,9 +1,12 @@
-import {useEffect,useId,useRef,useState,type FormEvent} from 'react';
+import {useEffect,useId,useMemo,useRef,useState,type FormEvent} from 'react';
 import {X} from 'lucide-react';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {uiText} from '../i18n/ui';
 import {localRequest} from './client';
 import {episodeImportLimits,type EpisodeImportItem,type EpisodeImportReceipt} from './episodeBatchImportTypes';
+import {EpisodeWorkbookPreview} from './EpisodeWorkbookPreview';
+import {assessWorkbook} from './assessEpisodeWorkbook';
+import {workbookLimit,type WorkbookPreview} from './episodeWorkbookImportTypes';
 import './episode-batch-import.css';
 
 type PreviewRow=EpisodeImportItem&{fileError?:string};
@@ -38,6 +41,15 @@ async function readScriptFile(file:File):Promise<PreviewRow>{
  }catch{return {...row,fileError:'无法读取文件，请另存为 UTF-8 文本后重新选择。'};}
 }
 
+function workbookBase64(file:File):Promise<string>{
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onload=()=>resolve(String(reader.result).split(',')[1]);
+  reader.onerror=()=>reject(new Error('无法读取 Excel 工作簿，请重新选择。'));
+  reader.readAsDataURL(file);
+ });
+}
+
 function itemProblem(row:PreviewRow){
  if(row.fileError)return row.fileError;
  if(!row.title.trim()||row.title.length>200)return '请填写 1–200 字符的标题。';
@@ -51,6 +63,8 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
  const [accountId,setAccountId]=useState(accounts.find(account=>account.id===initialAccountId)?.id??accounts[0]?.id??'');
  const [seriesVersionId,setSeriesVersionId]=useState(initialSeriesVersionId??'');
  const [rows,setRows]=useState<PreviewRow[]>([]),[duplicates,setDuplicates]=useState<DuplicateCheck|null>(null);
+ const [workbook,setWorkbook]=useState<WorkbookPreview|null>(null);
+ const assessment=useMemo(()=>workbook?assessWorkbook(workbook):null,[workbook]);
  const previews=useRef(new Map<string,HTMLDetailsElement>());
  useEffect(()=>{
   for(const row of rows){
@@ -95,17 +109,35 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
  function problem(message:string){setError(message);requestAnimationFrame(()=>errorFocus.current?.focus());}
  async function addFiles(files:File[]){
   if(!files.length||running.current)return;
+  const isWorkbook=files.some(file=>/\.xlsx$/i.test(file.name));
+  if(isWorkbook&&(files.length!==1||rows.length)||!isWorkbook&&workbook){
+   problem('Excel 每次只导入一份工作簿，请先移除当前文件。');return;
+  }
+  if(isWorkbook&&files[0].size>workbookLimit){problem('请选择一份 6 MB 以内的 .xlsx 工作簿。');return;}
   if(rows.length+files.length>episodeImportLimits.items){problem('每批最多导入 100 份文件。');return;}
   running.current=true;setBusy(true);clearPreview();
   try{
-   const added=await Promise.all(files.map(readScriptFile));
-   setRows(current=>[...current,...added]);
-  }finally{running.current=false;setBusy(false);}
+   if(isWorkbook){
+    const file=files[0];
+    setWorkbook(await post({action:'readWorkbook',name:file.name,contentBase64:await workbookBase64(file)}));
+   }else{
+    const added=await Promise.all(files.map(readScriptFile));
+    setRows(current=>[...current,...added]);
+   }
+  }catch(cause){problem(cause instanceof Error?cause.message:'无法读取所选文件。');}
+  finally{running.current=false;setBusy(false);}
  }
  function edit(id:string,patch:Partial<PreviewRow>){clearPreview();setRows(current=>current.map(row=>row.itemId===id?{...row,...patch}:row));}
 
  function payload():ImportPayload{
-  return {accountId,seriesVersionId:validSeries||null,items:rows.map(({itemId,sourceName,sourceText,title})=>({itemId,sourceName,sourceText,title,duplicate:choices[itemId]??'skip'}))};
+  const items=assessment?.items??rows.map(({itemId,sourceName,sourceText,title})=>({itemId,sourceName,sourceText,title}));
+  return {accountId,seriesVersionId:validSeries||null,items:items.map(item=>({...item,duplicate:choices[item.itemId]??'skip'}))};
+ }
+
+ function duplicateField(itemId:string){
+  const duplicate=duplicates?.items.find(item=>item.itemId===itemId);
+  if(!duplicate?.duplicateEpisodeId&&!duplicate?.duplicateInBatch)return null;
+  return <label>{uiText('可能重复时')}<select name="duplicate" disabled={busy} value={choices[itemId]??'skip'} onChange={event=>setChoices(current=>({...current,[itemId]:event.target.value as 'skip'|'create'}))}><option value="skip">{uiText('跳过')}</option><option value="create">{uiText('仍然创建')}</option></select></label>;
  }
 
  function applyReceipt(result:EpisodeImportReceipt){
@@ -116,7 +148,8 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(running.current||batchId)return;
-  if(!rows.length){problem('请先选择脚本文件。');return;}
+  if(!rows.length&&!workbook){problem('请先选择文件。');return;}
+  if(assessment&&(assessment.issues.orders.size||assessment.issues.shots.size)){problem('请修正预览中标出的工作表行。');return;}
   const invalid=rows.find(row=>itemProblem(row));
   if(invalid){problem(invalid.sourceName+'：'+itemProblem(invalid));return;}
   running.current=true;setBusy(true);setError('');
@@ -154,7 +187,7 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
  }
 
  function nextBatch(){
-  sessionStorage.removeItem(savedBatchKey);setBatchId('');setReceipt(null);intent.current=null;setRows([]);clearPreview();
+  sessionStorage.removeItem(savedBatchKey);setBatchId('');setReceipt(null);intent.current=null;setRows([]);setWorkbook(null);clearPreview();
  }
 
  return <dialog ref={dialog} className="modal-card episode-batch-import" aria-labelledby={heading} onCancel={event=>{event.preventDefault();closeDialog();}}>
@@ -177,8 +210,12 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
       <label>{uiText('账号')}<select name="accountId" required disabled={busy} value={accountId} onChange={event=>{setAccountId(event.target.value);setSeriesVersionId('');clearPreview();}}>{accounts.map(account=><option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
       <label>{uiText('系列')}<select name="seriesVersionId" disabled={busy} value={validSeries} onChange={event=>{setSeriesVersionId(event.target.value);clearPreview();}}><option value="">{uiText('不关联系列')}</option>{seriesChoices.map(choice=><option key={choice.id} value={choice.id}>{choice.name}</option>)}</select></label>
      </div>
-     <label>{uiText('脚本文件')}<input aria-describedby={fileHelp} name="scripts" type="file" multiple accept=".txt,.md,.markdown" disabled={busy} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/></label>
-     <p id={fileHelp} className="field-hint">{uiText('支持 UTF-8 的 TXT 和 Markdown，每份文件新建一张待脚本确认的生产单。')}</p>
+     <div className="episode-workbook-file">
+      <label>{uiText('导入文件')}<input aria-describedby={fileHelp} name="scripts" type="file" multiple accept=".txt,.md,.markdown,.xlsx" disabled={busy} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/></label>
+      <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
+     </div>
+     <p id={fileHelp} className="field-hint">{uiText('可选择多份 UTF-8 TXT、Markdown，或一份 .xlsx 工作簿。Excel 时长以秒填写。')}</p>
+     {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField} busy={busy} onChange={value=>{setWorkbook(value);clearPreview();}} onRemove={()=>{setWorkbook(null);clearPreview();}}/>}
      {rows.map(row=>{
       const duplicate=duplicates?.items.find(item=>item.itemId===row.itemId),invalid=itemProblem(row);
       const reviewDuplicate=duplicate?.duplicateEpisodeId||duplicate?.duplicateInBatch;
@@ -188,7 +225,7 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
         <label>{uiText('标题')}<input name="title" aria-invalid={!row.title.trim()||row.title.length>200||undefined} value={row.title} maxLength={200} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{title:event.target.value})}/></label>
         <label>{uiText('脚本正文')}<textarea name="sourceText" aria-invalid={!row.sourceText.trim()||row.sourceText.length>episodeImportLimits.sourceLength||undefined} rows={5} value={row.sourceText} disabled={busy||!!row.fileError} onChange={event=>edit(row.itemId,{sourceText:event.target.value})}/></label>
         {invalid&&<p className="form-error">{uiText(invalid)}</p>}
-        {reviewDuplicate&&<label>{uiText('可能重复时')}<select name="duplicate" disabled={busy} value={choices[row.itemId]??'skip'} onChange={event=>setChoices(current=>({...current,[row.itemId]:event.target.value as 'skip'|'create'}))}><option value="skip">{uiText('跳过')}</option><option value="create">{uiText('仍然创建')}</option></select></label>}
+        {duplicateField(row.itemId)}
         <Button size="sm" color="tertiary" type="button" isDisabled={busy} onPress={()=>{setRows(current=>current.filter(entry=>entry.itemId!==row.itemId));clearPreview();}}>{uiText('移除文件')}</Button>
        </div>
       </details>;

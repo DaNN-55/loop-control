@@ -1,3 +1,4 @@
+import {buildImportedScriptStudioPlan,validateImportedScriptStudioPlan} from './episodeImportedScriptPlan.js';
 import {createHash} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
@@ -10,7 +11,7 @@ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const fingerprint=(text:string)=>createHash('sha256').update(text).digest('hex');
 const contains=(value:object,keys:string[])=>Object.keys(value).some(key=>!keys.includes(key));
 const textField=(value:unknown,maximum:number):value is string=>typeof value==='string'&&value.length<=maximum&&!value.includes('\0');
-const duration=(value:unknown)=>typeof value==='number'&&Number.isFinite(value)&&value>=0.1&&value<=3600;
+const duration=(value:unknown)=>typeof value==='number'&&Number.isFinite(value)&&value>=0.1&&value<=3600&&Math.abs(value*100-Math.round(value*100))<=1e-6;
 
 type ImportInput={accountId:string;seriesVersionId:string|null;items:EpisodeImportItem[]};
 type ImportItemPayload=Required<EpisodeImportItem>&{sourceSha256:string};
@@ -35,9 +36,13 @@ function importInput(body:Record<string,unknown>):ImportInput{
   if(!Array.isArray(shots)||shots.length>100||shots.some((shot,index)=>!shot||typeof shot!=='object'||Array.isArray(shot)||
      contains(shot,['sequence','visual','videoPrompt','narration','caption','durationSeconds'])||
      !Number.isSafeInteger(shot.sequence)||shot.sequence<1||index>0&&shot.sequence<=shots[index-1].sequence||
-     !textField(shot.visual,4000)||!textField(shot.videoPrompt,4000)||!textField(shot.narration,4000)||!textField(shot.caption,4000)||
+     !textField(shot.visual,4000)||!textField(shot.videoPrompt,1500)||!textField(shot.narration,4000)||!textField(shot.caption,4000)||
      ![shot.visual,shot.videoPrompt,shot.narration,shot.caption].some(field=>field.trim())||!duration(shot.durationSeconds)))throw new ConfigurationError(400,label+'：请检查镜头顺序、文字和时长。');
   if(!item.sourceText.trim()&&!shots.length)throw new ConfigurationError(400,label+'：请填写脚本正文或分镜。');
+  if(shots.length){
+   try{validateImportedScriptStudioPlan(buildImportedScriptStudioPlan({sourceText:item.sourceText,shots},item.title));}
+   catch(error){throw new ConfigurationError(400,label+'：'+(error as Error).message);}
+  }
   ids.add(item.itemId);
  }
  return {accountId:body.accountId,seriesVersionId:body.seriesVersionId,items:body.items};

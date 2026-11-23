@@ -1,6 +1,6 @@
 import {useEffect,useRef,useState} from 'react';
 import {uiText} from '../i18n/ui';
-import {studioShotCaptionText,studioShotNarrationEnabled,type ScriptStudioPlan} from '../scriptStudio';
+import {ScriptStudioReviewShots} from './ScriptStudioReviewShots';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {EpisodeBatchDialog,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext,type EpisodeBatchItemResult} from '../workspace/EpisodeBatch';
 import {localCommand,localRequest} from './client';
@@ -9,29 +9,12 @@ import type {ScriptReview} from './batchScriptReview';
 type Result=EpisodeBatchItemResult&{requiresReview?:boolean};
 type Item={episodeId:string;review?:ScriptReview;readError?:string;result?:Result;picked?:boolean};
 const message=(error:unknown)=>error instanceof Error?error.message:'操作未完成，请重试。';
-const visualSource={image:'图片',video:'视频',material:'素材',unassigned:'未指定'} as const;
 
 async function reviewFor(item:Item,signal?:AbortSignal):Promise<Item>{
  try{
   const review=await localRequest('episodes/'+encodeURIComponent(item.episodeId)+'/batch-script-review',{signal}) as ScriptReview;
   return {episodeId:item.episodeId,review};
  }catch(error){return {episodeId:item.episodeId,readError:message(error)};}
-}
-
-function ShotReview({plan}:{plan:ScriptStudioPlan}){
- return <ol>{plan.shots.map((shot,index)=><li key={index}>
-  <strong>{shot.title}</strong>
-  <dl>
-   <div><dt>{uiText('时长')}</dt><dd>{uiText('{value0} 秒',{value0:shot.durationSeconds})}</dd></div>
-   <div><dt>{uiText('画面')}</dt><dd>{shot.visual||'—'}</dd></div>
-   <div><dt>{uiText('画面来源')}</dt><dd>{uiText(visualSource[shot.visualSource])}</dd></div>
-   {shot.videoPrompt&&<div><dt>{uiText('视频提示词')}</dt><dd>{shot.videoPrompt}</dd></div>}
-   <div><dt>{uiText('口播')}</dt><dd>{studioShotNarrationEnabled(plan,shot)?shot.narration:uiText('关闭')}</dd></div>
-   <div><dt>{uiText('字幕')}</dt><dd>{studioShotCaptionText(plan,shot)||uiText('关闭')}</dd></div>
-   {shot.camera&&<div><dt>{uiText('运镜')}</dt><dd>{shot.camera}</dd></div>}
-   {shot.settings.map(setting=><div key={setting.field}><dt>{uiText(setting.field)}</dt><dd>{uiText(setting.value)}</dd></div>)}
-  </dl>
- </li>)}</ol>;
 }
 
 export function BatchScriptReviewDialog({selection,onClose,onChanged}:EpisodeBatchActionContext){
@@ -107,7 +90,7 @@ export function BatchScriptReviewDialog({selection,onClose,onChanged}:EpisodeBat
   {busy!=='read'&&pending.map(item=>{
    const title=titles.get(item.episodeId)??item.episodeId;
    if(item.review?.status!=='ready')return <div key={item.episodeId} className="episode-batch-review-item"><strong>{title}</strong><p>{uiText(item.readError??(item.review?.status==='skipped'?item.review.reason:''))}</p></div>;
-   const {sourceText,plan,sourceName}=item.review;
+   const {sourceText,targetDuration,plan,sourceName}=item.review;
    return <section key={item.episodeId} className="episode-batch-review-item">
     <label className="episode-batch-review-check"><input type="checkbox" name="approved" checked={!!item.picked} disabled={!!busy} onChange={event=>{const picked=event.target.checked;setItems(current=>current.map(value=>value.episodeId===item.episodeId?{...value,picked}:value));}}/>
      <span>{uiText('通过 {title}',{title})}</span>
@@ -115,10 +98,11 @@ export function BatchScriptReviewDialog({selection,onClose,onChanged}:EpisodeBat
     <details open={pending.length===1||undefined}><summary>{uiText('核对 {title} 的脚本和分镜',{title})}</summary>
      <h3>{uiText('脚本原文')}</h3><pre>{sourceText||'—'}</pre>
      {sourceName&&<p><small>{sourceName}</small></p>}
+     {targetDuration!==null&&<p>{uiText('目标时长')} · {uiText('{value0} 秒',{value0:targetDuration})}</p>}
      <h3>{uiText('分镜')} · {uiText('{value0} 秒',{value0:plan.durationSeconds})}</h3>
      {plan.settings.length>0&&<dl>{plan.settings.map(setting=><div key={setting.field}><dt>{uiText(setting.field)}</dt><dd>{uiText(setting.value)}</dd></div>)}</dl>}
      {plan.warnings.length>0&&<ul>{plan.warnings.map(warning=><li key={warning}>{uiText(warning)}</li>)}</ul>}
-     <ShotReview plan={plan}/>
+     <ScriptStudioReviewShots plan={plan}/>
     </details>
    </section>;
   })}
