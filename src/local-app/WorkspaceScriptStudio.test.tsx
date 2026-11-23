@@ -62,7 +62,7 @@ it('keeps the preview hidden during text-only discussion',async()=>{
  panel();
  fireEvent.click(screen.getByRole('button',{name:'交流方式：调整拍法'}));
  fireEvent.click(await screen.findByRole('button',{name:'自由交流'}));
- fireEvent.click(screen.getByRole('button',{name:'关闭',exact:true}));
+ fireEvent.click(screen.getByRole('button',{name:'关闭'}));
  fireEvent.change(await screen.findByRole('textbox',{name:'修改要求'}),{target:{value:'这个故事适合什么风格？'}});
  fireEvent.click(screen.getByRole('button',{name:'发送'}));
  await waitFor(()=>expect(modelCommand).toHaveBeenCalledWith('optimize',expect.objectContaining({mode:'discuss'}),undefined,'script-studio'));
