@@ -10,6 +10,7 @@ export interface EpisodeBatchSelectionItem {
  title:string;
  sourceTitle:string;
  accountId:string;
+ collectionSeriesId?:string|null;
  archived:boolean;
  stage:EpisodeStage;
  hints?:EpisodeBatchHints;
@@ -33,14 +34,14 @@ export interface EpisodeBatchItemResult {
  reason?:string;
 }
 
-export function EpisodeBatchDialog({title,busy,onClose,children,footer}:{title:string;busy?:boolean;onClose:()=>void;children:ReactNode;footer?:ReactNode}){
+export function EpisodeBatchDialog({title,busy,compact,onClose,children,footer}:{title:string;busy?:boolean;compact?:boolean;onClose:()=>void;children:ReactNode;footer?:ReactNode}){
  const titleId=useId(),dialog=useRef<HTMLDialogElement>(null);
  useLayoutEffect(()=>{
   const element=dialog.current;
   element?.showModal();
   return()=>element?.close();
  },[]);
- return <dialog ref={dialog} className="episode-batch-dialog dan-ui product-ui" aria-labelledby={titleId} onCancel={event=>{event.preventDefault();if(!busy)onClose();}}>
+ return <dialog ref={dialog} className="episode-batch-dialog dan-ui product-ui" data-compact={compact||undefined} aria-labelledby={titleId} onCancel={event=>{event.preventDefault();if(!busy)onClose();}}>
   <header><h2 id={titleId}>{title}</h2><Button size="sm" color="tertiary" isDisabled={busy} onPress={onClose}>{uiText('关闭')}</Button></header>
   <div className="episode-batch-body">{children}</div>
   {footer&&<footer>{footer}</footer>}
@@ -48,13 +49,32 @@ export function EpisodeBatchDialog({title,busy,onClose,children,footer}:{title:s
 }
 
 const resultsLabels={success:'成功',skipped:'跳过',failed:'失败'} as const;
-export function EpisodeBatchResults({selection,results,title=uiText('逐单结果')}:{selection:readonly Pick<EpisodeBatchSelectionItem,'id'|'title'>[];results:readonly EpisodeBatchItemResult[];title?:string}){
+export function EpisodeBatchImpact({affected,excluded}:{affected:readonly EpisodeBatchSelectionItem[];excluded:readonly {item:EpisodeBatchSelectionItem;reason:string}[]}){
+ return <>
+  <p className="episode-batch-summary"><strong>{uiText('预计影响 {count} 张',{count:affected.length})}</strong></p>
+  {affected.length>0&&<ul role="list" className="episode-batch-items">{affected.map(item=><li key={item.id}><strong>{item.title}</strong></li>)}</ul>}
+  {excluded.length>0&&<details className="episode-batch-disclosure">
+   <summary>{uiText('预计不变 {count} 张',{count:excluded.length})}</summary>
+   <ul role="list" className="episode-batch-items">{excluded.map(({item,reason})=><li key={item.id}><strong>{item.title}</strong><span>{uiText(reason)}</span></li>)}</ul>
+  </details>}
+ </>;
+}
+
+export function EpisodeBatchResults({selection,results,title=uiText('逐单结果'),collapseSkipped=false}:{selection:readonly Pick<EpisodeBatchSelectionItem,'id'|'title'>[];results:readonly EpisodeBatchItemResult[];title?:string;collapseSkipped?:boolean}){
  const labels=new Map(selection.map(item=>[item.id,item.title]));
- return <section aria-label={title}>
-  <h3>{title}</h3>
-  <ul role="list" className="episode-batch-items">{results.map(result=><li key={result.episodeId} data-status={result.status}>
+ const skipped=collapseSkipped?results.filter(item=>item.status==='skipped'):[];
+ const visible=skipped.length?results.filter(item=>item.status!=='skipped'):results;
+ function rows(items:readonly EpisodeBatchItemResult[]){
+  return <ul role="list" className="episode-batch-items">{items.map(result=><li key={result.episodeId} data-status={result.status}>
    <strong>{labels.get(result.episodeId)??result.episodeId}</strong>
    <span>{uiText(resultsLabels[result.status])}{result.reason?' · '+uiText(result.reason):''}</span>
-  </li>)}</ul>
+  </li>)}</ul>;
+ }
+ return <section aria-label={title}>
+  {visible.length>0&&<><h3>{title}</h3>{rows(visible)}</>}
+  {skipped.length>0&&<details className="episode-batch-disclosure">
+   <summary>{uiText('跳过 {count} 张',{count:skipped.length})}</summary>
+   {rows(skipped)}
+  </details>}
  </section>;
 }

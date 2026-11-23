@@ -2,7 +2,7 @@ import {useEffect,useId,useRef,useState} from 'react';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {InputBase} from '../ui/dan-ui/components/base/input/input';
-import {EpisodeBatchDialog,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext,type EpisodeBatchItemResult} from '../workspace/EpisodeBatch';
+import {EpisodeBatchDialog,EpisodeBatchImpact,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext,type EpisodeBatchItemResult} from '../workspace/EpisodeBatch';
 import {localCommand} from './client';
 import {episodeBatchLifecycleCommand,type EpisodeBatchLifecycleAction,type EpisodeBatchLifecycleInput} from './episodeBatchLifecycleTypes';
 import './episode-batch-lifecycle.css';
@@ -12,8 +12,9 @@ const labels={
  archive:{title:'批量归档',confirm:'确认归档'},
  unarchive:{title:'批量取消归档',confirm:'确认取消归档'},
 } as const;
-const ruleFields=[
- ['prefix','添加前缀'],['suffix','添加后缀'],['find','查找文本'],['replace','替换为'],
+const ruleGroups=[
+ {label:'前缀与后缀',fields:[['prefix','添加前缀'],['suffix','添加后缀']]},
+ {label:'查找与替换',fields:[['find','查找文本'],['replace','替换为']]},
 ] as const;
 const emptyRules={prefix:'',suffix:'',find:'',replace:''};
 type RenameRules=typeof emptyRules;
@@ -55,6 +56,7 @@ function BatchEpisodeLifecycleDialog({selection,onClose,onChanged,action}:Episod
  const targets=results.size?failed:selection;
  const previewCurrent=preview?.rules===rules;
  const rename=action==='rename';
+ const alreadyArchived=action==='archive';
 
  function makePreview(){
   setPreview({rules,titles:new Map(selection.map(item=>[item.id,proposeTitle(item.sourceTitle,rules)]))});
@@ -102,7 +104,7 @@ function BatchEpisodeLifecycleDialog({selection,onClose,onChanged,action}:Episod
   }
  }
 
- return <EpisodeBatchDialog title={uiText(labels[action].title)} busy={busy} onClose={onClose} footer={targets.length>0&&
+ return <EpisodeBatchDialog compact={!rename} title={uiText(labels[action].title)} busy={busy} onClose={onClose} footer={targets.length>0&&
   <Button type="button" color="primary" size="sm" isDisabled={busy||(rename&&!previewCurrent)} onPress={()=>void apply()}>
    {uiText(results.size?'只重试失败项':labels[action].confirm)}
   </Button>
@@ -111,9 +113,12 @@ function BatchEpisodeLifecycleDialog({selection,onClose,onChanged,action}:Episod
    <p>{uiText('改名只更新显示标题，生产单目录和文件留在原位置。')}</p>
    <form className="episode-batch-title-rules" aria-labelledby={headingId} onSubmit={event=>{event.preventDefault();makePreview();}}>
     <h3 id={headingId}>{uiText('改名规则')}</h3>
-    {ruleFields.map(([key,label])=><label htmlFor={ruleId+'-'+key} key={key}><span>{uiText(label)}</span>
-     <InputBase id={ruleId+'-'+key} name={key} size="sm" value={rules[key]} isDisabled={busy} onChange={event=>setRules({...rules,[key]:event.target.value})}/>
-    </label>)}
+    {ruleGroups.map(({label,fields})=><fieldset key={label}>
+     <legend>{uiText(label)}</legend>
+     <div>{fields.map(([key,label])=><label htmlFor={ruleId+'-'+key} key={key}><span>{uiText(label)}</span>
+      <InputBase id={ruleId+'-'+key} name={key} size="sm" value={rules[key]} isDisabled={busy} onChange={event=>setRules({...rules,[key]:event.target.value})}/>
+     </label>)}</div>
+    </fieldset>)}
     <Button type="submit" size="sm" color="secondary" isDisabled={busy}>{uiText('预览新标题')}</Button>
    </form>
   </>}
@@ -122,7 +127,8 @@ function BatchEpisodeLifecycleDialog({selection,onClose,onChanged,action}:Episod
   }
   {!rename&&!results.size&&<>
    <p>{uiText(action==='archive'?'归档后从未归档列表移出，保留数据和文件。':'取消归档后重新出现在未归档列表。')}</p>
-   <ul role="list" className="episode-batch-items">{selection.map(item=><li key={item.id}><strong>{item.title}</strong><span>{uiText(item.archived?'已归档':'未归档')}</span></li>)}</ul>
+   <EpisodeBatchImpact affected={selection.filter(item=>item.archived!==alreadyArchived)}
+    excluded={selection.filter(item=>item.archived===alreadyArchived).map(item=>({item,reason:alreadyArchived?'已归档':'未归档'}))}/>
   </>}
   {busy&&<p role="status">{uiText('已处理 {count} / {total} 张',{count:progress.processed,total:progress.total})}</p>}
   {refreshFailed&&<p role="alert">{uiText('操作结果已记录，列表读取失败。')}</p>}

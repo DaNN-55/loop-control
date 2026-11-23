@@ -1,4 +1,6 @@
 export const episodeBatchImportMessages={
+ '格式说明':'Format guide',
+ '选择文件':'Choose files',
  '批量新建':'Create in bulk',
  '导入记录':'Import history',
  '关闭导入记录':'Close import history',

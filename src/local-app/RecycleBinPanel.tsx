@@ -1,3 +1,4 @@
+import {formatStorageSize} from '../fileSize';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {useState,useEffect,useCallback,useRef,type RefObject} from 'react';
 import {ArchiveRestore,Check,Info,RefreshCw,Trash2,X} from 'lucide-react';
@@ -13,8 +14,11 @@ import {LocalDeletionRecovery} from './LocalDeletionRecovery';
 import {BatchPurgeDialog,BatchRestoreDialog} from './BatchRecycleDialog';
 import type {RecycleBinItem,RecycleBinSummary,RecyclePurgePlan} from './recycleBatchTypes';
 import './recycle-bin.css';
+
+const size=(bytes:number)=>formatStorageSize(bytes,getUiLocale());
+
 interface Props{revision:unknown;targetKey?:string;onResolved?:(key:string)=>void;onChanged?:()=>void;onStateChange?:(state:{busy:boolean;dirty:boolean})=>void;onClose:()=>void;returnFocusRef:RefObject<HTMLElement|null>;embedded?:boolean;}
-const size=(bytes:number)=>new Intl.NumberFormat(getUiLocale(),{maximumFractionDigits:2}).format(bytes/1e9)+' GB';
+
 export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStateChange,onClose,returnFocusRef,embedded=false}:Props){
  const[summary,setSummary]=useState<RecycleBinSummary|null>(null),[draft,setDraft]=useState('5'),[busy,setBusy]=useState(false),[loading,setLoading]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState(''),[purge,setPurge]=useState<RecycleBinItem|null>(null),[recoveryBusy,setRecoveryBusy]=useState(false);
  const[policyOpen,setPolicyOpen]=useState(false);
@@ -47,7 +51,7 @@ export function RecycleBinDialog({revision,targetKey,onResolved,onChanged,onStat
    {error&&<p role="alert" className="recycle-bin-error">{uiText(error)}</p>}<FeedbackNotice message={notice} onDismiss={()=>setNotice('')}/>
    {summary&&<>
     <section className="recycle-bin-settings" aria-label={uiText('回收站设置')}>
-     <div className="recycle-bin-capacity"><span className="recycle-bin-capacity-label">{uiText('已用')}<Tooltip title={uiText('移入或保存上限时检查容量，超限按最早安全项清理。刚移入、单项超限、共享、未登记、离线及变化文件保留。')} isOpen={policyOpen} onOpenChange={setPolicyOpen} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" className="recycle-bin-policy-button" iconLeading={Info} aria-label={uiText('清理规则说明')} onPress={()=>setPolicyOpen(true)} onKeyDown={event=>{if(event.key==='Escape'&&policyOpen){event.preventDefault();setPolicyOpen(false);}}}/></Tooltip></span><strong>{size(summary.usedBytes)} <span>/ {size(summary.limitBytes)}</span></strong><meter aria-label={uiText('回收站已用容量')} value={summary.usedBytes} min={0} max={Math.max(summary.usedBytes,summary.limitBytes)} high={summary.limitBytes*.85} optimum={0}/></div>
+     <div className="recycle-bin-capacity"><span className="recycle-bin-capacity-label">{uiText('已用')}<Tooltip title={uiText('移入或保存上限时检查容量，超限按最早安全项清理。刚移入、单项超限、共享、未登记、离线及变化文件保留。')} isOpen={policyOpen} onOpenChange={setPolicyOpen} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" className="recycle-bin-policy-button" iconLeading={Info} aria-label={uiText('清理规则说明')} onPress={()=>setPolicyOpen(true)} onKeyDown={event=>{if(event.key==='Escape'&&policyOpen){event.preventDefault();setPolicyOpen(false);}}}/></Tooltip></span><strong>{size(summary.usedBytes)} <span>/ {new Intl.NumberFormat(getUiLocale(),{maximumFractionDigits:2}).format(summary.limitBytes/1e9)} GB</span></strong><meter aria-label={uiText('回收站已用容量')} value={summary.usedBytes} min={0} max={Math.max(summary.usedBytes,summary.limitBytes)} high={summary.limitBytes*.85} optimum={0}/></div>
      <form onSubmit={event=>{event.preventDefault();if(summary)void run('saveRecycleLimit',{limitBytes:Math.round(Number(draft)*1e9),expectedRevision:summary.settingsRevision},uiText('容量上限已保存。'));}}><label>{uiText('上限')}<span><input type="number" min="0.1" max="1000" step="0.1" required aria-label={uiText('容量上限')} value={draft} disabled={busy||loading} onChange={event=>setDraft(event.target.value)}/> GB</span></label><Tooltip title={uiText('保存上限')} className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" iconLeading={Check} aria-label={uiText('保存上限')} type="submit" isDisabled={busy||loading||!dirty}/></Tooltip></form>
     </section>
     {summary.overLimit&&<p className="recycle-bin-error" role="status">{uiText('已超限，受保护项目保留。可调高上限或手动清理。')}</p>}

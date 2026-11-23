@@ -1,5 +1,6 @@
 import {useEffect,useRef,useState} from 'react';
 import {getUiLocale,uiText} from '../i18n/ui';
+import {formatStorageSize} from '../fileSize';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {EpisodeBatchDialog,EpisodeBatchResults,type EpisodeBatchAction,type EpisodeBatchActionContext} from '../workspace/EpisodeBatch';
 import {EpisodeDeletionScope} from '../workspace/EpisodeDeletionScope';
@@ -7,8 +8,8 @@ import {localCommand,localRequest} from './client';
 import type {RecycleBatchItemResult,RecycleBatchPreview,RecycleBatchResult,RecycleBinItem,RecycleBinSummary,RecyclePurgePreview} from './recycleBatchTypes';
 
 const titleFor=(title:string)=>title||uiText('未命名生产单');
+const recycleSize=(bytes:number)=>formatStorageSize(bytes,getUiLocale());
 const errorMessage=(error:unknown)=>error instanceof Error?error.message:'操作未完成，请重试。';
-const recycleSize=(bytes:number)=>new Intl.NumberFormat(getUiLocale(),{maximumFractionDigits:3}).format(bytes/1e9)+' GB';
 
 function replaceResults<T extends RecycleBatchItemResult>(current:T[],next:T[]){
  const updated=new Map(current.map(item=>[item.episodeId,item]));
@@ -23,16 +24,18 @@ function RecycleProjection({preview,selection}:{preview:RecycleBatchPreview;sele
    current:recycleSize(preview.currentBytes),added:recycleSize(preview.afterMoveBytes),projected:recycleSize(preview.projectedBytes),limit:recycleSize(preview.limitBytes),
   })}</p>
   {preview.pendingBytes>0&&<p>{uiText('含待释放容量 {size}。',{size:recycleSize(preview.pendingBytes)})}</p>}
+  {preview.candidates.length>0?<section className="episode-batch-cleanup-warning">
+   <h3>{uiText('预计永久清理')}</h3>
+   <p>{uiText('确认后，预计清理的旧生产单可能永久删除。刚移入的本批生产单受保护。')}</p>
+   <ul role="list" className="episode-batch-items">{preview.candidates.map(item=><li key={item.episodeId}><strong>{titleFor(item.title)}</strong><span>{recycleSize(item.sizeBytes)}</span></li>)}</ul>
+  </section>:<p>{uiText('预计无需永久清理。')}</p>}
   <h3>{uiText('本次选择')}</h3>
   <ul role="list" className="episode-batch-items">{preview.items.map(item=><li key={item.episodeId}>
    <strong>{titleFor(titles.get(item.episodeId)??'')}</strong>
    <span>{item.status==='ready'?uiText('可移入 · {size}',{size:recycleSize(item.sizeBytes)}):uiText(item.status==='skipped'?'跳过':'失败')+' · '+uiText(item.reason)}</span>
   </li>)}</ul>
-  <h3>{uiText('预计永久清理')}</h3>
-  {preview.candidates.length?<ul role="list" className="episode-batch-items">{preview.candidates.map(item=><li key={item.episodeId}><strong>{titleFor(item.title)}</strong><span>{recycleSize(item.sizeBytes)}</span></li>)}</ul>:<p>{uiText('预计无需永久清理。')}</p>}
   {!!preview.retained.length&&<><h3>{uiText('因保护规则保留')}</h3><ul role="list" className="episode-batch-items">{preview.retained.map(item=><li key={item.episodeId}><strong>{titleFor(item.title)}</strong><span>{uiText(item.reason)}</span></li>)}</ul></>}
   {preview.projectedBytes>preview.limitBytes&&<p role="status">{uiText('预计清理后仍超出上限。')}</p>}
-  {!!preview.candidates.length&&<p>{uiText('确认后，预计清理的旧生产单可能永久删除。刚移入的本批生产单受保护。')}</p>}
  </>;
 }
 
@@ -100,7 +103,7 @@ function BatchRecycleDialog({selection,onClose,onChanged}:EpisodeBatchActionCont
   if(preview)setResults(current=>replaceResults(current,preview.items.filter(item=>item.status!=='ready')));
   void load(failedIds,retainedIds);
  }
- return <EpisodeBatchDialog title={uiText('批量移入回收站')} busy={busy==='submit'} onClose={onClose} footer={<>
+ return <EpisodeBatchDialog compact title={uiText('批量移入回收站')} busy={busy==='submit'} onClose={onClose} footer={<>
   {!busy&&!preview&&!!error&&!!lastPreviewIds.current.length&&!failedIds.length&&<Button size="sm" color="secondary" onPress={()=>void load(lastPreviewIds.current,retainedIds)}>{uiText('重新预览')}</Button>}
   {!busy&&!!failedIds.length&&(!preview||!ready.length)&&<Button size="sm" color="secondary" onPress={retryFailed}>{uiText('只重试失败项')}</Button>}
   {preview&&<Button size="sm" color="primary" isDisabled={!!busy||!ready.length} onPress={()=>void confirm()}>{uiText('确认移入 {count} 张',{count:ready.length})}</Button>}
@@ -156,7 +159,7 @@ export function BatchRestoreDialog({selection,onClose,onChanged}:RecycleBinBatch
   finally{running.current=false;setBusy(false);}
  }
 
- return <EpisodeBatchDialog title={uiText('批量恢复')} busy={busy} onClose={onClose} footer={!!targets.length&&
+ return <EpisodeBatchDialog compact title={uiText('批量恢复')} busy={busy} onClose={onClose} footer={!!targets.length&&
   <Button size="sm" color="primary" isDisabled={busy} onPress={()=>void restore()}>{uiText(results.length?'只重试失败项':'确认恢复 {count} 张',{count:targets.length})}</Button>
  }>
   {busy&&<p role="status">{uiText('正在恢复生产单…')}</p>}
@@ -238,7 +241,7 @@ export function BatchPurgeDialog({selection,onClose,onChanged}:RecycleBinBatchPr
 
  const previous=results.filter(item=>!preview?.items.some(row=>row.episodeId===item.episodeId));
  const titlesById=new Map(titles.map(item=>[item.id,item.title]));
- return <EpisodeBatchDialog title={uiText('批量永久删除')} busy={busy==='submit'} onClose={onClose} footer={<>
+ return <EpisodeBatchDialog compact title={uiText('批量永久删除')} busy={busy==='submit'} onClose={onClose} footer={<>
   {!busy&&!preview&&!!error&&<Button size="sm" color="secondary" onPress={()=>review(request.ids)}>{uiText('重新预览')}</Button>}
   {!busy&&!error&&!!failed.length&&!ready.length&&<Button size="sm" color="secondary" onPress={()=>review(failed)}>{uiText('只重试失败项')}</Button>}
   {!!ready.length&&<Button size="sm" color="primary-destructive" isDisabled={!!busy} onPress={()=>void confirm()}>{uiText('确认永久删除 {count} 张',{count:ready.length})}</Button>}
@@ -246,13 +249,13 @@ export function BatchPurgeDialog({selection,onClose,onChanged}:RecycleBinBatchPr
   {busy&&<p role="status">{uiText(busy==='preview'?'正在检查删除范围…':'删除中…')}</p>}
   {error&&<p role="alert">{uiText(error)}</p>}
   {preview&&<>
-   {!!ready.length&&<p>{uiText('可删除的生产单永久删除后无法恢复。请核对逐单文件范围。')}</p>}
+   {!!ready.length&&<p className="episode-batch-summary"><strong>{uiText('永久删除后无法恢复。')}</strong>{' '}{uiText('请核对逐单文件范围。')}</p>}
    <ul role="list" className="recycle-batch-purge-preview">{preview.items.map(item=><li className="episode-batch-review-item" key={item.episodeId}>
     <h3>{titlesById.get(item.episodeId)??item.episodeId}</h3>
     {item.status!=='ready'&&<p>{uiText(item.status==='skipped'?'跳过':'阻塞')} · {uiText(item.reason)}</p>}
     {item.scope&&<>
      {item.status==='failed'&&<p>{uiText('解除阻塞后，请重新预览并确认文件范围。')}</p>}
-     <EpisodeDeletionScope {...item.scope} showPaths/>
+     <EpisodeDeletionScope {...item.scope}/>
     </>}
    </li>)}</ul>
   </>}

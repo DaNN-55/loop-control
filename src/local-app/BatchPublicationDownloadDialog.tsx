@@ -31,14 +31,15 @@ function BatchPublicationDownloadDialog({selection,onClose}:EpisodeBatchActionCo
   return()=>controller.abort();
  },[selection,selectionTooLarge,attempt]);
  const ready=preview?.items.filter(item=>item.status==='ready').length??0;
- return <EpisodeBatchDialog title={uiText('批量下载发布 ZIP')} onClose={onClose} footer={<>
+ const skipped=(preview?.items.length??0)-ready;
+ return <EpisodeBatchDialog compact title={uiText('批量下载发布 ZIP')} onClose={onClose} footer={<>
   {!selectionTooLarge&&<Button size="sm" color="secondary" isDisabled={loading} onPress={()=>setAttempt(value=>value+1)}>{uiText('重新预览')}</Button>}
   {preview?.downloadUrl&&<Button size="sm" href={preview.downloadUrl} download="publication-batch.zip">{uiText('下载 ZIP')}</Button>}
  </>}>
   {selectionTooLarge?<p>{uiText('每次最多预览 {count} 张生产单，请减少选择数量。',{count:batchPublicationSelectionLimit})}</p>:loading?<p>{uiText('正在核验所选成片与发布资料…')}</p>:null}
   {error&&<p role="alert">{uiText(error)}</p>}
   <div aria-live="polite">
-   {preview&&<p>{uiText('可下载 {ready} 张，跳过 {skipped} 张',{ready,skipped:preview.items.length-ready})}{ready>0&&` · ${archiveSize(preview.bytes)}`}</p>}
+   {preview&&<p>{(skipped?uiText('可下载 {ready} 张，跳过 {skipped} 张',{ready,skipped}):uiText('可下载 {count} 张',{count:ready}))}{ready>0&&` · ${archiveSize(preview.bytes)}`}</p>}
    {preview?.blockedReason&&<p>{uiText(preview.blockedReason)}</p>}
   </div>
   {preview&&<ul role="list" className="episode-batch-items">

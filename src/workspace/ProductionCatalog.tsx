@@ -24,8 +24,8 @@ type Props=ComponentProps<typeof EpisodeWorkspace>&{
 };
 const previewPreference='loop-control.catalog.preview.v1';
 const emptySelection=new Map<string,EpisodeBatchSelectionItem>();
-function selectionItem(episode:Props['episodes'][number],hints?:EpisodeBatchHints):EpisodeBatchSelectionItem{
- return {id:episode.id,title:episode.title||uiText('未命名生产单'),sourceTitle:episode.title,accountId:episode.account_id,archived:episodeIsArchived(episode),stage:episode.stage,hints};
+function selectionItem(episode:Props['episodes'][number],hints?:EpisodeBatchHints,collectionSeriesId?:string|null):EpisodeBatchSelectionItem{
+ return {id:episode.id,title:episode.title||uiText('未命名生产单'),sourceTitle:episode.title,accountId:episode.account_id,archived:episodeIsArchived(episode),stage:episode.stage,hints,collectionSeriesId};
 }
 
 function MobilePreview({children,onClose}:{children:ReactNode;onClose:()=>void}){
@@ -45,7 +45,7 @@ export function ProductionCatalog({suspended=false,batchActions,batchActionHints
  const page=props.isPageLoading?new Map():new Map(props.episodes.map(episode=>[episode.id,episode]));
  const selection=[...batchItems.values()].map(item=>{
   const episode=page.get(item.id);
-  return episode?selectionItem(episode,batchActionHints?.[episode.id]??item.hints):item;
+  return episode?selectionItem(episode,batchActionHints?.[episode.id]??item.hints,props.collections?.[episode.id]?.seriesId):item;
  });
  const openBatchDialog=(id:string)=>setBatchDialog({id,scope:batchSelectionScope,
   selection:id==='publication-download'?selection.filter(item=>item.stage==='production_completed'):selection,
@@ -53,7 +53,7 @@ export function ProductionCatalog({suspended=false,batchActions,batchActionHints
  const updateBatch=(episodes:Props['episodes'],checked:boolean)=>setBatch(previous=>{
   const items=new Map(previous.scope===batchSelectionScope?previous.items:emptySelection);
   for(const episode of episodes){
-   if(checked)items.set(episode.id,selectionItem(episode,batchActionHints?.[episode.id]));
+   if(checked)items.set(episode.id,selectionItem(episode,batchActionHints?.[episode.id],props.collections?.[episode.id]?.seriesId));
    else items.delete(episode.id);
   }
   return {scope:batchSelectionScope,items};
@@ -139,7 +139,7 @@ export function ProductionCatalog({suspended=false,batchActions,batchActionHints
   <EpisodeWorkspace {...props} batchSelection={batchActions&&{selected:batchItems,onToggle:updateBatch,toolbar:selection.length>0&&<EpisodeBatchToolbar selection={selection} actions={batchActions} onOpen={openBatchDialog}
    onClear={()=>setBatch({scope:batchSelectionScope,items:emptySelection})}/>}} previewEpisodeId={episode?.id} onPreviewEpisode={select} previewControl={{visible,disabled:!episode,onToggle:()=>{if(visible)close();else if(episode)select(episode.id);}}}/>
   {visible&&(small?<MobilePreview onClose={close}>{content}</MobilePreview>:<aside className="production-preview" aria-label={uiText('生产单预览')}>{content}</aside>)}
-  {activeBatchDialog?.id==='selection'?<EpisodeBatchDialog title={uiText('选中生产单')} onClose={closeBatchDialog}>
+  {activeBatchDialog?.id==='selection'?<EpisodeBatchDialog compact title={uiText('选中生产单')} onClose={closeBatchDialog}>
    <ul role="list" className="episode-batch-items">{activeBatchDialog.selection.map(item=><li key={item.id}>
     <strong>{item.title}</strong><span>{props.accountsById.get(item.accountId)?.name} · <code title={item.id}>{item.id.slice(0,8)}</code></span>
    </li>)}</ul>

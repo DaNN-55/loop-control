@@ -40,6 +40,8 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   const option=(await page.snapshot()).split('\n').find(line=>line.includes('combobox "目标系列"'))?.match(/ref=(e\d+)/)?.[1];
   expect(option).toBeTruthy();
   await page.cli('select','@'+option,target.series_id);
+  expect(await page.evaluate("document.querySelector('dialog .episode-batch-summary').textContent")).toBe('预计影响 2 张');
+  expect(await page.evaluate("document.querySelector('dialog .episode-batch-disclosure').open")).toBe(false);
   await rename(missingBefore.directoryPath,missingBefore.directoryPath+'.offline');
   await page.click('确认调整系列');
   await outcome('完好目录','success');await outcome('缺失目录','failed');await outcome('已在目标','skipped');
@@ -56,6 +58,9 @@ it.skipIf(process.env.LOOP_BATCH_COLLECTION_BROWSER!=='1')('catalog changes a se
   await page.click('批量操作');await page.cli('find','role','menuitem','click','--name','查看文件夹','--exact');
   const readyAfter=await read(ready.id),missingAfter=await read(missing.id),alreadyAfter=await read(already.id);
   await page.wait(`document.querySelector('dialog').textContent.includes(${JSON.stringify(readyAfter.directoryPath)})`);
+  expect(await page.evaluate("document.querySelector('dialog .batch-collection-folder details').open")).toBe(false);
+  await page.cli('find','label','查看完整路径 · 完好目录','click');
+  expect(await page.evaluate(`document.querySelector('dialog').innerText.includes(${JSON.stringify(readyAfter.directoryPath)})`)).toBe(true);
   await page.cli('set','viewport','390','820');
   expect(await page.evaluate("(()=>{const dialog=document.querySelector('dialog[open]');const bounds=dialog.getBoundingClientRect();return bounds.left>=0&&bounds.right<=innerWidth&&dialog.scrollWidth<=dialog.clientWidth;})()")).toBe(true);
   expect(await page.evaluate("Array.from(document.querySelectorAll('dialog .batch-collection-folder')).find(row=>row.querySelector('strong')?.textContent==='首次读取时缺失')?.textContent")).toContain('目录缺失');

@@ -9,4 +9,8 @@
 .recycle-bin-name .episode-batch-check{flex:none}
 @media(max-width:640px){.recycle-bin-row>div:nth-child(2){padding-inline-start:50px}}
 
-.recycle-batch-purge-preview{list-style:none;margin:0;padding:0}.recycle-batch-purge-preview .episode-deletion-scope{margin-block:8px}
+.recycle-batch-purge-preview{list-style:none;margin:0;padding:0}
+
+.episode-batch-cleanup-warning{padding:8px 10px;border:1px solid var(--lc-line);border-inline-start:2px solid var(--lc-danger);border-radius:6px}
+.episode-batch-cleanup-warning p,.recycle-batch-purge-preview .episode-deletion-summary{margin-block:4px}
+.recycle-batch-purge-preview .episode-deletion-scope{margin-block:4px}

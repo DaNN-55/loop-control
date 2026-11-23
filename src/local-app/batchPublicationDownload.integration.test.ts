@@ -42,7 +42,7 @@ async function browserDownload(f:Fixture,secondId:string,expected:Buffer){
   await first();
   await second();
   await open();
-  await browser('wait','--text','可下载 1 张，跳过 0 张');
+  await browser('wait','--text','可下载 1 张');
   await browser('press','Escape');
   await f.c.query("UPDATE public.episodes SET stage='production_completed' WHERE id=$1",[f.episode]);
   await browser('reload');
@@ -50,8 +50,10 @@ async function browserDownload(f:Fixture,secondId:string,expected:Buffer){
   await first();
   await second();
   await open();
-  await browser('wait','--text','可下载 2 张，跳过 0 张');
-  expect(await browser('snapshot')).toContain('没有已保存的发布文案。');
+  await browser('wait','--text','可下载 2 张');
+  const preview=await browser('snapshot');
+  expect(preview).toContain('没有已保存的发布文案。');
+  expect(preview).not.toContain('跳过 0 张');
   const path=join(f.root,'browser-publication.zip');
   await browser('download','dialog a[download]',path);
   expect(await readFile(path)).toEqual(expected);
@@ -59,7 +61,7 @@ async function browserDownload(f:Fixture,secondId:string,expected:Buffer){
   expect(await browser('eval',"document.activeElement.textContent.trim()")).toContain('下载发布 ZIP');
   await browser('set','viewport','390','844');
   await open();
-  await browser('wait','--text','可下载 2 张，跳过 0 张');
+  await browser('wait','--text','可下载 2 张');
   expect(await browser('eval',"document.querySelector('dialog').getBoundingClientRect().width <= innerWidth")).toContain('true');
  }finally{
   await browser('close').catch(()=>{});

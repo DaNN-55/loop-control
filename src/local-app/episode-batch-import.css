@@ -8,6 +8,7 @@
  overflow:hidden;
  padding:0;
 }
+.product-ui dialog.episode-batch-import-history-dialog.modal-card {max-inline-size:min(34rem,calc(100vw - 32px))}
 dialog.episode-batch-import:not([open]) {display:none}
 .episode-batch-import::backdrop {background:rgb(12 16 23 / 45%)}
 .episode-batch-form {display:flex;flex-direction:column;max-block-size:inherit;min-block-size:0}
@@ -96,3 +97,10 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-workbook-file {display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;min-width:0}
 .episode-workbook-file strong {overflow-wrap:anywhere}
 .episode-workbook-template {color:var(--link-primary,currentColor);text-decoration:underline;text-underline-offset:.2em}
+
+.episode-batch-import-controls{display:grid;gap:10px}
+.episode-batch-import-controls[data-compact]{grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:8px}
+.episode-batch-import-controls[data-compact] .episode-batch-upload-slot{display:flex;min-block-size:36px;padding:4px 10px;gap:6px;white-space:nowrap}
+.episode-batch-import-controls[data-compact] .episode-batch-upload-help{grid-column:1/-1;justify-content:start;gap:4px 12px;font-size:.8125rem}
+.episode-batch-upload-format>summary{cursor:pointer}
+.episode-batch-upload-format[open]{flex-basis:100%}

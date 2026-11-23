@@ -27,7 +27,7 @@ export function EpisodeImportHistoryDialog({onClose,onViewBatch}:{onClose:()=>vo
  }
  const loading=!history&&!failed;
  const dates=new Intl.DateTimeFormat(getUiLocale(),{dateStyle:'medium',timeStyle:'short'});
- return <dialog ref={dialog} className="modal-card episode-batch-import" aria-labelledby={heading} onCancel={event=>{event.preventDefault();closeDialog();}}>
+ return <dialog ref={dialog} className="modal-card episode-batch-import episode-batch-import-history-dialog" aria-labelledby={heading} onCancel={event=>{event.preventDefault();closeDialog();}}>
   <div className="episode-batch-form">
    <header>
     <h2 id={heading}>{uiText('导入记录')}</h2>

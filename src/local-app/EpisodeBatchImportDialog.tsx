@@ -229,6 +229,8 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
   sessionStorage.removeItem(savedBatchKey);setBatchId('');setReceipt(null);intent.current=null;setRows([]);setWorkbook(null);setSeriesOverrides({});clearPreview();
  }
 
+ const hasUploads=!!workbook||rows.length>0;
+ const formatHint=uiText('Excel 的时长以秒填写。系列填在「系列」列，或在 TXT、Markdown 首行写「系列：名称」。');
  return <dialog ref={dialog} className="modal-card episode-batch-import" aria-labelledby={heading} onCancel={event=>{event.preventDefault();if(editingId)setEditingId(null);else closeDialog();}}>
   <form aria-labelledby={heading} aria-busy={busy} className="episode-batch-form" method="post" onSubmit={event=>void submit(event)}>
    <header>
@@ -245,35 +247,37 @@ export function EpisodeBatchImportDialog({ownerId,accounts,series,seriesVersions
        {item.episodeId&&<Button size="sm" color="secondary" type="button" onPress={()=>{dialog.current?.close();onOpenEpisode(item.episodeId!);}}>{uiText('打开生产单')}</Button>}
       </li>)}</ul></>:<p>{uiText(busy?'正在读取导入结果…':'正在等待导入结果。')}</p>}
     </section>:<>
-     <div className="episode-batch-target">
-      <label>{uiText('账号')}<select name="accountId" required disabled={busy||editingId!==null} value={accountId} onChange={event=>{setAccountId(event.target.value);setSeriesOverrides({});clearPreview();}}>{accounts.map(account=><option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
-     </div>
-     <div className="episode-batch-upload" data-dragging={dragging||undefined}
-      onDragOver={event=>{
-       if(!event.dataTransfer.types.includes('Files'))return;
-       event.preventDefault();
-       event.dataTransfer.dropEffect=busy||editingId?'none':'copy';
-       if(!busy&&!editingId)setDragging(true);
-      }}
-      onDragLeave={event=>{
-       if(!(event.relatedTarget instanceof Node&&event.currentTarget.contains(event.relatedTarget)))setDragging(false);
-      }}
-      onDrop={event=>{
-       if(!event.dataTransfer.types.includes('Files'))return;
-       event.preventDefault();
-       setDragging(false);
-       if(!busy&&!editingId)void addFiles(Array.from(event.dataTransfer.files));
-      }}>
-      <button className="episode-batch-upload-slot" type="button" disabled={busy||editingId!==null} aria-labelledby={fileLabel} aria-describedby={fileHelp} onClick={()=>fileInput.current?.click()}>
-       <Upload size={20} aria-hidden="true"/>
-       <strong id={fileLabel}>{uiText('点击选择或拖入文件')}</strong>
-       <small id={fileHelp}>{uiText('多份 UTF-8 TXT、Markdown，或一份 Excel（.xlsx）')}</small>
-      </button>
-      <input ref={fileInput} hidden name="scripts" type="file" multiple accept=".txt,.md,.markdown,.xlsx" disabled={busy||editingId!==null} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/>
-     </div>
-     <div className="episode-batch-upload-help">
-      <p className="field-hint">{uiText('Excel 的时长以秒填写。系列填在「系列」列，或在 TXT、Markdown 首行写「系列：名称」。')}</p>
-      <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
+     <div className="episode-batch-import-controls" data-compact={hasUploads||undefined}>
+      <div className="episode-batch-target">
+       <label>{uiText('账号')}<select name="accountId" required disabled={busy||editingId!==null} value={accountId} onChange={event=>{setAccountId(event.target.value);setSeriesOverrides({});clearPreview();}}>{accounts.map(account=><option key={account.id} value={account.id}>{account.name}</option>)}</select></label>
+      </div>
+      <div className="episode-batch-upload" data-dragging={dragging||undefined}
+       onDragOver={event=>{
+        if(!event.dataTransfer.types.includes('Files'))return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect=busy||editingId?'none':'copy';
+        if(!busy&&!editingId)setDragging(true);
+       }}
+       onDragLeave={event=>{
+        if(!(event.relatedTarget instanceof Node&&event.currentTarget.contains(event.relatedTarget)))setDragging(false);
+       }}
+       onDrop={event=>{
+        if(!event.dataTransfer.types.includes('Files'))return;
+        event.preventDefault();
+        setDragging(false);
+        if(!busy&&!editingId)void addFiles(Array.from(event.dataTransfer.files));
+       }}>
+       <button className="episode-batch-upload-slot" type="button" disabled={busy||editingId!==null} aria-labelledby={fileLabel} aria-describedby={fileHelp} onClick={()=>fileInput.current?.click()}>
+        <Upload size={hasUploads?16:20} aria-hidden="true"/>
+        <strong id={fileLabel}>{uiText(hasUploads?'选择文件':'点击选择或拖入文件')}</strong>
+        <small id={fileHelp} className={hasUploads?'sr-only':undefined}>{uiText('多份 UTF-8 TXT、Markdown，或一份 Excel（.xlsx）')}</small>
+       </button>
+       <input ref={fileInput} hidden name="scripts" type="file" multiple accept=".txt,.md,.markdown,.xlsx" disabled={busy||editingId!==null} onChange={event=>{const files=Array.from(event.currentTarget.files??[]);event.currentTarget.value='';void addFiles(files);}}/>
+      </div>
+      <div className="episode-batch-upload-help">
+       {hasUploads?<details className="episode-batch-upload-format"><summary>{uiText('格式说明')}</summary><p className="field-hint">{formatHint}</p></details>:<p className="field-hint">{formatHint}</p>}
+       <a className="episode-workbook-template" download href="/api/local/episode-imports/template.xlsx">{uiText('下载 Excel 模板')}</a>
+      </div>
      </div>
      {workbook&&assessment&&<EpisodeWorkbookPreview workbook={workbook} assessment={assessment} duplicateFor={duplicateField}
       seriesFor={seriesField} seriesValue={itemId=>seriesByItem.get(itemId)!.value} seriesTag={seriesTag}

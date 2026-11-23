@@ -1,4 +1,11 @@
 export const episodeBatchMessages:Record<string,string>={
+ '预计影响 {count} 张':'{count} orders expected to change',
+ '预计不变 {count} 张':'{count} orders expected to stay as they are',
+ '跳过 {count} 张':'{count} skipped',
+ '可下载 {count} 张':'{count} ready to download',
+ '查看完整路径 · {title}':'Show full path for {title}',
+ '前缀与后缀':'Prefix and suffix',
+ '查找与替换':'Find and replace',
  '批量操作':'Batch actions',
  '已选 {count} 张':'{count} selected',
  '查看选中清单':'View selected orders',

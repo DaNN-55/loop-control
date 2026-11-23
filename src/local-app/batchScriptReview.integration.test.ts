@@ -106,8 +106,8 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    await browser.wait("document.body.innerText.includes('已选 11 张')");
    await browser.click('批量操作');
    await browser.cli('find','role','menuitem','click','--name','确认脚本','--exact');
-   await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('通过 核对单 A0')");
-   await browser.cli('find','text','核对 核对单 A0 的脚本和分镜','click','--exact');
+   await browser.wait("!!document.querySelector('dialog[open] input[aria-label=\"通过 核对单 A0\"]')");
+   await browser.cli('find','label','核对 核对单 A0 的脚本和分镜','click');
    await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('初稿是一个石头屋。')");
    await browser.cli('find','role','checkbox','click','--name','通过 核对单 A0','--exact');
    await browser.cli('find','role','checkbox','click','--name','通过 核对单 B0','--exact');
@@ -115,6 +115,8 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    expect((await save(first,'改稿是一个木头屋。')).status).toBe(200);
    await browser.click('确认勾选脚本');
    await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('待确认脚本已变化，请重新核对。')");
+   expect(await browser.evaluate("document.querySelector('dialog .episode-batch-disclosure')?.open")).toBe(false);
+   await browser.cli('click','dialog .episode-batch-disclosure summary');
    const outcome=String(await browser.evaluate("document.querySelector('dialog[open]').innerText"));
    expect(outcome).toContain('核对单 B0\n成功');
    expect(outcome).toContain('核对单 A9\n成功');

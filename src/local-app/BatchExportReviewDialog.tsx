@@ -111,7 +111,7 @@ export function BatchExportReviewDialog({selection,onClose,onChanged}:EpisodeBat
    const review=item.review,previewing=previewId===episodeId;
    return <Fragment key={episodeId}><fieldset className="episode-batch-export-item" disabled={!!busy}>
     <legend>{title}</legend>
-    <Button size="sm" color={previewing?'secondary':'tertiary'} aria-pressed={previewing} onPress={()=>setPreviewId(episodeId)}>{uiText('预览 {title}',{title})}</Button>
+    <Button size="sm" color={previewing?'secondary':'tertiary'} aria-pressed={previewing} aria-label={uiText('预览 {title}',{title})} onPress={()=>setPreviewId(episodeId)}>{uiText('预览')}</Button>
     <label><input type="radio" name={'decision-'+episodeId} disabled={!item.playable} aria-label={uiText('通过 {title}',{title})} checked={item.decision==='approve'} onChange={()=>updateItem(episodeId,{decision:'approve'})}/>{uiText('通过')}</label>
     <label><input type="radio" name={'decision-'+episodeId} aria-label={uiText('待修改 {title}',{title})} checked={item.decision==='change'} onChange={()=>updateItem(episodeId,{decision:'change'})}/>{uiText('待修改')}</label>
    </fieldset>
@@ -123,7 +123,7 @@ export function BatchExportReviewDialog({selection,onClose,onChanged}:EpisodeBat
    </div>}
    </Fragment>;
   })}
-  {!!results.length&&<div className="episode-batch-results" aria-live="polite"><EpisodeBatchResults selection={selection} results={results}/></div>}
+  {!!results.length&&<div className="episode-batch-results" aria-live="polite"><EpisodeBatchResults selection={selection} results={results} collapseSkipped/></div>}
  </EpisodeBatchDialog>;
 }
 
