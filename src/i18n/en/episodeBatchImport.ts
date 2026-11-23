@@ -21,6 +21,8 @@ export const episodeBatchImportMessages={
  '重试此批':'Retry this batch',
  '检查重复':'Check for duplicates',
  '提交创建':'Create orders',
+ '编辑 {value0}':'Edit {value0}',
+ '请先保存或取消当前修改。':'Save or cancel the current changes first.',
  '脚本文件':'Script files',
  '支持 UTF-8 的 TXT 和 Markdown，每份文件新建一张待脚本确认的生产单。':'Choose UTF-8 text or Markdown files. Each file creates one production order awaiting script confirmation.',
  '导入文件':'Import files',

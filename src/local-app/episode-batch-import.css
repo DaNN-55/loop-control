@@ -40,22 +40,59 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-batch-upload-slot:disabled {cursor:default;opacity:.6}
 .episode-batch-upload-help {align-items:baseline;display:flex;flex-wrap:wrap;gap:4px 12px;justify-content:space-between}
 .episode-batch-upload-help p {margin:0}
-.episode-batch-preview,.episode-batch-file-preview,.episode-batch-results > li {border:1px solid var(--color-border-secondary);border-radius:8px;padding:8px 12px;overflow-wrap:anywhere}
-.episode-batch-preview > summary {cursor:pointer;padding-block:4px}
-.episode-batch-preview-title {display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px 8px;max-inline-size:calc(100% - 1.25em);vertical-align:top}
-.episode-batch-preview > summary > small,.episode-batch-results > li > span {display:block;color:var(--color-text-secondary);font-size:0.8125rem}
-.episode-batch-preview > summary > small {margin-inline-start:1.25em}
-.episode-batch-file-preview {display:grid;align-items:start;grid-template-columns:minmax(0,1fr) auto;gap:8px}
-.episode-batch-file-preview > .episode-batch-preview {border:0;padding:0}
-.episode-workbook-shots {border-inline-start:1px solid var(--color-border-secondary);margin-inline-start:.25rem;padding-inline-start:.75rem;min-inline-size:0}
-.episode-workbook-shots > .episode-batch-preview {border:0;border-radius:0;padding:3px 0}
-.episode-workbook-unmatched > h3 {color:var(--color-text-secondary);font-size:0.875rem;margin:0 0 4px}
-.episode-batch-fields {display:grid;gap:8px;padding-block-start:8px}
+.episode-import-row,.episode-batch-file-preview,.episode-batch-results > li {border:1px solid var(--color-border-secondary);border-radius:8px;padding:8px 12px;overflow-wrap:anywhere}
+.episode-import-row {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;column-gap:4px}
+.episode-import-disclosure {
+ display:grid;grid-template-columns:15px minmax(0,1fr);align-items:center;gap:6px;min-block-size:36px;
+ min-inline-size:0;padding:0;border:0;background:transparent;color:inherit;text-align:start;font:inherit;
+}
+.episode-import-disclosure:enabled {cursor:pointer}
+.episode-import-disclosure:focus-visible {outline:2px solid var(--color-border-brand);outline-offset:2px}
+.episode-import-disclosure[aria-expanded="true"] > svg {transform:rotate(90deg)}
+.episode-import-heading {display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.episode-import-title {display:inline-flex;min-inline-size:0;flex-wrap:wrap;align-items:center;gap:4px 6px}
+.episode-import-meta,.episode-batch-results > li > span {color:var(--color-text-secondary);font-size:.8125rem}
+.episode-import-duration {margin-inline-start:auto;white-space:nowrap;font-variant-numeric:tabular-nums}
+.episode-import-summary,.episode-import-row-body {grid-column:1/-1;margin-inline-start:21px;min-inline-size:0}
+.episode-import-summary {margin-block-start:-2px}
+.episode-import-row-body:not([hidden]) {display:grid;gap:8px;padding-block-start:7px}
+.episode-import-read-text {margin:0;white-space:pre-wrap}
+.episode-import-editor,.episode-import-order-fields,.episode-import-shot-fields,.episode-import-file-fields,.episode-import-shot-copy {display:grid;gap:8px;min-inline-size:0}
+.episode-import-editor label,.episode-import-shot-copy > div {min-inline-size:0}
+.episode-import-order-fields {grid-template-columns:minmax(4.6rem,.65fr) minmax(0,2fr) minmax(5.3rem,.7fr) minmax(7rem,1fr)}
+.episode-import-shot-fields {grid-template-columns:minmax(4.2rem,.65fr) minmax(0,2fr) minmax(5.3rem,.7fr)}
+.episode-import-file-fields {grid-template-columns:minmax(0,2fr) minmax(7rem,1fr)}
+.episode-import-shot-copy {grid-template-columns:1.35fr 1fr 1fr;margin:0}
+.episode-import-shot-copy dt {color:var(--color-text-secondary);font-size:.8125rem}
+.episode-import-shot-copy dd {margin:2px 0 0;white-space:pre-wrap}
+.episode-import-shot-link {max-inline-size:12rem}
+.episode-import-editor textarea {
+ background:var(--color-bg-primary);border:1px solid var(--color-border-secondary);border-radius:5px;
+ color:inherit;font:inherit;padding:7px 8px;resize:vertical;inline-size:100%;
+}
+.episode-import-editor-actions {display:flex;justify-content:end;flex-wrap:wrap;gap:6px}
+.episode-batch-file-preview {display:grid;align-items:start;grid-template-columns:minmax(0,1fr) auto;gap:4px}
+.episode-batch-file-preview > .episode-import-row {border:0;padding:0}
+.episode-workbook-shots {border-block-start:1px solid var(--color-border-secondary);padding-block-start:6px;min-inline-size:0}
+.episode-workbook-shots > .episode-import-row {border:0;border-radius:0;padding:1px 0}
+.episode-workbook-shots > .episode-import-row + .episode-import-row {border-block-start:1px solid var(--color-border-secondary)}
+.episode-workbook-shots > h3,.episode-workbook-unmatched > h3 {color:var(--color-text-primary);font-size:.875rem;margin:0 0 3px}
+.episode-workbook-shots > h3 small {color:var(--color-text-secondary);font-weight:400;margin-inline-start:4px}
+.episode-batch-content {container-type:inline-size}
+@container (max-width:510px) {
+ .episode-import-order-fields {grid-template-columns:minmax(4.6rem,.6fr) minmax(0,1fr) minmax(7rem,1.35fr)}
+ .episode-import-order-fields > label:nth-child(2) {grid-column:span 2}
+ .episode-import-order-fields > label:nth-child(3) {grid-column:1/3}
+}
+@container (max-width:365px) {
+ .episode-import-shot-fields {grid-template-columns:1fr 1fr}
+ .episode-import-shot-fields > label:nth-child(2) {grid-column:1/-1;grid-row:2}
+ .episode-import-shot-copy {grid-template-columns:1fr 1fr}
+ .episode-import-shot-copy > :first-child {grid-column:1/-1}
+}
 .episode-batch-results button {justify-self:start}
-.episode-batch-fields textarea {background:var(--color-bg-primary);border:1px solid var(--color-border-secondary);border-radius:5px;color:inherit;font:inherit;padding:8px;resize:vertical;width:100%}
 .episode-batch-results {display:grid;gap:8px;list-style:none;padding:0}
 .episode-batch-results > li {display:grid;gap:4px}
 .episode-workbook-file {display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;min-width:0}
 .episode-workbook-file strong {overflow-wrap:anywhere}
 .episode-workbook-template {color:var(--link-primary,currentColor);text-decoration:underline;text-underline-offset:.2em}
-.episode-workbook-issues {margin:.375rem .625rem;padding-inline-start:1.25rem}
