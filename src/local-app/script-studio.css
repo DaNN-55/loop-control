@@ -150,3 +150,13 @@ html[data-interface="impeccable"] .product-ui .script-studio .script-studio-shot
 @media(pointer:coarse){.script-studio-shot-menu [role=menuitem]{min-block-size:48px}}
 html[data-interface="impeccable"] .dan-ui.product-ui.script-studio-shot-menu[data-lc-dropdown]{width:160px;min-width:160px;max-width:calc(100vw - 24px);border-radius:6px}
 html[data-interface="impeccable"] .script-studio-shot-menu [role=menuitem].menu-item-danger:not([aria-disabled=true]),html[data-interface="impeccable"] .script-studio-shot-menu [role=menuitem].menu-item-danger:not([aria-disabled=true]) :is(span,svg){color:var(--lc-danger)!important}
+
+.script-studio-imported{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:16px;min-width:0}
+.script-studio-imported > section{min-width:0}
+.script-studio-imported > .script-studio-next,.script-studio-imported > .form-error{grid-column:1/-1}
+.workspace-script .script-studio-imported textarea{min-height:160px}
+.script-studio-imported small{color:var(--color-text-secondary)}
+.script-studio-imported .script-studio-review-shots{padding-inline-start:24px}
+.script-studio-imported .script-studio-review-shots dl{margin:4px 0 12px}
+.script-studio-imported .script-studio-review-shots dl>div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;margin-block:4px}
+.script-studio-imported .script-studio-review-shots dd{margin:0;white-space:pre-wrap}

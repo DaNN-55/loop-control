@@ -1,4 +1,6 @@
 import {readBatchExportReview} from './batchExportReview.js';
+import {episodeWorkbookTemplate,readEpisodeWorkbook} from './episodeWorkbookImport.js';
+import {workbookMime} from './episodeWorkbookImportTypes.js';
 import {StringDecoder} from 'node:string_decoder';
 import {episodeImportLimits} from './episodeBatchImportTypes.js';
 import {readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
@@ -188,9 +190,17 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(!options.episodes)throw new ConfigurationError(503,'本地建单服务尚未配置。');
     send(200,await options.episodes.batchImport.history(session,Number(page)));return;
    }
+   if(url.pathname==='/api/local/episode-imports/template.xlsx'&&request.method==='GET'&&!url.search){
+    const template=await episodeWorkbookTemplate();
+    response.writeHead(200,{'Content-Type':workbookMime,'Content-Disposition':'attachment; filename="production-orders-template.xlsx"','Content-Length':template.byteLength});
+    response.end(template);return;
+   }
    if(url.pathname==='/api/local/episode-imports'&&request.method==='POST'&&!url.search){
     if(!options.episodes)throw new ConfigurationError(503,'本地建单服务尚未配置。');
     let body;try{body=await readBody(request,episodeImportLimits.requestBytes);}catch{throw new ConfigurationError(400,'导入请求无效或超过大小上限。');}
+    if(body.action==='readWorkbook'){
+     send(200,await readEpisodeWorkbook(body.name,body.contentBase64));return;
+    }
     const batches=options.episodes.batchImport;
     send(200,await (body.action==='preview'?batches.preview(session,body):batches.run(session,body)));return;
    }

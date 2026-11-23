@@ -84,7 +84,7 @@ export class LocalEpisodeCommands {
   allowed.start=['episodeId'];
   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
   allowed.confirmRecognizedScript=['episodeId','expectedScriptRevisionId','text','reason','recognitionRequestId'];
-  allowed.confirmScriptStudio=['episodeId','expectedScriptRevisionId','text','targetDuration','reason','requestId'];
+  allowed.confirmScriptStudio=['episodeId','expectedScriptRevisionId','text','targetDuration','reason','requestId','importedVersion'];
   allowed.saveScriptReviewDraft=['episodeId','text','targetDuration','reason','requestId'];
   allowed.confirmReviewedScript=['episodeId','reviewFingerprint'];
   allowed.openStandaloneStudio=[];
@@ -170,7 +170,7 @@ export class LocalEpisodeCommands {
      }else if(review.status!=='ready'||review.reviewFingerprint!==data.reviewFingerprint){
       value={episodeId:e.id,status:'failed',reason:'待确认脚本已变化，请重新核对。',requiresReview:true};
      }else{
-      const scriptId=draft?(await confirmScriptStudio(c,root,session.id,e,{expectedScriptRevisionId:null,text:draft.sourceText,targetDuration:draft.targetDuration,reason:draft.reason,requestId:draft.requestId},location!.relativePath)).id:e.main_script_revision_id;
+      const scriptId=draft?(await confirmScriptStudio(c,root,session.id,e,{expectedScriptRevisionId:null,text:draft.sourceText,targetDuration:draft.targetDuration,reason:draft.reason,requestId:draft.requestId,importedVersion:draft.importedVersion},location!.relativePath)).id:e.main_script_revision_id;
       const policy=draft?{...inputPolicy,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:inputPolicy;
       await this.start(c,e.id,scriptId,root,policy);
       value={episodeId:e.id,status:'success'};
