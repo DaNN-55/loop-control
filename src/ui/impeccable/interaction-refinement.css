@@ -132,6 +132,16 @@ html[data-interface="impeccable"] [data-lc-dropdown] [role="menuitem"] > div > s
   font-weight: 500 !important;
 }
 html[data-interface="impeccable"] [data-lc-dropdown] [role="separator"] { margin: 5px 4px; background: var(--lc-line); }
+html[data-interface="impeccable"] .dan-ui.product-ui:is(.episode-creation-popover,.episode-batch-action-popover)[data-lc-dropdown][role="dialog"]{
+ box-sizing:border-box;
+ width:180px;
+ min-width:0;
+ max-width:calc(100vw - 28px);
+ overflow-x:hidden;
+ overflow-y:auto;
+}
+html[data-interface="impeccable"] :is(.episode-creation-popover,.episode-batch-action-popover) [role="menu"]{overflow:visible!important}
+html[data-interface="impeccable"] :is(.episode-creation-popover,.episode-batch-action-popover) [role="separator"]{width:auto!important}
 html[data-interface="impeccable"] .workspace-composer-popover {
   border-radius: 10px;
   overflow-x: hidden;

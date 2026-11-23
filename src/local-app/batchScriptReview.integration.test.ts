@@ -97,14 +97,22 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    await browser.wait("document.querySelectorAll('.episode-table tbody tr').length===1");
    await browser.cli('find','role','checkbox','click','--name','全选本页','--exact');
    await browser.wait("document.body.innerText.includes('已选 11 张')");
-   await browser.click('查看选中的 11 张生产单');
-   await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('核对单 B0')");
-   const selected=String(await browser.evaluate("document.querySelector('dialog[open]').innerText"));
-   expect(selected).toContain('核对单 A0');
-   expect(selected).toContain('核对单 A9');
-   await browser.click('关闭');
-   await browser.wait("document.body.innerText.includes('已选 11 张')");
-   await browser.click('批量操作');
+   expect(await browser.evaluate(`(()=>{
+    const count=document.querySelector('.episode-batch-selection-count[role=status]');
+    return count?.textContent==='已选 11 张'&&count.nextElementSibling?.getAttribute('aria-label')==='清空选择';
+   })()`)).toBe(true);
+   for(const [width,height] of [[420,820],[1357,946]]){
+    await browser.cli('set','viewport',String(width),String(height));
+    await browser.click('批量操作');
+    expect(await browser.evaluate(`(()=>{
+     const popover=document.querySelector('.episode-batch-action-popover');
+     const menu=popover.querySelector('[role=menu]');
+     const box=popover.getBoundingClientRect();
+     return box.width===180&&box.left>=0&&box.right<=innerWidth
+      &&popover.scrollWidth===popover.clientWidth&&menu.scrollWidth===menu.clientWidth;
+    })()`)).toBe(true);
+    if(width===420)await browser.cli('press','Escape');
+   }
    await browser.cli('find','role','menuitem','click','--name','确认脚本','--exact');
    await browser.wait("!!document.querySelector('dialog[open] input[aria-label=\"通过 核对单 A0\"]')");
    await browser.cli('find','label','核对 核对单 A0 的脚本和分镜','click');
@@ -140,6 +148,9 @@ it.skipIf(process.env.LOOP_BATCH_SCRIPT_BROWSER!=='1')('selects across pages, co
    expect(await browser.evaluate("!!document.querySelector('.episode-batch-selection-count')")).toBe(false);
    await browser.cli('find','role','checkbox','click','--name','选择 核对单 B0','--exact');
    await browser.wait("document.body.innerText.includes('已选 1 张')");
+   await browser.click('清空选择');
+   expect(await browser.evaluate("!document.querySelector('.episode-batch-selection-toolbar')")).toBe(true);
+   await browser.cli('find','role','checkbox','click','--name','选择 核对单 B0','--exact');
    await browser.cli('find','role','tab','click','--name','已完成','--exact');
    await browser.wait("document.body.innerText.includes('没有符合条件的生产单')");
    expect(await browser.evaluate("!!document.querySelector('.episode-batch-selection-count')")).toBe(false);

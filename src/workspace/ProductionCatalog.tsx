@@ -8,7 +8,7 @@ import {CompletedCatalogArtwork} from './CompletedCatalogArtwork';
 import {EpisodeWorkspace} from './WorkspaceViews';
 import {EpisodeStatus,episodeActionState,episodeNextAction,episodeWorkflowLabel} from './episodePresentation';
 import {productionCatalogParameters,type CatalogVideoMetadata} from './productionCatalogPreview';
-import {EpisodeBatchDialog,type EpisodeBatchAction,type EpisodeBatchSelectionItem} from './EpisodeBatch';
+import type {EpisodeBatchAction,EpisodeBatchSelectionItem} from './EpisodeBatch';
 import type {EpisodeBatchHints} from '../episodes/episodeCatalogTypes';
 import {EpisodeBatchToolbar} from './EpisodeBatchToolbar';
 import {episodeIsArchived} from './WorkspaceViews';
@@ -139,11 +139,7 @@ export function ProductionCatalog({suspended=false,batchActions,batchActionHints
   <EpisodeWorkspace {...props} batchSelection={batchActions&&{selected:batchItems,onToggle:updateBatch,toolbar:selection.length>0&&<EpisodeBatchToolbar selection={selection} actions={batchActions} onOpen={openBatchDialog}
    onClear={()=>setBatch({scope:batchSelectionScope,items:emptySelection})}/>}} previewEpisodeId={episode?.id} onPreviewEpisode={select} previewControl={{visible,disabled:!episode,onToggle:()=>{if(visible)close();else if(episode)select(episode.id);}}}/>
   {visible&&(small?<MobilePreview onClose={close}>{content}</MobilePreview>:<aside className="production-preview" aria-label={uiText('生产单预览')}>{content}</aside>)}
-  {activeBatchDialog?.id==='selection'?<EpisodeBatchDialog compact title={uiText('选中生产单')} onClose={closeBatchDialog}>
-   <ul role="list" className="episode-batch-items">{activeBatchDialog.selection.map(item=><li key={item.id}>
-    <strong>{item.title}</strong><span>{props.accountsById.get(item.accountId)?.name} · <code title={item.id}>{item.id.slice(0,8)}</code></span>
-   </li>)}</ul>
-  </EpisodeBatchDialog>:activeBatchDialog&&batchActions?.find(action=>action.id===activeBatchDialog.id)?.render({
+  {activeBatchDialog&&batchActions?.find(action=>action.id===activeBatchDialog.id)?.render({
    selection:activeBatchDialog.selection,onClose:closeBatchDialog,onChanged:onBatchChanged??(async()=>{}),
   })}
  </div>;

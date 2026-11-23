@@ -1,4 +1,4 @@
-import {ChevronDown,Download,List,Trash2} from 'lucide-react';
+import {ChevronDown,Download,Trash2} from 'lucide-react';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {Dropdown} from '../ui/dan-ui/components/base/dropdown/dropdown';
@@ -28,9 +28,6 @@ export function EpisodeBatchToolbar({selection,actions,onOpen,onClear}:{
  const count=uiText('已选 {count} 张',{count:selection.length});
  const hasManagement=management.length>0;
  return <div className="episode-batch-toolbar episode-batch-selection-toolbar" role="group" aria-label={uiText('批量操作')}>
-  <Button size="sm" color="tertiary" className="episode-batch-selection-count" iconTrailing={List}
-   aria-label={uiText('查看选中的 {count} 张生产单',{count:selection.length})} onPress={()=>onOpen('selection')}>{count}</Button>
-  <span className="sr-only" role="status">{count}</span>
   <div className="episode-batch-selection-actions">
    {showZip&&<Button size="sm" color="secondary" iconLeading={Download} onPress={()=>onOpen('publication-download')}>{uiText('下载发布 ZIP')}</Button>}
    {(reviews.length>0||hasManagement||archive||unarchive||recycle)&&<Dropdown.Root>
@@ -62,6 +59,9 @@ export function EpisodeBatchToolbar({selection,actions,onOpen,onClear}:{
     </Dropdown.Popover>
    </Dropdown.Root>}
   </div>
-  <Button size="sm" color="tertiary" className="episode-batch-selection-clear" aria-label={uiText('清空选择')} onPress={onClear}>{uiText('清空')}</Button>
+  <div className="episode-batch-selection-status">
+   <span className="episode-batch-selection-count" role="status">{count}</span>
+   <Button size="sm" color="tertiary" aria-label={uiText('清空选择')} onPress={onClear}>{uiText('清空')}</Button>
+  </div>
  </div>;
 }
