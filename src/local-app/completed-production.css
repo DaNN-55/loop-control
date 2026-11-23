@@ -182,5 +182,6 @@
  .is-completed-board .workspace-preparation-detail{border-inline-start:0;border-block-start:1px solid var(--lc-line)}
 }
 
-.completed-dialog:has(.completed-record-content){inline-size:min(1120px,calc(100% - 32px))}
+.completed-dialog:has(.completed-record-content){margin:auto;inline-size:min(1120px,calc(100% - 32px))}
+.completed-dialog:has(.completed-record-script){inline-size:min(860px,calc(100% - 32px))}
 .completed-record-content .workspace-preparation{padding:0}

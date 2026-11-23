@@ -264,6 +264,18 @@ function mockCompletedDialog(){
  Object.defineProperty(HTMLDialogElement.prototype,'showModal',{configurable:true,value:function(this:HTMLDialogElement){this.open=true;}});
  Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;fireEvent(this,new Event('close'));}});
 }
+it('keeps completed navigation hidden while the delivery workspace is loading',async()=>{
+ let resolveWorkspace!:(response:Response)=>void;
+ const response=new Promise<Response>(resolve=>{resolveWorkspace=resolve;});
+ vi.stubGlobal('fetch',vi.fn((path:string)=>path.endsWith('/workspace')?response:Promise.resolve(Response.json({}))));
+ render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={vi.fn()} onLegacy={()=>{}}/>);
+ expect(screen.getByText('正在读取制作流程…')).toBeTruthy();
+ expect(screen.queryByRole('navigation',{name:'作品查看'})).toBeNull();
+ resolveWorkspace(Response.json({workspace}));
+ await screen.findByRole('heading',{name:'成片预览'});
+ expect(screen.queryByRole('navigation',{name:'作品查看'})).toBeNull();
+});
+
 it('opens read-only completed records from delivery even when legacy evidence exists',async()=>{
  mockCompletedDialog();
  const legacy={episode:{id:'e'},reviewPackages:[],artifacts:[{id:'old-final',episode_id:'e',artifact_type:'final_render',relative_path:'episodes/e/old-final.mp4',sha256:'f'.repeat(64),created_at:'2026-10-30'}],materialRevisions:[],audioTracks:[]} as unknown as import('../episodes/episodeSnapshot').EpisodeProductionSnapshot;

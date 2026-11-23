@@ -14,7 +14,6 @@ export const workflowMessages:Record<string,string>={
 '交付操作':'Delivery actions',
 '查看与编辑':'View and edit',
 '下载交付包（ZIP）':'Download delivery package (ZIP)',
-'交付包包含可编辑工程，源素材须另行保留。':'The delivery package includes the editable project. Keep the source media separately.',
 '下载成片':'Download final video',
 '当前成片文件无法读取。':'The current final video file could not be read.',
 '当前成片不可用':'Current final video unavailable',

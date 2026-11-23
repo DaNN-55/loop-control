@@ -41,7 +41,7 @@ it('shows distinct existing content at all four steps without preparing or recre
  expect(command).not.toHaveBeenCalled();
 });
 it('keeps completed order inspection controls available without write controls',async()=>{
- const command=mount(legacySnapshot,'production_completed');fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));await screen.findAllByText('已有分镜正文');
+ const command=mount(legacySnapshot,'production_completed');fireEvent.click(await screen.findByRole('button',{name:/^分镜台/}));await screen.findAllByText('已有分镜正文');
  expect(screen.getByRole('navigation',{name:'作品查看'}).querySelectorAll('button')).toHaveLength(3);
  expect(screen.queryByRole('button',{name:'准备素材匹配'})).toBeNull();fireEvent.click(screen.getByRole('button',{name:'查看剪辑工程'}));await screen.findByRole('link',{name:'下载工程 project.json'});expect((screen.getByRole('combobox',{name:'已有工程版本'}) as HTMLSelectElement).disabled).toBe(false);fireEvent.click(screen.getByRole('button',{name:'返回分镜台'}));await screen.findAllByText('已有分镜正文');expect(command).not.toHaveBeenCalled();
 });

@@ -252,6 +252,7 @@ html[data-interface="impeccable"] .product-ui .workspace-script-compact .confirm
 .workspace-download-toolbar .workspace-more-download-options{position:absolute;z-index:20;right:0;top:calc(100% + 6px);width:min(260px,calc(100vw - 40px));padding:9px;background:var(--lc-surface,#fff);border:1px solid var(--lc-line-strong,#bdcadd);border-radius:7px;box-shadow:0 8px 24px rgb(23 38 62 / .12);font-size:12px}
 .workspace-more-download-options{display:grid;gap:5px}
 .workspace-download-options-group{display:grid;gap:4px}
+.workspace-completed-actions-menu[data-lc-dropdown]{scrollbar-width:none}
 .workspace-completed-actions-menu .workspace-action-group-label{padding:5px 10px 2px;color:var(--lc-muted,#596b83);font-size:11px;font-weight:600}
 .workspace-completed-actions-note{margin:0;padding:0 16px 10px;color:var(--lc-muted,#596b83);font-size:11px;line-height:1.6}
 .workspace-download-toolbar .workspace-more-download-options :is(a,button){justify-content:flex-start;text-align:left}

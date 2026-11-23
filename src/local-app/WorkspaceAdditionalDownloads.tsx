@@ -49,7 +49,7 @@ export function WorkspaceAdditionalDownloads({workspace:w,delivery,publication:p
       <Dropdown.Item onAction={completedActions.openProject}>{uiText('打开剪辑工程')}</Dropdown.Item>
      </Dropdown.Section>
     </Dropdown.Menu>
-    {delivery&&<p className="workspace-completed-actions-note">{uiText(editing?'请先保存或取消文案编辑，再下载最新资料包。':'交付包包含可编辑工程，源素材须另行保留。')}</p>}
+    {delivery&&editing&&<p className="workspace-completed-actions-note">{uiText('请先保存或取消文案编辑，再下载最新资料包。')}</p>}
    </Dropdown.Popover>
   </Dropdown.Root>
   <FeedbackNotice message={error} tone="error" onDismiss={()=>setError('')}/>
