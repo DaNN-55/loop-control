@@ -6,7 +6,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 import {csrfFor} from './sessions';
-import {loadSchemaCatalog} from './schemaMigrations';
+import {loadSchemaCatalog,migrationTransaction,schemaMigrationPlan,verifySchemaLedger} from './schemaMigrations';
 const enabled=process.env.LOOP_RECYCLE_ACCEPTANCE==='1';
 const migration='160-episode-recycle-bin.sql';
 
@@ -124,15 +124,26 @@ it.skipIf(!enabled)('recycle schema applies forward without rewriting existing m
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);
  const context=runtimeContext();context.assertDatabase();
  const before=JSON.parse(context.sql("SELECT jsonb_object_agg(version,sha256) FROM local_identity.schema_migrations"));
- const f=await recycleFixture(['db/current/226-recycle-eligibility.sql']);try{
-  const rows=(await f.c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows;
-  const after=Object.fromEntries(rows.map(row=>[row.version,row.sha256]));
-  for(const [version,sha] of Object.entries(before))expect(after[version]).toBe(sha);
+ const catalog=loadSchemaCatalog(process.cwd()),recycleVersion='226-recycle-eligibility.sql';
+ const installedThroughExcel=schemaMigrationPlan(before,catalog).filter(file=>file.version<recycleVersion).map(file=>'db/current/'+file.version);
+ const f=await recycleFixture(installedThroughExcel);try{
+  const ledger=async()=>Object.fromEntries((await f.c.query('SELECT version,sha256 FROM local_identity.schema_migrations ORDER BY version')).rows.map(row=>[row.version,row.sha256]));
+  const beforeRecycle=await ledger();
+  const priorGeneration=verifySchemaLedger(beforeRecycle,catalog);
+  expect(beforeRecycle['225-structured-import-script.sql']).toBe(catalog.current.find(file=>file.version==='225-structured-import-script.sql')?.sha256);
+  if(!Object.hasOwn(beforeRecycle,recycleVersion)){
+   const [next]=schemaMigrationPlan(beforeRecycle,catalog);
+   expect(next.version).toBe(recycleVersion);
+   await f.c.query(migrationTransaction([next]));
+  }
+  const after=await ledger();
+  expect(verifySchemaLedger(after,catalog)).toBe(priorGeneration);
+  for(const [version,sha] of Object.entries(beforeRecycle))expect(after[version]).toBe(sha);
   const historicalHash=createHash('sha256').update(await readFile('db/archive/legacy-v1/'+migration)).digest('hex');
-  expect(loadSchemaCatalog(process.cwd()).legacy.find(file=>file.version===migration)?.sha256).toBe(historicalHash);
+  expect(catalog.legacy.find(file=>file.version===migration)?.sha256).toBe(historicalHash);
   if((Object.hasOwn(before,'clean-v2.sql')||Object.hasOwn(before,'clean-v3.sql'))&&!Object.hasOwn(before,migration))expect(after[migration]).toBeUndefined();
   else expect(after[migration]).toBe(historicalHash);
-  expect(after['226-recycle-eligibility.sql']).toBe(createHash('sha256').update(await readFile('db/current/226-recycle-eligibility.sql')).digest('hex'));
+  expect(after[recycleVersion]).toBe(createHash('sha256').update(await readFile('db/current/'+recycleVersion)).digest('hex'));
   expect((await f.c.query("SELECT count(*)::int count FROM local_identity.episode_recycle_bin")).rows[0].count).toBe(0);
   expect((await f.c.query("SELECT local_identity.is_recycled_episode($1) recycled",[f.episode])).rows[0].recycled).toBe(false);
   const policies=(await f.c.query("SELECT policyname FROM pg_policies WHERE schemaname='local_identity' AND tablename IN ('episode_recycle_bin','recycle_bin_settings')")).rows;
