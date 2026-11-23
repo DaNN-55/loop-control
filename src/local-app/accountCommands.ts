@@ -49,9 +49,14 @@ export class LocalAccountCommands{
    return planEpisodeCollectionCommand(this.pool,session,this.mediaRoot,body,String(data.episodeId),data.seriesId as string|null);
   }
   if(body.command==='moveEpisodeCollection'){
-   const {episodeId,seriesId,migrationId}=data;
-   if(typeof episodeId!=='string'||!uuid.test(episodeId)||typeof seriesId!=='string'||!uuid.test(seriesId)||migrationId!==undefined&&(typeof migrationId!=='string'||!uuid.test(migrationId))||Object.keys(data).some(k=>!['episodeId','seriesId','migrationId'].includes(k)))throw new ConfigurationError(400,'批量调整只接受生产单、目标系列及迁移计划身份。');
-   return moveEpisodeCollectionCommand(this.pool,session,this.mediaRoot,body,{episodeId,seriesId,migrationId},signal);
+   const {episodeId,seriesId,targetAccountId,migrationId}=data;
+   if(typeof episodeId!=='string'||!uuid.test(episodeId)||
+    seriesId!==null&&(typeof seriesId!=='string'||!uuid.test(seriesId))||
+    targetAccountId!==undefined&&(typeof targetAccountId!=='string'||!uuid.test(targetAccountId))||
+    seriesId===null&&targetAccountId===undefined||
+    migrationId!==undefined&&(typeof migrationId!=='string'||!uuid.test(migrationId))||
+    Object.keys(data).some(k=>!['episodeId','seriesId','targetAccountId','migrationId'].includes(k)))throw new ConfigurationError(400,'批量调整只接受生产单、目标系列、目标账号及迁移计划身份。');
+   return moveEpisodeCollectionCommand(this.pool,session,this.mediaRoot,body,{episodeId,seriesId,targetAccountId,migrationId},signal);
   }
   if(body.command==='planLegacyStorageAdoption'){
    if(typeof data.accountId!=='string'||!uuid.test(data.accountId)||Object.keys(data).some(k=>k!=='accountId'))throw new ConfigurationError(400,'纳管计划只接受账号身份。');

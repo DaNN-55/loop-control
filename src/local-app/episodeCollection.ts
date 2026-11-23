@@ -54,7 +54,7 @@ export async function planEpisodeCollectionCommand(pool:Pool,session:OwnerSessio
  });
 }
 
-export async function moveEpisodeCollectionCommand(pool:Pool,session:OwnerSession,mediaRoot:string,body:Record<string,unknown>,{episodeId,seriesId,migrationId}:{episodeId:string;seriesId:string;migrationId?:string},signal?:AbortSignal){
+export async function moveEpisodeCollectionCommand(pool:Pool,session:OwnerSession,mediaRoot:string,body:Record<string,unknown>,{episodeId,seriesId,targetAccountId,migrationId}:{episodeId:string;seriesId:string|null;targetAccountId?:string;migrationId?:string},signal?:AbortSignal){
  let pendingId:string|undefined;
  try{
   const {state,replay}=await sessionTransaction(pool,session,async c=>{
@@ -63,7 +63,7 @@ export async function moveEpisodeCollectionCommand(pool:Pool,session:OwnerSessio
    const replay=Boolean(await readCollectionReceipt(c,session.id,String(body.idempotencyKey),canonicalFingerprint(body)));
    return{state,replay};
   });
-  if(!state.targets.some(target=>target.seriesId===seriesId))throw new ConfigurationError(409,'生产单与目标系列必须属于同一账号。');
+  if((targetAccountId!==undefined&&targetAccountId!==state.accountId)||!state.targets.some(target=>target.seriesId===seriesId))throw new ConfigurationError(409,'生产单与目标系列必须属于同一账号。');
   if(migrationId){
    const candidate=state.plans[0];
    if(candidate?.id!==migrationId||candidate.episodes[0].seriesId!==seriesId)throw new ConfigurationError(409,'迁移计划已变化，请重新检查生产单的系列调整。');
