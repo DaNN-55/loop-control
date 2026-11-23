@@ -45,9 +45,13 @@ export function localScriptStudioPlan(source:string,targetDuration:number|null):
 }
 /** Canonical production input is separate from the source retained in the confirmation. */
 function videoPrompt(shot:ScriptStudioShot){const camera=/^(?:沿用原稿|拍法待后续)/.test(shot.camera)?'':shot.camera,combined=[shot.videoPrompt,camera&&shot.videoPrompt.includes(camera)?'':camera].filter(Boolean).join('；');if(combined.length>1500)throw Error('运镜与视频提示词合计不能超过 1500 字符，请缩短拍法。');return combined;}
+function canonicalNarration(plan:ScriptStudioPlan,shot:ScriptStudioShot){
+ if(shot.narration||!studioShotNarrationEnabled(plan,shot)&&shot.settings.some(setting=>['口播启用','旁白启用'].includes(setting.field)&&setting.value==='关闭'))return shot.narration;
+ return shot.visual||shot.title;
+}
 export function scriptStudioText(plan:ScriptStudioPlan){
  const caption=plan.settings.filter(s=>s.field==='字幕'&&s.value!=='默认').at(-1)?.value,voice=plan.settings.filter(s=>['口播启用','旁白启用'].includes(s.field)&&s.value!=='默认').at(-1)?.value;
- return recognizedScriptText({title:plan.title,settings:[...plan.settings.filter(s=>!['字幕','口播启用','旁白启用'].includes(s.field)),{field:'字幕',value:caption??(plan.captionsEnabled?'开启':'关闭')},{field:'口播启用',value:voice??(plan.narrationEnabled?'开启':'关闭')}],shots:plan.shots.map(s=>({narration:s.narration||s.visual||s.title,subtitle:s.subtitle,visual:s.visual,videoPrompt:videoPrompt(s),visualSource:s.visualSource,settings:[...s.settings.filter(x=>!['镜头时长（秒）','生成时长（秒）'].includes(x.field)),{field:'镜头时长（秒）',value:String(s.durationSeconds)}]})),warnings:plan.warnings,canRecognize:true});
+ return recognizedScriptText({title:plan.title,settings:[...plan.settings.filter(s=>!['字幕','口播启用','旁白启用'].includes(s.field)),{field:'字幕',value:caption??(plan.captionsEnabled?'开启':'关闭')},{field:'口播启用',value:voice??(plan.narrationEnabled?'开启':'关闭')}],shots:plan.shots.map(s=>({narration:canonicalNarration(plan,s),subtitle:s.subtitle,visual:s.visual,videoPrompt:videoPrompt(s),visualSource:s.visualSource,settings:[...s.settings.filter(x=>!['镜头时长（秒）','生成时长（秒）'].includes(x.field)),{field:'镜头时长（秒）',value:String(s.durationSeconds)}]})),warnings:plan.warnings,canRecognize:true});
 }
 /** The model proposes filming; locally enforced content and duration boundaries still apply. */
 export function validateScriptStudioPlan(value:unknown,source:string,options:ScriptStudioOptions):ScriptStudioPlan{

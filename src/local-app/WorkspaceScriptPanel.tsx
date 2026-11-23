@@ -1,3 +1,5 @@
+import {buildImportedScriptStudioPlan} from './episodeImportedScriptPlan';
+import {ScriptStudioReviewShots} from './ScriptStudioReviewShots';
 import type {ImportedScript} from './episodeBatchImportTypes';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {useScriptStudioSessions} from './useScriptStudioSessions';
@@ -46,14 +48,18 @@ function WorkspaceScriptSource(props:Props){
  if(!source.loading)loaded.current={revisionId:props.scriptRevisionId,value:source.value};
  // Keep an initialized draft's baseline stable while refreshing the same immutable revision.
  const retained=loaded.current?.revisionId===props.scriptRevisionId?loaded.current.value:null;
- const pendingSource=!props.scriptRevisionId?pendingReview??imported:null;
- return <WorkspaceScriptEditor {...props} importedScript={pendingReview?null:imported} manualScriptReviewDraft={pendingReview} retained={pendingSource??retained??source.value} sourceReady={!!pendingSource||!!retained} sourceLoading={!pendingSource&&source.loading} sourceError={source.error} retrySource={source.retry}/>;
+ const structured=imported?.shots.length?imported:null;
+ const pendingSource=!props.scriptRevisionId?structured??pendingReview??imported:null;
+ return <WorkspaceScriptEditor {...props} importedScript={pendingReview&&!structured?null:imported} manualScriptReviewDraft={structured?null:pendingReview} retained={pendingSource??retained??source.value} sourceReady={!!pendingSource||!!retained} sourceLoading={!pendingSource&&source.loading} sourceError={source.error} retrySource={source.retry}/>;
 }
 function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript,stage,readOnly,pending,completedView=false,command,onConfirmed,history,errorPresented=false,materials=[],onMaterialImported,manualScriptReviewDraft,retained,sourceReady,sourceLoading,sourceError,retrySource}:Props&{retained:ScriptStudioSource;sourceReady:boolean;sourceLoading:boolean;sourceError:string;retrySource:()=>void}){
  const [flow,setFlow]=useState<ScriptConfirmationState>({phase:'idle'});
  const baseline:Basis='intent' in flow?flow.intent.baseline:{id:scriptRevisionId,text:retained.sourceText,duration:retained.targetDuration===null?'':String(retained.targetDuration)};
- const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??manualScriptReviewDraft?.version??importedScript?.version??'new',initial:{text:baseline.text,duration:baseline.duration,reason:'',filename:importedScript?.sourceName??'script.md'},legacyInitial:baseline.id===scriptRevisionId?{text:script,reason:'',filename:'script.md'}:undefined,enabled:!readOnly&&(sourceReady||flow.phase!=='idle')});
- const {text,duration,reason,filename}=draft.value;
+ const structured=importedScript?.shots.length?importedScript:null;
+ const structuredPlan=structured?buildImportedScriptStudioPlan(structured,uiText('分镜')):null;
+ const draft=useWorkspaceDraft({episodeId,kind:'script',version:baseline.id??manualScriptReviewDraft?.version??importedScript?.version??'new',initial:{text:baseline.text,duration:baseline.duration,reason:'',filename:importedScript?.sourceName??'script.md'},legacyInitial:baseline.id===scriptRevisionId?{text:script,reason:'',filename:'script.md'}:undefined,enabled:!structured&&!readOnly&&(sourceReady||flow.phase!=='idle')});
+ const sourceDraft=structured?{text:baseline.text,duration:baseline.duration,reason:'',filename:structured.sourceName}:draft.value;
+ const {text,duration,reason,filename}=sourceDraft;
  const [savedReview,setSavedReview]=useState(manualScriptReviewDraft??null),[savingReview,setSavingReview]=useState(false);
  const [error,setError]=useState(''),[invalid,setInvalid]=useState<'script'|'duration'|null>(null),[discardOpen,setDiscardOpen]=useState(false),[examplesOpen,setExamplesOpen]=useState(false),[historyOpen,setHistoryOpen]=useState(false),[middleCollapsed,setMiddleCollapsed]=useState(false),[modelOpen,setModelOpen]=useState(false),[editingShot,setEditingShot]=useState(false),[chatCollapsed,setChatCollapsed]=useState(false);
  const formId=useId(),errorId=useId(),textId=useId(),durationId=useId(),textInput=useRef<HTMLTextAreaElement>(null),durationInput=useRef<HTMLInputElement>(null),input=useRef<HTMLInputElement>(null);
@@ -64,9 +70,9 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript
  const changed=text!==savedSource.text||duration!==savedSource.duration;
  const canResume=flow.phase==='start_failed'&&!changed;
  const targetDuration=duration.trim()?Number(duration):null;
- const sessions=useScriptStudioSessions({episodeId,scriptRevisionId:basisId,source:text,targetDuration,disabled});
+ const sessions=useScriptStudioSessions({episodeId,scriptRevisionId:basisId,source:text,targetDuration,disabled:disabled||!!structured});
  const sessionWaiting=sessions.loading||sessions.creating;
- const assistant=useScriptStudioAssistant({episodeId,scriptRevisionId:basisId,source:text,targetDuration,conversationId:sessions.activeId??undefined,disabled:disabled||sessions.loading||sessions.creating||!!sessions.error});
+ const assistant=useScriptStudioAssistant({episodeId,scriptRevisionId:basisId,source:text,targetDuration,conversationId:sessions.activeId??undefined,disabled:disabled||!!structured||sessions.loading||sessions.creating||!!sessions.error});
  const proposal=assistant.result?.plan?assistant.result:null,showError=!errorPresented||flow.phase==='start_failed'&&flow.readError;
  const savedReviewMatches=savedReview?.sourceText===text&&savedReview.targetDuration===targetDuration;
  const explicitReviewRequestId=proposal?.requestId??(savedReviewMatches?savedReview.requestId:undefined);
@@ -77,7 +83,7 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript
  function setField(name:'text'|'duration'|'reason'|'filename',value:string){editSequence.current++;draft.setValue(previous=>({...previous,[name]:value}));if(name==='text'||name==='duration'){setInvalid(null);setError('');}}
  function validate(){
   setError('');setInvalid(null);
-  if(!text.trim()){setInvalid('script');setError('请填写主脚本。');textInput.current?.focus();return false;}
+  if(!text.trim()&&!structured&&!(basisId&&retained.plan)){setInvalid('script');setError('请填写主脚本。');textInput.current?.focus();return false;}
   try{if(duration.trim()&&!/^\d+(?:\.\d{1,2})?$/.test(duration.trim()))throw Error('总时长须为 0.1–3600 秒，最多两位小数。');validateStudioDuration(targetDuration);}catch(cause){setInvalid('duration');setError(cause instanceof Error?cause.message:'总时长无效。');durationInput.current?.focus();return false;}
   return true;
  }
@@ -120,14 +126,14 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript
   setHistoryOpen(false);
   if(adopt&&(assistant.unresolved||assistant.conversationLoading||!proposal?.plan?.canProceed||!proposal.requestId))return;
   if(basisId&&!changed&&!adopt&&flow.phase==='idle'&&stage!=='waiting_input'){onConfirmed(basisId);return;}
-  lock.current=true;const submitted={...draft.value};
-  const intent:ScriptIntent={baseline,source:savedSource,text:submitted.text,duration:submitted.duration,reason:submitted.reason.trim(),finish:id=>{draft.acknowledge(submitted,{...submitted,reason:''});onConfirmed(id,submitted.reason.trim()||undefined);}};
+  lock.current=true;const submitted={...sourceDraft};
+  const intent:ScriptIntent={baseline,source:savedSource,text:submitted.text,duration:submitted.duration,reason:submitted.reason.trim(),finish:id=>{if(!structured)draft.acknowledge(submitted,{...submitted,reason:''});onConfirmed(id,submitted.reason.trim()||undefined);}};
   setFlow({phase:'saving',intent});
   try{
    let id=basisId;
    if(!id||changed||adopt){
     const requestId=adopt?proposal!.requestId:!proposal&&savedReviewMatches?savedReview.requestId:undefined;
-    const saved=await command('confirmScriptStudio',{episodeId,expectedScriptRevisionId:id,text:submitted.text,targetDuration,reason:submitted.reason.trim(),...(requestId?{requestId}:{})}) as {id:string;alreadyStarted?:boolean};id=saved.id;
+    const saved=await command('confirmScriptStudio',{episodeId,expectedScriptRevisionId:id,text:submitted.text,targetDuration,reason:submitted.reason.trim(),...(requestId?{requestId}:{}),...(structured?{importedVersion:structured.version}:{})}) as {id:string;alreadyStarted?:boolean};id=saved.id;
     if(!active.current||!writable.current)return;
     if(saved.alreadyStarted){setFlow({phase:'started',intent,savedId:id});intent.finish(id);return;}
    }
@@ -145,7 +151,7 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript
  const middleVisible=!!proposal||assistant.opened&&assistant.busy&&!assistant.needsChoice;
  const collapsed=middleCollapsed;
  const continueLabel=flow.phase==='saving'?'正在保存…':flow.phase==='starting'?'正在启动…':flow.phase==='checking'?'正在核对…':canResume?'继续启动':'继续制作';
- const status=uiText(confirmationStatus[flow.phase]||(draft.dirty?'有未确认修改':basisId?'已确认基准':savedReviewMatches?'已保存待确认':'待确认'));
+ const status=uiText(confirmationStatus[flow.phase]||(!structured&&draft.dirty?'有未确认修改':basisId?'已确认基准':savedReviewMatches?'已保存待确认':'待确认'));
  const historyContent=<div className="script-studio-history-panel">{scriptRevisionId?<div className="script-studio-history-version"><span>{uiText('已确认版本')}</span><code title={scriptRevisionId}>{scriptRevisionId.slice(0,8)}</code></div>:<p>{uiText('尚无已确认版本')}</p>}{retained.plan&&<ScriptStudioSavedPlan plan={retained.plan}/>} {history}{!readOnly&&basisId&&<><label className="script-studio-note">{uiText('修订备注（选填）')}<input name="reason" aria-label={uiText('修订备注（选填）')} value={reason} maxLength={4000} disabled={disabled} onChange={event=>setField('reason',event.target.value)}/></label>{draft.dirty&&<div className="script-studio-history-actions"><Button type="button" size="sm" color="tertiary" isDisabled={disabled} onPress={()=>{setHistoryOpen(false);setDiscardOpen(true);}}>{uiText('还原已确认脚本')}</Button></div>}</>}</div>;
  return <section className={`production-workspace-section workspace-script workspace-script-compact script-studio script-studio-chat-layout${readOnly&&completedView?' workspace-script-completed':''}`} aria-label={uiText('脚本确认')}>
   {draft.storageError&&<p role="alert" className="form-error">{uiText('本机草稿暂无法保存，请保持此页面打开。')}</p>}
@@ -154,7 +160,20 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript
    {readOnly&&completedView?<CompletedScriptReading source={retained.sourceText} status={uiText(scriptRevisionId?'已确认':'待确认')} tools={<>
     <ScriptStudioPopup label="脚本历史" open={historyOpen} onOpenChange={setHistoryOpen} nonModal trigger={<ScriptStudioIcon label="历史" icon={History}/>}>{historyContent}</ScriptStudioPopup>
     <ScriptStudioPopup label="使用帮助" trigger={<ScriptStudioIcon label="使用帮助" icon={Info}/>}><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></ScriptStudioPopup>
-   </>}/>:readOnly?<><header className="script-studio-pane-heading"><h3>{uiText('主脚本')}</h3><span>{status}{uiText(' · 只读')}</span></header><div className="workspace-script-preview" role="document" aria-label={uiText('主脚本预览')} tabIndex={0}><MarkdownPreview content={retained.sourceText}/></div><details className="script-studio-readonly-history"><summary>{uiText('历史')}</summary>{historyContent}</details><details className="script-studio-readonly-history"><summary>{uiText('使用帮助')}</summary><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></details></>:<>
+   </>}/>:structuredPlan?<div className="script-studio-imported">
+    <section aria-label={uiText('脚本正文')}>
+     <header className="script-studio-pane-heading"><label htmlFor={textId}>{uiText('脚本正文')}</label><span role="status" className="script-studio-badge">{status}</span></header>
+     <textarea id={textId} name="script" readOnly rows={6} value={text} placeholder={uiText('未填写脚本正文')}/>
+     <small>{filename}</small>
+     {targetDuration!==null&&<p>{uiText('目标时长')} · {uiText('{value0} 秒',{value0:targetDuration})}</p>}
+    </section>
+    <section aria-label={uiText('分镜预览')}>
+     <header className="script-studio-pane-heading"><h4>{uiText('分镜')} · {uiText('{value0} 秒',{value0:structuredPlan.durationSeconds})}</h4></header>
+     <ScriptStudioReviewShots plan={structuredPlan}/>
+    </section>
+    {error&&showError&&<p role="alert" className="form-error">{uiText(error)}</p>}
+    {!readOnly&&<div className="script-studio-next"><Button type="button" size="sm" color="primary" isDisabled={disabled} onPress={()=>void (canResume?resume():confirm())}>{uiText(continueLabel)}</Button></div>}
+   </div>:readOnly?<><header className="script-studio-pane-heading"><h3>{uiText('主脚本')}</h3><span>{status}{uiText(' · 只读')}</span></header><div className="workspace-script-preview" role="document" aria-label={uiText('主脚本预览')} tabIndex={0}><MarkdownPreview content={retained.sourceText}/></div><details className="script-studio-readonly-history"><summary>{uiText('历史')}</summary>{historyContent}</details><details className="script-studio-readonly-history"><summary>{uiText('使用帮助')}</summary><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></details></>:<>
     {draft.restored&&<FeedbackNotice message="已恢复草稿，尚未确认。" onceKey={'script-draft:'+draft.scope} tone="info"/>}
     <div className="script-studio-toolbar" role="toolbar" aria-label={uiText('脚本工具')}>
      <strong>{uiText('脚本确认')}</strong>

@@ -1,4 +1,4 @@
-dialog.episode-batch-import {
+.product-ui dialog.episode-batch-import.modal-card {
  border:1px solid var(--color-border-secondary);
  border-radius:12px;
  color:var(--color-text-primary);
@@ -13,8 +13,8 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-batch-form {display:flex;flex-direction:column;max-block-size:inherit;min-block-size:0}
 .episode-batch-form > header,.episode-batch-form > .modal-actions {padding:12px 20px}
 .episode-batch-form > header {border-block-end:1px solid var(--color-border-secondary);align-items:center}
-.episode-batch-form > .modal-actions {border-block-start:1px solid var(--color-border-secondary);flex-wrap:wrap}
-.episode-batch-content {display:grid;gap:12px;min-block-size:0;overflow:auto;padding:12px 20px}
+.product-ui .episode-batch-form > .modal-actions {border-block-start:1px solid var(--color-border-secondary);flex-wrap:wrap;margin:0}
+.episode-batch-content {display:grid;gap:12px;min-block-size:0;overflow:auto;padding:12px 20px;grid-template-columns:minmax(0,1fr)}
 .episode-batch-content > [role="alert"]:empty {display:none}
 .episode-batch-content .form-error {margin:0}
 .episode-batch-target {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:12px}
@@ -26,3 +26,7 @@ dialog.episode-batch-import:not([open]) {display:none}
 .episode-batch-fields textarea {background:var(--color-bg-primary);border:1px solid var(--color-border-secondary);border-radius:5px;color:inherit;font:inherit;padding:8px;resize:vertical;width:100%}
 .episode-batch-results {display:grid;gap:8px;list-style:none;padding:0}
 .episode-batch-results > li {display:grid;gap:4px}
+.episode-workbook-file {display:flex;align-items:end;justify-content:space-between;gap:.5rem;flex-wrap:wrap;min-width:0}
+.episode-workbook-file strong {overflow-wrap:anywhere}
+.episode-workbook-template {color:var(--link-primary,currentColor);text-decoration:underline;text-underline-offset:.2em}
+.episode-workbook-issues {margin:.375rem .625rem;padding-inline-start:1.25rem}
