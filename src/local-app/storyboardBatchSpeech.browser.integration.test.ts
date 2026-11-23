@@ -15,6 +15,8 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   browser=await storyBrowser(f,'storyboard-batch-speech');
   await browser.cli('set','viewport','1440','900');
   await browser.cli('open',browser.url+'&step=preparation');
+  const legacyDraft='旧版保存的口播草稿。';
+  await browser.evaluate(`sessionStorage.setItem(${JSON.stringify('loop-speech-draft:'+w.id+':'+w.clips[0].shotId+':text')},${JSON.stringify(legacyDraft)})`);
   await browser.click('批量操作');
   const check=async(label:string)=>browser!.cli('find','role','checkbox','check','--name',label,'--exact');
   await browser.click('全选本单');
@@ -27,9 +29,15 @@ it.skipIf(!enabled)('selects shots independently, cancels a draft review with Es
   await browser.wait("document.querySelector('button[aria-label=\"选择镜头 02\"]').getAttribute('aria-pressed')==='true'");
   await browser.click('选择镜头 01');
   await browser.cli('find','role','tab','click','--name','字幕与口播','--exact');
+  expect(await browser.evaluate("Array.from(document.querySelectorAll('textarea')).find(el=>el.labels?.[0]?.textContent.trim()==='口播草稿')?.value")).toBe(legacyDraft);
+  await check('勾选镜头 01');
+  await browser.click('批量生成口播');
+  await browser.cli('wait','--text','核对批量口播');
+  expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).not.toContain(legacyDraft);
+  await browser.cli('press','Escape');
+  await browser.wait("!document.querySelector('dialog[open]')");
   const draft='这是在浏览器写下的草稿。';
   await browser.fill('口播草稿',draft);
-  await check('勾选镜头 01');
   await browser.click('批量生成口播');
   await browser.cli('wait','--text','核对批量口播');
   expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain(draft);

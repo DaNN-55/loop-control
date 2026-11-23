@@ -125,13 +125,17 @@ export async function generateOfficialVideo(input: OfficialVideoInput): Promise<
     query:async id=>{
       phase='poll';const value=await json(await input.fetcher(endpoint+query+encodeURIComponent(id),{headers:headers(),signal:AbortSignal.timeout(30_000)}),'查询');
       const task=input.provider==='volcengine'?value:input.provider==='minimax'?value.task:value.data;
-      const status=input.provider==='kling'?task?.task_status:task?.status;
+      const status=String(input.provider==='kling'?task?.task_status:task?.status).toLowerCase();
+      const failed=['failed','canceled','cancelled'].includes(status)||(input.provider==='minimax'||input.provider==='kling')&&status==='fail';
       if(status==='succeeded'||status==='succeed'){
         const url=input.provider==='volcengine'?task.content?.video_url:input.provider==='minimax'?task.content?.url:task.task_result?.videos?.[0]?.url;
         if(typeof url!=='string')throw Error('视频任务已完成但缺少下载地址。');
         phase='download';return{url};
       }
-      if(!['queued','pending','running','submitted','processing'].includes(status))throw new VideoGenerationError(`${label} 视频任务${status==='failed'?'生成失败':'状态无法识别'}${redact(task?.error?.message??task?.error?.detail)?`：${redact(task?.error?.message??task?.error?.detail)}`:'，请沿用原任务核对。'}`,'accepted');
+      if(failed||!['queued','pending','running','submitted','processing'].includes(status)){
+        const detail=redact(task?.error?.message??task?.error?.detail);
+        throw new VideoGenerationError(`${label} 视频任务${failed?'生成失败':'状态无法识别'}${detail?`：${detail}`:failed?'。':'，请沿用原任务核对。'}`,failed?'terminal_failed':'accepted');
+      }
       return{phase:['queued','pending','submitted'].includes(status)?'queued':'processing'};
     },
     pollDelayMs:()=>10_000,

@@ -1,4 +1,4 @@
-import {useEffect,useRef,useState,type ReactNode} from 'react';
+import {useRef,useState,type ReactNode} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import type {StoryboardBatchFailure,StoryboardBatchKind,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechSettings,StoryboardVideoSettings} from '../storyboardBatch';
 import {uiText} from '../i18n/ui';
@@ -7,6 +7,7 @@ import {WorkspaceNarrationToolbar} from './WorkspaceNarrationToolbar';
 import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import {readStoryboardSpeechDraft} from './storyboardSpeechDraft';
 import {readStoryboardVideoDraft} from './storyboardVideoDraft';
+import type {VideoInputMaterial} from './WorkspaceVideoInputs';
 import {episodeVisualDefaults} from './workspaceVisualDefaults';
 import {StoryboardVideoBatchSettings} from './StoryboardVideoBatchSettings';
 import {StoryboardBatchReviewDialog} from './StoryboardBatchReviewDialog';
@@ -14,7 +15,7 @@ import {workspaceStoryboardProgress} from './workspaceStoryboardProgress';
 import './storyboard-batch.css';
 
 type Selection={selected:ReadonlySet<string>;eligible:ReadonlySet<string>;disabled:boolean;onToggle:(id:string)=>void};
-export function WorkspaceStoryboardBatch({workspace,disabled,visibleInWorkspace,command,onSubmitted,children}:{workspace:ProductionWorkspace;disabled:boolean;visibleInWorkspace:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onSubmitted:()=>Promise<unknown>;children:(selection?:Selection)=>ReactNode}){
+export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleInWorkspace,command,onSubmitted,children}:{workspace:ProductionWorkspace;materials:VideoInputMaterial[];disabled:boolean;visibleInWorkspace:boolean;command:(name:string,data:unknown)=>Promise<unknown>;onSubmitted:()=>Promise<unknown>;children:(selection?:Selection)=>ReactNode}){
  const [retryKind,setRetryKind]=useState<StoryboardBatchKind>();
  const [active,setActive]=useState(false),[selection,setSelection]=useState(new Set<string>()),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const [review,setReview]=useState<StoryboardBatchReview|null>(null),[visible,setVisible]=useState(false),[included,setIncluded]=useState(new Set<string>()),[regenerate,setRegenerate]=useState(new Set<string>()),[unknown,setUnknown]=useState(false);
@@ -36,14 +37,15 @@ export function WorkspaceStoryboardBatch({workspace,disabled,visibleInWorkspace,
  const catalog=useProductionServiceCatalog({scope:workspace.id,active:active&&!disabled});
  const services=catalog.catalog?.groups.find(g=>g.capability==='speech')?.services??[];
  const videoServices=catalog.catalog?.groups.find(g=>g.capability==='video')?.services.filter(service=>service.mode==='generation')??[];
- const savedVideo=episodeVisualDefaults(workspace.id,'video') as {videoSelection?:StoryboardVideoSettings['selection'];videoSettings?:StoryboardVideoSettings['videoSettings'];videoResolution?:string};
+ const savedVideo=episodeVisualDefaults(workspace.id,'video') as {videoSelection?:StoryboardVideoSettings['selection'];videoSettings?:StoryboardVideoSettings['videoSettings'];videoResolution?:string;firstFrameFit?:StoryboardVideoSettings['firstFrameFit'];videoModeId?:string};
  const inheritedSelection=Object.hasOwn(savedVideo,'videoSelection')?savedVideo.videoSelection:workspace.visualTargets?.find(target=>target.defaultSelection)?.defaultSelection;
  const videoCommon=draftVideo??{selection:inheritedSelection,
   ...(inheritedSelection?.provider==='bailian'&&savedVideo.videoSettings?{videoSettings:savedVideo.videoSettings}:{}),
   ...(inheritedSelection?.provider==='minimax'&&savedVideo.videoResolution?{videoResolution:savedVideo.videoResolution}:{}),
+  ...(savedVideo.firstFrameFit==='contain'||savedVideo.firstFrameFit==='cover'?{firstFrameFit:savedVideo.firstFrameFit}:{}),
+  ...(typeof savedVideo.videoModeId==='string'?{videoMode:savedVideo.videoModeId}:{}),
  };
  const base={episodeId:workspace.episodeId,workspaceId:workspace.id};
- useEffect(()=>{if(!visibleInWorkspace&&visible&&!working.current)setVisible(false);},[visibleInWorkspace,visible]);
 
  function begin(nextActive:boolean,nextRetryKind?:StoryboardBatchKind){
   setActive(nextActive);setRetryKind(nextRetryKind);setSelection(new Set());setCommon(undefined);setVideo(undefined);setReview(null);setError('');setNotice('');
@@ -68,7 +70,7 @@ export function WorkspaceStoryboardBatch({workspace,disabled,visibleInWorkspace,
   if(disabled||working.current||!ids.length)return;
   working.current=true;setBusy(true);setError('');setNotice('');
   try{
-   const drafts=kind==='video'?ids.flatMap(id=>readStoryboardVideoDraft(workspace,id)??[]):(workspace.narration??[]).flatMap(n=>{
+   const drafts=kind==='video'?ids.flatMap(id=>readStoryboardVideoDraft(workspace,id,videoCommon,materials)??[]):(workspace.narration??[]).flatMap(n=>{
     if(!ids.includes(n.shotId))return [];
     const draft=readStoryboardSpeechDraft(workspace,n);
     return draft?.text.trim()?[draft]:[];
@@ -98,7 +100,7 @@ export function WorkspaceStoryboardBatch({workspace,disabled,visibleInWorkspace,
  }
 
  async function confirm(){
-  if(disabled||working.current||!review||!included.size)return;
+  if((disabled&&!unknown&&!workspace.stale)||working.current||!review||!included.size)return;
   working.current=true;setBusy(true);setError('');
   try{
    const next=await command('confirmStoryboardBatch',{...base,confirmationId:review.confirmationId,shotIds:[...included]}) as StoryboardBatchResult;
@@ -130,7 +132,7 @@ export function WorkspaceStoryboardBatch({workspace,disabled,visibleInWorkspace,
     </>}
    </div>
    {active&&<>
-    {unknown&&review?<Button size="sm" color="primary" isDisabled={disabled||busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>:retryKind?<Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare(retryKind,[...selected],[])}>{uiText('核对重试')}</Button>:<>
+    {unknown&&review?<Button size="sm" color="primary" isDisabled={busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>:retryKind?<Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare(retryKind,[...selected],[])}>{uiText('核对重试')}</Button>:<>
      <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('speech',[...selected],[])}>{uiText('批量生成口播')}</Button>
      <Button size="sm" color="secondary" isDisabled={disabled||busy||!selected.size} aria-busy={busy} onPress={()=>void prepare('video',[...selected],[])}>{uiText('批量生成视频')}</Button>
     </>}
@@ -149,6 +151,7 @@ export function WorkspaceStoryboardBatch({workspace,disabled,visibleInWorkspace,
    {!visible&&error&&<p role="alert">{error}</p>}
   </div>}
   {children(visibleInWorkspace&&active?{selected,eligible,disabled:busy||unknown,onToggle:id=>{if(!busy&&!unknown&&eligible.has(id))toggle(id);}}:undefined)}
-  {visibleInWorkspace&&visible&&review&&<StoryboardBatchReviewDialog review={review} labels={labels} selected={included} busy={busy} error={error} unknown={unknown} onToggle={toggleReview} onClose={()=>{setVisible(false);if(!unknown){setReview(null);setError('');}}} onConfirm={()=>void confirm()}/>}
+  {!visibleInWorkspace&&unknown&&review&&!visible&&<Button size="sm" color="primary" isDisabled={busy} onPress={()=>setVisible(true)}>{uiText('核对原回执')}</Button>}
+  {visible&&review&&<StoryboardBatchReviewDialog review={review} labels={labels} selected={included} busy={busy} error={error} unknown={unknown} onToggle={toggleReview} onClose={()=>{setVisible(false);if(!unknown){setReview(null);setError('');}}} onConfirm={()=>void confirm()}/>}
  </>;
 }

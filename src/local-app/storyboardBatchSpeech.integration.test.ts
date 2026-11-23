@@ -133,3 +133,28 @@ it.skipIf(!enabled)('rolls back the whole batch when a later task cannot be regi
   expect(await f.ok(confirm())).toEqual(ok);
  }finally{await f.close();}
 },120000);
+
+it.skipIf(!enabled)('returns the submitted receipt after a script revision and invalidates pending confirmation without enqueueing',async()=>{
+ const f=await storyE2eFixture({scriptOnly:true,migrations:['db/current/227-storyboard-batch-speech.sql']});
+ try{
+  const w=await f.read(),[first,second]=w.clips;
+  const common={selection:f.selections.speech,voice:currentVoice,languageCode:'zh-CN',speakingRate:1};
+  const prepare=(shotId:string)=>f.ok(f.send('prepareStoryboardBatch',{kind:'speech',shotIds:[shotId],common}));
+  const confirm=(confirmationId:string,shotId:string)=>f.ok(f.post('episode-commands','confirmStoryboardBatch',{episodeId:f.episode,workspaceId:w.id,confirmationId,shotIds:[shotId]}));
+  const initial=await prepare(first.shotId);
+  const receipt=await confirm(initial.confirmationId,first.shotId);
+  const pending=await prepare(second.shotId),rebasing=await prepare(second.shotId);
+  const revised=await f.ok(f.request('reconfirmScript',{expectedScriptRevisionId:f.script,text:f.scriptText.replace('雨停了','雨又开始下了'),reason:'验证批量核对基准变化'}));
+  expect(await confirm(initial.confirmationId,first.shotId)).toEqual(receipt);
+  const invalidated=await confirm(pending.confirmationId,second.shotId);
+  expect(invalidated).toMatchObject({status:'review',changed:true,items:[{shotId:second.shotId,state:'skipped',reason:expect.stringContaining('制作基准已变化')}]});
+  expect(await confirm(pending.confirmationId,second.shotId)).toEqual(invalidated);
+  await f.ok(f.request('start'));
+
+  await f.ok(f.send('replanWorkspace',{expectedScriptRevisionId:revised.id,reason:'采用新脚本制作基准'}));
+  const refreshed=await confirm(rebasing.confirmationId,second.shotId);
+  expect(refreshed).toMatchObject({status:'review',changed:true,items:[{shotId:second.shotId,state:'ready',change:'制作基准已变化'}]});
+  expect((await f.read()).narration!.find(n=>n.shotId===second.shotId)?.generationTask).toBeUndefined();
+  expect(await confirm(refreshed.confirmationId,second.shotId)).toMatchObject({status:'submitted',items:[{shotId:second.shotId}]});
+ }finally{await f.close();}
+},120000);

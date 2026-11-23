@@ -79,10 +79,8 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
     const origin=new URL(String(input)).origin;
     const operation=videoProvider?((init?.method??'GET').toUpperCase()==='POST'?'create':origin===new URL(endpoint!).origin||videoProvider==='minimax'&&origin===new URL(minimaxEndpoints.cn).origin?'poll':'download'):null;
     const response=await (operation?observeProductionRequest(pool,fence,operation,()=>fetcher(input,init)):fetcher(input,init));
-    if(videoProvider){
-     let rejected=init?.method==='POST'&&response.status>=400&&response.status<500&&response.status!==408;
-     if(init?.method!=='POST'&&response.ok){try{const value=await response.clone().json();const status=value.status??value.task?.status??value.data?.task_status??value.output?.task_status;rejected=['failed','fail','cancelled','canceled'].includes(String(status).toLowerCase());}catch{/* Existing Provider parser reports invalid payloads. */}}
-     if(rejected)await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);
+    if(videoProvider&&init?.method==='POST'&&response.status>=400&&response.status<500&&response.status!==408){
+     await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);
     }
     return response;
    };

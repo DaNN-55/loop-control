@@ -10,8 +10,8 @@ export interface StoryboardBatchFailure {shotId:string;taskId:string}
 
 export function definiteStoryboardFailure(task:WorkspaceVisualTask|undefined){
  return !!task&&['failed','blocked'].includes(task.status)&&!task.invalidated&&!task.retryTaskId
-  &&!task.submissionUnknown&&task.publicationAttempt==null&&!task.providerTaskId
-  &&(task.submissionOutcome==='rejected'||task.submissionOutcome==='not_sent');
+  &&!task.submissionUnknown&&task.publicationAttempt==null
+  &&(task.providerTaskId?task.kind==='video'&&task.submissionOutcome==='terminal_failed':task.submissionOutcome==='rejected'||task.submissionOutcome==='not_sent');
 }
 
 export function latestStoryboardTask(tasks:WorkspaceVisualTask[]){
@@ -26,6 +26,8 @@ export interface StoryboardVideoSettings {
  durationSeconds?:number;
  videoSettings?:WanGenerationSettings;
  videoResolution?:string;
+ firstFrameFit?:'contain'|'cover';
+ videoMode?:string;
  reservationCents?:number;
 }
 export interface StoryboardVideoDraft {
@@ -37,8 +39,6 @@ export interface StoryboardVideoDraft {
   prompt?:string;
   promptReferences?:PromptReferenceBinding[];
   firstFrameMaterialRevisionId?:string;
-  firstFrameFit?:'contain'|'cover';
-  videoMode?:string;
   visualInputs?:VideoVisualInputSelection[];
  };
 }

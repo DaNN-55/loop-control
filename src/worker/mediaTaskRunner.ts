@@ -670,7 +670,7 @@ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: num
     actualCostCents,
     blockers: (error instanceof ProviderRequestNotSentError||error instanceof ProviderRequestRejectedError)?[{code:error.code,detail:error.message}]:error instanceof VideoGenerationError?[{code:error.code,detail:error.message}]:[],
     retry: {
-      shouldRetry: !unknown && !(error instanceof ProviderRequestNotSentError||error instanceof ProviderRequestRejectedError) && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
+      shouldRetry: !unknown && !(error instanceof VideoGenerationError&&error.outcome==='terminal_failed') && !(error instanceof ProviderRequestNotSentError||error instanceof ProviderRequestRejectedError) && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
       reason: errorMessage(error),
     },
     nextStep: unknown ? "先核对请求账本及供应商记录，再由 Owner 明确决定后续操作；不会自动重发。" : "Retry only after the reported failure is understood.",

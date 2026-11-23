@@ -6,6 +6,7 @@ import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
 import {requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {assertLegacyExternalRequestsResolved} from './legacyDraftInputs.js';
+import {registerConsumedWorkspaceCall} from './workspaceCallConfirmation.js';
 import type {InputRuntime} from './episodeCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import {queueStoryboardVideo,resolveStoryboardVideo,type StoryboardVideoItem,type StoryboardVideoRequest} from './storyboardBatchVideo.js';
@@ -67,8 +68,8 @@ function requestData(data:Record<string,unknown>):BatchRequest{
  if(!Array.isArray(drafts))return invalid();
  const seen=new Set<string>();
  if(data.kind==='video'){
-  const settings=['selection','durationSeconds','videoSettings','videoResolution','reservationCents'];
-  const keys=[...settings,'prompt','promptReferences','firstFrameMaterialRevisionId','firstFrameFit','videoMode','visualInputs'];
+  const settings=['selection','durationSeconds','videoSettings','videoResolution','reservationCents','firstFrameFit','videoMode'];
+  const keys=[...settings,'prompt','promptReferences','firstFrameMaterialRevisionId','visualInputs'];
   if(data.common!==undefined&&!hasOnlyKeys(data.common,settings))return invalid();
   for(const d of drafts){
    if(!hasOnlyKeys(d,['shotId','targetItemId','preparationRevisionId','inputs'])||typeof d.shotId!=='string'||!shotIds.includes(d.shotId)||seen.has(d.shotId)||
@@ -100,24 +101,27 @@ async function saveReview(c:PoolClient,row:ProductionWorkspaceRecord,request:Bat
 async function queueSpeech(c:PoolClient,row:ProductionWorkspaceRecord,batchId:string,item:StoryboardSpeechItem){
  const frozen={...item.frozen!,batchId};
  const approvalId=randomUUID(),authorizationHash=digest({approvalId,frozen});
- await c.query(`INSERT INTO local_identity.workspace_call_confirmations(id,owner_id,workspace_id,episode_id,script_revision_id,project_sha256,workspace_revision,command,payload,context_hash,authorization_hash,summary,consumed_at,consumed_transaction)
-  VALUES($1,local_identity.owner_id(),$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,clock_timestamp(),txid_current())`,[approvalId,row.id,row.episode_id,row.script_revision_id,row.project_sha256,row.revision,speechCommand,JSON.stringify({clipId:frozen.target.clipId,batchInput:frozen}),digest(frozen),authorizationHash,JSON.stringify(item.review.summary)]);
- await c.query("SELECT set_config('loop.workspace_call_confirmation',$1,true)",[approvalId]);
+ await registerConsumedWorkspaceCall(c,row,{id:approvalId,command:speechCommand,payload:{clipId:frozen.target.clipId,batchInput:frozen},contextHash:digest(frozen),authorizationHash,summary:item.review.summary!});
  const {task_id:taskId}=(await c.query('SELECT (local_identity.queue_selected_workspace_narration($1,$2,$3,true)).id task_id',[row.id,item.review.shotId,JSON.stringify({...frozen,authorizationHash})])).rows[0];
  return {shotId:item.review.shotId,taskId:taskId as string,reservationCents:frozen.reservationCents};
 }
 
 /** Owner command owns the episode and workspace locks and commits the complete receipt with all task writes. */
-export async function executeStoryboardBatch(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>):Promise<StoryboardBatchResult>{
- if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先返回分镜台，使用当前制作基准进行批量生成。');
- const currentBasis=(await c.query('SELECT e.main_script_revision_id=$2 AND local_identity.preparation_source_current($3) current FROM public.episodes e WHERE e.id=$1',[row.episode_id,row.script_revision_id,row.preparation_revision_id])).rows[0]?.current;
- if(!currentBasis)throw new ConfigurationError(409,'制作基准已变化，请重新核对当前分镜。');
- await requireWritableEpisodeStorage(c,root,row.episode_id);
- await assertLegacyExternalRequestsResolved(c,root,row);
+export async function executeStoryboardBatch(c:PoolClient,root:string,row:ProductionWorkspaceRecord,runtime:InputRuntime,command:string,data:Record<string,unknown>,loadProject:()=>Promise<OpenChatCutProject>):Promise<StoryboardBatchResult>{
+ const currentBasis=async()=>(await c.query(`SELECT e.main_script_revision_id=$2 AND p.script_revision_id=$2
+  AND local_identity.preparation_source_current(p.id) current FROM public.episodes e
+  JOIN local_identity.production_preparation_revisions p ON p.episode_id=e.id AND p.id=$3 WHERE e.id=$1`,[row.episode_id,row.script_revision_id,row.preparation_revision_id])).rows[0]?.current===true;
+ const currentProject=async()=>{
+  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先返回分镜台，使用当前制作基准进行批量生成。');
+  await requireWritableEpisodeStorage(c,root,row.episode_id);
+  await assertLegacyExternalRequestsResolved(c,root,row);
+  return loadProject();
+ };
  if(command==='prepareStoryboardBatch'){
+  if(!await currentBasis())throw new ConfigurationError(409,'制作基准已变化，请重新核对当前分镜。');
   const request=requestData(data);
   if(request.shotIds.some(shotId=>!row.bindings.some(clip=>clip.shotId===shotId)))return invalid();
-  return saveReview(c,row,request,await resolveBatch(c,root,row,project,request));
+  return saveReview(c,row,request,await resolveBatch(c,root,row,await currentProject(),request));
  }
  const id=data.confirmationId,selected=idList(data.shotIds);
  if(typeof id!=='string'||!uuid.test(id)||!selected.length)return invalid();
@@ -131,6 +135,17 @@ export async function executeStoryboardBatch(c:PoolClient,root:string,row:Produc
  }
  if(new Date(approval.expires_at).getTime()<=Date.now())throw new ConfigurationError(409,'批量核对已过期，请重新核对。');
  const kind=approval.payload.request.kind;
+ const consume=async(result:StoryboardBatchResult)=>{
+  await c.query('UPDATE local_identity.workspace_call_confirmations SET payload=$2,summary=$3,consumed_at=clock_timestamp(),consumed_transaction=txid_current() WHERE id=$1',[id,JSON.stringify({...approval.payload,submittedShotIds:shotIds}),JSON.stringify(result)]);
+  return result;
+ };
+ if(!await currentBasis()){
+  const previous=approval.summary as StoryboardBatchReview;
+  return consume({...previous,changed:true,items:previous.items.map(item=>item.state==='skipped'?item:{
+   ...item,state:'skipped',reason:'制作基准已变化。请更新分镜后重新核对。',change:undefined,
+  })});
+ }
+ const project=await currentProject();
  const current=await resolveBatch(c,root,row,project,{...approval.payload.request,shotIds});
  const basisChanged=approval.payload.preparationRevisionId!==row.preparation_revision_id||approval.script_revision_id!==row.script_revision_id;
  const changed=current.some(item=>!item.frozen||itemHash(item)!==approval.payload.frozenHashes[item.review.shotId])||basisChanged;
@@ -158,6 +173,5 @@ export async function executeStoryboardBatch(c:PoolClient,root:string,row:Produc
   }
   result={status:'submitted',kind,confirmationId:id,episodeId:row.episode_id,items};
  }
- await c.query('UPDATE local_identity.workspace_call_confirmations SET payload=$2,summary=$3,consumed_at=clock_timestamp(),consumed_transaction=txid_current() WHERE id=$1',[id,JSON.stringify({...approval.payload,submittedShotIds:shotIds}),JSON.stringify(result)]);
- return result;
+ return consume(result);
 }

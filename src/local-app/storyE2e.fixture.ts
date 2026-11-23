@@ -103,7 +103,7 @@ export async function createNarrationPorts(){return{mode:'controlled',store:{mod
   if(host==='openspeech.bytedance.com')return new Response('data: '+JSON.stringify({code:0,data:readFileSync(${JSON.stringify(files.voice)}).toString('base64')})+'\\n');
   return Response.json({id:'story-umbrella-remote-task'});
  }
- if(host==='ark.cn-beijing.volces.com'){appendFileSync(${JSON.stringify(videoPolls)},JSON.stringify({method:init.method??'GET',url:String(url)})+'\\n');if(readFileSync(${JSON.stringify(mode)},'utf8')==='poll-fail')throw Error('Story poll interrupted');return Response.json({status:'succeeded',content:{video_url:'https://result.volccdn.com/story.mp4'}});}
+ if(host==='ark.cn-beijing.volces.com'){appendFileSync(${JSON.stringify(videoPolls)},JSON.stringify({method:init.method??'GET',url:String(url)})+'\\n');if(readFileSync(${JSON.stringify(mode)},'utf8')==='poll-fail')throw Error('Story poll interrupted');if(readFileSync(${JSON.stringify(mode)},'utf8')==='video-terminal-failure')return Response.json({status:'failed',error:{message:'Story provider failed the video'}});return Response.json({status:'succeeded',content:{video_url:'https://result.volccdn.com/story.mp4'}});}
  if(host==='result.volccdn.com')return new Response(readFileSync(${JSON.stringify(files.video)}),{headers:{'content-type':'video/mp4'}});
  throw Error('Uncontrolled provider destination: '+host);
 }};}`);

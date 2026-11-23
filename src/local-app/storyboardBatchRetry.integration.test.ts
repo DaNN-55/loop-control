@@ -55,3 +55,34 @@ it.skipIf(!enabled).each<StoryboardBatchKind>(['speech','video'])('%s only accep
   expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(3);
  }finally{await f.close();}
 },120000);
+
+it.skipIf(!enabled)('retries a provider-confirmed terminal video failure while an interrupted poll keeps the original task',async()=>{
+ const f=await storyE2eFixture({migrations:['db/current/228-storyboard-batch-video.sql','db/current/229-storyboard-batch-queued-reservations.sql']});
+ try{
+  const {id,clips}=await f.read(),shotIds=clips.map(clip=>clip.shotId);
+  for(const clip of clips)await f.ok(f.send('setWorkspaceNarrationEnabled',{clipId:clip.id,enabled:false,voiceMode:'none'}));
+  const common={selection:f.selections.video,durationSeconds:4};
+  const prepare=(retryFailures?:Array<{shotId:string;taskId:string}>)=>f.ok(f.send('prepareStoryboardBatch',{kind:'video',shotIds,common,retryFailures}));
+  const confirm=(confirmationId:string,ids=shotIds)=>f.ok(f.post('episode-commands','confirmStoryboardBatch',{episodeId:f.episode,workspaceId:id,confirmationId,shotIds:ids}));
+  const initial=await confirm((await prepare()).confirmationId);
+  const [failed,interrupted]=initial.items;
+  await writeFile(f.mode,'video-terminal-failure');
+  expect((await f.execute(failed.taskId)).status).toBe('failed');
+  await writeFile(f.mode,'poll-fail');
+  expect((await f.execute(interrupted.taskId)).status).toBe('failed');
+  const tasks=(await f.read()).visualTasks!;
+  expect(tasks.find(t=>t.taskId===failed.taskId)).toMatchObject({canResume:false,providerTaskId:'story-umbrella-remote-task',submissionOutcome:'terminal_failed'});
+  expect(tasks.find(t=>t.taskId===interrupted.taskId)).toMatchObject({canResume:true,providerTaskId:'story-umbrella-remote-task',submissionOutcome:'received'});
+  const review=await prepare([{shotId:shotIds[0],taskId:failed.taskId},{shotId:shotIds[1],taskId:interrupted.taskId}]);
+  expect(review.items).toMatchObject([{state:'ready'},{state:'skipped',reason:expect.stringContaining('核对原任务')}]);
+  expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(2);
+  const retry=await confirm(review.confirmationId,[shotIds[0]]);
+  expect(retry.items[0].taskId).not.toBe(failed.taskId);
+  await writeFile(f.mode,'success');
+  expect((await f.execute(retry.items[0].taskId)).status).toBe('completed');
+  const resumed=await f.ok(f.send('retryWorkspaceVisualCandidate',{candidateId:tasks.find(t=>t.taskId===interrupted.taskId)!.id}));
+  expect(resumed.visualTasks.find((t:{taskId:string})=>t.taskId===interrupted.taskId).status).toBe('ready');
+  expect((await f.execute(interrupted.taskId)).status).toBe('completed');
+  expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(3);
+ }finally{await f.close();}
+},120000);

@@ -12,7 +12,7 @@ import {WorkspaceVisualTaskStatus} from './WorkspaceVisualTaskStatus';
 import {workspaceTaskPresentation} from '../workspaceTaskPresentation';
 import {reconcileWorkspaceOutput} from './workspaceOutputReconciliationClient';
 import {restoreWorkspaceSettingsDraft,storeWorkspaceSettingsDraft,workspaceSettingsFingerprint} from './workspaceSettingsDraft';
-import {readStoryboardSpeechDraft,storeStoryboardSpeechDraft} from './storyboardSpeechDraft';
+import {readNarrationEditorDraft,storeStoryboardSpeechDraft} from './storyboardSpeechDraft';
 import {WorkspaceAudioAudition} from './WorkspaceAudioAudition';
 import {WorkspaceNarrationToolbar,type WorkspaceNarrationSettings} from './WorkspaceNarrationToolbar';
 import {WorkspaceNarrationCaptions} from './WorkspaceNarrationCaptions';
@@ -121,7 +121,7 @@ function NarrationRow({episodeId,workspace,narration:n,defaults,services,onSetti
  const savedCaption=workspace.captions?.find(c=>c.clipId===n.clipId||c.shotId===n.shotId)?.contract;
  const voiceEnabled=managedVoice?['tts','manual'].includes(managedVoice.mode):n.enabled??n.mode!=='none',captionEnabled=savedCaption?.enabled??true;
  const savedText=n.text;
- const [textDraft,setTextDraft]=useState(()=>({basis:workspace.preparationRevisionId,baseline:n.inputFingerprint,text:readStoryboardSpeechDraft(workspace,n)?.text??null}));
+ const [textDraft,setTextDraft]=useState(()=>({basis:workspace.preparationRevisionId,baseline:n.inputFingerprint,text:readNarrationEditorDraft(workspace,n)??null}));
  const text=textDraft.basis===workspace.preparationRevisionId&&textDraft.baseline===n.inputFingerprint?textDraft.text??savedText:savedText;
  const used=workspace.usedNarration?.find(voice=>voice.shotId===n.shotId),hasAdopted=!!used||!!n.adoptedAudioTrackId||!!n.retainedAudioTrackId;
  const draftState=!hasAdopted?'尚未采用口播。':used?.text==null?'当前采用的口播正文未记录。':text===used.text?'与已采用口播正文一致。':'草稿未采用，成片仍使用已采用口播。';
