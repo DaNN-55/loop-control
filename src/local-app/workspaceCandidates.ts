@@ -8,10 +8,15 @@ import {readWorkspaceNarration,restoreWorkspaceNarrationDraft,workspaceNarration
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {readWorkspaceNarrationSource} from './workspaceNarrationSource.js';
+import type {WorkspaceNarration} from '../productionWorkspace.js';
 import {readProductionWorkspace,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
-export async function readWorkspaceCandidates(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject):Promise<WorkspaceCandidate[]>{
+function generatedNarrationIsCurrent(row:ProductionWorkspaceRecord,n:WorkspaceNarration|undefined,frozen:Record<string,any>,text:string){
+ return frozen.target?.scriptRevisionId===row.script_revision_id&&(frozen.batchId?
+  frozen.target?.preparationRevisionId===row.preparation_revision_id&&n?.inputFingerprint===frozen.baselineInputFingerprint:n?.text===text);
+}
+export async function readWorkspaceCandidates(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject,currentNarration?:WorkspaceNarration[]):Promise<WorkspaceCandidate[]>{
  const main=(await c.query('SELECT manifest FROM local_identity.production_preparation_revisions WHERE id=$1 AND episode_id=$2',[row.preparation_revision_id??row.storyboard_package_id,row.episode_id])).rows[0]?.manifest?.shots??[];
- const narration=await readWorkspaceNarration(c,row,project),decisions=(await c.query('SELECT * FROM local_identity.workspace_candidate_decisions WHERE workspace_id=$1',[row.id])).rows;
+ const narration=currentNarration??await readWorkspaceNarration(c,row,project),decisions=(await c.query('SELECT * FROM local_identity.workspace_candidate_decisions WHERE workspace_id=$1',[row.id])).rows;
  const results=(await c.query(`SELECT r.*,t.input_snapshot,a.id,a.relative_path,a.sha256,a.file_size,a.duration_seconds FROM local_identity.workspace_narration_requests r JOIN public.tasks t ON t.id=r.task_id AND t.status='completed' JOIN public.audio_tracks a ON a.source_task_id=t.id AND a.episode_id=r.episode_id AND a.track_kind='narration' WHERE r.workspace_id=$1 ORDER BY r.created_at DESC`,[row.id])).rows;
  // A selected registered voice is a local candidate, not a fabricated generation request.
  const registered=(await c.query(`SELECT a.*,n.shot_id,n.clip_id,n.input_fingerprint,t.input_snapshot FROM local_identity.workspace_narrations n
@@ -25,7 +30,8 @@ export async function readWorkspaceCandidates(c:PoolClient,row:ProductionWorkspa
   const mode=route.item?.id===workspaceNarrationItemId(r.shot_id)?'tts':route.item?'source':'none',start=mode==='tts'&&target?Number(target.startFrame):Math.min(...visuals.map(i=>Number(i.startFrame))),window=mode==='tts'&&target?Number(target.durationInFrames):Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))-start,fps=timeline?.fps??30;
   const savedText=r.input_snapshot?.media?.narration?.text??'',generated=r.request_snapshot?.selectionVersion===1,registeredAudio=r.request_snapshot?.registeredAudio===true;
   const sameScript=r.request_snapshot?.target?.scriptRevisionId===row.script_revision_id&&!!clip;
-  const status=n?.adoptedAudioTrackId===r.id?'adopted':d?.decision==='rejected'?'rejected':(generated?sameScript&&n?.text===savedText:registeredAudio?sameScript&&n?.mode==='manual'&&n?.audioTrackId===r.id&&n?.inputFingerprint===r.input_fingerprint&&(!savedText||n?.text===savedText):n?.inputFingerprint===r.input_fingerprint)?'available':'stale';
+  const currentGenerated=!!clip&&generated&&generatedNarrationIsCurrent(row,n,r.request_snapshot,savedText);
+  const status=n?.adoptedAudioTrackId===r.id?'adopted':d?.decision==='rejected'?'rejected':(generated?currentGenerated:registeredAudio?sameScript&&n?.mode==='manual'&&n?.audioTrackId===r.id&&n?.inputFingerprint===r.input_fingerprint&&(!savedText||n?.text===savedText):n?.inputFingerprint===r.input_fingerprint)?'available':'stale';
   const canRestoreNarration=status==='stale'&&sameScript&&!!n&&(generated||r.request_snapshot?.manualUpload===true||registeredAudio&&!!savedText);
   return{...(r.request_snapshot?.selectionVersion===1?{speech:{selection:r.request_snapshot.selection,connectionName:r.request_snapshot.connection?.name,voice:r.input_snapshot.media.narration.voice.name,languageCode:r.input_snapshot.media.narration.voice.language_code,speakingRate:Number(r.input_snapshot.media.narration.voice.speaking_rate)}}:{}),id:r.id,kind:'audio',shotId:r.shot_id,clipId:clip?.id??r.clip_id,targetItemId:workspaceNarrationItemId(r.shot_id),taskId:r.task_id,inputFingerprint:r.input_fingerprint,text:r.input_snapshot?.media?.narration?.text??'',mainScriptText:(await resolveWorkspaceShotLineage(c,row,r.shot_id,r.input_snapshot?.workspace_narration?.preparation_revision_id??r.input_snapshot?.storyboard_review_package_id??row.preparation_revision_id??row.storyboard_package_id).catch(()=>null))?.baseline_text??main.find((s:{id:string})=>s.id===r.shot_id)?.scriptSegment??'',audioTrackId:r.id,relativePath:r.relative_path,sha256:r.sha256,fileSize:Number(r.file_size),durationSeconds:Number(r.duration_seconds),pendingConfirmation:!d&&mode==='tts'&&target?.sourceAssetId===`audio-track-${r.id}`&&!!target?.loopControlCandidate,currentVoiceMode:mode,currentDurationSeconds:route.item?Number(route.item.durationInFrames)/fps:null,targetDurationSeconds:window/fps,...(timeline&&Number.isFinite(window)?{durationImpact:{deltaSeconds:Number(r.duration_seconds)-window/fps,overlapItemIds:timeline.items.filter(i=>Math.ceil(Number(r.duration_seconds)*fps)>window&&i.id!==target?.id&&Number(i.startFrame)>=start+window&&Number(i.startFrame)<start+Math.ceil(Number(r.duration_seconds)*fps)).map(i=>String(i.id))}}:{}),status,...(canRestoreNarration?{canRestoreNarration}:{})};
  }));
@@ -49,7 +55,7 @@ export async function executeWorkspaceCandidateCommand(c:PoolClient,root:string,
  }
  if(command!=='adoptWorkspaceCandidate')throw new ConfigurationError(400,'候选操作无效。');
  const frozen=(await c.query('SELECT request_snapshot FROM local_identity.workspace_narration_requests WHERE task_id=$1 AND workspace_id=$2',[candidate.taskId,row.id])).rows[0]?.request_snapshot;
- if(!restoring&&(frozen?.selectionVersion===1?(current?.text!==candidate.text||frozen.target?.scriptRevisionId!==row.script_revision_id):current?.inputFingerprint!==candidate.inputFingerprint))throw new ConfigurationError(409,'口播正文已变化，请重新核对旧候选。');
+ if(!restoring&&(frozen?.selectionVersion===1?(!generatedNarrationIsCurrent(row,current,frozen,candidate.text)):current?.inputFingerprint!==candidate.inputFingerprint))throw new ConfigurationError(409,'口播正文已变化，请重新核对旧候选。');
  if(restoring&&!data.adoptionId)throw new ConfigurationError(409,'请先核对要恢复的口播。');
  await finishRegisteredWorkspaceCandidate(c,root,row,project,selected,data,restoreFingerprint,restoring?()=>restoreWorkspaceNarrationDraft(c,row,candidate):undefined);
  await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=$3 WHERE workspace_id=$1 AND shot_id=$2',[row.id,candidate.shotId,candidate.audioTrackId]);

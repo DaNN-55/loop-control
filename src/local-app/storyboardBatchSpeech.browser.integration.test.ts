@@ -1,0 +1,73 @@
+// @vitest-environment node
+import {expect,it} from 'vitest';
+import {storyE2eFixture} from './storyE2e.fixture';
+import {storyBrowser} from './storyBrowser.fixture';
+
+const enabled=process.env.LOOP_WORKSPACE_ACCEPTANCE==='1'&&!!process.env.LOOP_TEST_CONTEXT_MODULE&&!!process.env.LOOP_STORY_EVIDENCE;
+
+it.skipIf(!enabled)('selects shots independently, cancels a draft review with Escape, and adopts a generated voice after response loss',async()=>{
+ const f=await storyE2eFixture({scriptOnly:true,migrations:['db/current/227-storyboard-batch-speech.sql']});
+ let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
+ try{
+  await f.ok(f.send('saveWorkspaceNarrationDefaults',{selection:f.selections.speech,voice:'zh_female_vv_uranus_bigtts',languageCode:'zh-CN',speakingRate:1}));
+  const w=await f.read();
+  await f.ok(f.send('setWorkspaceNarrationEnabled',{clipId:w.clips[1].id,enabled:false,voiceMode:'none'}));
+  browser=await storyBrowser(f,'storyboard-batch-speech');
+  await browser.cli('set','viewport','1440','900');
+  await browser.cli('open',browser.url+'&step=preparation');
+  await browser.click('批量操作');
+  const check=async(label:string)=>browser!.cli('find','role','checkbox','check','--name',label,'--exact');
+  await browser.click('全选本单');
+  await browser.cli('wait','--text','已选择 2 个镜头');
+  await browser.click('清空选择');
+  await browser.cli('wait','--text','已选择 0 个镜头');
+  await check('勾选镜头 02');
+  expect(await browser.evaluate("document.querySelector('button[aria-label=\"选择镜头 01\"]').getAttribute('aria-pressed')")).toBe('true');
+  await browser.click('选择镜头 02');
+  await browser.wait("document.querySelector('button[aria-label=\"选择镜头 02\"]').getAttribute('aria-pressed')==='true'");
+  await browser.click('选择镜头 01');
+  await browser.cli('find','role','tab','click','--name','字幕与口播','--exact');
+  const draft='这是在浏览器写下的草稿。';
+  await browser.fill('口播草稿',draft);
+  await check('勾选镜头 01');
+  await browser.click('批量生成口播');
+  await browser.cli('wait','--text','核对批量口播');
+  expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain(draft);
+  expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain('来自草稿');
+  expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain('已设为无口播');
+  await browser.cli('find','role','checkbox','click','--name','镜头 01','--exact');
+  expect(await browser.evaluate("Array.from(document.querySelectorAll('dialog[open] button')).find(b=>b.textContent.trim()==='确认并提交')?.disabled")).toBe(true);
+  await browser.cli('press','Escape');
+  await browser.wait("!document.querySelector('dialog[open]')");
+  expect(await browser.evaluate("Array.from(document.querySelectorAll('textarea')).find(el=>el.value.includes('浏览器'))?.value")).toBe(draft);
+  expect((await f.read()).narration!.some(n=>n.generationTask)).toBe(false);
+  await browser.cli('set','viewport','390','844');
+  await browser.click('批量生成口播');
+  await browser.cli('wait','--text','核对批量口播');
+  expect(await browser.evaluate("document.querySelector('dialog[open]').getBoundingClientRect().width <= window.innerWidth")).toBe(true);
+  await browser.capture('narrow-review');
+  browser.dropNextResponse('confirmStoryboardBatch');
+  await browser.doubleClick('确认并提交');
+  await browser.cli('wait','--text','已提交 1 个镜头');
+  expect(browser.traffic.filter(t=>t.command==='confirmStoryboardBatch')).toEqual([{command:'confirmStoryboardBatch',dropped:true,status:200}]);
+  expect(browser.traffic.some(t=>t.command==='login'&&t.status===200)).toBe(true);
+  const queued=(await f.read()).narration!.find(n=>n.generationTask)?.generationTask;
+  expect(queued?.status).toBe('ready');
+  expect((await f.execute(queued!.taskId)).status).toBe('completed');
+  await browser.cli('reload');
+  await browser.wait("!!document.querySelector('#preparation-tab-voice')");
+  await browser.cli('find','role','tab','click','--name','字幕与口播','--exact');
+  await browser.cli('wait','--text','口播候选');
+  const candidate=(await f.read()).candidates!.find(c=>c.taskId===queued!.taskId)!;
+  expect(candidate.status).toBe('available');
+  await browser.cli('find','role','button','click','--name',`试听 ${draft}`);
+  await browser.wait("Array.from(document.querySelectorAll('.workspace-speech-results audio')).some(audio=>audio.currentTime > 0.05)");
+  await browser.capture('audition');
+  await browser.cli('find','role','button','click','--name','采用','--exact');
+  await browser.click('确认采用');
+  await expect.poll(async()=> (await f.read()).usedNarration?.[0]?.text).toBe(draft);
+ }finally{
+  if(browser)await browser.capture('result');
+  await browser?.close();await f.close();
+ }
+},180000);
