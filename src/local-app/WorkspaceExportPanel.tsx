@@ -1,4 +1,5 @@
 import {useMemo,useRef,useState,type CSSProperties} from 'react';
+import {createPortal} from 'react-dom';
 import {Check,ChevronRight,FileVideo,ArrowLeft,X} from 'lucide-react';
 import {uiText,getUiLocale} from '../i18n/ui';
 import {Dialog,Modal,ModalOverlay} from 'react-aria-components';
@@ -7,6 +8,7 @@ import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {localArtifactUrl} from '../reviews/localArtifactPreview';
 import type {ProductionWorkspace} from '../productionWorkspace';
 import {workspaceExportDeliveryState,type WorkspaceExportAction} from '../workspaceExportDelivery';
+import {CompletedDeliveryMedia} from './CompletedDeliveryMedia';
 import {WorkspaceDeliveryPanel} from './WorkspaceDeliveryPanel';
 import './workspace-compact-panels.css';
 
@@ -16,6 +18,7 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
  const flight=useMemo(()=>({active:false}),[scope]);
  const [operation,setOperation]=useState<{scope:string;name:WorkspaceExportAction}|null>(null),[error,setError]=useState('');
  const [downloadTarget,setDownloadTarget]=useState<HTMLDivElement|null>(null),[mediaInfo,setMediaInfo]=useState({sha:'',width:0,height:0,duration:0});
+ const [previewTarget,setPreviewTarget]=useState<HTMLDivElement|null>(null);
  const [failedSource,setFailedSource]=useState<string|null>(null),[previewAttempt,setPreviewAttempt]=useState(0);
  const player=useRef<HTMLVideoElement>(null),[historyId,setHistoryId]=useState<string|null>(null);
  const historyPreview=w.exports?.find(entry=>entry.id===historyId&&entry.status==='ready'&&entry.artifact);
@@ -41,29 +44,8 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
   catch(cause){if(currentScope.current===scope)setError(cause instanceof Error?cause.message:'操作未完成，请重试。');}
   finally{flight.active=false;setOperation(value=>value?.scope===scope?null:value);}
  }
- return <section className={`production-workspace-section workspace-export workspace-export-compact workspace-review-flow${completedView?' workspace-export-completed':''}`} aria-label={uiText('检查与交付')}>
-  <header><div className="workspace-compact-heading">{completedView?<h3>{uiText('检查与交付')}</h3>:null}{!completedView&&onEdit&&<Button size="sm" color="secondary" iconLeading={ArrowLeft} isDisabled={pending||!!action} onPress={onEdit}>{uiText('返回剪辑')}</Button>}{!completedView&&review.status!=='已完成'&&<span role="status" className={review.tone}>{uiText(review.status)}</span>}</div><div className="workspace-final-header-actions">{completedView?onEdit&&<Button size="sm" color="tertiary" isDisabled={pending||!!action} onPress={onEdit}>{uiText('返回剪辑')}</Button>:downloadToolbar}</div></header>
-  <div className="workspace-export-layout">
-   <div className="workspace-final-preview">
-    <div className="workspace-final-heading"><h4>{uiText('成片预览')}</h4></div>
-    {outdated&&!completedView&&<p role="status">{uiText('工程已变化，请重新生成成片。')}</p>}
-    {source&&!currentFileProblem?<div className="workspace-final-media" style={mediaStyle}><VideoPreview key={previewAttempt} mediaRef={player} onDuration={measureMedia} onError={completedView?()=>setFailedSource(source):undefined} title={uiText('最终导出视频')} aria-label={uiText('最终导出视频')} sourceLabel={uiText(outdated?'上次成片':'成片')} src={source}/></div>:<div className="workspace-final-empty"><FileVideo aria-hidden="true"/><p>{uiText(currentFileProblem?'当前成片不可用':review.previewMessage)}</p></div>}
-    {(latest?.artifact&&!currentFileProblem||completedView&&totalChecks>0)&&<p className="workspace-final-media-meta">
-     {completedView&&totalChecks>0&&<span className={passedChecks===totalChecks?'is-confirmed':'is-failed'}>{passedChecks===totalChecks&&<Check size={14} aria-hidden="true"/>}{checkSummary}</span>}
-     {latest?.artifact&&!currentFileProblem&&<>{info&&<><span>{info.duration.toFixed(2)} {uiText('秒')}</span><span>{info.width} × {info.height}</span></>}<span>MP4 · {(latest.artifact.fileSize/1024/1024).toFixed(2)} MB</span></>}
-    </p>}
-    {(review.exportAction.visible&&review.exportAction.primary||review.confirmAction.visible)&&<div className="workspace-final-actions">
-     {review.exportAction.visible&&review.exportAction.primary?<Button size="sm" color="primary" isDisabled={review.exportAction.disabledReason!==null} onPress={()=>void run('exportWorkspace')}>{uiText(review.exportAction.label)}</Button>:review.confirmAction.visible?<><span className="workspace-final-next">{uiText(review.nextMessage)}</span><Button size="sm" color="primary" iconLeading={Check} isDisabled={review.confirmAction.disabledReason!==null} onPress={()=>void run('completeWorkspaceExport',{exportId:latest!.id,expectedExportSha256:latest!.artifact?.sha256,expectedContentSha256:w.contentSha256})}>{uiText(review.confirmAction.label)}</Button></>:null}
-    </div>}
-    {!completedView&&latest?.checks.filter(check=>!check.passed).map((check,index)=><p key={index} role="alert" className="form-error">{uiText(check.detail)}</p>)}
-    {!errorPresented&&error&&<p role="alert" className="form-error">{uiText(error)}</p>}
-   </div>
-   <div className="workspace-export-review">
-    {completedView&&<div className="workspace-completed-download"><h4>{uiText('下载成片')}</h4>{downloadToolbar}</div>}
-    <WorkspaceDeliveryPanel actionsContainer={downloadTarget} workspace={w} pending={pending||readOnly||!!action} completedView={completedView} publicationReadOnly={publicationReadOnly} currentFileProblem={currentFileProblem} command={command} onChange={onChange} onRecheck={()=>{setFailedSource(null);setPreviewAttempt(count=>count+1);}}/>
-   </div>
-  </div>
-    {(latest||completedView&&!!w.deliveries?.slice(1).length)&&<details className="workspace-export-secondary" aria-label={uiText(completedView?'检查与导出记录':'查看详情')}><summary><ChevronRight size={13} aria-hidden="true"/><span>{uiText(completedView?'检查与导出记录':'查看详情')}</span><small>{!completedView&&`${checkSummary} · `}{uiText('{count} 个导出版本',{count:String(w.exports?.length??0)})}</small></summary>
+ const finalPreview=source&&!currentFileProblem?<div className="workspace-final-media" style={mediaStyle}><VideoPreview key={previewAttempt} mediaRef={player} onDuration={measureMedia} onError={completedView?()=>setFailedSource(source):undefined} title={uiText('最终导出视频')} aria-label={uiText('最终导出视频')} sourceLabel={uiText(outdated?'上次成片':'成片')} src={source}/></div>:<div className="workspace-final-empty"><FileVideo aria-hidden="true"/><p>{uiText(currentFileProblem?'当前成片不可用':review.previewMessage)}</p></div>;
+ const exportHistory=(latest||completedView&&!!w.deliveries?.slice(1).length)&&<details className="workspace-export-secondary" aria-label={uiText(completedView?'检查与导出记录':'查看详情')}><summary><ChevronRight size={13} aria-hidden="true"/><span>{uiText(completedView?'检查与导出记录':'查看详情')}</span><small>{!completedView&&`${checkSummary} · `}{uiText('{count} 个导出版本',{count:String(w.exports?.length??0)})}</small></summary>
      <div className="workspace-delivery-details-grid">
       <section aria-label={uiText('技术检查')}><header><h4>{uiText('技术检查')}</h4>{totalChecks>0&&<span className={passedChecks===totalChecks?'is-confirmed':'is-failed'}>{uiText(passedChecks===totalChecks?'全部通过':'存在未通过项')}</span>}</header>
        {totalChecks?<ul className="workspace-delivery-check-list">{latest?.checks.map((check,index)=><li key={index}><span className={check.passed?'is-confirmed':'is-failed'}>{check.passed?<Check size={14} aria-hidden="true"/>:<X size={14} aria-hidden="true"/>}<span className="sr-only">{uiText(check.passed?'通过':'未通过')}</span></span><span>{uiText(check.detail)}</span></li>)}</ul>:<p className="workspace-delivery-details-empty">{uiText('未记录技术检查项。')}</p>}
@@ -85,7 +67,33 @@ export function WorkspaceExportPanel({workspace:w,pending,command,onChange,readO
      </div>
      {!!w.deliveries?.slice(1).length&&<section aria-label={uiText('历史交付')}><h4>{uiText('历史交付')}</h4>{w.deliveries.slice(1).map((entry,index)=><div key={entry.id}><p>{uiText('历史交付')} {index+1} · {uiText(entry.status==='completed'?'已完成':'未完成')}{entry.error?` · ${entry.error}`:''}</p>{entry.status==='completed'&&entry.artifacts.filter(a=>a.artifactType==='final_render').map(a=><a key={a.relativePath} href={'/_local-artifact?'+new URLSearchParams({episode:w.episodeId,path:a.relativePath,sha256:a.sha256,download:'1'})} download>{uiText('下载历史视频')}</a>)}{entry.status==='completed'&&<a href={`/api/local/episodes/${w.episodeId}/delivery-download?delivery=${entry.id}`} download>{uiText('下载历史交付包（ZIP）')}</a>}</div>)}</section>}
      {review.exportAction.visible&&!review.exportAction.primary&&<Button size="sm" color="secondary" isDisabled={review.exportAction.disabledReason!==null} onPress={()=>void run('exportWorkspace')}>{uiText('重新生成成片')}</Button>}
-    </details>}
+    </details>;
+ return <section className={`production-workspace-section workspace-export workspace-export-compact workspace-review-flow${completedView?' workspace-export-completed':''}`} aria-label={uiText('检查与交付')}>
+  <header><div className="workspace-compact-heading">{completedView?<h3>{uiText('检查与交付')}</h3>:null}{!completedView&&onEdit&&<Button size="sm" color="secondary" iconLeading={ArrowLeft} isDisabled={pending||!!action} onPress={onEdit}>{uiText('返回剪辑')}</Button>}{!completedView&&review.status!=='已完成'&&<span role="status" className={review.tone}>{uiText(review.status)}</span>}</div><div className="workspace-final-header-actions">{downloadToolbar}</div></header>
+  <div className="workspace-export-layout">
+   <div className="workspace-final-preview">
+    <div className="workspace-final-heading"><h4>{uiText('成片预览')}</h4></div>
+    {outdated&&!completedView&&<p role="status">{uiText('工程已变化，请重新生成成片。')}</p>}
+    {completedView?<div ref={setPreviewTarget} className="completed-delivery-preview"/>:finalPreview}
+    {(latest?.artifact&&!currentFileProblem||completedView&&totalChecks>0)&&<p className="workspace-final-media-meta">
+     {completedView&&totalChecks>0&&<span className={passedChecks===totalChecks?'is-confirmed':'is-failed'}>{passedChecks===totalChecks&&<Check size={14} aria-hidden="true"/>}{checkSummary}</span>}
+     {latest?.artifact&&!currentFileProblem&&<>{info&&<><span>{info.duration.toFixed(2)} {uiText('秒')}</span><span>{info.width} × {info.height}</span></>}<span>MP4 · {(latest.artifact.fileSize/1024/1024).toFixed(2)} MB</span></>}
+    </p>}
+    {(review.exportAction.visible&&review.exportAction.primary||review.confirmAction.visible)&&<div className="workspace-final-actions">
+     {review.exportAction.visible&&review.exportAction.primary?<Button size="sm" color="primary" isDisabled={review.exportAction.disabledReason!==null} onPress={()=>void run('exportWorkspace')}>{uiText(review.exportAction.label)}</Button>:review.confirmAction.visible?<><span className="workspace-final-next">{uiText(review.nextMessage)}</span><Button size="sm" color="primary" iconLeading={Check} isDisabled={review.confirmAction.disabledReason!==null} onPress={()=>void run('completeWorkspaceExport',{exportId:latest!.id,expectedExportSha256:latest!.artifact?.sha256,expectedContentSha256:w.contentSha256})}>{uiText(review.confirmAction.label)}</Button></>:null}
+    </div>}
+    {!completedView&&latest?.checks.filter(check=>!check.passed).map((check,index)=><p key={index} role="alert" className="form-error">{uiText(check.detail)}</p>)}
+    {!errorPresented&&error&&<p role="alert" className="form-error">{uiText(error)}</p>}
+   </div>
+   <div className="workspace-export-review">
+    <WorkspaceDeliveryPanel actionsContainer={downloadTarget} workspace={w} pending={pending||readOnly||!!action} completedView={completedView} publicationReadOnly={publicationReadOnly} currentFileProblem={currentFileProblem} command={command} onChange={onChange} onRecheck={()=>{setFailedSource(null);setPreviewAttempt(count=>count+1);}}
+     renderCompletedPreview={completedView&&previewTarget?cover=>createPortal(<CompletedDeliveryMedia
+      coverUrl={cover?localArtifactUrl(w.episodeId,cover.file.relativePath,cover.file.sha256):null} video={finalPreview}
+      player={player} canPlay={!!source&&!currentFileProblem} mediaStyle={mediaStyle}/>,previewTarget):undefined}/>
+    {completedView&&exportHistory}
+   </div>
+  </div>
+  {!completedView&&exportHistory}
  {historyPreview?.artifact&&<ModalOverlay className="workspace-history-preview-overlay" isOpen isDismissable onOpenChange={open=>{if(!open)setHistoryId(null);}}><Modal className="workspace-history-preview-modal"><Dialog aria-label={uiText('历史成片预览')}><header><h4>{uiText('工程版本 {version}',{version:versionLabel(historyPreview.projectContentVersion)})}</h4><Button size="sm" color="tertiary" iconLeading={X} aria-label={uiText('关闭历史成片预览')} onPress={()=>setHistoryId(null)}/></header><VideoPreview title={uiText('历史成片')} src={'/_local-artifact?'+new URLSearchParams({episode:w.episodeId,path:historyPreview.artifact.relativePath,sha256:historyPreview.artifact.sha256})}/></Dialog></Modal></ModalOverlay>}
  </section>;
 }

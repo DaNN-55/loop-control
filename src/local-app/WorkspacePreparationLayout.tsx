@@ -22,7 +22,9 @@ function ResizablePreparationLayout({children,completedView}:{children:ReactNode
   return defaultWidth;
  });
  const [containerWidth,setContainerWidth]=useState(0),[dragging,setDragging]=useState(false);
- const maximum=Math.max(minWidth,(containerWidth||2000)-rightMinWidth-dividerWidth);
+ const available=containerWidth||2000;
+ const listLimit=completedView?Math.floor(available*.32):available;
+ const maximum=Math.max(minWidth,Math.min(listLimit,available-rightMinWidth-dividerWidth));
  const actualWidth=Math.min(width,maximum);
  useEffect(()=>{
   const element=grid.current!;

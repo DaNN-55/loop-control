@@ -372,9 +372,9 @@ it('keeps AudioSkin playback enabled in a completed order while narration and mu
  Object.defineProperty(HTMLDialogElement.prototype,'close',{configurable:true,value:function(this:HTMLDialogElement){this.open=false;}});
  const command=vi.fn();vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:completed})));
  const {container}=render(<ProductionWorkspacePanel episodeId="e" title="已完成工程" stage="production_completed" scriptRevisionId="s" materials={[]} command={command} onLegacy={()=>{}}/>);
- await screen.findByRole('region',{name:'已完成作品查看'});fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'成片预览'});fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));await screen.findByRole('table',{name:'镜头'});fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
+ await screen.findByRole('region',{name:'已完成作品查看'});fireEvent.click(screen.getByRole('button',{name:/^检查与交付/}));await screen.findByRole('heading',{name:'成片预览'});fireEvent.click(screen.getByRole('button',{name:/^分镜台/}));await screen.findByRole('table',{name:'镜头'});
  const media=await screen.findByLabelText('S01 已采用口播试听');expect(media.closest('fieldset')?.disabled).not.toBe(true);expect(container.querySelector('.app-audio-player button')?.matches(':disabled')).toBe(false);expect(screen.queryByRole('textbox',{name:'口播正文'})).toBeNull();
- fireEvent.click(screen.getByRole('tab',{name:'音效'}));expect(screen.getByRole('heading',{name:'配乐与声音制作记录'})).toBeTruthy();expect(screen.queryByRole('combobox',{name:'来源'})).toBeNull();expect(screen.queryByRole('button',{name:'上传 MP3'})).toBeNull();expect(command).not.toHaveBeenCalled();
+ expect(screen.getByRole('heading',{name:'配乐与声音制作记录'})).toBeTruthy();expect(screen.queryByRole('combobox',{name:'来源'})).toBeNull();expect(screen.queryByRole('button',{name:'上传 MP3'})).toBeNull();expect(command).not.toHaveBeenCalled();
 });
 
 it('saves optional sound intent only on request and restores the right text when switching shots',async()=>{

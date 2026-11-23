@@ -37,24 +37,21 @@ it('chooses through the shared model menu without generating and offers refresh 
  expect(screen.getByRole('button',{name:'选择文案模型'}).textContent).toContain('gpt-5.6-luna');expect(localCommand).not.toHaveBeenCalled();expect(localStorage.getItem('loop-control.script-studio-model:owner')).toBe('selected:gpt-5.6-luna');
 });
 
-it('keeps manual publication actions on completed orders without offering a new generation',async()=>{
+it('shows saved publication copy and leaves any local draft out of completed orders',async()=>{
  reads();
- render(<WorkspacePublicationPanel workspace={w} completedView/>);
+ const draftKey='loop-control.publication-draft:'+JSON.stringify(['owner','episode','workspace']);
+ const draft=JSON.stringify({revision:1,content:{...state.content,title:'未保存草稿'}});
+ localStorage.setItem(draftKey,draft);
+ const view=render(<WorkspacePublicationPanel workspace={w} completedView/>);
  expect(await screen.findByRole('button',{name:'复制全部'})).toBeTruthy();
+ expect(screen.getByText('手写')).toBeTruthy();
+ expect(screen.queryByText('未保存草稿')).toBeNull();
+ expect(screen.queryByRole('button',{name:'编辑文案'})).toBeNull();
  expect(screen.queryByText('重新生成文案')).toBeNull();
  expect(screen.queryByText('AI 生成文案')).toBeNull();
- expect(localRequest).not.toHaveBeenCalledWith('connections');
- fireEvent.click(screen.getByRole('button',{name:'编辑文案'}));
- expect(screen.getByRole('textbox',{name:'标题'})).toHaveProperty('value','手写');
+ expect(screen.queryByText('更换封面')).toBeNull();
+ expect(localRequest).toHaveBeenCalledExactlyOnceWith('episodes/episode/publication',expect.anything());
  expect(localCommand).not.toHaveBeenCalled();
-});
-
-it('allows completed orders to check an existing request without creating another',async()=>{
- vi.mocked(localRequest).mockImplementation(async path=>path.endsWith('publication-ai')?{requestId:'prior',status:'unknown',message:'请核对上次请求。'}:state);
- render(<WorkspacePublicationPanel workspace={w} completedView/>);
- const recover=await screen.findByRole('button',{name:'核对原请求'});
- await act(async()=>{fireEvent.click(recover);});
- expect(localRequest).toHaveBeenCalledTimes(3);
- expect(screen.queryByText('重新生成文案')).toBeNull();
- expect(localCommand).not.toHaveBeenCalled();
+ view.unmount();
+ expect(localStorage.getItem(draftKey)).toBe(draft);
 });

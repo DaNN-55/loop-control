@@ -54,13 +54,17 @@ it('uses three completed-work sections and opens only an isolated Studio copy wi
  expect(command).not.toHaveBeenCalled();
  expect(reads.mock.calls.filter(([,init])=>init?.method&&init.method!=='GET').every(([path])=>path.endsWith('/studio-copy'))).toBe(true);
 });
-it('keeps completed shot details inline and restores the selected shot and tab after viewing the project',async()=>{
+it('keeps completed shot details inline and restores the selected shot after viewing the project',async()=>{
  const {command}=setup();
  await waitFor(()=>expect(screen.queryByText('正在读取制作流程…')).toBeNull());
  fireEvent.click(screen.getByRole('button',{name:/分镜台/}));
  await screen.findByRole('table',{name:'镜头'});
  fireEvent.click(screen.getByRole('button',{name:'选择镜头 02'}));
- fireEvent.click(screen.getByRole('tab',{name:'字幕与口播'}));
+ expect(screen.getByRole('region',{name:'画面'})).toBeTruthy();
+ expect(screen.getByRole('region',{name:'字幕与口播'})).toBeTruthy();
+ expect(screen.getByRole('region',{name:'音效'})).toBeTruthy();
+ expect(screen.queryByRole('tablist',{name:'素材设置'})).toBeNull();
+ expect(screen.queryByRole('button',{name:/本期素材/})).toBeNull();
  expect(screen.queryByRole('dialog')).toBeNull();
  expect(screen.queryByRole('button',{name:/批量准备/})).toBeNull();
  expect(screen.getByRole('row',{name:'镜头 02'}).getAttribute('aria-selected')).toBe('true');
@@ -68,7 +72,7 @@ it('keeps completed shot details inline and restores the selected shot and tab a
  await screen.findByRole('region',{name:'OpenChatCut 查看副本'});
  fireEvent.click(screen.getByRole('button',{name:'返回分镜台'}));
  await screen.findByRole('table',{name:'镜头'});
- expect(screen.getByRole('tab',{name:'字幕与口播'}).getAttribute('aria-selected')).toBe('true');
+ expect(screen.getByRole('region',{name:'字幕与口播'})).toBeTruthy();
  expect(screen.getByRole('row',{name:'镜头 02'}).getAttribute('aria-selected')).toBe('true');
  expect(screen.queryByRole('dialog')).toBeNull();
  expect(command).not.toHaveBeenCalled();

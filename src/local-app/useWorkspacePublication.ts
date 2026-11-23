@@ -10,10 +10,10 @@ interface EditingSession {
 }
 
 /** Publication edits have their own revision; video changes never discard this draft. */
-export function useWorkspacePublication(episodeId:string,workspaceId:string,{autoSave=true}:{autoSave?:boolean}={}){
+export function useWorkspacePublication(episodeId:string,workspaceId:string,{autoSave=true,restoreDraft=true}:{autoSave?:boolean;restoreDraft?:boolean}={}){
  const ownerId=useWorkspaceOwnerId(),[,render]=useState(0);
- const path=`episodes/${episodeId}/publication`,storageKey=ownerId?'loop-control.publication-draft:'+JSON.stringify([ownerId,episodeId,workspaceId]):'';
- const session=useMemo<EditingSession>(()=>({active:false,state:null,content:{...emptyPublicationContent,tags:[]},error:'',storageError:false,blocked:false,sequence:0,saving:null,controller:new AbortController()}),[ownerId,episodeId,workspaceId]);
+ const path=`episodes/${episodeId}/publication`,storageKey=ownerId&&restoreDraft?'loop-control.publication-draft:'+JSON.stringify([ownerId,episodeId,workspaceId]):'';
+ const session=useMemo<EditingSession>(()=>({active:false,state:null,content:{...emptyPublicationContent,tags:[]},error:'',storageError:false,blocked:false,sequence:0,saving:null,controller:new AbortController()}),[ownerId,episodeId,workspaceId,restoreDraft]);
  const changed=()=>{if(session.active)render(value=>value+1);};
  function persist(){
   if(!storageKey||!session.state)return;

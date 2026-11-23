@@ -28,7 +28,6 @@
  display:grid;
  grid-template-columns:minmax(0,1fr) minmax(210px,28%);
  inline-size:100%;
- max-inline-size:1080px;
  gap:18px;
  align-items:start;
 }
@@ -49,7 +48,7 @@
 .completed-script-heading{justify-content:space-between;padding:8px 12px 12px}
 .completed-script-heading h3{margin:0;font-size:18px}
 .completed-script-heading span{font-size:12px;color:var(--lc-muted)}
-.completed-script-main .workspace-script-preview{max-inline-size:74ch;min-block-size:0;padding:0 12px 8px;overflow:visible}
+.completed-script-main .workspace-script-preview{min-block-size:0;padding:0 12px 8px;overflow:visible}
 .completed-script-paragraphs{list-style:none;padding:0;margin:0}
 .completed-script-paragraphs > li {
  display:grid;
@@ -90,12 +89,33 @@
 
 [data-compact-workflow].is-completed .workspace-preparation-grid.is-completed-board {
  grid-template-columns:minmax(220px,var(--workspace-list-size,340px)) 9px minmax(0,1fr);
- flex:none;
+ flex:1 0 auto;
 }
 .workspace-preparation-grid.is-completed-board > .workspace-preparation-resizer{display:flex}
-.is-completed-board .workspace-preparation-detail{border-inline-start:0;background:var(--lc-surface)}
-.is-completed-board .workspace-detail-tabs{flex-wrap:wrap}
-.is-completed-board .workspace-preparation-detail > [role=tabpanel]{overflow:visible}
+
+.is-completed-board .workspace-preparation-detail {
+ border-inline-start:0;
+ background:var(--lc-surface);
+ container:completed-shot-detail / inline-size;
+}
+.completed-shot-sections {
+ display:grid;
+ grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);
+ grid-template-rows:auto 1fr;
+ flex:1;
+}
+.completed-shot-section{padding:16px;min-inline-size:0;overflow-wrap:anywhere}
+.completed-shot-section > h3{margin:0 0 12px;font-size:14px}
+.completed-shot-visual{grid-row:span 2;border-inline-end:1px solid var(--lc-line)}
+.completed-shot-sound{border-block-start:1px solid var(--lc-line)}
+.completed-shot-caption{padding:0 0 12px;margin-block-end:12px;border-block-end:1px solid var(--lc-line)}
+.completed-shot-caption h4{margin:0 0 5px;font-size:12px;color:var(--lc-muted)}
+.completed-shot-caption p{margin:0;white-space:pre-wrap}
+@container completed-shot-detail (max-width:630px) {
+ .completed-shot-sections{grid-template-columns:minmax(0,1fr);grid-template-rows:auto}
+ .completed-shot-visual{grid-row:auto;border-inline-end:0}
+ .completed-shot-voice{border-block-start:1px solid var(--lc-line)}
+}
 .is-completed-board .completed-shot-index {
  inline-size:100%;
  table-layout:fixed;

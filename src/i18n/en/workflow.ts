@@ -1,4 +1,5 @@
 export const workflowMessages:Record<string,string>={
+'封面与成片':'Cover and final video','播放成片':'Play final video','交付文件不可用，请恢复原文件后重新检查。':'Delivery files are unavailable. Restore the original files and check again.',
 '成片首帧':'Final video first frame',
 '制作细节':'Production details',
 '本期补充约束':'Additional constraints',
