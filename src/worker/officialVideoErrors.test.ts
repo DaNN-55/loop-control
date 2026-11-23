@@ -44,5 +44,5 @@ it('retains a definite Wan rejection code and request ID instead of a generic me
 it('retains the Wan terminal failure and summarizes vendor stack traces',async()=>{
  const {generateWanVideo}=await import('./wanVideoProvider');let sent=false;
  const error=await generateWanVideo({credentials:'synthetic',image:Uint8Array.of(1),imageMime:'image/png',prompt:'测试',durationSeconds:2,reserve:async()=>({new:true}),recordSubmission:async()=>{},fetcher:async()=>{if(!sent){sent=true;return Response.json({output:{task_id:'failed-task'}});}return Response.json({output:{task_status:'FAILED',code:'AlgoError',message:'Traceback (most recent call last):\n File "/provider/private/file.py"\nTypeError: expected str, not NoneType'}});}}).catch(e=>e);
- expect(error).toMatchObject({outcome:'accepted'});expect(error.message).toContain('AlgoError');expect(error.message).toContain('TypeError');expect(error.message).not.toContain('/provider/private');
+ expect(error).toMatchObject({outcome:'terminal_failed'});expect(error.message).toContain('AlgoError');expect(error.message).toContain('TypeError');expect(error.message).not.toContain('/provider/private');
 });
