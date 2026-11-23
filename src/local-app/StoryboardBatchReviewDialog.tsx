@@ -15,7 +15,7 @@ export function StoryboardBatchReviewDialog({review,labels,selected,busy,error,u
  const count=review.items.filter(item=>item.state==='ready'&&selected.has(item.shotId)).length;
  const cents=review.items.reduce((sum,item)=>sum+(item.state==='ready'&&selected.has(item.shotId)?item.summary?.reservationCents??0:0),0);
  return <dialog ref={ref} aria-labelledby={titleId} className="storyboard-batch-dialog" onClose={event=>{if(!event.currentTarget.open)onClose();}} onCancel={event=>{if(busy)event.preventDefault();}}>
-  <header><h3 id={titleId}>{uiText(review.kind==='speech'?'核对批量口播':'核对批量视频')}</h3></header>
+  <header><h3 id={titleId}>{uiText(review.retry?(review.kind==='speech'?'核对失败口播重试':'核对失败视频重试'):(review.kind==='speech'?'核对批量口播':'核对批量视频'))}</h3></header>
   <div className="storyboard-batch-dialog-items">
    {review.changed&&<p role="status">{uiText('待提交内容已变化，本组未入队。请重新核对。')}</p>}
    {review.items.map(item=>{

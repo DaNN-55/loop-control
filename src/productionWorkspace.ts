@@ -26,7 +26,7 @@ export interface ProductionWorkspace {
 export const productionWorkspaceFields:Record<string,string[]>={
  importLegacyDraftInputs:['episodeId','expectedScriptRevisionId','reviewPackageId','workbenchSha256'],
  adoptLegacyPlan:['episodeId','expectedScriptRevisionId','expectedPlanSha256'],
- prepareStoryboardBatch:['episodeId','workspaceId','expectedRevision','kind','shotIds','common','drafts','regenerateShotIds'],
+ prepareStoryboardBatch:['episodeId','workspaceId','expectedRevision','kind','shotIds','common','drafts','regenerateShotIds','retryFailures'],
  confirmStoryboardBatch:['episodeId','workspaceId','confirmationId','shotIds'],
  prepareWorkspaceCall:['episodeId','workspaceId','expectedRevision','callCommand','callData'],
  confirmWorkspaceCall:['episodeId','workspaceId','expectedRevision','confirmationId','reservationCents'],

@@ -110,9 +110,10 @@ export async function createNarrationPorts(){return{mode:'controlled',store:{mod
   const worker=f.workerPool();
   const read=async()=>{const r=await fetch(f.origin+`/api/local/episodes/${episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});assert.equal(r.status,200);w=(await r.json()).workspace;return w!;};
   const send=async(command:string,data:Record<string,unknown>={},key?:string)=>{const result=await request(command,{...(w?{workspaceId:w.id,expectedRevision:w.revision}:{}),...data},key);if(result.status===200&&result.body?.id===w?.id)w=result.body;return result;};
-  const execute=async(taskId:string)=>{
+  const execute=async(taskId:string,options?:{afterClaim?:()=>Promise<void>;processOptions?:Parameters<typeof runWorkspaceDeliveryProcess>[3]})=>{
    const task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}) as any[])[0];assert.ok(task,'Real Worker must claim the submitted story task');
-   const result=await runWorkspaceDeliveryProcess(f,task,{mountPath:volume.mountPath,narration:{mode:'controlled',modulePath},media:{mode:'controlled',modulePath}});
+   await options?.afterClaim?.();
+   const result=await runWorkspaceDeliveryProcess(f,task,{mountPath:volume.mountPath,narration:{mode:'controlled',modulePath},media:{mode:'controlled',modulePath}},options?.processOptions);
    if(process.env.LOOP_STORY_EVIDENCE)await writeFile(join(process.env.LOOP_STORY_EVIDENCE,taskId+'-worker.json'),JSON.stringify(result,null,2));
    return result;
   };

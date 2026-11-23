@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
-import type {StoryboardBatchReceipt,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechDraft,StoryboardSpeechSettings,StoryboardVideoDraft,StoryboardVideoSettings} from '../storyboardBatch.js';
+import type {StoryboardBatchFailure,StoryboardBatchReceipt,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechDraft,StoryboardSpeechSettings,StoryboardVideoDraft,StoryboardVideoSettings} from '../storyboardBatch.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
 import {requireWritableEpisodeStorage} from './episodeStorageLocation.js';
@@ -57,6 +57,12 @@ function requestData(data:Record<string,unknown>):BatchRequest{
  if(data.kind!=='speech'&&data.kind!=='video')return invalid();
  const shotIds=idList(data.shotIds),regenerateShotIds=data.regenerateShotIds===undefined?[]:idList(data.regenerateShotIds);
  if(!shotIds.length||regenerateShotIds.some(id=>!shotIds.includes(id)))return invalid();
+ const retryFailures=data.retryFailures;
+ if(retryFailures!==undefined&&(!Array.isArray(retryFailures)||regenerateShotIds.length||
+  retryFailures.length!==shotIds.length||new Set(retryFailures.map(entry=>entry?.shotId)).size!==shotIds.length||
+  retryFailures.some(entry=>!hasOnlyKeys(entry,['shotId','taskId'])||typeof entry.shotId!=='string'||!shotIds.includes(entry.shotId)||
+   typeof entry.taskId!=='string'||!uuid.test(entry.taskId))))return invalid();
+ const retry=retryFailures===undefined?{}:{retryFailures:retryFailures as StoryboardBatchFailure[]};
  const drafts=data.drafts??[];
  if(!Array.isArray(drafts))return invalid();
  const seen=new Set<string>();
@@ -70,7 +76,7 @@ function requestData(data:Record<string,unknown>):BatchRequest{
     !hasOnlyKeys(d.inputs,keys)||d.inputs.prompt!==undefined&&(typeof d.inputs.prompt!=='string'||d.inputs.prompt.length>10000))return invalid();
    seen.add(d.shotId);
   }
-  return {kind:'video',shotIds,regenerateShotIds,drafts:drafts as StoryboardVideoDraft[],common:data.common as StoryboardVideoSettings|undefined};
+  return {kind:'video',shotIds,regenerateShotIds,...retry,drafts:drafts as StoryboardVideoDraft[],common:data.common as StoryboardVideoSettings|undefined};
  }
  for(const d of drafts){
   if(!d||typeof d!=='object'||Array.isArray(d)||Object.keys(d).some(key=>!['shotId','preparationRevisionId','inputFingerprint','text'].includes(key))||!shotIds.includes(d.shotId)||seen.has(d.shotId)||typeof d.preparationRevisionId!=='string'||typeof d.inputFingerprint!=='string'||!(/^[a-f0-9]{64}$/).test(d.inputFingerprint)||typeof d.text!=='string'||d.text.length>100000)return invalid();
@@ -78,14 +84,14 @@ function requestData(data:Record<string,unknown>):BatchRequest{
  }
  const common=data.common as StoryboardSpeechSettings|undefined;
  if(data.common!==undefined&&(!common||typeof common!=='object'||Array.isArray(common)||Object.keys(common).some(key=>!['selection','voice','languageCode','speakingRate'].includes(key))||typeof common.voice!=='string'||common.voice.length>200||typeof common.languageCode!=='string'||common.languageCode.length>30||typeof common.speakingRate!=='number'||!Number.isFinite(common.speakingRate)))return invalid();
- return {kind:'speech',shotIds,regenerateShotIds,drafts:drafts as StoryboardSpeechDraft[],common};
+ return {kind:'speech',shotIds,regenerateShotIds,...retry,drafts:drafts as StoryboardSpeechDraft[],common};
 }
 
 async function saveReview(c:PoolClient,row:ProductionWorkspaceRecord,request:BatchRequest,items:BatchItem[],changed=false):Promise<StoryboardBatchReview>{
  const id=randomUUID();
  const payload:StoredBatch={request,preparationRevisionId:row.preparation_revision_id,frozenHashes:Object.fromEntries(items.flatMap(item=>item.frozen?[[item.review.shotId,itemHash(item)]]:[]))};
  const expires=(await c.query("SELECT clock_timestamp()+interval '10 minutes' expires")).rows[0].expires as Date;
- const summary:StoryboardBatchReview={confirmationId:id,expiresAt:expires.toISOString(),status:'review',kind:request.kind,items:items.map(item=>item.review),...(changed?{changed:true as const}:{})};
+ const summary:StoryboardBatchReview={confirmationId:id,expiresAt:expires.toISOString(),status:'review',kind:request.kind,items:items.map(item=>item.review),...(request.retryFailures?{retry:true as const}:{}),...(changed?{changed:true as const}:{})};
  await c.query(`INSERT INTO local_identity.workspace_call_confirmations(id,owner_id,workspace_id,episode_id,script_revision_id,project_sha256,workspace_revision,command,payload,context_hash,authorization_hash,summary,expires_at)
   VALUES($1,local_identity.owner_id(),$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,[id,row.id,row.episode_id,row.script_revision_id,row.project_sha256,row.revision,batchCommand,JSON.stringify(payload),digest(payload),digest({id,payload}),JSON.stringify(summary),expires]);
  return summary;

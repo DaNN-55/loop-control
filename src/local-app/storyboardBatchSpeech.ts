@@ -1,6 +1,6 @@
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
-import type {StoryboardBatchItem,StoryboardSpeechDraft,StoryboardSpeechSettings} from '../storyboardBatch.js';
+import {definiteStoryboardFailure,latestStoryboardTask,type StoryboardBatchFailure,type StoryboardBatchItem,type StoryboardSpeechDraft,type StoryboardSpeechSettings} from '../storyboardBatch.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {ConfigurationError} from './configurationCommands.js';
@@ -18,6 +18,7 @@ export interface StoryboardSpeechRequest {
  common?:StoryboardSpeechSettings;
  drafts:StoryboardSpeechDraft[];
  regenerateShotIds:string[];
+ retryFailures?:StoryboardBatchFailure[];
 }
 export interface StoryboardSpeechItem {
  review:StoryboardBatchItem;
@@ -66,14 +67,17 @@ export async function resolveStoryboardSpeech(c:PoolClient,root:string,row:Produ
   if(!text.trim())return skip('缺少口播文案');
   if(mode==='none'||n.enabled===false)return skip('已设为无口播');
   const shotTasks=tasks.filter(task=>task.shotId===shotId);
+  if(shotTasks.some(task=>!task.retryTaskId&&(task.submissionUnknown||task.publicationAttempt!=null)))return skip('口播回执未知，请先在右侧核对原任务');
   if(shotTasks.some(task=>task.status==='ready'||task.status==='running'))return skip('已有口播任务进行中');
-  if(shotTasks.some(task=>!task.retryTaskId&&(task.submissionUnknown||task.publicationAttempt)))return skip('口播回执未知，请先在右侧核对原任务');
+  const prior=request.retryFailures?latestStoryboardTask(shotTasks):undefined;
+  if(request.retryFailures&&(!definiteStoryboardFailure(prior)||prior?.taskId!==request.retryFailures.find(failure=>failure.shotId===shotId)?.taskId))return skip('原任务已变化或无明确失败记录');
+  const previous=n.execution?.taskId===prior?.taskId?n.execution:undefined;
 
   const batch=request.common,template=templates?.shots.find(shot=>shot.shotId===shotId)?.narrationOverrides;
-  const selection=n.selection??batch?.selection??priorDefault?.selection??legacySelection;
-  const voice=n.override&&n.voice?n.voice:template?.voice??batch?.voice??priorDefault?.voice??templates?.narration.voice??n.voice??context.tts_voice??'';
-  const languageCode=n.override&&n.languageCode?n.languageCode:template?.languageCode??batch?.languageCode??priorDefault?.languageCode??templates?.narration.languageCode??n.languageCode??context.tts_language_code??'zh-CN';
-  const speakingRate=n.override&&n.speakingRate?n.speakingRate:template?.speakingRate??batch?.speakingRate??priorDefault?.speakingRate??templates?.narration.speakingRate??n.speakingRate??Number(context.tts_speaking_rate??1);
+  const selection=n.selection??batch?.selection??priorDefault?.selection??previous?.selection??legacySelection;
+  const voice=n.override&&n.voice?n.voice:template?.voice??batch?.voice??priorDefault?.voice??previous?.voice??templates?.narration.voice??n.voice??context.tts_voice??'';
+  const languageCode=n.override&&n.languageCode?n.languageCode:template?.languageCode??batch?.languageCode??priorDefault?.languageCode??previous?.languageCode??templates?.narration.languageCode??n.languageCode??context.tts_language_code??'zh-CN';
+  const speakingRate=n.override&&n.speakingRate?n.speakingRate:template?.speakingRate??batch?.speakingRate??priorDefault?.speakingRate??previous?.speakingRate??templates?.narration.speakingRate??n.speakingRate??Number(context.tts_speaking_rate??1);
 
   let resolved:Awaited<ReturnType<typeof resolveProductionSelection>>;
   try{
@@ -90,7 +94,7 @@ export async function resolveStoryboardSpeech(c:PoolClient,root:string,row:Produ
   const reservationCents=estimate.suggestedCents;
   const existing=!!n.adoptedAudioTrackId||!!n.retainedAudioTrackId||candidates.some(candidate=>candidate.shotId===shotId&&candidate.status==='available');
   const summary={kind:'口播生成' as const,target:shotId,provider:resolved.selection.provider,model:resolved.selection.model??resolved.choice.label,connection:`${resolved.connection.name} · v${resolved.connection.version}`,parameters:[`${characters} 字`,`音色：${voice}`,`语言：${languageCode}`,`语速：${speakingRate}`],inputs:[],prompt:text,reservationCents,estimate};
-  if(existing&&!request.regenerateShotIds.includes(shotId))return {review:{...base,state:'regenerate',reason:'已有可用口播或待采用候选',summary}};
+  if(existing&&!request.retryFailures&&!request.regenerateShotIds.includes(shotId))return {review:{...base,state:'regenerate',reason:'已有可用口播或待采用候选',summary}};
   return {review:{...base,state:'ready',summary},frozen:{
    baselineInputFingerprint:n.inputFingerprint,selectionVersion:1,selection:resolved.selection,connection:resolved.connection,execution:resolved.execution,
    inputFingerprint:productionHash({basis:row.preparation_revision_id,shotId,text,selection:resolved.selection,voice,languageCode,speakingRate}),reservationCents,
