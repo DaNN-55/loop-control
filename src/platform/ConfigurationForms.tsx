@@ -153,16 +153,18 @@ export function SeriesConfigurationForm({ headingContent, onCreateEpisode, onRen
   );
   return <><header className="account-editor-heading"><h2>{isEditing ? savedName : uiText("新建系列")}</h2>{isEditing ? <div className="series-header-actions"><span className="account-save-state" role="status">{uiText("已保存")}</span>{locked && onCreateEpisode && <Button size="sm" color="primary" type="button" isDisabled={busy} onClick={onCreateEpisode}>{uiText("新建生产单")}</Button>}</div> : null}</header><form className={`configuration-form series-configuration-form${locked ? " is-locked" : ""}`} onChangeCapture={() => {if (!locked && !busy) {setDirty(true); onDirtyChange?.(true);}}} onSubmit={requestSubmit}>
     <fieldset><legend>{uiText("系列资料")}</legend><label><FieldLabel>{isEditing ? uiText("系列显示名称") : uiText("系列名称")}</FieldLabel><InputBase size="sm" aria-label={isEditing ? uiText("系列显示名称") : uiText("系列名称")} readOnly={locked || (isEditing && !onRename)} isDisabled={busy} onChange={(event) => setName(event.target.value)} placeholder={uiText("例如：城市观察短片")} isRequired value={name} /></label>{headingContent}</fieldset>
-    {isEditing ? creativeRuleFields : <Disclosure className="series-creation-rules" label={uiText("创作规则（选填）")}>{creativeRuleFields}</Disclosure>}
+    {isEditing ? creativeRuleFields : <Disclosure open className="series-creation-rules" label={uiText("创作规则（选填）")}>{creativeRuleFields}</Disclosure>}
     {error ? <p className="form-error" role="alert">{uiText(error)}</p> : null}
     <footer className="series-form-footer">{!locked ? <span className={`account-save-state${dirty ? " is-dirty" : ""}`} role="status">{busy ? uiText("保存中…") : dirty ? uiText("有未保存修改") : isEditing ? uiText("修改中") : uiText("未创建")}</span> : null}<div className="configuration-actions">{locked ? <Button size="sm" color="secondary" className="button button-secondary" onClick={() => setEditing(true)} type="button">{uiText("修改")}</Button> : <><Button size="sm" color="secondary" className="button button-secondary" isDisabled={busy} onClick={()=>{if(!dirty||window.confirm(isEditing?uiText("放弃当前系列的未保存修改？"):uiText("放弃新建系列的草稿？")))reset();}} type="button">{isEditing ? dirty?uiText("放弃修改"):uiText("取消编辑") : uiText("取消")}</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={busy} type="submit">{busy ? uiText("保存中…") : isEditing ? uiText("保存系列设置") : uiText("创建系列")}</Button></>}</div></footer>
-    <p className="field-hint">{uiText("仅影响之后新建的生产单；已有生产单保留原规则。")}</p>
-    <Disclosure label={uiText("查看完整生效规则")} onToggle={event => setEffectiveOpen(event.currentTarget.open)}>{effectiveOpen && <section className="creative-rule-fields">
-      <label><FieldLabel>{uiText("生效的内容定位")}</FieldLabel><TextAreaBase size="sm" aria-label={uiText("生效的内容定位")} readOnly rows={2} value={seriesValues.positioning || accountDefaults.positioning}/></label>
-      <label><FieldLabel>{uiText("生效的画面风格")}</FieldLabel><TextAreaBase size="sm" aria-label={uiText("生效的画面风格")} readOnly rows={2} value={seriesValues.visualStyle || accountDefaults.visualStyle}/></label>
-      <label><FieldLabel>{uiText("生效的内容禁区")}</FieldLabel><TextAreaBase size="sm" aria-label={uiText("生效的内容禁区")} readOnly rows={2} value={restrictionValues}/></label>
-      {Object.keys(remainingAccountRules).length > 0 && <fieldset><legend>{uiText("账号规则")}</legend><CreativeRuleFields source={JSON.stringify(remainingAccountRules)} readOnly labelPrefix="账号 · " onChange={()=>{}}/></fieldset>}
-      {Object.keys(remainingSeriesRules).length > 0 && <fieldset><legend>{uiText("系列规则")}</legend><CreativeRuleFields source={JSON.stringify(remainingSeriesRules)} readOnly labelPrefix="系列 · " onChange={()=>{}}/></fieldset>}
-    </section>}</Disclosure>
+    {isEditing && <>
+      <p className="field-hint">{uiText("仅影响之后新建的生产单；已有生产单保留原规则。")}</p>
+      <Disclosure label={uiText("查看完整生效规则")} onToggle={event => setEffectiveOpen(event.currentTarget.open)}>{effectiveOpen && <section className="creative-rule-fields">
+        <label><FieldLabel>{uiText("生效的内容定位")}</FieldLabel><TextAreaBase size="sm" aria-label={uiText("生效的内容定位")} readOnly rows={2} value={seriesValues.positioning || accountDefaults.positioning}/></label>
+        <label><FieldLabel>{uiText("生效的画面风格")}</FieldLabel><TextAreaBase size="sm" aria-label={uiText("生效的画面风格")} readOnly rows={2} value={seriesValues.visualStyle || accountDefaults.visualStyle}/></label>
+        <label><FieldLabel>{uiText("生效的内容禁区")}</FieldLabel><TextAreaBase size="sm" aria-label={uiText("生效的内容禁区")} readOnly rows={2} value={restrictionValues}/></label>
+        {Object.keys(remainingAccountRules).length > 0 && <fieldset><legend>{uiText("账号规则")}</legend><CreativeRuleFields source={JSON.stringify(remainingAccountRules)} readOnly labelPrefix="账号 · " onChange={()=>{}}/></fieldset>}
+        {Object.keys(remainingSeriesRules).length > 0 && <fieldset><legend>{uiText("系列规则")}</legend><CreativeRuleFields source={JSON.stringify(remainingSeriesRules)} readOnly labelPrefix="系列 · " onChange={()=>{}}/></fieldset>}
+      </section>}</Disclosure>
+    </>}
   </form></>;
 }

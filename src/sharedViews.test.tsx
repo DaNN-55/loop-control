@@ -76,7 +76,6 @@ describe("approval console", () => {
     const onCreate = vi.fn().mockResolvedValue(undefined);
     render(<SeriesSettings isPending={false} onCreate={onCreate} series={[]} seriesVersions={[]} />);
 
-    const user=userEvent.setup();await user.click(screen.getByText("创作规则（选填）"));
     fireEvent.change(screen.getByRole("textbox", { name: "系列名称" }), { target: { value: "越南道士" } });
     fireEvent.change(screen.getByRole("textbox", { name: "系列定位" }), { target: { value: "雨夜民俗" } });
     fireEvent.click(screen.getByRole("button", { name: "创建系列" }));
