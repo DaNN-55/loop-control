@@ -3,7 +3,7 @@ import {ChevronDown} from 'lucide-react';
 import {Dialog,DialogTrigger} from 'react-aria-components';
 import {WorkspacePopover} from './WorkspacePopover';
 import type {ProductionWorkspace} from '../productionWorkspace';
-import type {StoryboardBatchFailure,StoryboardBatchKind,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechSettings,StoryboardVideoSettings} from '../storyboardBatch';
+import type {StoryboardImageSettings,StoryboardBatchFailure,StoryboardBatchKind,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechSettings,StoryboardVideoSettings} from '../storyboardBatch';
 import {uiText} from '../i18n/ui';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {WorkspaceNarrationToolbar} from './WorkspaceNarrationToolbar';
@@ -12,6 +12,8 @@ import {readStoryboardSpeechDraft} from './storyboardSpeechDraft';
 import {readStoryboardVideoDraft} from './storyboardVideoDraft';
 import type {VideoInputMaterial} from './WorkspaceVideoInputs';
 import {episodeVisualDefaults} from './workspaceVisualDefaults';
+import {StoryboardImageBatchSettings} from './StoryboardImageBatchSettings';
+import {readStoryboardImageDraft} from './storyboardImageDraft';
 import {StoryboardVideoBatchSettings} from './StoryboardVideoBatchSettings';
 import {StoryboardBatchReviewDialog} from './StoryboardBatchReviewDialog';
 import {workspaceStoryboardProgress} from './workspaceStoryboardProgress';
@@ -23,13 +25,14 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
  const [active,setActive]=useState(false),[selection,setSelection]=useState(new Set<string>()),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const [review,setReview]=useState<StoryboardBatchReview|null>(null),[visible,setVisible]=useState(false),[included,setIncluded]=useState(new Set<string>()),[regenerate,setRegenerate]=useState(new Set<string>()),[unknown,setUnknown]=useState(false);
  const [draftCommon,setCommon]=useState<StoryboardSpeechSettings>(),[draftVideo,setVideo]=useState<StoryboardVideoSettings>();
+ const [draftImage,setImage]=useState<StoryboardImageSettings>();
  const [settingsOpen,setSettingsOpen]=useState(false);
  const working=useRef(false);
  const shotIds=[...new Set(workspace.clips.map(clip=>clip.shotId))],labels=new Map(shotIds.map((id,index)=>[id,`镜头 ${String(index+1).padStart(2,'0')}`]));
- const failures:Record<StoryboardBatchKind,Map<string,string>>={speech:new Map(),video:new Map()};
+ const failures:Record<StoryboardBatchKind,Map<string,string>>={speech:new Map(),image:new Map(),video:new Map()};
  for(const id of shotIds){
   const progress=workspaceStoryboardProgress(workspace,id);
-  for(const kind of ['speech','video'] as const){
+  for(const kind of ['speech','image','video'] as const){
    const state=progress[kind];
    if(state&&'failureTaskId' in state&&state.failureTaskId)failures[kind].set(id,state.failureTaskId);
   }
@@ -40,6 +43,9 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
  const common=draftCommon??saved??{selection:null,voice:workspace.templateInputs?.narration.voice??'',languageCode:workspace.templateInputs?.narration.languageCode??'zh-CN',speakingRate:workspace.templateInputs?.narration.speakingRate??1};
  const catalog=useProductionServiceCatalog({scope:workspace.id,active:active&&!disabled});
  const services=catalog.catalog?.groups.find(g=>g.capability==='speech')?.services??[];
+ const imageServices=catalog.catalog?.groups.find(g=>g.capability==='image')?.services.filter(service=>service.mode==='generation')??[];
+ const savedImage=episodeVisualDefaults(workspace.id,'image') as {imageSelection?:StoryboardImageSettings['selection'];settings?:StoryboardImageSettings['settings']};
+ const imageCommon=draftImage??{selection:Object.hasOwn(savedImage,'imageSelection')?savedImage.imageSelection:workspace.visualConfiguration?.imageSelection,settings:savedImage.settings};
  const videoServices=catalog.catalog?.groups.find(g=>g.capability==='video')?.services.filter(service=>service.mode==='generation')??[];
  const savedVideo=episodeVisualDefaults(workspace.id,'video') as {videoSelection?:StoryboardVideoSettings['selection'];videoSettings?:StoryboardVideoSettings['videoSettings'];videoResolution?:string;firstFrameFit?:StoryboardVideoSettings['firstFrameFit'];videoModeId?:string};
  const inheritedSelection=Object.hasOwn(savedVideo,'videoSelection')?savedVideo.videoSelection:workspace.visualTargets?.find(target=>target.defaultSelection)?.defaultSelection;
@@ -53,7 +59,7 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
 
  function begin(nextActive:boolean,nextRetryKind?:StoryboardBatchKind){
   setSettingsOpen(false);
-  setActive(nextActive);setRetryKind(nextRetryKind);setSelection(new Set());setCommon(undefined);setVideo(undefined);setReview(null);setError('');setNotice('');
+  setActive(nextActive);setRetryKind(nextRetryKind);setSelection(new Set());setCommon(undefined);setVideo(undefined);setImage(undefined);setReview(null);setError('');setNotice('');
  }
 
  function toggle(id:string){
@@ -75,7 +81,7 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
   if(disabled||working.current||!ids.length)return;
   working.current=true;setBusy(true);setError('');setNotice('');
   try{
-   const drafts=kind==='video'?ids.flatMap(id=>readStoryboardVideoDraft(workspace,id,videoCommon,materials)??[]):(workspace.narration??[]).flatMap(n=>{
+   const drafts=kind==='image'?ids.flatMap(id=>readStoryboardImageDraft(workspace,id)??[]):kind==='video'?ids.flatMap(id=>readStoryboardVideoDraft(workspace,id,videoCommon,materials)??[]):(workspace.narration??[]).flatMap(n=>{
     if(!ids.includes(n.shotId))return [];
     const draft=readStoryboardSpeechDraft(workspace,n);
     return draft?.text.trim()?[draft]:[];
@@ -85,9 +91,9 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
     return taskId?[{shotId:id,taskId}]:[];
    }):undefined;
    if(retryFailures&&retryFailures.length!==ids.length)return;
-   const next=await command('prepareStoryboardBatch',{...base,expectedRevision:workspace.revision,kind,shotIds:ids,regenerateShotIds:overrides,drafts,...(retryFailures?{retryFailures}:{}),...(kind==='video'?{common:videoCommon}:common.selection?{common}:{})}) as StoryboardBatchReview;
+   const next=await command('prepareStoryboardBatch',{...base,expectedRevision:workspace.revision,kind,shotIds:ids,regenerateShotIds:overrides,drafts,...(retryFailures?{retryFailures}:{}),...(kind==='image'?{common:imageCommon}:kind==='video'?{common:videoCommon}:common.selection?{common}:{})}) as StoryboardBatchReview;
    setRegenerate(new Set(overrides));setUnknown(false);publish(next,prior);
-  }catch(cause){setError(cause instanceof Error?cause.message:uiText(kind==='speech'?'未能核对批量口播。':'未能核对批量视频。'));}
+  }catch(cause){setError(cause instanceof Error?cause.message:uiText(kind==='speech'?'未能核对批量口播。':kind==='image'?'未能核对批量图片。':'未能核对批量视频。'));}
   finally{working.current=false;setBusy(false);}
  }
 
@@ -114,36 +120,45 @@ export function WorkspaceStoryboardBatch({workspace,materials,disabled,visibleIn
    else {
     setReview(null);setVisible(false);
     if(next.kind==='video')setVideo(undefined);
+    if(next.kind==='image')setImage(undefined);
     if(retryKind){setSelection(new Set());setActive(false);setRetryKind(undefined);}
     setNotice(uiText('已提交 {count} 个镜头',{count:next.items.length}));
     await onSubmitted().catch(()=>setError(uiText('提交已完成，暂时无法刷新镜头。')));
    }
   }catch(cause){
    setUnknown((cause as {code?:string})?.code==='LOCAL_COMMAND_OUTCOME_UNKNOWN');
-   setError(cause instanceof Error?cause.message:uiText(review.kind==='speech'?'批量口播未能提交。':'批量视频未能提交。'));
+   setError(cause instanceof Error?cause.message:uiText(review.kind==='speech'?'批量口播未能提交。':review.kind==='image'?'批量图片未能提交。':'批量视频未能提交。'));
   }finally{working.current=false;setBusy(false);}
  }
 
  const actions=visibleInWorkspace&&<div className="storyboard-batch-actions storyboard-batch-caption-actions" role="group" aria-label={uiText('批量操作')}>
-    {!active&&(['speech','video'] as const).map(kind=>failures[kind].size>0&&<Button key={kind} size="sm" color="secondary" isDisabled={disabled||busy||unknown} onPress={()=>begin(true,kind)}>{uiText(kind==='speech'?'重试失败口播':'重试失败视频')}</Button>)}
+    {!active&&(['speech','image','video'] as const).map(kind=>failures[kind].size>0&&<Button key={kind} size="sm" color="secondary" isDisabled={disabled||busy||unknown} onPress={()=>begin(true,kind)}>{uiText(kind==='speech'?'重试失败口播':kind==='image'?'重试失败图片':'重试失败视频')}</Button>)}
     {active&&<>
-     {retryKind&&<span>{uiText(retryKind==='speech'?'重试失败口播':'重试失败视频')}</span>}
+     {retryKind&&<span>{uiText(retryKind==='speech'?'重试失败口播':retryKind==='image'?'重试失败图片':'重试失败视频')}</span>}
      {unknown&&review?<Button size="sm" color="primary" onPress={()=>setVisible(true)} isDisabled={busy}>{uiText('核对原回执')}</Button>:
       <DialogTrigger isOpen={settingsOpen} onOpenChange={setSettingsOpen}>
        <Button size="sm" color="tertiary" iconTrailing={ChevronDown} isDisabled={disabled||busy}>{uiText('共用设置')}</Button>
-       <WorkspacePopover className="dan-ui product-ui storyboard-batch-settings-popover" placement="bottom end" offset={6} containerPadding={12} shouldFlip>
+       <WorkspacePopover className="dan-ui product-ui storyboard-batch-settings-popover" placement="bottom start" offset={6} containerPadding={12} shouldFlip>
         <Dialog aria-label={uiText('共用设置')} className="storyboard-batch-settings">
-         {retryKind!=='video'&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用口播设置')}>
+         {(!retryKind||retryKind==='speech')&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用口播设置')}>
+          <h4>{uiText('口播')}</h4>
           <div className="storyboard-batch-settings-fields">
-           <h4>{uiText('口播')}</h4>
            <WorkspaceNarrationToolbar mode="tts" value={common} services={services} disabled={disabled||busy||unknown} changed={false} allowManual={false} showSample={false} onMode={()=>{}} onChange={setCommon} onSave={()=>{}} onRefresh={catalog.refresh} refreshing={catalog.pending}>{null}</WorkspaceNarrationToolbar>
            {catalog.error&&<p role="alert">{uiText('无法读取语音连接。')}</p>}
           </div>
           <Button size="sm" color="primary" isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare('speech',[...selected],[]);}}>{uiText(retryKind?'核对重试':'批量生成口播')}</Button>
          </div>}
-         {retryKind!=='speech'&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用视频设置')}>
+         {(!retryKind||retryKind==='image')&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用图片设置')}>
+          <h4>{uiText('图片')}</h4>
           <div className="storyboard-batch-settings-fields">
-           <h4>{uiText('视频')}</h4>
+           <StoryboardImageBatchSettings value={imageCommon} services={imageServices} disabled={disabled||busy||unknown} onChange={setImage} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
+           {catalog.error&&<p role="alert">{uiText('无法读取图片连接。')}</p>}
+          </div>
+          <Button size="sm" color={retryKind?'primary':'secondary'} isDisabled={disabled||busy||!selected.size} onPress={()=>{setSettingsOpen(false);void prepare('image',[...selected],[]);}}>{uiText(retryKind?'核对重试':'批量生成图片')}</Button>
+         </div>}
+         {(!retryKind||retryKind==='video')&&<div className="storyboard-batch-settings-row" role="group" aria-label={uiText('本次共用视频设置')}>
+          <h4>{uiText('视频')}</h4>
+          <div className="storyboard-batch-settings-fields">
            <StoryboardVideoBatchSettings value={videoCommon} services={videoServices} disabled={disabled||busy||unknown} onChange={setVideo} onRefresh={catalog.refresh} refreshing={catalog.pending}/>
            {catalog.error&&<p role="alert">{uiText('无法读取视频连接。')}</p>}
           </div>

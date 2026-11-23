@@ -6,6 +6,14 @@ export const imageSizePresets = [
   {ratio:'2:3', label:'竖图 2:3', standard:'1024x1536', high:'1280x1920'},
   {ratio:'3:2', label:'横图 3:2', standard:'1536x1024', high:'1920x1280'},
 ] as const;
+export function defaultImageSize(width=9,height=16): typeof imageSizePresets[number]['standard']{
+ const ratio=width/height;
+ const distance=(preset:typeof imageSizePresets[number])=>{
+  const [w,h]=preset.ratio.split(':').map(Number);
+  return Math.abs(w/h-ratio);
+ };
+ return [...imageSizePresets].sort((a,b)=>distance(a)-distance(b))[0].standard;
+}
 export const imageSizes = imageSizePresets.flatMap(p=>[p.standard,p.high]);
 export const openAiImage25Models = ['gpt-image-2.5-sunburst','gpt-image-2.5-flare','gpt-image-2.5-sunburst-2026-09-08','gpt-image-2.5-flare-2026-09-08'] as const;
 export const openAiImage26Models = ['gpt-image-2.6-sunburst','gpt-image-2.6-flare'] as const;

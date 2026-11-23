@@ -20,7 +20,7 @@ import {productionHash} from './scriptProductionStore.js';
 import {ConfigurationError,canonical} from './configurationCommands.js';
 
 /** Resolve the same selection and native voice window used by the queue. No Provider is invoked. */
-async function describe(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:string,payload:Record<string,unknown>){
+export async function describeWorkspaceCall(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:string,payload:Record<string,unknown>){
  if(JSON.stringify(payload).length>16384||!requiresWorkspaceCall(command,payload)||!Object.hasOwn(productionWorkspaceFields,command)||Object.keys(payload).some(k=>!productionWorkspaceFields[command].includes(k))||payload.episodeId!==row.episode_id||payload.workspaceId!==row.id||payload.expectedRevision!==Number(row.revision))throw new ConfigurationError(400,'本次调用参数无效，请重新填写。');
  await assertLegacyExternalRequestsResolved(c,root,row);
  let videoInputs:Awaited<ReturnType<typeof resolveWorkspaceVideoRequest>>['visual']|undefined;
@@ -73,7 +73,7 @@ async function describe(c:PoolClient,root:string,row:ProductionWorkspaceRecord,p
 }
 export async function prepareWorkspaceCall(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:unknown,payload:unknown):Promise<WorkspaceCallProposal>{
  if(typeof command!=='string'||!payload||typeof payload!=='object'||Array.isArray(payload))throw new ConfigurationError(400,'本次调用参数无效。');
- const input={...payload as Record<string,unknown>},description=await describe(c,root,row,project,command,input),id=randomUUID();
+ const input={...payload as Record<string,unknown>},description=await describeWorkspaceCall(c,root,row,project,command,input),id=randomUUID();
  if(command!=='prepareWorkspaceAudio')input.reservationCents=description.summary.reservationCents;
  const owner=(await c.query('SELECT local_identity.owner_id() id')).rows[0].id;
  const result=(await c.query('INSERT INTO local_identity.workspace_call_confirmations(id,owner_id,workspace_id,episode_id,script_revision_id,project_sha256,workspace_revision,command,payload,context_hash,authorization_hash,summary) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING expires_at',[id,owner,row.id,row.episode_id,row.script_revision_id,row.project_sha256,Number(row.revision),command,JSON.stringify(input),description.contextHash,productionHash({id,owner,workspace:row.id,input,contextHash:description.contextHash}),JSON.stringify(description.summary)])).rows[0];
@@ -83,7 +83,7 @@ export async function consumeWorkspaceCall(c:PoolClient,root:string,row:Producti
  if(typeof id!=='string'||!/^[a-f0-9-]{36}$/.test(id))throw new ConfigurationError(400,'请重新确认本次调用。');
  const approval=(await c.query('SELECT * FROM local_identity.workspace_call_confirmations WHERE id=$1 AND workspace_id=$2 AND owner_id=local_identity.owner_id() FOR UPDATE',[id,row.id])).rows[0];
  if(!approval||approval.consumed_at||new Date(approval.expires_at).getTime()<=Date.now()||approval.project_sha256!==row.project_sha256||approval.script_revision_id!==row.script_revision_id||Number(approval.workspace_revision)!==Number(row.revision))throw new ConfigurationError(409,'本次确认已过期、已使用或工程已变化，请重新确认。');
- const current=await describe(c,root,row,project,approval.command,approval.payload);
+ const current=await describeWorkspaceCall(c,root,row,project,approval.command,approval.payload);
  if(current.contextHash!==approval.context_hash||productionHash(current.summary)!==productionHash(approval.summary))throw new ConfigurationError(409,'连接、输入或费用依据已变化，请重新确认本次调用。');
  const amount=reservationCents===undefined?current.summary.reservationCents:reservationCents,limits=current.summary.estimate!;
  if(typeof amount!=='number'||!Number.isSafeInteger(amount)||amount<limits.minimumCents||amount>limits.maximumCents)throw new ConfigurationError(400,`本次费用预留须为 ¥${(limits.minimumCents/100).toFixed(2)}～¥${(limits.maximumCents/100).toFixed(2)}。`);

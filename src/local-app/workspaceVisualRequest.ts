@@ -28,7 +28,7 @@ async function visualContext(c:PoolClient,episodeId:string){
 }
 
 export async function resolveWorkspaceImageRequest(c:PoolClient,root:string,episodeId:string,data:Record<string,unknown>,phase:Phase){
- if(phase==='queue'&&(typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1200||!isImageGenerationSettings(data.settings)||!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000))throw new ConfigurationError(400,'请填写图片提示词、有效生成设置和本次费用预留。');
+ if(typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1200||!isImageGenerationSettings(data.settings)||phase==='queue'&&(!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000))throw new ConfigurationError(400,'请填写图片提示词、有效生成设置和本次费用预留。');
  const {context,creativeContext}=await visualContext(c,episodeId),resolved=await resolveProductionSelection(c,data.selection,'image');
  const prompt=String(data.prompt??'');
  if(!prompt.trim())throw new ConfigurationError(400,'请填写本次调用内容。');
@@ -39,10 +39,8 @@ export async function resolveWorkspaceImageRequest(c:PoolClient,root:string,epis
  if(new Set(ids).size!==ids.length||ids.some(id=>typeof id!=='string'||!/^[a-f0-9-]{36}$/.test(id)))throw new ConfigurationError(400,phase==='confirmation'?'参考素材标识无效或重复。':'参考图无效或超过 16 张。');
  const brief=data.imageBrief??emptyImageBrief;
  if(!isImageBrief(brief,ids))throw new ConfigurationError(400,phase==='confirmation'?'参考图用途或构图设置无效。':'参考用途或构图设置无效，请重新确认。');
- if(phase==='queue'){
-  if(Object.keys(settings).some(key=>!['size','quality','count'].includes(key)))throw new ConfigurationError(400,'图片设置包含不支持的参数。');
-  if(ids.length>(constraints.referenceImages?.max??0))throw new ConfigurationError(400,'图片设置或参考图与所选模型不兼容。');
- }
+ if(Object.keys(settings).some(key=>!['size','quality','count'].includes(key)))throw new ConfigurationError(400,'图片设置包含不支持的参数。');
+ if(ids.length>(constraints.referenceImages?.max??0))throw new ConfigurationError(400,'图片设置或参考图与所选模型不兼容。');
  const materials=[];let referenceBytes=0;
  const fileIO=phase==='confirmation'?await episodeFileIO(c,root,episodeId):undefined;
  for(const id of ids){
@@ -57,7 +55,7 @@ export async function resolveWorkspaceImageRequest(c:PoolClient,root:string,epis
  }
  let referencePrompt:string;try{referencePrompt=resolvePromptReferences(prompt,data.promptReferences,materials.map(m=>({materialRevisionId:m.id,kind:'image',name:m.source_path})));}catch(error){throw new ConfigurationError(400,(error as Error).message);}
  const actualPrompt=imageRequestPrompt(referencePrompt,brief,ids,creativeContext.accountRules,creativeContext.seriesRules);
- if(phase==='queue'&&actualPrompt.length>(constraints.prompt?.maxLength??1200))throw new ConfigurationError(400,'图片提示词与账号、系列规则合并后过长，请精简后提交。');
+ if(actualPrompt.length>(constraints.prompt?.maxLength??1200))throw new ConfigurationError(400,'图片提示词与账号、系列规则合并后过长，请精简后提交。');
  const references=materials.map(material=>({artifactType:'static_visual',relativePath:material.storage_path,sha256:material.sha256,fileSize:Number(material.file_size),mimeType:material.mime_type,materialRevisionId:material.id}));
  return{context,creativeContext,resolved,brief,materials,references,actualPrompt,prompt,ids,displayPrompt:[prompt,imageBriefPrompt(brief,ids)].filter(Boolean).join('\n\n')};
 }

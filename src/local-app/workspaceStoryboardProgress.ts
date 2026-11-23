@@ -25,13 +25,12 @@ export function workspaceStoryboardProgress(workspace:ProductionWorkspace,shotId
  const narration=workspace.narration?.find(n=>n.shotId===shotId);
  const voices=workspace.candidates?.filter(c=>c.shotId===shotId&&c.kind==='audio')??[];
  const speech=voices.find(c=>c.status==='available')??voices.find(c=>c.status==='adopted');
- const videoTasks=workspace.visualTasks?.filter(t=>t.shotId===shotId&&t.kind==='video')??[];
- const pendingVideo=videoTasks.find(t=>{const state=workspaceTaskPresentation(t);return !state.hidden&&(state.active||state.held||state.unknown||state.canResume||state.stopped&&(t.submissionOutcome==='started'||t.submissionOutcome==='received'));});
- const videos=workspace.visualCandidates?.filter(c=>c.shotId===shotId&&c.kind==='video'&&!!c.taskId)??[];
- const video=videos.find(c=>c.status==='available')??videos.find(c=>c.status==='adopted');
- const progress:Record<StoryboardBatchKind,ReturnType<typeof shotProgress>>={
-  speech:shotProgress(narration?.generationTask,speech),
-  video:shotProgress(pendingVideo??latestStoryboardTask(videoTasks),video),
+ const visual=(kind:'image'|'video')=>{
+  const tasks=workspace.visualTasks?.filter(t=>t.shotId===shotId&&t.kind===kind)??[];
+  const pending=tasks.find(t=>{const state=workspaceTaskPresentation(t);return !state.hidden&&(state.active||state.held||state.unknown||state.canResume||state.stopped&&(t.submissionOutcome==='started'||t.submissionOutcome==='received'));});
+  const candidates=workspace.visualCandidates?.filter(c=>c.shotId===shotId&&c.kind===kind&&!!c.taskId)??[];
+  return shotProgress(pending??latestStoryboardTask(tasks),candidates.find(c=>c.status==='available')??candidates.find(c=>c.status==='adopted'));
  };
+ const progress:Record<StoryboardBatchKind,ReturnType<typeof shotProgress>>={speech:shotProgress(narration?.generationTask,speech),image:visual('image'),video:visual('video')};
  return progress;
 }

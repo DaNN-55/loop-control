@@ -1,4 +1,4 @@
-import type {WorkspaceVisualTask} from './workspaceVisualCandidates';
+import type {WorkspaceVisualTask} from './workspaceVisualCandidates.js';
 
 type TaskEvidence=Pick<WorkspaceVisualTask,'status'|'publicationAttempt'|'submissionUnknown'|'submissionOutcome'|'canResume'|'retryTaskId'|'invalidated'|'waitingForRetry'|'retryAllowed'>;
 const presentations={

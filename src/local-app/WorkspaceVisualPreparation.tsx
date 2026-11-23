@@ -48,7 +48,7 @@ import type {ProductionWorkspace} from '../productionWorkspace';
 import type {WorkspaceVisualCandidate} from '../workspaceVisualCandidates';
 import {useProductionServiceCatalog} from './useProductionServiceCatalog';
 import type {ProductionSelection} from '../productionSelection';
-import {imageSizePresets,emptyImageBrief,referencePurposeLabels,framingLabels,captionSpaceLabels,type ImageBrief,type ImageGenerationSettings} from '../imageGeneration';
+import {defaultImageSize,imageSizePresets,emptyImageBrief,referencePurposeLabels,framingLabels,captionSpaceLabels,type ImageBrief,type ImageGenerationSettings} from '../imageGeneration';
 import {defaultWanSettings,wanSettingLabels,type WanGenerationSettings} from '../videoGenerationSettings';
 import {useWorkspaceOwnerId} from './WorkspaceDraft';
 import {workspaceUploadSessions,readWorkspaceUploadFile,type WorkspaceUploadEntry} from './workspaceUploads';
@@ -63,7 +63,7 @@ const uploadSession=workspaceUploadSessions<UploadEntry>();
 export interface VisualPreparationProps {
  onBusyChange?:(busy:boolean)=>void;
  workspacePolling?:boolean;
- tabRequest?:{targetItemId:string;id:number};
+ tabRequest?:{targetItemId:string;id:number;kind?:Kind};
  workspace:ProductionWorkspace;command:(name:string,data:unknown)=>Promise<unknown>;onChange:(w:ProductionWorkspace)=>void;
  materials:Material[];selectedShotId?:string;selectedTargetItemId?:string;onTargetChange?:(id:string)=>void;
  project?:OpenChatCutProject|null;currentVisualKind?:string;currentVisualPath?:string;currentVisualSha256?:string;currentMaterialRevisionId?:string;preview?:ReactNode;readOnly?:boolean;completedView?:boolean;preparationStatus?:ReactNode;
@@ -75,7 +75,7 @@ function prioritizeVideoInput(draft:Draft,id:string){
 }
 function initialDraft(props:VisualPreparationProps,targetItemId:string):Draft {
  const shotId=props.workspace.clips.find(clip=>clip.itemId===targetItemId)?.shotId,template=props.workspace.templateInputs?.shots.find(shot=>shot.shotId===shotId);
- const sizeTarget=props.workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),ratio=(sizeTarget?.width??9)/(sizeTarget?.height??16),size:ImageGenerationSettings['size']=[...imageSizePresets].sort((a,b)=>Math.abs(Number(a.ratio.split(':')[0])/Number(a.ratio.split(':')[1])-ratio)-Math.abs(Number(b.ratio.split(':')[0])/Number(b.ratio.split(':')[1])-ratio))[0].standard;
+ const sizeTarget=props.workspace.visualTargets?.find(t=>t.targetItemId===targetItemId),size=defaultImageSize(sizeTarget?.width,sizeTarget?.height);
  const selected=props.workspace.selectedImages?.find(s=>s.targetItemId===targetItemId)?.materialRevisionId;
  let pexelsSelection:ProductionSelection|null|undefined;try{pexelsSelection=JSON.parse(sessionStorage.getItem(`loop-pexels-draft:${props.workspace.id}:${targetItemId}`)??'null')?.selection;}catch{/* Keep an empty search selection. */}
  const window=props.project?readWorkspaceShotWindow(props.project,targetItemId):undefined;
@@ -129,7 +129,10 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
   if(changed)window.dispatchEvent(new CustomEvent('loop-visual-defaults',{detail:workspace.id}));
  }
  useEffect(()=>{
-  if(props.tabRequest?.targetItemId===targetItemId&&draftRef.current.tab!=='video')setDraft(value=>({...value,tab:'video'}));
+  if(props.tabRequest?.targetItemId===targetItemId){
+   const nextTab=props.tabRequest.kind??'video';
+   if(draftRef.current.tab!==nextTab)setDraft(value=>({...value,tab:nextTab}));
+  }
  },[props.tabRequest,targetItemId]);
  useEffect(()=>{
   const refresh=()=>{

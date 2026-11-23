@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import type {PoolClient} from 'pg';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
-import type {StoryboardBatchFailure,StoryboardBatchReceipt,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechDraft,StoryboardSpeechSettings,StoryboardVideoDraft,StoryboardVideoSettings} from '../storyboardBatch.js';
+import type {StoryboardImageDraft,StoryboardImageSettings,StoryboardBatchFailure,StoryboardBatchReceipt,StoryboardBatchResult,StoryboardBatchReview,StoryboardSpeechDraft,StoryboardSpeechSettings,StoryboardVideoDraft,StoryboardVideoSettings} from '../storyboardBatch.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
 import {requireWritableEpisodeStorage} from './episodeStorageLocation.js';
@@ -10,16 +10,19 @@ import {registerConsumedWorkspaceCall} from './workspaceCallConfirmation.js';
 import type {InputRuntime} from './episodeCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import {queueStoryboardVideo,resolveStoryboardVideo,type StoryboardVideoItem,type StoryboardVideoRequest} from './storyboardBatchVideo.js';
+import {queueStoryboardImage,resolveStoryboardImage,type StoryboardImageItem,type StoryboardImageRequest} from './storyboardBatchImage.js';
 import {resolveStoryboardSpeech,type StoryboardSpeechItem,type StoryboardSpeechRequest} from './storyboardBatchSpeech.js';
 
 const batchCommand='confirmStoryboardBatch',speechCommand='generateWorkspaceNarration';
 const uuid=/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 const digest=canonicalFingerprint;
 const itemHash=(item:BatchItem)=>{const {change:_,...review}=item.review;return digest({review,frozen:item.frozen});};
-type BatchRequest=(StoryboardSpeechRequest&{kind:'speech'})|(StoryboardVideoRequest&{kind:'video'});
-type BatchItem=StoryboardSpeechItem|StoryboardVideoItem;
+type BatchRequest=(StoryboardSpeechRequest&{kind:'speech'})|(StoryboardVideoRequest&{kind:'video'})|(StoryboardImageRequest&{kind:'image'});
+type BatchItem=StoryboardSpeechItem|StoryboardVideoItem|StoryboardImageItem;
 function resolveBatch(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,request:BatchRequest){
- return request.kind==='speech'?resolveStoryboardSpeech(c,root,row,project,request):resolveStoryboardVideo(c,root,row,project,request);
+ if(request.kind==='speech')return resolveStoryboardSpeech(c,root,row,project,request);
+ if(request.kind==='image')return resolveStoryboardImage(c,root,row,project,request);
+ return resolveStoryboardVideo(c,root,row,project,request);
 }
 interface StoredBatch {
  request:BatchRequest;
@@ -38,7 +41,7 @@ interface Approval {
 function describeChange(kind:BatchRequest['kind'],previous:StoryboardBatchReview['items'][number],current:StoryboardBatchReview['items'][number]){
  if(current.reason)return current.reason;
  const changes:string[]=[];
- if(previous.text!==current.text||previous.source!==current.source)changes.push(kind==='speech'?'口播文案已变化':'视频提示词已变化');
+ if(previous.text!==current.text||previous.source!==current.source)changes.push(kind==='speech'?'口播文案已变化':kind==='image'?'图片提示词已变化':'视频提示词已变化');
  if(previous.targetSeconds!==current.targetSeconds||previous.providerSeconds!==current.providerSeconds)changes.push('主声或视频请求时长已变化');
  if(previous.summary?.inputs.join('|')!==current.summary?.inputs.join('|'))changes.push('视觉输入已变化');
  if(previous.summary?.connection!==current.summary?.connection||previous.summary?.provider!==current.summary?.provider||previous.summary?.model!==current.summary?.model)changes.push('连接或模型已变化');
@@ -55,7 +58,7 @@ function hasOnlyKeys(value:unknown,keys:string[]):value is Record<string,unknown
  return !!value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(key=>keys.includes(key));
 }
 function requestData(data:Record<string,unknown>):BatchRequest{
- if(data.kind!=='speech'&&data.kind!=='video')return invalid();
+ if(data.kind!=='speech'&&data.kind!=='image'&&data.kind!=='video')return invalid();
  const shotIds=idList(data.shotIds),regenerateShotIds=data.regenerateShotIds===undefined?[]:idList(data.regenerateShotIds);
  if(!shotIds.length||regenerateShotIds.some(id=>!shotIds.includes(id)))return invalid();
  const retryFailures=data.retryFailures;
@@ -67,6 +70,18 @@ function requestData(data:Record<string,unknown>):BatchRequest{
  const drafts=data.drafts??[];
  if(!Array.isArray(drafts))return invalid();
  const seen=new Set<string>();
+ if(data.kind==='image'){
+  const validSettings=(value:unknown)=>value===undefined||hasOnlyKeys(value,['size','quality','count']);
+  if(data.common!==undefined&&(!hasOnlyKeys(data.common,['selection','settings'])||!validSettings(data.common.settings)))return invalid();
+  for(const d of drafts){
+   if(!hasOnlyKeys(d,['shotId','targetItemId','preparationRevisionId','selection','settings','prompt','imageBrief','referenceMaterialRevisionIds','promptReferences'])||
+    typeof d.shotId!=='string'||!shotIds.includes(d.shotId)||seen.has(d.shotId)||typeof d.targetItemId!=='string'||d.targetItemId.length>200||
+    typeof d.preparationRevisionId!=='string'||!uuid.test(d.preparationRevisionId)||!validSettings(d.settings)||
+    d.prompt!==undefined&&(typeof d.prompt!=='string'||d.prompt.length>1200))return invalid();
+   seen.add(d.shotId);
+  }
+  return {kind:'image',shotIds,regenerateShotIds,...retry,drafts:drafts as StoryboardImageDraft[],common:data.common as StoryboardImageSettings|undefined};
+ }
  if(data.kind==='video'){
   const settings=['selection','durationSeconds','videoSettings','videoResolution','reservationCents','firstFrameFit','videoMode'];
   const keys=[...settings,'prompt','promptReferences','firstFrameMaterialRevisionId','visualInputs'];
@@ -168,6 +183,8 @@ export async function executeStoryboardBatch(c:PoolClient,root:string,row:Produc
    await runtime.narrationReady();
    await runtime.checkReferences(c,[...new Set(speechItems.map(item=>item.frozen!.selection.connectionVersionId!))],{purpose:'workspace-generation'});
    for(const item of speechItems)items.push(await queueSpeech(c,row,id,item));
+  }else if(kind==='image'){
+   for(const item of current as StoryboardImageItem[])items.push(await queueStoryboardImage(c,root,row,project,runtime,id,item));
   }else{
    for(const item of current as StoryboardVideoItem[])items.push(await queueStoryboardVideo(c,root,row,project,runtime,id,item));
   }

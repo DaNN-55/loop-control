@@ -102,10 +102,10 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
       {batch&&<td className="workspace-shot-selection-cell"><label className="storyboard-batch-check" onClick={event=>event.stopPropagation()} onKeyDown={event=>event.stopPropagation()} onDragStart={event=>{event.preventDefault();event.stopPropagation();}}><input type="checkbox" aria-label={uiText("勾选{value0}",{value0:shotLabel})} checked={batch.selected.has(clip.shotId)} disabled={locked||batch.disabled||!batch.eligible.has(clip.shotId)} onChange={()=>batch.onToggle(clip.shotId)}/></label></td>}
       <td className="workspace-shot-number-cell"><button type="button" disabled={selectionDisabled} draggable={!reorderLocked} title={clip.shotId} aria-label={uiText("选择{value0}",{value0:String(shotLabel)})} aria-pressed={selectedShotId===clip.shotId} onClick={()=>{if(!selectionDisabled)onSelect(clip.shotId);}}>{String(index+1).padStart(2,"0")}</button></td>
       <td className="workspace-shot-content-cell"><div className="workspace-shot-text"><span>{clip.text}</span><small title={sourceName}>{sourceName?.replace(/^(?:(?:wan-)?added-[0-9a-f-]{36}-|[0-9a-f]{64}-)/i,'')||sourceName}</small></div>
-       {(['speech','video'] as const).map(kind=>{
+       {(['speech','image','video'] as const).map(kind=>{
         const state=generation[kind];
         if(!state)return null;
-        const labels={kind:uiText(kind==='speech'?'口播':'视频'),status:uiText(state.status)};
+        const labels={kind:uiText(kind==='speech'?'口播':kind==='image'?'图片':'视频'),status:uiText(state.status)};
         const text=uiText('{kind}：{status}',labels);
         return <div className="storyboard-shot-generation" key={kind}>
          <button type="button" disabled={selectionDisabled} aria-label={uiText('{shot}{kind}：{status}',{...labels,shot:uiText('镜头 {number}',{number:String(index+1).padStart(2,'0')})})} onClick={event=>{event.stopPropagation();if(onGenerationNavigate)onGenerationNavigate(clip.shotId,kind,state.targetItemId);else onSelect(clip.shotId);}}>{text}</button>

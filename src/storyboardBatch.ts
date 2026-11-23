@@ -5,7 +5,22 @@ import type {VideoVisualInputSelection} from './videoVisualInputs.js';
 import type {WanGenerationSettings} from './videoGenerationSettings.js';
 import type {WorkspaceVisualTask} from './workspaceVisualCandidates.js';
 
-export type StoryboardBatchKind='speech'|'video';
+import type {ImageBrief,ImageGenerationSettings} from './imageGeneration.js';
+
+export type StoryboardBatchKind='speech'|'image'|'video';
+export interface StoryboardImageSettings {
+ selection?:ProductionSelection|null;
+ settings?:Partial<ImageGenerationSettings>;
+}
+export interface StoryboardImageDraft extends StoryboardImageSettings {
+ shotId:string;
+ targetItemId:string;
+ preparationRevisionId:string;
+ prompt?:string;
+ promptReferences?:PromptReferenceBinding[];
+ referenceMaterialRevisionIds?:string[];
+ imageBrief?:Partial<ImageBrief>;
+}
 export interface StoryboardBatchFailure {shotId:string;taskId:string}
 
 export function definiteStoryboardFailure(task:WorkspaceVisualTask|undefined){
