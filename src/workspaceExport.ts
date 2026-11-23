@@ -4,5 +4,6 @@ export interface WorkspaceExport {id:string;projectContentVersion:number;content
 export const workspaceExportFields:Record<string,string[]>={
  exportWorkspace:['episodeId','workspaceId','expectedRevision'],
  confirmWorkspaceExport:['episodeId','workspaceId','expectedRevision','exportId','expectedExportSha256','expectedContentSha256'],
+ confirmReviewedExport:['episodeId','reviewFingerprint'],
  completeWorkspaceExport:['episodeId','workspaceId','expectedRevision','exportId','expectedExportSha256','expectedContentSha256'],
 };

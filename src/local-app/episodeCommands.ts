@@ -90,8 +90,9 @@ export class LocalEpisodeCommands {
   allowed.openStandaloneStudio=[];
   Object.assign(allowed,productionWorkspaceFields);
   if(!retiredManual&&!retiredPlanning&&!retiredNarration&&!retiredExecution&&Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
-  if(['saveScriptReviewDraft','confirmReviewedScript'].includes(body.command)&&!uuid.test(String(data.episodeId)))throw new ConfigurationError(400,'生产单标识无效。');
+  if(['saveScriptReviewDraft','confirmReviewedScript','confirmReviewedExport'].includes(body.command)&&!uuid.test(String(data.episodeId)))throw new ConfigurationError(400,'生产单标识无效。');
   if(body.command==='confirmReviewedScript'&&!/^[a-f0-9]{64}$/.test(String(data.reviewFingerprint)))throw new ConfigurationError(400,'脚本核对版本无效。');
+  if(body.command==='confirmReviewedExport'&&(typeof data.reviewFingerprint!=='string'||!/^[a-f0-9]{64}$/.test(data.reviewFingerprint)))throw new ConfigurationError(400,'成片核对版本无效。');
   if(body.command==='importMaterial'&&Object.hasOwn(data,'scriptStudioAttachment')&&data.scriptStudioAttachment!==true)throw new ConfigurationError(400,'附件校验标记无效。');
   recordValidatedRequestLogContext({operation:'episode.'+body.command});
   if(body.command==='create'){
@@ -198,7 +199,7 @@ export class LocalEpisodeCommands {
    }
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,idempotency_key) DO NOTHING',[session.id,body.idempotencyKey,hash,value]);return value;
   });
-  if(['requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','completeWorkspaceExport','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage'].includes(body.command))this.runtime.wake(String(data.episodeId??result.id));return result;
+  if(['requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','completeWorkspaceExport','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage'].includes(body.command)||body.command==='confirmReviewedExport'&&result.status==='success')this.runtime.wake(String(data.episodeId??result.id));return result;
  }
  private async start(c:PoolClient,episodeId:string,scriptId:string|null,root:string,policy:Record<string,unknown>&{static_visual?:{executor?:unknown}}){
   await this.preflight(c,policy);
