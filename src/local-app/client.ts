@@ -18,7 +18,7 @@ export async function localRequest(path:string,init?:RequestInit){
  const response=await fetch('/api/local/'+path,init);const value=await response.json();
  init?.signal?.throwIfAborted();
  if(!response.ok){if(response.status===401&&path!=='login'&&session===sessionGeneration){sessionGeneration++;csrf='';ownerScope='';inFlight.clear();window.dispatchEvent(new Event('loop-local-session-expired'));}throw Object.assign(new Error(String(value.error??'本机请求失败。').replaceAll('秘密','密钥')),{status:response.status,...(typeof value.code==='string'?{code:value.code}:{}),...(value.preflight?{preflight:value.preflight}:{})});}
- if(session===sessionGeneration){if(typeof value.csrfToken==='string')csrf=value.csrfToken;if((path==='session'||path==='login')&&typeof value.owner?.id==='string')ownerScope=value.owner.id;if(path==='logout'){csrf='';ownerScope='';}}return value;
+ if(session===sessionGeneration&&value!==null){if(typeof value.csrfToken==='string')csrf=value.csrfToken;if((path==='session'||path==='login')&&typeof value.owner?.id==='string')ownerScope=value.owner.id;if(path==='logout'){csrf='';ownerScope='';}}return value;
 }
 export async function localCommand<T>(command:string,data:unknown,expectedRevision?:string,endpoint='configuration'):Promise<T>{
  const generation=sessionGeneration;

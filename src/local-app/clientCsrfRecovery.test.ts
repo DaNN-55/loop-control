@@ -47,3 +47,10 @@ it.each(['network','server','missing-token'])('allows a new attempt when %s fail
  await expect(localCommand('archiveEpisode',{episodeId:episode,archived:true},undefined,'episode-lifecycle')).resolves.toEqual({archived:true});
  expect(calls.filter(c=>c==='POST /api/local/episode-lifecycle')).toHaveLength(1);
 });
+
+
+it('returns null for an empty publication request history',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json(null)));
+ const {localRequest}=await import('./client');
+ await expect(localRequest(`episodes/${episode}/publication-ai`)).resolves.toBeNull();
+});
