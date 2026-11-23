@@ -1,4 +1,4 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState,type CSSProperties,type SyntheticEvent} from 'react';
 import {Image as ImageIcon} from 'lucide-react';
 import {localRequest} from '../local-app/client';
 import {localArtifactUrl} from '../reviews/localArtifactPreview';
@@ -18,6 +18,8 @@ interface Props {
 export function CompletedCatalogArtwork({episodeId,video,legacyCover,loading=false,onVideoMetadata}:Props){
  const [publication,setPublication]=useState<WorkspacePublication['cover']|undefined>();
  const [coverFailed,setCoverFailed]=useState<string|null>(null);
+ const [coverAspect,setCoverAspect]=useState<{source:string;ratio:number}|null>(null);
+ const [videoAspect,setVideoAspect]=useState<{source:string;ratio:number}|null>(null);
  const [videoState,setVideoState]=useState<{source:string;ready:boolean}|null>(null);
  const track=useRef<HTMLDivElement>(null),player=useRef<HTMLVideoElement>(null);
  const settle=useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -38,6 +40,13 @@ export function CompletedCatalogArtwork({episodeId,video,legacyCover,loading=fal
  const showCover=!!cover&&cover!==coverFailed;
  const showFrame=!showCover&&publication!==undefined&&!!source&&videoState?.source===source&&videoState.ready;
  const waiting=publication===undefined||loading||!!source&&videoState?.source!==source;
+ const mediaAspect=source&&videoAspect?.source===source?videoAspect.ratio
+  :showCover&&coverAspect?.source===cover?coverAspect.ratio:undefined;
+ function readVideoMetadata({currentTarget:media}:SyntheticEvent<HTMLVideoElement>){
+  const {videoWidth:width,videoHeight:height,duration}=media;
+  if(source&&width>0&&height>0)setVideoAspect(previous=>previous?.source===source&&previous.ratio===width/height?previous:{source,ratio:width/height});
+  onVideoMetadata?.({width,height,duration});
+ }
  const coverLabel=uiText(showCover?'交付封面':'成片首帧'),videoLabel=uiText('成片');
  function settleSlide(){
   clearTimeout(settle.current);
@@ -55,19 +64,21 @@ export function CompletedCatalogArtwork({episodeId,video,legacyCover,loading=fal
   const rtl=getComputedStyle(element).direction==='rtl';
   element.scrollTo({left:element.clientWidth*index*(rtl?-1:1)});
  }
- return <section className="production-completed-artwork" aria-label={uiText('封面与成片')}>
+ return <section className="production-completed-artwork"
+  style={mediaAspect?{'--completed-media-ratio':mediaAspect} as CSSProperties:undefined} aria-label={uiText('封面与成片')}>
   <div className="production-completed-track" ref={track} onScroll={settleSlide}>
   <div className="production-completed-stage" role="group" aria-label={coverLabel}>
    {source&&<video key={source} src={source} muted playsInline hidden={!showFrame}
     aria-label={uiText('成片首帧')} preload={showCover||publication===undefined?'metadata':'auto'}
-    onLoadedMetadata={({currentTarget:media})=>onVideoMetadata?.({width:media.videoWidth,height:media.videoHeight,duration:media.duration})}
+    onLoadedMetadata={readVideoMetadata}
     onLoadedData={()=>setVideoState({source,ready:true})} onError={()=>setVideoState({source,ready:false})}/>}
-   {showCover&&<img src={cover} alt={uiText('交付封面')} onError={()=>setCoverFailed(cover)}/>}
+   {showCover&&<img src={cover} alt={uiText('交付封面')} onError={()=>setCoverFailed(cover)}
+    onLoad={({currentTarget:{naturalWidth,naturalHeight}})=>{if(naturalWidth>0&&naturalHeight>0)setCoverAspect({source:cover,ratio:naturalWidth/naturalHeight});}}/>}
    {!showCover&&!showFrame&&<div className="production-completed-empty"><ImageIcon size={20} aria-hidden="true"/><span>{uiText(waiting?'正在读取预览…':'预览暂不可用')}</span></div>}
   </div>
   {source&&<div className="production-completed-stage production-completed-playback" role="group" aria-label={videoLabel}>
    <video ref={player} src={source} controls playsInline preload="none" aria-label={videoLabel}
-    onLoadedMetadata={({currentTarget:media})=>onVideoMetadata?.({width:media.videoWidth,height:media.videoHeight,duration:media.duration})}/>
+    onLoadedMetadata={readVideoMetadata}/>
   </div>}
   </div>
   {source?<div className="production-completed-media-switch" role="group" aria-label={uiText('封面与成片')}>

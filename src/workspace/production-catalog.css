@@ -87,7 +87,9 @@ html[data-interface=impeccable] .product-ui .production-catalog .pagination-cont
  display:grid;
  grid-template:minmax(0,1fr) / minmax(0,1fr);
  place-items:center;
- block-size:170px;
+ inline-size:100%;
+ aspect-ratio:var(--completed-media-ratio, 16 / 9);
+ max-block-size:clamp(220px,46dvh,390px);
  background:var(--lc-surface-2);
  border:1px solid var(--lc-line);
  border-radius:7px;

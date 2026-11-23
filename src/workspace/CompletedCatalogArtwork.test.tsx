@@ -34,3 +34,18 @@ it('shows a first frame when no cover was saved',async()=>{
  fireEvent.loadedData(media);
  expect(screen.getByText('成片首帧')).toBeTruthy();
 });
+
+it('sizes the carousel from the video, with the cover dimensions available first',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({cover})));
+ const {container}=render(<CompletedCatalogArtwork episodeId="e" video={video}/>);
+ const image=await screen.findByRole('img',{name:'交付封面'});
+ const artwork=container.querySelector<HTMLElement>('.production-completed-artwork')!;
+ Object.defineProperties(image,{naturalWidth:{value:1080},naturalHeight:{value:1920}});
+ fireEvent.load(image);
+ expect(artwork.style.getPropertyValue('--completed-media-ratio')).toBe('0.5625');
+
+ const media=container.querySelector('video')!;
+ Object.defineProperties(media,{videoWidth:{value:1920},videoHeight:{value:1080}});
+ fireEvent.loadedMetadata(media);
+ expect(artwork.style.getPropertyValue('--completed-media-ratio')).toBe(String(16/9));
+});
