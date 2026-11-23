@@ -19,7 +19,7 @@ it('prefers the publication cover and falls back to a static first frame, then t
  fireEvent.loadedData(media);
  expect(media.hidden).toBe(false);
  expect(media.controls||media.autoplay).toBe(false);
- expect(screen.getByText('成片首帧')).toBeTruthy();
+ expect(screen.getByRole('group',{name:'成片首帧'})).toBeTruthy();
 
  fireEvent.error(media);
  expect(screen.getByText('预览暂不可用')).toBeTruthy();
@@ -32,7 +32,7 @@ it('shows a first frame when no cover was saved',async()=>{
  const media=container.querySelector('video')!;
  await waitFor(()=>expect(media.preload).toBe('auto'));
  fireEvent.loadedData(media);
- expect(screen.getByText('成片首帧')).toBeTruthy();
+ expect(screen.getByRole('group',{name:'成片首帧'})).toBeTruthy();
 });
 
 it('sizes the carousel from the video, with the cover dimensions available first',async()=>{
@@ -48,4 +48,26 @@ it('sizes the carousel from the video, with the cover dimensions available first
  Object.defineProperties(media,{videoWidth:{value:1920},videoHeight:{value:1080}});
  fireEvent.loadedMetadata(media);
  expect(artwork.style.getPropertyValue('--completed-media-ratio')).toBe(String(16/9));
+});
+
+it('uses the side arrows to navigate between the two slides',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({cover:null})));
+ const {container}=render(<CompletedCatalogArtwork episodeId="e" video={video}/>);
+ const track=container.querySelector<HTMLElement>('.production-completed-track')!;
+ await waitFor(()=>expect(track.querySelector('video')?.preload).toBe('auto'));
+ vi.spyOn(track.querySelector('.production-completed-playback video') as HTMLVideoElement,'pause').mockImplementation(()=>{});
+ const previous=screen.getByRole('button',{name:'查看封面'});
+ const next=screen.getByRole('button',{name:'查看视频'});
+ Object.defineProperties(track,{
+  clientWidth:{value:200},
+  scrollTo:{value:vi.fn(({left}:{left:number})=>{track.scrollLeft=left;fireEvent.scroll(track);})},
+ });
+ expect(previous.getAttribute('aria-disabled')).toBe('true');
+ fireEvent.click(next);
+ await waitFor(()=>expect(next.getAttribute('aria-disabled')).toBe('true'));
+ expect(track.scrollLeft).toBe(200);
+ expect(screen.getByRole('status').textContent).toBe('成片');
+ fireEvent.click(previous);
+ await waitFor(()=>expect(previous.getAttribute('aria-disabled')).toBe('true'));
+ expect(track.scrollLeft).toBe(0);
 });

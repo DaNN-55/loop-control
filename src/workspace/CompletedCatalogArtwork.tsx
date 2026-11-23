@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState,type CSSProperties,type SyntheticEvent} from 'react';
-import {Image as ImageIcon} from 'lucide-react';
+import {ChevronLeft,ChevronRight,Image as ImageIcon} from 'lucide-react';
 import {localRequest} from '../local-app/client';
 import {localArtifactUrl} from '../reviews/localArtifactPreview';
 import type {WorkspacePublication} from '../workspacePublication';
@@ -60,12 +60,17 @@ export function CompletedCatalogArtwork({episodeId,video,legacyCover,loading=fal
  }
  function showSlide(index:0|1){
   const element=track.current;
-  if(!element)return;
+  if(!element||index===active)return;
   const rtl=getComputedStyle(element).direction==='rtl';
   element.scrollTo({left:element.clientWidth*index*(rtl?-1:1)});
  }
  return <section className="production-completed-artwork"
   style={mediaAspect?{'--completed-media-ratio':mediaAspect} as CSSProperties:undefined} aria-label={uiText('封面与成片')}>
+  <div className="production-completed-viewport">
+  {source&&<div className="production-completed-arrows" role="group" aria-label={uiText('封面与成片')}>
+   <button type="button" aria-label={uiText('查看封面')} aria-disabled={active===0} onClick={()=>showSlide(0)}><ChevronLeft size={19} aria-hidden="true"/></button>
+   <button type="button" aria-label={uiText('查看视频')} aria-disabled={active===1} onClick={()=>showSlide(1)}><ChevronRight size={19} aria-hidden="true"/></button>
+  </div>}
   <div className="production-completed-track" ref={track} onScroll={settleSlide}>
   <div className="production-completed-stage" role="group" aria-label={coverLabel}>
    {source&&<video key={source} src={source} muted playsInline hidden={!showFrame}
@@ -81,10 +86,7 @@ export function CompletedCatalogArtwork({episodeId,video,legacyCover,loading=fal
     onLoadedMetadata={readVideoMetadata}/>
   </div>}
   </div>
-  {source?<div className="production-completed-media-switch" role="group" aria-label={uiText('封面与成片')}>
-   <button type="button" aria-pressed={active===0} onClick={()=>showSlide(0)}>{coverLabel}</button>
-   <button type="button" aria-pressed={active===1} onClick={()=>showSlide(1)}>{videoLabel}</button>
-   <span className="sr-only" role="status">{announcement}</span>
-  </div>:showCover&&<p className="production-preview-source">{coverLabel}</p>}
+  </div>
+  {source?<span className="sr-only" role="status">{announcement}</span>:showCover&&<p className="production-preview-source">{coverLabel}</p>}
  </section>;
 }
