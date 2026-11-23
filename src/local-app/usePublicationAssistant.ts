@@ -7,7 +7,7 @@ import {useWorkspaceOwnerId} from './WorkspaceDraft';
 import type {useWorkspacePublication} from './useWorkspacePublication';
 
 type PublicationEditing=ReturnType<typeof useWorkspacePublication>;
-export function usePublicationAssistant(episodeId:string,p:PublicationEditing,readOnly:boolean){
+export function usePublicationAssistant(episodeId:string,p:PublicationEditing,readOnly:boolean,allowGeneration:boolean){
  const owner=useWorkspaceOwnerId(),key=owner?'loop-control.script-studio-model:'+owner:'',path=`episodes/${episodeId}/publication-ai`;
  const visit=useMemo(()=>({active:false,busy:false}),[owner,episodeId]);
  const [modelsLoading,setModelsLoading]=useState(false),[catalog,setCatalog]=useState<ProductionServiceCatalog|null>(null),[selection,setSelection]=useState(''),[choosing,setChoosing]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[latest,setLatest]=useState<PublicationRequestResult|null>(null);
@@ -19,20 +19,20 @@ export function usePublicationAssistant(episodeId:string,p:PublicationEditing,re
  }
  useEffect(()=>{
   visit.active=true;setBusy(false);setError('');setLatest(null);setCatalog(null);setSelection(key?localStorage.getItem(key)??'':'');
-  if(!readOnly){void refresh();void recover();}
+  if(!readOnly){if(allowGeneration)void refresh();void recover();}
   return()=>{visit.active=false;};
- },[visit,readOnly]);
+ },[visit,readOnly,allowGeneration]);
  async function recover(){try{const value=await localRequest(path) as PublicationRequestResult|null;if(visit.active)setLatest(value);}catch(cause){if(visit.active)setError(cause instanceof Error?cause.message:'文案请求核对失败。');}}
  function choose(value:string){setSelection(value);setChoosing(false);try{if(key)localStorage.setItem(key,value);}catch{/* Preference failure never selects a different provider. */}}
  async function useConfiguredConnection(selection:ConnectionSetupSelection){
-  if(readOnly||visit.busy)return;
+  if(readOnly||!allowGeneration||visit.busy)return;
   const configured=await readConfiguredService('language_model',selection);
   if(!visit.active)return;
   await refresh();
   if(visit.active)choose(configured.service.id+':'+selection.modelId);
  }
  async function generate(){
-  if(readOnly||visit.busy||unresolved)return;
+  if(readOnly||!allowGeneration||visit.busy||unresolved)return;
   if(!choice){setChoosing(true);setError(options.length?'请明确选择本次模型。':'请先添加并验证大语言模型连接；仍可手写和下载视频。');return;}
   visit.busy=true;setBusy(true);setError('');
   try{

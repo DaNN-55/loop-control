@@ -42,6 +42,6 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,com
   {retryTarget&&<div className="workspace-completion-retry"><p role="alert">{uiText(retryTarget.error||'交付文件校验未完成，请重试。')}</p><Button size="sm" color="primary" iconLeading={RefreshCw} isDisabled={pending||retrying} onPress={()=>void retry()}>{uiText(retrying?'正在完成…':'重试完成')}</Button></div>}
   {completedView&&actionsContainer?createPortal(fileNotice,actionsContainer):fileNotice}
   {(error||pollingError)&&<p role="alert">{uiText(error||pollingError?.message||'')}</p>}
-  <WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly} coverFirst={completedView}>{(p,editing)=>verified?(actionsContainer?createPortal(<WorkspaceAdditionalDownloads workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>,actionsContainer):<WorkspaceAdditionalDownloads workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>):null}</WorkspacePublicationPanel>
+  <WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly} completedView={completedView}>{(p,editing)=>verified?(actionsContainer?createPortal(<WorkspaceAdditionalDownloads workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>,actionsContainer):<WorkspaceAdditionalDownloads workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>):null}</WorkspacePublicationPanel>
  </section>;
 }

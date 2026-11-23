@@ -36,3 +36,25 @@ it('chooses through the shared model menu without generating and offers refresh 
  const option=await screen.findByRole('menuitemradio',{name:'gpt-5.6-luna'});expect(screen.getByRole('button',{name:'刷新模型连接'})).toBeTruthy();expect(screen.getByRole('button',{name:'配置制作服务'})).toBeTruthy();fireEvent.click(option);
  expect(screen.getByRole('button',{name:'选择文案模型'}).textContent).toContain('gpt-5.6-luna');expect(localCommand).not.toHaveBeenCalled();expect(localStorage.getItem('loop-control.script-studio-model:owner')).toBe('selected:gpt-5.6-luna');
 });
+
+it('keeps manual publication actions on completed orders without offering a new generation',async()=>{
+ reads();
+ render(<WorkspacePublicationPanel workspace={w} completedView/>);
+ expect(await screen.findByRole('button',{name:'复制全部'})).toBeTruthy();
+ expect(screen.queryByText('重新生成文案')).toBeNull();
+ expect(screen.queryByText('AI 生成文案')).toBeNull();
+ expect(localRequest).not.toHaveBeenCalledWith('connections');
+ fireEvent.click(screen.getByRole('button',{name:'编辑文案'}));
+ expect(screen.getByRole('textbox',{name:'标题'})).toHaveProperty('value','手写');
+ expect(localCommand).not.toHaveBeenCalled();
+});
+
+it('allows completed orders to check an existing request without creating another',async()=>{
+ vi.mocked(localRequest).mockImplementation(async path=>path.endsWith('publication-ai')?{requestId:'prior',status:'unknown',message:'请核对上次请求。'}:state);
+ render(<WorkspacePublicationPanel workspace={w} completedView/>);
+ const recover=await screen.findByRole('button',{name:'核对原请求'});
+ await act(async()=>{fireEvent.click(recover);});
+ expect(localRequest).toHaveBeenCalledTimes(3);
+ expect(screen.queryByText('重新生成文案')).toBeNull();
+ expect(localCommand).not.toHaveBeenCalled();
+});
