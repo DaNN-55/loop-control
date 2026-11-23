@@ -1,4 +1,4 @@
-import type {StoryboardVideoDraft} from '../storyboardBatch';
+import {storyboardVideoDraftInputs,videoDraftIds,visualDraftMatchesBasis} from './storyboardVideoDraft';
 import {episodeVisualDefaults,restoreVisualDraft,recordVisualDefaultEdits,updatedVisualDefaults,type VisualDefaultOverrides} from './workspaceVisualDefaults';
 import {FeedbackNotice} from '../ui/FeedbackNotice';
 import {MediaRangeEditor} from '../ui/media/MediaRangeEditor';
@@ -70,9 +70,6 @@ export interface VisualPreparationProps {
  onImported?:(material:Material&{storage_path:string})=>void;
 }
 interface Draft {durationOverride?:boolean;defaultOverrides?:VisualDefaultOverrides;promptReferences?:PromptReferenceBinding[];pexelsSelection?:ProductionSelection|null;imageBrief:ImageBrief;imageSelection?:ProductionSelection|null;videoSelection?:ProductionSelection|null;videoSettings:WanGenerationSettings;videoResolution?:string;firstFrameFit:'contain'|'cover';tab:Kind;origin:Record<Kind,'material'|'generate'|'search'>;imagePrompt:string;videoPrompt:string;references:string[];firstFrame:string;videoModeId?:string;videoInputs?:VideoInputDraft;videoInputIds?:string[];referenceVideoSources?:Record<string,string>;settings:ImageGenerationSettings;duration:string;usage:'still'|'pan-zoom';selected:Record<Kind,string>}
-function videoDraftIds(draft:Draft){
- return draft.videoInputIds??[draft.firstFrame,...draft.videoInputs?.lastFrame??[],...draft.videoInputs?.referenceImages??[],...draft.videoInputs?.referenceVideos??[]].filter(Boolean);
-}
 function prioritizeVideoInput(draft:Draft,id:string){
  return [id,...videoDraftIds(draft).filter(value=>value!==id)];
 }
@@ -107,10 +104,17 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  const canSplitVideo=timeline&&visual?.kind==='video'&&!hasSeparatedVideoSound(timeline,visual);
  const shelf=useWorkspaceMaterialSelection();
  const adoptionDescriptionId=useId();
- const [draft,setDraftState]=useState<Draft>(()=>{let saved:unknown=null;try{const value=JSON.parse(sessionStorage.getItem(storageKey)??'null');if(value?.settings&&['image','video'].includes(value.tab)&&(!value.preparationRevisionId||value.preparationRevisionId===workspace.preparationRevisionId))saved=value;}catch{/* A missing browser draft is an empty form. */}return restoreDraft(props,targetItemId,saved);});
+ const [savedDraft]=useState(()=>{
+  try{const value=JSON.parse(sessionStorage.getItem(storageKey)??'null');if(value?.settings&&['image','video'].includes(value.tab)&&(!value.preparationRevisionId||value.preparationRevisionId===workspace.preparationRevisionId))return value;}catch{/* A missing browser draft is an empty form. */}
+  return null;
+ });
+ const [draft,setDraftState]=useState<Draft>(()=>restoreDraft(props,targetItemId,savedDraft));
+ const [draftBasisCurrent,setDraftBasisCurrent]=useState(()=>!savedDraft||visualDraftMatchesBasis(workspace,savedDraft));
  const draftRef=useRef(draft);draftRef.current=draft;
  function setDraft(action:SetStateAction<Draft>){
   const previous=draftRef.current,next=recordVisualDefaultEdits(previous,typeof action==='function'?action(previous):action);
+  // Opening an unscoped legacy draft cannot bind its prompt to a newer preparation.
+  if(!draftBasisCurrent&&next.videoPrompt!==previous.videoPrompt)setDraftBasisCurrent(true);
   draftRef.current=next;setDraftState(next);
   let changed=false;
   try{
@@ -246,26 +250,12 @@ function VisualPreparationTarget(props:VisualPreparationProps&{targetItemId:stri
  } satisfies VideoVisualInputSelection]:[]);
  const mentionOptions=promptReferenceOptions(tab==='image'?draft.references.flatMap(id=>{const m=allMaterials.find(m=>m.id===id);return m?[{materialRevisionId:id,kind:'image' as const,name:m.source_path.split('/').pop()??m.source_path}]:[];}):videoInputs.flatMap(entry=>entry.reason||!entry.material||!entry.role?[]:[{materialRevisionId:entry.id,kind:entry.role==='referenceVideos'?'video' as const:'image' as const,name:entry.material.source_path.split('/').pop()??entry.material.source_path,role:entry.role}]),draft.promptReferences);
  const advancedVideo=videoMode.id!=='first-frame';
- const videoTokens=new Set(draft.videoPrompt.match(/@(图片|视频)[1-9]\d*/g)??[]);
- const videoReferences=(draft.promptReferences??[]).filter(binding=>videoTokens.has(binding.token));
- const overrides=draft.defaultOverrides?.fields??[];
- const hasOwnVideoInputs=draft.videoInputIds!==undefined||draft.videoInputs!==undefined||overrides.includes('videoModeId');
- const [initialDuration]=useState(()=>initialDraft(props,targetItemId).duration);
- const settingsOverrides=Object.fromEntries(Object.entries(videoSettings).filter(([key,value])=>key==='negativePrompt'?!!value:overrides.some(field=>field===`videoSettings.${key}`)));
- const batchInputs:StoryboardVideoDraft['inputs']={
-  ...(draft.videoPrompt.trim()&&draft.videoPrompt!==(template?.videoPrompt??'')?{prompt:draft.videoPrompt}:{}),
-  ...(videoReferences.length?{promptReferences:videoReferences}:{}),
-  ...(overrides.includes('videoSelection')?{selection:draft.videoSelection}:{}),
-  ...(draft.durationOverride??draft.duration!==initialDuration?{durationSeconds:Number(draft.duration)}:{}),
-  ...(hasOwnVideoInputs?(advancedVideo?{videoMode:videoMode.id,visualInputs:submittedVideoInputs}:{firstFrameMaterialRevisionId:videoInputIds[0]??''}):{}),
-  ...(overrides.includes('firstFrameFit')&&(!advancedVideo||submitFirstFrame)?{firstFrameFit:draft.firstFrameFit}:{}),
-  ...(videoProvider==='bailian'&&Object.keys(settingsOverrides).length?{videoSettings:settingsOverrides}:{}),
-  ...(videoProvider==='minimax'&&overrides.includes('videoResolution')?{videoResolution:draft.videoResolution}:{}),
- };
- const batchVideoDraft=targetShotId&&workspace.preparationRevisionId&&Object.keys(batchInputs).length?{
+ const [initialVideoDraft]=useState(()=>initialDraft(props,targetItemId));
+ const batchInputs=storyboardVideoDraftInputs(draft,videoMode,submittedVideoInputs,{prompt:template?.videoPrompt??'',duration:initialVideoDraft.duration,firstFrame:initialVideoDraft.firstFrame});
+ const batchVideoDraft=draftBasisCurrent&&targetShotId&&workspace.preparationRevisionId&&Object.keys(batchInputs).length?{
   shotId:targetShotId,targetItemId,preparationRevisionId:workspace.preparationRevisionId,inputs:batchInputs,
  }:undefined;
- const storedDraft=JSON.stringify({...draft,preparationRevisionId:workspace.preparationRevisionId,batchVideoDraft});
+ const storedDraft=JSON.stringify({...draft,preparationRevisionId:draftBasisCurrent?workspace.preparationRevisionId:undefined,batchVideoDraft});
  useEffect(()=>{try{sessionStorage.setItem(storageKey,storedDraft);}catch{/* Storage is optional. */}},[storageKey,storedDraft]);
  const canSubmitVideoMode=!!videoService&&!!videoModel;
  const videoInputProblem=videoVisualInputProblem(videoMode,submittedVideoInputs)

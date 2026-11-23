@@ -93,6 +93,12 @@ export async function consumeWorkspaceCall(c:PoolClient,root:string,row:Producti
  await c.query("SELECT set_config('loop.workspace_call_confirmation',$1,true)",[id]);
  return{command:approval.command as string,payload:approval.payload as Record<string,unknown>};
 }
+/** Record a child call already approved by its locked batch in the same transaction. */
+export async function registerConsumedWorkspaceCall(c:PoolClient,row:ProductionWorkspaceRecord,input:{id:string;command:string;payload:object;contextHash:string;authorizationHash:string;summary:WorkspaceCallProposal['summary']}){
+ await c.query(`INSERT INTO local_identity.workspace_call_confirmations(id,owner_id,workspace_id,episode_id,script_revision_id,project_sha256,workspace_revision,command,payload,context_hash,authorization_hash,summary,consumed_at,consumed_transaction)
+  VALUES($1,local_identity.owner_id(),$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,clock_timestamp(),txid_current())`,[input.id,row.id,row.episode_id,row.script_revision_id,row.project_sha256,row.revision,input.command,JSON.stringify(input.payload),input.contextHash,input.authorizationHash,JSON.stringify(input.summary)]);
+ await c.query("SELECT set_config('loop.workspace_call_confirmation',$1,true)",[input.id]);
+}
 export async function currentWorkspaceCallAuthorization(c:PoolClient,row:ProductionWorkspaceRecord){
  const hash=(await c.query('SELECT local_identity.current_workspace_call_hash($1) hash',[row.id])).rows[0]?.hash;
  if(!hash)throw new ConfigurationError(409,'请先确认本次调用与费用预留。');

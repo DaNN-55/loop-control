@@ -6,6 +6,7 @@ import {workspaceCandidateTarget} from '../workspaceCandidates.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {defaultWanModelSettings} from '../wanVideoModels.js';
 import {videoVisualInputLabels} from '../videoVisualInputs.js';
+import {registeredAdapters} from '../worker/registeredAdapters.js';
 import {canonicalFingerprint as digest,ConfigurationError} from './configurationCommands.js';
 import type {InputRuntime} from './episodeCommands.js';
 import type {ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
@@ -15,6 +16,7 @@ import {estimateWorkspaceVideoCall} from './workspaceVideoCallEstimate.js';
 import {legacyVideoDefault} from './legacyVideoCompatibility.js';
 import {queueWorkspaceVisualGeneration,readWorkspaceVisualCandidates,readWorkspaceVisualTasks} from './workspaceVisualCandidates.js';
 import {resolveWorkspaceVideoRequest} from './workspaceVisualRequest.js';
+import {registerConsumedWorkspaceCall} from './workspaceCallConfirmation.js';
 
 export interface StoryboardVideoRequest {
  shotIds:string[];
@@ -28,6 +30,7 @@ export interface StoryboardVideoItem {
  frozen?:{
   data:Record<string,unknown>;
   request:Awaited<ReturnType<typeof resolveWorkspaceVideoRequest>>;
+  retryOfTaskId?:string;
   target:ReturnType<typeof workspaceCandidateTarget>&{width:number;height:number};
  };
 }
@@ -49,17 +52,19 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
   const template=templates?.shots.find(shot=>shot.shotId===shotId);
   const draft=request.drafts.find(d=>d.shotId===shotId&&d.targetItemId===clip?.itemId&&d.preparationRevisionId===row.preparation_revision_id)?.inputs;
   const prompt=draft?.prompt?.trim()?draft.prompt:template?.videoPrompt??'';
-  const base={shotId,text:prompt,source:draft?'draft':'confirmed'} as const;
+  const base={shotId,text:prompt,source:draft?.prompt?.trim()&&prompt!==(template?.videoPrompt??'')?'draft':'confirmed'} as const;
   const skip=(reason:string):StoryboardVideoItem=>({review:{...base,state:'skipped',reason}});
   if(!clip||!timeline||!item||!['video','image','text'].includes(String(item.kind)))return skip('镜头已移除');
   const shotTasks=tasks.filter(task=>task.shotId===shotId&&task.kind==='video');
   const unknownReason='视频回执未知，请先在右侧核对原任务';
   if(shotTasks.some(task=>!task.retryTaskId&&task.publicationAttempt!=null))return skip(unknownReason);
-  if(shotTasks.some(task=>task.status==='running'||task.status==='ready'&&(!task.invalidated||!!task.requestState)))return skip('已有视频任务进行中');
+  if(shotTasks.some(task=>task.status==='running'||task.status==='ready'&&(!task.invalidated||!!task.requestState&&task.requestState!=='queued')))return skip('已有视频任务进行中');
   if(shotTasks.some(task=>!task.retryTaskId&&(task.submissionUnknown||task.canResume||['started','received'].includes(task.submissionOutcome??'')&&task.status!=='completed')))return skip(unknownReason);
-  const prior=request.retryFailures?latestStoryboardTask(shotTasks):undefined;
+  const latest=latestStoryboardTask(shotTasks);
+  if(!request.retryFailures&&latest?.submissionOutcome==='terminal_failed')return skip('已有明确失败的视频任务，请使用重试失败视频');
+  const prior=request.retryFailures?latest:undefined;
   if(request.retryFailures&&(!definiteStoryboardFailure(prior)||prior?.taskId!==request.retryFailures.find(failure=>failure.shotId===shotId)?.taskId||
-   !prior?.targetItemId||!project.timelines.some(t=>t.items.some(item=>item.id===prior.targetItemId))))return skip('原任务已变化或无明确失败记录');
+   prior?.targetItemId!==item.id))return skip('原任务已变化或无明确失败记录');
   const previous=prior?.generation;
 
   const voice=narration.find(n=>n.shotId===shotId);
@@ -69,7 +74,7 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
   if(!prompt.trim())return skip('缺少视频提示词');
 
   const sharedSelection=request.common&&Object.hasOwn(request.common,'selection')?request.common.selection:previous?.selection??defaultSelection;
-  const selection=draft?.selection??sharedSelection;
+  const selection=draft&&Object.hasOwn(draft,'selection')?draft.selection:sharedSelection;
   if(!selection)return skip('请先选择视频生成连接与模型');
   const provider=selection.provider;
   const sharedSettingsApply=!request.common?.selection||request.common.selection.provider===provider&&request.common.selection.model===selection.model;
@@ -79,15 +84,19 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
   const wantWan=customWan!==undefined||provider==='bailian'&&commonWan!==undefined;
   if([customWan,...(provider==='bailian'?[commonWan]:[])].some(settings=>settings!==undefined&&(!settings||typeof settings!=='object'||Array.isArray(settings))))return skip('视频参数无效或不适用于当前模型。');
   const videoSettings=wantWan?(provider==='bailian'?{...defaultWanModelSettings(selection.model??''),...commonWan,...customWan}:customWan):undefined;
-  const advanced=draft?.videoMode&&draft.videoMode!=='first-frame';
+  const modes=registeredAdapters.productionChoices().find(choice=>choice.capability==='video'&&choice.provider===selection.provider&&choice.adapter===selection.adapter)?.videoGenerationModes?.[selection.model??''];
+  const mode=draft?.videoMode??(draft?.firstFrameMaterialRevisionId===undefined?modes?.find(mode=>mode.id===request.common?.videoMode)?.id:undefined);
+  const advanced=mode!==undefined&&mode!=='first-frame';
   const materialId=draft?.firstFrameMaterialRevisionId??chosenImages.find(image=>image.target_item_id===item.id)?.material_revision_id??(clip.source?.kind==='image'?clip.source.materialRevisionId:clip.image?.materialRevisionId)??(template?.visual?.material?.type==='image'?template.visual.material.id:undefined);
   if(!advanced&&!materialId)return skip('缺少首帧图片');
+  const visualInputs=draft?.visualInputs??(materialId?[{role:mode==='references'?'referenceImages':'firstFrame',materialRevisionId:materialId}]:[]);
+  const fit=!advanced||visualInputs.some(input=>input.role==='firstFrame')?draft?.firstFrameFit??request.common?.firstFrameFit:undefined;
   const resolution=draft?.videoResolution??(sharedSettingsApply?request.common?.videoResolution:undefined)??(sameModel?previous?.videoResolution:undefined);
   const data={
    targetItemId:item.id,prompt,selection,
    ...(draft?.promptReferences!==undefined?{promptReferences:draft.promptReferences}:{}),
-   ...(advanced?{videoMode:draft.videoMode,visualInputs:draft.visualInputs??[]}:{firstFrameMaterialRevisionId:materialId}),
-   ...(draft?.firstFrameFit!==undefined?{firstFrameFit:draft.firstFrameFit}:{}),
+   ...(advanced?{videoMode:mode,visualInputs}:{firstFrameMaterialRevisionId:materialId}),
+   ...(fit!==undefined?{firstFrameFit:fit}:{}),
    durationSeconds:draft?.durationSeconds??request.common?.durationSeconds??(sameModel?previous?.durationSeconds:undefined)??Number(item.durationInFrames)/timeline.fps,
    ...(videoSettings!==undefined?{videoSettings}:{}),
    ...(draft?.videoResolution!==undefined||provider==='minimax'&&resolution!==undefined?{videoResolution:resolution}:{}),
@@ -106,6 +115,7 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
    const state=reason&&!request.retryFailures&&!request.regenerateShotIds.includes(shotId)?'regenerate':'ready';
    const {selection,connection,choice}=resolved.resolved;
    const parameters=[`镜头 ${Number(targetSeconds.toFixed(2))} 秒`,`服务请求 ${providerSeconds} 秒`,visual.mode.label];
+   if(fit)parameters.push(fit==='cover'?'首帧居中裁切':'完整保留首帧');
    if(videoResolution)parameters.push(videoResolution);
    if(videoSettings&&typeof videoSettings==='object'&&'resolution' in videoSettings)parameters.push(String(videoSettings.resolution));
    const inputs=visual.frozen.map((input,index)=>visual.mode.characterOrder?`character${index+1} · ${input.name}`:visual.advanced?`${videoVisualInputLabels[input.role]} · ${input.name}`:input.name);
@@ -114,7 +124,7 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
      kind:'视频生成',target:shotId,provider:selection.provider,model:selection.model??choice.label,
      connection:connection?`${connection.name} · v${connection.version}`:'本地',parameters,inputs,prompt:actualPrompt,reservationCents,estimate,
     }},
-    ...(state==='ready'?{frozen:{data:{...data,selection,reservationCents},request:resolved,target:{...workspaceCandidateTarget(item),width:timeline.width,height:timeline.height}}}:{}),
+    ...(state==='ready'?{frozen:{data:{...data,selection,reservationCents},request:resolved,...(prior?{retryOfTaskId:prior.taskId}:{}),target:{...workspaceCandidateTarget(item),width:timeline.width,height:timeline.height}}}:{}),
    };
   }catch(error){
    if(error instanceof ConfigurationError&&error.status<500)return skip(error.message);
@@ -126,11 +136,9 @@ export async function resolveStoryboardVideo(c:PoolClient,root:string,row:Produc
 
 export async function queueStoryboardVideo(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,batchId:string,item:StoryboardVideoItem){
  const frozen=item.frozen!,approvalId=randomUUID();
- const payload={...frozen.data,batchId};
+ const payload={...frozen.data,batchId,...(frozen.retryOfTaskId?{batchRetryOfTaskId:frozen.retryOfTaskId}:{})};
  const contextHash=digest(frozen),authorizationHash=digest({approvalId,batchId,contextHash});
- await c.query(`INSERT INTO local_identity.workspace_call_confirmations(id,owner_id,workspace_id,episode_id,script_revision_id,project_sha256,workspace_revision,command,payload,context_hash,authorization_hash,summary,consumed_at,consumed_transaction)
-  VALUES($1,local_identity.owner_id(),$2,$3,$4,$5,$6,'requestWorkspaceVisualCandidate',$7,$8,$9,$10,clock_timestamp(),txid_current())`,[approvalId,row.id,row.episode_id,row.script_revision_id,row.project_sha256,row.revision,JSON.stringify(payload),contextHash,authorizationHash,JSON.stringify(item.review.summary)]);
- await c.query("SELECT set_config('loop.workspace_call_confirmation',$1,true)",[approvalId]);
- const {taskId}=await queueWorkspaceVisualGeneration(c,root,row,project,payload,runtime,'candidate',{batchId,request:frozen.request});
+ await registerConsumedWorkspaceCall(c,row,{id:approvalId,command:'requestWorkspaceVisualCandidate',payload,contextHash,authorizationHash,summary:item.review.summary!});
+ const {taskId}=await queueWorkspaceVisualGeneration(c,root,row,project,payload,runtime,'candidate',{batchId,retryOfTaskId:frozen.retryOfTaskId,request:frozen.request});
  return {shotId:item.review.shotId,taskId,reservationCents:Number(frozen.data.reservationCents)};
 }

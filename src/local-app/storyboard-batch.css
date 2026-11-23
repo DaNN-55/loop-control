@@ -6,7 +6,7 @@
 .storyboard-batch-toolbar [role="alert"],.storyboard-batch-dialog [role="alert"]{color:var(--lc-danger,#bd4147)}
 .storyboard-batch-shot-cell{display:flex;align-items:center;gap:5px}
 .storyboard-batch-shot-cell label{display:grid;place-items:center;flex:0 0 25px;min-height:28px;cursor:pointer}
-.storyboard-batch-dialog{width:min(43rem,calc(100% - 24px));max-height:calc(100% - 24px);padding:0;margin:auto;background:var(--lc-surface,#fff);color:var(--lc-text,#14283f);border:1px solid var(--lc-line,#d8e1ee);border-radius:10px;overflow:auto}
+.storyboard-batch-dialog{width:min(43rem,calc(100% - 24px));max-height:calc(100% - 24px);padding:0;margin:auto;background:var(--lc-surface,#fff);color:var(--lc-text,#14283f);border:1px solid var(--lc-line,#d8e1ee);border-radius:14px;box-shadow:0 18px 48px rgb(12 29 57 / .2);overflow:auto}
 .storyboard-batch-dialog:modal{overscroll-behavior:contain}
 .storyboard-batch-dialog::backdrop{background:#10182873;overflow:hidden;overscroll-behavior:contain}
 .storyboard-batch-dialog>header,.storyboard-batch-dialog>footer{position:sticky;z-index:1;padding:12px 16px;background:var(--lc-surface,#fff)}

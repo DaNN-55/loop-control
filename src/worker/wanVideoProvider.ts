@@ -75,7 +75,7 @@ export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array
         if(typeof data.video_url!=='string')throw Error('万相任务成功但缺少视频地址；请按原任务恢复下载。');
         return{url:data.video_url};
       }
-      if(!['PENDING','RUNNING'].includes(String(data.task_status)))throw new VideoGenerationError(`万相任务状态 ${String(data.task_status)}${typeof data.code==='string'?`（${data.code}）`:''}${typeof data.message==='string'?`：${safeDetail(data.message,[input.credentials,apiKey])}`:''}；费用预留已保留，重做前请核对。`,'accepted');
+      if(!['PENDING','RUNNING'].includes(String(data.task_status)))throw new VideoGenerationError(`万相任务状态 ${String(data.task_status)}${typeof data.code==='string'?`（${data.code}）`:''}${typeof data.message==='string'?`：${safeDetail(data.message,[input.credentials,apiKey])}`:''}；费用预留已保留，重做前请核对。`,['FAILED','CANCELED','CANCELLED'].includes(String(data.task_status))?'terminal_failed':'accepted');
       return{phase:data.task_status==='PENDING'?'queued':'processing'};
     },
     pollDelayMs:attempt=>Math.min(5_000+attempt*1_000,10_000),

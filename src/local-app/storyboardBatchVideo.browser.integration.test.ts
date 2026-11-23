@@ -86,3 +86,47 @@ it.skipIf(!enabled)('adopts a voice, reviews a video draft, adopts the generated
  }catch(error){await browser?.capture('failed');throw error;}
  finally{await browser?.close();await f.close();}
 },180000);
+
+it.skipIf(!enabled)('reviews an unopened legacy video draft and inherits the current video mode and fit',async()=>{
+ const f=await storyE2eFixture({migrations:['db/current/228-storyboard-batch-video.sql']});
+ let browser:Awaited<ReturnType<typeof storyBrowser>>|undefined;
+ try{
+  const w=await f.read(),[first,second]=w.clips;
+  for(const clip of w.clips)await f.ok(f.send('setWorkspaceNarrationEnabled',{clipId:clip.id,enabled:false,voiceMode:'none'}));
+  browser=await storyBrowser(f,'storyboard-batch-video-legacy');
+  await browser.cli('open',browser.url+'&step=preparation');
+  const draft='旧草稿中的纸条在风中摆动。';
+  const legacy={tab:'video',settings:{},videoPrompt:draft,videoInputIds:[f.materials.first.id],duration:'4',durationOverride:true,defaultOverrides:{version:1,fields:[]}};
+  const storage=(key:string,value:object)=>`sessionStorage.setItem(${JSON.stringify('loop-visual-draft:'+w.id+':'+key)},${JSON.stringify(JSON.stringify(value))})`;
+  await browser.evaluate(`${storage(second.itemId,legacy)};${storage(first.itemId,{tab:'video',settings:{},duration:'4',durationOverride:true,defaultOverrides:{version:1,fields:[]}})}`);
+  const modeKey=JSON.stringify('loop-video-default:'+w.id);
+  const defaults=(videoModeId:string)=>JSON.stringify(JSON.stringify({videoSelection:f.selections.video,firstFrameFit:'cover',videoModeId}));
+  await browser.evaluate(`localStorage.setItem(${modeKey},${defaults('references')})`);
+  await browser.click('批量操作');
+  await browser.click('全选本单');
+  await browser.cli('find','text','本次共用视频设置','click','--exact');
+  await browser.cli('fill','input[name=durationSeconds]','4');
+  await browser.click('批量生成视频');
+  await browser.wait("document.querySelector('dialog[open]')?.innerText.includes('参考素材生成')");
+  expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).toContain('参考图');
+  expect(await browser.evaluate("document.querySelector('dialog[open]').innerText")).not.toContain('首帧居中裁切');
+  await browser.cli('press','Escape');
+  await browser.wait("!document.querySelector('dialog[open]')");
+  await browser.click('退出批量操作');
+  await browser.evaluate(`localStorage.setItem(${modeKey},${defaults('first-frame')})`);
+  await browser.click('批量操作');
+  await browser.click('全选本单');
+  await browser.cli('find','text','本次共用视频设置','click','--exact');
+  await browser.cli('fill','input[name=durationSeconds]','4');
+  await browser.click('批量生成视频');
+  await browser.cli('wait','--text',draft);
+  const review=await browser.evaluate("Array.from(document.querySelectorAll('dialog[open] .storyboard-batch-review-item')).map(item=>item.innerText).join('\\n')");
+  expect(review).toContain('来自草稿');
+  expect(review).toContain('站台黄伞.png');
+  expect(review).toContain('来自已确认分镜');
+  await browser.click('确认并提交');
+  await browser.cli('wait','--text','已提交 2 个镜头');
+  expect((await f.read()).visualTasks!.find(task=>task.shotId===first.shotId)?.generation?.firstFrameFit).toBe('cover');
+  expect((await f.read()).visualTasks!.find(task=>task.shotId===second.shotId)?.generation).toMatchObject({prompt:draft,firstFrameMaterialRevisionId:f.materials.first.id,firstFrameFit:'cover'});
+ }finally{await browser?.close();await f.close();}
+},120000);
