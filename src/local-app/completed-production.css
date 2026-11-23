@@ -39,7 +39,7 @@
  border-radius:8px;
  background:var(--lc-surface);
 }
-.completed-script-heading,.completed-script-heading > div:first-child,.completed-script-tools {
+.completed-script-heading,.completed-script-heading > div:first-child {
  display:flex;
  align-items:center;
  flex-wrap:wrap;

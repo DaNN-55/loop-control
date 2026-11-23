@@ -158,10 +158,7 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript
   {draft.storageError&&<p role="alert" className="form-error">{uiText('本机草稿暂无法保存，请保持此页面打开。')}</p>}
   {sourceError?<div className="script-studio-read-error"><p role="alert" className="form-error">{uiText(sourceError)}</p><Button type="button" size="sm" color="secondary" onPress={retrySource}>{uiText('重新读取原文')}</Button></div>:sourceLoading&&<p role="status" className="script-studio-loading">{uiText('正在读取主脚本原文…')}</p>}
   <div className="script-studio-content">
-   {readOnly&&completedView?<CompletedScriptReading source={retained.sourceText} status={uiText(scriptRevisionId?'已确认':'待确认')} tools={<>
-    <ScriptStudioPopup label="脚本历史" open={historyOpen} onOpenChange={setHistoryOpen} nonModal trigger={<ScriptStudioIcon label="历史" icon={History}/>}>{historyContent}</ScriptStudioPopup>
-    <ScriptStudioPopup label="使用帮助" trigger={<ScriptStudioIcon label="使用帮助" icon={Info}/>}><p>{uiText('普通文本、单镜头和完整分镜都可继续制作。优化拍法默认保留原文内容和总时长。')}</p><p>{uiText('未明确的口播与字幕用途会在制作方案中说明，采用前请核对。总时长支持 0.1–3600 秒。')}</p></ScriptStudioPopup>
-   </>}/>:structuredPlan?<div className="script-studio-imported">
+   {readOnly&&completedView?<CompletedScriptReading source={retained.sourceText} status={uiText(scriptRevisionId?'已确认':'待确认')}/>:structuredPlan?<div className="script-studio-imported">
     <section aria-label={uiText('脚本正文')}>
      <header className="script-studio-pane-heading"><label htmlFor={textId}>{uiText('脚本正文')}</label><span role="status" className="script-studio-badge">{status}</span></header>
      <textarea id={textId} name="script" readOnly rows={6} value={text} placeholder={uiText('未填写脚本正文')}/>

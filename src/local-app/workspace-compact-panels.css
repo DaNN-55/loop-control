@@ -242,7 +242,8 @@ html[data-interface="impeccable"] .product-ui .workspace-script-compact .confirm
 .workspace-final-header-actions,.workspace-download-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
 .workspace-download-toolbar:empty{display:none}
 .workspace-download-toolbar .workspace-delivery-downloads{display:flex;align-items:center;gap:8px;margin:0;padding:0}
-.workspace-download-toolbar .workspace-delivery-downloads>a{white-space:nowrap;min-height:34px;font-size:12px}
+.workspace-review-flow .workspace-download-toolbar :is(.workspace-delivery-downloads>a,.workspace-more-downloads>summary){box-sizing:border-box;min-inline-size:90px;min-height:36px;padding:0 10px;white-space:nowrap;font-size:12px}
+.workspace-download-toolbar .workspace-download-primary svg{width:14px;height:14px}
 .workspace-download-toolbar .workspace-more-downloads{position:relative;margin:0}
 .workspace-download-toolbar .workspace-more-downloads[open]{display:block;width:auto}
 .workspace-download-toolbar .workspace-more-downloads>summary{display:flex;align-items:center;justify-content:center;gap:6px;list-style:none;padding:6px 10px;min-height:34px;border:1px solid var(--lc-line,#d8e1ee);border-radius:6px;font-size:12px;background:var(--lc-surface,#fff)}

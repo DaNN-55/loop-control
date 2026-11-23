@@ -1,4 +1,4 @@
-import {useMemo,type ReactNode} from 'react';
+import {useMemo} from 'react';
 import {uiText} from '../i18n/ui';
 import {parseProductionScript} from '../reviews/productionScript';
 import {MarkdownPreview} from '../ui/MarkdownPreview';
@@ -23,13 +23,12 @@ function readingSections(source:string){
  }catch{return null;}
 }
 
-export function CompletedScriptReading({source,status,tools}:{source:string;status:string;tools:ReactNode}){
+export function CompletedScriptReading({source,status}:{source:string;status:string}){
  const sections=useMemo(()=>readingSections(source),[source]);
  return <div className="completed-script-layout">
   <div className="completed-script-main">
    <header className="completed-script-heading">
     <div><h3>{sections?.script.title||uiText('主脚本')}</h3><span>{status}{uiText(' · 只读')}</span></div>
-    <div className="completed-script-tools">{tools}</div>
    </header>
    <div className="workspace-script-preview" role="document" aria-label={uiText('主脚本预览')} tabIndex={0}>
     {sections?<ol className="completed-script-paragraphs">{sections.script.segments.map(segment=>{
