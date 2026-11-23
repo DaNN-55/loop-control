@@ -5,7 +5,7 @@ export interface TemplateMaterialReference {reference:string;status:'bound'|'mis
 export interface TemplateSpeech {voice?:string;speakingRate?:number;languageCode?:string}
 export interface WorkspaceTemplateInputs {
  version:'workspace-template-inputs/v1';narration:TemplateSpeech;bgm?:TemplateMaterialReference;cover?:TemplateMaterialReference;
- shots:Array<{shotId:string;imagePrompt:string;videoPrompt:string;narration:TemplateSpeech;visualSource?:string;visual?:TemplateMaterialReference;sfx?:TemplateMaterialReference;videoReservationCents?:number}>;
+ shots:Array<{shotId:string;imagePrompt:string;videoPrompt:string;narration:TemplateSpeech;narrationOverrides?:TemplateSpeech;visualSource?:string;visual?:TemplateMaterialReference;sfx?:TemplateMaterialReference;videoReservationCents?:number}>;
 }
 const normalizedName=(name:string)=>name.split(/[\\/]/).at(-1)!.normalize('NFC').replace(/\.(png|jpg|jpeg|webp|bmp|gif|tiff?|avif|mp3|wav|m4a|aac|flac|ogg|mp4|m4v|mov|webm|mkv|avi)$/i,'');
 /** Only caller-scoped, current material revisions may become suggestions. Adoption remains explicit. */
@@ -23,8 +23,8 @@ function speech(settings:ProductionSettings):TemplateSpeech{
 export function productionTemplateInputs(script:ProductionScript,materials:TemplateMaterial[]):WorkspaceTemplateInputs|undefined{
  if(script.version!==3)return;
  return{version:'workspace-template-inputs/v1',narration:speech(script.settings),bgm:resolveTemplateMaterial(script.settings.bgm,'bgm',materials),cover:resolveTemplateMaterial(script.settings.cover,'cover',materials),shots:script.segments.map(segment=>{
-  const settings=segmentSettings(script,segment);
-  return{shotId:segment.id,imagePrompt:segment.visual,videoPrompt:segment.videoPrompt||segment.visual,narration:speech(settings),visualSource:segment.visualSource,visual:resolveTemplateMaterial(settings.materialReference,'visual',materials),sfx:resolveTemplateMaterial(settings.sfx,'sfx',materials),...(settings.videoReservationCents===undefined?{}:{videoReservationCents:settings.videoReservationCents})};
+  const settings=segmentSettings(script,segment),narrationOverrides=speech(segment.settings);
+  return{shotId:segment.id,imagePrompt:segment.visual,videoPrompt:segment.videoPrompt||segment.visual,narration:speech(settings),...(Object.keys(narrationOverrides).length?{narrationOverrides}:{}),visualSource:segment.visualSource,visual:resolveTemplateMaterial(settings.materialReference,'visual',materials),sfx:resolveTemplateMaterial(settings.sfx,'sfx',materials),...(settings.videoReservationCents===undefined?{}:{videoReservationCents:settings.videoReservationCents})};
  })};
 }
 export function templateReferenceProblem(value:TemplateMaterialReference|undefined){

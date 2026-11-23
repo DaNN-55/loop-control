@@ -20,6 +20,7 @@ import type {StoryboardShotManifest} from '../worker/contracts.js';
 import {prepareWorkspaceVideoSound} from './workspaceVideoSound.js';
 import {applyWorkspaceVideoSound} from '../workspaceVideoSound.js';
 import {requiresWorkspaceCall} from '../workspaceCall.js';
+import {executeStoryboardBatch} from './storyboardBatchCommands.js';
 import {prepareWorkspaceCall,consumeWorkspaceCall} from './workspaceCallConfirmation.js';
 import {verifyEpisodeFile,episodeFileIO} from './episodeFiles.js';
 import {readWorkspacePexels} from './workspacePexels.js';
@@ -288,11 +289,13 @@ export class ProductionWorkspaceCommands{
   if(command==='generateWorkspaceImage')return generateWorkspaceImage(c,root,e,runtime,data);
   if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
-  const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
+  const expectedRevision=command==='confirmStoryboardBatch'&&row?Number(row.revision):data.expectedRevision;
+ const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,expectedRevision);row=locked.row;const project=locked.project;
   recordValidatedRequestLogContext({workspaceId:row.id});
   const logClip=row.bindings.find(b=>b.id===data.clipId||b.shotId===data.shotId);
   if(logClip)recordValidatedRequestLogContext({shotId:logClip.shotId,...(logClip.image?.taskId&&logClip.image.taskId===data.taskId?{taskId:logClip.image.taskId}:{})});
-  if(command==='prepareWorkspaceCall')return prepareWorkspaceCall(c,root,row,project,data.callCommand,data.callData);
+  if(command==='prepareStoryboardBatch'||command==='confirmStoryboardBatch')return executeStoryboardBatch(c,root,row,project,runtime,command,data);
+ if(command==='prepareWorkspaceCall')return prepareWorkspaceCall(c,root,row,project,data.callCommand,data.callData);
   if(command==='confirmWorkspaceCall'){const call=await consumeWorkspaceCall(c,root,row,project,data.confirmationId,data.reservationCents);return this.execute(c,e,root,runtime,call.command,call.payload,true);}
   if(command==='saveWorkspaceSoundIntent'){
    if(data.expectedProjectSha256!==row.project_sha256)throw new ConfigurationError(409,'镜头信息已变化，请刷新后再保存音效意图。');

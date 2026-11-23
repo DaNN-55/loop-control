@@ -22,14 +22,14 @@ const exec=promisify(execFile);
 export const storyTitle='末班车前的一把伞';
 export const storyLines=['雨停了，她把伞留在长椅上。','伞柄的纸条写着：留给下一个人。'];
 
-export async function storyE2eFixture(options:{blank?:boolean;scriptOnly?:boolean}={}){
+export async function storyE2eFixture(options:{blank?:boolean;scriptOnly?:boolean;migrations?:string[]}={}){
  if(!process.env.LOOP_TEST_CONTEXT_MODULE)throw Error('Use npm run test:e2e; an explicit isolated cluster is required');
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE);
  const context=runtimeContext();if(context.dailyRuntime!==false)throw Error('Story E2E refuses the daily runtime');context.assertDatabase();
  const resources=fixtureResources();
  try{
   const volume=await workspaceAudioVolume();resources.defer(volume.close);
-  const f=await nativeWorkspaceFixture({testRootParent:volume.mountPath,migrations:productionWorkspaceMigrations,
+  const f=await nativeWorkspaceFixture({testRootParent:volume.mountPath,migrations:[...productionWorkspaceMigrations,...options.migrations??[]],
    connections:pool=>new LocalConnections(pool,{mode:'keychain',putImmutable:async()=>{throw Error('Story fixture does not write real credentials');},get:async()=> 'synthetic-story-only'},
     {mode:'live',networkAvailable:true,verify:async()=>{throw Error('Story fixture does not contact real providers');}}),
    runtime:{mountPath:volume.mountPath,wake(){},postReady:async()=>{},mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{}}});

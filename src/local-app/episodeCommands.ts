@@ -199,7 +199,7 @@ export class LocalEpisodeCommands {
    }
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,idempotency_key) DO NOTHING',[session.id,body.idempotencyKey,hash,value]);return value;
   });
-  if(['requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','completeWorkspaceExport','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage'].includes(body.command)||body.command==='confirmReviewedExport'&&result.status==='success')this.runtime.wake(String(data.episodeId??result.id));return result;
+  if(['requestWorkspaceVisualCandidate','requestWorkspaceImageCandidates','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','completeWorkspaceExport','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage'].includes(body.command)||body.command==='confirmReviewedExport'&&result.status==='success'||body.command==='confirmStoryboardBatch'&&result.status==='submitted')this.runtime.wake(String(data.episodeId??result.id));return result;
  }
  private async start(c:PoolClient,episodeId:string,scriptId:string|null,root:string,policy:Record<string,unknown>&{static_visual?:{executor?:unknown}}){
   await this.preflight(c,policy);
