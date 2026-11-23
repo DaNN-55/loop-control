@@ -1,4 +1,5 @@
 import {cleanup,fireEvent,render,screen,within,waitFor} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {afterEach,beforeEach,expect,it,vi} from 'vitest';
 import {ProductionWorkspacePanel} from './ProductionWorkspacePanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
@@ -31,50 +32,51 @@ function setup(stage='production_completed',data=workspace){
  const command=vi.fn();render(<ProductionWorkspacePanel episodeId="e" title="已完成作品" scriptRevisionId="s" materials={[]} stage={stage} command={command} onLegacy={()=>{}}/>);
  return {reads,command};
 }
-it('uses three completed-work sections and opens only an isolated Studio copy without production writes',async()=>{
+async function openCompletedStoryboard(){
+ await userEvent.click(await screen.findByRole('button',{name:'更多操作'}));
+ await userEvent.click(await screen.findByRole('menuitem',{name:'查看分镜'}));
+ return within(await screen.findByRole('dialog',{name:'分镜记录'}));
+}
+
+it('opens completed storyboard records and an isolated Studio copy without production writes',async()=>{
  const {command,reads}=setup();
- await waitFor(()=>expect(screen.queryByText('正在读取制作流程…')).toBeNull());
- const nav=screen.getByRole('navigation',{name:'作品查看'});
- expect(within(nav).getAllByRole('button').map(button=>button.textContent)).toHaveLength(3);
- expect(within(nav).queryByRole('button',{name:/剪辑工作台/})).toBeNull();
- fireEvent.click(within(nav).getByRole('button',{name:/分镜台/}));
- await screen.findByRole('table',{name:'镜头'});
- expect(screen.getByRole('separator',{name:'调整镜头列表宽度'})).toBeTruthy();
- expect(screen.getAllByRole('table')).toHaveLength(1);
- expect(screen.queryByRole('dialog')).toBeNull();
+ const storyboard=await openCompletedStoryboard();
+ expect(screen.queryByRole('navigation',{name:'作品查看'})).toBeNull();
+ expect(storyboard.getByRole('table',{name:'镜头'})).toBeTruthy();
+ expect(storyboard.getByRole('separator',{name:'调整镜头列表宽度'})).toBeTruthy();
+ expect(storyboard.getAllByRole('table')).toHaveLength(1);
+ expect(screen.getAllByRole('dialog')).toHaveLength(1);
  const quality=document.querySelector('.workspace-preparation .completed-quality');
  expect(quality).toBeNull();
  expect(screen.queryByText('问题与复核记录')).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:'在 OpenChatCut 中查看'}));
+ fireEvent.click(storyboard.getByRole('button',{name:'在 OpenChatCut 中查看'}));
  await screen.findByRole('region',{name:'OpenChatCut 查看副本'});
  await screen.findByTitle('OpenChatCut 查看副本');
  expect(document.querySelector('iframe')?.src).toContain('lcProject=loop-control-');
- fireEvent.click(screen.getByRole('button',{name:'返回分镜台'}));
- await waitFor(()=>expect(screen.getByRole('table',{name:'镜头'})).toBeTruthy());
+ fireEvent.click(screen.getByRole('button',{name:'返回分镜记录'}));
+ expect(within(await screen.findByRole('dialog',{name:'分镜记录'})).getByRole('table',{name:'镜头'})).toBeTruthy();
  expect(command).not.toHaveBeenCalled();
  expect(reads.mock.calls.filter(([,init])=>init?.method&&init.method!=='GET').every(([path])=>path.endsWith('/studio-copy'))).toBe(true);
 });
 it('keeps completed shot details inline and restores the selected shot after viewing the project',async()=>{
  const {command}=setup();
- await waitFor(()=>expect(screen.queryByText('正在读取制作流程…')).toBeNull());
- fireEvent.click(screen.getByRole('button',{name:/分镜台/}));
- await screen.findByRole('table',{name:'镜头'});
- fireEvent.click(screen.getByRole('button',{name:'选择镜头 02'}));
+ const storyboard=await openCompletedStoryboard();
+ fireEvent.click(storyboard.getByRole('button',{name:'选择镜头 02'}));
  expect(screen.getByRole('region',{name:'画面'})).toBeTruthy();
  expect(screen.getByRole('region',{name:'字幕与口播'})).toBeTruthy();
  expect(screen.getByRole('region',{name:'音效'})).toBeTruthy();
  expect(screen.queryByRole('tablist',{name:'素材设置'})).toBeNull();
  expect(screen.queryByRole('button',{name:/本期素材/})).toBeNull();
- expect(screen.queryByRole('dialog')).toBeNull();
+ expect(screen.getAllByRole('dialog')).toHaveLength(1);
  expect(screen.queryByRole('button',{name:/批量准备/})).toBeNull();
  expect(screen.getByRole('row',{name:'镜头 02'}).getAttribute('aria-selected')).toBe('true');
- fireEvent.click(screen.getByRole('button',{name:'在 OpenChatCut 中查看'}));
+ fireEvent.click(storyboard.getByRole('button',{name:'在 OpenChatCut 中查看'}));
  await screen.findByRole('region',{name:'OpenChatCut 查看副本'});
- fireEvent.click(screen.getByRole('button',{name:'返回分镜台'}));
- await screen.findByRole('table',{name:'镜头'});
+ fireEvent.click(screen.getByRole('button',{name:'返回分镜记录'}));
+ await screen.findByRole('dialog',{name:'分镜记录'});
  expect(screen.getByRole('region',{name:'字幕与口播'})).toBeTruthy();
  expect(screen.getByRole('row',{name:'镜头 02'}).getAttribute('aria-selected')).toBe('true');
- expect(screen.queryByRole('dialog')).toBeNull();
+ expect(screen.getAllByRole('dialog')).toHaveLength(1);
  expect(command).not.toHaveBeenCalled();
 });
 it('retains four production steps on unfinished orders',async()=>{
