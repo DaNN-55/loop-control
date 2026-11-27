@@ -61,14 +61,17 @@ async function nativeRef(role,name){
  const line=descendants.find(line=>line.includes('- '+role+' '+JSON.stringify(name)+' ')),ref=line?.match(/ref=(e\d+)/)?.[1];assert(ref,'Native '+role+' absent: '+name);return'@'+ref;
 }
 async function openEditor(shotId){
+ // The active storyboard shot is selected automatically when Studio connects.
+ await cli('click',`button[title=${JSON.stringify(shotId)}][aria-pressed]`);
  await click('进入剪辑工作台');await waitFor("!!document.querySelector('iframe')&&!document.querySelector('iframe').hasAttribute('inert')",'editable SDK iframe');
- await click('定位镜头 '+shotId);
 }
 try{
  await mkdir(evidence,{recursive:true});await stage('login');await cli('open',url);await cli('set','viewport','1440','1000');
  await cli('wait','--text','登录控制台');await fill('邮箱',config.email);await fill('密码',config.password);await click('使用密码登录');
  await waitFor("!!document.querySelector('[aria-label=主导航]')",'login');await observeRequests();
  await click('生产单');await click('新建生产单');
+  await cli('find','role','menuitem','click','--name','新建生产单','--exact');
+  await cli('wait','form[aria-label="新建生产单"]');
  await cli('select','form[aria-label="新建生产单"] select:not([aria-label="系列版本"])',config.accountId);
  await cli('select','[aria-label="系列版本"]',config.seriesVersionId??'');
  await fill('工作标题（可留空）',`T12 ${kind} 正式生产单 [100%_#?]✨`);await capture('01-create-form');await click('创建生产单');

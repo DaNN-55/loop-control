@@ -27,7 +27,8 @@ const pgpass=join(root,'empty-pgpass');await writeFile(pgpass,'',{mode:0o600});
 // macOS PostgreSQL can initialize locale services with extra threads and abort
 // startup when no locale is set. Scope a known-valid C fallback to this run.
 const localeFallback=!process.env.LANG,locale=localeFallback?{LANG:'C',LC_ALL:'C'}:{LANG:process.env.LANG};
-const env={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:temporary,...locale,PGPASSFILE:pgpass};
+const browserSocket=join(root,'browser');await mkdir(browserSocket,{mode:0o700});
+const env={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:temporary,...locale,PGPASSFILE:pgpass,AGENT_BROWSER_SOCKET_DIR:browserSocket};
 const session='t12-'+randomBytes(8).toString('hex');
 let active,processGroup,clusterStarted=false,clusterStartAttempted=false,bin,data,socket,port=5432,interrupted=false;
 const cleanup={clusterStopped:false,ownedClusterAbsent:false,clusterStatusChecked:false,postgresLogPreserved:false,partialStartProcessFound:false,browserSessionsVerified:false,closedSessions:[],sourceRemoved:false,temporaryRootRemoved:false,privateBrowserInputsRemoved:false,ownedMountCleanupVerified:false,detachedOwnedImages:[],cleanupErrors:[]};

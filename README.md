@@ -35,6 +35,7 @@ npm stop
 
 正常启动读取 `.loop-control/local/deployment.json`，核对数据库、媒体和秘密引用，准备本地后台与 Worker，再启动控制台。当前配置的控制台为 `http://127.0.0.1:5174`，Studio 为 `127.0.0.1:5175`；缺配置时明确失败。
 
+- [新 Mac：隔离空库成片验收与安装边界](docs/fresh-mac-verification.md)
 - [日常运行、数据位置与故障检查](docs/local-daily-runtime.md)
 - [当前产品约束](docs/specs/current-product.md)
 - [交互式架构快照](docs/architecture-map/README.md)
