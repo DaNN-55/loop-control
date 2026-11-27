@@ -28,7 +28,7 @@ const pgpass=join(root,'empty-pgpass');await writeFile(pgpass,'',{mode:0o600});
 // startup when no locale is set. Scope a known-valid C fallback to this run.
 const localeFallback=!process.env.LANG,locale=localeFallback?{LANG:'C',LC_ALL:'C'}:{LANG:process.env.LANG};
 const browserSocket=join(root,'browser');await mkdir(browserSocket,{mode:0o700});
-const env={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:temporary,...locale,PGPASSFILE:pgpass,AGENT_BROWSER_SOCKET_DIR:browserSocket};
+const env={PATH:process.env.PATH,HOME:process.env.HOME,TMPDIR:temporary,...locale,PGPASSFILE:pgpass,AGENT_BROWSER_SOCKET_DIR:browserSocket,...(process.env.CC_BROWSER_EXECUTABLE?{CC_BROWSER_EXECUTABLE:await realpath(process.env.CC_BROWSER_EXECUTABLE)}:{})};
 const session='t12-'+randomBytes(8).toString('hex');
 let active,processGroup,clusterStarted=false,clusterStartAttempted=false,bin,data,socket,port=5432,interrupted=false;
 const cleanup={clusterStopped:false,ownedClusterAbsent:false,clusterStatusChecked:false,postgresLogPreserved:false,partialStartProcessFound:false,browserSessionsVerified:false,closedSessions:[],sourceRemoved:false,temporaryRootRemoved:false,privateBrowserInputsRemoved:false,ownedMountCleanupVerified:false,detachedOwnedImages:[],cleanupErrors:[]};

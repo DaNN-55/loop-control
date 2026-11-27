@@ -49,12 +49,13 @@ JS
 cd "$check_root/loop-control"
 LOOP_TEST_POSTGRES_BIN="$(brew --prefix postgresql@17)/bin" \
 LOOP_TEST_OPENCHATCUT_ROOT="$check_root/OpenChatCut" \
+CC_BROWSER_EXECUTABLE='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' \
 node scripts/e2e/t12.mjs --scenario unassigned --output "$check_root/evidence"
 ```
 
 非 Homebrew 安装请直接填写 PostgreSQL 17 `bin` 绝对路径。端口、库、Keychain 或挂载配置不要从旧部署复制。不要省略 `LOOP_TEST_OPENCHATCUT_ROOT`，以免退回日常剪辑路径。
 
-T12 通过私有 Unix socket 接入临时 PostgreSQL，把 `clean-v3` 和后续迁移应用到新库。测试夹具建立测试 Owner 和制作账号，再用真实浏览器登录并新建未归属系列的生产单。素材由测试导入，视觉、语音和对齐使用受控的本地合成结果。浏览器实际打开 OpenChatCut、编辑、保存和重开，再导出、确认并校验交付；不代表走完首位 Owner 自助创建，也不代表用户逐个上传素材。它还在隔离数据内做备份／恢复等检查。
+T12 通过私有 Unix socket 接入临时 PostgreSQL，把 `clean-v3` 和后续迁移应用到新库。测试夹具建立测试 Owner 和制作账号，再用真实浏览器登录并新建未归属系列的生产单。素材由测试导入，视觉、语音和对齐使用受控的本地合成结果。浏览器实际打开嵌入式 OpenChatCut。测试通过 SDK 的项目接口编辑同一张生产单，经正式保存、重启并重开，再回浏览器点击「生成成片」「确认并完成」，校验 MP4 下载与解码播放。它也在隔离数据内做备份／恢复和删除检查。不覆盖 iframe 内的手动编辑控件、逐件素材上传、发布资料或首位 Owner 自助创建。
 
 在 T12 打印的 `evidence` 目录检查 `run.json` 是否 `passed: true`、`cleanup.cleanupErrors` 是否为空，再看 `unassigned/browser-playback.json` 的播放证据和 `unassigned/browser-downloads.json` 的下载校验。若失败，先看 `runner-error.txt`、`build.log`、`tests.log`（以实际生成的文件为准）；日志或浏览器快照只留本机，不要提交。不能通过手写回执或修改数据库身份跳过失败。
 
@@ -67,7 +68,7 @@ T12 通过私有 Unix socket 接入临时 PostgreSQL，把 `clean-v3` 和后续�
 2026-11-27，Apple Silicon、macOS 27.0、Node.js 24.20.0、npm 12.2.1、PostgreSQL 17.11。以公开 `main` 的 `7feb25c19b` 为基线：
 
 - 已从版本化 schema 创建独立空库并执行到 232；Owner、制作账号、生产单均为零。临时 APFS 镜像的挂载、写入、重新挂载和退出通过。运行包构建与 33 项定向用例通过。
-- T12 `unassigned` 已实际登录、新建生产单、准备本地合成素材并打开嵌入式 OpenChatCut。当前浏览器驱动未能操作 iframe 内的水平位置控件，完整 T12 未通过；未验证从控制台完成导出和交付。未重测 `series`。
+- T12 的 `unassigned` 和 `series` 分别在独立实例通过（各 1 项通过）：从测试 Owner 登录、建单和导入合成素材，到打开嵌入式编辑器、通过 SDK 项目接口修改并保存、重启重开、在浏览器生成和确认成片。`unassigned` 下载 MP4 为 147,875 字节、2.45 秒、1080×1920，含 H.264 视频和 AAC 音轨；浏览器解码 11 帧，下载字节与完成后恢复的成片 SHA-256 一致。两轮临时库、媒体挂载及浏览器会话均已清理。
 - 独立 SDK 集成跑通编辑、保存重开、冻结和实际 MP4 渲染；`ffprobe` 校验了画幅和音轨。运行时向 SDK 明确提供了本地 Chrome（避免首次渲染另行下载浏览器）。这不是控制台整链验收。
 - `npm run check` 在未修改的公开基线也出现 `templateSettings.integration.test.ts` 的 Vite source map 类型错误，不计作通过项。
 

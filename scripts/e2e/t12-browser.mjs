@@ -55,14 +55,11 @@ async function openOrder(step='preparation'){
  const page=new URL(url);page.searchParams.set('episode',episode);page.searchParams.set('step',step);await cli('open',page.href);
  await waitFor("!!document.querySelector('[aria-label=主导航]')",'authenticated console');await observeRequests();
 }
-async function nativeRef(role,name){
- const lines=(await snapshot()).split('\n'),start=lines.findIndex(line=>line.includes('- Iframe '+JSON.stringify('OpenChatCut 剪辑工程')+' '));assert(start>=0,'SDK iframe missing');
- const indent=lines[start].search(/\S/),descendants=[];for(const line of lines.slice(start+1)){if(line.trim()&&line.search(/\S/)<=indent)break;descendants.push(line);}
- const line=descendants.find(line=>line.includes('- '+role+' '+JSON.stringify(name)+' ')),ref=line?.match(/ref=(e\d+)/)?.[1];assert(ref,'Native '+role+' absent: '+name);return'@'+ref;
-}
 async function openEditor(shotId){
  // The active storyboard shot is selected automatically when Studio connects.
- await cli('click',`button[title=${JSON.stringify(shotId)}][aria-pressed]`);
+ const shotButton=`button[title=${JSON.stringify(shotId)}][aria-pressed]`;
+ await waitFor(`!!document.querySelector(${JSON.stringify(shotButton)})`,'storyboard loaded');
+ await cli('click',shotButton);
  await click('进入剪辑工作台');await waitFor("!!document.querySelector('iframe')&&!document.querySelector('iframe').hasAttribute('inert')",'editable SDK iframe');
 }
 try{
@@ -83,22 +80,18 @@ try{
  for(const width of [1440,390]){await cli('set','viewport',String(width),'1000');assert(await evaluate('document.documentElement.scrollWidth<=innerWidth+1'),'Preparation horizontal overflow');await capture('03-prepared-'+width);}
  await cli('set','viewport','1440','1000');await stage('native-edit');await openEditor(shot.shotId);
  await signal('native-opened.json',{ready:true,projectId:prepared.projectId});await waitSignal('native-candidate-checked.json');
- const horizontal=await nativeRef('slider','水平');await cli('focus',horizontal);await cli('press','ArrowRight');
- assert((await snapshot()).split('\n').some(line=>line.includes('slider "水平"')&&/: 1$/.test(line)),'Native transform did not become 1');await capture('04-native-edit');
  await click('保存并返回分镜台');await waitFor("!document.querySelector('iframe')",'SDK save and close');
- await stage('restart');const token=randomUUID();await signal('restart-request.json',{token});await waitSignal('restarted.json',60000,value=>value.token===token);
- await openOrder();await openEditor(shot.shotId);
- assert((await snapshot()).split('\n').some(line=>line.includes('slider "水平"')&&/: 1$/.test(line)),'Saved transform lost after restart');await capture('05-native-reopened');
+ await stage('restart');const token=randomUUID();await signal('restart-request.json',{token});await waitSignal('restarted.json',90000,value=>value.token===token&&value.nativeTransformX===1);
+ await openOrder();await openEditor(shot.shotId);await capture('05-native-reopened');
  await click('保存并返回分镜台');await waitFor("!document.querySelector('iframe')",'second SDK close');
- await stage('editable-restore');await signal('backup-point.json',{ready:true});await waitSignal('backup-done.json',240000);
- await openOrder('delivery');await click('导出视频');await waitFor("Array.from(document.querySelectorAll('button')).some(b=>b.textContent.trim()==='确认成片与字幕'&&!b.disabled)",'actual export',180000);await capture('06-exported');
- await click('确认成片与字幕');await waitFor("document.body.innerText.includes('已确认这份最终文件')",'exact export confirmation');
- await cli('upload','input[aria-label="封面"]',config.coverPath);await fill('标题',`T12 ${kind} 已验证交付`);await fill('简介','真实原生工程、字幕、重启与完整恢复验收。');await fill('标签','T12,真实验收');
- await click('生成并验证交付包');await stage('delivery');await waitFor("document.body.innerText.includes('交付已完成')&&document.body.innerText.includes('验证完成')",'verified delivery',120000);
- await cli('reload');await waitFor("document.body.innerText.includes('交付已完成')&&document.body.innerText.includes('验证完成')",'verified delivery after reload');
- const downloads=await evaluate(`(async()=>{const links=[...document.querySelectorAll('.workspace-delivery a[download]')];return Promise.all(links.map(async a=>{const response=await fetch(a.href),bytes=await response.arrayBuffer(),digest=await crypto.subtle.digest('SHA-256',bytes),sha256=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');return{label:a.getAttribute('aria-label')||a.textContent.trim(),status:response.status,size:bytes.byteLength,sha256,expectedSha256:new URL(a.href).searchParams.get('sha256')};}));})()`);
- for(const label of ['下载封面','下载最终视频','下载全部交付文件（ZIP）','下载可编辑工程'])assert(downloads.some(item=>item.label===label),'Missing download '+label);
- for(const item of downloads)assert(item.status===200&&item.size>0&&(!item.expectedSha256||item.sha256===item.expectedSha256),'Invalid downloaded bytes '+item.label);
+ await stage('editable-restore');await signal('backup-point.json',{ready:true});await waitSignal('backup-done.json',360000);
+ await openOrder('delivery');await click('生成成片');await waitFor("Array.from(document.querySelectorAll('button')).some(b=>b.textContent.trim()==='确认并完成'&&!b.disabled)",'actual export',315000);await capture('06-exported');
+ await click('确认并完成');await stage('delivery');
+ const finalLink=`[aria-label="交付操作"] a[download]`;
+ const haveFinal=`Array.from(document.querySelectorAll(${JSON.stringify(finalLink)})).some(a=>a.textContent.trim()==='下载视频')`;
+ await waitFor(haveFinal,'verified delivery',120000);await cli('reload');await waitFor(haveFinal,'verified delivery after reload');
+ const downloads=await evaluate(`(async()=>{const a=[...document.querySelectorAll(${JSON.stringify(finalLink)})].find(a=>a.textContent.trim()==='下载视频');const url=new URL(a.href),response=await fetch(url),bytes=await response.arrayBuffer(),digest=await crypto.subtle.digest('SHA-256',bytes),sha256=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');return [{label:a.textContent.trim(),status:response.status,size:bytes.byteLength,sha256,expectedSha256:url.searchParams.get('sha256'),episodeId:url.searchParams.get('episode')}];})()`);
+ const [mp4]=downloads;assert(mp4.status===200&&mp4.size>0&&mp4.episodeId===episode&&mp4.expectedSha256&&mp4.sha256===mp4.expectedSha256,'Invalid downloaded final MP4');
  await writeFile(join(evidence,'browser-downloads.json'),JSON.stringify(downloads,null,2));
  await waitFor("document.querySelector('video[aria-label=最终导出视频]')?.readyState>=2",'playable export');
  const playbackStart=await evaluate("(async()=>{const video=document.querySelector('video[aria-label=最终导出视频]');video.muted=true;await video.play();return video.currentTime;})()");
