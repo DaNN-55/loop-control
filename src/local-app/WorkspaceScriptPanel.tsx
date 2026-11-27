@@ -12,6 +12,7 @@ import {ScriptStudioIcon,ScriptStudioPopup} from './ScriptStudioTools';
 import {CompletedScriptReading} from './CompletedScriptReading';
 import {MarkdownPreview} from '../ui/MarkdownPreview';
 import {estimateScriptDuration,validateStudioDuration} from '../scriptStudio';
+import {storyboardHandoffText} from '../storyboardHandoff';
 import {ConfirmationModal,ConfirmationModalPresence} from '../ui/ConfirmationModal';
 import {useWorkspaceDraft,useWorkspaceOwnerId} from './WorkspaceDraft';
 import {workspaceScriptExample} from './workspaceScriptInput';
@@ -146,7 +147,7 @@ function WorkspaceScriptEditor({episodeId,scriptRevisionId,script,importedScript
  async function readScriptFile(file:File){
   if(disabled)return;
   const sequence=editSequence.current;
-  try{if(!/\.(md|txt)$/i.test(file.name))throw Error('请选择 Markdown 或 TXT 脚本。');if(!file.size||file.size>2*1024*1024)throw Error('脚本不能为空或超过 2 MB。');const value=await file.text();if(!active.current||!writable.current)return;if(sequence!==editSequence.current)throw Error('读取文件期间草稿已变化，本次导入未覆盖新内容，请重新导入。');setField('text',value);setField('filename',file.name);}catch(cause){if(active.current)setError(cause instanceof Error?cause.message:'脚本读取失败。');}
+  try{if(!/\.(md|txt)$/i.test(file.name))throw Error('请选择 Markdown 或 TXT 脚本。');if(!file.size||file.size>2*1024*1024)throw Error('脚本不能为空或超过 2 MB。');const original=await file.text(),value=storyboardHandoffText(original);if(!active.current||!writable.current)return;if(sequence!==editSequence.current)throw Error('读取文件期间草稿已变化，本次导入未覆盖新内容，请重新导入。');setField('text',value);if(value!==original)setField('duration','');setField('filename',file.name);}catch(cause){if(active.current)setError(cause instanceof Error?cause.message:'脚本读取失败。');}
  }
  const generatingProposal=assistant.busy&&assistant.activity==='model'&&!assistant.needsChoice;
  const middleVisible=!!proposal||generatingProposal;

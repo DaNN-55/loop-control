@@ -1,6 +1,6 @@
 import {studioDraftChanges} from './studioDraftChanges.js';
 import {archiveNativeStudioImports,type NativeStudioImport} from './nativeStudioImports.js';
-import {cacheBundledStudioSounds} from './openchatcutBundledSounds.js';
+import {prepareBundledStudioSounds} from './openchatcutBundledSounds.js';
 import {openChatCutBundledSounds,bundledSoundRuntimeSource} from '../openchatcutBundledSounds.js';
 import type {EpisodeFileIO} from '../local-app/episodeFiles.js';
 import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
@@ -306,7 +306,7 @@ async function openStudioDocument(assetRoot:string,episodeId:string,project:Open
   const reverseSources = new Map<string, string>(Object.entries(storedMetadata?.reverseSources??{}));
   const bundledSdkRoot=runtimeConfig.root?.trim()||process.env.OPENCHATCUT_ROOT?.trim();
   if(!bundledSdkRoot)throw Error('未配置 OPENCHATCUT_ROOT，无法准备内置音效。');
-  await cacheBundledStudioSounds(root,options.storage?.relativePath??`episodes/${episodeId}`,dataDir,bundledSdkRoot,reverseSources,options.storage);
+  await prepareBundledStudioSounds(root,options.storage?.relativePath??`episodes/${episodeId}`,dataDir,bundledSdkRoot,reverseSources,options.storage);
   await writeFile(await safeAssetOutputPath(root,relative(root,join(dataDir,'loop-bundled-sounds.json'))),JSON.stringify(Object.fromEntries(Object.entries(openChatCutBundledSounds).map(([id,sound])=>[id,bundledSoundRuntimeSource(sound.sha256)]))));
   sourcePaths = [...new Set(sourcePaths)];
   const copiedProject = structuredClone(project);

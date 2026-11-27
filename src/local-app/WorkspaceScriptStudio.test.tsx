@@ -115,3 +115,56 @@ it('places the accessible upload icon in the source header and keeps the native 
  const file=new File(['# 导入正文'],'scene.md',{type:'text/markdown'});Object.defineProperty(file,'text',{value:async()=>'# 导入正文'});fireEvent.change(input,{target:{files:[file]}});
  await waitFor(()=>expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value','# 导入正文'));expect(command).not.toHaveBeenCalled();expect(modelCommand).not.toHaveBeenCalled();
 });
+
+
+it('uploads a 策稿 handoff as its validated v3 storyboard without starting or calling a model',async()=>{
+ request.mockResolvedValue(catalog);const {command}=panel();
+ const body=`# 两镜
+
+## 制作设置
+- 模板版本：3
+- 画幅：9:16
+- 口播启用：关闭
+- 字幕：开启
+- 字幕正文模式：independent
+
+## 正文
+### 段落 01
+- 口播：
+- 字幕正文：First look.
+- 画面来源：已有素材
+- 素材名称：front.png
+- 镜头时长（秒）：2
+- 画面提示：全景。
+### 段落 02
+- 口播：
+- 字幕正文：See the detail.
+- 画面来源：已有素材
+- 素材名称：front.png
+- 镜头时长（秒）：3
+- 画面提示：细节。`;
+ const envelope=`---
+schema: "loop-control-handoff/v1"
+handoff_id: "demo-stand-sg-001"
+revision: 2
+product_id: "P01"
+title: "两镜"
+product_images:
+  - "images/front.png"
+---
+
+## 脚本
+
+${body}
+
+## 商品事实
+
+- 仅为合成示意。`;
+ function upload(text:string){const file=new File([text],'script.md',{type:'text/markdown'});Object.defineProperty(file,'text',{value:async()=>text});fireEvent.change(screen.getByLabelText('导入主脚本文件'),{target:{files:[file]}});}
+ upload(envelope.replace('素材名称：front.png','素材名称：absent.png'));
+ await screen.findByText(/absent\.png/);expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value',source);
+ fireEvent.change(screen.getByLabelText('目标时长'),{target:{value:'15'}});
+ upload(envelope);await waitFor(()=>expect(screen.getByRole('textbox',{name:'脚本正文'})).toHaveProperty('value',body));
+ expect(screen.getByLabelText('目标时长')).toHaveProperty('value','');
+ expect(command).not.toHaveBeenCalled();expect(modelCommand).not.toHaveBeenCalled();
+});
