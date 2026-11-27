@@ -37,6 +37,24 @@ async function waveform(studioUrl:string,destination:string){
  return response.json();
 }
 
+it('uses the real SDK to preview a bundled sound without prefilling production-order MP3s',async()=>{
+ const f=await mediaFixture();
+ try{
+  const opened=await f.open(),uploadDirectory=dirname(f.destination);
+  const bundledMp3s=async()=>(await readdir(uploadDirectory)).filter(name=>/^lc-sfx-.*\.mp3$/.test(name));
+  expect(await bundledMp3s()).toEqual([]);
+  const library=await(await fetch(new URL('/src/audio/soundLibrary.ts',opened.studioUrl))).text();
+  const {soundEffectSrc}=new Function(library.replace(/\bexport /g,'')+'\n;return {soundEffectSrc};')();
+  const url=new URL(soundEffectSrc('simple-whoosh'),opened.studioUrl);
+  const response=await fetch(url,{headers:{Range:'bytes=0-4095'}});
+  expect(response.status).toBe(206);
+  const original=await readFile(join(sdk!,'assets/sound-effects/simple-whoosh.mp3'));
+  expect(Buffer.from(await response.arrayBuffer())).toEqual(original.subarray(0,4096));
+  expect(await waveform(opened.studioUrl!,url.pathname)).toMatchObject({durationMs:expect.any(Number)});
+  expect(await bundledMp3s()).toEqual([]);
+ }finally{await f.cleanup();}
+},120_000);
+
 it('keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match',async()=>{
  const f=await mediaFixture();
  try{

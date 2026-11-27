@@ -8,6 +8,7 @@ import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import {openOpenChatCutDraftStudio,closeOpenChatCutStudio,openStandaloneOpenChatCutStudio,closeStandaloneOpenChatCutStudio,inspectOpenChatCutStoredProject,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {fileSha256} from '../worker/fileSha256.js';
+import {resolvePrivateBundledSound} from '../worker/openchatcutBundledSounds.js';
 import {completedCopyDocumentKey} from './completedStudioCopy.js';
 import type {ProductionCopyDraft} from './completedProductionCopies.js';
 import type {CompletedStudioCopy} from './completedStudioCopy.js';
@@ -62,9 +63,8 @@ export class CompletedStudioCopies {
   const files=[];
   for(const reference of completedProjectSources(stored.project)){
    const path=reference.startsWith(`episodes/${copy.runtimeId}/`)?join(copy.root,reference):/^\/media\/uploads\/[a-zA-Z0-9_.-]+$/.test(reference)?join(copy.root,'episodes',copy.runtimeId,'openchatcut-work/current/runtime',reference.slice(1)):null;
-   if(!path)throw new ConfigurationError(409,'副本包含未核验的外部来源，请先将素材导入本机。');
-   const stat=await lstat(path);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1||await realpath(path)!==path)throw new ConfigurationError(409,'副本素材不是独立普通文件。');
-   files.push({reference,originalReference:copy.references.get(reference),path,sha256:await fileSha256(path),fileSize:stat.size});
+   const media=await verifiedCopyMedia(copy,reference,path);
+   files.push({reference,originalReference:copy.references.get(reference),path:media.path,sha256:await fileSha256(media.path),fileSize:media.stat.size});
   }
   return{project:stored.project,changed:completedCopyDocumentKey(stored.project)!==copy.baseline,files};
  }
@@ -98,8 +98,7 @@ export class CompletedStudioCopies {
    const prior=await existing.json() as {found:boolean;value:unknown};
    if(prior.found&&JSON.stringify(prior.value)!==JSON.stringify(document))throw Error('独立副本已有新修改，未覆盖；请从独立剪辑库查看。');
    for(const [source,target] of media){
-    const path=join(copy.root,'episodes',copy.runtimeId,'openchatcut-work/current/runtime',source.slice(1)),stat=await lstat(path);
-    if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1)throw Error('副本媒体不是安全普通文件。');
+    const {path}=await verifiedCopyMedia(copy,source,join(copy.root,'episodes',copy.runtimeId,'openchatcut-work/current/runtime',source.slice(1)));
     const destination=await safeAssetOutputPath(library,target.slice(1));await copyFile(path,destination,constants.COPYFILE_FICLONE);
     if(await fileSha256(path)!==await fileSha256(destination))throw Error('独立副本媒体校验失败。');
    }
@@ -114,6 +113,18 @@ export class CompletedStudioCopies {
   }finally{copy.busy=false;}
  }
  async close(){await Promise.all([...this.copies.values()].map(async entry=>{const c=await entry.catch(()=>null);if(c)await this.discard(c.ownerId,c.episodeId,c.session.copyId);}));await Promise.all([...this.libraries].map(root=>closeStandaloneOpenChatCutStudio(root)));this.libraries.clear();}
+}
+async function verifiedCopyMedia(copy:Copy,reference:string,candidate:string|null){
+ if(!candidate)throw new ConfigurationError(409,'副本包含未核验的外部来源，请先将素材导入本机。');
+ let path=candidate;
+ let stat=await lstat(path).catch(error=>{if(error.code==='ENOENT')return null;throw error;});
+ if(!stat){
+  const sdk=copy.runtime.root?.trim()||process.env.OPENCHATCUT_ROOT?.trim(),sound=sdk&&await resolvePrivateBundledSound(sdk,`episodes/${copy.runtimeId}`,reference);
+  if(!sound)throw new ConfigurationError(409,'副本素材缺失，请恢复来源后重试。');
+  path=sound;stat=await lstat(path);
+ }
+ if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1||await realpath(path)!==path)throw new ConfigurationError(409,'副本素材不是安全普通文件。');
+ return {path,stat};
 }
 function copyDocument(project:OpenChatCutProject,map:(source:string)=>string):OpenChatCutProject{
  const document=structuredClone(project);
