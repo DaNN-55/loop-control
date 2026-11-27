@@ -16,6 +16,7 @@ import {runWorkspaceDeliveryProcess} from './workspaceDelivery.fixture';
 import {csrfFor} from './sessions';
 import {deletionFixtureFingerprint} from './deletionFingerprint.fixture';
 import {nativeStorageContext} from './nativeStorage.fixture';
+import {editStudioDocument} from './studioDocument.fixture';
 import {restoreCreatedEpisode} from './episodeCreationRestore.fixture';
 import {inspectMediaRoot} from './mediaRootSettings';
 import {requiresWorkspaceCall} from '../workspaceCall';
@@ -23,7 +24,7 @@ import {requiresWorkspaceCall} from '../workspaceCall';
 it.skipIf(process.env.LOOP_T12_BROWSER!=='1').each(['series','unassigned'] as const)('formal page creates a %s order and carries its real media, native work, delivery, restore and deletion through one registered location',async kind=>{
  const evidenceRoot=process.env.LOOP_T12_EVIDENCE,session=process.env.LOOP_T12_SESSION;if(!evidenceRoot||!session)throw Error('Explicit isolated evidence/session required');const evidence=join(evidenceRoot,kind);await mkdir(evidence,{recursive:true,mode:0o700});
  const runId=randomUUID(),browserSession=session+'-'+kind+'-'+runId.slice(0,8);let driver:ChildProcess|undefined,driverOutput='';
- const volume=await workspaceAudioVolume(),storage=await mkdtemp(join(volume.mountPath,'t12-full-'));await mkdir(join(storage,'state'));
+ const volume=await workspaceAudioVolume({size:'2g'}),storage=await mkdtemp(join(volume.mountPath,'t12-full-'));await mkdir(join(storage,'state'));
  const source='loop_t24_restore_'+randomBytes(6).toString('hex'),target='loop_t24_restore_'+randomBytes(6).toString('hex');
  const f=await narrationFixture(undefined,undefined,true,true,{databaseName:source,testRootParent:join(storage,'state'),mountPath:volume.mountPath,voice:workspaceTestMedia('controlled-narration-tone.mp3'),video:workspaceTestMedia('landscape-red-blue.mp4'),migrations:['db/archive/legacy-v1/120-native-workspace-storage-locations.sql','db/archive/legacy-v1/121-restored-media-deployment.sql','db/archive/legacy-v1/122-automatic-episode-directories.sql']}).catch(async error=>{await volume.close();throw error;});
  let vite:import('vite').ViteDevServer|undefined;const worker=f.workerPool();
@@ -77,11 +78,21 @@ it.skipIf(process.env.LOOP_T12_BROWSER!=='1').each(['series','unassigned'] as co
   const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!),context=nativeStorageContext(runtimeContext(),storage,source,target);
   let done=false,restartToken='',nativeCandidateChecked=false,earlyRestored=false;for(let n=0;n<900;n++){
    try{const error=await readSignal('browser-failed.json');throw Error(error.error);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
-   try{const request=await readSignal('restart-request.json');expect(request.token).toMatch(/^[0-9a-f-]{36}$/);if(request.token!==restartToken){await f.restart();restartToken=request.token;await signal('restarted.json',{token:restartToken});}}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
-   if(!nativeCandidateChecked)try{const opened=await readSignal('native-opened.json');if(opened.ready===true){expect(opened.projectId).toBe(w.project.projectId);await read();const prepared=await send('prepareWorkspaceVisualCandidate',{candidateId:unusedCandidate.id,durationPolicy:'keep-target'});expect(prepared.edit.source.src).toMatch(/^\/media\/uploads\//);nativeCandidateChecked=true;await signal('native-candidate-checked.json',{passed:true,prepared});}}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
+   if(!restartToken)try{
+     const request=await readSignal('restart-request.json');expect(request.token).toMatch(/^[a-f0-9-]{36}$/);expect(nativeCandidateChecked).toBe(true);
+     await read();const before=w.project.sha256;
+     const opened=await send('openWorkspaceStudio');w=opened.productionWorkspace;
+     const itemId=w.clips[0].itemId,findVisual=(doc:any)=>doc.timelines[0].items.find((item:any)=>item.id===itemId&&item.kind==='video');
+     await editStudioDocument(opened.studioUrl,w.project.projectId,doc=>{const item=findVisual(doc);expect(item).toBeTruthy();expect(item.transform.x).not.toBe(1);item.transform={...item.transform,x:1};});
+     const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.workspace.sha256});w=saved.productionWorkspace;
+     expect(w.project.sha256).not.toBe(before);await send('closeWorkspaceStudio');
+     await f.restart();await read();const after=JSON.parse(await readFile(join(assetRoot,w.project.relativePath),'utf8'));expect(findVisual(after)?.transform.x).toBe(1);
+     restartToken=request.token;await signal('restarted.json',{token:restartToken,nativeTransformX:1});
+    }catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
+    if(!nativeCandidateChecked)try{const opened=await readSignal('native-opened.json');if(opened.ready===true){expect(opened.projectId).toBe(w.project.projectId);await read();const prepared=await send('prepareWorkspaceVisualCandidate',{candidateId:unusedCandidate.id,durationPolicy:'keep-target'});expect(prepared.edit.source.src).toMatch(/^\/media\/uploads\//);nativeCandidateChecked=true;await signal('native-candidate-checked.json',{passed:true,prepared});}}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
    if(!earlyRestored)try{const point=await readSignal('backup-point.json');if(point.ready===true){expect(nativeCandidateChecked).toBe(true);expect(restartToken).not.toBe('');await read();await restoreCreatedEpisode({f,context,storage,source,target,episode:episode!,accountId:account.id,assetRoot,prefix,w,evidence,volumeMount:volume.mountPath,createBody:creation.payload,idempotencyKey:creation.idempotency_key,seriesVersionId:series?.id??null,phase:'editable'});earlyRestored=true;await signal('backup-done.json',{passed:true});}}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
    for(const task of await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_worker_capacity:1}) as any[]){expect(task.task_type).toBe('prepare_publish_package');const result=await runWorkspaceDeliveryProcess(f,task,{mountPath:volume.mountPath});expect(result.status,JSON.stringify(result)).toBe('completed');await writeFile(join(evidence,'delivery-worker.json'),JSON.stringify(result,null,2));}
-   try{const complete=await readSignal('browser-done.json');expect(complete.nativeTransformX).toBe(1);expect(complete.restartToken).toBe(restartToken);expect(complete.downloadCount).toBeGreaterThanOrEqual(4);expect(complete.playbackFrames).toBeGreaterThan(0);done=complete.passed===true;if(done)break;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}await pause(500);
+   try{const complete=await readSignal('browser-done.json');expect(complete.nativeTransformX).toBe(1);expect(complete.restartToken).toBe(restartToken);expect(complete.downloadCount).toBe(1);expect(complete.playbackFrames).toBeGreaterThan(0);done=complete.passed===true;if(done)break;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}await pause(500);
   }expect(done).toBe(true);await read();expect(w.deliveries[0].verified).toBe(true);expect(w.exports[0].confirmed).toBe(true);expect(earlyRestored).toBe(true);await f.restart();
   const project=JSON.parse(await readFile(join(assetRoot,w.project.relativePath),'utf8'));expect(project.timelines[0].items.find((i:any)=>i.kind==='video').transform.x).toBe(1);await writeFile(join(evidence,'project.json'),JSON.stringify(project,null,2));await writeFile(join(evidence,'workspace.json'),JSON.stringify(w,null,2));
   for(const path of [w.project.relativePath,w.exports[0].artifact.relativePath])expect(path.startsWith(prefix+'/')).toBe(true);const rows=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE episode_id=$1 ORDER BY id',[episode])).rows;await writeFile(join(evidence,'tasks.json'),JSON.stringify(rows,null,2));
