@@ -1,0 +1,17 @@
+:host {display:block;height:100%;min-width:0;min-height:0;}
+.loop-native-scope[data-interface="impeccable"] {height:100%;min-width:0;min-height:0;position:relative;overflow:auto;isolation:isolate;margin:0;}
+.loop-native-canvas {height:100%;min-height:0;min-width:0;}
+/* Keep the original workbench in a local scrollport, not the document viewport. */
+.loop-native-scope[data-interface="impeccable"] .app-shell[data-harness-production] {padding:0;position:relative;height:auto!important;min-height:100%!important;overflow:visible!important;}
+.loop-native-scope[data-interface="impeccable"] .app-shell[data-harness-production] .content-pane {min-width:0;width:100%;}
+.loop-native-scope[data-interface="impeccable"] .app-shell[data-harness-production]:has(.episode-detail-drawer) .content-pane {display:none;}
+.loop-native-scope[data-interface="impeccable"] .app-shell[data-harness-production] .episode-detail-scrim {display:none;}
+.loop-native-scope[data-interface="impeccable"] .app-shell[data-harness-production] .episode-detail-drawer {position:relative;inset:auto;width:100%;height:auto!important;min-height:0;max-width:none;z-index:auto;overflow:visible!important;}
+.loop-native-scope .local-episode-detail,.loop-native-scope .production-workspace {min-height:0;}
+.loop-native-scope .script-studio-grid {grid-template-columns:minmax(0,1fr);}
+/* A short embedded storyboard cannot host the original full-size upward shelf. */
+.loop-native-scope .workspace-material-inventory {position:relative;inset:auto;max-height:360px;}
+.loop-native-scope .workspace-preparation {overflow:visible!important;}
+.loop-native-scope .embedded-studio {flex:0 0 auto;min-height:560px;height:auto;overflow:visible;}
+.loop-native-scope .embedded-studio>.embedded-studio-body {min-block-size:480px;flex:none;}
+.loop-native-scope[data-interface="impeccable"] .access-shell {min-height:100%;min-width:0;}

@@ -61,7 +61,7 @@ export async function createNativeApplication(d){
   return current.handler(q,r);
  },close:async()=>{if(closed)return;closed=true;await previousPending?.close();await current.close();}};
 async function createNativeInstance(d,activate,lifecycle){
- const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,studioAgent,metricsSampler,metricsPool,mediaRootSettings,studioWarmup,closing;function close(){return closing??=(async()=>{studioWarmup?.close();accounts?.close();mediaRootSettings?.close();await metricsSampler?.stop();await metricsPool?.end();await automation?.stop();await episodes?.close();await studioAgent?.close();await worker?.stop();await pool.end();})();}
+ const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,studioAgent,metricsSampler,metricsPool,mediaRootSettings,studioWarmup,harnessHandoff,harnessProduction,closing;function close(){return closing??=(async()=>{studioWarmup?.close();await harnessProduction?.close();await harnessHandoff?.close();accounts?.close();mediaRootSettings?.close();await metricsSampler?.stop();await metricsPool?.end();await automation?.stop();await episodes?.close();await studioAgent?.close();await worker?.stop();await pool.end();})();}
  try{
  const authorization=readMediaRootAuthorization(d);if(authorization?.operation==='migration'){const proof=(await pool.query(migrationProofQuery(authorization))).rows[0].media_root_publication_proof;verifyMediaRootMigrationProof(proof,authorization);}
  const binding=d.mediaRootBinding??await inspectMediaRoot(d.mediaRoot);
@@ -81,6 +81,12 @@ async function createNativeInstance(d,activate,lifecycle){
  if(confirmedGeneration&&store){const {StudioAgentBridge}=await load('local-app/studioAgentBridge.js');studioAgent=await new StudioAgentBridge(pool,store).start();}
  const connections=new LocalConnections(pool,store,probe);episodes=worker?new LocalEpisodeCommands(pool,d.mediaRoot,{...d.worker,...worker,...(studioAgent?{studioAgentEnvironment:(c,episodeId)=>studioAgent.environment(c,episodeId),revokeStudioAgent:episodeId=>studioAgent.revoke(episodeId)}:{}),checkReferences:(c,refs,options)=>connections.assertBlueprintReferences(c,refs,options)}):undefined;
  accounts=new LocalAccountCommands(pool,d.mediaRoot,episodes);
+  const handoffRoot=process.env.LOOP_HARNESS_HANDOFF_ROOT, handoffOwner=process.env.LOOP_HARNESS_HANDOFF_OWNER_ID;
+  if(handoffRoot||handoffOwner){
+   if(!handoffRoot?.startsWith('/')||!handoffOwner||!episodes)throw Error('Harness handoff requires an absolute root, an Owner ID and an enabled local worker.');
+   const {LocalHarnessHandoff}=await load('local-app/harnessHandoff.js');
+   harnessHandoff=new LocalHarnessHandoff({root:handoffRoot,ownerId:handoffOwner,origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,episodes}).start(()=>console.error('Harness handoff reconciliation failed; check the isolated inbox and database.'));
+  }
  automation=await startNativeAutomation({backupsEnabled:d.automaticBackups!==false,pool,projectRoot:d.projectRoot,runtimeRelease:d.runtimeRelease,recordSchedule:!worker,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,backup:nativeBackup(d.projectRoot,d.database.database,d.mediaRoot,d.backupRoot,{script:d.backupScript,environment:d.backupEnvironment}),...(d.controlledNotifications?{send:async m=>appendFileSync(join(d.stateDirectory,'notification-private.jsonl'),JSON.stringify({id:m.eventId,at:new Date().toISOString()})+'\n',{mode:0o600})}:{})});
  // No module/schema access until a future explicit deployment opts in. Database
  // Owner control is checked separately on every observation.
@@ -97,7 +103,15 @@ async function createNativeInstance(d,activate,lifecycle){
  const storage=createLogStorage(d.runtimeRoot,logFile,{openDirectory:path=>promisify(execFile)('/usr/bin/open',['--',path],{timeout:10000,maxBuffer:8192})});
  if(d.openChatCut)studioWarmup=scheduleStudioWarmup({...d.openChatCut,projectRoot:d.projectRoot,environment});
  const choose=async()=>{try{const {stdout}=await promisify(execFile)('/usr/bin/osascript',['-e','on run argv\nactivate\nreturn POSIX path of (choose folder with prompt "选择日志存储文件夹" default location (POSIX file (item 1 of argv)))\nend run','--',storage.read().activeDirectory],{timeout:120000,maxBuffer:8192});return{path:stdout.trim()};}catch(error){if(/\(-128\)/.test(String(error.stderr)))return{cancelled:true};throw Error('Directory chooser unavailable');}};
- return{handler:createLocalHandler({log:event=>console.log(JSON.stringify({...event,runtimeReleaseId:runtimeRelease.id})),origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,runtimeStatus,recoverOutput:worker?.recoverOutput,logs:{read:()=>readRuntimeLogs([join(d.runtimeRoot,'app-private.log'),logFile]),storage:{...storage,choose}}}),close};
+ const handler=createLocalHandler({log:event=>console.log(JSON.stringify({...event,runtimeReleaseId:runtimeRelease.id})),origin:`http://127.0.0.1:${d.port}`,pool,mediaRoot:d.mediaRoot,stateDirectory:d.stateDirectory,historyRoot,mediaRootSettings,secrets,connections,episodes,accounts,automation,harnessHandoff,runtimeStatus,recoverOutput:worker?.recoverOutput,logs:{read:()=>readRuntimeLogs([join(d.runtimeRoot,'app-private.log'),logFile]),storage:{...storage,choose}}});
+ const productionDir=process.env.LOOP_HARNESS_PRODUCTION_DIR,productionOwner=process.env.LOOP_HARNESS_PRODUCTION_OWNER_ID;
+ if(productionDir||productionOwner){
+  if(!productionDir||!productionOwner||!episodes)throw Error('Harness production requires a private directory, Owner and enabled local worker.');
+  const {startHarnessProductionSocket}=await load('local-app/harnessProductionSocket.js');
+  const episodeIds=process.env.LOOP_HARNESS_PRODUCTION_EPISODE_IDS?.split(',');
+  harnessProduction=await startHarnessProductionSocket({directory:productionDir,ownerId:productionOwner,episodeIds,pool,handler});
+ }
+ return{handler:(q,r)=>handler(q,r),close};
  }catch(error){await close();throw error;}
 }
 

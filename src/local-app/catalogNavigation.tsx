@@ -1,3 +1,4 @@
+import {isHarnessProduction} from './nativeSurface';
 import type {WorkspaceSearchLocation} from './workspaceSearchTypes';
 import {createContext,useContext,useEffect,useRef} from 'react';
 import {batchStages,defaultEpisodePageSize,type BatchStage,episodePageSizes,type EpisodePageSize,type CatalogSort,type CatalogStatus,type ProductionStep} from '../episodes/episodeCatalogTypes';
@@ -55,7 +56,7 @@ export function useCatalogHistory(value:CatalogNavigation,owner:string,restore:(
  const latest=useRef({value,owner,restore,request});latest.current={value,owner,restore,request};
  const current=useRef({index:entry()?.index??0,url:catalogNavigationUrl(value)}),traversing=useRef(false);
  const pending=useRef<{target:CatalogNavigation;url:string;entry:Entry;phase:'return'|'apply'}|null>(null);
- useEffect(()=>{
+ useEffect(()=>{if(isHarnessProduction())return;
   const write=(index:number,url:string)=>history.replaceState({...history.state,loopCatalogNavigation:{index,owner:latest.current.owner||historyOwner.current}},'',url);
   write(current.current.index,current.current.url);
   const apply=(target:CatalogNavigation,ownerAtEntry:string)=>{
@@ -83,7 +84,7 @@ export function useCatalogHistory(value:CatalogNavigation,owner:string,restore:(
   window.addEventListener('popstate',pop);return()=>window.removeEventListener('popstate',pop);
  },[]);
  const url=catalogNavigationUrl(value);
- useEffect(()=>{
+ useEffect(()=>{if(isHarnessProduction())return;
   if(traversing.current)return;
   if(owner&&historyOwner.current&&owner!==historyOwner.current){historyOwner.current=owner;const next=readCatalogNavigation('');current.current.url=catalogNavigationUrl(next);history.replaceState({...history.state,loopCatalogNavigation:{index:current.current.index,owner}},'',current.current.url);restore(next);return;}
   if(owner)historyOwner.current=owner;

@@ -7,6 +7,12 @@ const lifetimeSeconds=12*60*60;
 export const tokenHash=(token:string)=>createHash('sha256').update(token).digest('hex');
 export const csrfFor=(token:string)=>createHmac('sha256',token).update('loop-csrf-v1').digest('hex');
 export interface OwnerSession {id:string;email:string;token:string}
+const privateSessions=new WeakSet<OwnerSession>();
+/** Created only after the Unix listener has validated its dedicated credential. */
+export function privateOwnerSession(owner:Pick<OwnerSession,'id'|'email'>):OwnerSession{
+ const session={id:owner.id,email:owner.email,token:''};privateSessions.add(session);return session;
+}
+export const isPrivateOwnerSession=(session:OwnerSession)=>privateSessions.has(session);
 export function readSessionToken(request:IncomingMessage):string|null{
  const matches=(request.headers.cookie??'').split(';').map(x=>x.trim()).filter(x=>x.startsWith(sessionCookie+'='));
  if(matches.length!==1)return null;const token=matches[0].slice(sessionCookie.length+1);return /^[0-9a-f]{64}$/.test(token)?token:null;

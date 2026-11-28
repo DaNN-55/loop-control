@@ -1,3 +1,5 @@
+import type {LocalHarnessHandoff} from './harnessHandoff.js';
+import {authorizeHarnessProduction,type HarnessProductionScope} from './harnessProductionPolicy.js';
 import {serveBatchPublicationDownload} from './batchPublicationDownload.js';
 import {batchPublicationDownloadPath} from './batchPublicationDownloadTypes.js';
 import {readBatchExportReview} from './batchExportReview.js';
@@ -28,7 +30,7 @@ import {readWorkspaceSearch} from './workspaceSearch.js';
 import {readOwnerPreferences,saveOwnerPreferences,readOwnerNotificationEvents} from './ownerPreferences.js';
 import {ScriptProductionStore} from './scriptProductionStore.js';
 import{hashPassword}from'./password.js';
-import{tokenHash}from'./sessions.js';
+import{tokenHash,privateOwnerSession}from'./sessions.js';
 import{readMediaDeployment}from'./mediaDeployment.js';
 import {LocalAccountCommands} from './accountCommands.js';
 import type{NativeAutomation}from'./nativeAutomation.js';
@@ -49,7 +51,7 @@ import type {LocalEpisodeCommands} from './episodeCommands.js';
 import type {SecretAdministration,SecretOperation} from './secretAdministration.js';
 import type {RuntimeStatus} from '../observability/runtimeStatus.js';
 import type {RuntimeLogReport,LogStoragePort} from '../observability/logTypes.js';
-interface LocalOptions {log?:(event:RuntimeRequestLogEvent)=>void;logs?:{read:()=>Promise<RuntimeLogReport>;storage:LogStoragePort};recoverOutput?:(taskId:string,attempt:number)=>Promise<{status:'completed';registered:boolean}>;mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
+interface LocalOptions {harnessHandoff?:LocalHarnessHandoff;log?:(event:RuntimeRequestLogEvent)=>void;logs?:{read:()=>Promise<RuntimeLogReport>;storage:LogStoragePort};recoverOutput?:(taskId:string,attempt:number)=>Promise<{status:'completed';registered:boolean}>;mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -68,19 +70,20 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
  const publications=new LocalWorkspacePublications(options.pool,options.mediaRoot);
  const publicationPackages=new LocalPublicationPackages(options.pool,options.mediaRoot);
  const accounts=options.accounts??new LocalAccountCommands(options.pool,options.mediaRoot,options.episodes);
- return async(request:IncomingMessage,response:ServerResponse)=>{
+ return async(request:IncomingMessage,response:ServerResponse,privateScope?:HarnessProductionScope)=>{
   const observation=observeLocalRequest(request,response,options.log);
   return observation.run(async()=>{
   response.setHeader('Cache-Control','no-store');response.setHeader('X-Content-Type-Options','nosniff');
   const send=(status:number,value:unknown)=>{response.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});response.end(JSON.stringify(value));};
   try{
-   const url=new URL(request.url??'/',options.origin),token=readSessionToken(request);
+   const privateBody=privateScope?await authorizeHarnessProduction(privateScope,request,limit=>readBody(request,limit)):undefined;
+    const url=new URL(request.url??'/',options.origin),token=privateScope?null:readSessionToken(request);
    const secretPath=url.pathname==='/api/local/secrets'||url.pathname.startsWith('/api/local/secrets/');
    const secretOperation:SecretOperation=url.pathname.endsWith('/detail')?'detail':url.pathname.endsWith('/reveal')?'view':'list';
    const reject=async(actor:string|null,reason:string)=>{if(secretPath&&options.secrets)await options.secrets.rejected(actor,secretOperation,reason);};
    if(secretPath){response.setHeader('Cache-Control','no-store, max-age=0');response.setHeader('Pragma','no-cache');response.setHeader('Expires','0');response.setHeader('Referrer-Policy','no-referrer');}
-   if(request.headers.host!==host||request.headers.origin&&request.headers.origin!==options.origin||request.headers['sec-fetch-site']==='cross-site'){await reject(null,'invalid_origin');send(403,{error:'本机来源不匹配。'});return;}
-   if(request.method!=='GET'&&request.headers.origin!==options.origin){await reject(null,'invalid_origin');send(403,{error:'变更请求需要精确来源。'});return;}
+   if(!privateScope&&(request.headers.host!==host||request.headers.origin&&request.headers.origin!==options.origin||request.headers['sec-fetch-site']==='cross-site')){await reject(null,'invalid_origin');send(403,{error:'本机来源不匹配。'});return;}
+   if(!privateScope&&request.method!=='GET'&&request.headers.origin!==options.origin){await reject(null,'invalid_origin');send(403,{error:'变更请求需要精确来源。'});return;}
    if(request.method!=='GET')observation.start();
    if(url.pathname==='/api/local/login'){
     if(request.method!=='POST'){send(405,{error:'需要POST。'});return;}
@@ -90,9 +93,9 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(!next){send(401,{error:'邮箱或密码无效，或登录暂时锁定。'});return;}
     response.setHeader('Set-Cookie',cookieHeader(next));const owner=await lookupSession(options.pool,next);send(200,{owner:owner?{id:owner.id,email:owner.email}:null,secretAdministration:!!owner&&!!options.secrets?.allowed(owner),csrfToken:csrfFor(next)});return;
    }
-   const session=await lookupSession(options.pool,token);
+   const session=privateScope?privateOwnerSession(privateScope.owner):await lookupSession(options.pool,token);
    if(!session){await reject(null,'unauthenticated');response.setHeader('Set-Cookie',cookieHeader(''));send(401,{error:'请先登录所有者。'});return;}
-   if(request.method!=='GET'){
+   if(!privateScope&&request.method!=='GET'){
     const csrf=request.headers['x-csrf-token'];const expected=csrfFor(session.token);
     if(typeof csrf!=='string'||!(/^[0-9a-f]{64}$/).test(csrf)||!timingSafeEqual(Buffer.from(csrf),Buffer.from(expected))){await reject(session.id,'invalid_csrf');send(403,{error:'CSRF校验失败。'});return;}
    }
@@ -114,8 +117,17 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    const recycleRead=url.pathname.match(/^\/api\/local\/episodes\/([0-9a-f-]{36})(?:\/|$)/);
    if(recycleRead&&request.method==='GET'&&uuid.test(recycleRead[1])&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[recycleRead[1]])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请恢复后再打开。');
-   if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!!options.secrets?.allowed(session),csrfToken:csrfFor(session.token)});return;}
-   if(url.pathname==='/api/local/storyboard-planning')throw new ConfigurationError(410,'旧视觉与分镜规划已退役，请使用当前制作流程。');
+   if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},secretAdministration:!privateScope&&!!options.secrets?.allowed(session),...(!privateScope?{csrfToken:csrfFor(session.token)}:{})});return;}
+   if(url.pathname==='/api/local/harness-handoff'){
+     if(url.search)throw new ConfigurationError(400,'制作包接单不接受查询参数。');
+     if(request.method==='GET'){send(200,options.harnessHandoff?await options.harnessHandoff.list(session):{enabled:false,items:[]});return;}
+     if(request.method!=='POST')throw new ConfigurationError(405,'接单请求方法无效。');
+     if(!options.harnessHandoff?.allows(session.id))throw new ConfigurationError(404,'未启用制作包接单。');
+     let body;try{body=await readBody(request);}catch{throw new ConfigurationError(400,'制作包接单请求格式无效。');}
+     send(200,await options.harnessHandoff.accept(session,body));return;
+    }
+    if(url.pathname==='/api/local/storyboard-planning')throw new ConfigurationError(410,'旧视觉与分镜规划已退役，请使用当前制作流程。');
+   if(privateScope&&url.pathname==='/api/local/connections'){send(200,{connections:[],versions:[],serviceCatalog:{groups:[]}});return;}
    if(url.pathname==='/api/local/preferences'){
     if(request.method==='GET'){send(200,await readOwnerPreferences(options.pool,session.id));return;}
     if(request.method!=='POST'){send(405,{error:'偏好请求方法无效。'});return;}
@@ -168,7 +180,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     send(200,{...maintenance,observedAt:runtime?.observedAt??maintenance?.observedAt,runtime:runtime??null,maintenanceAvailable:!!maintenance});return;
    }
    if(url.pathname==='/api/local/command-receipt'&&request.method==='POST'){
-    send(200,await readCommandReceipt(options.pool,session,await readBody(request,140*1024*1024)));return;
+    send(200,await readCommandReceipt(options.pool,session,privateBody??await readBody(request,140*1024*1024)));return;
    }
    await readMediaDeployment(options.pool,options.mediaRoot,request.method!=='GET');
    if(url.pathname==='/api/local/account-commands'&&request.method==='POST'){
@@ -219,7 +231,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
     if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}
-    let body;try{body=await readBody(request,140*1024*1024);}catch{send(400,{error:'Episode请求格式无效。'});return;}
+    let body;try{body=privateBody??await readBody(request,140*1024*1024);}catch{send(400,{error:'Episode请求格式无效。'});return;}
     if(typeof (body.data as Record<string,unknown>|undefined)?.episodeId==='string'&&uuid.test(String((body.data as Record<string,unknown>).episodeId))&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[(body.data as Record<string,unknown>).episodeId])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请先恢复。');
     send(200,await options.episodes.execute(session,body));return;
    }
@@ -312,7 +324,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/workspace-search'){send(200,await readWorkspaceSearch(options.pool,session.id,url.searchParams));return;}
-   if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id,parseCatalogQuery(url.searchParams)));return;}
+   if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id,parseCatalogQuery(url.searchParams),privateScope?.episodeIds));return;}
    const batchScriptReview=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/batch-script-review$/);
    if(batchScriptReview){
     if(!uuid.test(batchScriptReview[1])||url.search)throw new ConfigurationError(400,'生产单引用无效。');
@@ -399,7 +411,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
    }
    const artifact=url.pathname.match(/^\/api\/local\/artifacts\/([^/]+)$/);
    if(artifact&&uuid.test(artifact[1])){
-    const record=await findOwnedArtifact(options.pool,session.id,artifact[1],options.mediaRoot);if(!record){send(404,{error:'产物不可见。'});return;}
+    const record=await findOwnedArtifact(options.pool,session.id,artifact[1],options.mediaRoot,privateScope?.episodeIds);if(!record){send(404,{error:'产物不可见。'});return;}
     try{await serveOwnedArtifact(options.mediaRoot,record,response,request.headers.range);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
    }
    send(404,{error:'本地路径尚未迁移。'});

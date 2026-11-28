@@ -1,3 +1,4 @@
+import {isHarnessProduction,localNativePath} from './nativeSurface';
 import {createPortal} from 'react-dom';
 import {useState,type ReactNode} from 'react';
 import type {PublicationCover} from '../workspacePublication';
@@ -18,7 +19,7 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,com
  const [error,setError]=useState(''),[retrying,setRetrying]=useState(false),[rechecking,setRechecking]=useState(false);
  const reading=useWorkspaceReading(w,onChange,JSON.stringify([latest?.id,!!running]),'交付状态暂不可用，请刷新重试。');
  const pollingError=useWorkspacePolling(reading,{enabled:!!running,interval:2500});
- const url=(a:ArtifactManifest)=>'/_local-artifact?'+new URLSearchParams({episode:w.episodeId,path:a.relativePath,sha256:a.sha256,download:'1'});
+ const url=(a:ArtifactManifest)=>localNativePath('/_local-artifact?'+new URLSearchParams({episode:w.episodeId,path:a.relativePath,sha256:a.sha256,download:'1'}));
  async function retry(){
   if(!retryTarget||retrying)return;
   setError('');setRetrying(true);
@@ -43,6 +44,6 @@ export function WorkspaceDeliveryPanel({workspace:w,pending,command,onChange,com
   {retryTarget&&<div className="workspace-completion-retry"><p role="alert">{uiText(retryTarget.error||'交付文件校验未完成，请重试。')}</p><Button size="sm" color="primary" iconLeading={RefreshCw} isDisabled={pending||retrying} onPress={()=>void retry()}>{uiText(retrying?'正在完成…':'重试完成')}</Button></div>}
   {completedView&&actionsContainer?createPortal(fileNotice,actionsContainer):fileNotice}
   {(error||pollingError)&&<p role="alert">{uiText(error||pollingError?.message||'')}</p>}
-  <WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly} completedView={completedView}>{(p,editing)=><>{renderCompletedPreview?.(p.state?.cover??null)}{verified||completedActions?(actionsContainer?createPortal(<WorkspaceAdditionalDownloads completedActions={completedActions} workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>,actionsContainer):<WorkspaceAdditionalDownloads completedActions={completedActions} workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>):null}</>}</WorkspacePublicationPanel>
+  {isHarnessProduction()?renderCompletedPreview?.(null):<WorkspacePublicationPanel key={w.episodeId+':'+w.id} workspace={w} readOnly={publicationReadOnly} completedView={completedView}>{(p,editing)=><>{renderCompletedPreview?.(p.state?.cover??null)}{verified||completedActions?(actionsContainer?createPortal(<WorkspaceAdditionalDownloads completedActions={completedActions} workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>,actionsContainer):<WorkspaceAdditionalDownloads completedActions={completedActions} workspace={w} delivery={verified} publication={p} readOnly={publicationReadOnly} editing={editing}/>):null}</>}</WorkspacePublicationPanel>}
  </section>;
 }

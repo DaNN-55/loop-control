@@ -25,7 +25,7 @@ import{resolveLocalAssetRoot}from'./mediaDeployment.js';
 import {openStandaloneOpenChatCutStudio,closeStandaloneOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import type {Pool,PoolClient} from 'pg';
-import type {OwnerSession} from './sessions.js';
+import {isPrivateOwnerSession,type OwnerSession} from './sessions.js';
 import {sessionTransaction} from './ownerTransaction.js';
 import {ConfigurationError,canonicalFingerprint} from './configurationCommands.js';
 import {snapshotInput} from './localFiles.js';
@@ -72,7 +72,10 @@ export class LocalEpisodeCommands {
   if(body.action==='heartbeat')return this.completedCopies.heartbeat(ownerId,episodeId,body.copyId);
   return this.completedCopies.discard(ownerId,episodeId,body.copyId);
  }
- async execute(session:OwnerSession,body:Record<string,unknown>){return this.executeCommand(session,body,run=>sessionTransaction(this.pool,session,run));}
+ async createFromHandoff(session:OwnerSession,key:string,hash:string,data:Record<string,unknown>,initialize:(c:PoolClient,episode:Record<string,unknown>)=>Promise<void>){
+   return createEpisodeDirectory(this.pool,session,key,hash,data,this.mediaRoot,(c,_account,policy)=>this.preflight(c,policy),{initialize});
+  }
+  async execute(session:OwnerSession,body:Record<string,unknown>){return this.executeCommand(session,body,run=>sessionTransaction(this.pool,session,run));}
  private async executeCommand(session:{id:string},body:Record<string,unknown>,transaction:<T>(run:(c:PoolClient)=>Promise<T>)=>Promise<T>){
   if(typeof body.command!=='string'||!retiredPlanningCommands.has(body.command)&&!retiredManualCommands.has(body.command)&&!['generateTts','repairConnection','repairConfiguration'].includes(body.command)&&!Object.hasOwn(productionWorkspaceFields,body.command)&&!['create','start','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','saveScriptReviewDraft','confirmReviewedScript','importMaterial','openDirectory','openStandaloneStudio'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
   const data=body.data as Record<string,unknown>,hash=canonicalFingerprint(body);
@@ -148,6 +151,7 @@ export class LocalEpisodeCommands {
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
+    if(isPrivateOwnerSession(session as OwnerSession)&&['start','confirmReviewedScript'].includes(String(body.command))&&e.script_template_version!==3)throw new ConfigurationError(409,'Harness 基础制作仅可启动已导入的 v3 脚本，旧版自动生产流程未开放。');
     recordValidatedRequestLogContext({accountId:e.account_id,episodeId:e.id});
     const inputIo=['importMaterial','reconfirmScript','confirmRecognizedScript','confirmScriptStudio','confirmReviewedScript','prepareWorkspace','adoptLegacyPlan','importLegacyDraftInputs'].includes(String(body.command)),location=inputIo?await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id):null;
     if(location)await requireEpisodeStorageDirectory(c,location);
@@ -158,7 +162,7 @@ export class LocalEpisodeCommands {
     }
     const inputPolicy=[2,3].includes(e.script_template_version)?{...e.policy,asset_root:root,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:{...e.policy,asset_root:root};
     if(['reconfirmScript','confirmRecognizedScript','confirmScriptStudio','confirmReviewedScript'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
-    if(Object.hasOwn(productionWorkspaceFields,String(body.command))){value=await this.workspace.execute(c,e,root,this.runtime,String(body.command),data);
+    if(Object.hasOwn(productionWorkspaceFields,String(body.command))){const runtime:InputRuntime=isPrivateOwnerSession(session as OwnerSession)?{...this.runtime,studioAgentEnvironment:undefined,studioRuntime:this.runtime.studioRuntime?async()=>({...await this.runtime.studioRuntime!(),capabilityProfile:'harness-local-only'}):undefined}:this.runtime;value=await this.workspace.execute(c,e,root,runtime,String(body.command),data);
     }else if(body.command==='confirmScriptStudio'){
      value=await confirmScriptStudio(c,root,session.id,e,data,location!.relativePath);
     }else if(body.command==='saveScriptReviewDraft'){

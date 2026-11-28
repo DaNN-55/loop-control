@@ -1,10 +1,11 @@
+import {isHarnessProduction,localNativePath} from './nativeSurface';
 import {episodeBatchLifecycleCommand} from './episodeBatchLifecycleTypes';
 
 const inFlight=new Map<string,Promise<unknown>>();
 let csrf='',ownerScope='',sessionGeneration=0;
 function requestNotSent(cause:unknown){return Object.assign(new Error(cause instanceof Error?cause.message:'会话确认失败，请重试。',{cause}),cause instanceof Error?cause:{},{requestSent:false});}
 async function prepareMutationSession(generation:number){
- try{if(!csrf)await localRequest('session');if(generation!==sessionGeneration||!csrf)throw Error('会话已变化，请重新打开后操作。');return ownerScope;}
+ try{if(isHarnessProduction()?!ownerScope:!csrf)await localRequest('session');if(generation!==sessionGeneration||(isHarnessProduction()?!ownerScope:!csrf))throw Error('会话已变化，请重新打开后操作。');return ownerScope;}
  catch(cause){throw requestNotSent(cause);}
 }
 export async function localRequest(path:string,init?:RequestInit){
@@ -12,12 +13,12 @@ export async function localRequest(path:string,init?:RequestInit){
  const session=sessionGeneration;
  // HMR can reload this helper while the authenticated app remains mounted.
  // Restore a missing token before the mutation; never replay a rejected write.
- if(init?.method&&init.method.toUpperCase()!=='GET'&&path!=='login'&&!new Headers(init.headers).get('X-CSRF-Token')){
+ if(!isHarnessProduction()&&init?.method&&init.method.toUpperCase()!=='GET'&&path!=='login'&&!new Headers(init.headers).get('X-CSRF-Token')){
   // A failed session read precedes the requested mutation's fetch.
   await prepareMutationSession(session);
   const headers=new Headers(init.headers);headers.set('X-CSRF-Token',csrf);init={...init,headers};
  }
- const response=await fetch('/api/local/'+path,init);const value=await response.json();
+ const response=await fetch(localNativePath('/api/local/'+path),init);const value=await response.json();
  init?.signal?.throwIfAborted();
  if(!response.ok){if(response.status===401&&path!=='login'&&session===sessionGeneration){sessionGeneration++;csrf='';ownerScope='';inFlight.clear();window.dispatchEvent(new Event('loop-local-session-expired'));}throw Object.assign(new Error(String(value.error??'本机请求失败。').replaceAll('秘密','密钥')),{status:response.status,...(typeof value.code==='string'?{code:value.code}:{}),...(value.preflight?{preflight:value.preflight}:{})});}
  if(session===sessionGeneration&&value!==null){if(typeof value.csrfToken==='string')csrf=value.csrfToken;if((path==='session'||path==='login')&&typeof value.owner?.id==='string')ownerScope=value.owner.id;if(path==='logout'){csrf='';ownerScope='';}}return value;
@@ -53,7 +54,7 @@ export async function localCommand<T>(command:string,data:unknown,expectedRevisi
  const request=(async()=>{
   try{
    if(legacy||(recoverable&&pending&&!replayable)){try{return await readback();}catch{throw unknown();}}
-   try{return await localRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(operation)});}
+   try{return await localRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json',...(!isHarnessProduction()?{'X-CSRF-Token':csrf}:{})},body:JSON.stringify(operation)});}
    catch(error){
     if((error as {requestSent?:boolean}).requestSent===false){sessionStorage.removeItem(key);throw error;}
     const status=(error as {status?:number}).status;

@@ -66,6 +66,7 @@ interface Session {
 }
 
 export interface OpenChatCutRuntimeConfig {
+  capabilityProfile?: 'harness-local-only';
   projectName?: string;
   environment?: NodeJS.ProcessEnv;
   nodePath?: string;
@@ -73,6 +74,16 @@ export interface OpenChatCutRuntimeConfig {
   port?: number;
 }
 
+export function assertStudioCapabilityCompatibility(active:OpenChatCutRuntimeConfig|undefined,requested:OpenChatCutRuntimeConfig){
+  if(active&&(active.capabilityProfile??'full')!==(requested.capabilityProfile??'full'))throw Object.assign(new Error('当前剪辑会话的能力范围不同，请先保存并关闭原剪辑器，再从当前入口打开。'),{status:409});
+}
+export function isolateStudioRuntime(config:OpenChatCutRuntimeConfig):OpenChatCutRuntimeConfig{
+  if(config.capabilityProfile!=='harness-local-only')return config;
+  const source=config.environment??process.env,environment:NodeJS.ProcessEnv={};
+  for(const name of ['PATH','HOME','TMPDIR','LANG','LC_ALL','LOOP_STATE_DIR','LOOP_OPENCHATCUT_PROGRAM_CACHE_DIR','OPENCHATCUT_ROOT','OPENCHATCUT_NODE'])if(source[name]!==undefined)environment[name]=source[name];
+  environment.LOOP_STUDIO_CAPABILITY_PROFILE='harness-local-only';
+  return {...config,environment};
+}
 const sessions = new Map<string, Session>();
 const standaloneSessions = new Map<string, Promise<{ child: ChildProcess; studioUrl: string }>>();
 
@@ -194,6 +205,8 @@ export async function registerOpenChatCutStudioSource(assetRoot:string,episodeId
 }
 
 export async function openOpenChatCutDraftStudio(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,runtimeConfig:OpenChatCutRuntimeConfig={},validateProject?:StudioProjectValidator,storage?:EpisodeFileIO):Promise<OpenChatCutStudioOpenResult>{
+  assertStudioCapabilityCompatibility(sessions.get(episodeId)?.runtimeConfig,runtimeConfig);
+  runtimeConfig=isolateStudioRuntime(runtimeConfig);
   const inspectedDocument=JSON.stringify(project);
   const observation=await inspectOpenChatCutProjectWithRuntime(project,runtimeConfig);
   if(!observation.readable)throw Error('草稿不能由当前 OpenChatCut 读取。');
@@ -257,7 +270,10 @@ export async function checkpointOpenChatCutDraftVersion(assetRoot:string,episode
 }
 
 async function openStudioDocument(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,composition:Composition|undefined,runtimeConfig:OpenChatCutRuntimeConfig,options:{replaceWorkspace?:boolean;recoverDraft?:boolean;validateProject?:StudioProjectValidator;storage?:EpisodeFileIO},render?:ReviewRender):Promise<OpenChatCutStudioOpenResult>{
-  const existing=sessions.get(episodeId),root=await realpath(assetRoot),projectId=`loop-control-${episodeId}`;
+  const existing=sessions.get(episodeId);
+  assertStudioCapabilityCompatibility(existing?.runtimeConfig,runtimeConfig);
+  runtimeConfig=isolateStudioRuntime(runtimeConfig);
+  const root=await realpath(assetRoot),projectId=`loop-control-${episodeId}`;
   await options.storage?.assertValid();await assertStudioWorkspace(root,episodeId,projectId,options.storage?.relativePath);
   if (existing) {
     if(existing.dataDir!==join(root,options.storage?.relativePath??`episodes/${episodeId}`,"openchatcut-work/current/runtime"))throw Error("Studio 活动工程位置已变化，请先关闭原工程。");
