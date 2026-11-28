@@ -4,12 +4,19 @@ const focusableSelector = "button, summary, [href], input, select, textarea, [ta
 
 const activeDialogs: HTMLElement[] = [];
 
+function deepActiveElement(): Element | null {
+  let active = document.activeElement;
+  while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+  return active;
+}
+
 export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(isOpen: boolean, onClose: () => void, returnFocusRef?: RefObject<HTMLElement | null>) {
   const dialogRef = useRef<T>(null);
   // Capture before React commits autoFocus fields; an effect sees the field instead of its opener.
   const opening = useRef<{ open: boolean; trigger: HTMLElement | null }>({ open: false, trigger: null });
   if (isOpen && !opening.current.open) {
-    opening.current.trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const active = deepActiveElement();
+    opening.current.trigger = active instanceof HTMLElement ? active : null;
   }
   opening.current.open = isOpen;
   const onCloseRef = useRef(onClose);
@@ -48,7 +55,8 @@ export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(isOpen: b
 
     function manageDialogFocus(event: KeyboardEvent) {
       if (event.defaultPrevented || activeDialogs.at(-1) !== dialog) return;
-      const activeDialog = document.activeElement instanceof Element ? document.activeElement.closest('dialog[open], [role="dialog"]') : null;
+      const active = deepActiveElement();
+      const activeDialog = active instanceof Element ? active.closest('dialog[open], [role="dialog"]') : null;
       if (activeDialog && dialogRef.current && activeDialog !== dialogRef.current && !activeDialog.contains(dialogRef.current)) return;
       if (event.key === "Escape") {
         event.preventDefault();
@@ -64,10 +72,10 @@ export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(isOpen: b
       }
       const first = elements[0];
       const last = elements[elements.length - 1];
-      if (!dialogRef.current?.contains(document.activeElement) || (event.shiftKey && document.activeElement === first)) {
+      if (!dialogRef.current?.contains(active) || (event.shiftKey && active === first)) {
         event.preventDefault();
         (event.shiftKey ? last : first).focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
+      } else if (!event.shiftKey && active === last) {
         event.preventDefault();
         first.focus();
       }
@@ -80,7 +88,7 @@ export function useDialogFocus<T extends HTMLElement = HTMLDivElement>(isOpen: b
       if (index >= 0) activeDialogs.splice(index, 1);
       const returnTarget = [returnFocusRef?.current, previousFocus].find((target) => target?.isConnected && !target.matches(':disabled, [aria-disabled="true"]') && !target.closest('[hidden], [inert], [aria-hidden="true"]') && target !== document.body);
       const remainingDialog = activeDialogs.at(-1);
-      const active = document.activeElement;
+      const active = deepActiveElement();
       if (!remainingDialog && active instanceof HTMLElement && active !== document.body && !dialog.contains(active) &&
           !active.closest('[hidden], [inert], [aria-hidden="true"]')) return;
       if (returnTarget && (!remainingDialog || remainingDialog.contains(returnTarget))) {

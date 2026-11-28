@@ -4,7 +4,7 @@ import {ConfigurationError} from './configurationCommands.js';
 const uuid=/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 export const harnessProductionHost='loop-control.internal';
 export interface HarnessProductionScope {owner:{id:string;email:string};episodeIds?:readonly string[]}
-const commands=new Set(['start','confirmReviewedScript','prepareWorkspace','matchWorkspaceImage','matchWorkspaceMaterial','registerWorkspaceVisualCandidate','prepareWorkspaceVisualCandidate','adoptWorkspaceVisualCandidate','openWorkspaceStudio','saveWorkspaceStudio','closeWorkspaceStudio','exportWorkspace','confirmWorkspaceExport','completeWorkspaceExport','confirmReviewedExport']);
+const commands=new Set(['create','saveScriptReviewDraft','confirmScriptStudio','start','confirmReviewedScript','prepareWorkspace','matchWorkspaceImage','matchWorkspaceMaterial','registerWorkspaceVisualCandidate','prepareWorkspaceVisualCandidate','adoptWorkspaceVisualCandidate','openWorkspaceStudio','saveWorkspaceStudio','closeWorkspaceStudio','exportWorkspace','confirmWorkspaceExport','completeWorkspaceExport','confirmReviewedExport']);
 const routeId=new RegExp(`^/api/local/episodes/(${uuid.source.slice(1,-1)})(?:/(workspace(?:/project)?|batch-script-review|saved-plan|delivery-download))?$`,'i');
 const artifactId=new RegExp(`^/api/local/artifacts/(${uuid.source.slice(1,-1)})$`,'i');
 
@@ -18,6 +18,15 @@ function exactQuery(url:URL,required:string[],optional:string[]=[]){
 const isRecord=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value);
 function requireOperation(scope:HarnessProductionScope,body:unknown){
  if(!isRecord(body)||typeof body.command!=='string'||!commands.has(body.command)||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!isRecord(body.data)||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k)))throw deny();
+ if(body.command==='create'){
+  // New orders have no episode identity yet. Keep restricted episode-only
+  // deployments closed; the original command still checks Owner/account/series.
+  if(scope.episodeIds!==undefined||typeof body.data.accountId!=='string'||!uuid.test(body.data.accountId))throw deny();
+  return;
+ }
+ // Native script editing is local-only. Do not adopt an AI assistant receipt;
+ // original command validation still owns all other fields and state checks.
+ if(['saveScriptReviewDraft','confirmScriptStudio'].includes(body.command)&&Object.hasOwn(body.data,'requestId'))throw deny();
  if(body.command==='prepareWorkspace'&&(Object.hasOwn(body.data,'legacyDecision')||Object.hasOwn(body.data,'reviewPackageId')))throw deny();
  requireHarnessEpisode(scope,body.data.episodeId);
 }
@@ -31,7 +40,7 @@ export async function authorizeHarnessProduction(scope:HarnessProductionScope,re
  if(request.method==='POST'){
   exactQuery(url,[]);
   if(!['/api/local/episode-commands','/api/local/command-receipt'].includes(pathname))throw deny();
-  let body;try{body=await read(32*1024);}catch{throw new ConfigurationError(400,'制作请求格式无效或超过大小上限。');}
+  let body;try{body=await read(128*1024);}catch{throw new ConfigurationError(400,'制作请求格式无效或超过大小上限。');}
   if(pathname.endsWith('/command-receipt')){
    if(body.endpoint!=='episode-commands'||Object.keys(body).some(k=>!['endpoint','operation'].includes(k)))throw deny();
    requireOperation(scope,body.operation);

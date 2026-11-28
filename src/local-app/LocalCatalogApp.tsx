@@ -301,6 +301,7 @@ function LocalCatalogContent(){
  }
  async function beginProduction(mode:'single'|'batch'='single'){
   if(!catalog?.accounts.some(item=>!item.archived_at)){
+    if(harness){setError('暂无可用内容账号，请先在 Loop Control 中配置内容账号与当前蓝图。');return;}
    const session=sessionGeneration.current;
    setCreateAfterAccount(mode);setFirstUseError('');
    try{
@@ -324,6 +325,7 @@ function LocalCatalogContent(){
  const creationLabel=uiText('新建生产单');
  const workspaceActions=<div className="workspace-actions">
   {view!=='episodes'&&view!=='accounts'&&view!=='operations'&&<Tooltip title={uiText("刷新")} className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" aria-label={uiText("刷新")} className="button button-secondary refresh-button" onClick={()=>void refresh().catch(e=>setError(e instanceof Error?e.message:String(e)))} type="button"><Icon name="Refresh"/></Button></Tooltip>}
+  {harness&&view==='episodes'&&<Button ref={creationTrigger} size="sm" color="primary" iconLeading={Plus} onPress={()=>void beginProduction()}>{creationLabel}</Button>}
   {!harness&&view==='episodes'&&<Dropdown.Root>
    <Button ref={creationTrigger} size="sm" color="primary" iconLeading={Plus} iconTrailing={ChevronDown}>{creationLabel}</Button>
    <Dropdown.Popover className="dan-ui product-ui episode-creation-popover" placement="bottom end">
