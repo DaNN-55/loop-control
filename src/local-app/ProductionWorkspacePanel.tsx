@@ -27,7 +27,7 @@ import {WorkspaceShotTable} from './WorkspaceShotTable';
 import {workspaceShotPreparation,type WorkspacePreparationTarget} from './workspaceShotPreparation';
 import type {WorkspaceShotOperation} from '../workspaceShots';
 import {WorkspaceMaterialShelf} from './WorkspaceMaterialShelf';
-import {workspaceUploadSessions,createWorkspaceUploadSession,readWorkspaceUploadFile,type WorkspaceUploadEntry} from './workspaceUploads';
+import {workspaceUploadSessions,createWorkspaceUploadSession,readWorkspaceUploadFile,workspaceNativeVisualFile,workspaceUploadFileLimit,workspaceUploadFileLimitMiB,type WorkspaceUploadEntry} from './workspaceUploads';
 import {WorkspaceVisualPreparation} from './WorkspaceVisualPreparation';
 import {WorkspaceSourcePicker} from './WorkspaceSourcePicker';
 import type {WorkspaceSourceOptions} from '../workspaceSourceOptions';
@@ -130,9 +130,11 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
  },[materials,materialUploadState.rows,materialUploadState.retainedMaterials,materialUploadBusy]);
  const callConfirmation=useWorkspaceCallConfirmation(command,episodeId+':'+(workspace?.id??''),allMaterials);
  const narrationRefreshes=useRef(new Set<string>());
- const [nativeProject,setNativeProject]=useState<OpenChatCutProject|null>(null);
+ const projectIdentity=workspace?JSON.stringify([episodeId,workspace.id,workspace.project.sha256]):'';
+ const [projectSnapshot,setProjectSnapshot]=useState<{identity:string;project:OpenChatCutProject|null}|null>(null);
+ const nativeProject=projectSnapshot?.identity===projectIdentity?projectSnapshot.project:null;
  const [nativeProjectError,setNativeProjectError]=useState(''),[projectReadAttempt,setProjectReadAttempt]=useState(0);
- const nativeProjectIdentity=useRef('');
+ const writingShotStructure=useRef(false);
  const current=useRef<ProductionWorkspace|null>(null),openAction=useRef<()=>Promise<void>>(async()=>{});
  const operations=useWorkspaceOperations({episodeId,scriptRevisionId,readOnly,reopen:!!error,current:()=>current.current,command:run,publish:update,error:setError,recover:()=>setLoadAttempt(value=>value+1),prepared:stay=>{setLegacyPrompt(false);if(!stay)setStep(1);},opened:()=>setStep(2),closed:(destination,selection,next)=>{
   if(destination==='preparation'&&selection&&next.clips.some(clip=>clip.shotId===selection.shotId)){setSelectedShotId(selection.shotId);setPreviewItemId(selection.itemId);revealReturnedShot.current=true;}
@@ -177,7 +179,7 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
   }).catch(cause=>{if(active)setLoadError(cause instanceof Error?cause.message:'制作流程读取失败。');});
   return()=>{active=false;};
  },[episodeId,scriptRevisionId,boardId,loadAttempt]);
- useEffect(()=>{let active=true;const identity=episodeId+':'+(workspace?.id??'')+':'+(workspace?.project.sha256??'');if(nativeProjectIdentity.current!==identity){nativeProjectIdentity.current=identity;setNativeProject(null);}setNativeProjectError('');if(workspace)void localRequest(`episodes/${episodeId}/workspace/project?sha=${workspace.project.sha256}`).then(value=>{if(active)setNativeProject(value.project??null);}).catch(cause=>{if(active)setNativeProjectError(cause instanceof Error?cause.message:'已保存工程读取失败。');});return()=>{active=false;};},[episodeId,workspace?.id,workspace?.project.sha256,projectReadAttempt]);
+ useEffect(()=>{let active=true;setNativeProjectError('');if(workspace)void localRequest(`episodes/${episodeId}/workspace/project?sha=${workspace.project.sha256}`).then(value=>{if(active)setProjectSnapshot({identity:projectIdentity,project:value.project??null});}).catch(cause=>{if(active)setNativeProjectError(cause instanceof Error?cause.message:'已保存工程读取失败。');});return()=>{active=false;};},[projectIdentity,projectReadAttempt]);
  const scriptPath=materials.find(m=>m.id===scriptRevisionId)?.storage_path;
  useEffect(()=>{if(!scriptPath)return;let active=true;void fetch(localNativePath(`/_local-artifact?episode=${encodeURIComponent(episodeId)}&path=${encodeURIComponent(scriptPath)}`)).then(async r=>{if(!r.ok)throw Error('主脚本读取失败，请检查原脚本文件。');const text=await r.text();if(active){setScript(text);setLoadedScriptPath(scriptPath);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'主脚本读取失败。');});return()=>{active=false;};},[episodeId,scriptPath]);
  async function run(name:string,data:unknown,owns:()=>boolean=()=>true){if(readOnly)throw Error('归档或已完成生产单只读。');operationRead.current++;operationReadBusy.current=false;setCheckingOperation(false);setPending(true);setError('');setUncertainOperation(null);setOperationReadError('');try{return await callConfirmation.request(name,data);}catch(cause){if(!owns()||cause instanceof Error&&cause.name==='AbortError')throw cause;const message=cause instanceof Error?cause.message:'操作未完成。';if(name!=='importMaterial'&&name!=='registerWorkspaceVisualCandidate'){setError(message);if(['local_service_unavailable','LOCAL_COMMAND_OUTCOME_UNKNOWN'].includes((cause as {code?:string})?.code??''))setUncertainOperation({label:operationLabels[name]??'本次操作',checked:false});}if(message.includes('旧剪辑工作版本'))setLegacyPrompt(true);throw cause;}finally{setPending(false);}}
@@ -243,14 +245,15 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
    active:()=>materialUploadOwner.active&&activeMaterialUploadOwner.current===materialUploadOwner,
    async importFile(row){
     const file=row.file!;
-    if(!file.size||file.size>100*1024*1024)throw Error('文件为空或超过 100 MB。');
+    if(!file.size||file.size>workspaceUploadFileLimit())throw Error(`文件为空或超过 ${workspaceUploadFileLimitMiB()} MB。`);
+    const native=isHarnessProduction(),format=native?workspaceNativeVisualFile(file):undefined;
     const extension=file.name.split('.').pop()?.toLowerCase()??'';
-    const materialType=['png','jpg','jpeg','webp','bmp'].includes(extension)?'image':['mp4','mov','webm'].includes(extension)?'video':extension==='mp3'?'audio':null;
-    if(!materialType)throw Error('请选择图片、视频或 MP3。');
+    const materialType=native?format?.kind:['png','jpg','jpeg','webp','bmp'].includes(extension)?'image':['mp4','mov','webm'].includes(extension)?'video':extension==='mp3'?'audio':null;
+    if(!materialType)throw Error(native?'请选择支持的图片或视频文件。':'请选择图片、视频或 MP3。');
     const purpose=materialType==='audio'?unassignedWorkspaceAudioPurpose:'visual_reference';
     const contentBase64=await readWorkspaceUploadFile(file);
     if(!materialUploadOwner.active||activeMaterialUploadOwner.current!==materialUploadOwner)throw Object.assign(Error('上传已暂停。'),{name:'AbortError'});
-    const result=await command('importMaterial',{episodeId,materialType,sourceKind:'file',sourcePath:file.name,mimeType:file.type||'application/octet-stream',contentBase64,isMainScript:false,materialPurpose:purpose}) as {id:string;storage_path:string};
+    const result=await command('importMaterial',{episodeId,materialType,sourceKind:'file',sourcePath:file.name,mimeType:format?.mime||file.type||'application/octet-stream',contentBase64,isMainScript:false,materialPurpose:purpose}) as {id:string;storage_path:string};
     return {...result,material_type:materialType,source_path:file.name,is_main_script:false,material_purpose:purpose};
    },
    onImported:material=>{imported.push(material.id);setImportedMaterials(values=>[...values,{...material,is_main_script:false}]);},
@@ -269,16 +272,24 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
  const uniqueClips=workspace?.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index)??[];
  const selectedShot=uniqueClips.find(clip=>clip.shotId===selectedShotId)??uniqueClips[0];
  async function editShots(operation:WorkspaceShotOperation){
-  const w=current.current;if(!w||pending||readOnly||w.stale)throw Error('当前工程不可修改。');
-  const next=await run('editWorkspaceStructure',{episodeId,workspaceId:w.id,expectedRevision:w.revision,operation}) as ProductionWorkspace;
-  update(next);
-  if(operation.kind==='insert'){const added=next.clips.find(clip=>!w.clips.some(old=>old.shotId===clip.shotId));if(added)setSelectedShotId(added.shotId);setPreviewItemId('');}
+  const w=current.current;if(!w||pending||readOnly||w.stale||session||editorOpening||writingShotStructure.current)throw Error('当前工程不可修改。');
+  writingShotStructure.current=true;
+  try{
+   const next=await run('editWorkspaceStructure',{episodeId,workspaceId:w.id,expectedRevision:w.revision,operation}) as ProductionWorkspace;
+   update(next);
+   if(operation.kind==='insert'){const added=next.clips.find(clip=>!w.clips.some(old=>old.shotId===clip.shotId));if(added)setSelectedShotId(added.shotId);setPreviewItemId('');}
+  }finally{writingShotStructure.current=false;}
  }
  async function deleteShot(){
-  if(!shotToDelete||pending||readOnly)return;
+  if(!shotToDelete||pending||readOnly||session||editorOpening||writingShotStructure.current)return;
+  const w=current.current;
+  if(!w||w.stale||shotToDelete.episodeId!==episodeId||shotToDelete.workspaceId!==w.id||shotToDelete.revision!==w.revision){setError('工程已变化，请关闭并重新确认删除。');return;}
+  writingShotStructure.current=true;
   try{const next=await run('editWorkspaceStructure',{episodeId:shotToDelete.episodeId,workspaceId:shotToDelete.workspaceId,expectedRevision:shotToDelete.revision,operation:{kind:'remove',shotId:shotToDelete.shotId}}) as ProductionWorkspace;
    const index=uniqueClips.findIndex(c=>c.shotId===shotToDelete.shotId),remaining=next.clips.filter((c,i,all)=>all.findIndex(v=>v.shotId===c.shotId)===i);update(next);setSelectedShotId(remaining[Math.min(Math.max(0,index),remaining.length-1)]?.shotId??'');setPreviewItemId('');setShotToDelete(null);
+   requestAnimationFrame(()=>workspaceRoot.current?.querySelector<HTMLButtonElement>('.workspace-shot-table .workspace-shot-number-cell button[aria-pressed=true]')?.focus());
   }catch{/* run presents the failure inside the confirmation dialog. */}
+  finally{writingShotStructure.current=false;}
  }
  const preparations=uniqueClips.map(shot=>workspaceShotPreparation(workspace!,shot.shotId,nativeProject));
  const preparedCount=preparations.filter(result=>result.ready).length;
@@ -299,8 +310,8 @@ export function ProductionWorkspacePanel({episodeId,title,titleActions,scriptRev
     {{visual:<section className="workspace-visual-replacement" aria-label={uiText("上传与生成画面")}><WorkspaceVisualPreparation workspacePolling tabRequest={visualDestination} completedView={completed} preparationStatus={completed&&selectedShot&&selectedPreparation?<WorkspaceShotPreparationStatus preparation={selectedPreparation} shotLabel={selectedShotLabel} onNavigate={target=>navigatePreparation(selectedShot.shotId,target)}/>:undefined} workspace={workspace} command={run} onChange={update} materials={allMaterials} selectedShotId={selectedShot?.shotId} selectedTargetItemId={selectedPreview?.itemId} onTargetChange={setPreviewItemId} readOnly={readOnly} project={nativeProject} currentVisualPath={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined} currentVisualSha256={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.sha256:undefined} currentMaterialRevisionId={allMaterials.find(m=>m.storage_path===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.id??workspace.visualCandidates?.find(c=>c.relativePath===(selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.relativePath:undefined))?.materialRevisionId} currentVisualKind={selectedPreview?workspaceShotSource(selectedPreview,nativeProject)?.kind:undefined} preview={<WorkspaceShotPreview readOnly={readOnly} workspace={workspace} clips={selectedClips} selectedItemId={selectedPreview?.itemId} onSelect={setPreviewItemId} project={nativeProject} materials={allMaterials}/>} onImported={material=>setImportedMaterials(rows=>[...rows,{...material,is_main_script:false}])}/></section>,
     voice:<>{completed&&<section className="completed-shot-caption" aria-label={uiText("字幕正文")}><h4>{uiText("字幕正文")}</h4>
      <p>{selectedCaption?.contract.enabled===false?uiText("字幕已关闭"):selectedCaption?.contract.text||uiText("未保留字幕正文。")}</p>
-    </section>}<fieldset className="workspace-readonly-fields"><WorkspaceMainVoicePanel tabRequest={preparationDestination?.episodeId===episodeId&&preparationDestination.shotId===selectedShot?.shotId?preparationDestination:undefined} project={nativeProject} onImportAudio={uploadMaterials} active={completed||preparationTab==='voice'} readOnly={readOnly} narrationConfiguration={(legacySnapshot?.blueprint?.policy&&typeof legacySnapshot.blueprint.policy==='object'&&!Array.isArray(legacySnapshot.blueprint.policy)?legacySnapshot.blueprint.policy.narration:undefined)} episodeId={episodeId} workspace={workspace} pending={pending||materialUploadBusy||readOnly} command={run} onChanged={update} tracks={audioTracks} materials={allMaterials} defaultSettings={{voice:legacySnapshot?.episode.tts_voice??null,speakingRate:legacySnapshot?.episode.tts_speaking_rate??null,languageCode:legacySnapshot?.episode.tts_language_code??null}} selectedShotId={selectedShot?.shotId}/></fieldset></>,
-    sound:<><fieldset className="workspace-readonly-fields"><WorkspaceAudioPreparation effectsOnly readOnly={readOnly} workspace={workspace} selectedShotId={selectedShot?.shotId} command={run} onChange={update} materials={allMaterials} project={nativeProject}/></fieldset>{readOnly&&selectedShot&&<WorkspaceSoundIntent key={selectedShot.shotId} workspace={workspace} shot={selectedShot} pending={pending} readOnly={readOnly} command={run} onChange={update}/>}</>}}
+    </section>}<fieldset className="workspace-readonly-fields"><WorkspaceMainVoicePanel tabRequest={preparationDestination?.episodeId===episodeId&&preparationDestination.shotId===selectedShot?.shotId?preparationDestination:undefined} project={nativeProject} onImportAudio={uploadMaterials} active={completed||preparationTab==='voice'} readOnly={readOnly||isHarnessProduction()} narrationConfiguration={(legacySnapshot?.blueprint?.policy&&typeof legacySnapshot.blueprint.policy==='object'&&!Array.isArray(legacySnapshot.blueprint.policy)?legacySnapshot.blueprint.policy.narration:undefined)} episodeId={episodeId} workspace={workspace} pending={pending||materialUploadBusy||readOnly} command={run} onChanged={update} tracks={audioTracks} materials={allMaterials} defaultSettings={{voice:legacySnapshot?.episode.tts_voice??null,speakingRate:legacySnapshot?.episode.tts_speaking_rate??null,languageCode:legacySnapshot?.episode.tts_language_code??null}} selectedShotId={selectedShot?.shotId}/></fieldset></>,
+    sound:<><fieldset className="workspace-readonly-fields"><WorkspaceAudioPreparation effectsOnly readOnly={readOnly||isHarnessProduction()} workspace={workspace} selectedShotId={selectedShot?.shotId} command={run} onChange={update} materials={allMaterials} project={nativeProject}/></fieldset>{readOnly&&selectedShot&&<WorkspaceSoundIntent key={selectedShot.shotId} workspace={workspace} shot={selectedShot} pending={pending} readOnly={readOnly} command={run} onChange={update}/>}</>}}
    </WorkspacePreparationSections></aside></WorkspacePreparationLayout></WorkspaceMaterialSelectionProvider></section>;
  const recordTitle=activeRecord==='script'?'确认脚本':'分镜记录';
  return <>

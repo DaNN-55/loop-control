@@ -1,7 +1,8 @@
 // @vitest-environment node
 import {describe,it,expect,vi} from 'vitest';
 import type {IncomingMessage} from 'node:http';
-import {authorizeHarnessProduction} from './harnessProductionPolicy';
+import {authorizeHarnessProduction,nativeMaterialUploadPath,nativeMaterialReceiptPath} from './harnessProductionPolicy';
+import {nativeVisualMaterialMaxBytes,nativeVisualMaterialJsonMaxBytes} from '../harnessVisualMaterial';
 const id='11111111-1111-4111-8111-111111111111',other='22222222-2222-4222-8222-222222222222';
 const scope={owner:{id,email:'test@example.invalid'},episodeIds:[id]};
 const request=(url:string,method='GET')=>({url,method,headers:{host:'loop-control.internal'}} as IncomingMessage);
@@ -14,6 +15,28 @@ describe('Harness production capability',()=>{
   const operation=(command:string,episodeId=id)=>({command,data:{episodeId},idempotencyKey:id});
   for(const body of [operation('generateWorkspaceVisuals'),operation('create'),operation('exportWorkspace',other)])await expect(authorizeHarnessProduction(scope,request('/api/local/episode-commands','POST'),async()=>body)).rejects.toMatchObject({status:403});
   const body=operation('prepareWorkspace');await expect(authorizeHarnessProduction(scope,request('/api/local/episode-commands','POST'),async()=>body)).resolves.toEqual(body);
+ });
+ describe('bounded local visual material routes',()=>{
+  const data={episodeId:id,sourceKind:'file',sourcePath:'分镜.PNG',materialType:'image',mimeType:'image/png',isMainScript:false,materialPurpose:'visual_reference',contentBase64:'YWJj'};
+  const operation=(overrides:Record<string,unknown>={},command='importMaterial')=>({command,idempotencyKey:id,data:{...data,...overrides}});
+  const paths=[[nativeMaterialUploadPath,(body:ReturnType<typeof operation>)=>body],[nativeMaterialReceiptPath,(body:ReturnType<typeof operation>)=>({endpoint:'episode-commands',operation:body})]] as const;
+  it('preserves the generic request budget and admits material requests only at dedicated paths',async()=>{
+   for(const [pathname,wrap] of paths){
+    const body=wrap(operation()),read=vi.fn(async()=>body);
+    await expect(authorizeHarnessProduction(scope,request(pathname,'POST'),read)).resolves.toEqual(body);
+    expect(read).toHaveBeenCalledExactlyOnceWith(nativeVisualMaterialJsonMaxBytes);
+    await expect(authorizeHarnessProduction(scope,request(pathname),read)).rejects.toMatchObject({status:403});
+    await expect(authorizeHarnessProduction(scope,request(pathname+'?extra=1','POST'),read)).rejects.toMatchObject({status:403});
+   }
+   const read=vi.fn(async()=>operation());
+   await expect(authorizeHarnessProduction(scope,request('/api/local/episode-commands','POST'),read)).rejects.toMatchObject({status:403});
+   expect(read).toHaveBeenCalledExactlyOnceWith(128*1024);
+  });
+  it('rejects other episodes, other commands, paths, unapproved media, and oversized decoded files',async()=>{
+   for(const [pathname,wrap] of paths)for(const body of [operation({episodeId:other}),operation({},'create'),operation({sourceKind:'url'}),operation({sourcePath:'../sample.png'}),operation({sourcePath:'c:\\example.png'}),operation({logicalName:'another.png'}),operation({mimeType:'image/svg+xml'}),operation({materialType:'audio'}),operation({isMainScript:true}),operation({materialPurpose:'narration'}),operation({contentBase64:'YW=J'}),operation({contentBase64:'A'.repeat(4*Math.ceil((nativeVisualMaterialMaxBytes+1)/3))})]){
+    await expect(authorizeHarnessProduction(scope,request(pathname,'POST'),async()=>wrap(body))).rejects.toMatchObject({status:403});
+   }
+  });
  });
  describe('local single-order creation and script editing',()=>{
   const unrestricted={owner:scope.owner};
@@ -72,7 +95,28 @@ describe('Harness production capability',()=>{
     expect(read).toHaveBeenCalledExactlyOnceWith(128*1024);
    }
   });
-  it('keeps material uploads, structure edits, paid, batch and handoff capabilities outside this first slice',async()=>{
+  it.each([
+   {kind:'insert',afterShotId:'shot-1',text:'新镜头'},
+   {kind:'move',shotId:'shot-1',beforeShotId:null},
+   {kind:'remove',shotId:'shot-1'},
+   {kind:'trim',itemId:'item-1',sourceInFrame:15,sourceOutFrame:45,keepDuration:false},
+  ])('allows $kind for the selected episode, including receipt lookup',async edit=>{
+   const data={episodeId:id,workspaceId:other,expectedRevision:1,operation:edit};
+   const body=operation('editWorkspaceStructure',data);
+   await expect(authorize(body,true)).resolves.toEqual(body);
+   await expect(authorizeHarnessProduction(scope,request('/api/local/command-receipt','POST'),async()=>receipt(body))).resolves.toEqual(receipt(body));
+   await expect(authorize(operation('editWorkspaceStructure',{...data,episodeId:other}),true)).rejects.toMatchObject({status:403});
+  });
+  it('rejects unavailable structure kinds and malformed trims, including receipt lookups',async()=>{
+   for(const edit of [undefined,{kind:'appearance',itemId:'item-1',fit:'cover'},
+    {kind:'trim',itemId:'item-1',sourceInFrame:9,sourceOutFrame:4,keepDuration:false},
+    {kind:'trim',itemId:'item-1',sourceInFrame:4,sourceOutFrame:9,keepDuration:false,path:'/tmp/test.mp4'}]){
+    const body=operation('editWorkspaceStructure',{episodeId:id,workspaceId:other,expectedRevision:1,operation:edit});
+    await expect(authorize(body,true)).rejects.toMatchObject({status:403});
+    await expect(authorizeHarnessProduction(scope,request('/api/local/command-receipt','POST'),async()=>receipt(body))).rejects.toMatchObject({status:403});
+   }
+  });
+  it('keeps unrelated write commands outside single-order production',async()=>{
    for(const command of ['importMaterial','editWorkspaceStructure','saveWorkspaceVideoRanges','generateWorkspaceImage','requestWorkspaceVisualCandidate','confirmStoryboardBatch','createFromHandoff']){
     await expect(authorize(operation(command,{episodeId:id}))).rejects.toMatchObject({status:403});
    }

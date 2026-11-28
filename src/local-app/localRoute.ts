@@ -1,5 +1,5 @@
 import type {LocalHarnessHandoff} from './harnessHandoff.js';
-import {authorizeHarnessProduction,type HarnessProductionScope} from './harnessProductionPolicy.js';
+import {authorizeHarnessProduction,nativeMaterialUploadPath,nativeMaterialReceiptPath,type HarnessProductionScope} from './harnessProductionPolicy.js';
 import {serveBatchPublicationDownload} from './batchPublicationDownload.js';
 import {batchPublicationDownloadPath} from './batchPublicationDownloadTypes.js';
 import {readBatchExportReview} from './batchExportReview.js';
@@ -179,7 +179,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(!maintenance&&!runtime){send(503,{error:'系统状态暂不可用，请稍后重试。'});return;}
     send(200,{...maintenance,observedAt:runtime?.observedAt??maintenance?.observedAt,runtime:runtime??null,maintenanceAvailable:!!maintenance});return;
    }
-   if(url.pathname==='/api/local/command-receipt'&&request.method==='POST'){
+   if((url.pathname==='/api/local/command-receipt'||privateScope&&url.pathname===nativeMaterialReceiptPath)&&request.method==='POST'){
     send(200,await readCommandReceipt(options.pool,session,privateBody??await readBody(request,140*1024*1024)));return;
    }
    await readMediaDeployment(options.pool,options.mediaRoot,request.method!=='GET');
@@ -229,7 +229,7 @@ export function createLocalHandler(options:LocalOptions&{stateDirectory?:string}
     if(!options.episodes)throw new ConfigurationError(503,'本地建单服务尚未配置。');
     send(200,await options.episodes.batchImport.read(session,batchImport[1]));return;
    }
-   if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
+   if((url.pathname==='/api/local/episode-commands'||privateScope&&url.pathname===nativeMaterialUploadPath)&&request.method==='POST'){
     if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}
     let body;try{body=privateBody??await readBody(request,140*1024*1024);}catch{send(400,{error:'Episode请求格式无效。'});return;}
     if(typeof (body.data as Record<string,unknown>|undefined)?.episodeId==='string'&&uuid.test(String((body.data as Record<string,unknown>).episodeId))&&(await ownerTransaction(options.pool,session.id,true,async c=>(await c.query('SELECT 1 FROM local_identity.episode_recycle_bin WHERE episode_id=$1',[(body.data as Record<string,unknown>).episodeId])).rowCount)))throw new ConfigurationError(409,'生产单已移入回收站，请先恢复。');

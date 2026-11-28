@@ -1,6 +1,9 @@
 import {useState} from 'react';
 import {webcrypto} from 'node:crypto';
 import {localCommand} from './client';
+import {attachNativeSurface} from './nativeSurface';
+import {nativeVisualMaterialMaxBytes} from '../harnessVisualMaterial';
+import {WorkspaceMaterialSelectionProvider} from './WorkspaceMaterialDrop';
 import {act,cleanup,fireEvent,render,screen,waitFor,within} from '@testing-library/react';
 import {afterEach,expect,it,vi} from 'vitest';
 import {WorkspaceVisualPreparation} from './WorkspaceVisualPreparation';
@@ -40,6 +43,25 @@ const image=(name:string)=>new File(['image fixture'],name,{type:'image/png'});
 function choose(files:File[]){fireEvent.change(screen.getByLabelText('上传图片素材'),{target:{files}});}
 function uploadResults(){return screen.getByRole('region',{name:'上传结果'});}
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
+
+it('Harness 素材架上下文仍有本地候选选择器，超限和音频不进入导入，且没有 AI 入口',async()=>{
+ const release=attachNativeSurface(document.createElement('div'),'/api/team-loop-control/native');
+ try{
+  const fixture=setup();render(<WorkspaceMaterialSelectionProvider materials={[]}><fixture.View/></WorkspaceMaterialSelectionProvider>);
+  expect(screen.queryByRole('button',{name:'AI 生成'})).toBeNull();
+  expect(screen.getByRole('button',{name:/选择或拖入图片.*20 MB/})).toBeTruthy();
+  expect(screen.getByLabelText('上传图片素材').getAttribute('accept')).toBe('.png,.jpg,.jpeg,.webp,.bmp');
+  const oversized=image('big.png');Object.defineProperty(oversized,'size',{value:nativeVisualMaterialMaxBytes+1});
+  choose([oversized,new File(['audio'],'track.mp3',{type:'audio/mpeg'}),new File(['image'],'no-browser-mime.PNG')]);
+  await waitFor(()=>expect(fixture.imports).toEqual(['no-browser-mime.PNG']));
+  expect(fixture.startedImports).toEqual(['no-browser-mime.PNG']);
+  expect(screen.queryByRole('button',{name:'生成视频'})).toBeNull();
+  await waitFor(()=>expect(within(uploadResults()).getByText(/素材不能为空或超过 20 MB/)).toBeTruthy());
+  const imageTab=screen.getByRole('tab',{name:'图片'});imageTab.focus();fireEvent.keyDown(imageTab,{key:'ArrowRight'});
+  expect(document.activeElement).toBe(screen.getByRole('tab',{name:'视频'}));
+  expect(screen.getByLabelText('上传视频素材').getAttribute('accept')).toBe('.mp4,.mov,.webm');
+ }finally{cleanup();release();}
+});
 
 it('批量上传仅保留未完成项，只重试失败项，成功后移除恢复区并支持下一批',async()=>{
  const fixture=setup();render(<fixture.View/>);

@@ -432,6 +432,8 @@ html[data-interface="impeccable"] .product-ui .workspace-call-reservation input 
  [data-compact-workflow]>.production-workspace-title .production-workspace-title-actions{grid-column:2;grid-row:1}
  [data-compact-workflow]>.production-workspace-title>nav{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;overflow:visible}
  [data-compact-workflow]>.production-workspace-title>nav>button{min-width:0;margin:0;padding:4px 8px;justify-content:flex-start}
+}
+@container(width < 600px){
  .workspace-shot-table th:first-child,.workspace-shot-table tbody td:first-child,.workspace-shot-table .workspace-shot-table-actions-cell{position:sticky;z-index:1;background:var(--lc-surface)}
  .workspace-shot-table th:first-child,.workspace-shot-table tbody td:first-child{left:0}
  .workspace-shot-table .workspace-shot-table-actions-cell{right:0}
