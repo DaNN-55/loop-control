@@ -36,7 +36,7 @@ export async function createNativeApplication(d){
 
  const pending=readPendingMediaRootDeployment(d);
  if(pending){const recovery=createLocalDatabase(d.database);try{const state=(await recovery.query("SELECT local_identity.media_root_binding() binding,coalesce(nullif(current_setting('loop.restore_state',true),''),'ready') restore_state")).rows[0];const proof=pending.publication?.operation==='migration'?(await recovery.query(migrationProofQuery(pending.publication))).rows[0].media_root_publication_proof:undefined;d=recoverMediaRootDeployment(d,state.binding,{restoreState:state.restore_state,migrationProof:proof});}finally{await recovery.end();}}
- let current,active=d,closed=false,paused=false,previousPending;const requests=new Set();
+ let current,active=d,closed=false,paused=false,previousPending,closing;const requests=new Set();
  const finish=async migration=>{const pool=createLocalDatabase(active.database);try{const row=(await pool.query(migrationProofQuery(migration))).rows[0].media_root_publication_proof;verifyMediaRootMigrationProof(row,migration);await pool.query('SELECT local_identity.finish_media_root_migration($1,$2)',[migration.planId,migration.manifestSha256]);await unlink(mediaRootPendingPath(active)).catch(e=>{if(e.code!=='ENOENT')throw e;});}finally{await pool.end();}};
  const quiesce=async()=>{if(paused)throw Error('Storage operation already in progress');paused=true;const waiting=[...requests];let timer;try{await Promise.race([Promise.all(waiting),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Active requests must finish before migration')),30000);})]);}catch(error){paused=false;throw error;}finally{clearTimeout(timer);}};
  const releaseQuiescence=()=>{paused=false;};
@@ -59,7 +59,7 @@ export async function createNativeApplication(d){
   if(paused&&!maintenance&&q.method!=='GET'){r.writeHead(409,{'Content-Type':'application/json'});r.end(JSON.stringify({error:'媒体根正在迁移，请读取同一计划进度。'}));return;}
   if(!maintenance){let complete;const done=new Promise(resolve=>{complete=resolve;});requests.add(done);const finishRequest=()=>{requests.delete(done);complete();};r.once('finish',finishRequest);r.once('close',finishRequest);}
   return current.handler(q,r);
- },close:async()=>{if(closed)return;closed=true;await previousPending?.close();await current.close();}};
+ },close:()=>closing??=(async()=>{closed=true;await previousPending?.close();await current.close();})()};
 async function createNativeInstance(d,activate,lifecycle){
  const pool=createLocalDatabase(d.database);let worker,episodes,accounts,automation,studioAgent,metricsSampler,metricsPool,mediaRootSettings,studioWarmup,harnessHandoff,harnessProduction,closing;function close(){return closing??=(async()=>{studioWarmup?.close();await harnessProduction?.close();await harnessHandoff?.close();accounts?.close();mediaRootSettings?.close();await metricsSampler?.stop();await metricsPool?.end();await automation?.stop();await episodes?.close();await studioAgent?.close();await worker?.stop();await pool.end();})();}
  try{

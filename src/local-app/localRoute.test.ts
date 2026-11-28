@@ -6,7 +6,40 @@ import {it,expect} from 'vitest';
 import {createLocalHandler} from './localRoute';
 import {createLocalDatabase} from './catalog';
 import {SecretStoreError} from './connectionPorts';
-it('rejects cross-origin and Host-mismatched local authentication without accessing the database',async()=>{
+import {canonicalFingerprint} from './configurationCommands';
+import {nativeMaterialUploadPath,nativeMaterialReceiptPath} from './harnessProductionPolicy';
+it('dispatches dedicated native upload and receipt paths only with a private production scope',async()=>{
+ const episodeId='11111111-1111-4111-8111-111111111111',owner={id:'22222222-2222-4222-8222-222222222222',email:'owner@fixture.invalid'};
+ const operation={command:'importMaterial',idempotencyKey:episodeId,data:{episodeId,sourceKind:'file',sourcePath:'storyboard.png',materialType:'image',mimeType:'image/png',contentBase64:'YWJj',isMainScript:false,materialPurpose:'visual_reference'}};
+ const result={id:'registered-material'};
+ let writes=0,receipts=0;
+ const client={release(){},query:async(sql:string)=>{
+  if(sql.includes('command_receipts')){receipts++;return{rows:[{payload_hash:canonicalFingerprint(operation),result}]};}
+  if(sql.includes('episode_recycle_bin'))return{rowCount:0,rows:[]};
+  return{rowCount:1,rows:[owner]};
+ }};
+ const pool={connect:async()=>client,query:async()=>({rows:[{state:'ready',config:{targetRoot:null,sourceRoots:[]}}]})} as unknown as import('pg').Pool;
+ const episodes={async execute(session:{id:string},intent:unknown){expect(session.id).toBe(owner.id);expect(intent).toEqual(operation);writes++;return result;}} as unknown as NonNullable<Parameters<typeof createLocalHandler>[0]['episodes']>;
+ const handler=createLocalHandler({pool,episodes,origin:'http://loop-control.internal',mediaRoot:'/tmp/unused'});
+ let restricted=false;
+ const server=createServer((q,r)=>void handler(q,r,restricted?undefined:{owner,episodeIds:[episodeId]}));server.listen(0,'127.0.0.1');await once(server,'listening');
+ const address=`http://127.0.0.1:${(server.address() as {port:number}).port}`;
+ const post=(path:string,body:unknown)=>new Promise<{status:number|undefined;body:unknown}>((resolve,reject)=>{
+  const q=httpRequest(address+path,{method:'POST',headers:{Host:'loop-control.internal','Content-Type':'application/json'}},res=>{
+   res.setEncoding('utf8');let json='';res.on('data',value=>{json+=value;});res.on('end',()=>{try{resolve({status:res.statusCode,body:JSON.parse(json)});}catch(error){reject(error);}});
+  });q.on('error',reject);q.end(JSON.stringify(body));
+ });
+ try{
+  expect(await post(nativeMaterialUploadPath,operation)).toEqual({status:200,body:result});
+  expect(await post(nativeMaterialReceiptPath,{endpoint:'episode-commands',operation})).toEqual({status:200,body:{status:'committed',result}});
+  expect((await post('/api/local/episode-commands',operation)).status).toBe(403);
+  restricted=true;
+  expect((await post(nativeMaterialUploadPath,operation)).status).toBe(403);
+  expect((await post(nativeMaterialReceiptPath,{endpoint:'episode-commands',operation})).status).toBe(403);
+  expect([writes,receipts]).toEqual([1,1]);
+ }finally{server.closeAllConnections();await new Promise<void>(r=>server.close(()=>r()));}
+ });
+ it('rejects cross-origin and Host-mismatched local authentication without accessing the database',async()=>{
  const pool=createLocalDatabase({host:'127.0.0.1',port:1,user:'loop_app',database:'unused',password:'fixture'});
  const server=createServer(createLocalHandler({pool,origin:'http://127.0.0.1:55177',mediaRoot:'/tmp/unused'}));server.listen(0,'127.0.0.1');await once(server,'listening');
  try{const url=`http://127.0.0.1:${(server.address() as {port:number}).port}/api/local/login`;

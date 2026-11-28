@@ -29,13 +29,15 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
  const allSelected=!!batch&&batch.eligible.size>0&&batch.eligible.size===batch.selected.size;
  const clips=workspace.clips.filter((clip,index,all)=>all.findIndex(c=>c.shotId===clip.shotId)===index);
  const [adding,setAdding]=useState(false),[text,setText]=useState(''),[drop,setDrop]=useState<{shotId:string;after:boolean}|null>(null),[announcement,setAnnouncement]=useState('');
- const helpId=useId(),inputId=useId(),dragged=useRef<string|null>(null),editing=useRef(false),input=useRef<HTMLTextAreaElement>(null),addButton=useRef<HTMLButtonElement>(null);
- function cancelAdd(){setAdding(false);setText('');requestAnimationFrame(()=>addButton.current?.focus());}
+ const helpId=useId(),inputId=useId(),textErrorId=useId(),dragged=useRef<string|null>(null),editing=useRef(false),input=useRef<HTMLTextAreaElement>(null),addButton=useRef<HTMLButtonElement>(null);
+ const [invalidText,setInvalidText]=useState(false);
+ function cancelAdd(){setAdding(false);setText('');setInvalidText(false);requestAnimationFrame(()=>addButton.current?.focus());}
  async function insert(){
   if(locked||editing.current)return;
-  if(!text.trim()){input.current?.focus();return;}
+  if(!text.trim()){setInvalidText(true);input.current?.focus();return;}
   editing.current=true;
-  try{await onEdit({kind:'insert',afterShotId:clips.at(-1)?.shotId??null,text:text.trim()});setAdding(false);setText('');setAnnouncement('已在末尾新增镜头。');requestAnimationFrame(()=>addButton.current?.focus());}catch{/* The workspace presents errors; retain the draft. */}finally{editing.current=false;}
+  setAnnouncement('');
+  try{await onEdit({kind:'insert',afterShotId:clips.at(-1)?.shotId??null,text:text.trim()});cancelAdd();setAnnouncement('已在末尾新增镜头。');}catch{/* The workspace presents errors; retain the draft. */}finally{editing.current=false;}
  }
  async function move(shotId:string,beforeShotId:string|null){
   const index=clips.findIndex(c=>c.shotId===shotId);
@@ -121,7 +123,7 @@ export function WorkspaceShotTable({workspace,project,materials,selectedShotId,d
      </tr>;
     })}</tbody>
     {!readOnly&&<tfoot><tr><td colSpan={batch?6:5} className="workspace-shot-insert-cell"><Button ref={addButton} size="sm" color="tertiary" className="workspace-shot-add" aria-label={uiText("新增镜头")} title={uiText("新增镜头")} isDisabled={disabled||adding} onPress={()=>{setAdding(true);requestAnimationFrame(()=>input.current?.focus());}}><Plus size={18} aria-hidden="true"/></Button>
-     {adding&&<form className="workspace-shot-insert-form" onSubmit={event=>{event.preventDefault();void insert();}}><label htmlFor={inputId}>{uiText("新镜头文案")}</label><textarea id={inputId} ref={input} value={text} required maxLength={100000} rows={2} disabled={disabled} onChange={event=>setText(event.target.value)}/><div><Button size="sm" color="secondary" isDisabled={disabled} onPress={cancelAdd}>{uiText("取消")}</Button><Button size="sm" color="primary" type="submit" isDisabled={disabled||!text.trim()}>{uiText("新增镜头")}</Button></div></form>}
+     {adding&&<form className="workspace-shot-insert-form" aria-label={uiText('新增镜头')} onSubmit={event=>{event.preventDefault();void insert();}}><label htmlFor={inputId}>{uiText("新镜头文案")}</label><textarea id={inputId} name="text" ref={input} value={text} required maxLength={100000} rows={2} disabled={disabled} aria-invalid={invalidText||undefined} aria-describedby={invalidText?textErrorId:undefined} onChange={event=>{setText(event.target.value);setInvalidText(false);}}/>{invalidText&&<p id={textErrorId} className="form-error" role="alert">{uiText('请填写新镜头文案。')}</p>}<div><Button size="sm" color="secondary" type="button" isDisabled={disabled} onPress={cancelAdd}>{uiText("取消")}</Button><Button size="sm" color="primary" type="submit" isDisabled={disabled}>{uiText("新增镜头")}</Button></div></form>}
     </td></tr></tfoot>}
    </table>
   </div>

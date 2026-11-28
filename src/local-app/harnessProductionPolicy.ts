@@ -1,10 +1,12 @@
 import type {IncomingMessage} from 'node:http';
 import {ConfigurationError} from './configurationCommands.js';
+import {isWorkspaceShotOperation} from '../workspaceShots.js';
+import {harnessVisualMaterial,nativeVisualMaterialMaxBytes,nativeVisualMaterialJsonMaxBytes} from '../harnessVisualMaterial.js';
 
 const uuid=/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 export const harnessProductionHost='loop-control.internal';
 export interface HarnessProductionScope {owner:{id:string;email:string};episodeIds?:readonly string[]}
-const commands=new Set(['start','confirmReviewedScript','prepareWorkspace','matchWorkspaceImage','matchWorkspaceMaterial','registerWorkspaceVisualCandidate','prepareWorkspaceVisualCandidate','adoptWorkspaceVisualCandidate','openWorkspaceStudio','saveWorkspaceStudio','closeWorkspaceStudio','exportWorkspace','confirmWorkspaceExport','completeWorkspaceExport','confirmReviewedExport']);
+const commands=new Set(['create','saveScriptReviewDraft','confirmScriptStudio','start','confirmReviewedScript','prepareWorkspace','editWorkspaceStructure','matchWorkspaceImage','matchWorkspaceMaterial','registerWorkspaceVisualCandidate','prepareWorkspaceVisualCandidate','adoptWorkspaceVisualCandidate','openWorkspaceStudio','saveWorkspaceStudio','closeWorkspaceStudio','exportWorkspace','confirmWorkspaceExport','completeWorkspaceExport','confirmReviewedExport']);
 const routeId=new RegExp(`^/api/local/episodes/(${uuid.source.slice(1,-1)})(?:/(workspace(?:/project)?|batch-script-review|saved-plan|delivery-download))?$`,'i');
 const artifactId=new RegExp(`^/api/local/artifacts/(${uuid.source.slice(1,-1)})$`,'i');
 
@@ -16,9 +18,38 @@ function exactQuery(url:URL,required:string[],optional:string[]=[]){
  if(required.some(k=>url.searchParams.getAll(k).length!==1||!url.searchParams.get(k))||[...url.searchParams.keys()].some(k=>!required.includes(k)&&!optional.includes(k)||url.searchParams.getAll(k).length!==1))throw deny();
 }
 const isRecord=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object'&&!Array.isArray(value);
-function requireOperation(scope:HarnessProductionScope,body:unknown){
- if(!isRecord(body)||typeof body.command!=='string'||!commands.has(body.command)||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!isRecord(body.data)||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k)))throw deny();
+export const nativeMaterialUploadPath='/api/local/native-material-upload';
+export const nativeMaterialReceiptPath='/api/local/native-material-upload-receipt';
+const uploadFields=new Set(['episodeId','sourceKind','sourcePath','materialType','mimeType','contentBase64','isMainScript','materialPurpose']);
+function requireLocalVisualMaterial(data:Record<string,unknown>){
+ const {sourcePath,contentBase64}=data;
+ if(Object.keys(data).some(key=>!uploadFields.has(key))||data.sourceKind!=='file'||data.isMainScript!==false||data.materialPurpose!=='visual_reference'||typeof sourcePath!=='string'||Buffer.byteLength(sourcePath)>255||sourcePath.startsWith('.')||/[\\/:\x00-\x1f\x7f]/.test(sourcePath))throw deny();
+ const format=harnessVisualMaterial(sourcePath);
+ if(!format||data.materialType!==format.kind||data.mimeType!==format.mime||typeof contentBase64!=='string'||!contentBase64.length||contentBase64.length%4!==0)throw deny();
+ const padding=contentBase64.endsWith('==')?2:contentBase64.endsWith('=')?1:0;
+ if(contentBase64.length/4*3-padding>nativeVisualMaterialMaxBytes||/[^A-Za-z0-9+/]/.test(padding?contentBase64.slice(0,-padding):contentBase64))throw deny();
+}
+function requireOperation(scope:HarnessProductionScope,body:unknown,upload=false){
+ if(!isRecord(body)||typeof body.command!=='string'||!(upload?body.command==='importMaterial':commands.has(body.command))||typeof body.idempotencyKey!=='string'||!uuid.test(body.idempotencyKey)||!isRecord(body.data)||Object.keys(body).some(k=>!['command','data','idempotencyKey'].includes(k)))throw deny();
+ if(upload){
+  requireHarnessEpisode(scope,body.data.episodeId);
+  requireLocalVisualMaterial(body.data);
+  return;
+ }
+ if(body.command==='create'){
+  // New orders have no episode identity yet. Keep restricted episode-only
+  // deployments closed; the original command still checks Owner/account/series.
+  if(scope.episodeIds!==undefined||typeof body.data.accountId!=='string'||!uuid.test(body.data.accountId))throw deny();
+  return;
+ }
+ // Native script editing is local-only. Do not adopt an AI assistant receipt;
+ // original command validation still owns all other fields and state checks.
+ if(['saveScriptReviewDraft','confirmScriptStudio'].includes(body.command)&&Object.hasOwn(body.data,'requestId'))throw deny();
  if(body.command==='prepareWorkspace'&&(Object.hasOwn(body.data,'legacyDecision')||Object.hasOwn(body.data,'reviewPackageId')))throw deny();
+ if(body.command==='editWorkspaceStructure'){
+  const {operation}=body.data;
+  if(!isWorkspaceShotOperation(operation)||!['insert','move','remove','trim'].includes(operation.kind))throw deny();
+ }
  requireHarnessEpisode(scope,body.data.episodeId);
 }
 
@@ -30,12 +61,14 @@ export async function authorizeHarnessProduction(scope:HarnessProductionScope,re
  if(target.split('?')[0]!==pathname)throw deny();
  if(request.method==='POST'){
   exactQuery(url,[]);
-  if(!['/api/local/episode-commands','/api/local/command-receipt'].includes(pathname))throw deny();
-  let body;try{body=await read(32*1024);}catch{throw new ConfigurationError(400,'制作请求格式无效或超过大小上限。');}
-  if(pathname.endsWith('/command-receipt')){
+  const upload=pathname===nativeMaterialUploadPath||pathname===nativeMaterialReceiptPath;
+  const receipt=pathname==='/api/local/command-receipt'||pathname===nativeMaterialReceiptPath;
+  if(!upload&&!receipt&&pathname!=='/api/local/episode-commands')throw deny();
+  let body;try{body=await read(upload?nativeVisualMaterialJsonMaxBytes:128*1024);}catch{throw new ConfigurationError(400,'制作请求格式无效或超过大小上限。');}
+  if(receipt){
    if(body.endpoint!=='episode-commands'||Object.keys(body).some(k=>!['endpoint','operation'].includes(k)))throw deny();
-   requireOperation(scope,body.operation);
-  }else requireOperation(scope,body);
+   requireOperation(scope,body.operation,upload);
+  }else requireOperation(scope,body,upload);
   return body;
  }
  if(request.method!=='GET')throw deny();

@@ -1,4 +1,17 @@
 import type {UploadNotice} from './WorkspaceUploadFeedback';
+import {harnessVisualMaterial,nativeVisualMaterialMaxBytes} from '../harnessVisualMaterial';
+import {isHarnessProduction} from './nativeSurface';
+
+const MiB=1024*1024;
+export const workspaceUploadFileLimit=()=>isHarnessProduction()?nativeVisualMaterialMaxBytes:100*MiB;
+export const workspaceUploadFileLimitMiB=()=>workspaceUploadFileLimit()/MiB;
+/** Normalize only missing MIME and aliases accepted by the existing byte validator. */
+export function workspaceNativeVisualFile(file:File){
+ const format=harnessVisualMaterial(file.name);
+ if(!format)return undefined;
+ const mime=file.type;
+ return !mime||mime==='application/octet-stream'||mime===format.mime||format.mime==='image/bmp'&&mime==='image/x-ms-bmp'?format:undefined;
+}
 
 export interface WorkspaceImportedMaterial {id:string;material_type:string;source_path:string;storage_path:string;is_main_script?:boolean;material_purpose?:string;mime_type?:string;file_size?:number|string}
 export interface WorkspaceUploadEntry {

@@ -20,7 +20,7 @@ export function WorkspacePreparationSections({completed,selected,onSelect,childr
      const next=event.key==='ArrowRight'?sections[(index+1)%3]:event.key==='ArrowLeft'?sections[(index+2)%3]:event.key==='Home'?sections[0]:event.key==='End'?sections[2]:null;
      if(!next)return;
      event.preventDefault();onSelect(next[0]);
-     requestAnimationFrame(()=>document.getElementById(`preparation-tab-${next[0]}`)?.focus());
+     event.currentTarget.parentElement?.querySelector<HTMLButtonElement>(`#preparation-tab-${next[0]}`)?.focus();
     }}>{uiText(label)}</button>)}
   </div>
   {sections.map(([id])=><div key={id} role="tabpanel" id={`preparation-panel-${id}`} aria-labelledby={`preparation-tab-${id}`} hidden={selected!==id}>{children[id]}</div>)}

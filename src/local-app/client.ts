@@ -25,6 +25,11 @@ export async function localRequest(path:string,init?:RequestInit){
 }
 export async function localCommand<T>(command:string,data:unknown,expectedRevision?:string,endpoint='configuration'):Promise<T>{
  const generation=sessionGeneration;
+ // Change only the native import transport, not the existing Owner-scoped intent,
+ // idempotency key, or canonical receipt envelope.
+ const nativeImport=isHarnessProduction()&&endpoint==='episode-commands'&&command==='importMaterial';
+ const writeEndpoint=nativeImport?'native-material-upload':endpoint;
+ const receiptEndpoint=nativeImport?'native-material-upload-receipt':'command-receipt';
  const body={command,data,...(expectedRevision?{expectedRevision}:{})};
  const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(endpoint==='configuration'?body:{endpoint,...body}))))).map(x=>x.toString(16).padStart(2,'0')).join('');
  const unknown=(detail?:string)=>Object.assign(new Error((detail?detail+' ':'')+'本次操作结果暂未确认；请刷新核对已有任务或保存结果，不会自动重复执行。'),{code:'LOCAL_COMMAND_OUTCOME_UNKNOWN'});
@@ -48,13 +53,13 @@ export async function localCommand<T>(command:string,data:unknown,expectedRevisi
  // same locked transaction. An explicit retry can submit the exact same key.
  const replayable=endpoint==='episode-lifecycle'&&command===episodeBatchLifecycleCommand;
  const readback=async()=>{
-  const receipt=await localRequest('command-receipt',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint,operation}),signal:AbortSignal.timeout(10000)});
+  const receipt=await localRequest(receiptEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint,operation}),signal:AbortSignal.timeout(10000)});
   if(receipt.status!=='committed')throw unknown();return receipt.result;
  };
  const request=(async()=>{
   try{
    if(legacy||(recoverable&&pending&&!replayable)){try{return await readback();}catch{throw unknown();}}
-   try{return await localRequest(endpoint,{method:'POST',headers:{'Content-Type':'application/json',...(!isHarnessProduction()?{'X-CSRF-Token':csrf}:{})},body:JSON.stringify(operation)});}
+   try{return await localRequest(writeEndpoint,{method:'POST',headers:{'Content-Type':'application/json',...(!isHarnessProduction()?{'X-CSRF-Token':csrf}:{})},body:JSON.stringify(operation)});}
    catch(error){
     if((error as {requestSent?:boolean}).requestSent===false){sessionStorage.removeItem(key);throw error;}
     const status=(error as {status?:number}).status;

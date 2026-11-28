@@ -1,6 +1,6 @@
 import {ConfirmationModal} from './ConfirmationModal';
 import {useState} from 'react';
-import {cleanup, render, screen} from '@testing-library/react';
+import {cleanup, fireEvent, render, screen, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,expect,it,vi} from 'vitest';
 import {useDialogFocus} from './useDialogFocus';
@@ -31,6 +31,22 @@ it('focuses the input and returns to the keyboard opener after Escape despite au
 it('keeps destructive confirmation focus on cancel even when a confirmation input exists',()=>{
  render(<ConfirmationModal title="删除测试记录" tone="danger" confirmLabel="删除" onCancel={()=>{}} onConfirm={()=>{}}><input aria-label="确认名称"/></ConfirmationModal>);
  expect(document.activeElement).toBe(screen.getByRole('button',{name:'取消'}));
+});
+
+it('preserves keyboard focus and restores the actual opener inside a Shadow DOM workspace',()=>{
+ const host=document.createElement('div');document.body.append(host);
+ const shadow=host.attachShadow({mode:'open'}),container=document.createElement('div');shadow.append(container);
+ const view=render(<FormDialog/>,{container}),ui=within(container);
+ try{
+  const opener=ui.getByRole('button',{name:'新建表单'});opener.focus();fireEvent.click(opener);
+  const input=ui.getByRole('textbox',{name:'名称'}),save=ui.getByRole('button',{name:'保存'}),close=ui.getByRole('button',{name:'关闭表单'});
+  expect(shadow.activeElement).toBe(input);
+  const middle=new KeyboardEvent('keydown',{key:'Tab',bubbles:true,composed:true,cancelable:true});input.dispatchEvent(middle);
+  expect(middle.defaultPrevented).toBe(false);expect(shadow.activeElement).toBe(input);
+  save.focus();fireEvent.keyDown(save,{key:'Tab',composed:true});expect(shadow.activeElement).toBe(close);
+  fireEvent.keyDown(close,{key:'Tab',shiftKey:true,composed:true});expect(shadow.activeElement).toBe(save);
+  fireEvent.keyDown(save,{key:'Escape',composed:true});expect(shadow.activeElement).toBe(opener);
+ }finally{view.unmount();host.remove();}
 });
 
 function PendingChild(){

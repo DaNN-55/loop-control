@@ -1,4 +1,5 @@
-import {localNativePath} from './nativeSurface';
+import {isHarnessProduction,localNativePath} from './nativeSurface';
+import {nativeVisualMaterialAccept} from '../harnessVisualMaterial';
 import {VideoPreview} from '../ui/media/VideoPreview';
 import {AudioPreview} from '../ui/media/AudioPreview';
 import {uiText} from '../i18n/ui';
@@ -40,7 +41,7 @@ interface Props {
  onDismissNotice?:(id:number)=>void;
 }
 
-export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,materials,readOnly,busy,failures,onImport,onRetry,onAbandon,notice,onDismissNotice=()=>{}}:Props){
+export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,materials,readOnly,busy,status,failures,onImport,onRetry,onAbandon,notice,onDismissNotice=()=>{}}:Props){
  const shelf=useWorkspaceMaterialSelection();
  const [open,setOpen]=useState(false);
  const [height,setHeight]=useState(defaultHeight);
@@ -56,7 +57,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
  const files=materials.filter(m=>m.material_type in media&&(m.material_type!=='script'||scriptRevisionId===undefined||m.id===scriptRevisionId));
  const preview=files.find(m=>m.id===previewId),selected=files.find(m=>m.id===(shelf&&!readOnly?shelf.selectedId:previewId));
  const filtered=files.filter(m=>filter==='all'||m.material_type===filter);
- const uploadDisabled=readOnly||busy;
+ const uploadDisabled=readOnly||busy,native=isHarnessProduction();
 
  function beginResize(event:PointerEvent<HTMLDivElement>){
   if(event.button!==0||!drawer.current)return;
@@ -110,9 +111,11 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
     <div className="workspace-material-filters" role="group" aria-label={uiText("素材类型")}>{[['all','全部'],['image','图片'],['video','视频'],['audio','音频'],['script','脚本'],['reference','文档']].map(([value,label])=><button type="button" key={value} aria-pressed={filter===value} onClick={()=>setFilter(value)}>{uiText(label)}</button>)}</div>
     <div className="workspace-material-heading-actions">
     {!readOnly&&<Button size="xs" color="tertiary" className="workspace-material-import" noTextPadding iconLeading={Upload}
-     isDisabled={uploadDisabled} onPress={()=>input.current?.click()}>{uiText("导入本期素材")}</Button>}</div>
+     isDisabled={uploadDisabled} aria-describedby={native?id+'-upload-help':undefined} onPress={()=>input.current?.click()}>{uiText("导入本期素材")}</Button>}</div>
    </header>
-   {!readOnly&&<input ref={input} hidden type="file" multiple accept={supportedMedia} aria-label={uiText("上传制作素材")} onChange={event=>{
+   {native&&!readOnly&&<p id={id+'-upload-help'} className="workspace-material-selection-note">{uiText("PNG、JPEG、WebP、BMP、MP4、MOV、WebM · 每个文件不超过 20 MB")}</p>}
+   {native&&<div role="status">{busy?uiText(status):null}</div>}
+   {!readOnly&&<input ref={input} hidden type="file" multiple accept={native?nativeVisualMaterialAccept:supportedMedia} aria-label={uiText("上传制作素材")} disabled={uploadDisabled} onChange={event=>{
     const selected=Array.from(event.currentTarget.files??[]);
     event.currentTarget.value='';
     if(selected.length)void onImport(selected);
@@ -136,7 +139,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
        <span className="workspace-material-name">{name}</span>
       </button><button type="button" className="workspace-material-open-preview" aria-label={uiText("预览素材 {value0}",{value0:String(name)})} title={uiText("预览素材")} onClick={()=>{setPreviewId(material.id);setShowPreview(true);}}><Maximize2 size={16} aria-hidden="true"/></button></li>;
      })}
-    </ul>:<p className="workspace-material-empty">{files.length?uiText("此类型暂无素材"):readOnly?uiText("暂无素材"):uiText("可拖入图片、视频或 MP3，每个文件不超过 100 MB。")}</p>}
+    </ul>:<p className="workspace-material-empty">{files.length?uiText("此类型暂无素材"):readOnly?uiText("暂无素材"):native?uiText("可选择或拖入本地图片、视频。"):uiText("可拖入图片、视频或 MP3，每个文件不超过 100 MB。")}</p>}
    </div>
    <div className="workspace-material-selection-note"><span>{selected?uiText("已选 {value0}",{value0:String(fileName(selected))}):uiText("拖入右侧输入框，或先选素材再添加")}</span></div>
    {showPreview&&preview&&<ModalOverlay className="modal-backdrop dan-ui product-ui" isOpen isDismissable onOpenChange={setShowPreview}><Modal className="modal-card workspace-material-modal"><Dialog aria-label={fileName(preview)}><header><h3>{fileName(preview)}</h3><Button size="xs" color="tertiary" className="workspace-material-preview-close" aria-label={uiText("关闭素材预览")} iconLeading={X} onPress={()=>setShowPreview(false)}/></header><div className="workspace-material-preview"><MaterialPreview key={preview.id} episodeId={episodeId} material={preview}/></div></Dialog></Modal></ModalOverlay>}
