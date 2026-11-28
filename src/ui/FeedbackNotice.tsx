@@ -1,3 +1,4 @@
+import {nativeSurfacePortal} from '../local-app/nativeSurface';
 import {createContext,useCallback,useContext,useEffect,useId,useLayoutEffect,useMemo,useRef,useState,type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import {AlertCircle,Check,Info,X} from 'lucide-react';
@@ -9,7 +10,7 @@ interface FeedbackProps {message:string;identity?:string|number;onceKey?:string;
 interface Entry extends Required<Pick<FeedbackProps,'message'|'label'|'tone'|'duration'>> {id:string;identity?:string|number;onceKey?:string;actions:()=>ReactNode;dismiss:()=>void;closeLabel:string}
 const FeedbackContext=createContext<{add:(entry:Entry)=>void;remove:(id:string)=>void}|null>(null);
 const modalSelector='dialog[open],[role="dialog"][aria-modal="true"],[role="alertdialog"][aria-modal="true"]';
-function hasModal(){return [...document.querySelectorAll<HTMLElement>(modalSelector)].some(node=>!node.closest('[hidden],[inert],[aria-hidden="true"]'));}
+function hasModal(){return [...nativeSurfacePortal().querySelectorAll<HTMLElement>(modalSelector)].some(node=>!node.closest('[hidden],[inert],[aria-hidden="true"]'));}
 
 /** One visual lane; callers retain business state and all recovery actions. */
 export function FeedbackProvider({children}:{children:ReactNode}){
@@ -17,7 +18,7 @@ export function FeedbackProvider({children}:{children:ReactNode}){
  const add=useCallback((entry:Entry)=>{if(entry.onceKey&&seen.current.has(entry.onceKey))return;setEntries(previous=>[...previous.filter(item=>item.id!==entry.id),entry]);},[]);
  const remove=useCallback((id:string)=>setEntries(previous=>previous.some(item=>item.id===id)?previous.filter(item=>item.id!==id):previous),[]);
  const context=useMemo(()=>({add,remove}),[add,remove]);
- useEffect(()=>{let previous=hasModal();setBlocked(previous);const check=()=>{const next=hasModal();if(next!==previous){previous=next;setBlocked(next);}},observer=new MutationObserver(check);observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden','inert','aria-hidden','aria-modal']});return()=>observer.disconnect();},[]);
+ useEffect(()=>{let previous=hasModal();setBlocked(previous);const check=()=>{const next=hasModal();if(next!==previous){previous=next;setBlocked(next);}},observer=new MutationObserver(check);observer.observe(nativeSurfacePortal(),{subtree:true,childList:true,attributes:true,attributeFilter:['open','hidden','inert','aria-hidden','aria-modal']});return()=>observer.disconnect();},[]);
  const groups:Entry[][]=[];
  for(const entry of [...entries].sort((a,b)=>Number(b.duration===null)-Number(a.duration===null))){const group=groups.find(group=>group[0].message===entry.message&&group[0].tone===entry.tone&&group[0].label===entry.label);if(group)group.push(entry);else groups.push([entry]);}
  const visible=!blocked&&groups.length>0;
@@ -27,7 +28,7 @@ export function FeedbackProvider({children}:{children:ReactNode}){
  const nativeAnnounce=typeof (document as Document&{ariaNotify?:unknown}).ariaNotify==='function';
  return <FeedbackContext.Provider value={context}>{children}{createPortal(<div aria-live={nativeAnnounce?'off':'polite'} aria-atomic="false"><div ref={layer} popover="manual" role="region" aria-label={uiText('通知')} className="dan-ui product-ui app-feedback-region" hidden={!visible}>
   {!blocked&&groups.slice(0,3).map(group=>{const first=group[0];return <FeedbackCard key={first.id+':'+String(first.identity)+':'+first.message} entry={first} onDismiss={()=>{for(const item of group){if(item.onceKey)seen.current.add(item.onceKey);remove(item.id);item.dismiss();}}}/>;})}
- </div></div>,document.body)}</FeedbackContext.Provider>;
+ </div></div>,nativeSurfacePortal())}</FeedbackContext.Provider>;
 }
 
 export function FeedbackNotice(props:FeedbackProps){const context=useContext(FeedbackContext);return context?<FeedbackRegistration {...props}/>:<FeedbackProvider><FeedbackRegistration {...props}/></FeedbackProvider>;}

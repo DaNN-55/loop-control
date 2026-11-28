@@ -1,0 +1,28 @@
+import {it,expect} from 'vitest';
+import {spawnSync} from 'node:child_process';
+import {pathToFileURL} from 'node:url';
+import {resolve} from 'node:path';
+import {localStudioRouteAllowed,localStudioConfigSource,localStudioGuard,localStudioPlugins,localEditorOwnershipPlugin} from './openchatcut-local-only.mjs';
+it('fails closed for paid services, installed CLI agents, keys and unknown RPCs',()=>{
+ for(const path of ['/llm','/api/keys','/api/codex/run','/api/claude-code','/api/copilot','/agent','/generate/image','/generate/video','/generate/voice','/api/import-url','/upload/hydrate','/upload/presign','/api/future-paid-route','/api/%6beys'])for(const method of ['GET','POST'])expect(localStudioRouteAllowed(method,path),method+' '+path).toBe(false);
+ expect(localStudioRouteAllowed('GET','/src/main.tsx')).toBe(true);expect(localStudioRouteAllowed('GET','/media/uploads/shot.png')).toBe(true);
+ for(const path of ['/api/project-store','/api/probe-media','/export','/export/job/a','/upload','/upload/multipart/init'])expect(localStudioRouteAllowed('POST',path)).toBe(true);
+ expect(localStudioRouteAllowed('POST','/future')).toBe(false);
+ expect(localStudioPlugins.has('openchatcut-settings')).toBe(false);expect(localStudioPlugins.has('openchatcut-codex-agent')).toBe(false);expect(localStudioPlugins.has('openchatcut-llm-proxy')).toBe(false);
+});
+it('removes checkout environment bootstrap before evaluating the SDK config',()=>{
+ const source="import { serverPlugins } from '../server/plugins/index.ts';\n  const env = profile.mode === 'isolated-dev' ? process.env : loadEnv(mode, process.cwd(), '');\n  // Keep the default checkout safe\n  if (profile.mode !== 'isolated-dev' && existsSync('.env.local')) { readFileSync('.env.local'); }";
+ const result=localStudioConfigSource(source,'/sdk/config/vite.config.ts');expect(result).not.toContain('loadEnv(mode');expect(result).toContain('const env: Record<string,string> = {}');expect(result).toContain('if (false)');expect(result).toContain('from "/sdk/server/plugins/index.ts"');expect(()=>localStudioConfigSource('unknown sdk','/sdk/config/vite.config.ts')).toThrow();
+});
+it('blocks external fetch and raw sockets in a local-only child process',()=>{const helper=pathToFileURL(resolve('scripts/openchatcut-local-only.mjs')).href;const code=`import {installLocalStudioNetworkBoundary} from ${JSON.stringify(helper)};import {Socket} from 'node:net';installLocalStudioNetworkBoundary();let denied=0;try{await fetch('https://example.invalid');}catch{denied++;}try{new Socket().connect(443,'203.0.113.10');}catch{denied++;}if(denied!==2)process.exit(1);`;const child=spawnSync(process.execPath,['--input-type=module','-e',code],{encoding:'utf8'});expect(child.status,child.stderr).toBe(0);});
+it('allows only authenticated local ownership leases and discards every agent tool/queue',async()=>{
+ let handler,operations,routed=0,registeredTools,registeredRest,touched;
+ const claimBrowserProjectOwnership=()=>{};
+ localEditorOwnershipPlugin({trustedEditorRequest:req=>req.headers.origin==='http://127.0.0.1:5000',editorCredentialAuthorized:req=>req.headers.authorization==='test-launch',claimBrowserProjectOwnership,broker:{registerEditor(_p,_e,_r,tools,...rest){registeredTools=tools;registeredRest=rest;return 'issued-capability';},editorRegistrationMatches(){return true;},unregisterEditor(){},touchEditor(...args){touched=args;}},routeExternalAgentBridge:async(_req,res,_url,ops)=>{routed++;operations=ops;res.end();}}).configureServer({middlewares:{use(_path,fn){handler=fn;}}});
+ const invoke=async(method,url,headers={})=>{let status=200;await handler({method,url,headers:{origin:'http://127.0.0.1:5000',authorization:'test-launch','content-type':'application/json',...headers}},{writeHead(code){status=code;},end(){},headersSent:false});return status;};
+ expect(await invoke('POST','/register',{origin:'https://attacker.invalid'})).toBe(403);expect(await invoke('POST','/register',{authorization:'bad'})).toBe(403);expect(await invoke('POST','/register',{'x-openchatcut-editor-registration':'bad'})).toBe(403);expect(await invoke('GET','/poll')).toBe(403);expect(routed).toBe(0);
+ for(const path of ['/tools','/result','/connect-client','/bootstrap','/mcp'])expect(await invoke('POST',path,{'x-openchatcut-editor-registration':'a'.repeat(43)})).toBe(403);
+ expect(await invoke('POST','/register')).toBe(200);expect(operations.claimBrowserOwnership).toBe(claimBrowserProjectOwnership);operations.registerEditor('p','e','revision',[{name:'paid'}],{epoch:1},'cap');expect(registeredTools).toEqual([]);expect(registeredRest).toEqual([{epoch:1},'cap']);expect(operations.mcpTools()).toEqual([]);expect(operations.settleEditorCall()).toBe(false);expect(operations.editorCallBinding()).toBe(null);expect(await operations.nextEditorCall('p','e','new-revision',new AbortController().signal,'cap')).toBe(null);expect(touched).toEqual(['p','e','new-revision','cap']);expect(await operations.nextEditorCancellation()).toBe(null);
+ expect(localStudioRouteAllowed('POST','/api/external-agent/register')).toBe(true);expect(localStudioRouteAllowed('POST','/api/external-agent/result')).toBe(false);expect(localStudioRouteAllowed('GET','/api/external-agent/tools')).toBe(false);
+});
+it('rejects a key mutation before downstream middleware',()=>{let handler;localStudioGuard().configureServer({middlewares:{use(fn){handler=fn;}}});let status,body;const next=()=>{throw Error('must not reach provider');};handler({method:'POST',url:'/api/keys'},{writeHead(code){status=code;},end(text){body=text;}},next);expect(status).toBe(403);expect(body).toContain('本地编辑');});

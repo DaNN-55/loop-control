@@ -23,9 +23,9 @@ export async function readLocalEpisode(pool:Pool,ownerId:string,episodeId:string
   }};
  });
 }
-export async function findOwnedArtifact(pool:Pool,ownerId:string,id:string,mediaRoot?:string){
+export async function findOwnedArtifact(pool:Pool,ownerId:string,id:string,mediaRoot?:string,episodeIds?:readonly string[]){
  return ownerTransaction(pool,ownerId,true,async client=>{
-  const {rows:[artifact]}=await client.query(`SELECT a.episode_id,a.relative_path,a.sha256,a.file_size,local_identity.episode_asset_root(e.id) AS source_asset_root,coalesce(r.source_media_root,local_identity.media_deployment()->>'targetRoot') source_media_root,local_identity.media_deployment()->'sourceRoots' AS source_media_roots,local_identity.media_deployment()->>'targetRoot' AS expected_media_root FROM public.artifacts a JOIN public.episodes e ON e.id=a.episode_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN local_identity.import_record r ON true JOIN public.account_memberships m ON m.account_id=e.account_id WHERE a.id=$1 AND m.user_id=$2 AND m.role='owner'`,[id,ownerId]);if(!artifact)return artifact;
+  const {rows:[artifact]}=await client.query(`SELECT a.episode_id,a.relative_path,a.sha256,a.file_size,local_identity.episode_asset_root(e.id) AS source_asset_root,coalesce(r.source_media_root,local_identity.media_deployment()->>'targetRoot') source_media_root,local_identity.media_deployment()->'sourceRoots' AS source_media_roots,local_identity.media_deployment()->>'targetRoot' AS expected_media_root FROM public.artifacts a JOIN public.episodes e ON e.id=a.episode_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id LEFT JOIN local_identity.import_record r ON true JOIN public.account_memberships m ON m.account_id=e.account_id WHERE a.id=$1 AND m.user_id=$2 AND m.role='owner' AND ($3::uuid[] IS NULL OR a.episode_id=ANY($3))`,[id,ownerId,episodeIds??null]);if(!artifact)return artifact;
   const location=await resolveEpisodeStorageLocation(client,mediaRoot??artifact.expected_media_root??artifact.source_media_root,artifact.episode_id);await requireEpisodeStorageDirectory(client,location);return{...artifact,storage_location:location,resolved_file_path:await resolveEpisodeFileReference(client,location,artifact.relative_path)};
  });
 }

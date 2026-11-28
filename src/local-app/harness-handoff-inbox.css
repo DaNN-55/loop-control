@@ -1,0 +1,15 @@
+.harness-handoff-inbox:modal,
+.harness-handoff-inbox .episode-batch-content {overscroll-behavior:contain}
+.harness-handoff-inbox::backdrop {overflow:hidden;overscroll-behavior:contain}
+.harness-handoff-list {margin:0}
+.harness-handoff-list > li {display:grid;gap:.5rem;justify-items:start}
+.harness-handoff-list h3,.harness-handoff-list p,.harness-handoff-hint {margin:0}
+.harness-handoff-hint {color:var(--color-text-secondary)}
+.harness-handoff-settings {display:flex;flex-wrap:wrap;gap:.25rem 1rem;margin:0}
+.harness-handoff-settings > div {display:flex;gap:.375rem}
+.harness-handoff-settings dt {color:var(--color-text-secondary)}
+.harness-handoff-settings dd {margin:0}
+.harness-handoff-list form {display:grid;gap:.625rem;inline-size:min(100%,22rem)}
+.harness-handoff-list form label {display:block;margin-block-end:.25rem}
+.harness-handoff-list form select {min-block-size:3rem;font-size:max(1rem,1em)}
+.harness-handoff-list form > button {justify-self:start}

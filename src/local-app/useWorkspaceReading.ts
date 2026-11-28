@@ -1,3 +1,4 @@
+import {localNativePath} from './nativeSurface';
 import {useEffect,useMemo,useRef,useState} from 'react';
 import type {ProductionWorkspace} from '../productionWorkspace';
 
@@ -31,7 +32,7 @@ export function useWorkspaceReading(workspace:ProductionWorkspace|null,onChange:
     // Some refresh commands reconcile the first narration. Keep their server-side work intact.
     if(load)value=await load(latest);
     else{
-     const response=await fetch(`/api/local/episodes/${workspace.episodeId}/workspace`,{signal:controller.signal});
+     const response=await fetch(localNativePath(`/api/local/episodes/${workspace.episodeId}/workspace`),{signal:controller.signal});
      if(!response.ok)throw Error(readError);
      value=(await response.json()).workspace as ProductionWorkspace|null;
     }

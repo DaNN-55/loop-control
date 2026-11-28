@@ -1,3 +1,4 @@
+import {localNativePath} from '../local-app/nativeSurface';
 import { useEffect, useState } from "react";
 import { backend } from "../lib/backend";
 
@@ -20,12 +21,12 @@ function isSafeRelativePath(relativePath: string): boolean {
 
 export function localArtifactUrl(episodeId: string, relativePath: string, expectedSha256?: string): string | null {
   if (!episodeId || !isSafeRelativePath(relativePath)) return null;
-  return `/_local-artifact?${new URLSearchParams({ episode: episodeId, path: relativePath, ...(expectedSha256 ? { sha256: expectedSha256 } : {}) }).toString()}`;
+  return localNativePath(`/_local-artifact?${new URLSearchParams({ episode: episodeId, path: relativePath, ...(expectedSha256 ? { sha256: expectedSha256 } : {}) }).toString()}`);
 }
 
 export function localArtifactThumbnailUrl(episodeId: string, relativePath: string, expectedSha256?: string): string | null {
-  const source = localArtifactUrl(episodeId, relativePath, expectedSha256);
-  return source ? `${source}&thumbnail=keyframe` : null;
+  if (!episodeId || !isSafeRelativePath(relativePath)) return null;
+  return localNativePath(`/_local-artifact?${new URLSearchParams({episode:episodeId,path:relativePath,...(expectedSha256?{sha256:expectedSha256}:{}),thumbnail:'keyframe'})}`);
 }
 
 export function artifactPreviewKind(relativePath: string): "image" | "video" | "audio" | null {
@@ -37,7 +38,7 @@ export function artifactPreviewKind(relativePath: string): "image" | "video" | "
 }
 
 async function loadLocalArtifactPreview(source: string): Promise<string> {
-  if(backend==='local')return source; // Same-site HttpOnly Owner session; server verifies ownership and fingerprint.
+  if(backend==='local')return localNativePath(source); // Same-site HttpOnly Owner session; server verifies ownership and fingerprint.
   const cached = localArtifactPreviewLoads.get(source);
   if (cached && cached.expiresAt > Date.now()) return cached.load;
   localArtifactPreviewLoads.delete(source);
@@ -66,7 +67,7 @@ async function loadLocalArtifactText(source: string): Promise<string> {
   const load = (async () => {
     const headers: Record<string,string> = {};
     if (backend !== "local") { const {data,error}=await legacyClient!.auth.getSession();if(error||!data.session)throw Error("需要 Owner 登录会话。");headers.Authorization=`Bearer ${data.session.access_token}`; }
-    const response = await fetch(source, { headers });
+    const response = await fetch(localNativePath(source), { headers });
     if (!response.ok) throw new Error("无法读取文本产物。");
     return response.text();
   })();

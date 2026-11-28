@@ -1,3 +1,4 @@
+import {localNativePath} from './nativeSurface';
 import {VideoPreview} from '../ui/media/VideoPreview';
 import {AudioPreview} from '../ui/media/AudioPreview';
 import {uiText} from '../i18n/ui';
@@ -125,7 +126,7 @@ export function WorkspaceMaterialShelf({episodeId,shotCount,scriptRevisionId,mat
     {filtered.length?<ul className="workspace-material-list" aria-label={uiText("素材清单")}>
      {filtered.map(material=>{
       const assignable=['image','video','audio'].includes(material.material_type),kind=media[material.material_type as keyof typeof media],Icon=kind.icon,name=fileName(material),label=material.material_purpose&&audioLabels[material.material_purpose]||kind.label;
-      const src='/_local-artifact?'+new URLSearchParams({episode:episodeId,path:material.storage_path});
+      const src=localNativePath('/_local-artifact?'+new URLSearchParams({episode:episodeId,path:material.storage_path}));
       return <li key={material.id}><button className="workspace-material-select" type="button" aria-label={uiText("预览 {value0}",{value0:String(name)})} aria-pressed={assignable&&shelf&&!readOnly?shelf.selectedId===material.id:previewId===material.id}
        draggable={!!shelf&&!readOnly&&assignable} data-picked={shelf?.selectedId===material.id||undefined} title={`${name} · ${label}`}
        onDragStart={event=>{if(!shelf||readOnly||!assignable){event.preventDefault();return;}event.dataTransfer.setData(workspaceMaterialDragType,material.id);event.dataTransfer.effectAllowed='copy';shelf.select('');shelf.drag(material.id);}} onDragEnd={()=>shelf?.drag('')}
@@ -149,7 +150,7 @@ function MaterialPreview({episodeId,material}:{episodeId:string;material:ShelfMa
  const [failed,setFailed]=useState(false);
  const [duration,setDuration]=useState<number>(),[script,setScript]=useState('');
  const name=fileName(material);
- const src='/_local-artifact?'+new URLSearchParams({episode:episodeId,path:material.storage_path});
+ const src=localNativePath('/_local-artifact?'+new URLSearchParams({episode:episodeId,path:material.storage_path}));
  useEffect(()=>{if(material.material_type!=='script')return;const controller=new AbortController();void fetch(src,{signal:controller.signal}).then(async response=>{if(!response.ok)throw Error();setScript(await response.text());}).catch(()=>{if(!controller.signal.aborted)setFailed(true);});return()=>controller.abort();},[src,material.material_type]);
  const onError=()=>setFailed(true);
  const onLoadedMetadata=(event:React.SyntheticEvent<HTMLMediaElement>)=>{

@@ -1,3 +1,4 @@
+import {loadLocalStudioConfig,installLocalStudioNetworkBoundary} from './openchatcut-local-only.mjs';
 import {patchAgentModels} from './openchatcut-agent-models.mjs';
 import {createNativeWorkspaceModules} from './openchatcut-host-modules.mjs';
 import {nativeReadabilityPlugin} from './openchatcut-readability.mjs';
@@ -17,6 +18,7 @@ import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 const root=process.env.OPENCHATCUT_ROOT,dataDir=process.env.OPENCHATCUT_DATA_DIR,cacheDir=process.env.LOOP_OPENCHATCUT_VITE_CACHE_DIR,port=Number(process.argv[2]);
 if(!root||!dataDir||!cacheDir||!Number.isInteger(port)||port<1||port>65535)throw Error('Studio 嵌入运行配置无效。');
+if(process.env.LOOP_STUDIO_CAPABILITY_PROFILE==='harness-local-only')installLocalStudioNetworkBoundary();
 await pruneOpenChatCutCache(root);
 // Native toolbar exports use the SDK's server pipeline as well as the Owner export.
 // Reuse one adapted bundle for this session so both paths keep clip appearance.
@@ -40,7 +42,9 @@ const bridge={name:'loop-control-embedded-editor',enforce:'pre',config(config){c
   if(!code.includes(anchor))throw Error('当前 Studio 版本缺少已验证的编辑器宿主接入点。');
   return {code:"import {useLoopControlHost} from 'virtual:loop-control-embed';\n"+code.replace(anchor,'  const hostHome=useLoopControlHost(props.project.id, base, environment.agent, ui.panels);\n  if(hostHome)ui.persistence.handleHome=hostHome;\n'+anchor),map:null};
 }};
-const {createServer,transformWithEsbuild}=await import(pathToFileURL(join(root,'node_modules/vite/dist/node/index.js')).href);
-const server=await createServer({root,configFile:join(root,'config/vite.config.ts'),envDir:false,cacheDir:viteCache?.directory??cacheDir,plugins:[{name:'loop-control-program-cache',closeBundle:releaseCaches},nativeTransitionPlacementPlugin(),nativeAccessibilityPlugin(root),nativeReadabilityPlugin(root),await createNativeWorkspaceModules({transformWithEsbuild}),bridge],server:{host:'127.0.0.1',port,strictPort:true,open:false}});
+const vite=await import(pathToFileURL(join(root,'node_modules/vite/dist/node/index.js')).href);
+const {createServer,transformWithEsbuild}=vite;
+const localConfig=process.env.LOOP_STUDIO_CAPABILITY_PROFILE==='harness-local-only'?await loadLocalStudioConfig(vite,root,cacheDir):null;
+const server=await createServer({...localConfig,root,configFile:localConfig?false:join(root,'config/vite.config.ts'),envDir:false,cacheDir:viteCache?.directory??cacheDir,plugins:[...(localConfig?.plugins??[]),{name:'loop-control-program-cache',closeBundle:releaseCaches},nativeTransitionPlacementPlugin(),nativeAccessibilityPlugin(root),nativeReadabilityPlugin(root),await createNativeWorkspaceModules({transformWithEsbuild}),bridge],server:{host:'127.0.0.1',port,strictPort:true,open:false}});
 try{await server.listen();}catch(error){await server.close();await releaseCaches();throw error;}
 for(const signal of ['SIGINT','SIGTERM'])process.once(signal,async()=>{await server.close();await releaseCaches();await pruneOpenChatCutCache(root);process.exit(0);});

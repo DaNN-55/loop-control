@@ -5,7 +5,7 @@ import {useEffect,useRef} from 'react';
 const query=new URLSearchParams(location.search);
 const channel=query.get('lcChannel'),expectedProject=query.get('lcProject');
 let parentOrigin=null;
-try{const url=new URL(query.get('lcParent'));if(url.protocol==='http:'&&['127.0.0.1','localhost'].includes(url.hostname)&&!url.username&&!url.password)parentOrigin=url.origin;}catch{/* not an embedded launch */}
+try{const url=new URL(query.get('lcParent'));if(url.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(url.hostname)&&!url.username&&!url.password)parentOrigin=url.origin;}catch{/* not an embedded launch */}
 /** The host owns navigation and saving. All document edits and imports are native. */
 export function useLoopControlHost(projectId,base,agent,panels){
  const live=useRef({base,agent});live.current={base,agent};

@@ -23,6 +23,7 @@ export interface NativeWorkspaceFixtureOptions {
  storageContract?:'current'|'pre-lineage';databaseName?:string;testRootParent?:string;origin?:string;
  testContextModule?:string;openChatCutRoot?:string;migrations?:string[];runtime?:Partial<InputRuntime>;
  connections?:(pool:Pool)=>NonNullable<Parameters<typeof createLocalHandler>[0]['connections']>;
+ createHandoff?:(options:{pool:Pool;origin:string;mediaRoot:string;ownerId:string;episodes:LocalEpisodeCommands})=>NonNullable<Parameters<typeof createLocalHandler>[0]['harnessHandoff']>;
  onSetup?:(point:FixtureSetupPoint)=>void|Promise<void>;
 }
 
@@ -69,20 +70,24 @@ export async function nativeWorkspaceFixture(options:NativeWorkspaceFixtureOptio
   await c.query('COMMIT');
   const runtime={root:options.openChatCutRoot??process.env.LOOP_TEST_OPENCHATCUT_ROOT??join(process.cwd(),'.loop-control/local/OpenChatCut'),nodePath:process.execPath};
   const createCommands=()=>new LocalEpisodeCommands(pool,root,{ready:async()=>{},wake(){throw Error('No generation permitted');},mountPath:root,minimumFreeBytes:0,studioRuntime:async()=>runtime,checkReferences:async()=>{throw Error('No Provider permitted');},...options.runtime});
-  let handler:ReturnType<typeof createLocalHandler>,commands:LocalEpisodeCommands|undefined,origin='';
+  let handler:ReturnType<typeof createLocalHandler>,commands:LocalEpisodeCommands|undefined,handoff:ReturnType<NonNullable<NativeWorkspaceFixtureOptions['createHandoff']>>|undefined,origin='';
+  const createHandler=()=>{
+   handoff=options.createHandoff?.({pool,origin,mediaRoot:root,ownerId:owner,episodes:commands!});
+   return createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections,recoverOutput,harnessHandoff:handoff});
+  };
   const server=createServer((q,r)=>handler(q,r));
   resources.defer(async()=>{if(server.listening){server.closeAllConnections();await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));}});
-  resources.defer(async()=>{await commands?.close();});
+  resources.defer(async()=>{await handoff?.close();await commands?.close();});
   const start=async()=>{
    commands=createCommands();
    server.listen(0,'127.0.0.1');await once(server,'listening');
    origin=options.origin??`http://127.0.0.1:${(server.address() as {port:number}).port}`;
-   handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections,recoverOutput});
+   handler=createHandler();
    await options.onSetup?.({stage:'server',database,root,origin});return origin;
   };
   return{database,root,pool,c,owner,other,token,otherToken,password,email,runtime,workerPool,start,activeLocalExports:(id:string)=>commands?.activeLocalExports(id)??0,
    get origin(){return origin;},get handler(){return handler;},
-   async restart(){await commands!.close();commands=createCommands();handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands,connections,recoverOutput});},
+   async restart(){await handoff?.close();await commands!.close();commands=createCommands();handler=createHandler();},
    closeStudio:(episodeId:string)=>commands!.closeStudio(episodeId),close:resources.close,
    async post(endpoint:string,command:string,data:Record<string,unknown>,requestOptions:{token?:string;csrf?:boolean;origin?:string}={}){
     const session=requestOptions.token??token;
