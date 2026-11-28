@@ -26,6 +26,11 @@ it('closes the native account dialog resource once when application close is rep
  const app=await createNativeApplication({runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189});
  await Promise.all([app.close(),app.close()]);expect(ports.accountClose.mock.calls.length).toBe(before+1);
 });
+it('returns the in-flight shutdown promise to every Vite close caller',async()=>{
+ const app=await createNativeApplication({runtimeRoot:'/isolated/.loop-control/local',projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189});
+ const first=app.close(),second=app.close();
+ try{expect(second).toBe(first);}finally{await Promise.all([first,second]);}
+});
 it('assembles approved deployment ports in the normal factory and refuses a network reservation',async()=>{
  const d={projectRoot:'/isolated',home:'/isolated/home',stateDirectory:'/isolated/state',mediaRoot:'/isolated/media',database:{database:'isolated'},port:55189,worker:{studio:true},workerDatabase:{},connections:{keychain:{approved:true,runtimeRoot:'/isolated/.loop-control/stage-d',helperSha256:'pinned'},verification:'pexels-offline'},openChatCut:{root:'/isolated/OpenChatCut',node:'/isolated/node'}};
  const app=await createNativeApplication({...d,runtimeRoot:'/isolated/.loop-control/local'});try{expect(ports.store).toHaveBeenCalledWith(d.connections.keychain,undefined);expect(ports.connections.mock.calls.at(-1)[1]).toEqual({mode:'keychain'});expect(ports.probe.mock.calls.at(-1)[0].reserveRequest()).toBe(false);expect(ports.worker.mock.calls.at(-1)[0].environment).toMatchObject({OPENCHATCUT_ROOT:d.openChatCut.root,OPENCHATCUT_NODE:d.openChatCut.node});}finally{await app.close();}
